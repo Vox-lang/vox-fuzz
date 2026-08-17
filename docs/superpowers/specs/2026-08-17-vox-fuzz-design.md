@@ -40,24 +40,33 @@ nondeterminism are findings.
 No differential oracle in v1 (deferred until the project owner has
 evaluated the concept). The generator module is the documented seam.
 
-## Phase 0 — prerequisite vox compiler features
+## Child-death observation (POC-proven, no compiler changes needed)
 
 The fuzzer's core observation is "how did the child die?" and its core
-defense is "stop a hung child." Vox currently exposes neither: `reap`
-returns only the PID (wait4 status discarded), and there is no kill.
-Phase 0 adds, in the vox repo, with LANGUAGE.md updates and tests:
+defense is "stop a hung child." Vox's native `reap` discards the wait4
+status (NULL status pointer in `REAP_CHILD`) and there is no kill — but
+neither is a blocker. The proven mechanism (POC: 2026-08-17, all four
+classifications correct on vox 0.3.7):
 
-1. **Reaped-status access** — after a `reap`, the decoded wait status is
-   readable via implicit follow-up state (precedent: the error flag):
-   - `the reaped exit code` — WEXITSTATUS, or `nothing` if signaled
-   - `the reaped signal` — WTERMSIG, or `nothing` if exited normally
-2. **Signal sending** — `Send signal <N> to process <pid-expr>.` —
-   kill(2); sets the error flag on failure (precedent: other syscall
-   actions).
+- fork; child `Execute`s `/bin/sh -c "<cmd>; echo $? > status"` where
+  `<cmd>` runs the target under `timeout(1)`; parent reaps, reads the
+  status file, parses the number with a `byte N of` loop.
+- `$?` decodes everything needed: `0` clean, `1–100` program exit codes,
+  `124` hang (timeout killed it), `> 128` death by signal `N − 128`.
+- **Generator constraint making this unambiguous:** generated programs
+  only emit `exit with code 0–100`, so 124/126/127/128+ are reserved
+  classifier values that no legitimate program can produce.
 
-Exact surface wording is the language owner's call at review. No other
-language features are load-bearing; rlimit-style caging can arrive later
-(see Caging below).
+Cost: one extra sh spawn and a file round-trip per execution — noise
+next to the compile step. Runtime deps: `/bin/sh`, coreutils `timeout`
+(dev-tool territory, fine).
+
+**Deferred vox ergonomics (roadmap, nothing waits on them):** native
+reaped-status access (e.g. `the reaped exit code` / `the reaped signal`)
+and `Send signal <N> to process <pid>.` (kill(2)) would drop the shell
+wrapper entirely. Surface wording is the language owner's call. Also
+noted for vox: `times` as an alias for `multiply` (dogfood finding —
+`n times 10` reads more naturally than `n multiply 10`).
 
 ## Architecture
 
@@ -90,12 +99,14 @@ rate means generator drift, not compiler bugs.
 
 ### Harness
 
-- `fork` + `Execute` for every child (vox itself, and fuzzed binaries).
+- `fork` + `Execute` for every child (vox itself, and fuzzed binaries),
+  via the sh-wrapper mechanism above.
 - Fresh temporary working directory per run (generated programs may
   legitimately create and write files); nothing runs in the repo tree.
-- Wall-clock timeout: timer + `Send signal` (SIGKILL after grace).
-- Classification via `reap` + reaped exit code / reaped signal:
-  `Exit(code)`, `Signal(sig)`, `Timeout`.
+- Wall-clock timeout: `timeout(1)` inside the wrapper (SIGKILL via
+  `timeout -k` grace).
+- Classification from the wrapper's status file: exit code, signal
+  (status − 128), or hang (124).
 - Parallel workers via fork; workers share nothing and write findings to
   the filesystem, the parent reaps and aggregates.
 - **Caging (v1):** temp-dir isolation + timeout only. Resource limits
@@ -153,7 +164,7 @@ Parsed via `arguments's all`. `--vox` defaults to `vox` on PATH, then
 
 ## CI (GitHub Actions)
 
-Clone + build vox (after Phase 0 lands), build vox-fuzz with it, run the
+Clone + build vox, build vox-fuzz with it, run the
 test suite, then a fixed-seed ~2-minute smoke fuzz. Any finding fails
 the job and uploads the findings dir as an artifact.
 
@@ -167,10 +178,8 @@ the job and uploads the findings dir as an artifact.
 
 ## Phasing
 
-- **Phase 0** (vox repo): reaped-status + `Send signal` features, with
-  LANGUAGE.md and tests. Gate: language owner approves surface syntax.
-- **Phase 1**: harness + classification (the riskiest Vox code — proves
-  fork/Execute/reap/status/kill end to end). Gate: classification tests.
+- **Phase 1**: harness + classification (grows from the proven POC:
+  fork/Execute/sh-wrapper/reap/status-parse). Gate: classification tests.
 - **Phase 2**: generator + PRNG + compile-clean metric. Gate: ≥95% rate
   over 10k seeds.
 - **Phase 3**: gen loop end-to-end + findings store + reducer.
