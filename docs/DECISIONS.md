@@ -110,10 +110,7 @@ evaluated, rather than accepting machinery he would not be able to
 review. This is a deliberate policy, not an oversight.
 
 **What it costs.** Silent miscompiles — a program that runs cleanly and
-prints the wrong number — are invisible to v1. Note that the headline
-bug in `BUGS-FOUND-VOX-FUZZ.md` (a non-firing `On error` swallowing the
-rest of its sentence) is exactly this class in its correctness form,
-though its loop variant surfaces as a hang, which v1 *would* catch.
+prints the wrong number — are invisible to v1.
 
 **The seam.** The generator is the plug-in point. Two designs were
 sketched:
@@ -246,6 +243,13 @@ cost the most time when forgotten.
 3. Call arguments must be precomputed (G3).
 4. A blank line inside a loop body **closes the loop** — never insert
    one for visual spacing.
+4b. `On error` consumes its **whole sentence**: a comma after the
+   handler's action binds the next action *into the handler*
+   (`On error print "x", exit 1.` is one handler with two actions). To
+   guard a statement and then continue, close the handler with a period.
+   Misread this and the success path appears to "skip" statements — an
+   early version of the findings doc filed exactly that as a
+   high-severity compiler bug before it was withdrawn.
 5. Some words are reserved and fail as loop variables (`arg`), with a
    misleading "Missing loop variable" diagnostic.
 6. Text accumulation: `Create a buffer called out.` then
