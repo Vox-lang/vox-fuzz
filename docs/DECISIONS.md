@@ -5,7 +5,7 @@ produced them, and what would justify revisiting them. Written so it
 still makes sense to someone arriving cold, months from now, with none
 of the conversation that produced it.
 
-**Last updated:** 2026-08-17 · **Against:** vox v0.3.7
+**Last updated:** 2026-08-18 · **Against:** vox v0.4.2
 
 Each decision records what was chosen, why, and — most importantly —
 **what would change it**, so a future reader can tell a settled decision
@@ -28,7 +28,8 @@ The fuzzer that attacks the Vox compiler is itself written in Vox.
 2. *Dogfooding is itself testing.* Writing a multi-thousand-line real
    program in a young language finds compiler bugs and ergonomic gaps
    during development, before the fuzzer runs at all. This has already
-   paid: see `vox/docs/BUGS-FOUND-VOX-FUZZ.md`, whose headline finding
+   paid: see `vox/docs/BUGS_FOUND.md` (renamed from
+   `BUGS-FOUND-VOX-FUZZ.md`), whose headline finding
    was hit by hand-writing about ten lines of Vox.
 3. *Credibility.* A language claiming memory safety and capability,
    whose author reached for another language to test it, argues against
@@ -51,8 +52,17 @@ express the harness at all. That was checked and it can — see D2.
 
 ## D2. Child-death classification uses a shell wrapper, not native syscalls
 
-**Decided:** 2026-08-17. **Status:** settled for v1, revisit if the
-language gains native support.
+**Decided:** 2026-08-17. **Status: REVERSED 2026-08-18** — the language
+gained exactly the native support this decision said would justify
+revisiting it. vox 0.4.0 shipped `the reaped status`, `reap ... without
+waiting`, and `Send signal`; the plan's Task 3 now supervises natively
+(fork, Execute, poll, kill, reap, decode the raw wait status), verified
+by POC against 0.4.1. The shell keeps two narrow jobs Vox still cannot
+do: capturing a child's output to a file, and the reducer's `sed`. The
+"exit codes 0–100 only" generator constraint below fell with it — a raw
+wait status keeps signal and exit code in separate bits, so the full
+0–255 range is generated deliberately. The record below is preserved as
+the reasoning that held under 0.3.7.
 
 The harness forks, `Execute`s `/bin/sh -c "timeout N <cmd> ; echo $? >
 status"`, reaps, then reads and parses the status file.
@@ -187,14 +197,21 @@ it.
 
 ### G1. `reap` discards the wait status; no native way to read it
 
-`REAP_CHILD` passes wait4 a NULL status pointer. Worked around by D2.
-Closing it would simplify the harness and drop the `/bin/sh` dependency.
+**CLOSED in vox 0.4.0** — `the reaped status` yields the raw wait4
+status word (with a `-1` never-reaped sentinel), `reap ... without
+waiting` gives WNOHANG polling, and `Send signal` gives kill(2). D2 is
+reversed on the strength of it.
 
 ### G2. No user-defined types
 
-Eleven builtin types, no structs/records/classes. Property access
-(`buffer's size`) is a fixed per-type enum (`ObjectProperty`,
-`src/parser/ast.rs:243`). This is what forces D5's interim shape.
+**CLOSED in vox 0.4.0** — user-defined **things** shipped: compile-time
+layout, possessive field access, unlimited nesting, value-copy
+semantics, function members. D5's obstacle ("'Process is a library
+type' is not currently expressible") is gone; its interim shape — a raw
+status number decoded by library functions — is now the chosen shape by
+preference rather than constraint, and the generator is required to
+emit things (plan Task 9), since 0.4.0's newest surface is precisely
+what a fuzzer should be hammering.
 
 Worth noting for whoever designs it: Vox's builtins are already
 compiler-blessed structs — a buffer is
