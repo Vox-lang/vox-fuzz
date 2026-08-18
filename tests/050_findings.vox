@@ -1,0 +1,28 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/findings.vox".
+
+(runner.vox is included because findings.vox reads vox_binary from it.
+ A format string cannot nest double quotes - "{f of "crash"}" is a parse
+ error - so the category is bound to a local and every probed call is
+ hoisted out of its Print.)
+Set findings_dir to "./vf_test_findings".
+a text called 'the crash category' is "crash".
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_test_findings" and 5000.
+a number called 'the source setup' is 'run shell' of "printf 'Print 1.\\n' > ./vf_src.vox" and 5000.
+
+a boolean called 'seen before saving' is 'finding exists' of 'the crash category' and 7.
+Print "before: {'seen before saving'}".
+a number called 'the tally after saving' is 'finding save' of 'the crash category' and 7 and "./vf_src.vox" and "signal 11".
+Print "count: {'the tally after saving'}".
+a boolean called 'seen after saving' is 'finding exists' of 'the crash category' and 7.
+Print "after: {'seen after saving'}".
+
+a number called 'the program check' is 'run shell' of "test -f ./vf_test_findings/crash/7/program.vox" and 5000.
+Print "program saved: {'the program check' is 0}".
+a number called 'the repro check' is 'run shell' of "test -f ./vf_test_findings/crash/7/repro.sh" and 5000.
+Print "repro saved: {'the repro check' is 0}".
+a number called 'the detail check' is 'run shell' of "grep -q 'signal 11' ./vf_test_findings/crash/7/classification.txt" and 5000.
+Print "detail saved: {'the detail check' is 0}".
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_test_findings ./vf_src.vox" and 5000.

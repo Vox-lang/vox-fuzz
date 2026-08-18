@@ -1,0 +1,23 @@
+--- seed 42 ---
+a number called v1 is 27.
+a number called v2 is 264.
+For each number from 1 to 2,
+  Print v2 minus v1.
+Print v2 minus v1.
+Set v2 to v1 multiply v2.
+If v1 is greater than v2 then,
+  Print v1 add v2.
+For each number from 1 to 5,
+  Print v2 minus v1.
+a number called v3 is 447.
+Print v1.
+Set v3 to v3 add v2.
+Print v3 add v3.
+If v1 is greater than v2 then,
+  Print v2 multiply v3.
+Set v2 to v1.
+If v3 is greater than v1 then,
+  Print v1 minus v2.
+Exit 222.
+
+reproducible: 1

@@ -1,0 +1,11 @@
+see "../src/rng.vox".
+see "../src/gen.vox".
+
+'gen program' of 42 and 12.
+a text called t1 is 'gen text'.
+Print "--- seed 42 ---".
+Print t1.
+
+'gen program' of 42 and 12.
+a text called t2 is 'gen text'.
+Print "reproducible: {t1 is equal to t2}".

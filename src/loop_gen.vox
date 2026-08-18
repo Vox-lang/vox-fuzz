@@ -1,0 +1,60 @@
+(The gen loop: generate, compile, run, classify, record.
+
+ The invariant being tested: a vox-emitted binary must never die by
+ signal and never hang. A nonzero exit code is normal and is not a
+ finding.)
+
+a number called stat_total is 0.
+a number called stat_compiled is 0.
+a number called stat_findings is 0.
+
+To 'fuzz gen once' with a number called seed and a number called budget and a number called 'the deadline in milliseconds'.
+    Set stat_total to stat_total add 1.
+    'gen program' of seed and budget.
+    a text called 'the source path' is "./vf_gen.vox".
+    'gen write' of 'the source path'.
+    a number called 'the compiler exit code' is 'compile vox' of 'the source path' and "./vf_gen_bin".
+    If 'the compiler exit code' is less than 0 then,
+        a number called 'the lost compiler finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler run did not exit",
+        Set stat_findings to stat_findings add 1,
+        Return a number, 1.
+    If 'the compiler exit code' is greater than 128 then,
+        a number called 'the ice finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler died by signal",
+        Set stat_findings to stat_findings add 1,
+        Return a number, 1.
+    If 'the compiler exit code' is 101 then,
+        a number called 'the panic finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler panicked (rust exit 101)",
+        Set stat_findings to stat_findings add 1,
+        Return a number, 1.
+    If 'the compiler exit code' is greater than 0 then,
+        a number called 'the toolchain check' is 'run shell' of "grep -q -e nasm -e 'ld:' ./vf_cerr" and 5000,
+        If 'the toolchain check' is 0 then,
+            a number called 'the rejection finding' is 'finding save' of "asm-reject" and seed and 'the source path' and "emitted assembly refused by nasm or ld",
+            Set stat_findings to stat_findings add 1,
+            Return a number, 1.
+        Return a number, 0.
+    Set stat_compiled to stat_compiled add 1.
+    a text called 'the verdict' is 'run program' of "./vf_gen_bin" and 'the deadline in milliseconds'.
+    a text called 'the hang verdict' is "hang".
+    a text called 'the signal verdict' is "signal".
+    If 'the verdict' is 'the hang verdict' then,
+        a number called 'the hang finding' is 'finding save' of "hang" and seed and 'the source path' and "killed at the deadline",
+        Set stat_findings to stat_findings add 1,
+        Return a number, 1.
+    If 'the verdict' is 'the signal verdict' then,
+        a number called 'the killing signal' is 'signal of' of 'the last status',
+        a text called 'the detail' is "died by signal {'the killing signal'}",
+        a number called 'the crash finding' is 'finding save' of "crash" and seed and 'the source path' and 'the detail',
+        Set stat_findings to stat_findings add 1,
+        Return a number, 1.
+    Return a number, 0.
+
+To 'fuzz gen run' with a number called 'the first seed' and a number called 'how many programs' and a number called budget and a number called 'the deadline in milliseconds'.
+    a number called 'programs started' is 0.
+    While 'programs started' is less than 'how many programs',
+        a number called 'the seed' is 'the first seed' add 'programs started',
+        a number called 'a finding was recorded' is 'fuzz gen once' of 'the seed' and budget and 'the deadline in milliseconds',
+        Set 'programs started' to 'programs started' add 1.
+    Print "programs: {stat_total}".
+    Print "compiled: {stat_compiled}".
+    Print "findings: {stat_findings}".
