@@ -1,0 +1,50 @@
+category: parser-reject
+seed: (hand-reduced, not from the seeded generator)
+detail: A clause (If or For, at any nesting depth including the true
+top level) whose body's last/only action is an On-error handler,
+immediately followed by ANOTHER statement that itself uses On-error
+(whether that statement is inside a different clause or a fresh
+top-level statement), corrupts parsing. The symptom: the SECOND
+On-error group's own preceding declaration is reported "Unknown
+variable" pointing at its own declaration line, and everything that
+follows reads as though it were still inside the already-closed first
+clause.
+
+Two adjacent On-error groups that do NOT involve a clause closing on
+the first one (e.g. two independent top-level `list decl / element
+access / On error` statements in a row) compile and run correctly -
+this is specifically about a clause's *own close* coinciding with
+On-error immediately preceding another On-error use.
+
+Workaround in src/gen.vox (Task 9): a loop or if's body is never
+allowed to close on an On-error-terminated statement - see
+'gen statement's 'avoid onerror' parameter (passed true from
+'gen body', false only from the true top-level statement stream in
+'gen program') and 'gen any leaf's kind restriction (excludes the
+buffer-oob/list-oob kinds from ever being the mandatory closer after a
+nested block). On-error groups remain freely generated elsewhere, where
+this adjacency cannot arise.
+
+Process note for the master: 'fuzz gen once' (src/loop_gen.vox) treats
+any nonzero, non-signal, non-101, non-nasm/ld compiler exit as "not a
+finding, generator bug, skip" - it has no way to distinguish this kind
+of genuine "valid program the compiler rejects" bug from an actual
+generator mistake without a human reading the compiler's stderr. This
+bug was found by hand while writing src/gen.vox, not by the seeded
+seeds; a differently-shaped seed could produce the same adjacency and
+would currently just lower the compile-clean rate silently instead of
+surfacing as a finding.
+
+vox v0.4.2 By Josjuar Lister 2026
+
+--- ADJUDICATION (master + language lawyer, 2026-08-18) ---
+NOT A PARSER BUG AS REPORTED. Two documented rules stacked: the period
+after an On error handler closes only the handler (rule 1, :135 - On
+error is a nesting clause), so the following declaration sat inside the
+If; and If-body declarations do not register after the If
+("Declarations in Branches", :2918). The confusing caret is a real
+diagnostic defect (plan 318 item 3). Digging under this finding
+uncovered vox bug #25 - declarations on non-If conditional paths
+(On error/While/for each bodies) in scope over uninitialised storage:
+stack garbage for numbers, segfault for text. The fuzzer's finding was
+wrong in detail and invaluable in effect.
