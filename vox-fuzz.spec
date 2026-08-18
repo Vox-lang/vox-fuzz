@@ -25,6 +25,12 @@ Requires:       binutils
 # architecture can build or run this. Skips, not failures.
 ExclusiveArch:  x86_64
 
+# The binary is Vox-emitted assembly with no build-id note and no debug
+# sections — find-debuginfo hard-fails on it ("No build ID note found",
+# caught by a local rpmbuild before this ever reached Copr). Same
+# situation and same cure as the sibling packages.
+%global debug_package %{nil}
+
 %description
 A fuzzer for the Vox compiler — written in Vox. It generates random valid
 Vox programs, compiles them with the real compiler, supervises the
