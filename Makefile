@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 VOX ?= ../vox/target/release/vox
 # Pin the compiler runtime to the repo's coreasm; an installed
 # /usr/share/vox/coreasm would otherwise shadow it silently.

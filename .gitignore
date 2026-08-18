@@ -3,3 +3,4 @@ build/
 *.o
 *.asm
 vf_*/target
+/result
