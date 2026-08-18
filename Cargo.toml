@@ -1,0 +1,19 @@
+[package]
+name = "vox-fuzz"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.71"
+description = "A fuzzer for the Vox compiler, written in Vox — this crate is a launcher that carries the Vox sources and compiles them with your installed vox on first run"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/Vox-lang/vox-fuzz"
+readme = "README.md"
+keywords = ["vox", "fuzzer", "fuzzing", "compiler"]
+categories = ["development-tools::testing"]
+# The Vox sources ARE the program; the Rust here is a bootstrap.
+include = ["src/*.rs", "src/*.vox", "README.md", "LICENSE"]
+
+[[bin]]
+name = "vox-fuzz"
+path = "src/main.rs"
+
+[dependencies]

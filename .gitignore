@@ -2,4 +2,4 @@ build/
 /findings/
 *.o
 *.asm
-vf_*
+vf_*/target
