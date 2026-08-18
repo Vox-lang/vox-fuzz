@@ -1,0 +1,10 @@
+To 'gen statement'.
+    a number called kind is 0.
+    If kind is 9 then,
+        Print "nine".
+        Return a boolean, true.
+    Print "default".
+    Return a boolean, false.
+
+a boolean called r is 'gen statement'.
+Print r.

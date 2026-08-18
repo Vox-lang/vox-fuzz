@@ -1,0 +1,10 @@
+a number called v1 is 5.
+a number called v2 is 3.
+If v2 is greater than v1 then,
+  a list called l1 is [94, 79],
+  Print element 1 of l1,
+  On error print "first oob".
+a list called l2 is [58, 67].
+Print element 1 of l2.
+On error print "second oob".
+Print v1.

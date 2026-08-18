@@ -1,0 +1,27 @@
+category: parser-reject
+seed: (hand-reduced, not from the seeded generator)
+detail: A Return statement immediately following a period-closed If
+branch (not comma-joined into that branch's own action list) is
+misparsed. The If's own action ends with a period, correctly closing
+just the If (language note 6/rule 1); the Return that follows it is a
+fresh, ordinary function-body statement and should just return. Instead
+the compiler reports "Return is only valid inside a function" for that
+Return, plus a cascade of "Unknown identifier"/"Unknown variable" errors
+pointing at unrelated, syntactically-fine lines earlier and later in the
+file (parameter lists of other To-definitions, etc).
+
+Moving the Return to be the sole, comma-joined action of the If branch
+(`If cond then, Return X.` or `If cond then, setup, Return X.`) avoids
+it entirely - this is the existing, working shape already used
+throughout src/gen.vox's 'gen var ref' and 'gen expr' (Task 5, unmodified
+by this task). The bug is specifically a Return that trails a *closed*
+If as its own separate sentence.
+
+vox v0.4.2 By Josjuar Lister 2026
+
+--- ADJUDICATION (master + language lawyer, 2026-08-18) ---
+NOT A COMPILER BUG. A body-level Return closes the function body - the
+formal grammar says so (LANGUAGE.md:4886/:4899) though the prose denies
+it (:88). The statements after the Return were promoted to top level,
+and the second Return correctly errored there. Filed instead as: doc gap
++ diagnostic defect (no location, no hint), vox plan 318 items 2 and 4.
