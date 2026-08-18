@@ -1,0 +1,7 @@
+compile ok: 0
+hello from fixture
+run ok: exit 0
+compile e7: 0
+about to exit
+run e7: exit 7
+compile missing nonzero: 1

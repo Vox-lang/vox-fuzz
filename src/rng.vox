@@ -1,0 +1,17 @@
+(Seeded PRNG: a linear congruential generator. Deterministic per seed,
+ which is what makes every finding reproducible from its seed alone.)
+
+a number called rng_state is 12345.
+
+To 'rng seed' with a number called s.
+    Set rng_state to s.
+
+To 'rng next'.
+    Set rng_state to rng_state multiply 1103515245.
+    Set rng_state to rng_state add 12345.
+    Set rng_state to rng_state modulo 2147483648.
+    Return a number, rng_state.
+
+To 'rng below' with a number called nn.
+    a number called r is 'rng next'.
+    Return a number, r modulo nn.

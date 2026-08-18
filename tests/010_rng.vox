@@ -1,0 +1,14 @@
+see "../src/rng.vox".
+
+'rng seed' of 12345.
+Print 'rng below' of 100.
+Print 'rng below' of 100.
+Print 'rng below' of 100.
+
+(same seed reproduces the same sequence)
+'rng seed' of 12345.
+Print 'rng below' of 100.
+
+(a different seed differs)
+'rng seed' of 999.
+Print 'rng below' of 100.

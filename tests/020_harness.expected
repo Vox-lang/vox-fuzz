@@ -1,0 +1,4 @@
+true: exit 0
+exit 200: exit 200
+segv: signal 11 1
+sleep: hang 9

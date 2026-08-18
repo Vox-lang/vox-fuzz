@@ -1,0 +1,5 @@
+build/
+findings/
+*.o
+*.asm
+vf_*

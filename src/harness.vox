@@ -1,0 +1,75 @@
+(Run a program, and learn how it died.
+
+ A fuzzed program can meet three fates and the harness must tell them
+ apart exactly: it exits with a code of its own, a signal kills it, or it
+ never finishes and the harness has to end it. All three are read from the
+ kernel's own wait status, so no fate can be mistaken for another.
+
+ The decoders are written out here rather than taken from vox-libs'
+ process library on purpose: the fuzzer must run on a machine with nothing
+ installed, and these are four lines of arithmetic.)
+
+To 'exit code of' with a number called status.
+  Return a number, status divide 256 modulo 256.
+
+To 'signal of' with a number called status.
+  Return a number, status bit-and 127.
+
+To crashed with a number called status.
+  a number called 'terminating signal' is status bit-and 127.
+  Return a boolean, 'terminating signal' is not 0.
+
+Set 'the last status' to -1.
+
+(Run a program to completion, or to the deadline, whichever comes first.
+ Returns how it ended; the raw wait status is left in 'the last status'.
+
+ The argument list is argv[1..]: Vox prepends the program path as argv[0]
+ itself, so naming it again in the list passes it to the program as a real
+ argument.)
+To supervise with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds'.
+  a number called 'the child' is fork the process.
+  If 'the child' is 0 then,
+      Execute program with arguments 'the argument list',
+      Exit 127.
+  a timer called clock.
+  Start the clock.
+  a number called 'reap result' is 0.
+  a boolean called 'the child is still running' is true.
+  a boolean called 'the child was killed' is false.
+  While 'the child is still running',
+      Set 'reap result' to reap child 'the child' without waiting,
+      If 'reap result' is 'the child' then,
+          Set 'the child is still running' to false.
+      If 'the child is still running' then,
+          a number called 'milliseconds waited' is the clock's elapsed in milliseconds,
+          If 'milliseconds waited' is greater than 'the deadline in milliseconds' then,
+              Send signal 9 to process 'the child',
+              Set 'reap result' to reap child 'the child',
+              Set 'the child is still running' to false,
+              Set 'the child was killed' to true.
+      Wait 5 milliseconds.
+  Set 'the last status' to the reaped status.
+  If 'the child was killed' then,
+      Return a text, "hang".
+  If crashed of 'the last status' then,
+      Return a text, "signal".
+  Return a text, "exit".
+
+(Run a shell command, for the two things Vox cannot do itself: redirecting
+ a child's output to a file, and line surgery with sed. Never use this to
+ run a fuzzed program - supervise does that, and only supervise can tell an
+ exit code of 139 from a death by signal 11.)
+To 'run shell' with a text called command and a number called 'the deadline in milliseconds'.
+  a list called 'the shell arguments' is [].
+  append "-c" to 'the shell arguments'.
+  append command to 'the shell arguments'.
+  a text called 'how it ended' is supervise of "/bin/sh" and 'the shell arguments' and 'the deadline in milliseconds'.
+  a text called 'the exit verdict' is "exit".
+  If 'how it ended' is not 'the exit verdict' then,
+      Return a number, 0 minus 1.
+  Return a number, 'exit code of' of 'the last status'.
+
+(The bound 'the exit verdict' local is vox bug #21's workaround - a
+ string literal in a function-body If condition mis-resolves as a
+ variable name; language note 14.)
