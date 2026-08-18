@@ -28,7 +28,7 @@
           # test.sh refuses a missing VOX_CORE_PATH rather than silently
           # deriving a wrong one; point it at the compiler's own store copy.
           checkPhase = ''
-            VOX=vox VOX_CORE_PATH=${voxc}/share/vox/coreasm ./test.sh
+            VOX=${voxc}/bin/vox VOX_CORE_PATH=${voxc}/share/vox/coreasm bash ./test.sh
           '';
           doCheck = true;
           installPhase = ''

@@ -4,6 +4,7 @@
 ![Repo size](https://img.shields.io/github/repo-size/Vox-lang/vox-fuzz?style=flat-square)
 ![Last commit](https://img.shields.io/github/last-commit/Vox-lang/vox-fuzz?style=flat-square)
 ![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)
+[![crates.io](https://img.shields.io/crates/v/vox-fuzz?style=flat-square)](https://crates.io/crates/vox-fuzz)
 
 A fuzzer for the [Vox](https://github.com/Vox-lang/vox) compiler —
 **written in Vox**. It generates random valid Vox programs, compiles

@@ -1,8 +1,10 @@
 see "../src/harness.vox".
 
-(A program that exits cleanly.)
-a list called 'no arguments' is [].
-a text called 'how true ended' is supervise of "/bin/true" and 'no arguments' and 5000.
+(A program that exits cleanly. Every fixture in this test reaches its
+ fate through /bin/sh BUILT-INS only - true, sleep, and friends do not
+ exist inside the Nix build sandbox, and this test must pass there too.)
+a list called 'the clean arguments' is ["-c", "exit 0"].
+a text called 'how true ended' is supervise of "/bin/sh" and 'the clean arguments' and 5000.
 Print "true: {'how true ended'} {'exit code of' of 'the last status'}".
 
 (A program that exits with a code above 128 - the case a shell-reported
@@ -16,7 +18,9 @@ a list called 'the segfault arguments' is ["-c", "kill -SEGV $$"].
 a text called 'how it died' is supervise of "/bin/sh" and 'the segfault arguments' and 5000.
 Print "segv: {'how it died'} {'signal of' of 'the last status'} {crashed of 'the last status'}".
 
-(A program that never finishes, ended by the harness itself.)
-a list called 'the sleep arguments' is ["30"].
-a text called 'how sleep ended' is supervise of "/bin/sleep" and 'the sleep arguments' and 300.
-Print "sleep: {'how sleep ended'} {'signal of' of 'the last status'}".
+(A program that never finishes, ended by the harness itself. A busy
+ loop of shell built-ins, because the sandbox has no sleep binary; the
+ 300ms deadline keeps the burn short.)
+a list called 'the spin arguments' is ["-c", "while :; do :; done"].
+a text called 'how the spin ended' is supervise of "/bin/sh" and 'the spin arguments' and 300.
+Print "sleep: {'how the spin ended'} {'signal of' of 'the last status'}".
