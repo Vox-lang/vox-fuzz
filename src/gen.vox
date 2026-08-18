@@ -1,0 +1,116 @@
+(Program generator: emits random valid Vox source text.
+
+ There is no AST - rules append rendered source directly into gen_out.
+ Names are v1..vN in declaration order, so every reference is in scope
+ by construction.)
+
+Create a buffer called gen_out.
+a number called gen_vars is 0.
+
+To 'gen emit' with a text called s.
+    a buffer called piece is "{s}".
+    append piece to gen_out.
+
+To 'gen new var'.
+    Set gen_vars to gen_vars add 1.
+    a number called v is 'rng below' of 1000.
+    a text called line is "a number called v{gen_vars} is {v}.\n".
+    'gen emit' of line.
+    Return a number, gen_vars.
+
+To 'gen var ref'.
+    If gen_vars is 0 then,
+        Return a text, "0".
+    a number called 'the pick' is 'rng below' of gen_vars.
+    a number called 'the chosen variable' is 'the pick' add 1.
+    a text called 'the reference' is "v{'the chosen variable'}".
+    Return a text, 'the reference'.
+
+To 'gen expr'.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a number called 'the operator choice' is 'rng below' of 4.
+    If 'the operator choice' is 0 then,
+        a text called 'the sum' is "{'the left operand'} add {'the right operand'}",
+        Return a text, 'the sum'.
+    If 'the operator choice' is 1 then,
+        a text called 'the difference' is "{'the left operand'} minus {'the right operand'}",
+        Return a text, 'the difference'.
+    If 'the operator choice' is 2 then,
+        a text called 'the product' is "{'the left operand'} multiply {'the right operand'}",
+        Return a text, 'the product'.
+    a text called 'the plain reference' is "{'the left operand'}".
+    Return a text, 'the plain reference'.
+
+(`a` is a reserved word, which is why the operands carry their full
+ names.)
+
+To 'gen print'.
+    a text called e is 'gen expr'.
+    a text called line is "Print {e}.\n".
+    'gen emit' of line.
+
+To 'gen assign'.
+    a text called target is 'gen var ref'.
+    a text called e is 'gen expr'.
+    a text called line is "Set {target} to {e}.\n".
+    'gen emit' of line.
+
+To 'gen loop' with a number called depth.
+    a number called 'the spread' is 'rng below' of 5.
+    a number called 'the iteration limit' is 'the spread' add 1.
+    a text called head is "For each number from 1 to {'the iteration limit'},\n".
+    'gen emit' of head.
+    a text called e is 'gen expr'.
+    a text called body is "  Print {e}.\n".
+    'gen emit' of body.
+
+To 'gen if' with a number called depth.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a text called head is "If {'the left operand'} is greater than {'the right operand'} then,\n".
+    'gen emit' of head.
+    a text called e is 'gen expr'.
+    a text called body is "  Print {e}.\n".
+    'gen emit' of body.
+
+To 'gen statement' with a number called depth.
+    a number called kind is 'rng below' of 5.
+    If kind is 0 then,
+        a number called ignored is 'gen new var'.
+    If kind is 1 then,
+        'gen print'.
+    If kind is 2 then,
+        'gen assign'.
+    If kind is 3 then,
+        'gen loop' of depth.
+    If kind is 4 then,
+        'gen if' of depth.
+
+To 'gen program' with a number called seed and a number called budget.
+    clear gen_out.
+    Set gen_vars to 0.
+    'rng seed' of seed.
+    a number called ignored1 is 'gen new var'.
+    a number called ignored2 is 'gen new var'.
+    a number called i is 0.
+    While i is less than budget,
+        'gen statement' of 1,
+        Set i to i add 1.
+    a number called code is 'rng below' of 256.
+    a text called tail is "Exit {code}.\n".
+    'gen emit' of tail.
+
+(256, not 101: the shell-era cap is gone, and codes above 128 are the
+ ones a shell-reported status would have misclassified as signal deaths -
+ the native harness must prove it tells them apart, so the generator must
+ produce them.)
+
+To 'gen text'.
+    a text called t is "{gen_out}".
+    Return a text, t.
+
+To 'gen write' with a text called path.
+    open a file for writing called gf at path.
+    Write gen_out to gf.
+    Close gf.
