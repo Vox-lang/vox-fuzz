@@ -1,0 +1,22 @@
+see "../src/harness.vox".
+
+(A program that exits cleanly.)
+a list called 'no arguments' is [].
+a text called 'how true ended' is supervise of "/bin/true" and 'no arguments' and 5000.
+Print "true: {'how true ended'} {'exit code of' of 'the last status'}".
+
+(A program that exits with a code above 128 - the case a shell-reported
+ exit code could not tell apart from a signal death.)
+a list called 'the exit arguments' is ["-c", "exit 200"].
+a text called 'how the exit ended' is supervise of "/bin/sh" and 'the exit arguments' and 5000.
+Print "exit 200: {'how the exit ended'} {'exit code of' of 'the last status'}".
+
+(A program killed by a signal it did not choose.)
+a list called 'the segfault arguments' is ["-c", "kill -SEGV $$"].
+a text called 'how it died' is supervise of "/bin/sh" and 'the segfault arguments' and 5000.
+Print "segv: {'how it died'} {'signal of' of 'the last status'} {crashed of 'the last status'}".
+
+(A program that never finishes, ended by the harness itself.)
+a list called 'the sleep arguments' is ["30"].
+a text called 'how sleep ended' is supervise of "/bin/sleep" and 'the sleep arguments' and 300.
+Print "sleep: {'how sleep ended'} {'signal of' of 'the last status'}".

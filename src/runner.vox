@@ -1,0 +1,30 @@
+(Compile and run Vox programs through the harness.
+
+ Compiling goes through the shell, because the compiler's stderr must be
+ captured to a file and Vox cannot redirect a child's output itself.
+ Running NEVER goes through the shell: supervise reads the true wait
+ status, which is the only way to tell a program that exits with code 139
+ from one killed by signal 11.)
+
+a text called vox_binary is "../vox/target/release/vox".
+If the environment variable "VOX" exists then, Set vox_binary to environment's "VOX".
+(Pin the compiler runtime: an installed /usr/share/vox/coreasm silently
+ shadows the repo copy when VOX_CORE_PATH is unset, which would mean
+ fuzzing the packaged compiler instead of the one under development.
+ Declared, not Set: Set on an undeclared name conjures a number global
+ holding the string's pointer - language note 13.)
+a text called vox_core is "../vox/coreasm".
+If the environment variable "VOX_CORE_PATH" exists then, Set vox_core to environment's "VOX_CORE_PATH".
+
+To 'vox path'.
+    Return a text, vox_binary.
+
+To 'compile vox' with a text called source and a text called out.
+    a text called 'the compile command' is "VOX_CORE_PATH={vox_core} {vox_binary} {source} -o {out} > ./vf_cerr 2>&1".
+    a number called 'the compiler exit code' is 'run shell' of 'the compile command' and 60000.
+    Return a number, 'the compiler exit code'.
+
+To 'run program' with a text called 'binary path' and a number called 'the deadline in milliseconds'.
+    a list called 'no arguments' is [].
+    a text called 'the verdict' is supervise of 'binary path' and 'no arguments' and 'the deadline in milliseconds'.
+    Return a text, 'the verdict'.

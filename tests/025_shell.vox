@@ -1,0 +1,11 @@
+see "../src/harness.vox".
+
+a number called 'the clean run' is 'run shell' of "true" and 5000.
+Print "clean: {'the clean run'}".
+a number called 'the failed run' is 'run shell' of "exit 3" and 5000.
+Print "failed: {'the failed run'}".
+a number called 'the redirected run' is 'run shell' of "echo captured > ./vf_shell_out" and 5000.
+Print "redirected: {'the redirected run'}".
+a number called 'the check' is 'run shell' of "grep -q captured ./vf_shell_out" and 5000.
+Print "captured: {'the check'}".
+a number called 'the cleanup' is 'run shell' of "rm -f ./vf_shell_out" and 5000.
