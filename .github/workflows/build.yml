@@ -1,0 +1,50 @@
+name: vox-fuzz - Build + tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # The job is named `build` because that is the status-check name the
+  # branch ruleset requires — the same convention as the vox and
+  # vox-libs repos.
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install NASM
+        run: sudo apt-get update && sudo apt-get install -y nasm
+
+      - name: Check out the Vox compiler
+        uses: actions/checkout@v4
+        with:
+          repository: Vox-lang/vox
+          path: vox
+
+      - name: Build the Vox compiler
+        working-directory: vox
+        run: cargo build --release
+
+      # VOX and VOX_CORE_PATH are passed explicitly rather than derived:
+      # vox falls through a bad VOX_CORE_PATH silently to any installed
+      # copy, and test.sh refuses to run when the directory is missing.
+      - name: Run the test suite
+        run: |
+          VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
+          VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
+          ./test.sh
+
+      # Once the gen subcommand lands (plan Task 8), this job also
+      # smoke-fuzzes 100 seeds and fails on any finding — see the plan's
+      # Task 13 for the exact step to add. Left out until then so the
+      # gate never passes vacuously.
