@@ -1,0 +1,14 @@
+see "../src/rng.vox".
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/gen.vox".
+see "../src/findings.vox".
+see "../src/loop_gen.vox".
+
+Set findings_dir to "./vf_loop_findings".
+a number called ig is 'run shell' of "rm -rf ./vf_loop_findings" and 5000.
+
+'fuzz gen run' of 1 and 5 and 8 and 10000.
+Print "total: {stat_total}".
+Print "compiled at least 4 of 5: {stat_compiled is greater than 3}".
+a number called ig2 is 'run shell' of "rm -rf ./vf_loop_findings" and 5000.

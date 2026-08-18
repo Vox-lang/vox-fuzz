@@ -1,0 +1,38 @@
+(Findings store: one directory per finding, self-contained enough that
+ anyone can reproduce it without vox-fuzz.)
+
+a text called findings_dir is "./findings".
+a number called findings_count is 0.
+
+To 'finding path' with a text called category and a number called seed.
+    a text called p is "{findings_dir}/{category}/{seed}".
+    Return a text, p.
+
+To 'finding exists' with a text called category and a number called seed.
+    a text called 'the finding directory' is 'finding path' of category and seed.
+    a text called 'the existence probe' is "test -d {'the finding directory'}".
+    a number called 'the probe result' is 'run shell' of 'the existence probe' and 5000.
+    Return a boolean, 'the probe result' is 0.
+
+(`a boolean called present is st is 0.` does not parse - a comparison
+ cannot initialise a declaration; return it directly, which does work.)
+
+To 'finding save' with a text called category and a number called seed and a text called src and a text called detail.
+    a text called 'the finding directory' is 'finding path' of category and seed.
+    a text called 'the directory command' is "mkdir -p {'the finding directory'}".
+    a number called 'the directory result' is 'run shell' of 'the directory command' and 5000.
+    a text called 'the copy command' is "cp {src} {'the finding directory'}/program.vox".
+    a number called 'the copy result' is 'run shell' of 'the copy command' and 5000.
+    a text called 'the classification command' is "printf 'category: {category}\\nseed: {seed}\\ndetail: {detail}\\n' > {'the finding directory'}/classification.txt".
+    a number called 'the classification result' is 'run shell' of 'the classification command' and 5000.
+    a text called 'the version command' is "{vox_binary} --version >> {'the finding directory'}/classification.txt 2>&1".
+    a number called 'the version result' is 'run shell' of 'the version command' and 10000.
+    a text called 'the repro command' is "printf '#!/bin/sh\\n{vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\\n' > {'the finding directory'}/repro.sh".
+    a number called 'the repro result' is 'run shell' of 'the repro command' and 5000.
+    a text called 'the chmod command' is "chmod +x {'the finding directory'}/repro.sh".
+    a number called 'the chmod result' is 'run shell' of 'the chmod command' and 5000.
+    Set findings_count to findings_count add 1.
+    Return a number, findings_count.
+
+(`ver` is an alternate spelling of the reserved keyword `version`, which
+ is why the version line's local carries the full phrase.)
