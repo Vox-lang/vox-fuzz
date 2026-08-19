@@ -1,17 +1,78 @@
+899
+reassigned1
+tag1
 886
-847
-366
-519
+2
+label
+count
 72
-72
-72
-{x1: 620, x2: 0}
+reassigned2
+{x1: 706, x2: 0}
+{x1: 706, x2: 0}
+{x1: 706, x2: 0}
+{x1: 706, x2: 0}
+481.351499999999987
+48.511111111111113
+236.810000000000002
+word1-word1
+0
+map key missing
+38
+620
+reassigned1
+714
+147
+tag2
 630
-855
-36
-36
-91
-320
+2
+label
+count
+tag3
+69
+2
+label
+count
+491
+-491
+tag1
+290
+2
+label
+count
+928
+reassigned1
+129
+reassigned2
+0
+buffer read out of range
+10
+mixed1
+95.640000000000001
+12
+710
+783
+106
+{g1: {x1: 106, x2: 0}, g2: {x1: 0, x2: 0}}
+200
+-200
+123904
+{x1: 422, x2: 0}
+20
+mixed1
+29.34
+276
+{g1: {x1: 276, x2: 0}, g2: {x1: 0, x2: 0}}
+274240
+tag1
+541
+2
+label
+count
+102400
+75
+word1-word1
+0
+list read out of range
 programs: 5
 compiled: 5
 findings: 0
