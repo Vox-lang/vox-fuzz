@@ -1,3 +1,122 @@
-see "./version.vox".
+(vox-fuzz entry point.
 
-'fuzz version'.
+ Subcommands:
+   vox-fuzz version                          print the version, exit 0
+   vox-fuzz gen [--seed N] [--count N]       generate, compile, and run
+              [--budget N] [--timeout MS]    random Vox programs
+              [--vox PATH] [--core DIR]
+              [--out DIR]
+   anything else                             usage to stderr, exit 2
+
+ Flag precedence for --vox / --core is flag beats environment beats
+ compiled-in default. runner.vox declares vox_binary / vox_core and then
+ applies the VOX / VOX_CORE_PATH environment guards at load time, before
+ this body runs; 'parse options' Sets them again afterwards, so an
+ explicit flag always wins. See acceptance item 3.
+
+ Written for vox 0.4.4. Bug #21 is fixed there - a string literal in an
+ If condition inside a function body now resolves correctly - so the flag
+ spellings are written inline as the English they are, not hoisted into
+ top-level globals as the 0.4.2-era plan snippet had to. 'count' and
+ 'version' are free words on 0.4.4; 'flag', 'args', 'empty', 'ver' are
+ still reserved, so no local here carries any of those names.)
+
+see "./version.vox".
+see "./rng.vox".
+see "./harness.vox".
+see "./runner.vox".
+see "./gen.vox".
+see "./findings.vox".
+see "./loop_gen.vox".
+
+(Defaults. Declared, not Set - language note 13.)
+a number called opt_seed is 1.
+a number called opt_count is 100.
+a number called opt_budget is 12.
+a number called opt_timeout is 10000.
+
+(Usage goes to stderr (fd 2), not stdout, so a script that asks for help
+ cannot mistake it for program output. Open the descriptor, write each
+ line, close it.)
+
+To 'print usage'.
+    open a file for writing called 'the error stream' at 2.
+    Write "usage: vox-fuzz <command> [options]\n" to 'the error stream'.
+    Write "\n" to 'the error stream'.
+    Write "commands:\n" to 'the error stream'.
+    Write "  gen        generate, compile, and run random Vox programs\n" to 'the error stream'.
+    Write "  version    print the version\n" to 'the error stream'.
+    Write "\n" to 'the error stream'.
+    Write "gen options:\n" to 'the error stream'.
+    Write "  --seed N       first seed (default 1)\n" to 'the error stream'.
+    Write "  --count N      how many programs (default 100)\n" to 'the error stream'.
+    Write "  --budget N     statements per program (default 12)\n" to 'the error stream'.
+    Write "  --timeout MILLISECONDS per-program time limit (default 10000)\n" to 'the error stream'.
+    Write "  --vox PATH     vox binary (default ../vox/target/release/vox)\n" to 'the error stream'.
+    Write "  --core DIR     coreasm dir (default ../vox/coreasm)\n" to 'the error stream'.
+    Write "  --out DIR      findings directory (default ./findings)\n" to 'the error stream'.
+    Close 'the error stream'.
+
+(Parse the gen subcommand's flags. arguments's all is argv[1..], so
+ element 1 is the subcommand itself and the flags start at element 2.
+
+ Two shapes here are load-bearing - language note 6b. Every If sits at
+ While level (none nests the increment), and the position increment is
+ the loop's last plain statement, so its period closes the loop. An
+ earlier draft nested the flag Ifs inside the value-position guard with
+ the increment inside it, which both left the loop open - swallowing
+ everything after it - and never advanced on an odd argument count,
+ spinning forever on `vox-fuzz gen --seed` with no value.
+
+ Bug #21 being fixed means the flag spellings compare inline; no hoisted
+ globals. A flag given with no value reads its target from "" - `as a
+ number` yields 0 - accepted for v1.)
+
+To 'parse options'.
+    a list called 'the given arguments' is arguments's all.
+    a number called 'how many were given' is 'the given arguments's length.
+    a number called 'the position' is 2.
+    While 'the position' is less than or equal to 'how many were given',
+        a text called 'the option' is element 'the position' of 'the given arguments',
+        a number called 'the value position' is 'the position' add 1,
+        a text called 'the value' is "",
+        If 'the value position' is less than or equal to 'how many were given' then,
+            Set 'the value' to element 'the value position' of 'the given arguments'.
+        If 'the option' is "--seed" then,
+            Set opt_seed to 'the value' as a number.
+        If 'the option' is "--count" then,
+            Set opt_count to 'the value' as a number.
+        If 'the option' is "--budget" then,
+            Set opt_budget to 'the value' as a number.
+        If 'the option' is "--timeout" then,
+            Set opt_timeout to 'the value' as a number.
+        If 'the option' is "--vox" then,
+            Set vox_binary to 'the value'.
+        If 'the option' is "--core" then,
+            Set vox_core to 'the value'.
+        If 'the option' is "--out" then,
+            Set findings_dir to 'the value'.
+        Set 'the position' to 'the position' add 2.
+
+(Dispatch. Top-level literal comparisons are legal - bug #21 bites only
+ inside function bodies.)
+
+a list called 'the command arguments' is arguments's all.
+a number called 'the command argument tally' is 'the command arguments's length.
+If 'the command argument tally' is 0 then,
+    'print usage',
+    Exit 2.
+
+a text called 'the command' is element 1 of 'the command arguments'.
+If 'the command' is equal to "version" then,
+    'fuzz version',
+    Exit 0.
+
+If 'the command' is equal to "gen" then,
+    'parse options',
+    Print "vox-fuzz gen: seeds {opt_seed}.. count {opt_count} budget {opt_budget} timeout {opt_timeout}ms",
+    'fuzz gen run' of opt_seed and opt_count and opt_budget and opt_timeout,
+    Exit 0.
+
+'print usage'.
+Exit 2.

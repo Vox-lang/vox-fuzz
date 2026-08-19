@@ -1,0 +1,49 @@
+vox-fuzz 0.1.0
+version exits clean: 1
+usage: vox-fuzz <command> [options]
+
+commands:
+  gen        generate, compile, and run random Vox programs
+  version    print the version
+
+gen options:
+  --seed N       first seed (default 1)
+  --count N      how many programs (default 100)
+  --budget N     statements per program (default 12)
+  --timeout MILLISECONDS per-program time limit (default 10000)
+  --vox PATH     vox binary (default ../vox/target/release/vox)
+  --core DIR     coreasm dir (default ../vox/coreasm)
+  --out DIR      findings directory (default ./findings)
+bad subcommand exits 2: 1
+vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
+{x1: 578, x2: 0}
+{x1: 578, x2: 0}
+{x1: 578, x2: 0}
+{x1: 578, x2: 0}
+{x1: 578, x2: 0}
+814
+847
+814
+847
+814
+847
+125
+814
+847
+814
+847
+814
+847
+125
+814
+847
+814
+847
+814
+847
+125
+110
+programs: 3
+compiled: 3
+findings: 0
+gen runs: 1

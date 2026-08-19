@@ -50,31 +50,41 @@ Findings are also **self-verifying**: each one is a `.vox` file plus a
 
 ## Building and running
 
-Requires a Vox compiler (0.4.2+) and nasm/ld:
+Requires a Vox compiler (0.4.4+ — the CLI's flag parsing relies on the
+bug #21 fix for string literals in function-body conditions) and nasm/ld:
 
 ```sh
 export VOX=/path/to/vox                 # defaults to ../vox/target/release/vox
 export VOX_CORE_PATH=/path/to/coreasm   # pin the runtime; test.sh refuses a bad one
-./test.sh                               # the project gate — 9 tests
+./test.sh                               # the project gate — 10 tests
 ```
 
-A fuzzing session is currently a small Vox program (the CLI is the next
-milestone — see the plan):
+Build the CLI, then run a session:
 
-```vox
-see "./src/rng.vox".
-see "./src/harness.vox".
-see "./src/runner.vox".
-see "./src/gen.vox".
-see "./src/findings.vox".
-see "./src/loop_gen.vox".
-
-'fuzz gen run' of 1000 and 200 and 12 and 10000.
+```sh
+make build                                            # compiles src/main.vox to build/vox-fuzz
+./build/vox-fuzz gen --seed 1 --count 200 --budget 12 --timeout 10000 --out ./findings
 ```
 
-— first seed, how many programs, statements per program, per-program
-deadline in milliseconds. ~24 programs/second end to end on modest
-hardware: generated, compiled, linked, run, classified.
+`gen` flags:
+
+| Flag | Meaning | Default |
+|---|---|---|
+| `--seed N` | first seed | `1` |
+| `--count N` | how many programs | `100` |
+| `--budget N` | statements per program | `12` |
+| `--timeout MILLISECONDS` | per-program time limit | `10000` |
+| `--vox PATH` | vox binary to test | `../vox/target/release/vox` |
+| `--core DIR` | coreasm dir (`VOX_CORE_PATH`) | `../vox/coreasm` |
+| `--out DIR` | findings directory | `./findings` |
+
+`--vox` / `--core` precedence is **flag beats environment beats
+compiled-in default**: an explicit flag wins over `VOX` / `VOX_CORE_PATH`,
+which win over the built-in paths. `vox-fuzz version` prints the version;
+any other invocation prints usage to stderr and exits 2.
+
+~24 programs/second end to end on modest hardware: generated, compiled,
+linked, run, classified.
 
 ## Findings
 
@@ -86,10 +96,10 @@ including the pair whose investigation uncovered bug #25.
 
 ## Status
 
-Foundation, generator, findings store, and the fuzzing loop are on
-`main` behind CI and branch protection; 2,400+ seeds have run at 100%
-compile-clean. Remaining per the
-[v1 plan](docs/superpowers/plans/2026-08-17-vox-fuzz-v1.md): the CLI,
+Foundation, generator, findings store, the fuzzing loop, and the CLI are
+on `main` behind CI and branch protection; 2,400+ seeds have run at 100%
+compile-clean, and CI smoke-fuzzes 100 seeds on every push. Remaining per
+the [v1 plan](docs/superpowers/plans/2026-08-17-vox-fuzz-v1.md):
 test-case reduction, the compile-determinism check, and runtime-input
 fuzzing. The [release pipeline](docs/plans/317_release_pipeline.md) is
 staged behind the CLI.

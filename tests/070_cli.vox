@@ -1,0 +1,15 @@
+see "../src/harness.vox".
+
+(Exercise the built CLI binary through 'run shell'. supervise inherits the
+ parent's descriptors, so the subcommands' own stdout/stderr land in this
+ test's output stream alongside the verdict lines - the expected file
+ captures that verbatim. Run from the repo root, where ./build/vox-fuzz
+ lives after `make build`.)
+
+a number called s1 is 'run shell' of "./build/vox-fuzz version" and 10000.
+Print "version exits clean: {s1 is 0}".
+a number called s2 is 'run shell' of "./build/vox-fuzz bogus-subcommand" and 10000.
+Print "bad subcommand exits 2: {s2 is 2}".
+a number called s3 is 'run shell' of "./build/vox-fuzz gen --count 3 --seed 500 --out ./vf_cli_findings" and 120000.
+Print "gen runs: {s3 is 0}".
+a number called s4 is 'run shell' of "rm -rf ./vf_cli_findings" and 5000.

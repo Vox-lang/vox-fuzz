@@ -38,13 +38,44 @@ jobs:
       # VOX and VOX_CORE_PATH are passed explicitly rather than derived:
       # vox falls through a bad VOX_CORE_PATH silently to any installed
       # copy, and test.sh refuses to run when the directory is missing.
+      - name: Build vox-fuzz
+        run: |
+          VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
+          VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
+          make build
+
       - name: Run the test suite
         run: |
           VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
           VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
           ./test.sh
 
-      # Once the gen subcommand lands (plan Task 8), this job also
-      # smoke-fuzzes 100 seeds and fails on any finding — see the plan's
-      # Task 13 for the exact step to add. Left out until then so the
-      # gate never passes vacuously.
+      # Smoke-fuzz: run the gen subcommand over 100 seeds and fail CI if
+      # even one finding directory appears. A finding is a real vox
+      # compiler bug (ICE, asm rejection, signal death, hang, or
+      # nondeterminism) and must never pass silently. Kept fast: a modest
+      # count and a short per-program deadline — the happy path is ~24
+      # programs/sec, so this is seconds unless something hangs, and a
+      # hang is itself a finding the gate is meant to catch.
+      - name: Smoke fuzz
+        run: |
+          VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
+          VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
+          ./build/vox-fuzz gen --seed 1 --count 100 --budget 12 --timeout 10000 --out ./findings
+          if [ -d findings ] && [ -n "$(ls -A findings 2>/dev/null)" ]; then
+            echo "fuzzing findings present — a finding is a real vox compiler bug:"
+            find findings -type f
+            exit 1
+          fi
+
+      # On any failure above, upload the findings directory so the bug is
+      # recoverable from the run. if-no-files-found: ignore keeps a
+      # non-fuzzing failure (e.g. a test regression) from failing the
+      # upload step itself.
+      - name: Upload findings
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: findings
+          path: findings/
+          if-no-files-found: ignore
