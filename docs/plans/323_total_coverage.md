@@ -83,10 +83,51 @@ chained loop expansion, text declarations with interpolation, `Exit`.
 | **`.lib` shared libraries** | FUZZ (build-time) | bug #18 was `.lib` element-type inference |
 | **`arguments's`** | FUZZ | bugs #23 and #26 lived here |
 | **nested/deep expressions, operator matrix** | FUZZ | coverage is shallow, not absent |
+| **the flag schema** (`a flag called ...`, `Parse flags`) | FUZZ | carried #31 (segfault) and #32 (mis-typing) the first time anything real used it — see below |
+| **the predicate family** (`is empty`, `even`, `odd`, `positive`, `negative`, `zero`) | FUZZ | `is empty` on a text was ALWAYS false (#33); not one test in the compiler's own suite used `is empty` before its regression pair |
+| **string literals colliding with variable names** | FUZZ (shape) | #29 and #30 both need a literal whose text equals a live name — a shape no uniform generator emits by chance; belongs with plan 325 T3 |
+| **function complexity** | FUZZ | generated functions are trivial: few parameters, no recursion, no call chains, no function calling another with its result. #32 hid *inside a function body* precisely because top-level use masked it |
+| **section ordering / globals before functions** | FUZZ (shape) | plan 324 Part A — the skeleton never varies, so order-dependent defects (#28's class) are unreachable |
 
 Note the pattern, which is the argument for this plan: **almost every
 dark construct has already produced a compiler bug.** #3, #14, #18, #23,
 #24, #26 all sit in areas the fuzzer cannot currently reach.
+
+## Addendum, 2026-08-20 — the thesis proved itself three more times
+
+While this plan sat unmerged, the flag schema — dark in the table above
+— was used in anger for the first time (rewriting vox-fuzz's own CLI
+onto it) and immediately yielded **three compiler bugs in under a day**:
+
+- **#31** — a `text` flag with no default segfaults the moment it is
+  read unsupplied. A null pointer sat where `""` should be.
+- **#32** — any flag read inside a function body is typed `boolean`
+  whatever it was declared as. Invisible at top level, which is why no
+  simple test ever caught it.
+- **#33** — found while *documenting* #31's fix: `is empty` on a text
+  is always false. It tests the pointer, not the contents. Not
+  flag-specific — every `text` in the language — and the compiler's own
+  suite of 426 tests did not contain a single `is empty` before the
+  regression pair landed.
+
+Three lessons for this plan, each already a task:
+
+1. **A documented facility with no real user carries bugs
+   indefinitely.** The fuzzer must be the "real user" of every feature
+   nothing else exercises — that is T8's ledger, and the reason it
+   gates.
+2. **Context matters, not just constructs.** #32 only misbehaves inside
+   a function body; #28 only under one declaration order. Emitting a
+   construct once, in one position, is not coverage — T3 must exercise
+   constructs *inside functions, branches, and loops*, and plan 324's
+   skeleton variation is load-bearing, not cosmetic.
+3. **Predicates need truth-table coverage.** #33 was not a crash — the
+   program ran happily to the wrong answer. Emitting `is empty` and
+   friends is necessary but not sufficient; the generator should emit
+   predicates whose outcome is *knowable at generation time* (an empty
+   literal, a just-appended list) so the oracle can check the answer,
+   not just the exit. This is the first concrete case for the deferred
+   output-oracle: signal-death detection would never have found #33.
 
 ## Tasks
 
