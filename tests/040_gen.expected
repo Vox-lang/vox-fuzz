@@ -39,47 +39,49 @@ To f3 with a number called p1 and a number called p2.
 
 a number called v1 is 753.
 a number called v2 is 806.
-a t2 called i1.
+print each item from arguments's all treating "-" as "none".
+a t1 called i1.
 Set i1's x1 to 266.
-Print i1.
-a map called m1 is {"label": "tag1", "count": 752}.
-Print m1's "missing".
-On error print "map key missing".
-a t1 called i2.
-Set i2's x1 to 142.
-a t1 called i3 is i2.
-Set i3's x1 to 703.
+a t1 called i2 is i1.
+Set i2's x1 to 459.
+Print i1's x1.
 Print i2's x1.
+a t1 called i3.
+Set i3's x1 to 865.
+a t1 called i4 is i3.
+Set i4's x1 to 142.
 Print i3's x1.
-a map called m2 is {"label": "tag2", "count": 613}.
-Print m2's "missing".
-On error print "map key missing".
-a map called m3 is {"label": "tag3", "count": 219}.
-Print m3's "missing".
-On error print "map key missing".
-a list called l1 is [53, 58].
-Print element 69 of l1.
-On error print "list read out of range".
-Set v2 to v1 add v2.
-a value called y1 is 670.
-Print y1.
-Set y1 to "reassigned1".
-Print y1.
-a t1 called i4.
-Set i4's x1 to 516.
-a t1 called i5 is i4.
-Set i5's x1 to 685.
 Print i4's x1.
-Print i5's x1.
-a number called v3 is 219.
-a value called y2 is 369.
-Print y2.
-Set y2 to "reassigned2".
-Print y2.
-a value called y3 is 15.
-Print y3.
-Set y3 to "reassigned3".
-Print y3.
-Exit 196.
+If v1 is greater than v2 then,
+  a t3 called i5,
+  Set i5's g1's x1 to 0,
+  Print i5's g1's x1,
+  Print i5.
+a buffer called b1 is 46 bytes in size.
+Print byte 106 of b1.
+On error print "buffer read out of range".
+a list called l1 is [93, 34].
+Print element 501 of l1.
+On error print "list read out of range".
+print each item from [70, 47] treating 16 as 85.
+a float called d1 is 219.92.
+a float called d2 is 10.26.
+a float called d3 is d1 multiply d2.
+Print d3.
+a float called d4 is d1 divide d2.
+Print d4.
+a float called d5 is d1 add v2.
+Print d5.
+a list called l2 is [].
+append v2 to l2, but if v2 is less than v1 or v2 modulo 4 is equal to 0 append v1 add v2, but if v2 is not equal to v1 or v2 modulo 6 is equal to 0 append v1 add v2, but if v2 is less than or equal to v1 append v1 add v2, otherwise append v2.
+a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_830413".
+On error print "environment variable not set".
+Print 'the missing value 1'.
+a number called r1 is 0.
+Repeat 4 times, Increment r1.
+
+Print r1.
+Print f1.
+Exit 142.
 
 reproducible: 1
