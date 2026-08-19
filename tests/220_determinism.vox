@@ -1,0 +1,59 @@
+see "../src/rng.vox".
+see "../src/gen.vox".
+
+(The deterministic gate. A fuzzer whose output is not reproducible cannot
+ produce a usable repro.sh, so determinism is a correctness property worth
+ gating on — and it is itself fully deterministic. Generation only, no
+ compiling, no running, so it stays fast enough for ./test.sh.
+
+ Two claims, both pinned:
+  - same seed + budget, generated twice, is byte-identical. Text equality in
+    Vox compares bytes (confirmed, and it is the same comparison
+    tests/040_gen.vox relies on for its `reproducible` line).
+  - different seeds produce different source. A generator that returned a
+    constant would pass the first claim trivially; this second claim is the
+    vacuous-test trap this project has been bitten by, and is the whole
+    point. Different seeds differ because the prelude functions f1/f2 draw a
+    constant from the RNG, so even budget 0 differs by seed.
+
+ If generation ever depends on something outside the seed, a `1` below
+ flips to `0` and the .expected diff fails the gate.)
+
+a list called 'the seeds' is [1, 42, 999].
+a list called 'the budgets' is [1, 8, 20].
+
+a number called 'same pairs' is 0.
+a number called 'distinct pairs' is 0.
+
+To 'source of' with a number called seed and a number called budget.
+    'gen program' of seed and budget.
+    a text called t is 'gen text'.
+    Return a text, t.
+
+(Generate the same seed+budget twice and assert byte-identical.)
+To 'check same' with a number called seed and a number called budget.
+    a text called first is 'source of' of seed and budget.
+    a text called second is 'source of' of seed and budget.
+    If first is equal to second then,
+        Set 'same pairs' to 'same pairs' add 1.
+    Print "same seed {seed} budget {budget}: {first is equal to second}".
+
+(Generate two different seeds at the same budget and assert they differ.)
+To 'check differ' with a number called sa and a number called sb and a number called budget.
+    a text called first is 'source of' of sa and budget.
+    a text called second is 'source of' of sb and budget.
+    If first is not equal to second then,
+        Set 'distinct pairs' to 'distinct pairs' add 1.
+    Print "differ seed {sa} vs {sb} budget {budget}: {first is not equal to second}".
+
+(One seed at a time; the inner budget sweep is a single-line For-each whose
+ own body period closes it, so there is no nested-clause-close trap.)
+To 'sweep seed' with a number called seed.
+    For each b in 'the budgets', 'check same' of seed and b.
+
+For each s in 'the seeds', 'sweep seed' of s.
+
+'check differ' of 1 and 2 and 12.
+'check differ' of 1 and 3 and 12.
+
+Print "determinism: {'same pairs'} same-seed pairs byte-identical, {'distinct pairs'} distinct-seed pairs differ".

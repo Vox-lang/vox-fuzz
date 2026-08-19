@@ -8,26 +8,50 @@ a number called stat_total is 0.
 a number called stat_compiled is 0.
 a number called stat_findings is 0.
 
+(Pure compiler-exit-code classifier, extracted from 'fuzz gen once' so the
+ exit-code -> category mapping can be unit-tested without compiling or
+ running anything. Returns the category the codegen loop acts on:
+   code < 0      -> "hang"       (compiler exceeded its budget)
+   code > 128    -> "ice"        (compiler died by signal; 128+N is signal N)
+   code == 101   -> "ice"        (rust panic)
+   code == 0     -> "ok"         (compiled, proceed to run)
+   otherwise     -> "check-asm"  (1..128: a benign failure OR an asm-reject,
+                                  decided by the toolchain grep in 'fuzz gen
+                                  once', which needs the compiler's stderr and
+                                  so cannot be pure)
+ The 128/129 boundary is the one this exists to pin: 128 is a legitimate
+ exit code, 129 is a signal death. A naive `>= 128` would misclassify a real
+ exit-128 as a crash.)
+To 'classify compile exit' with a number called code.
+    If code is less than 0 then, Return a text, "hang".
+    If code is greater than 128 then, Return a text, "ice".
+    If code is equal to 101 then, Return a text, "ice".
+    If code is equal to 0 then, Return a text, "ok".
+    Return a text, "check-asm".
+
 To 'fuzz gen once' with a number called seed and a number called budget and a number called 'the deadline in milliseconds'.
     Set stat_total to stat_total add 1.
     'gen program' of seed and budget.
     a text called 'the source path' is "./vf_gen.vox".
     'gen write' of 'the source path'.
     a number called 'the compiler exit code' is 'compile vox' of 'the source path' and "./vf_gen_bin".
-    If 'the compiler exit code' is less than 0 then,
+    a text called 'the compile class' is 'classify compile exit' of 'the compiler exit code'.
+    If 'the compile class' is "hang" then,
         a text called 'the hang detail' is "compiler exceeded the {'the compile budget in milliseconds'}ms compile budget (independent of --timeout, which bounds only the run)",
         a number called 'the compile hang finding' is 'finding save' of "hang" and seed and 'the source path' and 'the hang detail',
         Set stat_findings to stat_findings add 1,
         Return a number, 1.
-    If 'the compiler exit code' is greater than 128 then,
-        a number called 'the ice finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler died by signal",
+    If 'the compile class' is "ice" then,
+        (Both a signal death (> 128) and a rust panic (101) save under the
+         same "ice" category; only the detail text differs, re-derived from the
+         code here so 'classify compile exit' can stay a clean category map.)
+        a text called 'the ice detail' is "compiler died by signal",
+        If 'the compiler exit code' is 101 then,
+            Set 'the ice detail' to "compiler panicked (rust exit 101)".
+        a number called 'the ice finding' is 'finding save' of "ice" and seed and 'the source path' and 'the ice detail',
         Set stat_findings to stat_findings add 1,
         Return a number, 1.
-    If 'the compiler exit code' is 101 then,
-        a number called 'the panic finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler panicked (rust exit 101)",
-        Set stat_findings to stat_findings add 1,
-        Return a number, 1.
-    If 'the compiler exit code' is greater than 0 then,
+    If 'the compile class' is "check-asm" then,
         (vox's own deliberate wrapper lines - "NASM assembly failed", "Linking
          failed" (src/main.rs:728, :911) - are the signal: they are printed on
          exactly the codegen-stage-failed path, in this exact casing, every
