@@ -15,7 +15,7 @@ to.
 
 ### 1. Assembler and linker rejections are silently dropped — the whole `asm-reject` category is dead code
 
-**Status:** **confirmed, unfixed.** Found by the vox-fuzz red team
+**Status:** **fixed** (plan 322, phase A). Found by the vox-fuzz red team
 (2026-08-19, arena finding `01-asm-reject-dropped`); independently
 confirmed by the master from the Vox compiler's source and from the
 platform toolchain's real output before any fix was scoped.
@@ -73,13 +73,11 @@ genuinely were clean. A dead detector and a working compiler are
 indistinguishable from the summary line — which is precisely why a
 fuzzer needs its own adversary.
 
-**Fix direction (not yet applied — scoped with the rest of the red
-team's findings):** stop pattern-matching prose. Preferred: have the
-compile step distinguish "vox rejected the program" from "the toolchain
-rejected vox's output" by something structural rather than by grepping
-human-facing text — vox exits 1 for both today, so the honest fix is
-either a distinct exit code from the compiler, or matching on the
-stable, deliberate wrapper lines (`NASM assembly failed` / `Linking
-failed`) with `grep -F`, treating the assembler's own free-form
-diagnostics as unreliable. Whichever is chosen, the regression test must
-force a real assembler rejection, not a simulated one.
+**Fix applied (plan 322 A1):** `src/loop_gen.vox`'s toolchain check is now
+`grep -q -F -e 'NASM assembly failed' -e 'Linking failed' -e nasm -e 'ld:'
+./vf_cerr` — matching vox's own deliberate wrapper lines first (stable,
+`-F` fixed-string, exact case), keeping the old `nasm`/`ld:` patterns as
+additional alternatives for a toolchain that does print them. Regression
+test `tests/100_asm_reject.vox` forces a *real* assembler rejection via a
+`nasm` shim ahead of the real one on `PATH` (the model the red team's own
+`poc.sh` used) and asserts an `asm-reject` finding directory is written.

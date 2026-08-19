@@ -1,0 +1,36 @@
+see "../src/harness.vox".
+
+(A2 regression (plan 322), the half of finding 02 that matters more than
+ the injection: a space in --out is a legitimate path, not an attack, and
+ must still work. Before the fix, the unquoted splice split
+ 'mkdir -p'/'cp'/'printf' into the wrong arguments and scattered a
+ finding's artifacts across two directories while the tool still printed
+ "findings: 1" - N real compiler bugs, silently misplaced, with a success
+ message on top. Force one ICE finding into a spaced --out and confirm
+ program.vox, classification.txt, and repro.sh all land in exactly the
+ directory the summary names, not split across './vf' and 'space
+ findings/...'. Run from the repo root, where ./build/vox-fuzz lives
+ after `make build`.)
+
+To 'path exists' with a text called candidate.
+    Return a boolean, candidate is available.
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_space_shim './vf space findings'" and 5000.
+a number called 'the shim directory' is 'run shell' of "mkdir -p ./vf_space_shim" and 5000.
+a number called 'the shim body' is 'run shell' of "printf '#!/bin/sh\necho panicked >&2\nexit 101\n' > ./vf_space_shim/voxpanic" and 5000.
+a number called 'the shim permission' is 'run shell' of "chmod +x ./vf_space_shim/voxpanic" and 5000.
+
+a list called 'the fuzz arguments' is ["gen", "--seed", "900", "--count", "1", "--budget", "4", "--timeout", "3000", "--vox", "./vf_space_shim/voxpanic", "--out", "./vf space findings"].
+a text called 'the fuzz verdict' is supervise of "./build/vox-fuzz" and 'the fuzz arguments' and 30000.
+
+a text called 'the program path' is "./vf space findings/ice/900/program.vox".
+a text called 'the classification path' is "./vf space findings/ice/900/classification.txt".
+a text called 'the repro path' is "./vf space findings/ice/900/repro.sh".
+Print "program.vox landed in the named directory: {'path exists' of 'the program path'}".
+Print "classification.txt landed in the named directory: {'path exists' of 'the classification path'}".
+Print "repro.sh landed in the named directory: {'path exists' of 'the repro path'}".
+
+a text called 'the split directory' is "./vf".
+Print "no fragment left outside the named directory: {'path exists' of 'the split directory' is false}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_space_shim './vf space findings'" and 5000.

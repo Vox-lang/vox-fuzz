@@ -1,0 +1,8 @@
+vox-fuzz gen: seeds 900.. count 1 budget 4 timeout 3000ms
+programs: 1
+compiled: 0
+findings: 1
+program.vox landed in the named directory: 1
+classification.txt landed in the named directory: 1
+repro.sh landed in the named directory: 1
+no fragment left outside the named directory: 1
