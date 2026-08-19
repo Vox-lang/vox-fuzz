@@ -4,11 +4,11 @@
  Names are v1..vN in declaration order, so every reference is in scope
  by construction. Buffers (bN), lists (lN), thing instances (iN),
  maps (mN), value locals (yN), floats (dN), texts (sN), function-call
- scratch locals (cN), and grid loop variables (eN) each get their own
- counter and are always self-contained within the one statement that
- declares them - they are never referenced by a later, unrelated
- statement, so nothing about Vox's per-branch declaration visibility
- can bite them.
+ scratch locals (cN), grid loop variables (eN), While counters (uN) and
+ Repeat counters (rN) each get their own counter and are always
+ self-contained within the one statement that declares them - they are
+ never referenced by a later, unrelated statement, so nothing about
+ Vox's per-branch declaration visibility can bite them.
 
  Nesting (loops, ifs) is depth-capped at 3 and threaded through two
  precomputed values on every recursive call: `depth` (nesting budget
@@ -30,6 +30,9 @@ a number called gen_values is 0.
 a number called gen_floats is 0.
 a number called gen_texts is 0.
 a number called gen_grid is 0.
+a number called gen_whiles is 0.
+a number called gen_repeats is 0.
+a number called gen_envs is 0.
 
 To 'gen emit' with a text called s.
     a buffer called piece is "{s}".
@@ -69,8 +72,72 @@ To 'gen expr'.
     a text called 'the plain reference' is "{'the left operand'}".
     Return a text, 'the plain reference'.
 
+(Same four shapes as 'gen expr', minus `times` - hand-reduced: `append v1
+ times v2 to l1.` fails to parse ("Expected 'to' after value in append
+ statement"), while `append v1 multiply v2 to l1.` compiles, and `times`
+ works everywhere else (Print, Set, declarations) including as the
+ alternate spelling of `multiply` CHANGELOG 0.4.4 introduced - append's
+ own value grammar is the one place that alias does not reach. Reported
+ separately as a genuine finding, not tuned around; this is the
+ generator-side fix so 'gen leaf butif append', the only caller that
+ feeds an expression into an append statement's value, never emits the
+ illegal form.)
+To 'gen append expr'.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a number called 'the operator choice' is 'rng below' of 4.
+    If 'the operator choice' is 0 then,
+        a text called 'the sum' is "{'the left operand'} add {'the right operand'}",
+        Return a text, 'the sum'.
+    If 'the operator choice' is 1 then,
+        a text called 'the difference' is "{'the left operand'} minus {'the right operand'}",
+        Return a text, 'the difference'.
+    If 'the operator choice' is 2 then,
+        a text called 'the product' is "{'the left operand'} multiply {'the right operand'}",
+        Return a text, 'the product'.
+    a text called 'the plain reference' is "{'the left operand'}".
+    Return a text, 'the plain reference'.
+
 (`a` is a reserved word, which is why the operands carry their full
  names.)
+
+(A boolean condition, for the positions where one is legal - an If's own
+ `then`/but-if clause, a but-if branch's own condition. Comparisons and
+ property checks are grammatically confined to exactly that position in
+ 0.4.5 (hand-verified: `Print x is greater than y.` and even
+ `a boolean called c is x is greater than y.` both fail to parse - "is
+ greater than" is not a first-class expression the way `add`/`multiply`
+ are, so it must never be handed to 'gen expr's callers). Covers the
+ full comparison table plus `modulo ... is equal to 0` and an and/or
+ join of two conditions - the operator-matrix gap this leaf-space
+ exists to close.)
+To 'gen condition'.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a number called 'the comparison choice' is 'rng below' of 6.
+    a text called 'the comparison' is "".
+    If 'the comparison choice' is 0 then,
+        Set 'the comparison' to "{'the left operand'} is greater than {'the right operand'}".
+    If 'the comparison choice' is 1 then,
+        Set 'the comparison' to "{'the left operand'} is less than {'the right operand'}".
+    If 'the comparison choice' is 2 then,
+        Set 'the comparison' to "{'the left operand'} is equal to {'the right operand'}".
+    If 'the comparison choice' is 3 then,
+        Set 'the comparison' to "{'the left operand'} is not equal to {'the right operand'}".
+    If 'the comparison choice' is 4 then,
+        Set 'the comparison' to "{'the left operand'} is greater than or equal to {'the right operand'}".
+    If 'the comparison choice' is 5 then,
+        Set 'the comparison' to "{'the left operand'} is less than or equal to {'the right operand'}".
+    a number called 'the modulus' is 'rng below' of 5 add 2.
+    a text called 'the modulo check' is "{'the left operand'} modulo {'the modulus'} is equal to 0".
+    a number called 'the joiner choice' is 'rng below' of 3.
+    If 'the joiner choice' is 0 then,
+        Return a text, 'the comparison'.
+    If 'the joiner choice' is 1 then,
+        a text called 'the and form' is "{'the comparison'} and {'the modulo check'}",
+        Return a text, 'the and form'.
+    a text called 'the or form' is "{'the comparison'} or {'the modulo check'}".
+    Return a text, 'the or form'.
 
 (gen line piece: the punctuation a body line needs depends entirely on
  whether it is nested inside an already-open clause. Nested, every
@@ -416,6 +483,317 @@ To 'gen leaf thing copy' with a text called indent and a boolean called nested.
     a list called 'the lines' is [decl, 'set line', 'copy decl', 'mutate line', 'print orig', 'print copy'].
     'gen join lines' of indent and nested and 'the lines'.
 
+(`but if` chains (bugs #3 and #14 both lived here): a base action plus
+ 1-3 alternative branches, checked in order, first match wins. Two
+ shapes, because 0.4.5's `otherwise` is hand-verified against the pinned
+ binary to compile after `append`'s chain but NOT after `print`'s -
+ `Print x, but if ... print y,
+ otherwise print z.` is rejected ("Expected a statement, got Otherwise")
+ under every punctuation variant tried, print-each included; the EBNF's
+ own print_stmt production has no otherwise arm either, so the compiler
+ is being consistent with its own grammar even though the prose
+ describes otherwise as available to both. Print's chain therefore never
+ carries one; append's always does, which is how "with and without a
+ trailing otherwise" both get covered without emitting the illegal form.
+ Hand-verified safe as a block's mandatory closer: unlike For-each/
+ While/Repeat, a but-if chain's own trailing period does not leave
+ anything open behind it (a for-each-in-while sole-body probe traps the
+ next statement two-for-one; the equivalent but-if-chain probe does
+ not), so both land in 'gen any leaf's pool, no remap needed.)
+To 'gen leaf butif print' with a text called indent and a boolean called nested.
+    a text called 'the base value' is 'gen expr'.
+    a text called 'the chain' is "Print {'the base value'}".
+    a number called 'the branch count' is 'rng below' of 3 add 1.
+    a number called 'the branch index' is 1.
+    While 'the branch index' is less than or equal to 'the branch count',
+        a text called 'the condition' is 'gen condition',
+        a text called 'the alternative' is 'gen expr',
+        Set 'the chain' to "{'the chain'}, but if {'the condition'} print {'the alternative'}",
+        Set 'the branch index' to 'the branch index' add 1.
+    a list called 'the lines' is ['the chain'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf butif append' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a text called decl is "a list called l{gen_lists} is []".
+    a text called 'the base value' is 'gen append expr'.
+    a text called 'the chain' is "append {'the base value'} to l{gen_lists}".
+    a number called 'the branch count' is 'rng below' of 3 add 1.
+    a number called 'the branch index' is 1.
+    While 'the branch index' is less than or equal to 'the branch count',
+        a text called 'the condition' is 'gen condition',
+        a text called 'the alternative' is 'gen append expr',
+        Set 'the chain' to "{'the chain'}, but if {'the condition'} append {'the alternative'}",
+        Set 'the branch index' to 'the branch index' add 1.
+    a text called 'the otherwise value' is 'gen append expr'.
+    Set 'the chain' to "{'the chain'}, otherwise append {'the otherwise value'}".
+    a list called 'the lines' is [decl, 'the chain'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`treating X as Y`: per-clause substitution on loop expansion. The
+ print-each variant sometimes draws its collection from arguments's all
+ (LANGUAGE.md's own canonical example). The brief's own item 5 flags
+ that arguments's positional properties (first/second/last) need real
+ arguments passed to be tested meaningfully, which this generator does
+ not have - but arguments's all does not need that: it is a legal,
+ always-empty collection with no arguments passed, so the treating
+ clause parses and runs zero times, the same defined "does nothing"
+ behaviour LANGUAGE.md documents for any empty collection.
+ The grid variant chains two `each` clauses, each with its own treating,
+ through f3 (language note 3's zero/one/two-arg prelude), reusing the
+ grid's own e{N} loop-variable counter so two grid calls in one program
+ never collide. Hand-verified UNSAFE as a block's mandatory closer -
+ loop expansion is a nesting clause exactly like For-each's own key/
+ element iteration (kinds 9/14) and the grid's `each ... and each ...`
+ (kind 6's grid quarter) - so both remap to 1 under avoid-onerror and
+ stay out of 'gen any leaf', same rule, same reason.)
+To 'gen leaf treating print' with a text called indent and a boolean called nested.
+    a number called 'source choice' is 'rng below' of 2.
+    a text called source is "".
+    a text called 'match value' is "".
+    a text called 'replacement value' is "".
+    If 'source choice' is 0 then,
+        (arguments's all yields text elements (argv strings) - the
+         treating match/replacement must be text too, or nasm rejects
+         the emitted assembly with 'symbol _str_eq not defined'
+         (hand-reduced: `print each item from arguments's all treating
+         98 as 31.` alone reproduces it) - a number literal here compiles
+         past the analyzer but the codegen path for a text-typed
+         collection expects a text-typed match, and the mismatch never
+         gets caught until the assembler.)
+        Set source to "arguments's all",
+        Set 'match value' to "\"-\"",
+        Set 'replacement value' to "\"none\"".
+    If 'source choice' is 1 then,
+        a number called 'elem one' is 'rng below' of 100,
+        a number called 'elem two' is 'rng below' of 100,
+        a number called 'match number' is 'rng below' of 100,
+        a number called 'replacement number' is 'rng below' of 100,
+        Set source to "[{'elem one'}, {'elem two'}]",
+        Set 'match value' to "{'match number'}",
+        Set 'replacement value' to "{'replacement number'}".
+    a text called line is "print each item from {source} treating {'match value'} as {'replacement value'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf treating grid' with a text called indent and a boolean called nested.
+    a number called 'first match' is 'rng below' of 100.
+    a number called 'first replacement' is 'rng below' of 100.
+    a number called 'second match' is 'rng below' of 5 add 1.
+    a number called 'second replacement' is 'rng below' of 100.
+    a number called 'elem one' is 'rng below' of 100.
+    a number called 'elem two' is 'rng below' of 100.
+    a number called 'range start' is 'rng below' of 5 add 1.
+    a number called 'range spread' is 'rng below' of 4.
+    a number called 'range end' is 'range start' add 'range spread'.
+    Set gen_grid to gen_grid add 1.
+    a number called 'first loop name' is gen_grid.
+    Set gen_grid to gen_grid add 1.
+    a number called 'second loop name' is gen_grid.
+    a text called line is "f3 of each e{'first loop name'} from [{'elem one'}, {'elem two'}] treating {'first match'} as {'first replacement'} and each e{'second loop name'} from {'range start'} to {'range end'} treating {'second match'} as {'second replacement'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`While` and `Repeat`: today only `For each` is emitted. Both are
+ self-contained, single-statement leaves with a hardcoded, unconditional
+ `Increment`, never a body drawn from the recursive statement generator.
+
+ The real defect this sidesteps. An earlier draft of this comment
+ misdiagnosed it as While-specific; direct reproduction traced it to
+ its actual root and filed it as bug #27: **a period never closes a
+ Repeat body, in any nesting, at
+ any depth - only a blank line does.** `Repeat 2 times, Print "r".`
+ followed by `Print "after".`, with no blank line between them, prints
+ `r after r after` - "after" is silently absorbed into the loop and
+ re-runs with it, not a parse error, not a crash, just a program that
+ means something other than what it reads as. `While` and `For each`
+ both close correctly on a period, including a period stacked to close
+ two levels at once (a For-each nested inside a While, closed with two
+ periods on its own last statement, correctly closes both and the
+ following statement runs once) - hand-verified, and it is what
+ isolates the defect to Repeat specifically rather than "loops in
+ general" or "While as the outer level," both of which an earlier
+ version of this comment wrongly concluded from a Repeat-nested-in-
+ While probe whose double-period failure was actually bug #27 wearing
+ a While-shaped disguise.
+
+ Consequence for this generator: 'gen leaf repeat' cannot just emit its
+ closing `Print` as the next period-terminated line the way 'gen leaf
+ while' does - that line would silently become part of the Repeat's own
+ body (verified: it printed the counter once per iteration instead of
+ once after, exactly bug #27's signature). It emits a blank line after
+ the Repeat statement instead, which is what LANGUAGE.md documents as
+ the only thing that closes a Repeat, before the closing `Print`.
+ 'gen leaf while' needs no such treatment - its own closing `Print`
+ already closes correctly on its ordinary period, per the hand-
+ verification above, so it is written the simpler way.
+
+ Both stay reachable only at the true top level regardless (kind range
+ widened at depth 3 only, left out of depth 2/1/0's ranges and out of
+ 'gen any leaf'): a blank line closes every open clause at once,
+ including an enclosing function definition, so emitting one from
+ inside a nested body would be unsafe for reasons that have nothing to
+ do with bug #27, and 'gen leaf while' has no need to be reachable
+ there either, so both are held to the same, simplest-to-verify
+ position. Top level is also where 'nested' is always false, so every
+ rendered line is independently period-closed to begin with - the
+ blank line in 'gen leaf repeat' is closing the Repeat, not doing any
+ work a period was already doing.)
+To 'gen leaf while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 8 add 1.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Increment u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Bug #27 (see above): the Repeat statement's own period never closes
+ it, so the closing `Print` is emitted after a blank line - the one
+ thing that does close a Repeat - instead of joined onto 'the lines'
+ the way every other leaf's closing read is.)
+To 'gen leaf repeat' with a text called indent and a boolean called nested.
+    Set gen_repeats to gen_repeats add 1.
+    a number called 'the trips' is 'rng below' of 8 add 1.
+    a text called decl is "a number called r{gen_repeats} is 0".
+    a text called 'loop line' is "Repeat {'the trips'} times, Increment r{gen_repeats}".
+    a list called 'the opening lines' is [decl, 'loop line'].
+    'gen join lines' of indent and nested and 'the opening lines'.
+    'gen emit' of "\n".
+    a text called 'read line' is "Print r{gen_repeats}".
+    a list called 'the closing lines' is ['read line'].
+    'gen join lines' of indent and nested and 'the closing lines'.
+
+(`environment's`: bug #24 (an unset variable segfaulted, uncatchable by
+ On error) and bug #26 (out-of-range positional properties - first/last
+ on an empty environment) - both fixed in 0.4.3/0.4.4 per CHANGELOG, so
+ both are now defined-behaviour-under-test, the same standing the
+ buffer/list/map oob leaves already have.
+
+ The inrange leaf reads real environment state - count, a named lookup
+ of PATH - but two fixed regressions mean it must never print the raw
+ result, and must never reuse a fixed local name. An earlier version
+ printed environment's count and environment's "PATH" directly, and
+ one landed in a checked-in test fixture verbatim: home directory, tool
+ versions, every installed plugin, on a public repo. Reading is exactly
+ the coverage bugs #24 and #26 are about; printing what was read is not
+ required to exercise that and is the part that leaked. So every read
+ here is immediately collapsed to a boolean before it is printed -
+ `as a boolean` (0 is false, nonzero is true) for the count, and a
+ buffer's own `empty` property (declaring the buffer directly from
+ environment's "PATH", the same construction 'needle buf' elsewhere in
+ this file uses to turn a text expression into a buffer) for the named
+ lookup, never the text itself. `environment's empty` is already a
+ boolean and was never the problem.
+
+ The second regression a fixed local name caused: this leaf is reachable
+ both as a nested block's mandatory closer (inside a conditionally-taken
+ If branch) and as an ordinary top-level statement, in the same program,
+ and a fixed name (`envpathbuf`) collided with itself across the two.
+ Hand-reduced to a compiler defect with nothing environment-specific
+ left in it: `If false-condition then, a buffer called b is "x".` /
+ `a buffer called b is "y".` segfaults even though the first
+ declaration's branch never runs - a text/buffer declared on an untaken
+ If path corrupts a later, same-named declaration elsewhere. This reads
+ like bug #25's family (a declaration on a conditional path leaving bad
+ storage behind) but #25's own fix, read literally, only names On
+ error/While/for-each/Repeat bodies - not If. Reported separately as a
+ finding, not tuned around; the generator-side fix is what every other
+ leaf in this file already does and this one alone was not doing -
+ counter-suffixed names (env{gen_envs}count, env{gen_envs}pathbuf), so
+ two calls can never collide regardless of which one lands inside a
+ branch that turns out not to run.
+
+ All five lines are plain reads/declarations with no error path, so this
+ stays a safe closer.)
+To 'gen leaf environment inrange' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a text called 'count decl' is "a number called env{gen_envs}count is environment's count".
+    a text called 'count check' is "Print env{gen_envs}count as a boolean".
+    a text called 'empty line' is "Print environment's empty".
+    a text called 'path decl' is "a buffer called env{gen_envs}pathbuf is environment's \"PATH\"".
+    a text called 'path check' is "Print env{gen_envs}pathbuf's empty".
+    a list called 'the lines' is ['count decl', 'count check', 'empty line', 'path decl', 'path check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The oob leaf's own local, 'the missing value', is a fixed quoted name
+ rather than a counter-suffixed one - safe unlike the inrange leaf's
+ former envpathbuf, because this leaf is unsafe-closer/remap-only (see
+ below), which this file's own avoid-onerror machinery guarantees means
+ its real body only ever renders at the true top level, never inside a
+ conditionally-taken branch - there is no second scope for the same
+ name to collide with. Counter-suffixing it anyway would cost nothing
+ and remove the need to reason about that guarantee holding forever, so
+ it is done here too, purely as defensive consistency with the fix
+ above rather than because this leaf reproduces the defect.)
+To 'gen leaf environment oob' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a number called 'probe id' is 'rng below' of 1000000.
+    a text called decl is "a text called 'the missing value {gen_envs}' is environment's \"VOXFUZZ_UNSET_{'probe id'}\"".
+    a text called handler is "On error print \"environment variable not set\"".
+    a text called 'read line' is "Print 'the missing value {gen_envs}'".
+    a list called 'the lines' is [decl, handler, 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`arguments's`: bugs #23 and #26 lived here, both fixed. The generated
+ program runs with no user arguments (runner.vox's 'run program' always
+ passes an empty argument list), so count/name/empty are the properties
+ that stay meaningful either way - count is always 1, name is always
+ the program's own path, empty is always true, and all three are plain
+ reads with no error path, so this is a safe closer. `first`/`second`/
+ `last`/`the argument at` would, with zero arguments passed, ALWAYS hit
+ their out-of-range path rather than sometimes exercising the in-range
+ one - the brief's own instruction is to flag that rather than emit
+ something that can only ever prove one thing; noted in the task report
+ instead. `arguments's all` still gets exercised for real, just via
+ 'gen leaf treating print' above, since a treating clause needs a
+ collection anyway and an always-empty one is exactly the collection
+ arguments's all always is - one fewer construct duplicated as its own
+ leaf.)
+To 'gen leaf arguments inrange' with a text called indent and a boolean called nested.
+    a text called 'count line' is "Print arguments's count".
+    a text called 'name line' is "Print arguments's name".
+    a text called 'empty line' is "Print arguments's empty".
+    a list called 'the lines' is ['count line', 'name line', 'empty line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Deep expressions and the operator matrix: modulo, precedence (`*`/`%`
+ binding tighter than `+`), and `{...}` grouping to override it - Vox's
+ own grouping punctuation, since real parentheses are comments (see
+ 'Comments'). Hand-verified: `{v1 add v2} multiply v3 modulo 4` and
+ nested `{{...} multiply ...} modulo ...` both compile and evaluate with
+ the documented precedence. A plain Print of an arithmetic expression
+ never opens a clause, so this is a safe closer - unlike 'gen leaf rich
+ condition' below, nothing here is a comparison, which 0.4.5 confines to
+ an If/but-if condition position and refuses everywhere else (see 'gen
+ condition's own comment).)
+To 'gen leaf deep arithmetic' with a text called indent and a boolean called nested.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a text called 'the third operand' is 'gen var ref'.
+    a number called 'the modulus' is 'rng below' of 5 add 2.
+    a text called 'the deep expr' is "{{{'the left operand'} add {'the right operand'}}} multiply {'the third operand'} modulo {'the modulus'}".
+    a text called line is "Print {'the deep expr'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The comparison/and-or side of the operator matrix, in the one position
+ 0.4.5 allows it: an If condition. 'gen condition' already covers the
+ full comparison table plus modulo plus and/or; this leaf is what
+ actually exercises it, printing one of two expressions depending on
+ which branch fires. Hand-verified UNSAFE as a block's mandatory closer
+ - an If/Otherwise sole-closer traps the next statement the same way a
+ nested loop does (both hand-reduced against 0.4.5) - so this remaps to
+ 1 under avoid-onerror and stays out of 'gen any leaf', same as 'gen
+ if' itself is never used directly as a closer.)
+To 'gen leaf rich condition' with a text called indent and a boolean called nested.
+    a text called condition is 'gen condition'.
+    a text called 'the yes branch' is 'gen expr'.
+    a text called 'the no branch' is 'gen expr'.
+    a text called line is "If {condition} then, Print {'the yes branch'}. Otherwise, Print {'the no branch'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
 To 'gen dispatch leaf' with a number called kind and a text called indent and a boolean called nested.
     If kind is 0 then,
         'gen leaf print' of indent.
@@ -451,6 +829,28 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf text value' of indent and nested.
     If kind is 19 then,
         'gen leaf call safe' of indent and nested.
+    If kind is 20 then,
+        'gen leaf butif print' of indent and nested.
+    If kind is 21 then,
+        'gen leaf butif append' of indent and nested.
+    If kind is 22 then,
+        'gen leaf environment inrange' of indent and nested.
+    If kind is 23 then,
+        'gen leaf arguments inrange' of indent and nested.
+    If kind is 24 then,
+        'gen leaf deep arithmetic' of indent and nested.
+    If kind is 25 then,
+        'gen leaf treating print' of indent and nested.
+    If kind is 26 then,
+        'gen leaf treating grid' of indent and nested.
+    If kind is 27 then,
+        'gen leaf environment oob' of indent and nested.
+    If kind is 28 then,
+        'gen leaf rich condition' of indent and nested.
+    If kind is 29 then,
+        'gen leaf while' of indent and nested.
+    If kind is 30 then,
+        'gen leaf repeat' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -477,9 +877,16 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
  available in every non-closing position - both here and in
  'gen statement's own remap (which this mirrors, for the same reason:
  that path picks leaves directly too, with no second call through this
- function, so it needs the identical substitution).)
+ function, so it needs the identical substitution).
+
+ T3 additions 20-24 (but-if print/append, environment/arguments inrange,
+ deep arithmetic) join this pool - each is hand-verified safe as a sole
+ closer, per its own function comment. 25-28 (treating, environment oob,
+ rich condition) do not, for the same reasons kind 9/14/6-grid don't;
+ 29-30 (While/Repeat) aren't reachable outside the true top level at
+ all, so they can never even be offered here.)
 To 'gen any leaf' with a text called indent and a boolean called nested.
-    a number called pick is 'rng below' of 11.
+    a number called pick is 'rng below' of 16.
     a number called kind is 0.
     If pick is 0 then,
         Set kind to 0.
@@ -503,6 +910,16 @@ To 'gen any leaf' with a text called indent and a boolean called nested.
         Set kind to 15.
     If pick is 10 then,
         Set kind to 19.
+    If pick is 11 then,
+        Set kind to 20.
+    If pick is 12 then,
+        Set kind to 21.
+    If pick is 13 then,
+        Set kind to 22.
+    If pick is 14 then,
+        Set kind to 23.
+    If pick is 15 then,
+        Set kind to 24.
     'gen dispatch leaf' of kind and indent and nested.
 
 (A block's body always ends with a plain leaf statement (note 6b): the
@@ -571,19 +988,36 @@ To 'gen if' with a number called depth and a text called indent.
  top-level statement never closes a clause.
 
  Kind space: 0-15 are leaves (see 'gen dispatch leaf'), 16 is a loop,
- 17 is an if, 18 grows the v-pool. depth 3 draws from the full range;
- depth 2 and 1 drop new-var (nesting must not permanently grow scope);
- depth 0 drops loop/if too (nesting budget exhausted, leaves only).)
+ 17 is an if, 18 grows the v-pool, 19 is a remap-only target. T3 adds
+ 20-24 (always-safe leaves), 25-28 (leaves that need the same
+ avoid-onerror remap as 3/5/6/9/10/14, for the reasons given on each
+ leaf's own comment), and 29-30 (While/Repeat, top-level only - see
+ 'gen leaf while's comment for why). depth 3 draws from the full range;
+ depth 2 and 1 drop new-var (nesting must not permanently grow scope)
+ and 29-30 (their termination guarantee depends on being an independent,
+ self-closing top-level sentence, which nested positions are not); depth
+ 0 drops loop/if and every T3 addition too, leaves 0-15 only (nesting
+ budget exhausted - kept to the pre-T3 range rather than widened, since
+ the deepest level is the lowest-value place to add more surface).)
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        Set kind to 'rng below' of 19.
+        Set kind to 'rng below' of 31.
     If depth is equal to 2 then,
-        Set kind to 'rng below' of 18.
+        Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
-        Set kind to 'rng below' of 18.
+        Set kind to 'rng below' of 29.
     If depth is equal to 0 then,
         Set kind to 'rng below' of 16.
+    (kind 18 (new-var) is only in the depth-2/1 range's span because 29
+     needs a single contiguous rng_below upper bound to cover 20-28 too;
+     depth 3's own draw is what makes 18 meaningful, so a depth-2/1 hit
+     on it is neutralized here rather than left to grow the permanent
+     v-pool from a conditionally-executed nested branch.)
+    If kind is 18 and depth is equal to 2 then,
+        Set kind to 1.
+    If kind is 18 and depth is equal to 1 then,
+        Set kind to 1.
     a boolean called 'is nested' is true.
     If depth is equal to 3 then,
         Set 'is nested' to false.
@@ -649,7 +1083,15 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         If kind is 14 then,
             Set 'safe kind' to 1.
         If kind is 6 then,
-            Set 'safe kind' to 19..
+            Set 'safe kind' to 19.
+        If kind is 25 then,
+            Set 'safe kind' to 1.
+        If kind is 26 then,
+            Set 'safe kind' to 1.
+        If kind is 27 then,
+            Set 'safe kind' to 1.
+        If kind is 28 then,
+            Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
 
@@ -715,6 +1157,9 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_floats to 0.
     Set gen_texts to 0.
     Set gen_grid to 0.
+    Set gen_whiles to 0.
+    Set gen_repeats to 0.
+    Set gen_envs to 0.
     'rng seed' of seed.
     'gen emit prelude things'.
     'gen emit prelude thing methods'.
