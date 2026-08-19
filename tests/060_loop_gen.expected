@@ -1,78 +1,67 @@
-899
-reassigned1
+99
+mixed1
+52.850000000000001
+13
+mixed3
+34.509999999999998
+1
+./vf_gen_bin
+1
+137
+1
+./vf_gen_bin
+1
 tag1
-886
+245
 2
 label
 count
-72
-reassigned2
-{x1: 706, x2: 0}
-{x1: 706, x2: 0}
-{x1: 706, x2: 0}
-{x1: 706, x2: 0}
-481.351499999999987
-48.511111111111113
-236.810000000000002
-word1-word1
-0
-map key missing
-38
-620
-reassigned1
-714
-147
-tag2
-630
-2
-label
-count
-tag3
-69
-2
-label
-count
-491
--491
-tag1
-290
-2
-label
-count
-928
-reassigned1
-129
-reassigned2
+1
+./vf_gen_bin
+1
+357
+-357
+environment variable not set
+
+environment variable not set
+
+495
+36
 0
 buffer read out of range
-10
-mixed1
-95.640000000000001
-12
-710
-783
-106
-{g1: {x1: 106, x2: 0}, g2: {x1: 0, x2: 0}}
-200
--200
-123904
-{x1: 422, x2: 0}
-20
-mixed1
-29.34
-276
-{g1: {x1: 276, x2: 0}, g2: {x1: 0, x2: 0}}
-274240
+word1-word1
+828
+reassigned1
 tag1
-541
+195
 2
 label
 count
-102400
-75
-word1-word1
+word3-word3
+1
+./vf_gen_bin
+1
+29
+35
+3900.183899999999539
+10.330931549150797
+211.72999999999999
+{x1: 128, x2: 0}
+363
+363
+16442.435099999998783
+45.024071166928309
+1180.409999999999854
+198
+-198
+237.923500000000018
+15.562659846547314
+380.850000000000023
 0
-list read out of range
+map key missing
+1
+./vf_gen_bin
+1
 programs: 5
 compiled: 5
 findings: 0
