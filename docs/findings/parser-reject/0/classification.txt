@@ -25,3 +25,17 @@ formal grammar says so (LANGUAGE.md:4886/:4899) though the prose denies
 it (:88). The statements after the Return were promoted to top level,
 and the second Return correctly errored there. Filed instead as: doc gap
 + diagnostic defect (no location, no hint), vox plan 318 items 2 and 4.
+
+--- UPDATE (2026-08-19, vox-fuzz modernization sweep) ---
+Plan 318 item 2 is fixed: recompiling this finding's own program.vox
+with the pinned vox 0.4.5 now produces a located, hinted diagnostic —
+
+  error: Return is only valid inside a function
+    --> program.vox:5:9
+    a Return closed `gen statement`'s body early at line 5 — a
+    body-level Return ends the function it's in, so this Return is no
+    longer inside it
+
+The "no location, no hint" complaint above describes 0.4.2 and is
+stale as of 0.4.4. Left unedited above — it is the historical record of
+what was actually observed at the time.

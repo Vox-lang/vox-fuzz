@@ -19,6 +19,10 @@ To 'finding exists' with a text called category and a number called seed.
 
 To 'finding save' with a text called category and a number called seed and a text called src and a text called detail.
     a text called 'the finding directory' is 'finding path' of category and seed.
+    a boolean called 'already saved' is 'finding exists' of category and seed.
+    If 'already saved' then,
+        Set findings_count to findings_count add 1,
+        Return a number, findings_count.
     a text called 'the directory command' is "mkdir -p {'the finding directory'}".
     a number called 'the directory result' is 'run shell' of 'the directory command' and 5000.
     a text called 'the copy command' is "cp {src} {'the finding directory'}/program.vox".
@@ -27,7 +31,7 @@ To 'finding save' with a text called category and a number called seed and a tex
     a number called 'the classification result' is 'run shell' of 'the classification command' and 5000.
     a text called 'the version command' is "{vox_binary} --version >> {'the finding directory'}/classification.txt 2>&1".
     a number called 'the version result' is 'run shell' of 'the version command' and 10000.
-    a text called 'the repro command' is "printf '#!/bin/sh\\n{vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\\n' > {'the finding directory'}/repro.sh".
+    a text called 'the repro command' is "printf '#!/bin/sh\\nexport VOX_CORE_PATH=\"${{VOX_CORE_PATH:-{vox_core}}}\"\\n{vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\\n' > {'the finding directory'}/repro.sh".
     a number called 'the repro result' is 'run shell' of 'the repro command' and 5000.
     a text called 'the chmod command' is "chmod +x {'the finding directory'}/repro.sh".
     a number called 'the chmod result' is 'run shell' of 'the chmod command' and 5000.
