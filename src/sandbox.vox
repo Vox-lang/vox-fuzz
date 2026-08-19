@@ -1,0 +1,123 @@
+(Per-run scratch sandbox, plan 323 T2.
+
+ Confinement is enforced OUTSIDE this file, at the process level.
+ scripts/fuzz-confined.sh runs the whole vox-fuzz process inside bwrap,
+ with only the scratch root bind-mounted read-write and everything else
+ read-only, no network. That is deliberate, not an oversight: wrapping
+ each GENERATED program individually (rather than the fuzzer process)
+ was tried and rejected - bwrap flattens a segfaulting child's true wait
+ status (WIFSIGNALED, signal 11) into a plain exit code (WIFEXITED,
+ code 139), which destroys the exact distinction runner.vox's
+ 'supervise' exists to preserve. See scripts/fuzz-confined.sh's header
+ for the measurements behind that call. Every generated program is a
+ descendant of the confined vox-fuzz process, so it inherits the
+ confinement for free, and supervise/'run shell'/'run program' - the
+ functions that make the exit/signal/hang distinction - are untouched
+ by this file.
+
+ This file only provides the scratch directory lifecycle: a unique
+ per-program directory, created before the program runs and swept after
+ it ends, however it ends. Wiring this into the live gen loop (actually
+ running a generated program against a scratch path for file I/O) is
+ T4, not this task - T2 is infrastructure only.
+
+ Dependency note: like every file in this codebase, this one does not
+ 'see' its own dependencies - the includer does, in order. A caller
+ needs 'see "./harness.vox".' (supervise, 'run shell') and
+ 'see "./runner.vox".' ('make directories', 'shell quote') before
+ 'see "./sandbox.vox".' - tests/210_scratch_sandbox.vox shows the order.)
+
+(Uniqueness: every concurrently-running vox-fuzz process has a distinct
+ OS pid, and no two programs within one run share a seed, so pid+seed
+ is collision-free both across concurrently-running vox-fuzz processes
+ and across the many scratch directories inside one run. Vox has no
+ getpid() of its own, so this reads it the same way harness.vox's own
+ 'kill grandchild of' already reads a related pid: as a decimal number
+ sitting inside a /proc text file - here, the first field of
+ /proc/self/stat.)
+To 'self pid'.
+    open a file for reading called 'self stat' at "/proc/self/stat".
+    On error Return a number, 0.
+    a buffer called 'self stat data'.
+    Read from 'self stat' into 'self stat data'.
+    Close 'self stat'.
+    a number called n is 'self stat data's length.
+    a buffer called 'pid digits'.
+    a buffer called 'one digit' is " ".
+    a number called pos is 1.
+    a boolean called 'still in pid' is true.
+    While pos is less than or equal to n and 'still in pid',
+        a number called b is byte pos of 'self stat data',
+        If b is equal to 32 then,
+            Set 'still in pid' to false.
+        If 'still in pid' then,
+            Set byte 1 of 'one digit' to b,
+            append 'one digit' to 'pid digits'.
+        Set pos to pos add 1.
+    a text called 'pid text' is 'pid digits' as text.
+    a number called pid is 'pid text' as a number.
+    Return a number, pid.
+
+(The root every per-program scratch directory lives under - relative to
+ the harness's own working directory, matching every other scratch path
+ in this codebase (./vf_gen.vox, ./vf_gen_bin, findings_dir's default
+ ./findings): test.sh already sweeps ./vf_* after every test, .gitignore
+ already ignores it, and scripts/fuzz-confined.sh binds this one root
+ read-write and everything else read-only - a relative path is the only
+ kind guaranteed to resolve inside that bind rather than outside it.)
+a text called 'the scratch root' is "./vf_scratch".
+
+To 'scratch dir path' with a number called seed.
+    a number called pid is 'self pid'.
+    a text called path is "{'the scratch root'}/run_{pid}_{seed}".
+    Return a text, path.
+
+(mkdir -p, via runner.vox's own byte-walking 'make directories' - no
+ shell, so nothing about the scratch path can be read as shell syntax.)
+To 'scratch dir create' with a text called path.
+    a number called r is 'make directories' of path.
+    Return a number, r.
+
+(Sweep: delete the directory and everything a generated program left
+ inside it. Vox has no directory-listing primitive - file I/O in
+ LANGUAGE.md is open/read/write/seek/close/delete, nothing that
+ enumerates a directory's contents - so an arbitrarily deep tree left by
+ a generated program cannot be walked and deleted file-by-file in pure
+ Vox. This is the one place sandbox.vox goes through 'run shell' rather
+ than a native syscall statement, shell-quoted through the same 'shell
+ quote' every other harness-side shell command in this codebase already
+ uses - even though this particular path is harness-generated, not user
+ input, quoting it costs nothing. 'rm -rf' on a path that was never
+ created (create failed, or this is called twice) is a silent no-op,
+ so sweep is safe to call unconditionally.)
+To 'scratch dir sweep' with a text called path.
+    a text called 'the sweep command' is "rm -rf {'shell quote' of path}".
+    a number called 'the sweep exit code' is 'run shell' of 'the sweep command' and 5000.
+    Return a number, 'the sweep exit code'.
+
+(Run a program with its own fresh scratch directory: create it, run the
+ program through the untouched 'supervise' (so its fate - exit, signal,
+ or hang - is read from the real wait status, exactly like every other
+ run in this fuzzer), then sweep the directory - always, regardless of
+ which of the three fates happened.
+
+ The path is handed to the program as its first argument
+ (arguments's first), not an environment variable. Vox has no way to
+ set an environment variable for a child it is about to fork:
+ 'Execute' only ever inherits the caller's own environment
+ (LANGUAGE.md, "Executing Programs"), and there is no setenv-shaped
+ statement anywhere in the language to change that environment first.
+ Piping the assignment through 'run shell' (VAR=value program) was
+ rejected for the same reason confinement itself was moved out of
+ supervise: running a generated program through a shell can no longer
+ tell an exit code of 139 from a real signal 11, and that distinction
+ is this fuzzer's whole reason to exist. An argv element costs nothing
+ and needs no new capability.)
+To 'run program in scratch' with a text called 'binary path' and a number called seed and a number called 'the deadline in milliseconds'.
+    a text called 'the scratch path' is 'scratch dir path' of seed.
+    a number called 'the create result' is 'scratch dir create' of 'the scratch path'.
+    a list called 'the argument list' is [].
+    append 'the scratch path' to 'the argument list'.
+    a text called 'the verdict' is supervise of 'binary path' and 'the argument list' and 'the deadline in milliseconds'.
+    a number called 'the sweep result' is 'scratch dir sweep' of 'the scratch path'.
+    Return a text, 'the verdict'.

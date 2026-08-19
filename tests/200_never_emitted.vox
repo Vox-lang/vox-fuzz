@@ -1,0 +1,151 @@
+see "../src/rng.vox".
+see "../src/gen.vox".
+
+(The safety guard, plan 323 T1.
+
+ Vox can Shutdown/Poweroff, Reboot/Restart, Halt, Mount/Unmount/umount,
+ Pivot root, and create device nodes (LANGUAGE.md "Directories,
+ Mounting, and Process Control" and "System Control"). This fuzzer runs
+ unconfined on Josj's workstation - a generated program that reached the
+ real compiler and actually ran one of these would be a genuine
+ incident, not a test failure. src/gen.vox does not emit any of them
+ today (grep-confirmed, and plan 323's own coverage audit agrees); this
+ test is the safeguard that survives someone later "improving" the
+ generator and adding one back carelessly.
+
+ Scope - Tier NEVER only. Plan 323 also lists directory create/remove,
+ Execute, fork, and Send signal, but those are Tier CONFINE: legitimate
+ once T2's sandbox confines them (T4/T5, not this test), and src/gen.vox
+ emits none of them either today. Banning them here outright would make
+ this test fail the moment T4/T5 correctly add confined versions of
+ them, so they are deliberately absent from the list below.
+
+ Case-insensitive - LANGUAGE.md "Case Sensitivity" says keywords are
+ case-insensitive, so the scan runs against a lowercased copy of the
+ generated text; a stray "SHUTDOWN" or "ShutDown" cannot slip past a
+ scan that only ever tried the exact template casing.
+
+ "mount" alone is the needle for the whole Mount/Unmount/umount family -
+ "unmount" and "umount" both contain "mount" as a substring, so one
+ needle covers the construct and both aliases.
+
+ Generation only, no compiling or running - the guard's job is done the
+ moment the SOURCE TEXT contains the word; waiting on a compile (or on
+ running 2,000+ compiled binaries) would only delay the alarm, and this
+ test has to stay fast enough to live in ./test.sh.
+
+ Budgets: the CLI's --budget takes any number with no hard ceiling, so
+ "largest the CLI allows" is unbounded in principle. 300 is used here as
+ a deliberately large practical ceiling - 7.5x the biggest budget used
+ elsewhere in this suite (080_gen_rich.vox's 40) - to stress the
+ generator without making this test slow. Seed ranges are disjoint
+ across the four tiers so the 2,000 programs are 2,000 distinct seeds,
+ not the same 2,000 seeds replayed at every budget.)
+
+a number called 'the programs swept' is 0.
+a number called 'the failing seed' is 0.
+a text called 'the failing word' is "".
+a number called 'the failing budget' is 0.
+
+(Needle buffers, built once rather than on every one of the 9 checks
+ times 2,000 programs.)
+a buffer called needle_shutdown is "shutdown".
+a buffer called needle_poweroff is "poweroff".
+a buffer called needle_reboot is "reboot".
+a buffer called needle_restart is "restart".
+a buffer called needle_halt is "halt".
+a buffer called needle_mount is "mount".
+a buffer called needle_pivotroot is "pivot root".
+a buffer called needle_pivotroot_us is "pivot_root".
+a buffer called needle_devicenode is "device node".
+
+To 'lower text' with a text called s.
+    a buffer called work is s.
+    a number called n is work's length.
+    a number called pos is 1.
+    While pos is less than or equal to n,
+        a number called b is byte pos of work,
+        If b is greater than or equal to 65 and b is less than or equal to 90 then,
+            Set byte pos of work to b add 32.
+        Set pos to pos add 1.
+    Return a buffer, work.
+
+To 'byte match at' with a buffer called haystack and a number called start and a buffer called needle and a number called 'needle length'.
+    a number called offset is 0.
+    a boolean called 'bytes match' is true.
+    While offset is less than 'needle length',
+        a number called 'hay pos' is start add offset,
+        a number called 'hay byte' is byte 'hay pos' of haystack,
+        a number called 'needle pos' is offset add 1,
+        a number called 'needle byte' is byte 'needle pos' of needle,
+        If 'hay byte' is not 'needle byte' then,
+            Set 'bytes match' to false.
+        Set offset to offset add 1.
+    Return a boolean, 'bytes match'.
+
+(Assumes haystack is already lowercased and needle is one of the
+ pre-built lowercase needle_* buffers above.)
+To 'text has' with a buffer called haystack and a buffer called needle.
+    a number called 'haystack length' is haystack's length.
+    a number called 'needle length' is needle's length.
+    a boolean called found is false.
+    a number called 'last start' is 'haystack length' minus 'needle length' add 1.
+    a number called 'scan start' is 1.
+    While found is false and 'scan start' is less than or equal to 'last start',
+        a boolean called 'match here' is 'byte match at' of haystack and 'scan start' and needle and 'needle length',
+        If 'match here' then,
+            Set found to true.
+        Set 'scan start' to 'scan start' add 1.
+    Return a boolean, found.
+
+(The Tier NEVER vocabulary, derived from plan 323's Tier NEVER table and
+ LANGUAGE.md's "Directories, Mounting, and Process Control" / "System
+ Control" sections - every spelling and alias: shutdown/poweroff,
+ reboot/restart, halt, Mount/unmount/umount, pivot_root, device-node
+ creation. Returns the matched word, or "" if the source is clean.)
+To 'find banned construct' with a text called source.
+    a buffer called hay is 'lower text' of source.
+    If 'text has' of hay and needle_shutdown then, Return a text, "shutdown".
+    If 'text has' of hay and needle_poweroff then, Return a text, "poweroff".
+    If 'text has' of hay and needle_reboot then, Return a text, "reboot".
+    If 'text has' of hay and needle_restart then, Return a text, "restart".
+    If 'text has' of hay and needle_halt then, Return a text, "halt".
+    If 'text has' of hay and needle_mount then, Return a text, "mount".
+    If 'text has' of hay and needle_pivotroot then, Return a text, "pivot root".
+    If 'text has' of hay and needle_pivotroot_us then, Return a text, "pivot_root".
+    If 'text has' of hay and needle_devicenode then, Return a text, "device node".
+    Return a text, "".
+
+(Sweeps 'seed count' seeds starting at 'first seed', at the given budget,
+ through the generator's own entry points - 'gen program' then 'gen
+ text'. Stops scanning (both this tier and any tier called after it,
+ via the caller's own guard checks) the moment one seed comes back
+ dirty, so a hit is reported fast rather than buried under thousands
+ more programs.)
+To 'sweep budget' with a number called budget and a number called 'seed count' and a number called 'first seed'.
+    a number called 'last seed' is 'first seed' add 'seed count' minus 1.
+    a number called seed is 'first seed'.
+    While 'the failing word' is "" and seed is less than or equal to 'last seed',
+        'gen program' of seed and budget,
+        a text called source is 'gen text',
+        a text called hit is 'find banned construct' of source,
+        Set 'the programs swept' to 'the programs swept' add 1,
+        If hit is not "" then,
+            Set 'the failing seed' to seed,
+            Set 'the failing word' to hit,
+            Set 'the failing budget' to budget.
+        Set seed to seed add 1.
+
+'sweep budget' of 4 and 600 and 1.
+If 'the failing word' is "" then,
+    'sweep budget' of 12 and 600 and 601.
+If 'the failing word' is "" then,
+    'sweep budget' of 40 and 600 and 1201.
+If 'the failing word' is "" then,
+    'sweep budget' of 300 and 200 and 1801.
+
+If 'the failing word' is not "" then,
+    Print "NEVER EMITTED GUARD FAILED: banned construct '{'the failing word'}' found at seed {'the failing seed'} budget {'the failing budget'}",
+    Exit 1.
+
+Print "never-emitted guard: swept {'the programs swept'} programs across 4 budgets, 0 banned constructs found".

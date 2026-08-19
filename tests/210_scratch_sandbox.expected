@@ -1,0 +1,5 @@
+nonzero exit: verdict exit existed-before 1 exists-after 0
+signal death: verdict signal existed-before 1 exists-after 0
+hang to deadline: verdict hang existed-before 1 exists-after 0
+wrote ok
+argv handoff: verdict exit exists-after 0

@@ -1,0 +1,66 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/sandbox.vox".
+
+(Plan 323 T2 - the harness scratch sandbox. Proves the per-program
+ scratch directory exists before the program runs and is gone after,
+ no matter which of the three fates a fuzzed run ends in: a normal
+ nonzero exit, death by signal, or a hang killed at the deadline. These
+ are the normal cases in a fuzzer, not the exceptional ones - runner.vox
+ and harness.vox already have to tell them apart for every generated
+ program, so this test forces each one the same trusted way
+ tests/020_harness.vox already does, with 'the scratch path' created
+ and swept around the same supervise call.
+
+ Confinement itself (bwrap, read-only-except-scratch, no network) is
+ external - scripts/fuzz-confined.sh - and out of scope for this test,
+ which exercises the directory lifecycle only.)
+
+To 'prove sweep' with a number called seed and a text called label and a list called 'the arguments' and a number called 'the deadline in milliseconds'.
+    a text called 'the scratch path' is 'scratch dir path' of seed.
+    a number called 'the create result' is 'scratch dir create' of 'the scratch path'.
+    a boolean called 'existed before' is false.
+    If 'the scratch path' is available then,
+        Set 'existed before' to true.
+    a text called 'the verdict' is supervise of "/bin/sh" and 'the arguments' and 'the deadline in milliseconds'.
+    a number called 'the sweep result' is 'scratch dir sweep' of 'the scratch path'.
+    a boolean called 'exists after' is false.
+    If 'the scratch path' is available then,
+        Set 'exists after' to true.
+    Print "{label}: verdict {'the verdict'} existed-before {'existed before'} exists-after {'exists after'}".
+
+(1. Nonzero exit - the ordinary case, not a finding, and still swept.)
+a list called 'the exit arguments' is ["-c", "exit 5"].
+'prove sweep' of 501 and "nonzero exit" and 'the exit arguments' and 5000.
+
+(2. Death by signal - the same kill-SEGV fixture tests/020_harness.vox
+ uses, so this is a proven way to force a real WIFSIGNALED death.)
+a list called 'the signal arguments' is ["-c", "kill -SEGV $$"].
+'prove sweep' of 502 and "signal death" and 'the signal arguments' and 5000.
+
+(3. Hang to the deadline - a busy loop of shell builtins (no sleep
+ binary in the Nix sandbox, matching tests/020_harness.vox), killed by
+ the harness itself at a short deadline. 700ms rather than
+ 020_harness.vox's 300ms - enough slack that a busy dev machine doesn't
+ turn a real kill into a false failure, while still being short enough
+ that this test stays fast.)
+a list called 'the hang arguments' is ["-c", "while :; do :; done"].
+'prove sweep' of 503 and "hang to deadline" and 'the hang arguments' and 700.
+
+(4. The path handoff itself, end to end, through 'run program in
+ scratch' rather than a hand-assembled argument list: a real compiled
+ Vox program reads arguments's first, writes a file inside it, and the
+ directory - file included - is gone once the run completes.)
+a number called 'fixture compile result' is 'compile vox' of "tests/fixtures/scratch_writer.vox" and "./vf_scratch_writer_bin".
+a text called 'writer verdict' is 'run program in scratch' of "./vf_scratch_writer_bin" and 504 and 5000.
+a text called 'writer scratch path' is 'scratch dir path' of 504.
+a boolean called 'writer path exists after' is false.
+If 'writer scratch path' is available then,
+    Set 'writer path exists after' to true.
+Print "argv handoff: verdict {'writer verdict'} exists-after {'writer path exists after'}".
+
+(Each scenario above sweeps its own per-program subdirectory but leaves
+ the shared scratch root behind by design - see sandbox.vox. Tidy the
+ now-empty root so test.sh's own './vf_*' cleanup (which does not
+ recurse into directories) has nothing left to complain about.)
+a number called 'root cleanup' is 'run shell' of "rmdir {'the scratch root'} 2>/dev/null; true" and 2000.
