@@ -10,7 +10,7 @@ readme = "README.md"
 keywords = ["vox", "fuzzer", "fuzzing", "compiler"]
 categories = ["development-tools::testing"]
 # The Vox sources ARE the program; the Rust here is a bootstrap.
-include = ["src/*.rs", "src/*.vox", "README.md", "LICENSE"]
+include = ["src/*.rs", "src/*.vox", "build.rs", "README.md", "LICENSE"]
 
 [[bin]]
 name = "vox-fuzz"
