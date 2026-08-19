@@ -19,9 +19,17 @@ If the environment variable "VOX_CORE_PATH" exists then, Set vox_core to environ
 To 'vox path'.
     Return a text, vox_binary.
 
+(The compiler gets its own deadline, separate from --timeout: --timeout
+ bounds how long a fuzzed *program* may run (harness.vox's supervise, via
+ 'run program'), and has never governed compilation. This budget is a
+ vox-fuzz constant, not a CLI option - name it honestly so a -1 exit code
+ from 'compile vox' reads as "the compiler itself hung" rather than being
+ misread against the run timeout.)
+a number called 'the compile budget in milliseconds' is 60000.
+
 To 'compile vox' with a text called source and a text called out.
-    a text called 'the compile command' is "VOX_CORE_PATH={vox_core} {vox_binary} {source} -o {out} > ./vf_cerr 2>&1".
-    a number called 'the compiler exit code' is 'run shell' of 'the compile command' and 60000.
+    a text called 'the compile command' is "VOX_CORE_PATH={'shell quote' of vox_core} {'shell quote' of vox_binary} {source} -o {out} > ./vf_cerr 2>&1".
+    a number called 'the compiler exit code' is 'run shell' of 'the compile command' and 'the compile budget in milliseconds'.
     Return a number, 'the compiler exit code'.
 
 To 'run program' with a text called 'binary path' and a number called 'the deadline in milliseconds'.

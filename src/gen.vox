@@ -2,11 +2,13 @@
 
  There is no AST - rules append rendered source directly into gen_out.
  Names are v1..vN in declaration order, so every reference is in scope
- by construction. Buffers (bN), lists (lN), thing instances (iN), and
- function-call scratch locals (cN) each get their own counter and are
- always self-contained within the one statement that declares them -
- they are never referenced by a later, unrelated statement, so nothing
- about Vox's per-branch declaration visibility can bite them.
+ by construction. Buffers (bN), lists (lN), thing instances (iN),
+ maps (mN), value locals (yN), floats (dN), texts (sN), function-call
+ scratch locals (cN), and grid loop variables (eN) each get their own
+ counter and are always self-contained within the one statement that
+ declares them - they are never referenced by a later, unrelated
+ statement, so nothing about Vox's per-branch declaration visibility
+ can bite them.
 
  Nesting (loops, ifs) is depth-capped at 3 and threaded through two
  precomputed values on every recursive call: `depth` (nesting budget
@@ -23,6 +25,11 @@ a number called gen_bufs is 0.
 a number called gen_lists is 0.
 a number called gen_instances is 0.
 a number called gen_args is 0.
+a number called gen_maps is 0.
+a number called gen_values is 0.
+a number called gen_floats is 0.
+a number called gen_texts is 0.
+a number called gen_grid is 0.
 
 To 'gen emit' with a text called s.
     a buffer called piece is "{s}".
@@ -183,7 +190,172 @@ To 'gen call two' with a text called indent and a boolean called nested.
     a list called 'the lines' is ['first decl', 'second decl', 'call line'].
     'gen join lines' of indent and nested and 'the lines'.
 
+(Chained expansion, the grid: 0.4.5's Cartesian-product call form, joined
+ by 'and' across two 'each ... from ...' clauses - a list clause and a
+ range clause, over f3's two number parameters. The loop variables get
+ their own e{N} names from a dedicated counter so two grid calls in the
+ same program never bind the same identifier twice, which the one
+ identifier space rule would otherwise make a shadowing question rather
+ than a clean fresh name. f3 has no side effect worth printing, so this
+ is a bare call statement - language note 3's "plain call statement"
+ form, the same one the grid section itself uses when a fixed argument
+ needs to come first.)
+To 'gen call grid' with a text called indent and a boolean called nested.
+    Set gen_grid to gen_grid add 1.
+    a number called 'first loop name' is gen_grid.
+    Set gen_grid to gen_grid add 1.
+    a number called 'second loop name' is gen_grid.
+    a number called 'list element one' is 'rng below' of 100.
+    a number called 'list element two' is 'rng below' of 100.
+    a number called 'range start' is 'rng below' of 5 add 1.
+    a number called 'range spread' is 'rng below' of 4.
+    a number called 'range end' is 'range start' add 'range spread'.
+    a text called 'call line' is "f3 of each e{'first loop name'} from [{'list element one'}, {'list element two'}] and each e{'second loop name'} from {'range start'} to {'range end'}".
+    a list called 'the lines' is ['call line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Maps: literal creation with a text-valued key and a number-valued key,
+ string-key read, `Set map's "key" to ...`, `'s length`, and a `keys`
+ iteration - heap growth and hashing (finding 05). The oob variant reads
+ a key that was never inserted; the language's own claim is that a
+ missing key sets the error flag and returns 0 rather than crashing, so
+ this is the same on-trial pattern as the buffer/list oob leaves. Each
+ map gets a freshly numbered iteration variable (k{N}) for the same
+ fresh-name reason the grid loop variables do.)
+To 'gen leaf map inrange' with a text called indent and a boolean called nested.
+    Set gen_maps to gen_maps add 1.
+    a number called 'count value' is 'rng below' of 1000.
+    a number called 'count value two' is 'rng below' of 1000.
+    a text called decl is "a map called m{gen_maps} is {{\"label\": \"tag{gen_maps}\", \"count\": {'count value'}}}".
+    a text called 'read label' is "Print m{gen_maps}'s \"label\"".
+    a text called 'write count' is "Set m{gen_maps}'s \"count\" to {'count value two'}".
+    a text called 'read count' is "Print m{gen_maps}'s \"count\"".
+    a text called 'read length' is "Print m{gen_maps}'s length".
+    a text called 'iterate keys' is "For each k{gen_maps} in m{gen_maps}'s keys, Print k{gen_maps}".
+    a list called 'the lines' is [decl, 'read label', 'write count', 'read count', 'read length', 'iterate keys'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf map oob' with a text called indent and a boolean called nested.
+    Set gen_maps to gen_maps add 1.
+    a number called 'count value' is 'rng below' of 1000.
+    a text called decl is "a map called m{gen_maps} is {{\"label\": \"tag{gen_maps}\", \"count\": {'count value'}}}".
+    a text called 'read line' is "Print m{gen_maps}'s \"missing\"".
+    a text called handler is "On error print \"map key missing\"".
+    a list called 'the lines' is [decl, 'read line', handler].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The `value` type: declare, print, reassign across the type boundary
+ (number to text), print again - the exact round-trip that produced
+ compiler bugs #2, #8 and #15 (finding 06). Runtime-tag ABI.)
+To 'gen leaf value roundtrip' with a text called indent and a boolean called nested.
+    Set gen_values to gen_values add 1.
+    a number called 'starting number' is 'rng below' of 1000.
+    a text called decl is "a value called y{gen_values} is {'starting number'}".
+    a text called 'print number' is "Print y{gen_values}".
+    a text called reassign is "Set y{gen_values} to \"reassigned{gen_values}\"".
+    a text called 'print text' is "Print y{gen_values}".
+    a list called 'the lines' is [decl, 'print number', reassign, 'print text'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Floats: decimal literals, float multiply and divide, and a mixed
+ float/int expression - the whole float codegen path, unfuzzed until
+ now (finding 04). The divisor's whole part is drawn from 1 upward so it
+ is never 0.0 by construction - proving the divide codegen path is the
+ goal, not proving the language's own division-by-zero behaviour, which
+ is a different question this generator does not ask.)
+To 'gen leaf float arithmetic' with a text called indent and a boolean called nested.
+    Set gen_floats to gen_floats add 1.
+    a number called 'first name' is gen_floats.
+    a number called 'first whole' is 'rng below' of 1000.
+    a number called 'first frac' is 'rng below' of 100.
+    Set gen_floats to gen_floats add 1.
+    a number called 'second name' is gen_floats.
+    a number called 'second whole' is 'rng below' of 20 add 1.
+    a number called 'second frac' is 'rng below' of 100.
+    Set gen_floats to gen_floats add 1.
+    a number called 'product name' is gen_floats.
+    Set gen_floats to gen_floats add 1.
+    a number called 'quotient name' is gen_floats.
+    Set gen_floats to gen_floats add 1.
+    a number called 'mixed name' is gen_floats.
+    a text called 'first decl' is "a float called d{'first name'} is {'first whole'}.{'first frac'}".
+    a text called 'second decl' is "a float called d{'second name'} is {'second whole'}.{'second frac'}".
+    a text called 'product decl' is "a float called d{'product name'} is d{'first name'} multiply d{'second name'}".
+    a text called 'print product' is "Print d{'product name'}".
+    a text called 'quotient decl' is "a float called d{'quotient name'} is d{'first name'} divide d{'second name'}".
+    a text called 'print quotient' is "Print d{'quotient name'}".
+    a text called 'the int operand' is 'gen var ref'.
+    a text called 'mixed decl' is "a float called d{'mixed name'} is d{'first name'} add {'the int operand'}".
+    a text called 'print mixed' is "Print d{'mixed name'}".
+    a list called 'the lines' is ['first decl', 'second decl', 'product decl', 'print product', 'quotient decl', 'print quotient', 'mixed decl', 'print mixed'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Thing member functions: the manifest entry plus its two `To do the
+ T's m` definitions live in the prelude (see 'gen emit prelude thing
+ methods'); this leaf drives both call forms - the type-possessive maker
+ (`a t4's 'made at' with ...`) and the instance-possessive receiver
+ (`i's 'reflected across'`) - and reads the owner-return field back
+ after each (finding 03). Today only data fields are generated; this is
+ the dispatch and owner-return path fields alone cannot reach.)
+To 'gen leaf thing member' with a text called indent and a boolean called nested.
+    Set gen_instances to gen_instances add 1.
+    a number called 'maker name' is gen_instances.
+    a number called 'starting x' is 'rng below' of 1000.
+    Set gen_instances to gen_instances add 1.
+    a number called 'mirror name' is gen_instances.
+    a text called decl is "a t4 called i{'maker name'} is a t4's 'made at' with {'starting x'}".
+    a text called 'print maker' is "Print i{'maker name'}'s x1".
+    a text called 'mirror decl' is "a t4 called i{'mirror name'} is i{'maker name'}'s 'reflected across'".
+    a text called 'print mirror' is "Print i{'mirror name'}'s x1".
+    a list called 'the lines' is [decl, 'print maker', 'mirror decl', 'print mirror'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Mixed-type lists: a number, a text, and a float literal in one list -
+ per-slot runtime type tag machinery, never author-declared. Iterating
+ and printing exercises the tag dispatch on read (grep-proven gap, same
+ standard as the four findings). Each list gets its own iteration
+ variable (w{N}) for the same fresh-name reason maps and the grid do.)
+To 'gen leaf list mixed' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a number called 'number element' is 'rng below' of 100.
+    a number called 'float whole' is 'rng below' of 100.
+    a number called 'float frac' is 'rng below' of 100.
+    a text called decl is "a list called l{gen_lists} is [{'number element'}, \"mixed{gen_lists}\", {'float whole'}.{'float frac'}]".
+    a text called 'iterate line' is "For each w{gen_lists} in l{gen_lists}, Print w{gen_lists}".
+    a list called 'the lines' is [decl, 'iterate line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Text as a value the generated program handles, not just the source the
+ fuzzer writes: a text local built from a literal, then a second text
+ built by interpolating the first - `{...}` format substitution on the
+ target program's own text data, grep-proven gap, same standard.)
+To 'gen leaf text value' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called 'first name' is gen_texts.
+    Set gen_texts to gen_texts add 1.
+    a number called 'second name' is gen_texts.
+    a text called 'first decl' is "a text called s{'first name'} is \"word{'first name'}\"".
+    a text called 'second decl' is "a text called s{'second name'} is \"{{s{'first name'}}}-{{s{'first name'}}}\"".
+    a text called 'print line' is "Print s{'second name'}".
+    a list called 'the lines' is ['first decl', 'second decl', 'print line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
 To 'gen leaf call' with a text called indent and a boolean called nested.
+    a number called 'call kind' is 'rng below' of 4.
+    If 'call kind' is 0 then,
+        'gen call zero' of indent and nested.
+    If 'call kind' is 1 then,
+        'gen call one' of indent and nested.
+    If 'call kind' is 2 then,
+        'gen call two' of indent and nested.
+    If 'call kind' is 3 then,
+        'gen call grid' of indent and nested.
+
+(Same three call shapes, minus the grid - kind 19's job is standing in
+ for kind 6 wherever the grid's `each ... and each ...` clause would be
+ unsafe as a block closer (see 'gen statement's avoid-onerror remap),
+ without losing zero/one/two's coverage in that position too.)
+To 'gen leaf call safe' with a text called indent and a boolean called nested.
     a number called 'call kind' is 'rng below' of 3.
     If 'call kind' is 0 then,
         'gen call zero' of indent and nested.
@@ -263,20 +435,51 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf thing' of indent and nested.
     If kind is 8 then,
         'gen leaf thing copy' of indent and nested.
+    If kind is 9 then,
+        'gen leaf map inrange' of indent and nested.
+    If kind is 10 then,
+        'gen leaf map oob' of indent and nested.
+    If kind is 11 then,
+        'gen leaf value roundtrip' of indent and nested.
+    If kind is 12 then,
+        'gen leaf float arithmetic' of indent and nested.
+    If kind is 13 then,
+        'gen leaf thing member' of indent and nested.
+    If kind is 14 then,
+        'gen leaf list mixed' of indent and nested.
+    If kind is 15 then,
+        'gen leaf text value' of indent and nested.
+    If kind is 19 then,
+        'gen leaf call safe' of indent and nested.
 
-(Excludes the two On-error kinds (3, 5). Adjudicated 2026-08-18: this
- is not a parser bug but the termination rule working as documented -
- a period after an On-error handler closes only the HANDLER, because
- On error is itself a nesting clause (LANGUAGE.md rule 1), so a block
- whose closer ends on a handler is never actually closed by it.
- Restricting the mandatory closer to non-On-error kinds is therefore
- not a workaround but correctness: the closer's period must close the
- block, and only a plain leaf's period does. The hand-reduced evidence
- lives in docs/findings/parser-reject/1/, which also led to vox bug
- #25. On-error groups remain freely available in non-closing
- positions.)
+(Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
+ this is not a parser bug but the termination rule working as
+ documented - a period after an On-error handler closes only the
+ HANDLER, because On error is itself a nesting clause (LANGUAGE.md rule
+ 1), so a block whose closer ends on a handler is never actually closed
+ by it. Restricting the mandatory closer to non-On-error kinds is
+ therefore not a workaround but correctness: the closer's period must
+ close the block, and only a plain leaf's period does. The hand-reduced
+ evidence lives in docs/findings/parser-reject/1/, which also led to
+ vox bug #25. On-error groups remain freely available in non-closing
+ positions.
+
+ Also excludes 9's key iteration and 14's list iteration, and swaps 6
+ (call) for 19 (the same three call shapes minus the grid variant) -
+ same rule 1 as above, not a separate defect. `For each`/grid `each` is
+ itself a nesting clause, so when one of these is the mandatory closer,
+ its own period closes THAT clause, not the enclosing block the closer
+ was supposed to close - note 6b's guarantee ("the closing leaf's
+ period closes the block") only holds for a leaf that does not itself
+ open a clause. 9 and 14 have no such-clause-free sibling so they are
+ dropped outright; 6 does (19), so a call stays available here at only
+ the cost of its grid quarter. Full coverage, grid included, remains
+ available in every non-closing position - both here and in
+ 'gen statement's own remap (which this mirrors, for the same reason:
+ that path picks leaves directly too, with no second call through this
+ function, so it needs the identical substitution).)
 To 'gen any leaf' with a text called indent and a boolean called nested.
-    a number called pick is 'rng below' of 7.
+    a number called pick is 'rng below' of 11.
     a number called kind is 0.
     If pick is 0 then,
         Set kind to 0.
@@ -287,11 +490,19 @@ To 'gen any leaf' with a text called indent and a boolean called nested.
     If pick is 3 then,
         Set kind to 4.
     If pick is 4 then,
-        Set kind to 6.
-    If pick is 5 then,
         Set kind to 7.
-    If pick is 6 then,
+    If pick is 5 then,
         Set kind to 8.
+    If pick is 6 then,
+        Set kind to 11.
+    If pick is 7 then,
+        Set kind to 12.
+    If pick is 8 then,
+        Set kind to 13.
+    If pick is 9 then,
+        Set kind to 15.
+    If pick is 10 then,
+        Set kind to 19.
     'gen dispatch leaf' of kind and indent and nested.
 
 (A block's body always ends with a plain leaf statement (note 6b): the
@@ -313,6 +524,23 @@ To 'gen loop' with a number called depth and a text called indent.
     a text called 'next indent' is "{indent}  ".
     'gen body' of 'next depth' and 'next indent'.
 
+(Not a compiler defect, and not something 'gen if' itself needs to work
+ around - recorded here only because it explains why 'gen any leaf'
+ refuses every For-each-bearing kind the guaranteed-closer role (see
+ that function's own comment). LANGUAGE.md rule 1: a period closes only
+ the innermost currently open clause. If a `For each` (block or
+ single-line) is the body of a single-branch If, the For-each's own
+ period closes the FOR EACH, not the If - the If is still open one
+ level further out than the indentation suggests. Whatever textually
+ "follows" the If at this point is therefore still inside its body, and
+ it is THAT statement's period which finally closes the If. A
+ declaration positioned there is accordingly "declared in only some
+ branches" (there is no Otherwise), so vox correctly refuses it outside
+ - not a defect, the documented branch-scoping rule doing exactly what
+ it says. This only bites when the mandatory closer (see 'gen body')
+ is itself a For-each-bearing leaf, since a plain leaf's period closes
+ the If as intended; excluding those kinds from 'gen any leaf' is the
+ whole fix, and a bare Otherwise-less If stays legal, generatable Vox.)
 To 'gen if' with a number called depth and a text called indent.
     a text called 'the left operand' is 'gen var ref'.
     a text called 'the right operand' is 'gen var ref'.
@@ -324,7 +552,7 @@ To 'gen if' with a number called depth and a text called indent.
 
 (depth is a precomputed, decrementing nesting budget (language note 3):
  3 at the true top-level statement stream, capped at 0. new-var (kind
- 11) only grows the globally-referenceable v-pool at depth 3, the one
+ 18) only grows the globally-referenceable v-pool at depth 3, the one
  place a declaration is unconditionally, permanently in scope; nested
  declarations inside gen's leaf kinds stay local to their own
  statement instead. Returns whether this call opened an unclosed
@@ -338,45 +566,102 @@ To 'gen if' with a number called depth and a text called indent.
  clause-close bookkeeping if the very next statement also touches
  On-error, corrupting everything after it (hand-reduced against
  0.4.2, matching the adjacency documented on 'gen any leaf'). Passing
- false (only 'gen program's true top-level call does) allows the two
- On-error leaf kinds through undisturbed, since a plain top-level
- statement never closes a clause.)
+ false (only 'gen program's true top-level call does) allows the
+ three On-error leaf kinds through undisturbed, since a plain
+ top-level statement never closes a clause.
+
+ Kind space: 0-15 are leaves (see 'gen dispatch leaf'), 16 is a loop,
+ 17 is an if, 18 grows the v-pool. depth 3 draws from the full range;
+ depth 2 and 1 drop new-var (nesting must not permanently grow scope);
+ depth 0 drops loop/if too (nesting budget exhausted, leaves only).)
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        Set kind to 'rng below' of 12.
+        Set kind to 'rng below' of 19.
     If depth is equal to 2 then,
-        Set kind to 'rng below' of 11.
+        Set kind to 'rng below' of 18.
     If depth is equal to 1 then,
-        Set kind to 'rng below' of 11.
+        Set kind to 'rng below' of 18.
     If depth is equal to 0 then,
-        Set kind to 'rng below' of 9.
+        Set kind to 'rng below' of 16.
     a boolean called 'is nested' is true.
     If depth is equal to 3 then,
         Set 'is nested' to false.
-    If kind is 9 then,
+    If kind is 16 then,
         'gen loop' of depth and indent,
         Return a boolean, true.
-    If kind is 10 then,
+    If kind is 17 then,
         'gen if' of depth and indent,
         Return a boolean, true.
-    If kind is 11 then,
+    If kind is 18 then,
         a number called ignored is 'gen new var',
         Return a boolean, false.
     a number called 'safe kind' is kind.
+    (Pre-existing generator defect, found and fixed while extending this
+     function: the innermost 'If kind is 10' only closes itself with one
+     period (rule 1), so without a second one here the outer 'If avoid
+     onerror' clause was never closed and silently absorbed the dispatch
+     call and the Return below into its own conditional body. At the
+     true top level avoid_onerror is false, so that swallowed tail never
+     ran - every plain top-level leaf silently emitted nothing, the
+     whole time, for every seed. It went unnoticed because loop/if
+     bodies recurse through the separately-closed avoid_onerror=true
+     path below 'gen body', which still produced visible leaf output,
+     making a program look populated even with the true top level
+     silently empty. The double period closes both the inner-if and the
+     outer avoid-onerror clause, so the dispatch call actually runs
+     unconditionally, as the indentation always implied it should.)
+    (Same remap for the three For-each-bearing kinds (6's grid variant,
+     9, 14) and the same reason as the On-error trio above: whenever
+     this leaf might be the one whose period closes an enclosing block
+     (avoid_onerror true), a `For each`/grid `each` clause inside it is
+     itself a nesting clause (LANGUAGE.md rule 1), so its period closes
+     THAT, not the enclosing block - the enclosing If or loop is then
+     one level further open than the rest of this generator assumes,
+     and whatever comes next is silently declared inside it instead of
+     at the level intended. Not a compiler defect (see 'gen if's own
+     comment) - the compiler is right that a declaration only inside a
+     single If branch is out of scope after it; the fix is simply never
+     letting one of these be the block's closer. 9 and 14 have no safe
+     sibling, so they fall back to 1 (assign); 6 does have one - 19 is
+     'gen leaf call' minus the grid variant - so a call as closer keeps
+     three quarters of its coverage instead of losing all of it.
+
+     Every branch below tests the ORIGINAL kind, never 'safe kind' -
+     these are independent substitutions, not a chain. kind 10 (map
+     oob) used to hop to 9 (map inrange) as its On-error remap, back
+     when 9 was itself a safe closer; now that 9 is unsafe too, 10 has
+     to be remapped directly to 1, the same as 9 and 14 - routing it
+     through 9 first would only test the untouched original `kind`
+     (still 10) against "kind is 9", never fire, and leave 'safe kind'
+     sitting at 9, still For-each-bearing. Hand-reduced: this exact
+     chaining mistake was live in an earlier version of this remap and
+     produced seed 3's "Unknown map: m3" before it was caught.)
     If 'avoid onerror' then,
         If kind is 3 then,
             Set 'safe kind' to 2.
         If kind is 5 then,
             Set 'safe kind' to 4.
+        If kind is 10 then,
+            Set 'safe kind' to 1.
+        If kind is 9 then,
+            Set 'safe kind' to 1.
+        If kind is 14 then,
+            Set 'safe kind' to 1.
+        If kind is 6 then,
+            Set 'safe kind' to 19..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
 
 (Prelude: thing types and functions, emitted once per program before
  the statement stream that uses them (definitions before instances,
  instances before access - valid by construction). t3 nests one t1 and
- one t2, so a chained possessive is always reachable. f1/f2/f3 cover 0,
- 1, and 2 number parameters.)
+ one t2, so a chained possessive is always reachable. t4 carries the
+ manifest for 'gen leaf thing member' - a maker ('made at', first
+ parameter is a number, not a t4) and a receiver ('reflected across',
+ first parameter is a t4), each obeying the owner-return rule, the same
+ shape as LANGUAGE.md's own point/'placed at' example (finding 03).
+ f1/f2/f3 cover 0, 1, and 2 number parameters.)
 To 'gen emit prelude things'.
     'gen emit' of "A thing called t1 has\n".
     'gen emit' of "    a number called x1 is 0,\n".
@@ -389,6 +674,23 @@ To 'gen emit prelude things'.
     'gen emit' of "A thing called t3 has\n".
     'gen emit' of "    a t1 called g1,\n".
     'gen emit' of "    a t2 called g2.\n".
+    'gen emit' of "\n".
+    'gen emit' of "A thing called t4 has\n".
+    'gen emit' of "    a function called 'made at',\n".
+    'gen emit' of "    a function called 'reflected across',\n".
+    'gen emit' of "    a number called x1 is 0.\n".
+    'gen emit' of "\n".
+
+To 'gen emit prelude thing methods'.
+    'gen emit' of "To do the t4's 'made at', with a number called x1.\n".
+    'gen emit' of "    a t4 called plotted.\n".
+    'gen emit' of "    Set plotted's x1 to x1.\n".
+    'gen emit' of "    Return a t4, plotted.\n".
+    'gen emit' of "\n".
+    'gen emit' of "To do the t4's 'reflected across', with a t4 called original.\n".
+    'gen emit' of "    a t4 called mirrored.\n".
+    'gen emit' of "    Set mirrored's x1 to 0 subtract original's x1.\n".
+    'gen emit' of "    Return a t4, mirrored.\n".
     'gen emit' of "\n".
 
 To 'gen emit prelude functions'.
@@ -408,8 +710,14 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_lists to 0.
     Set gen_instances to 0.
     Set gen_args to 0.
+    Set gen_maps to 0.
+    Set gen_values to 0.
+    Set gen_floats to 0.
+    Set gen_texts to 0.
+    Set gen_grid to 0.
     'rng seed' of seed.
     'gen emit prelude things'.
+    'gen emit prelude thing methods'.
     'gen emit prelude functions'.
     a number called ignored1 is 'gen new var'.
     a number called ignored2 is 'gen new var'.

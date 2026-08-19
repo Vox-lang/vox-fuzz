@@ -16,33 +16,65 @@ gen options:
   --out DIR      findings directory (default ./findings)
 bad subcommand exits 2: 1
 vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
-{x1: 578, x2: 0}
-{x1: 578, x2: 0}
-{x1: 578, x2: 0}
-{x1: 578, x2: 0}
-{x1: 578, x2: 0}
-814
-847
-814
-847
-814
-847
-125
-814
-847
-814
-847
-814
-847
-125
-814
-847
-814
-847
-814
-847
-125
-110
+word1-word1
+35
+35
+35
+36
+242
+-242
+0
+map key missing
+99
+0
+buffer read out of range
+tag2
+566
+2
+label
+count
+3905.641500000000178
+250.321518987341761
+1772.769999999999982
+22
+mixed1
+23.879999999999999
+{x1: 568, x2: 0}
+3
+mixed1
+64.900000000000006
+7192.395999999999731
+47.695439739413686
+1226.700000000000046
+353
+word1-word1
+25
+0
+list read out of range
+0
+buffer read out of range
+175
+132
+554
+224
+-224
+57
+510
+{g1: {x1: 510, x2: 0}, g2: {x1: 0, x2: 0}}
+799
+70
+0
+map key missing
+60
+0
+buffer read out of range
+806
+{g1: {x1: 806, x2: 0}, g2: {x1: 0, x2: 0}}
+tag2
+718
+2
+label
+count
 programs: 3
 compiled: 3
 findings: 0

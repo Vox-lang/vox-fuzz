@@ -1,0 +1,24 @@
+see "../src/harness.vox".
+
+(A1 regression (plan 322): loop_gen.vox's classifier must catch a REAL
+ assembler rejection. A hand-written vf_cerr fixture would only test the
+ grep against text whoever wrote the grep also wrote - the red team's
+ own poc.sh forces a real rejection with a nasm shim ahead of the real
+ one on PATH, and that is the model here: drive the built CLI, through a
+ shimmed nasm that always refuses, and confirm an asm-reject finding
+ directory is written instead of being silently swallowed as "compiled
+ cleanly, nothing to see". Run from the repo root, where ./build/vox-fuzz
+ lives after `make build`.)
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_asmreject_shim ./vf_asmreject_findings" and 5000.
+a number called 'the shim directory' is 'run shell' of "mkdir -p ./vf_asmreject_shim" and 5000.
+a number called 'the shim body' is 'run shell' of "printf '#!/bin/sh\necho bad.asm:1: error: forced rejection >&2\nexit 1\n' > ./vf_asmreject_shim/nasm" and 5000.
+a number called 'the shim permission' is 'run shell' of "chmod +x ./vf_asmreject_shim/nasm" and 5000.
+
+a number called 'the fuzz run' is 'run shell' of "PATH=\"$(pwd)/vf_asmreject_shim:$PATH\" ./build/vox-fuzz gen --seed 700 --count 3 --budget 8 --timeout 5000 --out ./vf_asmreject_findings" and 60000.
+Print "fuzz run exits clean: {'the fuzz run' is 0}".
+
+a number called 'the finding check' is 'run shell' of "test -d ./vf_asmreject_findings/asm-reject" and 5000.
+Print "asm-reject finding recorded: {'the finding check' is 0}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_asmreject_shim ./vf_asmreject_findings" and 5000.
