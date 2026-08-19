@@ -11,6 +11,21 @@ A thing called t3 has
     a t1 called g1,
     a t2 called g2.
 
+A thing called t4 has
+    a function called 'made at',
+    a function called 'reflected across',
+    a number called x1 is 0.
+
+To do the t4's 'made at', with a number called x1.
+    a t4 called plotted.
+    Set plotted's x1 to x1.
+    Return a t4, plotted.
+
+To do the t4's 'reflected across', with a t4 called original.
+    a t4 called mirrored.
+    Set mirrored's x1 to 0 subtract original's x1.
+    Return a t4, mirrored.
+
 To f1.
     Return a number, 27.
 
@@ -24,17 +39,47 @@ To f3 with a number called p1 and a number called p2.
 
 a number called v1 is 753.
 a number called v2 is 806.
-a number called v3 is 752.
-a number called v4 is 436.
-For each number from 1 to 5,
-  a t1 called i1,
-  Set i1's x1 to 0,
-  a t1 called i2 is i1,
-  Set i2's x1 to 153,
-  Print i1's x1,
-  Print i2's x1.
-If v4 is greater than v1 then,
-  Print v3 add v4.
-Exit 223.
+a t2 called i1.
+Set i1's x1 to 266.
+Print i1.
+a map called m1 is {"label": "tag1", "count": 752}.
+Print m1's "missing".
+On error print "map key missing".
+a t1 called i2.
+Set i2's x1 to 142.
+a t1 called i3 is i2.
+Set i3's x1 to 703.
+Print i2's x1.
+Print i3's x1.
+a map called m2 is {"label": "tag2", "count": 613}.
+Print m2's "missing".
+On error print "map key missing".
+a map called m3 is {"label": "tag3", "count": 219}.
+Print m3's "missing".
+On error print "map key missing".
+a list called l1 is [53, 58].
+Print element 69 of l1.
+On error print "list read out of range".
+Set v2 to v1 add v2.
+a value called y1 is 670.
+Print y1.
+Set y1 to "reassigned1".
+Print y1.
+a t1 called i4.
+Set i4's x1 to 516.
+a t1 called i5 is i4.
+Set i5's x1 to 685.
+Print i4's x1.
+Print i5's x1.
+a number called v3 is 219.
+a value called y2 is 369.
+Print y2.
+Set y2 to "reassigned2".
+Print y2.
+a value called y3 is 15.
+Print y3.
+Set y3 to "reassigned3".
+Print y3.
+Exit 196.
 
 reproducible: 1
