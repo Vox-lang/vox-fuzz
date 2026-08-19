@@ -1,0 +1,12 @@
+same seed 1 budget 1: 1
+same seed 1 budget 8: 1
+same seed 1 budget 20: 1
+same seed 42 budget 1: 1
+same seed 42 budget 8: 1
+same seed 42 budget 20: 1
+same seed 999 budget 1: 1
+same seed 999 budget 8: 1
+same seed 999 budget 20: 1
+differ seed 1 vs 2 budget 12: 1
+differ seed 1 vs 3 budget 12: 1
+determinism: 9 same-seed pairs byte-identical, 2 distinct-seed pairs differ

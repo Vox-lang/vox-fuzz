@@ -1,0 +1,86 @@
+(Per-function unit tests. The deterministic gate (tests/220_determinism.vox)
+ covers generation-as-a-whole; this file covers the pieces a generated
+ finding would be reported through, and the one security-sensitive seam.
+
+ Three groups:
+  - 'shell quote' (harness.vox): the single audit point for every
+    user-controlled value that reaches a shell. The six cases below are the
+    ones that distinguish quoting from concatenation -- an embedded single
+    quote, an embedded double quote, a space, a newline, an empty string,
+    and a string that is only quotes. A broken quote would splice an
+    unescaped value into a 'run shell' string; pinning the exact bytes here
+    means the one audit point stays audited.
+  - 'rng below' (rng.vox): at the two boundary bounds (0 and 1), and that it
+    stays in 0..n-1 over a thousand draws. rng below 0 is a modulo-by-zero
+    edge; Vox evaluates it to 0, which is in-bounds, and that is the
+    behavior worth pinning so a future change to modulo does not turn the
+    fuzzer's seed reproduction into a divide-by-zero.
+  - 'finding path' (findings.vox): an odd category and a large seed, to
+    pin that the path is built by text concatenation (not a shell), so an
+    attacker-controlled category name could never become a shell argument.
+  - 'classify compile exit' (loop_gen.vox): the exit-code -> category map,
+    extracted as a pure function so it can be called directly here. The
+    128/129 boundary is the point: 128 is a legitimate exit code, 129 is a
+    signal death, and a naive `>= 128` would misclassify a real exit-128 as
+    a crash.)
+
+see "../src/rng.vox".
+see "../src/harness.vox".
+see "../src/findings.vox".
+see "../src/runner.vox".
+see "../src/gen.vox".
+see "../src/loop_gen.vox".
+
+(shell quote: hoisted to locals because the format string cannot nest a
+ "..." literal inside a {...} interpolation. The call itself takes a text
+ argument, so the literal belongs at the call site, not in the Print.)
+a text called q1 is 'shell quote' of "O'Brien".
+a text called q2 is 'shell quote' of "say \"hi\"".
+a text called q3 is 'shell quote' of "a b".
+a text called q4 is 'shell quote' of "a\nb".
+a text called q5 is 'shell quote' of "".
+a text called q6 is 'shell quote' of "'''".
+Print "quote O'Brien: {q1}".
+Print "quote say-hi: {q2}".
+Print "quote space: {q3}".
+Print "quote newline: {q4}".
+Print "quote empty: {q5}".
+Print "quote quotes: {q6}".
+
+(rng below at the two boundary bounds. below 1 is always 0; below 0 is the
+ modulo-by-zero edge, evaluated to 0.)
+'rng seed' of 7.
+Print "rng below 1: {'rng below' of 1}".
+Print "rng below 0: {'rng below' of 0}".
+
+(rng below stays in 0..n-1 over a thousand draws. 'bad' counts any draw
+ outside that range; it must stay 0. Uses only is less than / is greater
+ than, both proven elsewhere, so the assertion itself cannot be the thing
+ that fails compiling.)
+'rng seed' of 42.
+a number called bad is 0.
+a number called i is 0.
+While i is less than 1000,
+    a number called r is 'rng below' of 100,
+    If r is less than 0 then, Set bad to bad add 1.
+    If r is greater than 99 then, Set bad to bad add 1.
+    Set i to i add 1.
+Print "rng bounds: bad={bad} (0 means all 1000 draws of below 100 stayed in 0..99)".
+
+(finding path: an odd category and a large seed. The result is plain text
+ concatenation -- no shell -- which is the property that makes a category
+ name safe even if it were attacker-controlled.)
+a text called fp is 'finding path' of "odd-cat" and 999999999.
+Print "finding path: {fp}".
+
+(classify compile exit: the exit-code -> category map. Inlined in the
+ interpolation because the argument is a number, not a string literal, so
+ there is no nested-"..." trap. -1 is built from 0 minus 1 so the literal
+ is not a leading dash, which the compiler rejects.)
+a number called neg is 0 minus 1.
+Print "classify 0: {'classify compile exit' of 0}".
+Print "classify 1: {'classify compile exit' of 1}".
+Print "classify 101: {'classify compile exit' of 101}".
+Print "classify 128: {'classify compile exit' of 128}".
+Print "classify 129: {'classify compile exit' of 129}".
+Print "classify -1: {'classify compile exit' of neg}".

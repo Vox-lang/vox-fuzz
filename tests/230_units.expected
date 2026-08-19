@@ -1,0 +1,17 @@
+quote O'Brien: 'O'\''Brien'
+quote say-hi: 'say "hi"'
+quote space: 'a b'
+quote newline: 'a
+b'
+quote empty: ''
+quote quotes: ''\'''\'''\'''
+rng below 1: 0
+rng below 0: 0
+rng bounds: bad=0 (0 means all 1000 draws of below 100 stayed in 0..99)
+finding path: ./findings/odd-cat/999999999
+classify 0: ok
+classify 1: check-asm
+classify 101: ice
+classify 128: check-asm
+classify 129: ice
+classify -1: hang

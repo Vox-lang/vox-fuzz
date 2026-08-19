@@ -50,32 +50,12 @@ jobs:
           VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
           ./test.sh
 
-      # Smoke-fuzz: run the gen subcommand over 100 seeds and fail CI if
-      # even one finding directory appears. A finding is a real vox
-      # compiler bug (ICE, asm rejection, signal death, hang, or
-      # nondeterminism) and must never pass silently. Kept fast: a modest
-      # count and a short per-program deadline — the happy path is ~24
-      # programs/sec, so this is seconds unless something hangs, and a
-      # hang is itself a finding the gate is meant to catch.
-      - name: Smoke fuzz
-        run: |
-          VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
-          VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
-          ./build/vox-fuzz gen --seed 1 --count 100 --budget 12 --timeout 10000 --out ./findings
-          if [ -d findings ] && [ -n "$(ls -A findings 2>/dev/null)" ]; then
-            echo "fuzzing findings present — a finding is a real vox compiler bug:"
-            find findings -type f
-            exit 1
-          fi
-
-      # On any failure above, upload the findings directory so the bug is
-      # recoverable from the run. if-no-files-found: ignore keeps a
-      # non-fuzzing failure (e.g. a test regression) from failing the
-      # upload step itself.
-      - name: Upload findings
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: findings
-          path: findings/
-          if-no-files-found: ignore
+      # Smoke fuzz removed 2026-08-19: a fuzzer answers "does a bug exist
+      # somewhere", which is the wrong question for a gate. A finding from
+      # seed 47 would fail the PR of whoever pushed a README typo, for a bug
+      # that is not theirs and may be months old — a stochastic gate blocks
+      # the wrong person and so loses its authority. Exploratory fuzzing is a
+      # local campaign instead; see SEEDS.md for how to run one. The
+      # deterministic gate that replaces it is tests/220_determinism.vox
+      # (generation is reproducible from its seed) plus the per-function unit
+      # tests in tests/230_units.vox.
