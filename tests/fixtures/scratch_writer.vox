@@ -1,0 +1,9 @@
+(Fixture for tests/210_scratch_sandbox.vox - proves a program run via
+ 'run program in scratch' really does receive its scratch path as
+ arguments's first, and can use it for file I/O.)
+a text called 'scratch path' is arguments's first.
+a text called 'file path' is "{'scratch path'}/hello.txt".
+open a file for writing called out at 'file path'.
+Write "hello from scratch\n" to out.
+Close out.
+Print "wrote ok".
