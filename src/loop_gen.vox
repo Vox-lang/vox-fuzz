@@ -50,11 +50,8 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     Return a number, 0.
 
 To 'fuzz gen run' with a number called 'the first seed' and a number called 'how many programs' and a number called budget and a number called 'the deadline in milliseconds'.
-    a number called 'programs started' is 0.
-    While 'programs started' is less than 'how many programs',
-        a number called 'the seed' is 'the first seed' add 'programs started',
-        a number called 'a finding was recorded' is 'fuzz gen once' of 'the seed' and budget and 'the deadline in milliseconds',
-        Set 'programs started' to 'programs started' add 1.
+    a number called 'the last seed' is 'the first seed' add 'how many programs' minus 1.
+    'fuzz gen once' of each seed from 'the first seed' to 'the last seed' and budget and 'the deadline in milliseconds'.
     Print "programs: {stat_total}".
     Print "compiled: {stat_compiled}".
     Print "findings: {stat_findings}".

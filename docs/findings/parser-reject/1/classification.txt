@@ -48,3 +48,18 @@ uncovered vox bug #25 - declarations on non-If conditional paths
 (On error/While/for each bodies) in scope over uninitialised storage:
 stack garbage for numbers, segfault for text. The fuzzer's finding was
 wrong in detail and invaluable in effect.
+
+--- UPDATE (2026-08-19, vox-fuzz modernization sweep) ---
+Plan 318 item 3 is fixed: recompiling this finding's own program.vox
+with the pinned vox 0.4.5 now lands the caret on the use site, not the
+declaration —
+
+  error: Unknown variable: l2
+    --> program.vox:8:20
+    hint: `l2` is declared only in some branches of an `if`/`otherwise`,
+    so it is not in scope after it - declare it in every branch, or
+    before the `if`
+
+The "confusing caret" complaint above describes 0.4.2 and is stale as
+of 0.4.4. Left unedited above — it is the historical record of what was
+actually observed at the time.

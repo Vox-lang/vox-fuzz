@@ -1,0 +1,29 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/findings.vox".
+
+(A re-run that lands on the same category/seed must not clobber an
+ earlier finding's artifacts - 'finding save' checks 'finding exists'
+ first and skips the write, but still counts the finding.)
+Set findings_dir to "./vf_dedup_findings".
+a text called 'the category' is "crash".
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_dedup_findings ./vf_src_a.vox ./vf_src_b.vox" and 5000.
+a number called 'the source a' is 'run shell' of "printf 'Print 1.\\n' > ./vf_src_a.vox" and 5000.
+a number called 'the source b' is 'run shell' of "printf 'Print 2.\\n' > ./vf_src_b.vox" and 5000.
+
+a number called 'the first tally' is 'finding save' of 'the category' and 3 and "./vf_src_a.vox" and "first detail".
+Print "first save count: {'the first tally'}".
+
+(Tamper with the saved classification.txt so a clobber is detectable.)
+a number called 'the tamper' is 'run shell' of "printf 'SENTINEL - do not overwrite\\n' > ./vf_dedup_findings/crash/3/classification.txt" and 5000.
+
+a number called 'the second tally' is 'finding save' of 'the category' and 3 and "./vf_src_b.vox" and "second detail".
+Print "second save count: {'the second tally'}".
+
+a number called 'the sentinel check' is 'run shell' of "grep -q SENTINEL ./vf_dedup_findings/crash/3/classification.txt" and 5000.
+Print "classification untouched: {'the sentinel check' is 0}".
+a number called 'the program check' is 'run shell' of "grep -q 'Print 1' ./vf_dedup_findings/crash/3/program.vox" and 5000.
+Print "program still the first one: {'the program check' is 0}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_dedup_findings ./vf_src_a.vox ./vf_src_b.vox" and 5000.
