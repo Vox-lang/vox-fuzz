@@ -1,4 +1,4 @@
-vox-fuzz 0.1.0
+vox-fuzz 0.2.0
 version exits clean: 1
 usage: vox-fuzz <command> [options]
 

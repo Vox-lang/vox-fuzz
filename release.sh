@@ -51,7 +51,7 @@ USAGE
     esac
 done
 
-MIRROR_LIST="Cargo.toml (authoritative), Cargo.lock, vox-fuzz.spec, flake.nix, src/version.vox"
+MIRROR_LIST="Cargo.toml (authoritative), Cargo.lock, vox-fuzz.spec, flake.nix, src/version.vox, tests/001_smoke.expected, tests/070_cli.expected"
 
 write_version_everywhere() {
     local new="$1"
@@ -59,6 +59,12 @@ write_version_everywhere() {
     sed -i "0,/^Version:\( *\).*/s//Version:\1$new/" vox-fuzz.spec
     sed -i "0,/version = \".*\";/s//version = \"$new\";/" flake.nix
     sed -i "s/vox-fuzz [0-9][0-9.]*/vox-fuzz $new/" src/version.vox
+    # The test fixtures that assert the CLI's version line are mirrors too.
+    # Without this a bump updates version.vox, the `version` subcommand then
+    # prints the new number, and 001_smoke/070_cli fail on the old one --
+    # every release breaking CI in exactly the same way (seen on 0.2.0).
+    sed -i "s/vox-fuzz [0-9][0-9.]*/vox-fuzz $new/" \
+        tests/001_smoke.expected tests/070_cli.expected
     # Refresh Cargo.lock's record of this package.
     cargo check --quiet >/dev/null 2>&1 || true
     verify_version_consistency "$new"
