@@ -1,0 +1,6 @@
+vox-fuzz gen: seeds 700.. count 3 budget 8 timeout 5000ms
+programs: 3
+compiled: 0
+findings: 3
+fuzz run exits clean: 1
+asm-reject finding recorded: 1

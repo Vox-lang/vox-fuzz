@@ -15,7 +15,8 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     'gen write' of 'the source path'.
     a number called 'the compiler exit code' is 'compile vox' of 'the source path' and "./vf_gen_bin".
     If 'the compiler exit code' is less than 0 then,
-        a number called 'the lost compiler finding' is 'finding save' of "ice" and seed and 'the source path' and "compiler run did not exit",
+        a text called 'the hang detail' is "compiler exceeded the {'the compile budget in milliseconds'}ms compile budget (independent of --timeout, which bounds only the run)",
+        a number called 'the compile hang finding' is 'finding save' of "hang" and seed and 'the source path' and 'the hang detail',
         Set stat_findings to stat_findings add 1,
         Return a number, 1.
     If 'the compiler exit code' is greater than 128 then,
@@ -27,7 +28,15 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
         Set stat_findings to stat_findings add 1,
         Return a number, 1.
     If 'the compiler exit code' is greater than 0 then,
-        a number called 'the toolchain check' is 'run shell' of "grep -q -e nasm -e 'ld:' ./vf_cerr" and 5000,
+        (vox's own deliberate wrapper lines - "NASM assembly failed", "Linking
+         failed" (src/main.rs:728, :911) - are the signal: they are printed on
+         exactly the codegen-stage-failed path, in this exact casing, every
+         time. Match those with -F first. The nasm/ld: patterns stay as
+         additional alternatives for a toolchain that does echo them, but per
+         FUZZER_DEFECTS.md entry 1 they were never sufficient alone: nasm's own
+         diagnostic never contains "nasm", and this platform's linker prefixes
+         "ld.bfd:", not "ld:".)
+        a number called 'the toolchain check' is 'run shell' of "grep -q -F -e 'NASM assembly failed' -e 'Linking failed' -e nasm -e 'ld:' ./vf_cerr" and 5000,
         If 'the toolchain check' is 0 then,
             a number called 'the rejection finding' is 'finding save' of "asm-reject" and seed and 'the source path' and "emitted assembly refused by nasm or ld",
             Set stat_findings to stat_findings add 1,

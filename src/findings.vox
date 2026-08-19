@@ -10,12 +10,27 @@ To 'finding path' with a text called category and a number called seed.
 
 To 'finding exists' with a text called category and a number called seed.
     a text called 'the finding directory' is 'finding path' of category and seed.
-    a text called 'the existence probe' is "test -d {'the finding directory'}".
-    a number called 'the probe result' is 'run shell' of 'the existence probe' and 5000.
-    Return a boolean, 'the probe result' is 0.
+    Return a boolean, 'the finding directory' is available.
 
-(`a boolean called present is st is 0.` does not parse - a comparison
- cannot initialise a declaration; return it directly, which does work.)
+(finding path/category/seed never carry attacker- or flag-controlled text
+ - only findings_dir does (--out) - but the whole directory is built and
+ checked as one text value, so there is nothing left to quote here: 'is
+ available' is access(2), not a shell.)
+
+(Everything below that is plain filesystem work - making directories,
+ copying a file, writing text - is done in Vox, not through /bin/sh: per
+ plan 322 A2, that is the fix, not quoting, wherever the language can do
+ the work itself. findings_dir/vox_binary/vox_core (--out/--vox/--core)
+ are user-controlled; a shell that spliced them in raw is exactly finding
+ 02. Only two steps are left on a shell at all - capturing `vox --version`
+ and setting the executable bit - because Vox has no way to capture a
+ child's stdout or to chmod a file. Both interpolate vox_binary and 'the
+ finding directory' only through 'shell quote' (harness.vox), so there is
+ one place to audit for every value that started outside this source.
+ repro.sh's own vox_binary line is quoted the same way for a different
+ reason: that script is not a shell command vox-fuzz runs, but a spaced
+ --vox would still leave whoever runs repro.sh later with a broken
+ script - the benign half of finding 02 again, one step removed.)
 
 To 'finding save' with a text called category and a number called seed and a text called src and a text called detail.
     a text called 'the finding directory' is 'finding path' of category and seed.
@@ -23,17 +38,26 @@ To 'finding save' with a text called category and a number called seed and a tex
     If 'already saved' then,
         Set findings_count to findings_count add 1,
         Return a number, findings_count.
-    a text called 'the directory command' is "mkdir -p {'the finding directory'}".
-    a number called 'the directory result' is 'run shell' of 'the directory command' and 5000.
-    a text called 'the copy command' is "cp {src} {'the finding directory'}/program.vox".
-    a number called 'the copy result' is 'run shell' of 'the copy command' and 5000.
-    a text called 'the classification command' is "printf 'category: {category}\\nseed: {seed}\\ndetail: {detail}\\n' > {'the finding directory'}/classification.txt".
-    a number called 'the classification result' is 'run shell' of 'the classification command' and 5000.
-    a text called 'the version command' is "{vox_binary} --version >> {'the finding directory'}/classification.txt 2>&1".
+    a number called 'the mkdir result' is 'make directories' of 'the finding directory'.
+    open a file for reading called 'the program source' at src.
+    a buffer called 'the program bytes'.
+    Read from 'the program source' into 'the program bytes'.
+    Close 'the program source'.
+    a text called 'the program copy path' is "{'the finding directory'}/program.vox".
+    open a file for writing called 'the program copy' at 'the program copy path'.
+    Write 'the program bytes' to 'the program copy'.
+    Close 'the program copy'.
+    a text called 'the classification path' is "{'the finding directory'}/classification.txt".
+    open a file for writing called 'the classification file' at 'the classification path'.
+    Write "category: {category}\nseed: {seed}\ndetail: {detail}\n" to 'the classification file'.
+    Close 'the classification file'.
+    a text called 'the version command' is "{'shell quote' of vox_binary} --version >> {'shell quote' of 'the finding directory'}/classification.txt 2>&1".
     a number called 'the version result' is 'run shell' of 'the version command' and 10000.
-    a text called 'the repro command' is "printf '#!/bin/sh\\nexport VOX_CORE_PATH=\"${{VOX_CORE_PATH:-{vox_core}}}\"\\n{vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\\n' > {'the finding directory'}/repro.sh".
-    a number called 'the repro result' is 'run shell' of 'the repro command' and 5000.
-    a text called 'the chmod command' is "chmod +x {'the finding directory'}/repro.sh".
+    a text called 'the repro path' is "{'the finding directory'}/repro.sh".
+    open a file for writing called 'the repro file' at 'the repro path'.
+    Write "#!/bin/sh\nexport VOX_CORE_PATH=\"${{VOX_CORE_PATH:-{vox_core}}}\"\n{'shell quote' of vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\n" to 'the repro file'.
+    Close 'the repro file'.
+    a text called 'the chmod command' is "chmod +x {'shell quote' of 'the finding directory'}/repro.sh".
     a number called 'the chmod result' is 'run shell' of 'the chmod command' and 5000.
     Set findings_count to findings_count add 1.
     Return a number, findings_count.

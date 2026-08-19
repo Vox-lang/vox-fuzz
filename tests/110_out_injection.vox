@@ -1,0 +1,31 @@
+see "../src/harness.vox".
+
+(A comparison cannot initialise a declaration - `a boolean called x is a
+ is b.` does not parse, per findings.vox's own note on this. Returning it
+ directly from a function does work.)
+To 'texts equal' with a text called left and a text called right.
+    Return a boolean, left is right.
+
+(A2 regression (plan 322): findings.vox/runner.vox must never let
+ --out/--vox reach a shell unquoted. supervise passes argv directly via
+ execve (no outer shell to accidentally do the escaping for us), so
+ '--out' carries the injection payload as one real argument, exactly as
+ an orchestration wrapper deriving --out from an untrusted string would
+ produce it. A vox shim that always panics forces the ICE branch, which
+ is the only path that reaches 'finding save'. Run from the repo root,
+ where ./build/vox-fuzz lives after `make build`.)
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_inject_shim ./vf_inject_proof ./vfinj*" and 5000.
+a number called 'the shim directory' is 'run shell' of "mkdir -p ./vf_inject_shim" and 5000.
+a number called 'the shim body' is 'run shell' of "printf '#!/bin/sh\necho panicked >&2\nexit 101\n' > ./vf_inject_shim/voxpanic" and 5000.
+a number called 'the shim permission' is 'run shell' of "chmod +x ./vf_inject_shim/voxpanic" and 5000.
+
+a list called 'the fuzz arguments' is ["gen", "--seed", "800", "--count", "1", "--budget", "4", "--timeout", "3000", "--vox", "./vf_inject_shim/voxpanic", "--out", "./vfinj$(touch vf_inject_proof)z"].
+a text called 'the fuzz verdict' is supervise of "./build/vox-fuzz" and 'the fuzz arguments' and 30000.
+a boolean called 'the fuzz exited normally' is 'texts equal' of 'the fuzz verdict' and "exit".
+Print "fuzz process exited normally: {'the fuzz exited normally'}".
+
+a number called 'the proof check' is 'run shell' of "test -e ./vf_inject_proof" and 5000.
+Print "injected command did not run: {'the proof check' is not 0}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_inject_shim ./vf_inject_proof ./vfinj*" and 5000.
