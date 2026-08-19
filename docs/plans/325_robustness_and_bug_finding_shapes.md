@@ -78,6 +78,25 @@ each maps to a real compiler bug it therefore could not find.
       cross-referenced here so the connection to bug #28 is not lost:
       #28 turned entirely on a conditional declaration *preceding* a
       top-level one, an order the generator never emits.
+- [ ] **A flag schema, parsed and read from inside a function.**
+      (added 2026-08-20) Would have found #31 and #32 unaided: declare
+      one flag of each value type, some with defaults and some without,
+      `Parse flags.`, then read every flag *both* at top level *and*
+      inside a called function — #32 was invisible at top level. The
+      harness runs programs with no arguments, so undefaulted flags
+      exercise the "unsupplied" path (#31's crash site) for free; a
+      later variant can pass seeded flag values once plan 324 T3's
+      input axis lands.
+- [ ] **Predicates with knowable answers.** (added 2026-08-20) `is
+      empty` on a freshly-declared `""` text, an `[]` list, a new
+      buffer — and their non-empty twins — plus `even`/`odd`/
+      `positive`/`negative`/`zero` on constants. #33 (`is empty` on a
+      text always false) was a wrong-answer bug, not a crash: no
+      signal-death oracle can see it. Where the generator knows the
+      truth value at emission time, it can branch to `Exit` with a
+      distinct code on the wrong answer, turning a silent lie into a
+      detectable exit — a poor man's output oracle that needs no
+      harness change.
 
 ## Task 4 — emission-rate reporting
 
