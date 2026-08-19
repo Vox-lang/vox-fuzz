@@ -1,0 +1,5 @@
+vox-fuzz gen: seeds 950.. count 1 budget 4 timeout 3000ms
+programs: 1
+compiled: 0
+findings: 1
+repro.sh ran the shimmed compiler: 1

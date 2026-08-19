@@ -21,6 +21,24 @@ To crashed with a number called status.
 
 Set 'the last status' to -1.
 
+(A killed child may itself be a shell with a still-running grandchild -
+ supervise's own SIGKILL only ever reaches the direct child. /proc's
+ per-task children list is a plain file, so this needs no shell and no
+ process-group plumbing Vox does not expose: read it, and if a grandchild
+ is named, kill that too. Absence (no such path, no listed child) is the
+ common case and is silently fine - there is nothing orphaned to chase.)
+To 'kill grandchild of' with a number called pid.
+    a text called 'the children path' is "/proc/{pid}/task/{pid}/children".
+    open a file for reading called 'the children file' at 'the children path'.
+    On error Return a number, 0.
+    a buffer called 'the children data'.
+    Read from 'the children file' into 'the children data'.
+    Close 'the children file'.
+    a number called 'the grandchild pid' is 'the children data' as a number.
+    If 'the grandchild pid' is greater than 0 then,
+        Send signal 9 to process 'the grandchild pid'.
+    Return a number, 'the grandchild pid'.
+
 (Run a program to completion, or to the deadline, whichever comes first.
  Returns how it ended; the raw wait status is left in 'the last status'.
 
@@ -44,6 +62,7 @@ To supervise with a text called program and a list called 'the argument list' an
       If 'the child is still running' then,
           a number called 'milliseconds waited' is the clock's elapsed in milliseconds,
           If 'milliseconds waited' is greater than 'the deadline in milliseconds' then,
+              a number called 'the killed grandchild' is 'kill grandchild of' of 'the child',
               Send signal 9 to process 'the child',
               Set 'reap result' to reap child 'the child',
               Set 'the child is still running' to false,
@@ -69,6 +88,57 @@ To 'run shell' with a text called command and a number called 'the deadline in m
   If 'how it ended' is not 'the exit verdict' then,
       Return a number, 0 minus 1.
   Return a number, 'exit code of' of 'the last status'.
+
+(The one place a value that did not originate in this source gets spliced
+ into a 'run shell' string. Single-quotes the whole value and closes/reopens
+ the quote around any embedded quote (' becomes '\''), which is the standard
+ POSIX-shell escape - so the result is always exactly one shell word, no
+ matter what bytes it holds. --out/--vox/--core reach 'run shell' only
+ through this function; that makes it the one place to audit, per plan
+ 322 A2.)
+To 'shell quote' with a text called value.
+    a buffer called 'the source bytes' is value.
+    a buffer called 'the quoted bytes' is "'".
+    a number called 'the scan position' is 1.
+    a number called 'the byte count' is 'the source bytes's size.
+    a buffer called 'one byte' is " ".
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the source bytes',
+        If 'the current byte' is 39 then,
+            append "'\\''" to 'the quoted bytes',
+        Otherwise,
+            Set byte 1 of 'one byte' to 'the current byte',
+            append 'one byte' to 'the quoted bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    append "'" to 'the quoted bytes'.
+    a text called result is 'the quoted bytes' as text.
+    Return a text, result.
+
+(mkdir -p, without a shell: 'Create a directory called' is one mkdir(2)
+ call, so a path whose parent does not exist yet fails. Walk the path
+ byte by byte and create each ancestor as its closing '/' is seen, then
+ the whole path last. This is what lets findings.vox create a
+ user-controlled --out directory (however it is spelled - nested, spaced,
+ or holding characters that would have been shell syntax) without ever
+ handing it to /bin/sh.)
+To 'make directories' with a text called path.
+    a buffer called 'the path bytes' is path.
+    a number called 'the byte count' is 'the path bytes's size.
+    a number called 'the scan position' is 1.
+    a buffer called prefix.
+    a buffer called 'one path byte' is " ".
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the path bytes',
+        a number called 'prefix so far length' is prefix's size,
+        If 'the current byte' is 47 and 'prefix so far length' is greater than 0 then,
+            a text called ancestor is prefix as text,
+            Create a directory called ancestor.
+        Set byte 1 of 'one path byte' to 'the current byte',
+        append 'one path byte' to prefix,
+        Set 'the scan position' to 'the scan position' add 1.
+    a text called 'the whole path' is prefix as text.
+    Create a directory called 'the whole path'.
+    Return a number, 0.
 
 (The bound 'the exit verdict' local is vox bug #21's workaround - a
  string literal in a function-body If condition mis-resolves as a

@@ -1,0 +1,6 @@
+vox-fuzz gen: seeds 800.. count 1 budget 4 timeout 3000ms
+programs: 1
+compiled: 0
+findings: 1
+fuzz process exited normally: 1
+injected command did not run: 1
