@@ -51,7 +51,7 @@ a list called 'the hang arguments' is ["-c", "while :; do :; done"].
  scratch' rather than a hand-assembled argument list: a real compiled
  Vox program reads arguments's first, writes a file inside it, and the
  directory - file included - is gone once the run completes.)
-a number called 'fixture compile result' is 'compile vox' of "tests/fixtures/scratch_writer.vox" and "./vf_scratch_writer_bin".
+a number called 'fixture compile result' is 'compile vox' of "." and "tests/fixtures/scratch_writer.vox" and "./vf_scratch_writer_bin" and "./vf_cerr".
 a text called 'writer verdict' is 'run program in scratch' of "./vf_scratch_writer_bin" and 504 and 5000.
 a text called 'writer scratch path' is 'scratch dir path' of 504.
 a boolean called 'writer path exists after' is false.

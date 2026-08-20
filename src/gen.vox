@@ -664,6 +664,171 @@ To 'gen leaf repeat' with a text called indent and a boolean called nested.
     a list called 'the closing lines' is ['read line'].
     'gen join lines' of indent and nested and 'the closing lines'.
 
+(D4: `Break`/`Continue` - the one construct the generator never emitted
+ (0 of 40 sampled programs). LANGUAGE.md "Loop Control" documents both
+ as standalone statements: `Break.` exits the loop, `Continue.` skips to
+ the next iteration. This leaf emits a bounded loop containing a guarded
+ one of the four safe combinations, each hand-verified against v0.4.5
+ (compiled with $VOX and run under `timeout`, the output confirmed to
+ match the expected break/continue semantics):
+
+   For each + Break
+     For each number from 1 to 5,
+         Print number,
+         If number is equal to 3 then,
+             Break.
+         Print "after".
+     -> 1 after 2 after 3 done  (Break skips the trailing Print at 3 and
+         exits the loop; the range still bounds it - a guard value above
+         5 just runs the full range with no break.)
+
+   For each + Continue
+     For each number from 1 to 5,
+         Print number,
+         If number is equal to 3 then,
+             Continue.
+         Print "after".
+     -> 1 after 2 after 3 4 after 5 after done  (Continue skips only the
+         trailing Print at 3; the For-each counter auto-advances, so the
+         loop still terminates even though Continue skipped the body's
+         rest - this is why For-each + Continue is safe without an
+         explicit Increment.)
+
+   While + Break
+     a number called u1 is 0.
+     While u1 is less than 5,
+         Print u1,
+         If u1 is equal to 3 then,
+             Break.
+         Increment u1.
+     -> 0 1 2 3 done  (Break exits; Increment sits AFTER the If, so a
+         break correctly skips it - we are leaving. The While condition
+         bounds it regardless: a guard value >= 5 never fires and u1
+         climbs to 5 and stops.)
+
+   While + Continue
+     a number called u1 is 0.
+     While u1 is less than 5,
+         Increment u1,
+         If u1 is equal to 3 then,
+             Continue.
+         Print u1.
+     -> 1 2 4 5 done  (Continue skips the Print at 3; Increment sits
+         BEFORE the Continue, so progress is guaranteed even when the
+         guard fires - the one ordering constraint 3 requires, and the
+         one an unconstrained While + Continue hung on in an earlier
+         probe: Continue before Increment advances nothing, the guard
+         fires, the loop body repeats forever at the same counter.)
+
+ The verified compilable shape (constraint 2): the loop head, body
+ statement, If-guard and Break/Continue all live on one comma-joined
+ line, the Break/Continue carrying its own period to close the If, and
+ the loop's own closing period (appended by 'gen join lines' on its last
+ line) terminating the whole statement - exactly the shape 'gen leaf
+ while' already uses and 'gen leaf repeat' deliberately avoids. The
+ trailing `Print "x"` / `Print u{N}` inside the body is what makes the
+ break/continue observable in the program's output (fewer markers than
+ the range when a Break fires, a gap in the markers when a Continue
+ fires). The post-loop `Print u{N}` on the While forms is 'gen leaf
+ while's own read-back, kept for the same reason: reaching it at all
+ proves the loop terminated rather than hung.
+
+ The guard value is drawn from a range that SOMETIMES exceeds the loop
+ bound, so across seeds the guard fires for some programs and not for
+ others - the honest demonstration that termination never depends on it
+ firing, since the loop's own bound (For-each range / While condition)
+ always closes the loop whether the guard was ever true or not.
+
+ Safe-closer decision: this leaf is loop-bearing (For-each and While are
+ both nesting clauses, rule 1), so its closing period closes the LOOP,
+ not an enclosing block - exactly the reason kinds 9/14/6-grid and
+ 25-28 are excluded from 'gen any leaf'. It therefore does NOT join 'gen
+ any leaf', and follows kinds 29/30 (While/Repeat) in being reachable
+ only at the true top level: the While forms inherit 'gen leaf while's
+ top-level-only position (their termination guarantee is that of an
+ independent, self-closing top-level sentence), and the For-each forms
+ are held there too for the same simplest-to-verify reason 'gen leaf
+ while' gives. So kind 31 is added to the depth-3 draw only, left out of
+ depth 2/1/0 and out of 'gen any leaf', and needs no avoid-onerror remap
+ (at depth 3 avoid_onerror is false, the same reason 29/30 need none).
+ 'nested' is accordingly always false here, and the rendered lines are
+ independently period-closed, the way 'gen leaf while's are.
+
+ Fresh locals: the While forms declare a u{N} counter, reusing
+ gen_whiles (the same counter 'gen leaf while' uses) so two While-bearing
+ leaves in one program never collide on a u-name. The For-each forms use
+ the built-in `number` loop variable and declare nothing fresh. Each of
+ the four combinations lives in its own helper (the 'gen leaf call' ->
+ 'gen call zero/one/two/grid' pattern) so each has its locals at its own
+ function top level - never inside an If branch, which keeps them
+ permanently in scope and avoids both note 6b (a period inside a branch
+ closing the branch before a later reference) and the same-name-across-
+ branches collision 'gen leaf environment inrange' documented.)
+To 'gen leaf loop control' with a text called indent and a boolean called nested.
+    (The combo is drawn through 'rng below' of 13 then folded mod 4, NOT
+     'rng below' of 4, deliberately. 'rng below' of N is r modulo N, and
+     this generator's LCG has correlated low bits: the kind draw just
+     before this ('rng below' of 32, in 'gen statement') returns 31 only
+     when that r's low 5 bits are 11111, which forces the NEXT r to be
+     divisible by 32 and therefore by 4 - so an immediately-following
+     'rng below' of 4 (or of any multiple of 4) would ALWAYS return 0,
+     locking the combo to 0 (Break-foreach) and making Continue
+     unreachable for every seed. Hand-confirmed: with 'rng below' of 4
+     here, 200 seeded programs produced 13 Break-foreach hits and zero
+     Continue. 13 is prime and not a multiple of 4, so r modulo 13
+     depends on the whole r, not just the low bits the LCG locks - the
+     combo then varies across seeds and all four combinations are
+     reachable. 13 modulo 4 maps 0..12 onto 0,1,2,3 as 4,3,3,3, a mild
+     bias toward combo 0 that is irrelevant next to the coverage gain.)
+    a number called 'the combo' is 'rng below' of 13.
+    Set 'the combo' to 'the combo' modulo 4.
+    If 'the combo' is 0 then,
+        'gen leaf loop break foreach' of indent and nested.
+    If 'the combo' is 1 then,
+        'gen leaf loop continue foreach' of indent and nested.
+    If 'the combo' is 2 then,
+        'gen leaf loop break while' of indent and nested.
+    If 'the combo' is 3 then,
+        'gen leaf loop continue while' of indent and nested.
+
+To 'gen leaf loop break foreach' with a text called indent and a boolean called nested.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 3.
+    a number called 'the guard' is 'rng below' of 'the guard span' add 1.
+    a text called 'loop line' is "For each number from 1 to {'the limit'}, Print number, If number is equal to {'the guard'} then, Break. Print \"x\"".
+    a list called 'the lines' is ['loop line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop continue foreach' with a text called indent and a boolean called nested.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 3.
+    a number called 'the guard' is 'rng below' of 'the guard span' add 1.
+    a text called 'loop line' is "For each number from 1 to {'the limit'}, Print number, If number is equal to {'the guard'} then, Continue. Print \"x\"".
+    a list called 'the lines' is ['loop line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop break while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 2.
+    a number called 'the guard' is 'rng below' of 'the guard span'.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Print u{gen_whiles}, If u{gen_whiles} is equal to {'the guard'} then, Break. Increment u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop continue while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 2.
+    a number called 'the guard' is 'rng below' of 'the guard span'.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Increment u{gen_whiles}, If u{gen_whiles} is equal to {'the guard'} then, Continue. Print u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
 (`environment's`: bug #24 (an unset variable segfaulted, uncatchable by
  On error) and bug #26 (out-of-range positional properties - first/last
  on an empty environment) - both fixed in 0.4.3/0.4.4 per CHANGELOG, so
@@ -737,24 +902,37 @@ To 'gen leaf environment oob' with a text called indent and a boolean called nes
 
 (`arguments's`: bugs #23 and #26 lived here, both fixed. The generated
  program runs with no user arguments (runner.vox's 'run program' always
- passes an empty argument list), so count/name/empty are the properties
- that stay meaningful either way - count is always 1, name is always
- the program's own path, empty is always true, and all three are plain
- reads with no error path, so this is a safe closer. `first`/`second`/
- `last`/`the argument at` would, with zero arguments passed, ALWAYS hit
- their out-of-range path rather than sometimes exercising the in-range
- one - the brief's own instruction is to flag that rather than emit
- something that can only ever prove one thing; noted in the task report
- instead. `arguments's all` still gets exercised for real, just via
- 'gen leaf treating print' above, since a treating clause needs a
- collection anyway and an always-empty one is exactly the collection
- arguments's all always is - one fewer construct duplicated as its own
- leaf.)
+ passes an empty argument list), so count/empty are the properties that
+ stay meaningful either way - count is always 1, empty is always true,
+ and both are plain reads with no error path, so this is a safe closer.
+
+ `arguments's name` was dropped here as a direct consequence of D1
+ (per-run scratch isolation, see loop_gen.vox / sandbox.vox): the
+ generated program's own path is now `./vf_scratch/run_{pid}_{seed}/
+ vf_gen_bin`, and `arguments's name` returns that path. The pid varies
+ per run, so printing it would make a generated program's stdout
+ non-deterministic, and tests/060_loop_gen.expected + tests/070_cli.expected
+ pin program output by exact diff - every run would break the gate. This
+ is the same shape `gen leaf environment inrange` already solved for
+ `environment's "PATH"`: raw host/run state is non-deterministic, so the
+ leaf reads only the deterministic properties (count, empty) and never
+ prints the raw text. count and empty stay because both are fixed
+ regardless of the path - count is always 1, empty always true with no
+ user args.
+
+ `first`/`second`/`last`/`the argument at` would, with zero arguments
+ passed, ALWAYS hit their out-of-range path rather than sometimes
+ exercising the in-range one - the brief's own instruction is to flag
+ that rather than emit something that can only ever prove one thing;
+ noted in the task report instead. `arguments's all` still gets
+ exercised for real, just via 'gen leaf treating print' above, since a
+ treating clause needs a collection anyway and an always-empty one is
+ exactly the collection arguments's all always is - one fewer construct
+ duplicated as its own leaf.)
 To 'gen leaf arguments inrange' with a text called indent and a boolean called nested.
     a text called 'count line' is "Print arguments's count".
-    a text called 'name line' is "Print arguments's name".
     a text called 'empty line' is "Print arguments's empty".
-    a list called 'the lines' is ['count line', 'name line', 'empty line'].
+    a list called 'the lines' is ['count line', 'empty line'].
     'gen join lines' of indent and nested and 'the lines'.
 
 (Deep expressions and the operator matrix: modulo, precedence (`*`/`%`
@@ -851,6 +1029,8 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf while' of indent and nested.
     If kind is 30 then,
         'gen leaf repeat' of indent and nested.
+    If kind is 31 then,
+        'gen leaf loop control' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -884,7 +1064,9 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
  closer, per its own function comment. 25-28 (treating, environment oob,
  rich condition) do not, for the same reasons kind 9/14/6-grid don't;
  29-30 (While/Repeat) aren't reachable outside the true top level at
- all, so they can never even be offered here.)
+ all, so they can never even be offered here; 31 (Break/Continue loop
+ control) is loop-bearing and top-level-only for the same two reasons at
+ once, so it is held out of this pool too - see its own comment.)
 To 'gen any leaf' with a text called indent and a boolean called nested.
     a number called pick is 'rng below' of 16.
     a number called kind is 0.
@@ -992,9 +1174,11 @@ To 'gen if' with a number called depth and a text called indent.
  20-24 (always-safe leaves), 25-28 (leaves that need the same
  avoid-onerror remap as 3/5/6/9/10/14, for the reasons given on each
  leaf's own comment), and 29-30 (While/Repeat, top-level only - see
- 'gen leaf while's comment for why). depth 3 draws from the full range;
+ 'gen leaf while's comment for why). D4 adds 31 (Break/Continue loop
+ control, top-level only - same rule as 29/30, see 'gen leaf loop
+ control's comment). depth 3 draws from the full range;
  depth 2 and 1 drop new-var (nesting must not permanently grow scope)
- and 29-30 (their termination guarantee depends on being an independent,
+ and 29-31 (their termination guarantee depends on being an independent,
  self-closing top-level sentence, which nested positions are not); depth
  0 drops loop/if and every T3 addition too, leaves 0-15 only (nesting
  budget exhausted - kept to the pre-T3 range rather than widened, since
@@ -1002,7 +1186,7 @@ To 'gen if' with a number called depth and a text called indent.
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        Set kind to 'rng below' of 31.
+        Set kind to 'rng below' of 32.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,

@@ -39,49 +39,43 @@ To f3 with a number called p1 and a number called p2.
 
 a number called v1 is 753.
 a number called v2 is 806.
-print each item from arguments's all treating "-" as "none".
-a t1 called i1.
-Set i1's x1 to 266.
-a t1 called i2 is i1.
-Set i2's x1 to 459.
-Print i1's x1.
-Print i2's x1.
-a t1 called i3.
-Set i3's x1 to 865.
-a t1 called i4 is i3.
-Set i4's x1 to 142.
-Print i3's x1.
-Print i4's x1.
-If v1 is greater than v2 then,
-  a t3 called i5,
-  Set i5's g1's x1 to 0,
-  Print i5's g1's x1,
-  Print i5.
-a buffer called b1 is 46 bytes in size.
-Print byte 106 of b1.
-On error print "buffer read out of range".
-a list called l1 is [93, 34].
-Print element 501 of l1.
-On error print "list read out of range".
-print each item from [70, 47] treating 16 as 85.
-a float called d1 is 219.92.
-a float called d2 is 10.26.
+Print arguments's count.
+Print arguments's empty.
+a list called l1 is [33, 66].
+append 59 to l1.
+Print element 1 of l1.
+For each number from 1 to 1,
+  Set v2 to v1.
+a value called y1 is 0.
+Print y1.
+Set y1 to "reassigned1".
+Print y1.
+Set v1 to v2 times v1.
+a number called v3 is 491.
+Print v3 multiply v1.
+a float called d1 is 685.10.
+a float called d2 is 20.92.
 a float called d3 is d1 multiply d2.
 Print d3.
 a float called d4 is d1 divide d2.
 Print d4.
-a float called d5 is d1 add v2.
+a float called d5 is d1 add v3.
 Print d5.
-a list called l2 is [].
-append v2 to l2, but if v2 is less than v1 or v2 modulo 4 is equal to 0 append v1 add v2, but if v2 is not equal to v1 or v2 modulo 6 is equal to 0 append v1 add v2, but if v2 is less than or equal to v1 append v1 add v2, otherwise append v2.
-a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_830413".
-On error print "environment variable not set".
-Print 'the missing value 1'.
-a number called r1 is 0.
-Repeat 4 times, Increment r1.
-
-Print r1.
-Print f1.
-Exit 142.
+a number called env1count is environment's count.
+Print env1count as a boolean.
+Print environment's empty.
+a buffer called env1pathbuf is environment's "PATH".
+Print env1pathbuf's empty.
+Print arguments's count.
+Print arguments's empty.
+a list called l2 is [81, 50].
+append 59 to l2.
+Print element 1 of l2.
+For each number from 1 to 5,
+  a t3 called i1,
+  Set i1's g1's x1 to 132,
+  Print i1's g1's x1,
+  Print i1.
+Exit 101.
 
 reproducible: 1

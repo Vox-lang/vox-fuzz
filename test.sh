@@ -51,7 +51,7 @@ for f in "${FILES[@]}"; do
     # test. 150s outlasts the longest per-test deadline any test passes
     # to 'run shell' (070's 120s).
     timeout 150 "$bin" > "$WORK/$name.out" 2>&1
-    rm -f ./vf_*
+    rm -rf ./vf_*
     if diff -q "$exp" "$WORK/$name.out" > /dev/null; then
         echo -e "${GREEN}PASS${NC} $name"
         PASSED=$((PASSED+1))
