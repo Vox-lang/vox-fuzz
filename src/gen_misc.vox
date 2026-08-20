@@ -1,0 +1,437 @@
+a number called gen_envs is 0.
+
+a number called gen_flags is 0.
+
+a boolean called gen_uses_flag_reader is true.
+
+(Plan 327 Part A: the argv the harness will hand this program, and what
+ the program should therefore see. The generator CHOOSES the arguments,
+ so for once it knows the expected values at generation time — which is
+ the deferred output-oracle problem already solved in one corner. A
+ program given a valid invocation asserts its flags parsed to exactly
+ what was passed and Exits with a distinct code if not, so a wrong
+ answer becomes a detectable one without any reference implementation.
+
+ gen_argv is read by loop_gen and handed to BOTH of the oracle's runs.
+ If the two runs ever got different argv, the difference between them
+ would BE the input and every program would be a false nondeterminism
+ finding.
+
+ gen_asserts_argv is false for the hostile shapes, where the point is
+ that the program must not crash rather than that it must agree with a
+ prediction — a malformed number raises and yields 0, a missing value
+ leaves the flag empty, and an unknown flag is not consumed at all.
+ Asserting on those would be asserting on behaviour the fuzzer is
+ supposed to be QUESTIONING.)
+
+a list called gen_argv is [].
+
+a text called gen_expected_label is "".
+
+a number called gen_expected_count is 0.
+
+a boolean called gen_expects_on is false.
+
+a boolean called gen_asserts_argv is false.
+
+a number called gen_reader_calls is 0.
+
+(`environment's`: bug #24 (an unset variable segfaulted, uncatchable by
+ On error) and bug #26 (out-of-range positional properties - first/last
+ on an empty environment) - both fixed in 0.4.3/0.4.4 per CHANGELOG, so
+ both are now defined-behaviour-under-test, the same standing the
+ buffer/list/map oob leaves already have.
+
+ The inrange leaf reads real environment state - count, a named lookup
+ of PATH - but two fixed regressions mean it must never print the raw
+ result, and must never reuse a fixed local name. An earlier version
+ printed environment's count and environment's "PATH" directly, and
+ one landed in a checked-in test fixture verbatim: home directory, tool
+ versions, every installed plugin, on a public repo. Reading is exactly
+ the coverage bugs #24 and #26 are about; printing what was read is not
+ required to exercise that and is the part that leaked. So every read
+ here is immediately collapsed to a boolean before it is printed -
+ `as a boolean` (0 is false, nonzero is true) for the count, and a
+ buffer's own `empty` property (declaring the buffer directly from
+ environment's "PATH", the same construction 'needle buf' elsewhere in
+ this file uses to turn a text expression into a buffer) for the named
+ lookup, never the text itself. `environment's empty` is already a
+ boolean and was never the problem.
+
+ The second regression a fixed local name caused: this leaf is reachable
+ both as a nested block's mandatory closer (inside a conditionally-taken
+ If branch) and as an ordinary top-level statement, in the same program,
+ and a fixed name (`envpathbuf`) collided with itself across the two.
+ Hand-reduced to a compiler defect with nothing environment-specific
+ left in it: `If false-condition then, a buffer called b is "x".` /
+ `a buffer called b is "y".` segfaults even though the first
+ declaration's branch never runs - a text/buffer declared on an untaken
+ If path corrupts a later, same-named declaration elsewhere. This reads
+ like bug #25's family (a declaration on a conditional path leaving bad
+ storage behind) but #25's own fix, read literally, only names On
+ error/While/for-each/Repeat bodies - not If. Reported separately as a
+ finding, not tuned around; the generator-side fix is what every other
+ leaf in this file already does and this one alone was not doing -
+ counter-suffixed names (env{gen_envs}count, env{gen_envs}pathbuf), so
+ two calls can never collide regardless of which one lands inside a
+ branch that turns out not to run.
+
+ All five lines are plain reads/declarations with no error path, so this
+ stays a safe closer.)
+
+To 'gen leaf environment inrange' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a text called 'count decl' is "a number called env{gen_envs}count is environment's count".
+    a text called 'count check' is "Print env{gen_envs}count as a boolean".
+    a text called 'empty line' is "Print environment's empty".
+    a text called 'path decl' is "a buffer called env{gen_envs}pathbuf is environment's \"PATH\"".
+    a text called 'path check' is "Print env{gen_envs}pathbuf's empty".
+    a list called 'the lines' is ['count decl', 'count check', 'empty line', 'path decl', 'path check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The oob leaf's own local, 'the missing value', is a fixed quoted name
+ rather than a counter-suffixed one - safe unlike the inrange leaf's
+ former envpathbuf, because this leaf is unsafe-closer/remap-only (see
+ below), which this file's own avoid-onerror machinery guarantees means
+ its real body only ever renders at the true top level, never inside a
+ conditionally-taken branch - there is no second scope for the same
+ name to collide with. Counter-suffixing it anyway would cost nothing
+ and remove the need to reason about that guarantee holding forever, so
+ it is done here too, purely as defensive consistency with the fix
+ above rather than because this leaf reproduces the defect.)
+
+To 'gen leaf environment oob' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a number called 'probe id' is 'rng below' of 1000000.
+    a text called decl is "a text called 'the missing value {gen_envs}' is environment's \"VOXFUZZ_UNSET_{'probe id'}\"".
+    a text called handler is "On error print \"environment variable not set\"".
+    a text called 'read line' is "Print 'the missing value {gen_envs}'".
+    a list called 'the lines' is [decl, handler, 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`arguments's`: bugs #23 and #26 lived here, both fixed. The generated
+ program runs with no user arguments (runner.vox's 'run program' always
+ passes an empty argument list), so count/empty are the properties that
+ stay meaningful either way - count is always 1, empty is always true,
+ and both are plain reads with no error path, so this is a safe closer.
+
+ `arguments's name` was dropped here as a direct consequence of D1
+ (per-run scratch isolation, see loop_gen.vox / sandbox.vox): the
+ generated program's own path is now `./vf_scratch/run_{pid}_{seed}/
+ vf_gen_bin`, and `arguments's name` returns that path. The pid varies
+ per run, so printing it would make a generated program's stdout
+ non-deterministic, and tests/060_loop_gen.expected + tests/070_cli.expected
+ pin program output by exact diff - every run would break the gate. This
+ is the same shape `gen leaf environment inrange` already solved for
+ `environment's "PATH"`: raw host/run state is non-deterministic, so the
+ leaf reads only the deterministic properties (count, empty) and never
+ prints the raw text. count and empty stay because both are fixed
+ regardless of the path - count is always 1, empty always true with no
+ user args.
+
+ `first`/`second`/`last`/`the argument at` would, with zero arguments
+ passed, ALWAYS hit their out-of-range path rather than sometimes
+ exercising the in-range one - the brief's own instruction is to flag
+ that rather than emit something that can only ever prove one thing;
+ noted in the task report instead. `arguments's all` still gets
+ exercised for real, just via 'gen leaf treating print' above, since a
+ treating clause needs a collection anyway and an always-empty one is
+ exactly the collection arguments's all always is - one fewer construct
+ duplicated as its own leaf.)
+
+To 'gen leaf arguments inrange' with a text called indent and a boolean called nested.
+    a text called 'count line' is "Print arguments's count".
+    a text called 'empty line' is "Print arguments's empty".
+    a list called 'the lines' is ['count line', 'empty line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Casts, `absolute`, and `Break` - all three grep-confirmed absent from
+ this generator before 2026-08-20, and `Break` was measured at 0 of 40
+ programs, the only construct at literally zero.
+
+ The cast pair is the point: `n as text` followed by `t as a number`
+ round-trips a value through text and back, and it is fed an extreme
+ literal, so i64's own limits go through the conversion. That is how a
+ saturating or wrapping cast would show itself - and compiler bug #34
+ (a float outside +/-2^63 formats as 9223372036854775808.372...) is
+ exactly a conversion boundary, found by hand while writing these
+ emitters rather than by the fuzzer, which could not reach it.
+
+ `Break`'s loop is bounded by construction - a fixed range with a
+ counter guard - so the program still always terminates. The guard's
+ period closes only the If (LANGUAGE.md rule 1), so the loop body
+ continues to the comma-joined line after it, which is why the print
+ sits inside the loop rather than after it.)
+
+To 'gen leaf cast and break' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the literal' is 'gen extreme number'.
+    a number called 'the ceiling' is 'rng below' of 20 add 5.
+    a text called 'source decl' is "a number called cn{n} is {'the literal'}".
+    a text called 'to text' is "a text called ct{n} is cn{n} as text".
+    a text called 'print text' is "Print ct{n}".
+    a text called 'round trip' is "a number called cb{n} is ct{n} as a number".
+    a text called 'print round trip' is "Print cb{n}".
+    a text called 'absolute probe' is "Print cn{n}'s absolute".
+    a text called 'loop line' is "For each ce{n} from 1 to {'the ceiling'},".
+    a text called 'the accumulate line' is "    a number called cs{n} is ce{n} multiply 2,".
+    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break.".
+    a list called 'the lines' is ['source decl', 'to text', 'print text', 'round trip', 'print round trip', 'absolute probe'].
+    'gen join lines' of indent and nested and 'the lines'.
+    'gen emit' of "{indent}{'loop line'}\n{indent}{'the accumulate line'}\n{indent}{'the guard line'}\n".
+
+(Timers and time values — plan 323 listed these Tier CONFINE on the
+ assumption that anything time-related needs a bound. A timer does not:
+ `Start`/`Stop` around a loop that is already bounded by construction
+ adds no waiting at all, and reading `elapsed` is a plain read. `Wait`
+ IS the construct that needs a bound and is deliberately still not
+ emitted here.
+
+ Every assertion is a knowable one — elapsed cannot be negative, a unix
+ timestamp cannot be non-positive, the year cannot be below 2000 — so
+ this leaf prints a verdict rather than a raw number. That keeps the
+ output deterministic despite the clock being anything but, which
+ matters because the same seed must produce the same PROGRAM and this
+ one's output must not wander between runs.
+
+ Syntax verified by hand first: `the clock's elapsed in milliseconds`
+ (the `in` cast only works on a timer's duration/elapsed), and
+ `Get current time into now` rather than any possessive on a bare
+ `time` — two forms I got wrong before reading LANGUAGE.md properly.)
+
+To 'gen leaf timer and clock' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the ceiling' is 'rng below' of 40 add 10.
+    a text called 'timer decl' is "a timer called tk{n}".
+    a text called 'timer start' is "Start tk{n}".
+    a text called 'accumulator' is "a number called ta{n} is 0".
+    a list called 'the lines' is ['timer decl', 'timer start', 'accumulator'].
+    'gen join lines' of indent and nested and 'the lines'.
+    'gen emit' of "{indent}For each te{n} from 1 to {'the ceiling'},\n".
+    'gen emit' of "{indent}    Set ta{n} to ta{n} add te{n}.\n".
+    a text called 'timer stop' is "Stop tk{n}".
+    a text called 'print acc' is "Print ta{n}".
+    a text called 'read elapsed' is "a number called tl{n} is the tk{n}'s elapsed in milliseconds".
+    a text called 'check elapsed' is "If tl{n} is negative then, Print \"tl{n} NEGATIVE\". Otherwise, Print \"tl{n} ok\"".
+    a text called 'get time' is "Get current time into tn{n}".
+    a text called 'read unix' is "a number called tu{n} is the tn{n}'s unix".
+    a text called 'check unix' is "If tu{n} is positive then, Print \"tu{n} ok\". Otherwise, Print \"tu{n} BAD\"".
+    a text called 'read year' is "a number called ty{n} is the tn{n}'s year".
+    a text called 'check year' is "If ty{n} is greater than 2000 then, Print \"ty{n} ok\". Otherwise, Print \"ty{n} BAD\"".
+    a list called 'the tail lines' is ['timer stop', 'print acc', 'read elapsed', 'check elapsed', 'get time', 'read unix', 'check unix', 'read year', 'check year'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(Weighted so most programs get a sane invocation — the common path, and
+ the one that has never run — while a minority get something hostile.
+ The hostile shapes are drawn from behaviour probed by hand against
+ 0.4.7 and recorded in defect 10, so none of them is a guess.)
+
+To 'gen build argv'.
+    (A list is emptied by assignment; `clear` is buffer-only.)
+    Set gen_argv to [].
+    Set gen_expected_label to "".
+    Set gen_expected_count to 0.
+    Set gen_expects_on to false.
+    Set gen_asserts_argv to false.
+    a number called shape is 'rng below' of 10.
+    (0-5: a valid invocation, asserted. Long form and short form are
+     different code paths through one schema, so both are drawn.)
+    If shape is less than 6 then,
+        Set gen_asserts_argv to true,
+        a number called 'the word' is 'rng below' of 100000,
+        a text called 'the label value' is "v{'the word'}",
+        a number called 'the count value' is 'rng below' of 10000,
+        (Prime modulus. Two consecutive `'rng below' of 2` draws in this
+         LCG ALWAYS differ — measured 2000 trials, 2000 disagreements,
+         zero agreements. Each draw's own distribution stays a fair
+         50/50, which is exactly why this hides: the marginals look
+         perfect while the PAIR is locked. Here that meant short form
+         always carried the boolean flag and long form never did, so two
+         of the four combinations were unreachable for every seed.
+         The same trap as 'gen leaf loop control' documents, which is
+         now three sightings.)
+        a number called 'the form draw' is 'rng below' of 13,
+        a number called 'long form' is 0,
+        If 'the form draw' is greater than 6 then,
+            Set 'long form' to 1.
+        If 'long form' is 0 then,
+            append "-a" to gen_argv,
+            append 'the label value' to gen_argv,
+            append "-b" to gen_argv,
+            a text called 'the short count' is "{'the count value'}",
+            append 'the short count' to gen_argv.
+        If 'long form' is 1 then,
+            append "--alpha{gen_flags}" to gen_argv,
+            append 'the label value' to gen_argv,
+            append "--beta{gen_flags}" to gen_argv,
+            a text called 'the long count' is "{'the count value'}",
+            append 'the long count' to gen_argv.
+        Set gen_expected_label to 'the label value',
+        Set gen_expected_count to 'the count value',
+        a number called 'the boolean draw' is 'rng below' of 11,
+        a number called 'boolean pick' is 1,
+        If 'the boolean draw' is less than 6 then,
+            Set 'boolean pick' to 0,
+        If 'boolean pick' is 0 then,
+            append "-c" to gen_argv,
+            Set gen_expects_on to true.
+        Return a number, 0.
+    (6: a value of the wrong type for a number flag. Yields 0 AND raises,
+     so a program can tell it from a real -b 0 - verified, defect 10.)
+    If shape is 6 then,
+        append "-b" to gen_argv,
+        append "notanumber" to gen_argv,
+        Return a number, 0.
+    (7: a value past i64. Raises too - compiler bug #35's fix reaching
+     the flag path.)
+    If shape is 7 then,
+        append "-b" to gen_argv,
+        append "99999999999999999999" to gen_argv,
+        Return a number, 0.
+    (8: a flag whose value is missing because argv ends. Leaves the flag
+     empty and does not raise.)
+    If shape is 8 then,
+        append "-a" to gen_argv,
+        Return a number, 0.
+    (9: an unknown flag plus positionals. Consumes nothing, so both fall
+     through to arguments's all - which has only ever seen the empty
+     case.)
+    append "-z" to gen_argv.
+    a number called extra is 'rng below' of 100.
+    a text called 'the extra' is "extra{extra}".
+    append 'the extra' to gen_argv.
+    Return a number, 0.
+
+(The assertions. Only emitted for a valid invocation, and only for the
+ flags actually passed. A distinct Exit code per assertion means a
+ finding's exit status says WHICH expectation failed, without needing
+ the output.)
+
+To 'gen emit argv assertions'.
+    If gen_asserts_argv is false then,
+        Return a number, 0.
+    a number called n is gen_flags.
+    'gen emit' of "If fl{n}label is not \"{gen_expected_label}\" then, Exit 91.\n".
+    'gen emit' of "If fl{n}count is not {gen_expected_count} then, Exit 92.\n".
+    If gen_expects_on then,
+        'gen emit' of "If fl{n}on is false then, Exit 93.\n".
+    If gen_expects_on is false then,
+        'gen emit' of "If fl{n}on then, Exit 94.\n".
+    'gen emit' of "\n".
+
+(Flags. Josj, 2026-08-20: "Flags don't appear anywhere." They did not,
+ and the language's own flag schema went unexercised by anything real
+ until vox-fuzz's CLI was rewritten onto it - which immediately produced
+ compiler bugs #31 (a text flag with no default segfaulted on first
+ read) and #32 (any flag read inside a function body was typed boolean
+ whatever it was declared). A documented facility with no real user
+ carries bugs indefinitely; this makes the fuzzer that user.
+
+ The schema goes first, before anything else in the program: a
+ declaration must precede `Parse flags.`, and using a flag variable
+ before the parse point is a compile-time error. Everything after the
+ parse point may read them freely.
+
+ Generated programs are run with NO arguments (runner.vox passes an
+ empty argument list), so an undefaulted flag always takes the
+ "unsupplied" path - exactly #31's crash site - for free. That also
+ means a `required` flag would abort every program at runtime, so none
+ is emitted: the invariant is a program that should compile AND run.
+
+ NOTE this raises the fuzzer's floor to vox 0.4.6. On 0.4.5 and earlier
+ an undefaulted text flag segfaults on read, so every generated program
+ would "find" #31 - a true finding, but one already fixed and recorded.
+ SEEDS.md pins the compiler commit, which is what keeps that honest.)
+
+To 'gen emit prelude flags'.
+    a number called n is gen_flags.
+    a number called 'default pick' is 'rng below' of 3.
+    a text called 'the text flag' is "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text.\n".
+    If 'default pick' is 0 then,
+        Set 'the text flag' to "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text with default \"d{n}\".\n".
+    'gen emit' of 'the text flag'.
+    'gen emit' of "a flag called fl{n}count is \"-b\" or \"--beta{n}\", it is a number.\n".
+    'gen emit' of "a flag called fl{n}on is \"-c\" or \"--gamma{n}\", it is a boolean.\n".
+    (The harness always passes --scratch, so the flag is always
+     declared; only programs that chose file I/O actually use it. A text
+     flag with no default reads as "" when unsupplied, which is compiler
+     bug #31's fix — before 0.4.6 this would have segfaulted.)
+    'gen emit' of "a flag called fl{n}scratch is \"-s\" or \"--scratch{n}\", it is a text.\n".
+    'gen emit' of "Parse flags.\n".
+    'gen emit' of "\n".
+    (Immediately after the parse point: a flag read before it is a
+     compile-time error, and putting the assertions here means they run
+     before anything else can Exit for its own reasons.)
+    'gen emit argv assertions'.
+
+(gen_flags is fixed for the whole program in 'gen program', not
+ incremented here. It used to be bumped on entry, which meant the flag
+ READER — if the seeded order placed it first — named fl0label and
+ referred to flags that did not exist yet. The reader being emitted
+ before the schema is perfectly legal Vox, verified by hand: a function
+ may read a flag declared below it so long as it is CALLED after
+ `Parse flags.` So the ordering was fine and only the naming was broken.)
+
+(The reader function is the #32 shape and the whole reason this is
+ worth emitting: a flag read INSIDE a function body was mis-typed, and
+ was invisible at top level because the declaration's own type is still
+ in scope there. Reading each flag both ways is what makes the
+ difference observable.)
+
+To 'gen emit prelude flag reader'.
+    If gen_uses_flag_reader is false then,
+        Return a number, 0.
+    a number called n is gen_flags.
+    'gen emit' of "To 'read flags {n}'.\n".
+    'gen emit' of "    a text called fl{n}local is fl{n}label.\n".
+    'gen emit' of "    a number called fl{n}bumped is fl{n}count add 1.\n".
+    'gen emit' of "    Print fl{n}local.\n".
+    'gen emit' of "    Print fl{n}bumped.\n".
+    'gen emit' of "    Print fl{n}on.\n".
+    'gen emit' of "\n".
+
+(Top-level flag reads, plus a call into the reader. `is empty` on the
+ text flag is deliberate: compiler bug #33 - `is empty` on a text was
+ always false, testing the pointer instead of the contents - was fixed
+ in 0.4.6, and an undefaulted unsupplied flag holding "" is the exact
+ shape that proves it. Both branches print, so neither answer crashes
+ the program; a WRONG answer is invisible to a signal-death oracle and
+ is what plan 325's knowable-answer work is for.)
+
+To 'gen leaf flag read' with a text called indent and a boolean called nested.
+    a number called n is gen_flags.
+    a text called 'print label' is "Print fl{n}label".
+    a text called 'print count' is "Print fl{n}count".
+    a text called 'print on' is "Print fl{n}on".
+    (The top-level reads always work; the CALL only goes in when this
+     program actually defined the reader. Flags are still read either
+     way, so coverage of the flag surface does not depend on the
+     decision — only the function call does.)
+    a list called 'the lines' is ['print label', 'print count', 'print on'].
+    If gen_uses_flag_reader then,
+        Set gen_reader_calls to gen_reader_calls add 1,
+        a text called 'call reader' is "'read flags {n}'",
+        a list called 'the calling lines' is ['print label', 'print count', 'print on', 'call reader'],
+        'gen join lines' of indent and nested and 'the calling lines',
+        Return a boolean, false.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(An `is empty` probe on the flag and on plain values, in branch form.
+ Every answer here is knowable at generation time, which is what makes
+ this leaf a candidate for a real output oracle later; today it only
+ proves the predicate compiles and does not crash.)
+
+To 'gen leaf predicate probe' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the number literal' is 'gen extreme number'.
+    a text called 'blank decl' is "a text called pt{n} is \"\"".
+    a text called 'blank probe' is "If pt{n} is empty then, Print \"pt{n} empty\". Otherwise, Print \"pt{n} filled\"".
+    a text called 'number decl' is "a number called pn{n} is {'the number literal'}".
+    a text called 'even probe' is "If pn{n} is even then, Print \"pn{n} even\". Otherwise, Print \"pn{n} odd\"".
+    a text called 'sign probe' is "If pn{n} is positive then, Print \"pn{n} positive\". Otherwise, Print \"pn{n} nonpositive\"".
+    a text called 'zero probe' is "If pn{n} is zero then, Print \"pn{n} zero\". Otherwise, Print \"pn{n} nonzero\"".
+    a list called 'the lines' is ['blank decl', 'blank probe', 'number decl', 'even probe', 'sign probe', 'zero probe'].
+    'gen join lines' of indent and nested and 'the lines'.

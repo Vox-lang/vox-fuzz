@@ -28,7 +28,14 @@ see "../src/rng.vox".
 see "../src/harness.vox".
 see "../src/findings.vox".
 see "../src/runner.vox".
-see "../src/gen.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
 see "../src/loop_gen.vox".
 
 (shell quote: hoisted to locals because the format string cannot nest a

@@ -1,0 +1,523 @@
+a number called gen_grid is 0.
+
+a number called gen_whiles is 0.
+
+a number called gen_repeats is 0.
+
+a number called gen_grid_depth is 3.
+
+(Whether THIS program will actually use its grid sink and its flag
+ reader. Josj, reading forty programs: "I see good function definitions,
+ but no call sites." He was right, and the count was damning — the grid
+ sink was DEFINED in 40 of 40 programs and CALLED in 8, the flag reader
+ defined in 40 and called in 10. So four fifths of programs carried a
+ function nobody ever called: dead weight that pads the source, dilutes
+ everything else a reader sees, and proves nothing about the compiler
+ beyond its willingness to parse an unused definition.
+
+ Both are now decided once per program, before any block is emitted, and
+ the definition is emitted only when the program commits to calling it.
+ The statement stream reads the same decision, so a program that defines
+ the sink is guaranteed to reach for it.)
+
+a boolean called gen_uses_grid is true.
+
+(Call counters. Committing to emit a definition does not by itself
+ produce a CALL — the leaf that calls it has to win the kind draw, which
+ is why 22 of 40 programs still defined an uncalled grid sink after the
+ first attempt at this. 'gen program' checks these after the statement
+ budget is spent and emits one call if none happened, so a definition
+ always has a call site.)
+
+a number called gen_grid_calls is 0.
+
+(Chained expansion, the grid: 0.4.5's Cartesian-product call form, joined
+ by 'and' across two 'each ... from ...' clauses - a list clause and a
+ range clause, over f3's two number parameters. The loop variables get
+ their own e{N} names from a dedicated counter so two grid calls in the
+ same program never bind the same identifier twice, which the one
+ identifier space rule would otherwise make a shadowing question rather
+ than a clean fresh name. f3 has no side effect worth printing, so this
+ is a bare call statement - language note 3's "plain call statement"
+ form, the same one the grid section itself uses when a fixed argument
+ needs to come first.)
+
+To 'gen call grid' with a text called indent and a boolean called nested.
+    Set gen_grid to gen_grid add 1.
+    a number called 'first loop name' is gen_grid.
+    Set gen_grid to gen_grid add 1.
+    a number called 'second loop name' is gen_grid.
+    a number called 'list element one' is 'rng below' of 100.
+    a number called 'list element two' is 'rng below' of 100.
+    a number called 'range start' is 'rng below' of 5 add 1.
+    a number called 'range spread' is 'rng below' of 4.
+    a number called 'range end' is 'range start' add 'range spread'.
+    a text called 'call line' is "f3 of each e{'first loop name'} from [{'list element one'}, {'list element two'}] and each e{'second loop name'} from {'range start'} to {'range end'}".
+    a list called 'the lines' is ['call line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Deep grid expansion. Josj, 2026-08-20: "instead of double nested
+ parameter loop expansions I wanna see 17 levels of nested parameter
+ loop expansion." A grid clause binds to a PARAMETER - `f of each a from
+ X and each b from Y` needs f to take two - so an N-deep grid requires
+ an N-parameter callee, which this leaf emits alongside the call. The
+ prelude's f1/f2/f3 top out at two parameters, which is precisely why
+ the generator could never go deeper.
+
+ Runtime stays bounded while the COMPILER does not: most clauses get a
+ one-value range (`from i to i`), so the Cartesian product stays small
+ no matter how deep the nesting goes, while codegen still has to build
+ and close N nested loops. That is the intended asymmetry - depth
+ stresses the compiler, and the product is what would stress only the
+ clock. A handful of two-value ranges keep the product genuinely
+ multi-iteration without letting it explode: worst case here is 2^3.
+
+ Verified by hand at depth 17 before this leaf was written: compiles,
+ runs, and sums correctly. Deeper is reachable by raising the cap.)
+
+To 'gen leaf deep grid' with a text called indent and a boolean called nested.
+    (A program that did not commit to a grid sink has no such function to
+     call, so this leaf stands aside for one that always works. The
+     decision is made once per program in 'gen program', which is what
+     keeps definition and call site in step.)
+    If gen_uses_grid is false then,
+        'gen call two' of indent and nested,
+        Return a boolean, false.
+    Set gen_grid to gen_grid add 1.
+    a number called 'the run' is gen_grid.
+    a number called depth is gen_grid_depth.
+    a text called clauses is "".
+    a number called 'spread budget' is 3.
+    a number called i is 1.
+    While i is less than depth add 1,
+        a number called low is 'rng below' of 9,
+        a number called high is low,
+        a number called widen is 'rng below' of 4,
+        If widen is 0 and 'spread budget' is positive then,
+            Set high to low add 1,
+            Set 'spread budget' to 'spread budget' minus 1.
+        If i is 1 then,
+            Set clauses to "each q{'the run'}s{i} from {low} to {high}".
+        If i is greater than 1 then,
+            Set clauses to "{clauses} and each q{'the run'}s{i} from {low} to {high}".
+        Set i to i add 1.
+    Set gen_grid_calls to gen_grid_calls add 1.
+    a text called 'call line' is "'grid sink {depth}' of {clauses}".
+    a list called 'the lines' is ['call line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`but if` chains (bugs #3 and #14 both lived here): a base action plus
+ 1-3 alternative branches, checked in order, first match wins. Two
+ shapes, because 0.4.5's `otherwise` is hand-verified against the pinned
+ binary to compile after `append`'s chain but NOT after `print`'s -
+ `Print x, but if ... print y,
+ otherwise print z.` is rejected ("Expected a statement, got Otherwise")
+ under every punctuation variant tried, print-each included; the EBNF's
+ own print_stmt production has no otherwise arm either, so the compiler
+ is being consistent with its own grammar even though the prose
+ describes otherwise as available to both. Print's chain therefore never
+ carries one; append's always does, which is how "with and without a
+ trailing otherwise" both get covered without emitting the illegal form.
+ Hand-verified safe as a block's mandatory closer: unlike For-each/
+ While/Repeat, a but-if chain's own trailing period does not leave
+ anything open behind it (a for-each-in-while sole-body probe traps the
+ next statement two-for-one; the equivalent but-if-chain probe does
+ not), so both land in 'gen any leaf's pool, no remap needed.)
+
+To 'gen leaf butif print' with a text called indent and a boolean called nested.
+    a text called 'the base value' is 'gen expr'.
+    a text called 'the chain' is "Print {'the base value'}".
+    a number called 'the branch count' is 'rng below' of 3 add 1.
+    a number called 'the branch index' is 1.
+    While 'the branch index' is less than or equal to 'the branch count',
+        a text called 'the condition' is 'gen condition',
+        a text called 'the alternative' is 'gen expr',
+        Set 'the chain' to "{'the chain'}, but if {'the condition'} print {'the alternative'}",
+        Set 'the branch index' to 'the branch index' add 1.
+    a list called 'the lines' is ['the chain'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf butif append' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a text called decl is "a list called l{gen_lists} is []".
+    a text called 'the base value' is 'gen append expr'.
+    a text called 'the chain' is "append {'the base value'} to l{gen_lists}".
+    a number called 'the branch count' is 'rng below' of 3 add 1.
+    a number called 'the branch index' is 1.
+    While 'the branch index' is less than or equal to 'the branch count',
+        a text called 'the condition' is 'gen condition',
+        a text called 'the alternative' is 'gen append expr',
+        Set 'the chain' to "{'the chain'}, but if {'the condition'} append {'the alternative'}",
+        Set 'the branch index' to 'the branch index' add 1.
+    a text called 'the otherwise value' is 'gen append expr'.
+    Set 'the chain' to "{'the chain'}, otherwise append {'the otherwise value'}".
+    a list called 'the lines' is [decl, 'the chain'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`treating X as Y`: per-clause substitution on loop expansion. The
+ print-each variant sometimes draws its collection from arguments's all
+ (LANGUAGE.md's own canonical example). The brief's own item 5 flags
+ that arguments's positional properties (first/second/last) need real
+ arguments passed to be tested meaningfully, which this generator does
+ not have - but arguments's all does not need that: it is a legal,
+ always-empty collection with no arguments passed, so the treating
+ clause parses and runs zero times, the same defined "does nothing"
+ behaviour LANGUAGE.md documents for any empty collection.
+ The grid variant chains two `each` clauses, each with its own treating,
+ through f3 (language note 3's zero/one/two-arg prelude), reusing the
+ grid's own e{N} loop-variable counter so two grid calls in one program
+ never collide. Hand-verified UNSAFE as a block's mandatory closer -
+ loop expansion is a nesting clause exactly like For-each's own key/
+ element iteration (kinds 9/14) and the grid's `each ... and each ...`
+ (kind 6's grid quarter) - so both remap to 1 under avoid-onerror and
+ stay out of 'gen any leaf', same rule, same reason.)
+
+To 'gen leaf treating print' with a text called indent and a boolean called nested.
+    a number called 'source choice' is 'rng below' of 2.
+    a text called source is "".
+    a text called 'match value' is "".
+    a text called 'replacement value' is "".
+    If 'source choice' is 0 then,
+        (arguments's all yields text elements (argv strings) - the
+         treating match/replacement must be text too, or nasm rejects
+         the emitted assembly with 'symbol _str_eq not defined'
+         (hand-reduced: `print each item from arguments's all treating
+         98 as 31.` alone reproduces it) - a number literal here compiles
+         past the analyzer but the codegen path for a text-typed
+         collection expects a text-typed match, and the mismatch never
+         gets caught until the assembler.)
+        Set source to "arguments's all",
+        Set 'match value' to "\"-\"",
+        Set 'replacement value' to "\"none\"".
+    If 'source choice' is 1 then,
+        a number called 'elem one' is 'rng below' of 100,
+        a number called 'elem two' is 'rng below' of 100,
+        a number called 'match number' is 'rng below' of 100,
+        a number called 'replacement number' is 'rng below' of 100,
+        Set source to "[{'elem one'}, {'elem two'}]",
+        Set 'match value' to "{'match number'}",
+        Set 'replacement value' to "{'replacement number'}".
+    a text called line is "print each item from {source} treating {'match value'} as {'replacement value'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf treating grid' with a text called indent and a boolean called nested.
+    a number called 'first match' is 'rng below' of 100.
+    a number called 'first replacement' is 'rng below' of 100.
+    a number called 'second match' is 'rng below' of 5 add 1.
+    a number called 'second replacement' is 'rng below' of 100.
+    a number called 'elem one' is 'rng below' of 100.
+    a number called 'elem two' is 'rng below' of 100.
+    a number called 'range start' is 'rng below' of 5 add 1.
+    a number called 'range spread' is 'rng below' of 4.
+    a number called 'range end' is 'range start' add 'range spread'.
+    Set gen_grid to gen_grid add 1.
+    a number called 'first loop name' is gen_grid.
+    Set gen_grid to gen_grid add 1.
+    a number called 'second loop name' is gen_grid.
+    a text called line is "f3 of each e{'first loop name'} from [{'elem one'}, {'elem two'}] treating {'first match'} as {'first replacement'} and each e{'second loop name'} from {'range start'} to {'range end'} treating {'second match'} as {'second replacement'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(`While` and `Repeat`: today only `For each` is emitted. Both are
+ self-contained, single-statement leaves with a hardcoded, unconditional
+ `Increment`, never a body drawn from the recursive statement generator.
+
+ The real defect this sidesteps. An earlier draft of this comment
+ misdiagnosed it as While-specific; direct reproduction traced it to
+ its actual root and filed it as bug #27: **a period never closes a
+ Repeat body, in any nesting, at
+ any depth - only a blank line does.** `Repeat 2 times, Print "r".`
+ followed by `Print "after".`, with no blank line between them, prints
+ `r after r after` - "after" is silently absorbed into the loop and
+ re-runs with it, not a parse error, not a crash, just a program that
+ means something other than what it reads as. `While` and `For each`
+ both close correctly on a period, including a period stacked to close
+ two levels at once (a For-each nested inside a While, closed with two
+ periods on its own last statement, correctly closes both and the
+ following statement runs once) - hand-verified, and it is what
+ isolates the defect to Repeat specifically rather than "loops in
+ general" or "While as the outer level," both of which an earlier
+ version of this comment wrongly concluded from a Repeat-nested-in-
+ While probe whose double-period failure was actually bug #27 wearing
+ a While-shaped disguise.
+
+ Consequence for this generator: 'gen leaf repeat' cannot just emit its
+ closing `Print` as the next period-terminated line the way 'gen leaf
+ while' does - that line would silently become part of the Repeat's own
+ body (verified: it printed the counter once per iteration instead of
+ once after, exactly bug #27's signature). It emits a blank line after
+ the Repeat statement instead, which is what LANGUAGE.md documents as
+ the only thing that closes a Repeat, before the closing `Print`.
+ 'gen leaf while' needs no such treatment - its own closing `Print`
+ already closes correctly on its ordinary period, per the hand-
+ verification above, so it is written the simpler way.
+
+ Both stay reachable only at the true top level regardless (kind range
+ widened at depth 3 only, left out of depth 2/1/0's ranges and out of
+ 'gen any leaf'): a blank line closes every open clause at once,
+ including an enclosing function definition, so emitting one from
+ inside a nested body would be unsafe for reasons that have nothing to
+ do with bug #27, and 'gen leaf while' has no need to be reachable
+ there either, so both are held to the same, simplest-to-verify
+ position. Top level is also where 'nested' is always false, so every
+ rendered line is independently period-closed to begin with - the
+ blank line in 'gen leaf repeat' is closing the Repeat, not doing any
+ work a period was already doing.)
+
+To 'gen leaf while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 8 add 1.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Increment u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Bug #27 (see above): the Repeat statement's own period never closes
+ it, so the closing `Print` is emitted after a blank line - the one
+ thing that does close a Repeat - instead of joined onto 'the lines'
+ the way every other leaf's closing read is.)
+
+To 'gen leaf repeat' with a text called indent and a boolean called nested.
+    Set gen_repeats to gen_repeats add 1.
+    a number called 'the trips' is 'rng below' of 8 add 1.
+    a text called decl is "a number called r{gen_repeats} is 0".
+    a text called 'loop line' is "Repeat {'the trips'} times, Increment r{gen_repeats}".
+    a list called 'the opening lines' is [decl, 'loop line'].
+    'gen join lines' of indent and nested and 'the opening lines'.
+    'gen emit' of "\n".
+    a text called 'read line' is "Print r{gen_repeats}".
+    a list called 'the closing lines' is ['read line'].
+    'gen join lines' of indent and nested and 'the closing lines'.
+
+(D4: `Break`/`Continue` - the one construct the generator never emitted
+ (0 of 40 sampled programs). LANGUAGE.md "Loop Control" documents both
+ as standalone statements: `Break.` exits the loop, `Continue.` skips to
+ the next iteration. This leaf emits a bounded loop containing a guarded
+ one of the four safe combinations, each hand-verified against v0.4.5
+ (compiled with $VOX and run under `timeout`, the output confirmed to
+ match the expected break/continue semantics):
+
+   For each + Break
+     For each number from 1 to 5,
+         Print number,
+         If number is equal to 3 then,
+             Break.
+         Print "after".
+     -> 1 after 2 after 3 done  (Break skips the trailing Print at 3 and
+         exits the loop; the range still bounds it - a guard value above
+         5 just runs the full range with no break.)
+
+   For each + Continue
+     For each number from 1 to 5,
+         Print number,
+         If number is equal to 3 then,
+             Continue.
+         Print "after".
+     -> 1 after 2 after 3 4 after 5 after done  (Continue skips only the
+         trailing Print at 3; the For-each counter auto-advances, so the
+         loop still terminates even though Continue skipped the body's
+         rest - this is why For-each + Continue is safe without an
+         explicit Increment.)
+
+   While + Break
+     a number called u1 is 0.
+     While u1 is less than 5,
+         Print u1,
+         If u1 is equal to 3 then,
+             Break.
+         Increment u1.
+     -> 0 1 2 3 done  (Break exits; Increment sits AFTER the If, so a
+         break correctly skips it - we are leaving. The While condition
+         bounds it regardless: a guard value >= 5 never fires and u1
+         climbs to 5 and stops.)
+
+   While + Continue
+     a number called u1 is 0.
+     While u1 is less than 5,
+         Increment u1,
+         If u1 is equal to 3 then,
+             Continue.
+         Print u1.
+     -> 1 2 4 5 done  (Continue skips the Print at 3; Increment sits
+         BEFORE the Continue, so progress is guaranteed even when the
+         guard fires - the one ordering constraint 3 requires, and the
+         one an unconstrained While + Continue hung on in an earlier
+         probe: Continue before Increment advances nothing, the guard
+         fires, the loop body repeats forever at the same counter.)
+
+ The verified compilable shape (constraint 2): the loop head, body
+ statement, If-guard and Break/Continue all live on one comma-joined
+ line, the Break/Continue carrying its own period to close the If, and
+ the loop's own closing period (appended by 'gen join lines' on its last
+ line) terminating the whole statement - exactly the shape 'gen leaf
+ while' already uses and 'gen leaf repeat' deliberately avoids. The
+ trailing `Print "x"` / `Print u{N}` inside the body is what makes the
+ break/continue observable in the program's output (fewer markers than
+ the range when a Break fires, a gap in the markers when a Continue
+ fires). The post-loop `Print u{N}` on the While forms is 'gen leaf
+ while's own read-back, kept for the same reason: reaching it at all
+ proves the loop terminated rather than hung.
+
+ The guard value is drawn from a range that SOMETIMES exceeds the loop
+ bound, so across seeds the guard fires for some programs and not for
+ others - the honest demonstration that termination never depends on it
+ firing, since the loop's own bound (For-each range / While condition)
+ always closes the loop whether the guard was ever true or not.
+
+ Safe-closer decision: this leaf is loop-bearing (For-each and While are
+ both nesting clauses, rule 1), so its closing period closes the LOOP,
+ not an enclosing block - exactly the reason kinds 9/14/6-grid and
+ 25-28 are excluded from 'gen any leaf'. It therefore does NOT join 'gen
+ any leaf', and follows kinds 29/30 (While/Repeat) in being reachable
+ only at the true top level: the While forms inherit 'gen leaf while's
+ top-level-only position (their termination guarantee is that of an
+ independent, self-closing top-level sentence), and the For-each forms
+ are held there too for the same simplest-to-verify reason 'gen leaf
+ while' gives. So kind 31 is added to the depth-3 draw only, left out of
+ depth 2/1/0 and out of 'gen any leaf', and needs no avoid-onerror remap
+ (at depth 3 avoid_onerror is false, the same reason 29/30 need none).
+ 'nested' is accordingly always false here, and the rendered lines are
+ independently period-closed, the way 'gen leaf while's are.
+
+ Fresh locals: the While forms declare a u{N} counter, reusing
+ gen_whiles (the same counter 'gen leaf while' uses) so two While-bearing
+ leaves in one program never collide on a u-name. The For-each forms use
+ the built-in `number` loop variable and declare nothing fresh. Each of
+ the four combinations lives in its own helper (the 'gen leaf call' ->
+ 'gen call zero/one/two/grid' pattern) so each has its locals at its own
+ function top level - never inside an If branch, which keeps them
+ permanently in scope and avoids both note 6b (a period inside a branch
+ closing the branch before a later reference) and the same-name-across-
+ branches collision 'gen leaf environment inrange' documented.)
+
+To 'gen leaf loop control' with a text called indent and a boolean called nested.
+    (The combo is drawn through 'rng below' of 13 then folded mod 4, NOT
+     'rng below' of 4, deliberately. 'rng below' of N is r modulo N, and
+     this generator's LCG has correlated low bits: the kind draw just
+     before this ('rng below' of 32, in 'gen statement') returns 31 only
+     when that r's low 5 bits are 11111, which forces the NEXT r to be
+     divisible by 32 and therefore by 4 - so an immediately-following
+     'rng below' of 4 (or of any multiple of 4) would ALWAYS return 0,
+     locking the combo to 0 (Break-foreach) and making Continue
+     unreachable for every seed. Hand-confirmed: with 'rng below' of 4
+     here, 200 seeded programs produced 13 Break-foreach hits and zero
+     Continue. 13 is prime and not a multiple of 4, so r modulo 13
+     depends on the whole r, not just the low bits the LCG locks - the
+     combo then varies across seeds and all four combinations are
+     reachable. 13 modulo 4 maps 0..12 onto 0,1,2,3 as 4,3,3,3, a mild
+     bias toward combo 0 that is irrelevant next to the coverage gain.)
+    a number called 'the combo' is 'rng below' of 13.
+    Set 'the combo' to 'the combo' modulo 4.
+    If 'the combo' is 0 then,
+        'gen leaf loop break foreach' of indent and nested.
+    If 'the combo' is 1 then,
+        'gen leaf loop continue foreach' of indent and nested.
+    If 'the combo' is 2 then,
+        'gen leaf loop break while' of indent and nested.
+    If 'the combo' is 3 then,
+        'gen leaf loop continue while' of indent and nested.
+
+To 'gen leaf loop break foreach' with a text called indent and a boolean called nested.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 3.
+    a number called 'the guard' is 'rng below' of 'the guard span' add 1.
+    a text called 'loop line' is "For each number from 1 to {'the limit'}, Print number, If number is equal to {'the guard'} then, Break. Print \"x\"".
+    a list called 'the lines' is ['loop line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop continue foreach' with a text called indent and a boolean called nested.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 3.
+    a number called 'the guard' is 'rng below' of 'the guard span' add 1.
+    a text called 'loop line' is "For each number from 1 to {'the limit'}, Print number, If number is equal to {'the guard'} then, Continue. Print \"x\"".
+    a list called 'the lines' is ['loop line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop break while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 2.
+    a number called 'the guard' is 'rng below' of 'the guard span'.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Print u{gen_whiles}, If u{gen_whiles} is equal to {'the guard'} then, Break. Increment u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf loop continue while' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the limit' is 'rng below' of 5 add 2.
+    a number called 'the guard span' is 'the limit' add 2.
+    a number called 'the guard' is 'rng below' of 'the guard span'.
+    a text called decl is "a number called u{gen_whiles} is 0".
+    a text called 'loop line' is "While u{gen_whiles} is less than {'the limit'}, Increment u{gen_whiles}, If u{gen_whiles} is equal to {'the guard'} then, Continue. Print u{gen_whiles}".
+    a text called 'read line' is "Print u{gen_whiles}".
+    a list called 'the lines' is [decl, 'loop line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen loop' with a number called depth and a text called indent.
+    a number called 'the spread' is 'rng below' of 5.
+    a number called 'the iteration limit' is 'the spread' add 1.
+    a text called head is "{indent}For each number from 1 to {'the iteration limit'},\n".
+    'gen emit' of head.
+    a number called 'next depth' is depth minus 1.
+    a text called 'next indent' is "{indent}  ".
+    'gen body' of 'next depth' and 'next indent'.
+
+(Not a compiler defect, and not something 'gen if' itself needs to work
+ around - recorded here only because it explains why 'gen any leaf'
+ refuses every For-each-bearing kind the guaranteed-closer role (see
+ that function's own comment). LANGUAGE.md rule 1: a period closes only
+ the innermost currently open clause. If a `For each` (block or
+ single-line) is the body of a single-branch If, the For-each's own
+ period closes the FOR EACH, not the If - the If is still open one
+ level further out than the indentation suggests. Whatever textually
+ "follows" the If at this point is therefore still inside its body, and
+ it is THAT statement's period which finally closes the If. A
+ declaration positioned there is accordingly "declared in only some
+ branches" (there is no Otherwise), so vox correctly refuses it outside
+ - not a defect, the documented branch-scoping rule doing exactly what
+ it says. This only bites when the mandatory closer (see 'gen body')
+ is itself a For-each-bearing leaf, since a plain leaf's period closes
+ the If as intended; excluding those kinds from 'gen any leaf' is the
+ whole fix, and a bare Otherwise-less If stays legal, generatable Vox.)
+
+To 'gen if' with a number called depth and a text called indent.
+    a text called 'the left operand' is 'gen var ref'.
+    a text called 'the right operand' is 'gen var ref'.
+    a text called head is "{indent}If {'the left operand'} is greater than {'the right operand'} then,\n".
+    'gen emit' of head.
+    a number called 'next depth' is depth minus 1.
+    a text called 'next indent' is "{indent}  ".
+    'gen body' of 'next depth' and 'next indent'.
+
+(One callee per supported grid depth, emitted once in the prelude
+ rather than beside the call site. A function definition is only legal
+ at the top level, and 'gen leaf deep grid' can be selected inside a
+ loop or If body, where emitting a `To ...` would be invalid Vox - the
+ invariant forbids that, so the definitions live here where their
+ position is fixed and legal by construction.)
+
+To 'gen emit prelude grid sinks'.
+    If gen_uses_grid is false then,
+        Return a number, 0.
+    (ONE callee, at the depth this program actually uses. The first
+     version emitted all fifteen (depths 3..17) into every program
+     whether or not any was called - measured cost: the shared prelude
+     grew from 25 lines to 65, most of it dead definitions, which is
+     boilerplate wearing coverage's coat. gen_grid_depth is drawn once
+     per program in 'gen program' before any prelude is emitted, so the
+     definition is top-level and legal by construction and the deep-grid
+     leaf calls a sink that exists. Depth variety now lives ACROSS seeds
+     instead of inside one program's dead code.)
+    a text called 'the parameter list' is "a number called p1".
+    a text called sum is "p1".
+    a number called i is 2.
+    While i is less than gen_grid_depth add 1,
+        Set 'the parameter list' to "{'the parameter list'} and a number called p{i}",
+        Set sum to "{sum} add p{i}",
+        Set i to i add 1.
+    a text called 'the definition' is "To 'grid sink {gen_grid_depth}' with {'the parameter list'}.\n    a number called gtotal is {sum}.\n    Print gtotal.\n\n".
+    'gen emit' of 'the definition'.
