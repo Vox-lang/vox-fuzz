@@ -17,61 +17,40 @@ gen options:
   --keep DIR     also save every generated program here (default: off)
 bad subcommand exits 2: 1
 vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
-814
-{g1: {x1: 814, x2: 0}, g2: {x1: 0, x2: 0}}
-33
-81
-mixed1
-6.31
+1
+0o     1
+6035984033617884020
+111
+216
+869
+-869
+-3338576509337935791
+1
+1
+3
+-3338576509337935791
+0
+70
+143
+147
+pt1 empty
+pn1 odd
+pn1 positive
+pn1 nonzero
+16
+37
+0
+99
 tag1
-138
+232
 2
 label
 count
+554
+715
 0
 map key missing
-5
-0x5
--2977399354182261911
-1
-1
-42
-556181
-556181
-556181
-9223372029073561479
-9223372029073561479
-9223372029073561479
-9223372029073561479
-9223372029073561479
-0
-0
-0
-49498329
-0x2F348D9
-4317033307548309757
-1
-x
-2
-3
-x
-4
-x
-5
-x
-6
-x
-1
-1
-95
--95
-pt3 empty
-pn3 odd
-pn3 positive
-pn3 nonzero
-{x1: 652, x2: 0}
-79
-71
+76
 486
 {g1: {x1: 486, x2: 0}, g2: {x1: 0, x2: 0}}
 465
@@ -83,11 +62,19 @@ buffer read out of range
 environment variable not set
 
 0
-661
-reassigned1
+419
 0
+map key missing
+419
+15
+0xF
+-3727690370163183879
+
+0
+0
+
 1
-1
+0
 programs: 3
 compiled: 3
 findings: 0

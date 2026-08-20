@@ -1860,8 +1860,14 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
     'gen join lines' of indent and nested and 'the lines'.
 
 
+(gen_flags is fixed for the whole program in 'gen program', not
+ incremented here. It used to be bumped on entry, which meant the flag
+ READER — if the seeded order placed it first — named fl0label and
+ referred to flags that did not exist yet. The reader being emitted
+ before the schema is perfectly legal Vox, verified by hand: a function
+ may read a flag declared below it so long as it is CALLED after
+ `Parse flags.` So the ordering was fine and only the naming was broken.)
 To 'gen emit prelude flags'.
-    Set gen_flags to gen_flags add 1.
     a number called n is gen_flags.
     a number called 'default pick' is 'rng below' of 3.
     a text called 'the text flag' is "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text.\n".
@@ -1997,38 +2003,79 @@ To 'gen emit globals block'.
         a number called ignored is 'gen new var',
         Set made to made add 1.
 
-To 'gen emit ordered blocks'.
-    a number called order is 'rng below' of 6.
-    If order is 0 then,
-        'gen emit prelude functions',
-        'gen emit prelude grid sinks',
-        'gen emit prelude flag reader',
-        'gen emit globals block'.
-    If order is 1 then,
-        'gen emit globals block',
-        'gen emit prelude functions',
-        'gen emit prelude grid sinks',
-        'gen emit prelude flag reader'.
-    If order is 2 then,
-        'gen emit prelude flag reader',
-        'gen emit globals block',
-        'gen emit prelude functions',
-        'gen emit prelude grid sinks'.
-    If order is 3 then,
-        'gen emit prelude grid sinks',
-        'gen emit prelude functions',
-        'gen emit globals block',
-        'gen emit prelude flag reader'.
-    If order is 4 then,
-        'gen emit globals block',
-        'gen emit prelude grid sinks',
-        'gen emit prelude flag reader',
+(Things and their methods travel together as ONE block: a method names
+ its owner type, so the definition must precede it. Nothing else pins
+ them — verified by hand against 0.4.7 that a thing may be defined AFTER
+ a function that does not use it.)
+To 'gen emit things block'.
+    'gen emit prelude things'.
+    'gen emit prelude thing methods'.
+
+(Six blocks, in a seeded order. Josj, 2026-08-20, reading forty
+ generated programs: "I wasn't expecting to see such well behaved
+ programs." He was right, and the measurement agreed with him — nine
+ distinct orderings across those forty, and yet EVERY one opened
+ `FLAG-THING-...`, because the flag schema and the things were pinned
+ to the front. The first thirty lines of every program were therefore
+ identical in shape, which is exactly the part a human reads first.
+
+ Both pins were mine, not the language's, and both were wrong. Verified
+ by hand against 0.4.7: a thing may be defined after a function that
+ does not use it, and the flag schema may follow things and functions
+ provided it still precedes `Parse flags.` and every flag read.
+
+ What genuinely constrains the order, and all that does:
+ - the flag block ends with `Parse flags.`, and the statement stream
+   reads flags, so the flag block must precede the statements — which
+   it does by construction, since all six blocks precede them;
+ - a thing's methods name its owner type, so things and methods travel
+   as one block rather than separately;
+ - globals must precede the statement stream, since a top-level
+   statement reading a name declared later is use-before-declaration.
+   A FUNCTION may still reference a global declared below it — Vox
+   permits that forward reference, and it is now genuinely exercised.
+
+ Rotating six blocks rather than enumerating permutations: 720 hand-
+ written orderings would be absurd, and a rotation plus an independent
+ swap gives plenty of distinct openings while every ordering stays
+ legal by inspection, which a generated permutation would not.)
+To 'gen emit one block' with a number called which.
+    If which is 0 then,
+        'gen emit prelude flags'.
+    If which is 1 then,
+        'gen emit things block'.
+    If which is 2 then,
         'gen emit prelude functions'.
-    If order is 5 then,
-        'gen emit prelude functions',
-        'gen emit globals block',
-        'gen emit prelude flag reader',
+    If which is 3 then,
         'gen emit prelude grid sinks'.
+    If which is 4 then,
+        'gen emit prelude flag reader'.
+    If which is 5 then,
+        'gen emit globals block'.
+
+To 'gen emit ordered blocks'.
+    a number called 'the rotation' is 'rng below' of 6.
+    a number called 'the swap from' is 'rng below' of 6.
+    a number called 'the swap to' is 'rng below' of 6.
+    a number called i is 0.
+    While i is less than 6,
+        a number called 'the slot' is i add 'the rotation',
+        Set 'the slot' to 'the slot' modulo 6,
+        (The swap writes to a SEPARATE name because both tests must see
+         the ORIGINAL slot. Chaining them on one variable collapses the
+         pair: slot==from becomes to, then the second test sees `to` and
+         sends it straight back to from — so from and to both emit the
+         same block and one block never emits at all. That produced
+         `label f1 inconsistently redefined` from nasm, 58 of 60
+         programs failing to assemble.)
+        a number called 'the mapped slot' is 'the slot',
+        If 'the slot' is 'the swap from' then,
+            Set 'the mapped slot' to 'the swap to'.
+        If 'the slot' is 'the swap to' then,
+            Set 'the mapped slot' to 'the swap from'.
+        'gen emit one block' of 'the mapped slot',
+        Set i to i add 1.
+
 
 To 'gen program' with a number called seed and a number called budget.
     clear gen_out.
@@ -2048,9 +2095,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_flags to 0.
     'rng seed' of seed.
     Set gen_grid_depth to 'rng below' of 15 add 3.
-    'gen emit prelude flags'.
-    'gen emit prelude things'.
-    'gen emit prelude thing methods'.
+    Set gen_flags to 1.
     'gen emit ordered blocks'.
     a number called i is 0.
     While i is less than budget,
