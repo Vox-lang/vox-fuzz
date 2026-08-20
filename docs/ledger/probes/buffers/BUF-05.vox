@@ -1,0 +1,6 @@
+(BUF-05: `a buffer called X is N bytes in size.` allocates exactly N bytes of capacity.)
+(expected output:
+256
+)
+a buffer called b is 256 bytes in size.
+print b's capacity.

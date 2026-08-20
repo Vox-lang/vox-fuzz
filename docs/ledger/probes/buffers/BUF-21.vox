@@ -1,0 +1,11 @@
+(BUF-21: reading/writing a byte at a position given by a runtime VARIABLE, not a compile-time literal, works - a different code path than a baked-in index.)
+(expected output:
+101
+HZllo
+)
+a buffer called buf is "Hello".
+a number called i is 2.
+a number called v is byte i of buf.
+print v.
+Set byte i of buf to 90.
+print buf.

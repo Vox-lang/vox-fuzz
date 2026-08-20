@@ -1,0 +1,15 @@
+(VAL-23: `null` and `nil` are accepted spellings of the same literal as
+ `nothing`; all three produce the identical value (each prints as
+ `nothing`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-23.vox -o p && ./p
+ expected output:
+   [nothing]
+   [nothing]
+   [nothing]
+)
+a list called lhs is [null].
+a list called mid is [nil].
+a list called rhs is [nothing].
+print lhs.
+print mid.
+print rhs.

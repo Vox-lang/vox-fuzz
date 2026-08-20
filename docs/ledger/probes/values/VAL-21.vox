@@ -1,0 +1,13 @@
+(VAL-21: `nothing` is the absent value; it sits in a list slot and a map
+ value and prints as the word `nothing`. Also covers VAL-22 (the exact
+ printed aggregate forms [1, nothing, "x"] and {"found": 4, "absent":
+ nothing}).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-21.vox -o p && ./p
+ expected output:
+   [1, nothing, "x"]
+   {"found": 4, "absent": nothing}
+)
+a list called L is [1, nothing, "x"].
+print L.
+a map called m is {"found": 4, "absent": nothing}.
+print m.

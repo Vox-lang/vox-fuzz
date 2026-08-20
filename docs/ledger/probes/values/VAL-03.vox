@@ -1,0 +1,17 @@
+(VAL-03: the worked `describe` example — a value parameter dispatches on
+ `is a number` / `is a text` / Otherwise, printing number / text / decimal
+ for the mixed list [1, "two", 3.5].
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-03.vox -o p && ./p
+ expected output:
+   number
+   text
+   decimal
+)
+To describe with a value called item.
+  If item is a number, print "number".
+  Otherwise if item is a text, print "text".
+  Otherwise print "decimal".
+
+a list called m is [1, "two", 3.5].
+For each item in m,
+  describe of item.

@@ -1,0 +1,14 @@
+(BUF-06: fixed buffers do not grow - writes past capacity are rejected/truncated, not silently expanded.)
+(expected output:
+write past capacity errored
+4
+8
+ABCD
+)
+a buffer called fx is 8 bytes in size.
+append "ABCD" to fx.
+Set byte 100 of fx to 9.
+On error print "write past capacity errored".
+print fx's size.
+print fx's capacity.
+print fx.

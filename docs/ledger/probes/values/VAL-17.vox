@@ -1,0 +1,14 @@
+(VAL-17: retyping a statically-typed variable is a compile error — the
+ compiler reports the declared type and points at the explicit cast as the
+ correct rewrite. The rewrite itself (`a text called t is n as text.`) is
+ valid and produces Text (static) — verified separately.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-17.vox -o p && ./p
+ expected output:
+   error: In-place retyping applies only to variables declared as 'value';
+   'n' is declared as a number
+     help: convert explicitly instead: a text called t is n as text.
+   (no binary produced; compile error)
+)
+a number called n is 3.
+n is a text.
+print n.

@@ -1,0 +1,9 @@
+(BUF-07: user programs can check buffer length after an operation to detect truncation.)
+(expected output:
+8
+)
+open a file for reading called f at "docs/ledger/probes/buffers/fixtures/long.txt".
+a buffer called small is 8 bytes in size.
+Read from f into small.
+print small's size.
+Close f.

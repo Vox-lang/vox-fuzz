@@ -1,0 +1,16 @@
+(BUF-15: `resize`, `reallocate`, `grow`, `shrink` are all accepted spellings of the same resize operation.)
+(expected output:
+16
+24
+32
+10
+)
+a buffer called buf is 8 bytes in size.
+resize buf to 16 bytes.
+print buf's capacity.
+reallocate buf to 24 bytes.
+print buf's capacity.
+grow buf to 32.
+print buf's capacity.
+shrink buf to 10.
+print buf's capacity.

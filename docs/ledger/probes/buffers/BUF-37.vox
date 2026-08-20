@@ -1,0 +1,14 @@
+(BUF-37: a fixed-size DESTINATION buffer truncates when full and sets the error flag, under append/copy.)
+(expected output:
+4
+fixed append truncated (errored)
+8
+ABCDEFGH
+)
+a buffer called fixdst is 8 bytes in size.
+copy "ABCD" to fixdst.
+print fixdst's size.
+append "EFGHIJKL" to fixdst.
+On error print "fixed append truncated (errored)".
+print fixdst's size.
+print fixdst.

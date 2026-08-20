@@ -1,0 +1,7 @@
+(BUF-20: reading a byte at a literal position works, e.g. `byte 1 of data`.)
+(expected output:
+72
+)
+a buffer called data is "Hello".
+a number called v is byte 1 of data.
+print v.

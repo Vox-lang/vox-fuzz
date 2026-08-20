@@ -1,0 +1,7 @@
+(BUF-24: writing a byte with a character literal (e.g. 'A') works and stores its ASCII code.)
+(expected output:
+66
+)
+a buffer called data is "AAAA".
+Set byte 2 of data to 'B'.
+print byte 2 of data.

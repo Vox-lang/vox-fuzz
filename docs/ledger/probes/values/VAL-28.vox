@@ -1,0 +1,9 @@
+(VAL-28: arithmetic on `nothing` written literally is a compile error.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-28.vox -o p && ./p
+ expected output:
+   error: Cannot use nothing in arithmetic; check it with 'is nothing' first.
+   (no binary produced; compile error)
+)
+a number called n is nothing add 1.
+print n.

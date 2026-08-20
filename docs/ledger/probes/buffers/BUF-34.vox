@@ -1,0 +1,19 @@
+(BUF-34: format-string sources are supported for `set`, `is`, `append`, and `copy` when destination is a buffer.)
+(expected output:
+tag7
+set7
+app7
+cp7
+)
+a number called n is 7.
+a buffer called viadecl is "tag{n}".
+print viadecl.
+a buffer called viaset is 32 bytes in size.
+set viaset to "set{n}".
+print viaset.
+a buffer called viaappend is 32 bytes in size.
+append "app{n}" to viaappend.
+print viaappend.
+a buffer called viacopy is 32 bytes in size.
+copy "cp{n}" to viacopy.
+print viacopy.
