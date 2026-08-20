@@ -1,0 +1,8 @@
+compiled: 1
+both runs exited cleanly: 1
+both captures readable: 1 1
+oracle sees the mismatch: true
+finding saved: 1
+finding directory exists: 1
+classification has run 1 output: 1
+classification has run 2 output: 1

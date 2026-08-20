@@ -1,0 +1,18 @@
+(A hand-written program that is deliberately NOT deterministic across
+ runs of the same binary - planted to prove the differential
+ self-consistency oracle (FUZZER_DEFECTS.md defect 9) catches real
+ nondeterminism, not just whatever the generator already proves clean.
+
+ Printing raw /proc/self/stat is the honest way to construct this
+ without a live compiler bug: its first field is this process's own
+ pid, which differs every time the SAME binary is fork/exec'd again -
+ exactly the "prints something that MOVES" case the oracle exists to
+ catch. (Bug #39, the brief's own worked example, is fixed in the vox
+ 0.4.7 this repo now builds against, so its repro shape no longer
+ reproduces - this is the brief's other suggested construction.))
+open a file for reading called 'stat source' at "/proc/self/stat".
+a buffer called 'stat data'.
+Read from 'stat source' into 'stat data'.
+Close 'stat source'.
+a text called 'stat text' is 'stat data' as text.
+Print 'stat text'.
