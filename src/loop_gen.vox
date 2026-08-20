@@ -109,7 +109,11 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
         Return a number, 0.
     Set stat_compiled to stat_compiled add 1.
     a text called 'run1 output path' is "{'the scratch path'}/vf_out1".
-    a text called 'the verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path'.
+    (Plan 327: the generator chose this program's argv, and BOTH runs
+     must get the same one — see runner.vox. gen_argv is a global set by
+     'gen build argv' during generation, so the two runs cannot drift.)
+    a text called 'no input yet' is "".
+    a text called 'the verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path' and gen_argv and 'no input yet'.
     If 'the verdict' is "hang" then,
         a number called 'the hang finding' is 'finding save' of "hang" and seed and 'the source path' and "killed at the deadline",
         Set stat_findings to stat_findings add 1,
@@ -132,7 +136,22 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      exactly a leaked pointer (bug #39's shape). No expected value is
      needed: the output only has to disagree with itself.)
     a text called 'run2 output path' is "{'the scratch path'}/vf_out2".
-    a text called 'the second verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path'.
+    a text called 'the second verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path' and gen_argv and 'no input yet'.
+    (Plan 327 A3: an argv assertion failed. The generator chose this
+     program's arguments, so it KNOWS what the flags should have parsed
+     to; 91-94 mean the program disagreed. That is a wrong VALUE caught
+     without a reference implementation — the one class the oracle's
+     run-it-twice check cannot see, because a deterministic wrong answer
+     is identical on both runs.
+     These codes are reserved: 'gen program' never draws them as an
+     ordinary exit code.)
+    a number called 'the exit code' is 'exit code of' of 'the last status'.
+    If 'the exit code' is greater than 90 and 'the exit code' is less than 95 then,
+        a text called 'the assertion detail' is "argv assertion failed: exit {'the exit code'} (91 label, 92 number, 93 boolean expected true, 94 boolean expected false)",
+        a number called 'the assertion finding' is 'finding save' of "wrong-value" and seed and 'the source path' and 'the assertion detail',
+        Set stat_findings to stat_findings add 1,
+        'scratch dir sweep' of 'the scratch path',
+        Return a number, 1.
     If 'the second verdict' is "exit" then,
         a text called 'the first output' is 'read whole file' of 'run1 output path',
         a boolean called 'first read ok' is 'the last read succeeded',

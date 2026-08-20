@@ -57,6 +57,31 @@ a boolean called gen_uses_flag_reader is true.
  budget is spent and emits one call if none happened, so a definition
  always has a call site.)
 a number called gen_grid_calls is 0.
+
+(Plan 327 Part A: the argv the harness will hand this program, and what
+ the program should therefore see. The generator CHOOSES the arguments,
+ so for once it knows the expected values at generation time — which is
+ the deferred output-oracle problem already solved in one corner. A
+ program given a valid invocation asserts its flags parsed to exactly
+ what was passed and Exits with a distinct code if not, so a wrong
+ answer becomes a detectable one without any reference implementation.
+
+ gen_argv is read by loop_gen and handed to BOTH of the oracle's runs.
+ If the two runs ever got different argv, the difference between them
+ would BE the input and every program would be a false nondeterminism
+ finding.
+
+ gen_asserts_argv is false for the hostile shapes, where the point is
+ that the program must not crash rather than that it must agree with a
+ prediction — a malformed number raises and yields 0, a missing value
+ leaves the flag empty, and an unknown flag is not consumed at all.
+ Asserting on those would be asserting on behaviour the fuzzer is
+ supposed to be QUESTIONING.)
+a list called gen_argv is [].
+a text called gen_expected_label is "".
+a number called gen_expected_count is 0.
+a boolean called gen_expects_on is false.
+a boolean called gen_asserts_argv is false.
 a number called gen_reader_calls is 0.
 
 To 'gen emit' with a text called s.
@@ -1949,6 +1974,87 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
  before the schema is perfectly legal Vox, verified by hand: a function
  may read a flag declared below it so long as it is CALLED after
  `Parse flags.` So the ordering was fine and only the naming was broken.)
+(Weighted so most programs get a sane invocation — the common path, and
+ the one that has never run — while a minority get something hostile.
+ The hostile shapes are drawn from behaviour probed by hand against
+ 0.4.7 and recorded in defect 10, so none of them is a guess.)
+To 'gen build argv'.
+    (A list is emptied by assignment; `clear` is buffer-only.)
+    Set gen_argv to [].
+    Set gen_expected_label to "".
+    Set gen_expected_count to 0.
+    Set gen_expects_on to false.
+    Set gen_asserts_argv to false.
+    a number called shape is 'rng below' of 10.
+    (0-5: a valid invocation, asserted. Long form and short form are
+     different code paths through one schema, so both are drawn.)
+    If shape is less than 6 then,
+        Set gen_asserts_argv to true,
+        a number called 'the word' is 'rng below' of 100000,
+        a text called 'the label value' is "v{'the word'}",
+        a number called 'the count value' is 'rng below' of 10000,
+        a number called 'long form' is 'rng below' of 2,
+        If 'long form' is 0 then,
+            append "-a" to gen_argv,
+            append 'the label value' to gen_argv,
+            append "-b" to gen_argv,
+            a text called 'the short count' is "{'the count value'}",
+            append 'the short count' to gen_argv.
+        If 'long form' is 1 then,
+            append "--alpha{gen_flags}" to gen_argv,
+            append 'the label value' to gen_argv,
+            append "--beta{gen_flags}" to gen_argv,
+            a text called 'the long count' is "{'the count value'}",
+            append 'the long count' to gen_argv.
+        Set gen_expected_label to 'the label value',
+        Set gen_expected_count to 'the count value',
+        a number called 'boolean pick' is 'rng below' of 2,
+        If 'boolean pick' is 0 then,
+            append "-c" to gen_argv,
+            Set gen_expects_on to true.
+        Return a number, 0.
+    (6: a value of the wrong type for a number flag. Yields 0 AND raises,
+     so a program can tell it from a real -b 0 - verified, defect 10.)
+    If shape is 6 then,
+        append "-b" to gen_argv,
+        append "notanumber" to gen_argv,
+        Return a number, 0.
+    (7: a value past i64. Raises too - compiler bug #35's fix reaching
+     the flag path.)
+    If shape is 7 then,
+        append "-b" to gen_argv,
+        append "99999999999999999999" to gen_argv,
+        Return a number, 0.
+    (8: a flag whose value is missing because argv ends. Leaves the flag
+     empty and does not raise.)
+    If shape is 8 then,
+        append "-a" to gen_argv,
+        Return a number, 0.
+    (9: an unknown flag plus positionals. Consumes nothing, so both fall
+     through to arguments's all - which has only ever seen the empty
+     case.)
+    append "-z" to gen_argv.
+    a number called extra is 'rng below' of 100.
+    a text called 'the extra' is "extra{extra}".
+    append 'the extra' to gen_argv.
+    Return a number, 0.
+
+(The assertions. Only emitted for a valid invocation, and only for the
+ flags actually passed. A distinct Exit code per assertion means a
+ finding's exit status says WHICH expectation failed, without needing
+ the output.)
+To 'gen emit argv assertions'.
+    If gen_asserts_argv is false then,
+        Return a number, 0.
+    a number called n is gen_flags.
+    'gen emit' of "If fl{n}label is not \"{gen_expected_label}\" then, Exit 91.\n".
+    'gen emit' of "If fl{n}count is not {gen_expected_count} then, Exit 92.\n".
+    If gen_expects_on then,
+        'gen emit' of "If fl{n}on is false then, Exit 93.\n".
+    If gen_expects_on is false then,
+        'gen emit' of "If fl{n}on then, Exit 94.\n".
+    'gen emit' of "\n".
+
 To 'gen emit prelude flags'.
     a number called n is gen_flags.
     a number called 'default pick' is 'rng below' of 3.
@@ -1960,6 +2066,10 @@ To 'gen emit prelude flags'.
     'gen emit' of "a flag called fl{n}on is \"-c\" or \"--gamma{n}\", it is a boolean.\n".
     'gen emit' of "Parse flags.\n".
     'gen emit' of "\n".
+    (Immediately after the parse point: a flag read before it is a
+     compile-time error, and putting the assertions here means they run
+     before anything else can Exit for its own reasons.)
+    'gen emit argv assertions'.
 
 (The reader function is the #32 shape and the whole reason this is
  worth emitting: a flag read INSIDE a function body was mis-typed, and
@@ -2545,6 +2655,7 @@ To 'gen program' with a number called seed and a number called budget.
     'rng seed' of seed.
     Set gen_grid_depth to 'rng below' of 15 add 3.
     Set gen_flags to 1.
+    'gen build argv'.
     Set gen_grid_calls to 0.
     Set gen_reader_calls to 0.
     (Branch form, not `Set x to <comparison>` — a comparison cannot be
@@ -2578,7 +2689,17 @@ To 'gen program' with a number called seed and a number called budget.
     If gen_uses_flag_reader and gen_reader_calls is 0 then,
         a text called 'the forced reader call' is "'read flags {gen_flags}'.\n",
         'gen emit' of 'the forced reader call'.
-    a number called code is 'rng below' of 256.
+    (91-94 are RESERVED for the argv assertions and must never be drawn
+     as an ordinary exit code, or a program that passed its assertions
+     could exit 92 by chance and be reported as having failed one. The
+     draw skips the reserved band rather than rejecting and redrawing,
+     so the distribution stays flat and deterministic.
+     256 - 4 = 252 possible codes, and anything at or above 91 is
+     shifted up by four.)
+    a number called 'the raw code' is 'rng below' of 252.
+    a number called code is 'the raw code'.
+    If 'the raw code' is greater than 90 then,
+        Set code to 'the raw code' add 4.
     a text called tail is "Exit {code}.\n".
     'gen emit' of tail.
 
