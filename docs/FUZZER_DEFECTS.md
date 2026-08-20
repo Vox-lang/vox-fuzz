@@ -259,6 +259,25 @@ rather than between processes.
 Suggested next step: run the two tests alone in a tight loop to get a
 faster reproduction, then instrument the scratch path lifecycle.
 
+**2026-08-20, hypotheses RULED OUT.** Recorded because a negative result
+saves the next person the same afternoon:
+
+- **CPU contention is not the cause.** `020_harness` bounds a spinning
+  process with a 300ms deadline, which looks like the obvious suspect.
+  It was run with four busy-loops saturating the machine and passed,
+  producing the exact expected `sleep: hang 9`.
+- **It is not deterministic given a state.** The same tree that failed
+  it two runs in three then passed three full `-v` runs consecutively,
+  with nothing changed in between.
+- **It is not my generator changes.** The rate varied within a single
+  unchanged tree, so any claim that a specific change worsened it is
+  unsupported. (I made that claim mid-session and withdrew it.)
+
+What still holds: it only ever strikes `020_harness` or
+`210_scratch_sandbox` — both process/timing tests — and never a
+generator or determinism test. Whatever it is, it lives in the
+fork/reap/scratch-lifecycle path, not in generation.
+
 ---
 
 ### 7. `supervise` gives the child no stdin, so any stdin read is reported as a hang
@@ -301,3 +320,133 @@ prerequisite for T3, which the plan does not currently name.
 emitted — `/dev/stdout` never blocks. The read half stays unemitted, and
 the T1 guard should treat a generated `/dev/stdin` read as a build
 failure so it cannot slip in ahead of the harness change.
+
+---
+
+### 8. A format string is never substituted where a string literal would go — so a whole class of type-tag bugs is unreachable
+
+**Status:** **open**, identified by Josj 2026-08-20, immediately after
+compiler bug #39 was found **by hand** rather than by the fuzzer.
+
+The generator now has four format-string leaves — specifiers,
+expressions, format-as-value, and every interpolated type. What it does
+NOT have is the thing that would have caught #39: a format string
+appearing **in a position where a string literal would otherwise go**.
+
+Grep-confirmed: zero of the format emissions occur as a list element,
+and every generated string literal is a plain literal.
+
+**Why that is the gap that matters.** #39 is that a format string as the
+FIRST element of an inline collection makes every element of that
+collection print as a raw pointer — a silent wrong value plus an address
+leak. It is not reachable by emitting format strings *somewhere*; it is
+only reachable by emitting one *instead of a literal, in a collection*.
+
+**Correction, and it matters — emission alone would NOT have caught it.**
+Josj, on reading the above: *"I'm not sure if the fuzzer is able to test
+if an address is printed when another valid type is expected."* He is
+right, and the claim above was too optimistic on its own. A program
+carrying #39 compiles, runs, and exits 0. The harness's oracle is signal
+death, hang, ICE and assembler rejection — none of which fire. The
+wrong output is invisible. That is equally true of #33, #34, #35, #36
+and #39: **every compiler bug found this week is silent wrong data, and
+the fuzzer cannot see any of them.** Emission is necessary and not
+sufficient; see defect 9, which supplies the missing half.
+The same is true of its family, #17 and #18, which are all the same
+shape: a format string's TYPE TAG, not its payload, being got wrong at
+some sink that infers element types statically.
+
+**Josj's design, which is the right one:** when the generator is about
+to emit a string literal, it should *occasionally and randomly* emit a
+format string instead. That decision should hand off to a dedicated
+subroutine that composes a random format string obeying the language's
+own format rules — slots, specifiers, expressions inside slots, escaped
+braces — rather than each call site inventing its own.
+
+The payoff is combinatorial rather than additive: every existing site
+that emits a literal becomes a format-string site for free, including
+ones nobody thought to enumerate. List elements, buffer initialisers,
+`treating` clauses, function arguments, thing fields, map keys and
+values, `Write ... to` sinks — LANGUAGE.md §"Format Strings Everywhere"
+claims all of them accept a format string, and that claim is exactly
+what is currently untested.
+
+**Two constraints the implementation must respect:**
+
+1. **The known-broken shapes must stay out until the compiler is
+   fixed**, or every program carrying one becomes a false finding. #39's
+   collection-first-element case is the live example. When #39 is fixed,
+   that exclusion is what should be lifted first — and the exclusion
+   should be written so it is obvious it is temporary and tied to a bug
+   number.
+2. **Grouping does not work inside a slot.** `{{` is the literal-brace
+   escape, so `"{{x add y} multiply z}"` renders `{13 multiply z}`, not
+   `52`. Format-string expressions are flat by necessity — the existing
+   `'gen deep expr'` already grew a `grouped` parameter for exactly this
+   reason and should be reused rather than reinvented.
+
+**Acceptance:** a campaign in which format strings appear at a
+measurable rate in literal positions; every program still compiles;
+zero findings. And a guard test in the spirit of `080_gen_rich.vox`, so
+the surface cannot silently stop being generated later — which the
+format worker flagged as the obvious missing guard and left out only
+because its brief pinned the gate at 19 tests.
+
+
+---
+
+### 9. No oracle can see a wrong VALUE — but a cheap one can see a leaked ADDRESS
+
+**Status:** **open**, designed 2026-08-20 from Josj's observation that
+emitting a shape is useless if nothing can tell the output is wrong.
+Feasibility and effectiveness both proven below before being written
+down.
+
+The harness classifies a run by signal death, hang, ICE, or assembler
+rejection. A program that computes the wrong answer and exits 0 is
+indistinguishable from a correct one. So the entire class this project
+keeps finding — #33, #34, #35, #36, #39, all silent wrong data — is
+invisible to the fuzzer that exists.
+
+A general output oracle needs an expected value, which needs either a
+reference implementation or generation-time knowledge of every result.
+That is the deferred hard problem. **But one important sub-class needs
+neither.**
+
+**The mechanism: run the same binary twice and diff the output.**
+
+A generated program is deterministic by construction — no input, no
+randomness, and the one clock-reading leaf deliberately prints verdicts
+(`ok`/`BAD`) rather than times. So its output must be byte-identical
+across runs. If it is not, the program printed something that moves:
+under ASLR, that means a **heap address**. Which is precisely what a
+leaked pointer is.
+
+**Proven, both directions, 2026-08-20:**
+
+| Check | Result |
+|---|---|
+| 20 generated programs, each run twice | 20/20 byte-identical — the determinism premise holds |
+| #39's repro (`["{base}", "plain"]`), run twice | `139780998905880` vs `140133082423320` — **caught** |
+| the corrected form (`["plain", "{base}"]`), run twice | identical — **no false positive** |
+
+Note the second column of #39's output is stable (`4206785`, static
+rodata) while the first moves. The oracle needs no expected value: it
+only needs the output to disagree with itself.
+
+**Cost:** one extra execution per program, bounded by the same deadline.
+Cheap enough to run on every program rather than as a special mode.
+
+**What it catches:** leaked pointers, uninitialised memory that happens
+to vary, anything ASLR-dependent. **What it does not catch:** a
+deterministic wrong answer — `"{f:06}"` printing a float's bit pattern
+(#36) is the same wrong number every time and stays invisible. That
+half still needs the knowable-answer work in plan 325.
+
+**Implementation notes:** `supervise` already returns a verdict per run;
+this needs a second call and a byte comparison of captured stdout, which
+the harness does not currently capture at all (generated programs write
+straight to the fuzzer's own stdout — see defect 7's neighbourhood).
+Capturing it is the prerequisite, and it is the same plumbing plan 324
+T3 needs for seeded input. A finding of this class should record both
+outputs, since the diff IS the evidence.
