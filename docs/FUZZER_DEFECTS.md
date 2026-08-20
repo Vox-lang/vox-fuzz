@@ -164,7 +164,9 @@ wall-clock time, not to retry it.
 
 ### 5. Two concurrent runs from the same directory fabricate findings
 
-**Status:** **open, partially fixed.** Found and proven 2026-08-19.
+**Status:** **FIXED** (merged 2026-08-20). Per-run scratch isolation plus a pid-keyed writability probe — the probe itself had reintroduced the very collision D1 cures. Five concurrent pairs back to back, both sides clean.
+
+**Original status:** open, partially fixed. Found and proven 2026-08-19.
 
 Two `gen` runs started from the same working directory produced **1,260
 `asm-reject` findings between them, every one false** — each finding's
@@ -397,7 +399,9 @@ because its brief pinned the gate at 19 tests.
 
 ### 9. No oracle can see a wrong VALUE — but a cheap one can see a leaked ADDRESS
 
-**Status:** **open**, designed 2026-08-20 from Josj's observation that
+**Status:** **FIXED** (merged 2026-08-20) for the heap/stack half; the
+static-address half is a known and recorded limitation, see below.
+Designed 2026-08-20 from Josj's observation that
 emitting a shape is useless if nothing can tell the output is wrong.
 Feasibility and effectiveness both proven below before being written
 down.
@@ -437,8 +441,45 @@ only needs the output to disagree with itself.
 **Cost:** one extra execution per program, bounded by the same deadline.
 Cheap enough to run on every program rather than as a special mode.
 
-**What it catches:** leaked pointers, uninitialised memory that happens
-to vary, anything ASLR-dependent. **What it does not catch:** a
+**What it catches — measured, not assumed (2026-08-20).** vox emits
+NON-PIE executables (`readelf -h` reports `Type: EXEC`), which splits
+leaked pointers into two classes:
+
+| Address kind | Moves between runs? | Oracle sees it |
+|---|---|---|
+| heap (buffers, lists, allocations) | yes, under ASLR | **caught** |
+| stack | yes, under ASLR | **caught** |
+| static / rodata (string literals, globals) | **no** — fixed at link time | **MISSED** |
+
+Bug #39's own output demonstrates both halves in one program. Its first
+element printed `139780998905880` — a heap pointer that moved between
+runs, and that movement is what the oracle detects. Its second printed
+`4210945`, which is `0x40403`: a low, fixed address in static data,
+identical on every run. **A bug that leaked only static pointers would
+be entirely invisible to this oracle.**
+
+That is not a reason to weaken the claim to nothing — the heap case is
+the common one, and two of the five bugs in vox 0.4.7 leaked exactly
+that. But the register should not say "catches leaked pointers" when it
+catches most of them.
+
+**Closing the static half, if it is ever worth it.** Two options, both
+more expensive than the current check:
+
+1. **Compile the same source twice with a padding difference** so static
+   addresses shift, then compare. Real, but doubles compile cost — the
+   expensive half of a campaign.
+2. **A plausibility filter**: flag a printed integer that falls in the
+   binary's own static range when the surrounding program has no
+   business producing one. Cheap, but needs a notion of "no business",
+   which is the expected-value problem this oracle exists to avoid.
+
+Neither is worth doing until something demonstrates a static-pointer
+leak actually happens. Recorded so the limitation is known rather than
+discovered later.
+
+**Also catches:** uninitialised memory that happens to vary, and
+anything else ASLR-dependent. **What it does not catch:** a
 deterministic wrong answer — `"{f:06}"` printing a float's bit pattern
 (#36) is the same wrong number every time and stays invisible. That
 half still needs the knowable-answer work in plan 325.
@@ -450,3 +491,66 @@ straight to the fuzzer's own stdout — see defect 7's neighbourhood).
 Capturing it is the prerequisite, and it is the same plumbing plan 324
 T3 needs for seeded input. A finding of this class should record both
 outputs, since the diff IS the evidence.
+
+
+---
+
+### 10. Generated programs are never given arguments, so the whole flag-PARSING surface is untested
+
+**Status:** **open**, identified by Josj 2026-08-20: *"Do we actually
+pass values to flags? valid and invalid?"* We do not.
+
+`runner.vox`'s `run program` builds `a list called 'no arguments' is
+[].` and passes it to every generated program, on every path — including
+the oracle's second run. So a generated program has always run with an
+empty argv.
+
+**What that leaves untested.** The generator declares flags and reads
+them, which is what found compiler bugs #31 and #32 — but those were
+both on the DECLARATION side. Everything on the parsing side has no
+coverage at all:
+
+| Shape | Covered today |
+|---|---|
+| short form with a value (`-l hello`) | no |
+| long form with a value (`--label world`) | no |
+| boolean presence (`-v`) | no |
+| a malformed value for a `number` flag | no |
+| a value that overflows i64 | no |
+| a flag given with its value missing at end of argv | no |
+| an unknown flag falling through to positionals | no |
+| `arguments's all` / `arguments's raw` with actual arguments | **no** — only ever the empty case |
+| a `required` flag, supplied and unsupplied | no |
+
+**The behaviour is worth knowing before emitting it**, and it was probed
+by hand on 0.4.7 so the emitter does not have to discover it:
+
+- `-l hello -r 42 -v` and `--label world --retries 7` both parse
+  correctly, and recognised flags are removed from `arguments's all`.
+- `-r notanumber` yields 0 **and sets the error flag**, so a program can
+  tell it from a real `-r 0`, which does not raise. Good behaviour, and
+  the reason this is a coverage gap rather than a compiler bug.
+- `-r 99999999999999999999` also raises — that is compiler bug #35's fix
+  reaching the flag path, though it still returns the wrapped value.
+- `-l` with no following token leaves the flag empty and does not raise.
+- `-z extra` consumes nothing: both tokens fall through as positionals.
+
+**Why it matters.** The flag schema is the single richest surface the
+generator touches and it has already produced three compiler bugs (#31,
+#32, and #33 by way of the CLI rewrite that exposed it). Half of that
+surface has never been executed.
+
+**What the fix needs.** The harness must pass a seeded argument list to
+the generated program, and the program must know what to expect so it
+can be self-checking. That is the same plumbing as defect 7 (the child
+needs a real stdin) and plan 324 T3 (seeded input bytes) — argv is
+simply the third input channel, and the cheapest of the three, since
+`supervise` already takes an argument list and it is only ever handed an
+empty one.
+
+**Design note for whoever builds it.** The generator knows what it
+passed, so this is a rare case where the expected VALUE is known at
+generation time — a program can assert `label` equals what was supplied
+and `Exit` with a distinct code if not. That makes it one of the few
+places the deferred output-oracle problem is already solved, and it is
+worth exploiting rather than merely printing the values and hoping.
