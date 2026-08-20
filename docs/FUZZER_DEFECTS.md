@@ -191,7 +191,14 @@ Fix and full acceptance in plan 325 Task 1.
 
 ### 6. A run reports `findings: 0` while every compile fails
 
-**Status:** **open.** Found 2026-08-19.
+**Status:** **FIXED** (2026-08-20). A run that compiled NOTHING now
+writes a message to stderr saying the run proves nothing and that
+`findings: 0` is meaningless, and exits **2**. A run that compiled less
+than half warns loudly but keeps its normal exit status, because a low
+compile rate is not necessarily broken — chaos mode will do it
+deliberately. Verified both directions: a deliberately failing compiler
+gives exit 2 with the message, a healthy run gives exit 0 unchanged.
+Found 2026-08-19.
 
 A campaign whose working directory was deleted mid-flight ran to
 completion through **2,817 `getcwd` errors**, compiled nothing, and
