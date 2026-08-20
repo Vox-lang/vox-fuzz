@@ -1412,7 +1412,11 @@ To 'gen if' with a number called depth and a text called indent.
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        Set kind to 'rng below' of 40.
+        (39 was the file-write leaf and is deliberately NOT drawn - see
+         'gen leaf file write' for why. The draw stops at 39 so kinds
+         0..38 stay reachable and the leaf's code stays present for
+         whoever re-enables it against a scratch-dir path.)
+        Set kind to 'rng below' of 39.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
@@ -1723,6 +1727,34 @@ To 'gen leaf timer and clock' with a text called indent and a boolean called nes
  emitted even though #37 makes it always answer 1, because a wrong
  answer is not a crash and the program still runs. When #37 is fixed
  this leaf starts exercising the fix for free.)
+(DISABLED 2026-08-20, and the reason is worth keeping.
+
+ Writing to "/dev/stdout" from a generated program corrupts the
+ HARNESS's own captured output. Opening /dev/stdout gives the child an
+ independent file description with its own offset starting at 0. When
+ the harness's stdout is a redirected FILE - which is exactly what
+ test.sh does when capturing a golden - the child writes at offset 0
+ while the parent goes on writing at its own, much larger offset. The
+ result is a sparse file: a hole between them that reads back as a run
+ of NUL bytes, which is how this was found (tests/060_loop_gen.expected
+ went from text to binary, 526 NULs, passing locally on a terminal and
+ failing in CI where stdout is a file).
+
+ It is not a compiler bug - `Write` itself is clean, 6 bytes for 6
+ bytes - and not visible interactively. It is a consequence of choosing
+ /dev/stdout as the "needs no sandbox" write target, which was my
+ shortcut around plan 324 Part B.
+
+ The correct target is a path inside the per-run scratch directory,
+ which defect 5's isolation now provides. That needs the harness to
+ tell the program where its scratch dir is - the same plumbing plan 324
+ T3 needs for seeded input, and the same plumbing defect 7 needs for
+ stdin. The leaf is kept intact so it can be re-pointed at that path
+ rather than rewritten.
+
+ The leaf also printed `permissions`, which is machine-dependent for
+ /dev/stdout - a tty, a pipe and a file all differ - so it could never
+ have lived in a golden fixture either way.)
 To 'gen leaf file write' with a text called indent and a boolean called nested.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
