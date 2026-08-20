@@ -74,6 +74,15 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      would be a false nondeterminism finding.)
     a text called 'the input path' is "{'the scratch path'}/vf_input".
     'gen write input' of 'the input path'.
+    (The program is told its own scratch directory on the command line,
+     which is what lets it do real file I/O without an allowlist: it can
+     only write where it was told, and this directory is pid-and-seed
+     keyed and swept when the run ends. Appended to the argv the
+     generator built, so BOTH of the oracle's runs get the same value —
+     a different scratch path per run would make the program's own
+     output differ and every program a false nondeterminism finding.)
+    append "--scratch{gen_flags}" to gen_argv.
+    append 'the scratch path' to gen_argv.
     'gen write' of 'the source path'.
     a number called 'the kept' is 'keep source' of 'the source path' and seed.
     a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".
