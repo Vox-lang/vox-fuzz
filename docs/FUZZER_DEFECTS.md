@@ -258,3 +258,46 @@ rather than between processes.
 
 Suggested next step: run the two tests alone in a tight loop to get a
 faster reproduction, then instrument the scratch path lifecycle.
+
+---
+
+### 7. `supervise` gives the child no stdin, so any stdin read is reported as a hang
+
+**Status:** **open**, found 2026-08-20 while checking whether file I/O
+could be emitted without waiting for the sandbox. Found BEFORE emitting
+it, which is the only reason it is a note here rather than a flood of
+false findings in a campaign.
+
+`supervise` (harness.vox:48) forks and `Execute`s the generated program
+with **no stdio redirection of any kind**. The child therefore inherits
+whatever stdin the fuzzer itself has. Run from a terminal — or from any
+parent whose stdin is an open-but-silent pipe — a generated program
+that reads `/dev/stdin` blocks forever, is killed at the deadline, and
+is classified `hang`.
+
+**Proved, not assumed.** A program whose only interesting statement is
+`Read from input into data` where `input` is `/dev/stdin`:
+
+| stdin | result |
+|---|---|
+| `< /dev/null` | reads 0 bytes, no error, exits 0 |
+| open pipe with no writer sending | **blocks until killed (rc 124)** |
+
+The second row is what `supervise` produces today.
+
+**Consequence, and why it matters now.** Plan 324 Part B puts
+`/dev/stdin` on the read allowlist, and plan 324 T3 wants the harness to
+feed seeded bytes to it. Emitting a stdin read before this is fixed
+would make EVERY such program a false hang — a whole category of
+fabricated findings, arriving with the plan's own blessing.
+
+**Fix, and it is small:** the child must have its stdin explicitly
+redirected before `Execute` — from `/dev/null` by default, and from the
+seeded input file once plan 324 T3 lands. That single change turns the
+row above from "blocks" into "reads 0 bytes", and is the actual
+prerequisite for T3, which the plan does not currently name.
+
+**Until then:** the write half of file I/O is safe to emit and is
+emitted — `/dev/stdout` never blocks. The read half stays unemitted, and
+the T1 guard should treat a generated `/dev/stdin` read as a build
+failure so it cannot slip in ahead of the harness change.
