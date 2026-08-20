@@ -107,6 +107,25 @@ a number called tu2 is the tn2's unix.
 If tu2 is positive then, Print "tu2 ok". Otherwise, Print "tu2 BAD".
 a number called ty2 is the tn2's year.
 If ty2 is greater than 2000 then, Print "ty2 ok". Otherwise, Print "ty2 BAD".
-Exit 241.
+open a file for reading called sin3 at "/dev/stdin".
+a buffer called sb3 is 49 bytes.
+Read from sin3 into sb3.
+Print sb3's size.
+If sb3 is empty then, Print "sb3 empty". Otherwise, Print "sb3 filled".
+a buffer called sc3 is 8 bytes.
+Read from sin3 into sc3.
+Print sc3's size.
+Close sin3.
+a text called fp4 is "{fl1scratch}/out4".
+open a file for writing called fw4 at fp4.
+Write "payload 75631\n" to fw4.
+Close fw4.
+open a file for reading called fr4 at fp4.
+a buffer called fb4 is 8 bytes in size.
+Read from fr4 into fb4.
+Print fb4's size.
+Print fr4's readable.
+Close fr4.
+Exit 217.
 
 reproducible: 1
