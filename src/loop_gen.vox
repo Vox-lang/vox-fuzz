@@ -110,15 +110,12 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     Set stat_compiled to stat_compiled add 1.
     a text called 'run1 output path' is "{'the scratch path'}/vf_out1".
     a text called 'the verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path'.
-    a text called 'the exit verdict' is "exit".
-    a text called 'the hang verdict' is "hang".
-    a text called 'the signal verdict' is "signal".
-    If 'the verdict' is 'the hang verdict' then,
+    If 'the verdict' is "hang" then,
         a number called 'the hang finding' is 'finding save' of "hang" and seed and 'the source path' and "killed at the deadline",
         Set stat_findings to stat_findings add 1,
         'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
-    If 'the verdict' is 'the signal verdict' then,
+    If 'the verdict' is "signal" then,
         a number called 'the killing signal' is 'signal of' of 'the last status',
         a text called 'the detail' is "died by signal {'the killing signal'}",
         a number called 'the crash finding' is 'finding save' of "crash" and seed and 'the source path' and 'the detail',
@@ -136,7 +133,7 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      needed: the output only has to disagree with itself.)
     a text called 'run2 output path' is "{'the scratch path'}/vf_out2".
     a text called 'the second verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path'.
-    If 'the second verdict' is 'the exit verdict' then,
+    If 'the second verdict' is "exit" then,
         a text called 'the first output' is 'read whole file' of 'run1 output path',
         a boolean called 'first read ok' is 'the last read succeeded',
         a text called 'the second output' is 'read whole file' of 'run2 output path',

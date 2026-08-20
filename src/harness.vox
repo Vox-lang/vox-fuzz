@@ -146,8 +146,7 @@ To 'run shell' with a text called command and a number called 'the deadline in m
   append "-c" to 'the shell arguments'.
   append command to 'the shell arguments'.
   a text called 'how it ended' is supervise of "/bin/sh" and 'the shell arguments' and 'the deadline in milliseconds'.
-  a text called 'the exit verdict' is "exit".
-  If 'how it ended' is not 'the exit verdict' then,
+  If 'how it ended' is not "exit" then,
       Return a number, 0 minus 1.
   Return a number, 'exit code of' of 'the last status'.
 
@@ -201,7 +200,3 @@ To 'make directories' with a text called path.
     a text called 'the whole path' is prefix as text.
     Create a directory called 'the whole path'.
     Return a number, 0.
-
-(The bound 'the exit verdict' local is vox bug #21's workaround - a
- string literal in a function-body If condition mis-resolves as a
- variable name; language note 14.)
