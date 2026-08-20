@@ -31,6 +31,26 @@ To 'classify compile exit' with a number called code.
     If code is equal to 0 then, Return a text, "ok".
     Return a text, "check-asm".
 
+(--keep: copy each generated program somewhere durable BEFORE the sweep.
+ Without this a passing program is unreadable by design — the scratch dir
+ that holds it is removed the moment the run ends, which is correct for
+ hygiene and useless for a human who wants to READ what the generator
+ produces. Findings already survive (finding save copies the source
+ out); this does the same for the ordinary case.
+
+ Empty means off, so the default behaviour is unchanged and no campaign
+ silently starts filling a directory.)
+a text called keep_dir is "".
+
+To 'keep source' with a text called 'the source path' and a number called seed.
+    If keep_dir is empty then,
+        Return a number, 0.
+    a number called 'the make' is 'make directories' of keep_dir.
+    a text called 'the destination' is "{keep_dir}/seed_{seed}.vox".
+    a text called 'the copy command' is "cp {'shell quote' of 'the source path'} {'shell quote' of 'the destination'}".
+    a number called 'the copy exit code' is 'run shell' of 'the copy command' and 5000.
+    Return a number, 'the copy exit code'.
+
 To 'fuzz gen once' with a number called seed and a number called budget and a number called 'the deadline in milliseconds'.
     Set stat_total to stat_total add 1.
     'gen program' of seed and budget.
@@ -48,6 +68,7 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     'scratch dir create' of 'the scratch path'.
     a text called 'the source path' is "{'the scratch path'}/vf_gen.vox".
     'gen write' of 'the source path'.
+    a number called 'the kept' is 'keep source' of 'the source path' and seed.
     a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".
     a text called 'the cerr path' is "{'the scratch path'}/vf_cerr".
     a number called 'the compiler exit code' is 'compile vox' of 'the scratch path' and "vf_gen.vox" and "vf_gen_bin" and "vf_cerr".

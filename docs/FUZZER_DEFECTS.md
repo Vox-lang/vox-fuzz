@@ -201,3 +201,103 @@ the other side.
 read back, delete) and abort non-zero on failure; treat an unreadable
 compile-stderr as fatal, not as a finding. Plan 325 Task 2.
 
+
+
+---
+
+## Addendum 2026-08-20 — D1 reproduced at full strength, and it is worse than "open"
+
+Running one extra `gen` command from the same directory as a running
+campaign produced **28 findings from 40 programs**. The identical seed
+range re-run in an isolated directory: **20/20 compiled, 0 findings.**
+All 28 were fabricated.
+
+The same collision, the same night:
+
+- corrupted a 400-seed campaign's own arithmetic — it reported
+  `compiled: 347` and `findings: 12` against `programs: 400`, which do
+  not add up and cannot both be true;
+- **poisoned a checked-in fixture**: regenerating `060_loop_gen.expected`
+  while a campaign ran captured `programs: 5 / compiled: 0 / findings: 5`
+  and wrote it into the repo as the expected output. It was caught only
+  because the number was absurd on its face.
+
+That third consequence is the reason to raise this defect's priority.
+A fabrication that lands in a golden file stops being a transient lie
+and becomes the definition of correct. **Plan 325 T1 should be done
+before any further emitter work on this repo.**
+
+Practical rule until it is fixed: **one fuzz process per directory, ever**
+— including the test suite, which shells out to the binary and therefore
+counts as a run. Copy `build/` to a scratch directory for parallel work.
+
+### Defect 4 (the suite flake) — measured, and narrowed to two tests
+
+Five consecutive full-suite runs on 2026-08-20, same tree, same binary,
+nothing else running, all scratch leftovers deleted first:
+
+| run | result |
+|---|---|
+| 1 | 19/19 |
+| 2 | FAIL `210_scratch_sandbox` |
+| 3 | FAIL `020_harness` |
+| 4 | 19/19 |
+| 5 | 19/19 |
+
+**Roughly 2 in 5, and it moves between exactly two tests.** Both are
+sandbox/process tests; no generator or determinism test has ever
+flaked. Each passes when run alone.
+
+That narrows it considerably from "unreproduced": it is not seed-
+dependent (the generator tests are the seeded ones and they are rock
+solid), and it is not my concurrent campaigns (the runs above had
+none). It smells like a race in scratch-directory creation or teardown,
+or a process the harness reaps while another test is still using its
+path — the D1 shared-path family again, but within a single suite run
+rather than between processes.
+
+Suggested next step: run the two tests alone in a tight loop to get a
+faster reproduction, then instrument the scratch path lifecycle.
+
+---
+
+### 7. `supervise` gives the child no stdin, so any stdin read is reported as a hang
+
+**Status:** **open**, found 2026-08-20 while checking whether file I/O
+could be emitted without waiting for the sandbox. Found BEFORE emitting
+it, which is the only reason it is a note here rather than a flood of
+false findings in a campaign.
+
+`supervise` (harness.vox:48) forks and `Execute`s the generated program
+with **no stdio redirection of any kind**. The child therefore inherits
+whatever stdin the fuzzer itself has. Run from a terminal — or from any
+parent whose stdin is an open-but-silent pipe — a generated program
+that reads `/dev/stdin` blocks forever, is killed at the deadline, and
+is classified `hang`.
+
+**Proved, not assumed.** A program whose only interesting statement is
+`Read from input into data` where `input` is `/dev/stdin`:
+
+| stdin | result |
+|---|---|
+| `< /dev/null` | reads 0 bytes, no error, exits 0 |
+| open pipe with no writer sending | **blocks until killed (rc 124)** |
+
+The second row is what `supervise` produces today.
+
+**Consequence, and why it matters now.** Plan 324 Part B puts
+`/dev/stdin` on the read allowlist, and plan 324 T3 wants the harness to
+feed seeded bytes to it. Emitting a stdin read before this is fixed
+would make EVERY such program a false hang — a whole category of
+fabricated findings, arriving with the plan's own blessing.
+
+**Fix, and it is small:** the child must have its stdin explicitly
+redirected before `Execute` — from `/dev/null` by default, and from the
+seeded input file once plan 324 T3 lands. That single change turns the
+row above from "blocks" into "reads 0 bytes", and is the actual
+prerequisite for T3, which the plan does not currently name.
+
+**Until then:** the write half of file I/O is safe to emit and is
+emitted — `/dev/stdout` never blocks. The read half stays unemitted, and
+the T1 guard should treat a generated `/dev/stdin` read as a build
+failure so it cannot slip in ahead of the harness change.

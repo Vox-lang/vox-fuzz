@@ -14,66 +14,80 @@ gen options:
   --vox PATH     vox binary (default ../vox/target/release/vox)
   --core DIR     coreasm dir (default ../vox/coreasm)
   --out DIR      findings directory (default ./findings)
+  --keep DIR     also save every generated program here (default: off)
 bad subcommand exits 2: 1
 vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
+814
+{g1: {x1: 814, x2: 0}, g2: {x1: 0, x2: 0}}
+33
+81
+mixed1
+6.31
+tag1
+138
+2
+label
+count
+0
+map key missing
+5
+0x5
+-2977399354182261911
+1
+1
+42
+556181
+556181
+556181
+9223372029073561479
+9223372029073561479
+9223372029073561479
+9223372029073561479
+9223372029073561479
 0
 0
+0
+49498329
+0x2F348D9
+4317033307548309757
+1
+x
+2
+3
+x
+4
+x
+5
+x
+6
+x
+1
+1
+95
+-95
+pt3 empty
+pn3 odd
+pn3 positive
+pn3 nonzero
+{x1: 652, x2: 0}
+79
+71
+486
+{g1: {x1: 486, x2: 0}, g2: {x1: 0, x2: 0}}
+465
+tl1 ok
+tu1 ok
+ty1 ok
+0
+buffer read out of range
 environment variable not set
 
-83
-400
+0
+661
 reassigned1
--8934041986016164816
-13013.923999999999069
-30.430367504835587
-705065592923585408.0
-1
-0
 0
 1
 1
-1
-0
-0
-1
-1
-9
-12714.04320000000007
-35.442449841605068
-1312.279999999999973
-121
-70
-{x1: 666, x2: 0}
-0
-buffer read out of range
-8
-1187.912000000000262
-61.359090909090909
-910.980000000000018
-1
-0
-0
-1
-1
-97
-22
-55
-mixed1
-52.57
-0
-buffer read out of range
-8
-2839.672000000000026
-146.677272727272708
-1143.380000000000109
-1
-0
-0
-1
-1
-61
-856
-reassigned1
 programs: 3
 compiled: 3
 findings: 0

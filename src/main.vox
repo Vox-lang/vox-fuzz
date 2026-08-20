@@ -54,7 +54,7 @@ To 'print usage'.
     Write "  --timeout MILLISECONDS per-program time limit (default 10000)\n" to 'the error stream'.
     Write "  --vox PATH     vox binary (default ../vox/target/release/vox)\n" to 'the error stream'.
     Write "  --core DIR     coreasm dir (default ../vox/coreasm)\n" to 'the error stream'.
-    Write "  --out DIR      findings directory (default ./findings)\n" to 'the error stream'.
+    Write "  --out DIR      findings directory (default ./findings)\n  --keep DIR     also save every generated program here (default: off)\n" to 'the error stream'.
     Close 'the error stream'.
 
 (Parse the gen subcommand's flags. arguments's all is argv[1..], so
@@ -96,6 +96,8 @@ To 'parse options'.
             Set vox_core to 'the value'.
         If 'the option' is "--out" then,
             Set findings_dir to 'the value'.
+        If 'the option' is "--keep" then,
+            Set keep_dir to 'the value'.
         Set 'the position' to 'the position' add 2.
 
 (Dispatch. Top-level literal comparisons are legal - bug #21 bites only

@@ -33,6 +33,8 @@ a number called gen_grid is 0.
 a number called gen_whiles is 0.
 a number called gen_repeats is 0.
 a number called gen_envs is 0.
+a number called gen_flags is 0.
+a number called gen_grid_depth is 3.
 
 To 'gen emit' with a text called s.
     a buffer called piece is "{s}".
@@ -40,10 +42,79 @@ To 'gen emit' with a text called s.
 
 To 'gen new var'.
     Set gen_vars to gen_vars add 1.
-    a number called v is 'rng below' of 1000.
+    a text called v is 'gen extreme number'.
     a text called line is "a number called v{gen_vars} is {v}.\n".
     'gen emit' of line.
     Return a number, gen_vars.
+
+(Aggressive magnitudes. Josj, 2026-08-20: "instead of always setting
+ values to things like 32.8 I wanna see 1243626351836374761.1224435542121323
+ ... I wanna make the compiler AND the runtime cry." A generator whose
+ every literal is a tame three-digit number never reaches a boundary, so
+ it never finds a boundary bug. These two helpers replace `'rng below' of
+ 1000` wherever a literal's magnitude is free to vary.
+
+ Every value returned is LEGAL Vox that should compile and run - the
+ invariant is untouched. i64's exact limits are included deliberately:
+ they are the values a saturating or wrapping conversion gets wrong, and
+ they are exactly where the compiler stops being able to be lazy.)
+(Josj, 2026-08-20, on seeing literal diversity FALL from 0.42 to 0.25:
+ "I was giving an example of a big number." Quite. The first version of
+ these tables hardcoded his example literal, so every program shared the
+ same handful of constants - wide magnitudes, no entropy. These build a
+ literal digit by digit instead: random length, random digits. The exact
+ i64 boundaries keep a small fixed weight because they are genuinely
+ special - they are what found compiler bugs #34 and #35, and a uniform
+ draw would land on them essentially never.
+
+ At most 18 digits, so a generated integer literal stays inside i64 by
+ construction: whether an over-wide LITERAL is a compile error or a
+ silent wrap is a question worth asking deliberately one day, not one to
+ trip over while testing something else.)
+To 'gen random digits' with a number called 'how many'.
+    a number called 'the first digit' is 'rng below' of 9 add 1.
+    a text called digits is "{'the first digit'}".
+    a number called made is 1.
+    While made is less than 'how many',
+        a number called d is 'rng below' of 10,
+        Set digits to "{digits}{d}",
+        Set made to made add 1.
+    Return a text, digits.
+
+To 'gen extreme number'.
+    a number called pick is 'rng below' of 10.
+    If pick is 0 then,
+        Return a text, "0".
+    If pick is 1 then,
+        Return a text, "9223372036854775807".
+    If pick is 2 then,
+        Return a text, "2147483648".
+    If pick is 3 then,
+        a number called 'a short length' is 'rng below' of 3 add 1,
+        a text called 'a small number' is 'gen random digits' of 'a short length',
+        Return a text, 'a small number'.
+    a number called 'the length' is 'rng below' of 18 add 1.
+    a text called 'the number' is 'gen random digits' of 'the length'.
+    Return a text, 'the number'.
+
+
+(Floats get their own extremes: a long mantissa the double cannot hold
+ exactly (rounding is correct behaviour and must not be reported as a
+ finding - only a crash or a wildly wrong magnitude is), a value beyond
+ 2^63 where an i64 route through the parser would show itself, and the
+ subnormal end. The very literal Josj asked for is in the table.)
+To 'gen extreme float'.
+    a number called pick is 'rng below' of 10.
+    If pick is 0 then,
+        Return a text, "0.000000000000000000001".
+    If pick is 1 then,
+        Return a text, "9223372036854775807.5".
+    a number called 'the whole length' is 'rng below' of 18 add 1.
+    a number called 'the fraction length' is 'rng below' of 20 add 1.
+    a text called 'the whole part' is 'gen random digits' of 'the whole length'.
+    a text called 'the fraction part' is 'gen random digits' of 'the fraction length'.
+    Return a text, "{'the whole part'}.{'the fraction part'}".
+
 
 To 'gen var ref'.
     If gen_vars is 0 then,
@@ -166,16 +237,111 @@ To 'gen join lines' with a text called indent and a boolean called nested and a 
     a text called 'final piece' is 'gen line piece' of indent and 'the last line' and false.
     'gen emit' of 'final piece'.
 
+(Deep expressions and the full operator matrix. Plan 323 lists this as
+ "shallow, not absent": 'gen expr' emits exactly two operands and one of
+ five operators, never nested, and 'gen leaf deep arithmetic' emits ONE
+ hardcoded three-operand template. So the compiler's precedence and
+ grouping rules — the richest part of its expression handling — were
+ exercised by two fixed shapes.
+
+ This builds an expression ITERATIVELY rather than recursively: start
+ from a single operand and repeatedly wrap it, either as
+ `{so far OP operand}` or as `{operand OP so far}`. Arbitrary depth, no
+ recursion needed, and mixing the two wrap directions means the tree is
+ not uniformly left-leaning — which is the point, since a
+ left-associative bug and a right-associative one look identical under a
+ left-only generator.
+
+ Grouping in Vox is `{ }`, and in a format string a literal brace is
+ doubled — hence the `{{` / `}}` below. Verified by hand against 0.4.6:
+ `20 add 6 multiply 3` is 38 (multiply binds tighter),
+ `{20 add 6} multiply 3` is 78, `20 minus 6 minus 3` is 11
+ (left-associative), and `{{20 add 6} multiply 3} modulo 7` is 1.
+
+ divide and modulo are included with a NONZERO literal divisor. Not
+ because zero would be illegal — `x divide 0` is legal Vox that sets the
+ error flag and yields 0, verified — but because an unguarded random
+ divisor would make a large fraction of programs into division-by-zero
+ tests rather than precedence tests. The zero case deserves its own
+ leaf; it is not this one's job.)
+To 'gen deep expr' with a number called depth.
+    a text called 'the expression' is 'gen var ref'.
+    a number called i is 0.
+    While i is less than depth,
+        a number called 'the operator choice' is 'rng below' of 6,
+        a text called op is "add",
+        If 'the operator choice' is 1 then,
+            Set op to "minus".
+        If 'the operator choice' is 2 then,
+            Set op to "multiply".
+        If 'the operator choice' is 3 then,
+            Set op to "times".
+        If 'the operator choice' is 4 then,
+            Set op to "divide".
+        If 'the operator choice' is 5 then,
+            Set op to "modulo".
+        a text called operand is 'gen var ref',
+        If 'the operator choice' is greater than 3 then,
+            a number called 'the safe divisor' is 'rng below' of 9 add 2,
+            Set operand to "{'the safe divisor'}".
+        a number called 'the side' is 'rng below' of 2,
+        If 'the side' is 0 then,
+            Set 'the expression' to "{{{'the expression'} {op} {operand}}}".
+        If 'the side' is 1 then,
+            Set 'the expression' to "{{{operand} {op} {'the expression'}}}".
+        Set i to i add 1.
+    Return a text, 'the expression'.
+
+To 'gen leaf deep expression' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called depth is 'rng below' of 8 add 2.
+    a text called e is 'gen deep expr' of depth.
+    a text called decl is "a number called dx{n} is {e}".
+    a text called 'print line' is "Print dx{n}".
+    a list called 'the lines' is [decl, 'print line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
 To 'gen leaf print' with a text called indent.
     a text called e is 'gen expr'.
     a text called line is "{indent}Print {e}.\n".
     'gen emit' of line.
 
+(The one leaf that uses a variable reference as an assignment TARGET
+ rather than as a value. With an empty variable pool 'gen var ref'
+ returns the literal "0" — fine as a value, invalid as a target, and
+ `Set 0 to 0 times 0.` is illegal Vox. That is what made the degenerate
+ no-globals program unreachable (seed 300019).
+
+ The cure is local, not global: declare a fresh number in THIS block, at
+ THIS indent, immediately before assigning to it. A top-level
+ declaration emitted from here would be wrong instead — this leaf can be
+ selected inside an If or loop body, and a name declared on a single
+ conditional path is out of scope afterwards (bug #25's family), which
+ the compiler is right to reject.)
 To 'gen leaf assign' with a text called indent.
-    a text called target is 'gen var ref'.
     a text called e is 'gen expr'.
+    (ONE statement, not two. An earlier version emitted a declaration and
+     then a separate `Set`, each ending in a period - and a period closes
+     the innermost open clause, so the first one closed the enclosing If
+     or loop early and every comma-continued line after it was orphaned
+     at the wrong level. That produced `Expected a statement, got Comma`
+     on 3 of 600 programs (seeds 7000007 and 7000267 among them).
+
+     A declaration takes an initializer, so the separate assignment was
+     never needed: one statement, one period, safe wherever a single
+     leaf is safe. This leaf emits directly rather than through
+     'gen join lines' and so has no `nested` flag to consult - which is
+     exactly why it must emit a single statement and nothing more.)
+    If gen_vars is 0 then,
+        Set gen_texts to gen_texts add 1,
+        a text called 'the fresh declaration' is "{indent}a number called an{gen_texts} is {e}.\n",
+        'gen emit' of 'the fresh declaration',
+        Return a boolean, false.
+    a text called target is 'gen var ref'.
     a text called line is "{indent}Set {target} to {e}.\n".
     'gen emit' of line.
+    Return a boolean, false.
 
 (Buffers: declaration, a write, and a read - the language's own claim
  is that out-of-bounds access sets the error flag and returns 0 rather
@@ -281,6 +447,47 @@ To 'gen call grid' with a text called indent and a boolean called nested.
     a list called 'the lines' is ['call line'].
     'gen join lines' of indent and nested and 'the lines'.
 
+(Deep grid expansion. Josj, 2026-08-20: "instead of double nested
+ parameter loop expansions I wanna see 17 levels of nested parameter
+ loop expansion." A grid clause binds to a PARAMETER - `f of each a from
+ X and each b from Y` needs f to take two - so an N-deep grid requires
+ an N-parameter callee, which this leaf emits alongside the call. The
+ prelude's f1/f2/f3 top out at two parameters, which is precisely why
+ the generator could never go deeper.
+
+ Runtime stays bounded while the COMPILER does not: most clauses get a
+ one-value range (`from i to i`), so the Cartesian product stays small
+ no matter how deep the nesting goes, while codegen still has to build
+ and close N nested loops. That is the intended asymmetry - depth
+ stresses the compiler, and the product is what would stress only the
+ clock. A handful of two-value ranges keep the product genuinely
+ multi-iteration without letting it explode: worst case here is 2^3.
+
+ Verified by hand at depth 17 before this leaf was written: compiles,
+ runs, and sums correctly. Deeper is reachable by raising the cap.)
+To 'gen leaf deep grid' with a text called indent and a boolean called nested.
+    Set gen_grid to gen_grid add 1.
+    a number called 'the run' is gen_grid.
+    a number called depth is gen_grid_depth.
+    a text called clauses is "".
+    a number called 'spread budget' is 3.
+    a number called i is 1.
+    While i is less than depth add 1,
+        a number called low is 'rng below' of 9,
+        a number called high is low,
+        a number called widen is 'rng below' of 4,
+        If widen is 0 and 'spread budget' is positive then,
+            Set high to low add 1,
+            Set 'spread budget' to 'spread budget' minus 1.
+        If i is 1 then,
+            Set clauses to "each q{'the run'}s{i} from {low} to {high}".
+        If i is greater than 1 then,
+            Set clauses to "{clauses} and each q{'the run'}s{i} from {low} to {high}".
+        Set i to i add 1.
+    a text called 'call line' is "'grid sink {depth}' of {clauses}".
+    a list called 'the lines' is ['call line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
 (Maps: literal creation with a text-valued key and a number-valued key,
  string-key read, `Set map's "key" to ...`, `'s length`, and a `keys`
  iteration - heap growth and hashing (finding 05). The oob variant reads
@@ -333,19 +540,22 @@ To 'gen leaf value roundtrip' with a text called indent and a boolean called nes
 To 'gen leaf float arithmetic' with a text called indent and a boolean called nested.
     Set gen_floats to gen_floats add 1.
     a number called 'first name' is gen_floats.
-    a number called 'first whole' is 'rng below' of 1000.
-    a number called 'first frac' is 'rng below' of 100.
+    a text called 'first literal' is 'gen extreme float'.
     Set gen_floats to gen_floats add 1.
     a number called 'second name' is gen_floats.
     a number called 'second whole' is 'rng below' of 20 add 1.
     a number called 'second frac' is 'rng below' of 100.
+    (The divisor stays modest and strictly nonzero on purpose: this leaf
+     divides by it, and a zero or subnormal divisor would make every
+     program a division-by-zero test rather than a magnitude test. The
+     dividend carries the extremes instead.)
     Set gen_floats to gen_floats add 1.
     a number called 'product name' is gen_floats.
     Set gen_floats to gen_floats add 1.
     a number called 'quotient name' is gen_floats.
     Set gen_floats to gen_floats add 1.
     a number called 'mixed name' is gen_floats.
-    a text called 'first decl' is "a float called d{'first name'} is {'first whole'}.{'first frac'}".
+    a text called 'first decl' is "a float called d{'first name'} is {'first literal'}".
     a text called 'second decl' is "a float called d{'second name'} is {'second whole'}.{'second frac'}".
     a text called 'product decl' is "a float called d{'product name'} is d{'first name'} multiply d{'second name'}".
     a text called 'print product' is "Print d{'product name'}".
@@ -1031,6 +1241,22 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf repeat' of indent and nested.
     If kind is 31 then,
         'gen leaf loop control' of indent and nested.
+    If kind is 32 then,
+        'gen leaf deep grid' of indent and nested.
+    If kind is 33 then,
+        'gen leaf flag read' of indent and nested.
+    If kind is 34 then,
+        'gen leaf predicate probe' of indent and nested.
+    If kind is 35 then,
+        'gen leaf cast and break' of indent and nested.
+    If kind is 36 then,
+        'gen leaf base conversion' of indent and nested.
+    If kind is 37 then,
+        'gen leaf timer and clock' of indent and nested.
+    If kind is 38 then,
+        'gen leaf deep expression' of indent and nested.
+    If kind is 39 then,
+        'gen leaf file write' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1186,7 +1412,11 @@ To 'gen if' with a number called depth and a text called indent.
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        Set kind to 'rng below' of 32.
+        (39 was the file-write leaf and is deliberately NOT drawn - see
+         'gen leaf file write' for why. The draw stops at 39 so kinds
+         0..38 stay reachable and the leaf's code stays present for
+         whoever re-enables it against a scratch-dir path.)
+        Set kind to 'rng below' of 39.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
@@ -1275,6 +1505,19 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         If kind is 27 then,
             Set 'safe kind' to 1.
         If kind is 28 then,
+            Set 'safe kind' to 1.
+        (Renumbered when main's `gen leaf loop control` claimed kind 31 in
+         a merge: these three are the same three leaves as before - deep
+         grid, cast-and-break, and timer-and-clock - each of which opens
+         a For-each clause and therefore cannot be a block's closer.
+         Main's loop control is NOT here because it emits through
+         'gen join lines' as a single line, so its own terminator closes
+         what it opened.)
+        If kind is 32 then,
+            Set 'safe kind' to 1.
+        If kind is 35 then,
+            Set 'safe kind' to 1.
+        If kind is 37 then,
             Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
@@ -1329,6 +1572,464 @@ To 'gen emit prelude functions'.
     a text called fn3 is "To f3 with a number called p1 and a number called p2.\n    a number called r is p1 add p2.\n    Return a number, r.\n\n".
     'gen emit' of fn3.
 
+(One callee per supported grid depth, emitted once in the prelude
+ rather than beside the call site. A function definition is only legal
+ at the top level, and 'gen leaf deep grid' can be selected inside a
+ loop or If body, where emitting a `To ...` would be invalid Vox - the
+ invariant forbids that, so the definitions live here where their
+ position is fixed and legal by construction.)
+(Flags. Josj, 2026-08-20: "Flags don't appear anywhere." They did not,
+ and the language's own flag schema went unexercised by anything real
+ until vox-fuzz's CLI was rewritten onto it - which immediately produced
+ compiler bugs #31 (a text flag with no default segfaulted on first
+ read) and #32 (any flag read inside a function body was typed boolean
+ whatever it was declared). A documented facility with no real user
+ carries bugs indefinitely; this makes the fuzzer that user.
+
+ The schema goes first, before anything else in the program: a
+ declaration must precede `Parse flags.`, and using a flag variable
+ before the parse point is a compile-time error. Everything after the
+ parse point may read them freely.
+
+ Generated programs are run with NO arguments (runner.vox passes an
+ empty argument list), so an undefaulted flag always takes the
+ "unsupplied" path - exactly #31's crash site - for free. That also
+ means a `required` flag would abort every program at runtime, so none
+ is emitted: the invariant is a program that should compile AND run.
+
+ NOTE this raises the fuzzer's floor to vox 0.4.6. On 0.4.5 and earlier
+ an undefaulted text flag segfaults on read, so every generated program
+ would "find" #31 - a true finding, but one already fixed and recorded.
+ SEEDS.md pins the compiler commit, which is what keeps that honest.)
+(Casts, `absolute`, and `Break` - all three grep-confirmed absent from
+ this generator before 2026-08-20, and `Break` was measured at 0 of 40
+ programs, the only construct at literally zero.
+
+ The cast pair is the point: `n as text` followed by `t as a number`
+ round-trips a value through text and back, and it is fed an extreme
+ literal, so i64's own limits go through the conversion. That is how a
+ saturating or wrapping cast would show itself - and compiler bug #34
+ (a float outside +/-2^63 formats as 9223372036854775808.372...) is
+ exactly a conversion boundary, found by hand while writing these
+ emitters rather than by the fuzzer, which could not reach it.
+
+ `Break`'s loop is bounded by construction - a fixed range with a
+ counter guard - so the program still always terminates. The guard's
+ period closes only the If (LANGUAGE.md rule 1), so the loop body
+ continues to the comma-joined line after it, which is why the print
+ sits inside the loop rather than after it.)
+To 'gen leaf cast and break' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the literal' is 'gen extreme number'.
+    a number called 'the ceiling' is 'rng below' of 20 add 5.
+    a text called 'source decl' is "a number called cn{n} is {'the literal'}".
+    a text called 'to text' is "a text called ct{n} is cn{n} as text".
+    a text called 'print text' is "Print ct{n}".
+    a text called 'round trip' is "a number called cb{n} is ct{n} as a number".
+    a text called 'print round trip' is "Print cb{n}".
+    a text called 'absolute probe' is "Print cn{n}'s absolute".
+    a text called 'loop line' is "For each ce{n} from 1 to {'the ceiling'},".
+    a text called 'the accumulate line' is "    a number called cs{n} is ce{n} multiply 2,".
+    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break.".
+    a list called 'the lines' is ['source decl', 'to text', 'print text', 'round trip', 'print round trip', 'absolute probe'].
+    'gen join lines' of indent and nested and 'the lines'.
+    'gen emit' of "{indent}{'loop line'}\n{indent}{'the accumulate line'}\n{indent}{'the guard line'}\n".
+
+(Base conversion — text to number, bases 2 through 36. Grep-confirmed
+ absent from this generator before 2026-08-20, and absent from the
+ compiler's own tests and examples too: the surface had no user at all,
+ which is the same story as the flag schema (#31/#32) and `is empty`
+ (#33). Probing it by hand to find out which shapes were legal turned up
+ compiler bug #35 within minutes — a numeral above i64::MAX wraps to a
+ negative number with no error flag.
+
+ Three shapes, all legal Vox that should compile and run:
+
+ - a well-formed numeral in a random base, which must round-trip;
+ - a numeral carrying a digit invalid for its base, which LANGUAGE.md
+   says stops at that character rather than raising - so it is a normal
+   read, not an error path;
+ - an oversized numeral, the #35 shape. That one is emitted because the
+   fuzzer should keep reaching the boundary, not because a wrong answer
+   is currently detectable: #35 is a silent wrong VALUE, invisible to a
+   signal-death oracle, and is exactly the argument for plan 325's
+   knowable-answer work.
+
+ The generated digits are built from the chosen base's own alphabet, so
+ the well-formed case really is well-formed for that base rather than
+ accidentally valid.)
+(The digit alphabet as data rather than arithmetic on character codes:
+ base 36's digits are 0-9 then a-z, and `element N of` is the idiom this
+ file already uses. Positions are 1-based, so a digit VALUE of v is at
+ element v+1.)
+(Timers and time values — plan 323 listed these Tier CONFINE on the
+ assumption that anything time-related needs a bound. A timer does not:
+ `Start`/`Stop` around a loop that is already bounded by construction
+ adds no waiting at all, and reading `elapsed` is a plain read. `Wait`
+ IS the construct that needs a bound and is deliberately still not
+ emitted here.
+
+ Every assertion is a knowable one — elapsed cannot be negative, a unix
+ timestamp cannot be non-positive, the year cannot be below 2000 — so
+ this leaf prints a verdict rather than a raw number. That keeps the
+ output deterministic despite the clock being anything but, which
+ matters because the same seed must produce the same PROGRAM and this
+ one's output must not wander between runs.
+
+ Syntax verified by hand first: `the clock's elapsed in milliseconds`
+ (the `in` cast only works on a timer's duration/elapsed), and
+ `Get current time into now` rather than any possessive on a bare
+ `time` — two forms I got wrong before reading LANGUAGE.md properly.)
+To 'gen leaf timer and clock' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the ceiling' is 'rng below' of 40 add 10.
+    a text called 'timer decl' is "a timer called tk{n}".
+    a text called 'timer start' is "Start tk{n}".
+    a text called 'accumulator' is "a number called ta{n} is 0".
+    a list called 'the lines' is ['timer decl', 'timer start', 'accumulator'].
+    'gen join lines' of indent and nested and 'the lines'.
+    'gen emit' of "{indent}For each te{n} from 1 to {'the ceiling'},\n".
+    'gen emit' of "{indent}    Set ta{n} to ta{n} add te{n}.\n".
+    a text called 'timer stop' is "Stop tk{n}".
+    a text called 'print acc' is "Print ta{n}".
+    a text called 'read elapsed' is "a number called tl{n} is the tk{n}'s elapsed in milliseconds".
+    a text called 'check elapsed' is "If tl{n} is negative then, Print \"tl{n} NEGATIVE\". Otherwise, Print \"tl{n} ok\"".
+    a text called 'get time' is "Get current time into tn{n}".
+    a text called 'read unix' is "a number called tu{n} is the tn{n}'s unix".
+    a text called 'check unix' is "If tu{n} is positive then, Print \"tu{n} ok\". Otherwise, Print \"tu{n} BAD\"".
+    a text called 'read year' is "a number called ty{n} is the tn{n}'s year".
+    a text called 'check year' is "If ty{n} is greater than 2000 then, Print \"ty{n} ok\". Otherwise, Print \"ty{n} BAD\"".
+    a list called 'the tail lines' is ['timer stop', 'print acc', 'read elapsed', 'check elapsed', 'get time', 'read unix', 'check unix', 'read year', 'check year'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(File I/O, write half only — plan 324 Part B, partially unblocked.
+
+ The plan puts this behind the per-run sandbox, but the WRITE half needs
+ no sandbox at all: `/dev/stdout` is a path every process already has,
+ writing to it cannot escape anywhere, and it never blocks.
+
+ The READ half is deliberately NOT emitted, and the reason is recorded
+ as defect 7 in docs/FUZZER_DEFECTS.md: `supervise` forks and Executes
+ the generated program with no stdio redirection, so the child inherits
+ the fuzzer's own stdin. A generated `/dev/stdin` read therefore blocks
+ until the deadline and is classified `hang` — a false finding on every
+ such program. Proved before emitting: with `< /dev/null` the read
+ returns 0 bytes and exits 0; with an open-but-silent pipe it blocks
+ until killed. The harness must redirect the child's stdin before the
+ read half can be emitted.
+
+ This leaf also reaches the FILE PROPERTY surface, which is where the
+ red team found #37 (`readable` always true) and #38 (`exists` is a
+ parse error) — the least-covered documented surface in the language.
+ `exists` is not emitted because it does not compile; `readable` IS
+ emitted even though #37 makes it always answer 1, because a wrong
+ answer is not a crash and the program still runs. When #37 is fixed
+ this leaf starts exercising the fix for free.)
+(DISABLED 2026-08-20, and the reason is worth keeping.
+
+ Writing to "/dev/stdout" from a generated program corrupts the
+ HARNESS's own captured output. Opening /dev/stdout gives the child an
+ independent file description with its own offset starting at 0. When
+ the harness's stdout is a redirected FILE - which is exactly what
+ test.sh does when capturing a golden - the child writes at offset 0
+ while the parent goes on writing at its own, much larger offset. The
+ result is a sparse file: a hole between them that reads back as a run
+ of NUL bytes, which is how this was found (tests/060_loop_gen.expected
+ went from text to binary, 526 NULs, passing locally on a terminal and
+ failing in CI where stdout is a file).
+
+ It is not a compiler bug - `Write` itself is clean, 6 bytes for 6
+ bytes - and not visible interactively. It is a consequence of choosing
+ /dev/stdout as the "needs no sandbox" write target, which was my
+ shortcut around plan 324 Part B.
+
+ The correct target is a path inside the per-run scratch directory,
+ which defect 5's isolation now provides. That needs the harness to
+ tell the program where its scratch dir is - the same plumbing plan 324
+ T3 needs for seeded input, and the same plumbing defect 7 needs for
+ stdin. The leaf is kept intact so it can be re-pointed at that path
+ rather than rewritten.
+
+ The leaf also printed `permissions`, which is machine-dependent for
+ /dev/stdout - a tty, a pipe and a file all differ - so it could never
+ have lived in a golden fixture either way.)
+To 'gen leaf file write' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the payload' is 'rng below' of 100000.
+    a text called 'open line' is "open a file for writing called fh{n} at \"/dev/stdout\"".
+    a text called 'write line' is "Write \"fuzz{n} {'the payload'}\\n\" to fh{n}".
+    a text called 'descriptor line' is "Print fh{n}'s descriptor".
+    a text called 'writable line' is "Print fh{n}'s writable".
+    a text called 'readable line' is "Print fh{n}'s readable".
+    a text called 'permissions line' is "Print fh{n}'s permissions".
+    a text called 'close line' is "Close fh{n}".
+    a list called 'the lines' is ['open line', 'write line', 'descriptor line', 'writable line', 'readable line', 'permissions line', 'close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen digit for value' with a number called v.
+    a list called 'the digit alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"].
+    a number called 'the position' is v add 1.
+    a text called d is element 'the position' of 'the digit alphabet'.
+    Return a text, d.
+
+To 'gen pick parse form' with a number called base.
+    (The six documented text-to-number forms, LANGUAGE.md:1926-1931. The
+     three named aliases are fixed-base, so they are only offered when the
+     digits were generated for that base; the two base-N forms - spaced
+     and fused, both documented and both real syntax - take any base 2-36,
+     and plain `as a number` is base 10.)
+    a number called pick is 'rng below' of 4.
+    If base is 16 and pick is 0 then,
+        Return a text, "as a hex number".
+    If base is 16 and pick is 1 then,
+        Return a text, "as a hexadecimal number".
+    If base is 8 and pick is 0 then,
+        Return a text, "as an octal number".
+    If base is 2 and pick is 0 then,
+        Return a text, "as a binary number".
+    If base is 10 and pick is 1 then,
+        Return a text, "as a number".
+    If pick is 2 then,
+        Return a text, "as a base{base} number".
+    a text called 'the spaced form' is "as a base {base} number".
+    Return a text, 'the spaced form'.
+
+To 'gen pick format spec'.
+    (Number-to-text in a base, LANGUAGE.md:3030-3034 - the other
+     direction, and one Josj had to point out was even a thing. `b`
+     renders bare while `x`/`X`/`o` carry 0x/0o prefixes, which is what
+     the table documents.
+     A space width on a prefixed base pads the DIGIT FIELD, so `{n:8x}`
+     renders `0x      ff` - spaces inside the token. That is self-
+     consistent with `{n:04x}` giving `0x00ff` (width = digits, not the
+     whole token), so it is a design wart rather than a defect, and it is
+     emitted deliberately: if it ever becomes a crash rather than an
+     oddity, this is what catches it.)
+    a number called pick is 'rng below' of 6.
+    If pick is 0 then,
+        Return a text, "x".
+    If pick is 1 then,
+        Return a text, "X".
+    If pick is 2 then,
+        Return a text, "b".
+    If pick is 3 then,
+        Return a text, "o".
+    If pick is 4 then,
+        a number called 'the zero width' is 'rng below' of 8 add 2,
+        Return a text, "0{'the zero width'}x".
+    a number called 'the space width' is 'rng below' of 8 add 2.
+    Return a text, "{'the space width'}o".
+
+To 'gen leaf base conversion' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    (Weighted so the three named aliases are actually reachable: a
+     uniform 2-36 draw would hit base 16 once in 35 programs and the
+     `as a hex number` spelling almost never.)
+    a number called 'the base choice' is 'rng below' of 6.
+    a number called base is 'rng below' of 35 add 2.
+    If 'the base choice' is 0 then,
+        Set base to 16.
+    If 'the base choice' is 1 then,
+        Set base to 8.
+    If 'the base choice' is 2 then,
+        Set base to 2.
+    If 'the base choice' is 3 then,
+        Set base to 10.
+    a number called 'how many digits' is 'rng below' of 8 add 1.
+    a text called digits is "".
+    a number called i is 0.
+    While i is less than 'how many digits',
+        a number called v is 'rng below' of base,
+        a text called d is 'gen digit for value' of v,
+        Set digits to "{digits}{d}",
+        Set i to i add 1.
+    a text called 'the parse form' is 'gen pick parse form' of base.
+    a text called 'the format spec' is 'gen pick format spec'.
+    a text called 'good decl' is "a text called bs{n} is \"{digits}\"".
+    a text called 'good conv' is "a number called bn{n} is bs{n} {'the parse form'}".
+    a text called 'good print' is "Print bn{n}".
+    a text called 'round trip' is "Print \"{{bn{n}:{'the format spec'}}}\"".
+    a text called 'big decl' is "a text called bx{n} is \"{'gen random digits' of 20}\"".
+    a text called 'big conv' is "a number called bg{n} is bx{n} as a number".
+    a text called 'big print' is "Print bg{n}".
+    a list called 'the lines' is ['good decl', 'good conv', 'good print', 'round trip', 'big decl', 'big conv', 'big print'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+
+To 'gen emit prelude flags'.
+    Set gen_flags to gen_flags add 1.
+    a number called n is gen_flags.
+    a number called 'default pick' is 'rng below' of 3.
+    a text called 'the text flag' is "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text.\n".
+    If 'default pick' is 0 then,
+        Set 'the text flag' to "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text with default \"d{n}\".\n".
+    'gen emit' of 'the text flag'.
+    'gen emit' of "a flag called fl{n}count is \"-b\" or \"--beta{n}\", it is a number.\n".
+    'gen emit' of "a flag called fl{n}on is \"-c\" or \"--gamma{n}\", it is a boolean.\n".
+    'gen emit' of "Parse flags.\n".
+    'gen emit' of "\n".
+
+(The reader function is the #32 shape and the whole reason this is
+ worth emitting: a flag read INSIDE a function body was mis-typed, and
+ was invisible at top level because the declaration's own type is still
+ in scope there. Reading each flag both ways is what makes the
+ difference observable.)
+To 'gen emit prelude flag reader'.
+    a number called n is gen_flags.
+    'gen emit' of "To 'read flags {n}'.\n".
+    'gen emit' of "    a text called fl{n}local is fl{n}label.\n".
+    'gen emit' of "    a number called fl{n}bumped is fl{n}count add 1.\n".
+    'gen emit' of "    Print fl{n}local.\n".
+    'gen emit' of "    Print fl{n}bumped.\n".
+    'gen emit' of "    Print fl{n}on.\n".
+    'gen emit' of "\n".
+
+(Top-level flag reads, plus a call into the reader. `is empty` on the
+ text flag is deliberate: compiler bug #33 - `is empty` on a text was
+ always false, testing the pointer instead of the contents - was fixed
+ in 0.4.6, and an undefaulted unsupplied flag holding "" is the exact
+ shape that proves it. Both branches print, so neither answer crashes
+ the program; a WRONG answer is invisible to a signal-death oracle and
+ is what plan 325's knowable-answer work is for.)
+To 'gen leaf flag read' with a text called indent and a boolean called nested.
+    a number called n is gen_flags.
+    a text called 'print label' is "Print fl{n}label".
+    a text called 'print count' is "Print fl{n}count".
+    a text called 'print on' is "Print fl{n}on".
+    a text called 'call reader' is "'read flags {n}'".
+    a list called 'the lines' is ['print label', 'print count', 'print on', 'call reader'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(An `is empty` probe on the flag and on plain values, in branch form.
+ Every answer here is knowable at generation time, which is what makes
+ this leaf a candidate for a real output oracle later; today it only
+ proves the predicate compiles and does not crash.)
+To 'gen leaf predicate probe' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the number literal' is 'gen extreme number'.
+    a text called 'blank decl' is "a text called pt{n} is \"\"".
+    a text called 'blank probe' is "If pt{n} is empty then, Print \"pt{n} empty\". Otherwise, Print \"pt{n} filled\"".
+    a text called 'number decl' is "a number called pn{n} is {'the number literal'}".
+    a text called 'even probe' is "If pn{n} is even then, Print \"pn{n} even\". Otherwise, Print \"pn{n} odd\"".
+    a text called 'sign probe' is "If pn{n} is positive then, Print \"pn{n} positive\". Otherwise, Print \"pn{n} nonpositive\"".
+    a text called 'zero probe' is "If pn{n} is zero then, Print \"pn{n} zero\". Otherwise, Print \"pn{n} nonzero\"".
+    a list called 'the lines' is ['blank decl', 'blank probe', 'number decl', 'even probe', 'sign probe', 'zero probe'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen emit prelude grid sinks'.
+    (ONE callee, at the depth this program actually uses. The first
+     version emitted all fifteen (depths 3..17) into every program
+     whether or not any was called - measured cost: the shared prelude
+     grew from 25 lines to 65, most of it dead definitions, which is
+     boilerplate wearing coverage's coat. gen_grid_depth is drawn once
+     per program in 'gen program' before any prelude is emitted, so the
+     definition is top-level and legal by construction and the deep-grid
+     leaf calls a sink that exists. Depth variety now lives ACROSS seeds
+     instead of inside one program's dead code.)
+    a text called 'the parameter list' is "a number called p1".
+    a text called sum is "p1".
+    a number called i is 2.
+    While i is less than gen_grid_depth add 1,
+        Set 'the parameter list' to "{'the parameter list'} and a number called p{i}",
+        Set sum to "{sum} add p{i}",
+        Set i to i add 1.
+    a text called 'the definition' is "To 'grid sink {gen_grid_depth}' with {'the parameter list'}.\n    a number called gtotal is {sum}.\n    Print gtotal.\n\n".
+    'gen emit' of 'the definition'.
+
+(Section ordering. Plan 324 Part A, and Josj's own words on 2026-08-20:
+ "globals can't be defined before functions". They could not: the
+ skeleton was a fixed template - things, methods, functions, globals,
+ statements - identical across all 40 programs measured. A generator
+ that only ever emits one ordering is structurally incapable of finding
+ an order-dependent defect, which is exactly what compiler bug #28 was
+ (a conditional declaration BEFORE a top-level one segfaults; the same
+ two declarations in the opposite order are fine).
+
+ What may move, and what may not, established by hand against 0.4.6
+ rather than assumed:
+
+ - The flag schema and `Parse flags.` stay first. A flag variable used
+   before the parse point is a compile-time error, and the statement
+   stream reads flags.
+ - Things and their methods stay next: a method names its owner type,
+   and the statement stream instantiates them.
+ - Functions, grid sinks, the flag reader and the globals may appear in
+   any order among themselves. Vox permits a forward reference from a
+   function body to a global declared BELOW it - verified: a function
+   that increments a global declared four lines later prints 42 - so
+   putting globals last is legal, and putting them first (what Josj
+   asked for) equally so.
+ - Globals stay ahead of the statement stream: a top-level statement
+   reading a name declared later is use-before-declaration, which is a
+   different question from the function case above.
+
+ Six orderings rather than a general shuffle: it is enough to clear plan
+ 324's acceptance bar (at least four distinct orderings across 100
+ seeds), and every one of the six is legal by inspection, which a
+ generated permutation would not be. The globals count varies 0..3 as
+ well, so the degenerate "no globals at all" shape is reachable - the
+ statement stream already handles an empty pool ('gen var ref' returns
+ the literal 0).)
+(One global minimum, not zero. The truly degenerate no-globals shape is
+ reachable by the skeleton but NOT yet by the statement stream: several
+ leaves use 'gen var ref' as an assignment TARGET, and with an empty
+ pool that helper returns the literal "0", producing `Set 0 to 0 times
+ 0.` - invalid Vox, which the invariant forbids. Caught by seed 300019
+ in the first 300-seed campaign after ordering landed (276/300
+ compiled; before ordering it was 250/250).
+
+ The right fix is to teach the assigning leaves to declare a variable
+ when the pool is empty, which makes the no-globals program legal
+ instead of merely unreachable. Until then the count starts at one, so
+ the ordering variation - which is what this change is for - is kept
+ and the invalid shape is not emitted. Recorded rather than papered
+ over: a generator that emits illegal Vox manufactures false findings,
+ which is the one thing this repo must never do.)
+To 'gen emit globals block'.
+    a number called 'how many' is 'rng below' of 4.
+    a number called made is 0.
+    While made is less than 'how many',
+        a number called ignored is 'gen new var',
+        Set made to made add 1.
+
+To 'gen emit ordered blocks'.
+    a number called order is 'rng below' of 6.
+    If order is 0 then,
+        'gen emit prelude functions',
+        'gen emit prelude grid sinks',
+        'gen emit prelude flag reader',
+        'gen emit globals block'.
+    If order is 1 then,
+        'gen emit globals block',
+        'gen emit prelude functions',
+        'gen emit prelude grid sinks',
+        'gen emit prelude flag reader'.
+    If order is 2 then,
+        'gen emit prelude flag reader',
+        'gen emit globals block',
+        'gen emit prelude functions',
+        'gen emit prelude grid sinks'.
+    If order is 3 then,
+        'gen emit prelude grid sinks',
+        'gen emit prelude functions',
+        'gen emit globals block',
+        'gen emit prelude flag reader'.
+    If order is 4 then,
+        'gen emit globals block',
+        'gen emit prelude grid sinks',
+        'gen emit prelude flag reader',
+        'gen emit prelude functions'.
+    If order is 5 then,
+        'gen emit prelude functions',
+        'gen emit globals block',
+        'gen emit prelude flag reader',
+        'gen emit prelude grid sinks'.
+
 To 'gen program' with a number called seed and a number called budget.
     clear gen_out.
     Set gen_vars to 0.
@@ -1344,12 +2045,13 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_whiles to 0.
     Set gen_repeats to 0.
     Set gen_envs to 0.
+    Set gen_flags to 0.
     'rng seed' of seed.
+    Set gen_grid_depth to 'rng below' of 15 add 3.
+    'gen emit prelude flags'.
     'gen emit prelude things'.
     'gen emit prelude thing methods'.
-    'gen emit prelude functions'.
-    a number called ignored1 is 'gen new var'.
-    a number called ignored2 is 'gen new var'.
+    'gen emit ordered blocks'.
     a number called i is 0.
     While i is less than budget,
         a boolean called 'top opened' is 'gen statement' of 3 and "" and false,
