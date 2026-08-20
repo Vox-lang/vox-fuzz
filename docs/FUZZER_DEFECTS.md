@@ -284,7 +284,15 @@ fork/reap/scratch-lifecycle path, not in generation.
 
 ### 7. `supervise` gives the child no stdin, so any stdin read is reported as a hang
 
-**Status:** **open**, found 2026-08-20 while checking whether file I/O
+**Status:** **FIXED** (2026-08-20). The child's stdin is now redirected
+from a file before `Execute`, defaulting to `/dev/null` so a program
+that reads gets a clean immediate EOF instead of the fuzzer's own stdin.
+Mechanism: close the descriptor, then open — the open takes the lowest
+free number, which is the one just freed, the same trick the stdout
+capture already used. Verified in isolation with `/bin/cat` before being
+wired in, then end to end: a generated program reading `/dev/stdin`
+returns verdict `exit` (not `hang`) and reads the injected bytes.
+Originally found 2026-08-20 while checking whether file I/O
 could be emitted without waiting for the sandbox. Found BEFORE emitting
 it, which is the only reason it is a note here rather than a flood of
 false findings in a campaign.

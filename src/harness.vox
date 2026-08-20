@@ -105,15 +105,44 @@ To supervise with a text called program and a list called 'the argument list' an
  two calls - even back to back for the same program, which is exactly
  what the oracle does - never share an open file description with each
  other either.)
-To 'supervise capturing' with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds' and a text called 'the capture path'.
+(Stdin, redirected from a file before Execute — defect 7's fix, and
+ plan 327's prerequisite.
+
+ Without it the child inherits the FUZZER's stdin, so a generated
+ program reading /dev/stdin blocks until the deadline and is classified
+ `hang`: a false finding on every program carrying one. Proved before
+ building this: with `< /dev/null` such a read returns 0 bytes and exits
+ 0; with an open-but-silent pipe it blocks until killed, and the second
+ is what an inherited terminal or pipe gives you.
+
+ The mechanism is the same one the stdout capture already uses — close
+ the descriptor, then open, and the open takes the lowest free number,
+ which is the one just freed. Verified in isolation with /bin/cat before
+ being wired in here.
+
+ An empty input path means /dev/null: a program that reads gets a clean
+ immediate EOF rather than the fuzzer's own stdin. That is the SAFE
+ default and is what every existing caller gets.)
+To 'supervise capturing with input' with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds' and a text called 'the capture path' and a text called 'the input path'.
+  a text called 'the stdin source' is "/dev/null".
+  If 'the input path' is not empty then,
+      Set 'the stdin source' to 'the input path'.
   a number called 'the child' is fork the process.
   If 'the child' is 0 then,
+      open a file for reading called 'stdin borrow' at 0,
+      Close 'stdin borrow',
+      open a file for reading called 'the injected input' at 'the stdin source',
       open a file for writing called 'stdout borrow' at 1,
       Close 'stdout borrow',
       open a file for writing called 'the captured output' at 'the capture path',
       Execute program with arguments 'the argument list',
       Exit 127.
   a text called 'the verdict' is 'reap with deadline' of 'the child' and 'the deadline in milliseconds'.
+  Return a text, 'the verdict'.
+
+To 'supervise capturing' with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds' and a text called 'the capture path'.
+  a text called 'no input' is "".
+  a text called 'the verdict' is 'supervise capturing with input' of program and 'the argument list' and 'the deadline in milliseconds' and 'the capture path' and 'no input'.
   Return a text, 'the verdict'.
 
 (Read a whole file back into text, for comparing two captured runs. Sets

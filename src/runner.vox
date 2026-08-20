@@ -96,7 +96,23 @@ To 'run program' with a text called 'binary path' and a number called 'the deadl
 (Same as 'run program', but stdout is captured to 'the capture path' -
  see harness.vox's 'supervise capturing' for how. This is what the
  differential oracle runs the generated binary through, twice, per seed.)
+(Plan 327: a generated program's argv and stdin are inputs, and both
+ were empty on every path until now. These take them explicitly rather
+ than building an empty list internally, so a caller cannot forget to
+ pass them and silently get the old behaviour.
+
+ The oracle runs a program TWICE and compares output. Both runs must
+ receive the SAME argv and the SAME stdin, or the difference between the
+ runs IS the input and every program becomes a false nondeterminism
+ finding. That is the single easiest way to break the oracle, so the two
+ call sites take their arguments from one place and this comment sits
+ where whoever changes it will read it.)
+To 'run program capturing with input' with a text called 'binary path' and a number called 'the deadline in milliseconds' and a text called 'the capture path' and a list called 'the argument list' and a text called 'the input path'.
+    a text called 'the verdict' is 'supervise capturing with input' of 'binary path' and 'the argument list' and 'the deadline in milliseconds' and 'the capture path' and 'the input path'.
+    Return a text, 'the verdict'.
+
 To 'run program capturing' with a text called 'binary path' and a number called 'the deadline in milliseconds' and a text called 'the capture path'.
     a list called 'no arguments' is [].
-    a text called 'the verdict' is 'supervise capturing' of 'binary path' and 'no arguments' and 'the deadline in milliseconds' and 'the capture path'.
+    a text called 'no input' is "".
+    a text called 'the verdict' is 'run program capturing with input' of 'binary path' and 'the deadline in milliseconds' and 'the capture path' and 'no arguments' and 'no input'.
     Return a text, 'the verdict'.
