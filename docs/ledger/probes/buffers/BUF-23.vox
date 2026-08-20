@@ -1,0 +1,7 @@
+(BUF-23: writing a byte with a hex literal value (e.g. 0x48) works.)
+(expected output:
+72
+)
+a buffer called data is "AAAA".
+Set byte 1 of data to 0x48.
+print byte 1 of data.

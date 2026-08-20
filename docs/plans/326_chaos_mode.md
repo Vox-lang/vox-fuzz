@@ -1,5 +1,18 @@
 # Plan 326 — chaos mode: overshoot into invalid Vox, then whittle back
 
+> **SUPERSEDED — 2026-08-20 (Josj): "I want to scrap chaos mode… I want it to be the
+> default."** There is no separate mode and no knob. The generator is the
+> noise-plus-rules model all the time (`CLAUDE.md`); a program the compiler
+> rejects is a `parser-reject` finding to triage — a rule not yet written, or a
+> compiler bug — and "chaos then whittle" is the permanent way of working,
+> measured by `scripts/invariants` shrinking. What survives from this plan is
+> the oracle rule in §"The oracle changes with the mode", re-homed as a **tag**:
+> a program the generator deliberately broke must carry its expected verdict
+> (`expected: reject`) in its metadata, so a rejection is the happy path and a
+> crash is the finding. A "beautiful" (pretty-printed) layout is not planned;
+> `--layout plain` from the layout randomizer covers the reading-aid case.
+
+
 **Origin:** Josj, 2026-08-20: *"I want to add so much randomness and
 awareness of all language functions that we end up with tons of
 instances where invalid vox is being produced. We then slowly whittle

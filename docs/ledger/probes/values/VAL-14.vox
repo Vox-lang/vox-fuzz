@@ -1,0 +1,27 @@
+(VAL-14: the `type` property on a value returns a text description with a
+ `(dynamic)` suffix for each runtime tag — Text, Number, Float, Boolean,
+ List, Map, Nothing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-14.vox -o p && ./p
+ expected output:
+   Number (dynamic)
+   Float (dynamic)
+   Text (dynamic)
+   Boolean (dynamic)
+   List (dynamic)
+   Map (dynamic)
+   Nothing (dynamic)
+)
+a value called vn is 5.
+a value called vf is 3.5.
+a value called vt is "hi".
+a value called vb is true.
+a value called vl is [1, 2].
+a value called vm is {"k": 1}.
+a value called vz is nothing.
+print vn's type.
+print vf's type.
+print vt's type.
+print vb's type.
+print vl's type.
+print vm's type.
+print vz's type.

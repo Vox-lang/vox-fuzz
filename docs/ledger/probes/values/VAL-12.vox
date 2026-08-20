@@ -1,0 +1,11 @@
+(VAL-12: retyping to the type a value already holds is a no-op (no error,
+ value unchanged). Post-retype type-tracking for the rest of the variable's
+ lifetime is covered by VAL-10 (arithmetic succeeds after the retype).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-12.vox -o p && ./p
+ expected output:
+   7
+)
+a value called v is 7.
+v is a number.
+print v.
+on error print "err".

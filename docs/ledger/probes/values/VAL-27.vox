@@ -1,0 +1,14 @@
+(VAL-27: a missing map key is an error, not `nothing` — reading a key that
+ was never set sets the error flag (caught by `On error`) and leaves 0; a
+ key set to `nothing` is present and distinguishable from the absent key.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-27.vox -o p && ./p
+ expected output:
+   k is present and holds nothing
+   never_set is absent
+   0
+)
+a map called m is {"k": nothing}.
+If m's "k" is nothing, print "k is present and holds nothing".
+a number called x is m's "never_set".
+on error print "never_set is absent".
+print x.

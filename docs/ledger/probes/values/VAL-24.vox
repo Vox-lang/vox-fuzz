@@ -1,0 +1,9 @@
+(VAL-24: `nothing` is a reserved word, so it cannot be used as a variable
+ name. (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-24.vox -o p && ./p
+ expected output:
+   error: Cannot use 'nothing' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called nothing is 5.
+print nothing.

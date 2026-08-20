@@ -1,0 +1,11 @@
+(VAL-30: the stored payload of `nothing` really is 0, so unguarded
+ arithmetic on a runtime nothing quietly evaluates as if 0 — `m's "absent"
+ add 1` yields 1 (0 + 1), a plausible wrong answer. Guard with `is not
+ nothing` first.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-30.vox -o p && ./p
+ expected output:
+   1
+)
+a map called m is {"absent": nothing}.
+a number called bad is m's "absent" add 1.
+print bad.

@@ -1,0 +1,11 @@
+(VAL-15: the type reported by `type` changes with reassignment — Text
+ (dynamic) while v holds "hello", Number (dynamic) after `set v to 42`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-15.vox -o p && ./p
+ expected output:
+   Text (dynamic)
+   Number (dynamic)
+)
+a value called v is "hello".
+print v's type.
+set v to 42.
+print v's type.

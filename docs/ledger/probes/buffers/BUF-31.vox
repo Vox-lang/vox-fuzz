@@ -1,0 +1,10 @@
+(BUF-31: `append source to destination` adds source bytes to the end of destination.)
+(expected output:
+Hello World
+11
+)
+a buffer called src is "World".
+a buffer called dst is "Hello ".
+append src to dst.
+print dst.
+print dst's size.

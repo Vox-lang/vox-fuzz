@@ -1,0 +1,13 @@
+(BUF-03: dynamic buffers have no overflow - they grow past whatever the initial reserve is. Appends a 64-byte chunk 100 times (6400 bytes total) to push well past the 4096-byte initial reserve found by BUF-02/D1.)
+(expected output:
+6200
+8192
+)
+a buffer called d.
+a text called chunk is "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd".
+a number called i is 0.
+While i is less than 100,
+    append chunk to d,
+    Set i to i add 1.
+print d's size.
+print d's capacity.

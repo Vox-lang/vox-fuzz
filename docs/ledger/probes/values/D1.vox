@@ -1,0 +1,15 @@
+(D1 — Discrepancy 1 repro: a conditional value return (factorial pattern,
+ no `Return` on the `To` line) that returns a NUMBER literal from a frame
+ whose value parameter holds a TEXT segfaults the runtime. The manual
+ (LANGUAGE.md:2570-2574) describes this limitation as cosmetic — "the
+ value would print as a number" — but in this direction it crashes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   Segmentation fault (core dumped)   exit 139   (deterministic, 6/6 runs)
+)
+To label with a value called v.
+  If v is a number, return a value, v.
+  Otherwise, return a value, 99.
+
+a value called r is label of "hello".
+print r.

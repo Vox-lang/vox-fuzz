@@ -1,0 +1,13 @@
+(BUF-36: a dynamic (unsized) DESTINATION buffer grows automatically under append, past whatever small initial reserve it started with - not just under direct append tested in BUF-03, but specifically as an append target.)
+(expected output:
+6200
+8192
+)
+a buffer called dst.
+a text called chunk is "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd".
+a number called i is 0.
+While i is less than 100,
+    append chunk to dst,
+    Set i to i add 1.
+print dst's size.
+print dst's capacity.

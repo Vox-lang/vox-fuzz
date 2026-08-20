@@ -1,0 +1,15 @@
+(VAL-07: a value local keeps its tag through reassignment — `set r to 7.`
+ retags a text-holding value as a number, so `If r is a number` fires.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-07.vox -o p && ./p
+ expected output:
+   hello
+   7
+   now a number
+)
+To echo with a value called v. Return a value, v.
+
+a value called r is echo of "hello".
+print r.
+set r to 7.
+print r.
+If r is a number, print "now a number".

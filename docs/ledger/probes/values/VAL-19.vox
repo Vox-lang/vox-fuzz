@@ -1,0 +1,34 @@
+(VAL-19: the conditional-value-RETURN limitation — the factorial pattern
+ (`If ... return a value, <expr>. Otherwise ...`) in a function whose `To`
+ line has no `Return` does not track the return type. Returning a text
+ literal from a frame whose parameter was a number prints a stable garbage
+ number (4210906) mis-tagged as Number (dynamic). The reverse direction
+ (returning a number from a text frame) segfaults — see Discrepancy 1,
+ whose minimal repro is D1.vox. The conditional-value-PARAMETER half (void
+ return) works fine — also shown here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-19.vox -o p && ./p
+ expected output:
+   kept
+   Text (dynamic)
+   4210906
+   Number (dynamic)
+   num
+   not num
+)
+To label with a value called v.
+  If v is a text, return a value, v.
+  Otherwise, return a value, "fallback".
+
+a value called kept is label of "kept".
+print kept.
+print kept's type.
+a value called lost is label of 9.
+print lost.
+print lost's type.
+
+To handle with a value called v.
+  If v is a number, print "num".
+  Otherwise, print "not num".
+
+handle of 5.
+handle of "x".

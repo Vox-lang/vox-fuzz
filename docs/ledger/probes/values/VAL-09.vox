@@ -1,0 +1,22 @@
+(VAL-09: in-place retype `<valuevar> is a <type>.` works for number, float,
+ text, and boolean targets — reads the runtime tag, converts, stores back
+ with the new tag.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-09.vox -o p && ./p
+ expected output:
+   42
+   42
+   3.5
+   1
+)
+a value called asnum is "42".
+asnum is a number.
+print asnum.
+a value called astext is 42.
+astext is a text.
+print astext.
+a value called asfloat is "3.5".
+asfloat is a float.
+print asfloat.
+a value called asbool is "true".
+asbool is a boolean.
+print asbool.

@@ -186,6 +186,13 @@ for its first months.
 
 ## The working loop
 
+The procedure in full — files, the fixed row schema, the status ladder,
+retained probes, discrepancy adjudication, the leaf-building rules, the
+campaign-and-invariant gate, and the acceptance checklists — is
+`docs/ledger/PROCEDURE.md`. `docs/ledger/INDEX.md` lists every section of
+the manual and where its ledger stands. Every ledger looks like
+`docs/ledger/buffers.md`; every section is mapped the same way. In brief:
+
 1. A worker maps one LANGUAGE.md section to a ledger of claims — as a
    **gap analysis**, marking what existing leaves already cover.
 2. The master reviews the map before any code. A wrong map poisons
@@ -216,8 +223,8 @@ precisely what is missing rather than starting again.
 *This section dates quickly and is not an instruction. Everything above
 it is.*
 
-The buffer section is the first mapped: **39 claims, 6 exercised, 1
-verified, 25 todo** — about 18% covered, and buffers are the section
+The buffer section is the first mapped: **39 claims, 6 exercised, 0
+verified** (no buffer leaf asserts anything yet) — about 18% covered, and buffers are the section
 that matters most.
 
 Two discrepancies found while mapping it, both awaiting adjudication:

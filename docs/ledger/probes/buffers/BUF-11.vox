@@ -1,0 +1,13 @@
+(BUF-11: `length` is a synonym for `size` - same value, before and after a mutation.)
+(expected output:
+4
+4
+9
+9
+)
+a buffer called b is "seed".
+print b's size.
+print b's length.
+append "-more" to b.
+print b's size.
+print b's length.
