@@ -1,6 +1,6 @@
 [package]
 name = "vox-fuzz"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.71"
 description = "A fuzzer for the Vox compiler, written in Vox — this crate is a launcher that carries the Vox sources and compiles them with your installed vox on first run"

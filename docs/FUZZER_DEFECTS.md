@@ -159,3 +159,45 @@ is the same disease as entries 1 and 2, arriving from the other
 direction. If it recurs, capture `test.sh -v` output at the time; the
 fix is likely to make the deadline generous or the test independent of
 wall-clock time, not to retry it.
+
+---
+
+### 5. Two concurrent runs from the same directory fabricate findings
+
+**Status:** **open, partially fixed.** Found and proven 2026-08-19.
+
+Two `gen` runs started from the same working directory produced **1,260
+`asm-reject` findings between them, every one false** — each finding's
+`program.vox` compiles cleanly by hand (exit 0). Proof: killing one run
+dropped the other's rate from 961-and-climbing to zero new in 40s.
+
+The original cause was fixed scratch names in the current directory
+(`./vf_gen.vox`, `./vf_gen_bin`, `./vf_cerr`) with no per-run isolation.
+A partial fix (`fix/fuzzer-defects-worker`, unmerged) adds a per-run
+scratch dir `vf_scratch/run_{pid}_{seed}` and cuts it to ~40 per
+concurrent run — **but still fabricates ~1 finding even in a solo run**,
+so a second cause remains. Concurrent compiles of identically-named
+sources in separate directories do NOT collide (tested), so the residual
+is elsewhere in the compile path — likely scratch-dir creation racing or
+failing.
+
+**Severity: high** — the obvious way to fuzz faster is several
+instances, and doing so floods the findings directory with fabrications.
+Fix and full acceptance in plan 325 Task 1.
+
+---
+
+### 6. A run reports `findings: 0` while every compile fails
+
+**Status:** **open.** Found 2026-08-19.
+
+A campaign whose working directory was deleted mid-flight ran to
+completion through **2,817 `getcwd` errors**, compiled nothing, and
+reported a clean sweep. "Could not compile anything" and "found nothing"
+are indistinguishable in the output — the same disease as defect 1, from
+the other side.
+
+**Fix:** verify the scratch directory is writable at startup (write,
+read back, delete) and abort non-zero on failure; treat an unreadable
+compile-stderr as fatal, not as a finding. Plan 325 Task 2.
+

@@ -1,5 +1,5 @@
 Name:           vox-fuzz
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        A fuzzer for the Vox compiler, written in Vox
 
