@@ -237,3 +237,31 @@ To 'fuzz gen run' with a number called 'the first seed' and a number called 'how
     Print "programs: {stat_total}".
     Print "compiled: {stat_compiled}".
     Print "findings: {stat_findings}".
+    (Defect 6: "could not compile anything" and "found nothing" used to
+     be indistinguishable. A campaign whose working directory was
+     deleted mid-flight ran to completion through 2,817 getcwd errors,
+     compiled nothing, and reported a clean sweep — and a clean sweep is
+     exactly what a reader wants to believe.
+
+     The numbers were always printed side by side, so the evidence was
+     there; nobody reads three lines of output as a comparison. This
+     makes the comparison itself the tool's job, and makes the exit
+     status carry it, because that is what a script or a CI job actually
+     checks.
+
+     Nothing compiled at all is a broken run, not a clean one: exit 2.
+     A campaign that compiled less than half is not necessarily broken —
+     chaos mode will do this deliberately one day — so it warns loudly
+     and keeps the normal exit status rather than pretending to a
+     verdict it cannot support.)
+    a number called 'the failed to compile' is stat_total minus stat_compiled.
+    If stat_total is positive and stat_compiled is 0 then,
+        open a file for writing called 'the compile error stream' at 2,
+        Write "vox-fuzz: NOTHING COMPILED. {stat_total} programs generated, 0 compiled — this run proves nothing and 'findings: 0' above is meaningless.\n" to 'the compile error stream',
+        Close 'the compile error stream',
+        Exit 2.
+    a number called 'the half' is stat_total divide 2.
+    If 'the failed to compile' is greater than 'the half' then,
+        open a file for writing called 'the warn stream' at 2,
+        Write "vox-fuzz: WARNING — {'the failed to compile'} of {stat_total} programs failed to compile. A generated program that does not compile is a generator defect, not a finding; investigate before trusting this run.\n" to 'the warn stream',
+        Close 'the warn stream'.
