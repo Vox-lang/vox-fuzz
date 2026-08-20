@@ -4,6 +4,8 @@
  signal and never hang. A nonzero exit code is normal and is not a
  finding.)
 
+see "./sandbox.vox".
+
 a number called stat_total is 0.
 a number called stat_compiled is 0.
 a number called stat_findings is 0.
@@ -29,17 +31,53 @@ To 'classify compile exit' with a number called code.
     If code is equal to 0 then, Return a text, "ok".
     Return a text, "check-asm".
 
+(--keep: copy each generated program somewhere durable BEFORE the sweep.
+ Without this a passing program is unreadable by design — the scratch dir
+ that holds it is removed the moment the run ends, which is correct for
+ hygiene and useless for a human who wants to READ what the generator
+ produces. Findings already survive (finding save copies the source
+ out); this does the same for the ordinary case.
+
+ Empty means off, so the default behaviour is unchanged and no campaign
+ silently starts filling a directory.)
+a text called keep_dir is "".
+
+To 'keep source' with a text called 'the source path' and a number called seed.
+    If keep_dir is empty then,
+        Return a number, 0.
+    a number called 'the make' is 'make directories' of keep_dir.
+    a text called 'the destination' is "{keep_dir}/seed_{seed}.vox".
+    a text called 'the copy command' is "cp {'shell quote' of 'the source path'} {'shell quote' of 'the destination'}".
+    a number called 'the copy exit code' is 'run shell' of 'the copy command' and 5000.
+    Return a number, 'the copy exit code'.
+
 To 'fuzz gen once' with a number called seed and a number called budget and a number called 'the deadline in milliseconds'.
     Set stat_total to stat_total add 1.
     'gen program' of seed and budget.
-    a text called 'the source path' is "./vf_gen.vox".
+    (D1: every artefact of this seed's compile/run lives under its own
+     pid+seed scratch directory from sandbox.vox, so a second vox-fuzz
+     process running the same seed range concurrently cannot overwrite
+     this source, binary, or cerr. sandbox.vox's path is collision-free
+     across OS pids AND across seeds within one run - see its header for
+     why both halves of pid+seed matter. Vox has no try/finally, so the
+     sweep is repeated before every Return: finding save reads the source
+     to copy program.vox into the findings dir BEFORE the sweep, so the
+     order finding-save -> sweep -> return keeps the copy intact while
+     still leaving no scratch behind on any path.)
+    a text called 'the scratch path' is 'scratch dir path' of seed.
+    'scratch dir create' of 'the scratch path'.
+    a text called 'the source path' is "{'the scratch path'}/vf_gen.vox".
     'gen write' of 'the source path'.
-    a number called 'the compiler exit code' is 'compile vox' of 'the source path' and "./vf_gen_bin".
+    a number called 'the kept' is 'keep source' of 'the source path' and seed.
+    a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".
+    a text called 'the cerr path' is "{'the scratch path'}/vf_cerr".
+    a number called 'the compiler exit code' is 'compile vox' of 'the scratch path' and "vf_gen.vox" and "vf_gen_bin" and "vf_cerr".
     a text called 'the compile class' is 'classify compile exit' of 'the compiler exit code'.
     If 'the compile class' is "hang" then,
         a text called 'the hang detail' is "compiler exceeded the {'the compile budget in milliseconds'}ms compile budget (independent of --timeout, which bounds only the run)",
         a number called 'the compile hang finding' is 'finding save' of "hang" and seed and 'the source path' and 'the hang detail',
         Set stat_findings to stat_findings add 1,
+        'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
     If 'the compile class' is "ice" then,
         (Both a signal death (> 128) and a rust panic (101) save under the
@@ -50,6 +88,7 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
             Set 'the ice detail' to "compiler panicked (rust exit 101)".
         a number called 'the ice finding' is 'finding save' of "ice" and seed and 'the source path' and 'the ice detail',
         Set stat_findings to stat_findings add 1,
+        'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
     If 'the compile class' is "check-asm" then,
         (vox's own deliberate wrapper lines - "NASM assembly failed", "Linking
@@ -59,30 +98,86 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
          additional alternatives for a toolchain that does echo them, but per
          FUZZER_DEFECTS.md entry 1 they were never sufficient alone: nasm's own
          diagnostic never contains "nasm", and this platform's linker prefixes
-         "ld.bfd:", not "ld:".)
-        a number called 'the toolchain check' is 'run shell' of "grep -q -F -e 'NASM assembly failed' -e 'Linking failed' -e nasm -e 'ld:' ./vf_cerr" and 5000,
+         "ld.bfd:", not "ld:". The cerr path is the per-seed one, quoted.)
+        a number called 'the toolchain check' is 'run shell' of "grep -q -F -e 'NASM assembly failed' -e 'Linking failed' -e nasm -e 'ld:' {'shell quote' of 'the cerr path'}" and 5000,
         If 'the toolchain check' is 0 then,
             a number called 'the rejection finding' is 'finding save' of "asm-reject" and seed and 'the source path' and "emitted assembly refused by nasm or ld",
             Set stat_findings to stat_findings add 1,
+            'scratch dir sweep' of 'the scratch path',
             Return a number, 1.
+        'scratch dir sweep' of 'the scratch path',
         Return a number, 0.
     Set stat_compiled to stat_compiled add 1.
-    a text called 'the verdict' is 'run program' of "./vf_gen_bin" and 'the deadline in milliseconds'.
+    a text called 'the verdict' is 'run program' of 'the binary path' and 'the deadline in milliseconds'.
     a text called 'the hang verdict' is "hang".
     a text called 'the signal verdict' is "signal".
     If 'the verdict' is 'the hang verdict' then,
         a number called 'the hang finding' is 'finding save' of "hang" and seed and 'the source path' and "killed at the deadline",
         Set stat_findings to stat_findings add 1,
+        'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
     If 'the verdict' is 'the signal verdict' then,
         a number called 'the killing signal' is 'signal of' of 'the last status',
         a text called 'the detail' is "died by signal {'the killing signal'}",
         a number called 'the crash finding' is 'finding save' of "crash" and seed and 'the source path' and 'the detail',
         Set stat_findings to stat_findings add 1,
+        'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
+    'scratch dir sweep' of 'the scratch path'.
     Return a number, 0.
 
+(D2: a campaign whose scratch root cannot be written is total failure,
+ not success - so probe the scratch root BEFORE the loop spends any time
+ generating, and abort loudly if it is unusable. Provenance: a run whose
+ cwd was deleted under it sailed to completion through 2,817 getcwd
+ errors, compiled nothing, and still reported "findings: 0". The probe
+ makes the root, writes one known byte to .vf_probe inside it, reads it
+ back, compares, and deletes it - all native Vox file I/O, no shell, so a
+ read-only filesystem surfaces here as a probe failure rather than as a
+ shell exit code some later step could misread. Each fallible step is
+ followed by 'On error Return a boolean, false.' - the first failure
+ short-circuits the probe. The write step is the one that catches a
+ chmod-555 scratch root: 'make directories' ignores a Create-directory
+ failure on an already-present dir, but 'open for writing' inside a
+ read-only directory fails with EACCES and the 'On error' fires.)
+To 'scratch root is writable'.
+    a number called 'the mkdir result' is 'make directories' of 'the scratch root'.
+    (The probe filename carries this process's pid, for exactly the reason
+     the scratch DIRECTORIES do. A fixed '.vf_probe' made this check
+     reintroduce the very defect D1 exists to cure: two concurrent runs
+     each created, wrote, read and DELETED the same probe file, so one
+     deleted the other's mid-sequence and the loser's read or delete hit
+     'On error Return a boolean, false' - reporting the scratch root as
+     unwritable and aborting a campaign whose root was perfectly fine.
+     Both runs lost that race as often as not, so a concurrent pair could
+     abort on a false negative before generating a single program.)
+    a number called 'the probe pid' is 'self pid'.
+    a text called 'the probe path' is "{'the scratch root'}/.vf_probe_{'the probe pid'}".
+    open a file for writing called 'the probe file' at 'the probe path'.
+    On error Return a boolean, false.
+    Write "x" to 'the probe file'.
+    On error Return a boolean, false.
+    Close 'the probe file'.
+    open a file for reading called 'the probe read' at 'the probe path'.
+    On error Return a boolean, false.
+    a buffer called 'the probe bytes'.
+    Read from 'the probe read' into 'the probe bytes'.
+    On error Return a boolean, false.
+    Close 'the probe read'.
+    Delete the file 'the probe path'.
+    On error Return a boolean, false.
+    a text called 'the probe text' is 'the probe bytes' as text.
+    If 'the probe text' is not "x" then,
+        Return a boolean, false.
+    Return a boolean, true.
+
 To 'fuzz gen run' with a number called 'the first seed' and a number called 'how many programs' and a number called budget and a number called 'the deadline in milliseconds'.
+    a boolean called 'the scratch is usable' is 'scratch root is writable'.
+    If 'the scratch is usable' is false then,
+        open a file for writing called 'the error stream' at 2,
+        Write "vox-fuzz: scratch root '{'the scratch root'}' is not writable; aborting before the campaign.\n" to 'the error stream',
+        Close 'the error stream',
+        Exit 1.
     a number called 'the last seed' is 'the first seed' add 'how many programs' minus 1.
     'fuzz gen once' of each seed from 'the first seed' to 'the last seed' and budget and 'the deadline in milliseconds'.
     Print "programs: {stat_total}".

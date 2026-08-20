@@ -1,15 +1,15 @@
 see "../src/harness.vox".
 see "../src/runner.vox".
 
-a number called c1 is 'compile vox' of "tests/fixtures/ok.vox" and "./vf_ok".
+a number called c1 is 'compile vox' of "." and "tests/fixtures/ok.vox" and "./vf_ok" and "./vf_cerr".
 Print "compile ok: {c1}".
 a text called r1 is 'run program' of "./vf_ok" and 5000.
 Print "run ok: {r1} {'exit code of' of 'the last status'}".
 
-a number called c2 is 'compile vox' of "tests/fixtures/exits7.vox" and "./vf_e7".
+a number called c2 is 'compile vox' of "." and "tests/fixtures/exits7.vox" and "./vf_e7" and "./vf_cerr".
 Print "compile e7: {c2}".
 a text called r2 is 'run program' of "./vf_e7" and 5000.
 Print "run e7: {r2} {'exit code of' of 'the last status'}".
 
-a number called c3 is 'compile vox' of "tests/fixtures/does_not_exist.vox" and "./vf_no".
+a number called c3 is 'compile vox' of "." and "tests/fixtures/does_not_exist.vox" and "./vf_no" and "./vf_cerr".
 Print "compile missing nonzero: {c3 is greater than 0}".

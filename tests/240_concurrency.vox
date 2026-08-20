@@ -1,0 +1,52 @@
+see "../src/harness.vox".
+
+(D1 - per-run scratch isolation. The defect this closes: the gen loop
+ used to write ./vf_gen.vox, ./vf_gen_bin, ./vf_cerr to fixed names in the
+ cwd, so two vox-fuzz processes running the SAME seed range concurrently
+ overwrote each other's half-written source/cerr and the classifier
+ correctly reported a false asm-reject - 1,260 false findings in the
+ proven case. With D1 every seed's artefacts live under
+ ./vf_scratch/run_{pid}_{seed}/ (sandbox.vox), and pid+seed is
+ collision-free across concurrently-running processes (distinct pids)
+ AND across seeds within one run (distinct seeds).
+
+ This is the case disjoint seed ranges would pass even without the fix:
+ both processes use --seed 1 --count 25, the identical range. Without the
+ fix this produces hundreds of findings; with it, zero. We assert both
+ runs exited 0 (the fuzzer ran clean) AND both reported exactly
+ "findings: 0" (no false asm-rejects from the collision).
+
+ Harness-side: launching the fuzzer itself through 'run shell' with & and
+ wait is not a generated program, so the signal-distinction rule
+ (constraint 4) does not apply here - it applies to 'run program'/
+ supervise, which the fuzzer itself uses internally and which this test
+ does not touch. Each launched vox-fuzz writes its exit code to a file
+ (sh's $? after the subshell) and its summary to a .out file; we grep
+ that for the exact "findings: 0" line and read the exit-code file back
+ in Vox. ~25 seeds at budget 8 each finishes in a few seconds even with
+ two running at once.)
+
+To 'read number file' with a text called path.
+    open a file for reading called f at path.
+    On error Return a number, -1.
+    a buffer called data.
+    Read from f into data.
+    Close f.
+    a number called n is data as a number.
+    Return a number, n.
+
+a number called 'launch' is 'run shell' of "rm -rf ./vf_conc_a ./vf_conc_b ./vf_conc_a.out ./vf_conc_b.out ./vf_conc_a.exit ./vf_conc_b.exit ./vf_conc_a.fok ./vf_conc_b.fok ./vf_scratch ; ( ./build/vox-fuzz gen --count 25 --seed 1 --budget 8 --out ./vf_conc_a > ./vf_conc_a.out 2>&1 ; echo $? > ./vf_conc_a.exit ) & ( ./build/vox-fuzz gen --count 25 --seed 1 --budget 8 --out ./vf_conc_b > ./vf_conc_b.out 2>&1 ; echo $? > ./vf_conc_b.exit ) & wait ; true" and 90000.
+
+a number called 'greps' is 'run shell' of "grep -q -x 'findings: 0' ./vf_conc_a.out ; echo $? > ./vf_conc_a.fok ; grep -q -x 'findings: 0' ./vf_conc_b.out ; echo $? > ./vf_conc_b.fok ; true" and 10000.
+
+a number called 'exit a' is 'read number file' of "./vf_conc_a.exit".
+a number called 'exit b' is 'read number file' of "./vf_conc_b.exit".
+a number called 'fok a' is 'read number file' of "./vf_conc_a.fok".
+a number called 'fok b' is 'read number file' of "./vf_conc_b.fok".
+
+Print "run a exit 0: {'exit a' is 0}".
+Print "run a findings 0: {'fok a' is 0}".
+Print "run b exit 0: {'exit b' is 0}".
+Print "run b findings 0: {'fok b' is 0}".
+
+a number called 'cleanup' is 'run shell' of "rm -rf ./vf_conc_a ./vf_conc_b ./vf_conc_a.out ./vf_conc_b.out ./vf_conc_a.exit ./vf_conc_b.exit ./vf_conc_a.fok ./vf_conc_b.fok ./vf_scratch" and 5000.
