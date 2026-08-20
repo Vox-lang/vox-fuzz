@@ -1,12 +1,27 @@
 --- seed 42 ---
-To 'read flags 1'.
-    a text called fl1local is fl1label.
-    a number called fl1bumped is fl1count add 1.
-    Print fl1local.
-    Print fl1bumped.
-    Print fl1on.
+To f1.
+    Return a number, 142.
 
-a number called v1 is 352363490389034107.
+To f2 with a number called p1.
+    a number called r is p1 add 4.
+    Return a number, r.
+
+To f3 with a number called p1 and a number called p2.
+    a number called r is p1 add p2.
+    Return a number, r.
+
+To f4 with a text called p1.
+    Print "f4 {p1}".
+
+a flag called fl1label is "-a" or "--alpha1", it is a text.
+a flag called fl1count is "-b" or "--beta1", it is a number.
+a flag called fl1on is "-c" or "--gamma1", it is a boolean.
+Parse flags.
+
+If fl1label is not "v76753" then, Exit 91.
+If fl1count is not 4806 then, Exit 92.
+If fl1on is false then, Exit 93.
+
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -34,68 +49,52 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
-a flag called fl1label is "-a" or "--alpha1", it is a text with default "d1".
-a flag called fl1count is "-b" or "--beta1", it is a number.
-a flag called fl1on is "-c" or "--gamma1", it is a boolean.
-Parse flags.
-
-To f1.
-    Return a number, 447.
-
-To f2 with a number called p1.
-    a number called r is p1 add 17.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To f4 with a text called p1.
-    Print "f4 {p1}".
-
+a number called v1 is 338903410707.
 To 'grid sink 15' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15.
     a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15.
     Print gtotal.
 
+a text called s1 is "word1".
+a text called s2 is "{s1}-{s1}".
+Print s2.
 If v1 is greater than or equal to v1 or v1 modulo 6 is equal to 0 then, Print v1 minus v1. Otherwise, Print v1 times v1.
 print each item from arguments's all treating "-" as "none".
-a number called gn1 is 2147483648.
-a buffer called gw1 is 192 bytes in size.
-copy "hello1" to gw1.
-a text called gt1 is "{gw1}".
-a text called gu1 is "/bin/{gt1}-{gn1:08}".
-Print gt1.
-Print gu1.
-a buffer called gb1 is "{gt1}|{gn1}".
-Print gb1.
-a buffer called gc1 is 192 bytes in size.
-set gc1 to "set {gn1:08}".
-append " {gt1}" to gc1.
-Print gc1.
-f4 of "{gt1}/{gn1}".
-a list called gl1 is [].
-append "{gn1:08}" to gl1.
-Print element 1 of gl1.
-a map called gm1 is {"label": "tag1"}.
-Set gm1's "label" to "{gt1}-{gn1}".
-Print gm1's "label".
-a value called gv1 is "{gn1:08}".
-Print gv1.
-open a file for writing called gh1 at "/dev/stdout".
-Write "fmt1 {gt1} {gn1}\n" to gh1.
-Close gh1.
+a number called gn3 is 2147483648.
+a buffer called gw3 is 192 bytes in size.
+copy "hello3" to gw3.
+a text called gt3 is "{gw3}".
+a text called gu3 is "/bin/{gt3}-{gn3:08}".
+Print gt3.
+Print gu3.
+a buffer called gb3 is "{gt3}|{gn3}".
+Print gb3.
+a buffer called gc3 is 192 bytes in size.
+set gc3 to "set {gn3:08}".
+append " {gt3}" to gc3.
+Print gc3.
+f4 of "{gt3}/{gn3}".
+a list called gl3 is [].
+append "{gn3:08}" to gl3.
+Print element 1 of gl3.
+a map called gm3 is {"label": "tag3"}.
+Set gm3's "label" to "{gt3}-{gn3}".
+Print gm3's "label".
+a value called gv3 is "{gn3:08}".
+Print gv3.
+open a file for writing called gh3 at "/dev/stdout".
+Write "fmt3 {gt3} {gn3}\n" to gh3.
+Close gh3.
 a number called v2 is 3763434107614341.
 f3 of each e1 from [5, 42] treating 13 as 86 and each e2 from 5 to 5 treating 5 as 16.
 a list called l1 is [62, "mixed1", 55.84].
 For each w1 in l1, Print w1.
-a text called s2 is "word2".
-a text called s3 is "{s2}-{s2}".
-Print s3.
+a text called s4 is "word4".
+a text called s5 is "{s4}-{s4}".
+Print s5.
 print each item from [28, 21] treating 78 as 95.
 Print fl1label.
 Print fl1count.
 Print fl1on.
-'read flags 1'.
 a t2 called i1.
 Set i1's x1 to 276.
 Print i1.
@@ -103,8 +102,7 @@ a value called y1 is 738.
 Print y1.
 Set y1 to "reassigned1".
 Print y1.
-Print v1.
-'grid sink 15' of each q3s1 from 6 to 7 and each q3s2 from 7 to 7 and each q3s3 from 8 to 9 and each q3s4 from 3 to 3 and each q3s5 from 5 to 6 and each q3s6 from 4 to 4 and each q3s7 from 7 to 7 and each q3s8 from 4 to 4 and each q3s9 from 5 to 5 and each q3s10 from 1 to 1 and each q3s11 from 6 to 6 and each q3s12 from 4 to 4 and each q3s13 from 8 to 8 and each q3s14 from 8 to 8 and each q3s15 from 0 to 0.
-Exit 17.
+'grid sink 15' of each q3s1 from 6 to 7 and each q3s2 from 6 to 6 and each q3s3 from 6 to 7 and each q3s4 from 7 to 7 and each q3s5 from 8 to 9 and each q3s6 from 3 to 3 and each q3s7 from 5 to 5 and each q3s8 from 4 to 4 and each q3s9 from 7 to 7 and each q3s10 from 4 to 4 and each q3s11 from 5 to 5 and each q3s12 from 1 to 1 and each q3s13 from 6 to 6 and each q3s14 from 4 to 4 and each q3s15 from 8 to 8.
+Exit 53.
 
 reproducible: 1
