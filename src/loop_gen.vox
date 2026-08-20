@@ -108,7 +108,9 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
         'scratch dir sweep' of 'the scratch path',
         Return a number, 0.
     Set stat_compiled to stat_compiled add 1.
-    a text called 'the verdict' is 'run program' of 'the binary path' and 'the deadline in milliseconds'.
+    a text called 'run1 output path' is "{'the scratch path'}/vf_out1".
+    a text called 'the verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path'.
+    a text called 'the exit verdict' is "exit".
     a text called 'the hang verdict' is "hang".
     a text called 'the signal verdict' is "signal".
     If 'the verdict' is 'the hang verdict' then,
@@ -123,6 +125,36 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
         Set stat_findings to stat_findings add 1,
         'scratch dir sweep' of 'the scratch path',
         Return a number, 1.
+    (Differential self-consistency oracle - FUZZER_DEFECTS.md defect 9.
+     Only reached once the FIRST run already exited cleanly (hang/signal
+     above already are findings and a second run would add nothing - the
+     brief's own cost bound). A generated program takes no input and
+     touches nothing but its own arithmetic and text - deterministic by
+     construction - so running it again and finding different bytes on
+     stdout means it printed something that MOVES, which under ASLR is
+     exactly a leaked pointer (bug #39's shape). No expected value is
+     needed: the output only has to disagree with itself.)
+    a text called 'run2 output path' is "{'the scratch path'}/vf_out2".
+    a text called 'the second verdict' is 'run program capturing' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path'.
+    If 'the second verdict' is 'the exit verdict' then,
+        a text called 'the first output' is 'read whole file' of 'run1 output path',
+        a boolean called 'first read ok' is 'the last read succeeded',
+        a text called 'the second output' is 'read whole file' of 'run2 output path',
+        a boolean called 'second read ok' is 'the last read succeeded',
+        If 'first read ok' then,
+            If 'second read ok' then,
+                If 'the first output' is not 'the second output' then,
+                    a text called 'the mismatch detail' is "run 1: {'the first output'}\n---\nrun 2: {'the second output'}",
+                    a number called 'the nondeterminism finding' is 'finding save' of "nondeterministic" and seed and 'the source path' and 'the mismatch detail',
+                    Set stat_findings to stat_findings add 1,
+                    'scratch dir sweep' of 'the scratch path',
+                    Return a number, 1....
+    (The four trailing periods above close, in order: the innermost
+     mismatch If, 'second read ok's If, 'first read ok's If, and the
+     outer exit-verdict If - periods stack, one per level (LANGUAGE.md,
+     "Closing more than one level") - so a mismatched-verdict second run
+     or a failed read falls straight through to here rather than being
+     silently absorbed into a branch that never runs.)
     'scratch dir sweep' of 'the scratch path'.
     Return a number, 0.
 

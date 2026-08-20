@@ -92,3 +92,11 @@ To 'run program' with a text called 'binary path' and a number called 'the deadl
     a list called 'no arguments' is [].
     a text called 'the verdict' is supervise of 'binary path' and 'no arguments' and 'the deadline in milliseconds'.
     Return a text, 'the verdict'.
+
+(Same as 'run program', but stdout is captured to 'the capture path' -
+ see harness.vox's 'supervise capturing' for how. This is what the
+ differential oracle runs the generated binary through, twice, per seed.)
+To 'run program capturing' with a text called 'binary path' and a number called 'the deadline in milliseconds' and a text called 'the capture path'.
+    a list called 'no arguments' is [].
+    a text called 'the verdict' is 'supervise capturing' of 'binary path' and 'no arguments' and 'the deadline in milliseconds' and 'the capture path'.
+    Return a text, 'the verdict'.

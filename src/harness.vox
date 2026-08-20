@@ -39,17 +39,13 @@ To 'kill grandchild of' with a number called pid.
         Send signal 9 to process 'the grandchild pid'.
     Return a number, 'the grandchild pid'.
 
-(Run a program to completion, or to the deadline, whichever comes first.
- Returns how it ended; the raw wait status is left in 'the last status'.
-
- The argument list is argv[1..]: Vox prepends the program path as argv[0]
- itself, so naming it again in the list passes it to the program as a real
- argument.)
-To supervise with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds'.
-  a number called 'the child' is fork the process.
-  If 'the child' is 0 then,
-      Execute program with arguments 'the argument list',
-      Exit 127.
+(The reap loop, shared by supervise and 'supervise capturing': poll the
+ forked child without blocking, kill it (and any grandchild) past the
+ deadline, and read its true wait status. Split out so the two callers
+ cannot drift apart on the one piece of logic that tells an exit code of
+ 139 from a real signal 11 - see the module comment at the top of this
+ file.)
+To 'reap with deadline' with a number called 'the child' and a number called 'the deadline in milliseconds'.
   a timer called clock.
   Start the clock.
   a number called 'reap result' is 0.
@@ -74,6 +70,72 @@ To supervise with a text called program and a list called 'the argument list' an
   If crashed of 'the last status' then,
       Return a text, "signal".
   Return a text, "exit".
+
+(Run a program to completion, or to the deadline, whichever comes first.
+ Returns how it ended; the raw wait status is left in 'the last status'.
+
+ The argument list is argv[1..]: Vox prepends the program path as argv[0]
+ itself, so naming it again in the list passes it to the program as a real
+ argument.)
+To supervise with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds'.
+  a number called 'the child' is fork the process.
+  If 'the child' is 0 then,
+      Execute program with arguments 'the argument list',
+      Exit 127.
+  a text called 'the verdict' is 'reap with deadline' of 'the child' and 'the deadline in milliseconds'.
+  Return a text, 'the verdict'.
+
+(Same as supervise, but the child's stdout is redirected to 'the capture
+ path' before Execute - the differential oracle's prerequisite (defect 9)
+ and defect 7's stdin fix both need this same plumbing, so it is built
+ once as a general capability rather than wired only for the oracle.
+
+ No dup2 in the language (LANGUAGE.md's process/FD surface stops at
+ fork/reap/Execute and numeric-fd borrowing), so this uses the classic
+ POSIX substitute: borrow the real fd 1, Close it (a real close(2) - the
+ tracking table exists for cleanup, not to fake the syscall away, per
+ FILE_CLOSE in coreasm/x86_64/file.asm), then open the capture file. The
+ kernel always hands out the LOWEST free descriptor, and 1 is now it, so
+ the new file becomes the child's stdout with no dup2 needed. This runs
+ strictly after fork, in the child's own copy of the fd table - the
+ parent's real stdout (fd 1) is untouched, so nothing here can repeat the
+ shared-offset corruption defect 7 documents from the stdin side (a child
+ writing through a fd it shares with the parent moves the parent's own
+ file position). Each call opens a FRESH file (O_TRUNC, no append), so
+ two calls - even back to back for the same program, which is exactly
+ what the oracle does - never share an open file description with each
+ other either.)
+To 'supervise capturing' with a text called program and a list called 'the argument list' and a number called 'the deadline in milliseconds' and a text called 'the capture path'.
+  a number called 'the child' is fork the process.
+  If 'the child' is 0 then,
+      open a file for writing called 'stdout borrow' at 1,
+      Close 'stdout borrow',
+      open a file for writing called 'the captured output' at 'the capture path',
+      Execute program with arguments 'the argument list',
+      Exit 127.
+  a text called 'the verdict' is 'reap with deadline' of 'the child' and 'the deadline in milliseconds'.
+  Return a text, 'the verdict'.
+
+(Read a whole file back into text, for comparing two captured runs. Sets
+ 'the last read succeeded' so a caller can tell a genuinely empty file
+ (legitimate - a program that never Prints) from a read that failed
+ (plumbing broke) - collapsing both to "" would let a read failure on
+ one side and real content on the other masquerade as a nondeterminism
+ finding, which is exactly the false positive this oracle must not
+ produce.)
+a boolean called 'the last read succeeded' is false.
+
+To 'read whole file' with a text called path.
+    Set 'the last read succeeded' to false.
+    open a file for reading called 'the file to read' at path.
+    On error Return a text, "".
+    a buffer called 'the read bytes'.
+    Read from 'the file to read' into 'the read bytes'.
+    On error Return a text, "".
+    Close 'the file to read'.
+    Set 'the last read succeeded' to true.
+    a text called 'the read text' is 'the read bytes' as text.
+    Return a text, 'the read text'.
 
 (Run a shell command, for the two things Vox cannot do itself: redirecting
  a child's output to a file, and line surgery with sed. Never use this to

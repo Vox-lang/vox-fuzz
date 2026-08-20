@@ -1,0 +1,57 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/findings.vox".
+
+(FUZZER_DEFECTS.md defect 9 - the differential self-consistency oracle.
+ Two claims, proven directly against the real capability rather than
+ through the seed-based generator (which the 300-seed campaign already
+ covers, and which by construction can never emit this fixture):
+
+   1. 'run program capturing' really captures a fresh, comparable copy
+      of stdout on each call - not the SAME file re-read, and not the
+      fuzzer's own stdout.
+   2. A save through 'finding save' - the same call loop_gen.vox now
+      makes on a mismatch - keeps BOTH captured outputs in the finding,
+      not just the fact that they differed. A finding without both is
+      useless (the brief's own words); grep for both markers rather
+      than the unpredictable pid values themselves, since those can
+      never be pinned in a golden file.
+
+ tests/fixtures/nondeterministic.vox is planted by hand: it prints raw
+ /proc/self/stat, whose first field is the process's own pid - genuinely
+ different on every fork/exec of the very same binary, the same "prints
+ something that MOVES" shape bug #39 was before it was fixed in 0.4.7.)
+
+Set findings_dir to "./vf_test_nondeterm_findings".
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_test_nondeterm_findings ./vf_nd1 ./vf_nd2" and 5000.
+
+a number called 'the compile result' is 'compile vox' of "." and "tests/fixtures/nondeterministic.vox" and "./vf_nd_bin" and "./vf_nd_cerr".
+Print "compiled: {'the compile result' is 0}".
+
+a text called 'run1 verdict' is 'run program capturing' of "./vf_nd_bin" and 5000 and "./vf_nd1".
+a text called 'run2 verdict' is 'run program capturing' of "./vf_nd_bin" and 5000 and "./vf_nd2".
+Print "both runs exited cleanly: {'run1 verdict' is 'run2 verdict'}".
+
+a text called 'the first output' is 'read whole file' of "./vf_nd1".
+a boolean called 'first read ok' is 'the last read succeeded'.
+a text called 'the second output' is 'read whole file' of "./vf_nd2".
+a boolean called 'second read ok' is 'the last read succeeded'.
+Print "both captures readable: {'first read ok'} {'second read ok'}".
+
+If 'the first output' is not 'the second output' then,
+    Print "oracle sees the mismatch: true".
+Otherwise,
+    Print "oracle sees the mismatch: false".
+
+a text called 'the mismatch detail' is "run 1: {'the first output'}\n---\nrun 2: {'the second output'}".
+a number called 'the finding tally' is 'finding save' of "nondeterministic" and 900777 and "tests/fixtures/nondeterministic.vox" and 'the mismatch detail'.
+Print "finding saved: {'the finding tally' is greater than 0}".
+
+a number called 'the finding dir check' is 'run shell' of "test -d ./vf_test_nondeterm_findings/nondeterministic/900777" and 5000.
+Print "finding directory exists: {'the finding dir check' is 0}".
+a number called 'the run1 marker check' is 'run shell' of "grep -q 'run 1:' ./vf_test_nondeterm_findings/nondeterministic/900777/classification.txt" and 5000.
+Print "classification has run 1 output: {'the run1 marker check' is 0}".
+a number called 'the run2 marker check' is 'run shell' of "grep -q 'run 2:' ./vf_test_nondeterm_findings/nondeterministic/900777/classification.txt" and 5000.
+Print "classification has run 2 output: {'the run2 marker check' is 0}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_test_nondeterm_findings ./vf_nd1 ./vf_nd2 ./vf_nd_bin ./vf_nd_cerr" and 5000.
