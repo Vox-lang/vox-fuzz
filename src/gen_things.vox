@@ -1,0 +1,142 @@
+a number called gen_instances is 0.
+
+a number called gen_values is 0.
+
+(The `value` type: declare, print, reassign across the type boundary
+ (number to text), print again - the exact round-trip that produced
+ compiler bugs #2, #8 and #15 (finding 06). Runtime-tag ABI.)
+
+To 'gen leaf value roundtrip' with a text called indent and a boolean called nested.
+    Set gen_values to gen_values add 1.
+    a number called 'starting number' is 'rng below' of 1000.
+    a text called decl is "a value called y{gen_values} is {'starting number'}".
+    a text called 'print number' is "Print y{gen_values}".
+    a text called reassign is "Set y{gen_values} to \"reassigned{gen_values}\"".
+    a text called 'print text' is "Print y{gen_values}".
+    a list called 'the lines' is [decl, 'print number', reassign, 'print text'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Thing member functions: the manifest entry plus its two `To do the
+ T's m` definitions live in the prelude (see 'gen emit prelude thing
+ methods'); this leaf drives both call forms - the type-possessive maker
+ (`a t4's 'made at' with ...`) and the instance-possessive receiver
+ (`i's 'reflected across'`) - and reads the owner-return field back
+ after each (finding 03). Today only data fields are generated; this is
+ the dispatch and owner-return path fields alone cannot reach.)
+
+To 'gen leaf thing member' with a text called indent and a boolean called nested.
+    Set gen_instances to gen_instances add 1.
+    a number called 'maker name' is gen_instances.
+    a number called 'starting x' is 'rng below' of 1000.
+    Set gen_instances to gen_instances add 1.
+    a number called 'mirror name' is gen_instances.
+    a text called decl is "a t4 called i{'maker name'} is a t4's 'made at' with {'starting x'}".
+    a text called 'print maker' is "Print i{'maker name'}'s x1".
+    a text called 'mirror decl' is "a t4 called i{'mirror name'} is i{'maker name'}'s 'reflected across'".
+    a text called 'print mirror' is "Print i{'mirror name'}'s x1".
+    a list called 'the lines' is [decl, 'print maker', 'mirror decl', 'print mirror'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Things: instance declaration, possessive field read/write, and
+ whole-thing printing. t1/t2 are flat; t3 nests one of each, so a
+ chained possessive (i's g1's x1) is always reachable.)
+
+To 'gen thing flat' with a text called indent and a boolean called nested.
+    Set gen_instances to gen_instances add 1.
+    a number called 'type choice' is 'rng below' of 2.
+    a text called 'type name' is "t1".
+    If 'type choice' is 1 then,
+        Set 'type name' to "t2".
+    a number called val is 'rng below' of 1000.
+    a text called decl is "a {'type name'} called i{gen_instances}".
+    a text called 'set line' is "Set i{gen_instances}'s x1 to {val}".
+    a text called 'print line' is "Print i{gen_instances}".
+    a list called 'the lines' is [decl, 'set line', 'print line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen thing nested' with a text called indent and a boolean called nested.
+    Set gen_instances to gen_instances add 1.
+    a number called val is 'rng below' of 1000.
+    a text called decl is "a t3 called i{gen_instances}".
+    a text called 'set line' is "Set i{gen_instances}'s g1's x1 to {val}".
+    a text called 'field line' is "Print i{gen_instances}'s g1's x1".
+    a text called 'whole line' is "Print i{gen_instances}".
+    a list called 'the lines' is [decl, 'set line', 'field line', 'whole line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf thing' with a text called indent and a boolean called nested.
+    a number called 'thing kind' is 'rng below' of 2.
+    If 'thing kind' is 0 then,
+        'gen thing flat' of indent and nested.
+    If 'thing kind' is 1 then,
+        'gen thing nested' of indent and nested.
+
+(Value-copy check: assign one instance to another, mutate the copy,
+ and print both fields back out - the two must differ, proving the
+ copy shares nothing with the original.)
+
+To 'gen leaf thing copy' with a text called indent and a boolean called nested.
+    Set gen_instances to gen_instances add 1.
+    a number called 'original name' is gen_instances.
+    a number called val is 'rng below' of 1000.
+    Set gen_instances to gen_instances add 1.
+    a number called 'copy name' is gen_instances.
+    a number called val2 is 'rng below' of 1000.
+    a text called decl is "a t1 called i{'original name'}".
+    a text called 'set line' is "Set i{'original name'}'s x1 to {val}".
+    a text called 'copy decl' is "a t1 called i{'copy name'} is i{'original name'}".
+    a text called 'mutate line' is "Set i{'copy name'}'s x1 to {val2}".
+    a text called 'print orig' is "Print i{'original name'}'s x1".
+    a text called 'print copy' is "Print i{'copy name'}'s x1".
+    a list called 'the lines' is [decl, 'set line', 'copy decl', 'mutate line', 'print orig', 'print copy'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Prelude: thing types and functions, emitted once per program before
+ the statement stream that uses them (definitions before instances,
+ instances before access - valid by construction). t3 nests one t1 and
+ one t2, so a chained possessive is always reachable. t4 carries the
+ manifest for 'gen leaf thing member' - a maker ('made at', first
+ parameter is a number, not a t4) and a receiver ('reflected across',
+ first parameter is a t4), each obeying the owner-return rule, the same
+ shape as LANGUAGE.md's own point/'placed at' example (finding 03).
+ f1/f2/f3 cover 0, 1, and 2 number parameters.)
+
+To 'gen emit prelude things'.
+    'gen emit' of "A thing called t1 has\n".
+    'gen emit' of "    a number called x1 is 0,\n".
+    'gen emit' of "    a number called x2 is 0.\n".
+    'gen emit' of "\n".
+    'gen emit' of "A thing called t2 has\n".
+    'gen emit' of "    a number called x1 is 0,\n".
+    'gen emit' of "    a number called x2 is 0.\n".
+    'gen emit' of "\n".
+    'gen emit' of "A thing called t3 has\n".
+    'gen emit' of "    a t1 called g1,\n".
+    'gen emit' of "    a t2 called g2.\n".
+    'gen emit' of "\n".
+    'gen emit' of "A thing called t4 has\n".
+    'gen emit' of "    a function called 'made at',\n".
+    'gen emit' of "    a function called 'reflected across',\n".
+    'gen emit' of "    a number called x1 is 0.\n".
+    'gen emit' of "\n".
+
+To 'gen emit prelude thing methods'.
+    'gen emit' of "To do the t4's 'made at', with a number called x1.\n".
+    'gen emit' of "    a t4 called plotted.\n".
+    'gen emit' of "    Set plotted's x1 to x1.\n".
+    'gen emit' of "    Return a t4, plotted.\n".
+    'gen emit' of "\n".
+    'gen emit' of "To do the t4's 'reflected across', with a t4 called original.\n".
+    'gen emit' of "    a t4 called mirrored.\n".
+    'gen emit' of "    Set mirrored's x1 to 0 subtract original's x1.\n".
+    'gen emit' of "    Return a t4, mirrored.\n".
+    'gen emit' of "\n".
+
+(Things and their methods travel together as ONE block: a method names
+ its owner type, so the definition must precede it. Nothing else pins
+ them — verified by hand against 0.4.7 that a thing may be defined AFTER
+ a function that does not use it.)
+
+To 'gen emit things block'.
+    'gen emit prelude things'.
+    'gen emit prelude thing methods'.

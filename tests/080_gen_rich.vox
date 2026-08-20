@@ -1,5 +1,12 @@
 see "../src/rng.vox".
-see "../src/gen.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
 
 (a large budget across many seeds should exercise nesting: the generated
  text must contain at least one nested construct and one buffer)

@@ -1,0 +1,75 @@
+a number called gen_lists is 0.
+
+a number called gen_maps is 0.
+
+(Lists: declaration, append, and element access - in range and
+ deliberately out of it, same claim under test as buffers.)
+
+To 'gen leaf list inrange' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a number called 'elem one' is 'rng below' of 100.
+    a number called 'elem two' is 'rng below' of 100.
+    a text called decl is "a list called l{gen_lists} is [{'elem one'}, {'elem two'}]".
+    a number called appended is 'rng below' of 100.
+    a text called 'append line' is "append {appended} to l{gen_lists}".
+    a text called 'read line' is "Print element 1 of l{gen_lists}".
+    a list called 'the lines' is [decl, 'append line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf list oob' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a number called 'elem one' is 'rng below' of 100.
+    a number called 'elem two' is 'rng below' of 100.
+    a text called decl is "a list called l{gen_lists} is [{'elem one'}, {'elem two'}]".
+    a number called oob is 'rng below' of 500 add 10.
+    a text called 'read line' is "Print element {oob} of l{gen_lists}".
+    a text called handler is "On error print \"list read out of range\"".
+    a list called 'the lines' is [decl, 'read line', handler].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Maps: literal creation with a text-valued key and a number-valued key,
+ string-key read, `Set map's "key" to ...`, `'s length`, and a `keys`
+ iteration - heap growth and hashing (finding 05). The oob variant reads
+ a key that was never inserted; the language's own claim is that a
+ missing key sets the error flag and returns 0 rather than crashing, so
+ this is the same on-trial pattern as the buffer/list oob leaves. Each
+ map gets a freshly numbered iteration variable (k{N}) for the same
+ fresh-name reason the grid loop variables do.)
+
+To 'gen leaf map inrange' with a text called indent and a boolean called nested.
+    Set gen_maps to gen_maps add 1.
+    a number called 'count value' is 'rng below' of 1000.
+    a number called 'count value two' is 'rng below' of 1000.
+    a text called decl is "a map called m{gen_maps} is {{\"label\": \"tag{gen_maps}\", \"count\": {'count value'}}}".
+    a text called 'read label' is "Print m{gen_maps}'s \"label\"".
+    a text called 'write count' is "Set m{gen_maps}'s \"count\" to {'count value two'}".
+    a text called 'read count' is "Print m{gen_maps}'s \"count\"".
+    a text called 'read length' is "Print m{gen_maps}'s length".
+    a text called 'iterate keys' is "For each k{gen_maps} in m{gen_maps}'s keys, Print k{gen_maps}".
+    a list called 'the lines' is [decl, 'read label', 'write count', 'read count', 'read length', 'iterate keys'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf map oob' with a text called indent and a boolean called nested.
+    Set gen_maps to gen_maps add 1.
+    a number called 'count value' is 'rng below' of 1000.
+    a text called decl is "a map called m{gen_maps} is {{\"label\": \"tag{gen_maps}\", \"count\": {'count value'}}}".
+    a text called 'read line' is "Print m{gen_maps}'s \"missing\"".
+    a text called handler is "On error print \"map key missing\"".
+    a list called 'the lines' is [decl, 'read line', handler].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Mixed-type lists: a number, a text, and a float literal in one list -
+ per-slot runtime type tag machinery, never author-declared. Iterating
+ and printing exercises the tag dispatch on read (grep-proven gap, same
+ standard as the four findings). Each list gets its own iteration
+ variable (w{N}) for the same fresh-name reason maps and the grid do.)
+
+To 'gen leaf list mixed' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a number called 'number element' is 'rng below' of 100.
+    a number called 'float whole' is 'rng below' of 100.
+    a number called 'float frac' is 'rng below' of 100.
+    a text called decl is "a list called l{gen_lists} is [{'number element'}, \"mixed{gen_lists}\", {'float whole'}.{'float frac'}]".
+    a text called 'iterate line' is "For each w{gen_lists} in l{gen_lists}, Print w{gen_lists}".
+    a list called 'the lines' is [decl, 'iterate line'].
+    'gen join lines' of indent and nested and 'the lines'.

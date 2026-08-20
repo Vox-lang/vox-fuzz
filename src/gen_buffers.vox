@@ -1,0 +1,28 @@
+a number called gen_bufs is 0.
+
+(Buffers: declaration, a write, and a read - the language's own claim
+ is that out-of-bounds access sets the error flag and returns 0 rather
+ than crashing, so the oob variant is what actually puts that claim on
+ trial.)
+
+To 'gen leaf buffer inrange' with a text called indent and a boolean called nested.
+    Set gen_bufs to gen_bufs add 1.
+    a number called 'buf size' is 'rng below' of 64 add 8.
+    a text called decl is "a buffer called b{gen_bufs} is {'buf size'} bytes in size".
+    a number called pos is 'rng below' of 'buf size' add 1.
+    a number called val is 'rng below' of 256.
+    a text called 'write line' is "Set byte {pos} of b{gen_bufs} to {val}".
+    a text called 'read line' is "Print byte {pos} of b{gen_bufs}".
+    a list called 'the lines' is [decl, 'write line', 'read line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
+    Set gen_bufs to gen_bufs add 1.
+    a number called 'buf size' is 'rng below' of 64 add 8.
+    a text called decl is "a buffer called b{gen_bufs} is {'buf size'} bytes in size".
+    a number called extra is 'rng below' of 500 add 1.
+    a number called oob is 'buf size' add extra.
+    a text called 'read line' is "Print byte {oob} of b{gen_bufs}".
+    a text called handler is "On error print \"buffer read out of range\"".
+    a list called 'the lines' is [decl, 'read line', handler].
+    'gen join lines' of indent and nested and 'the lines'.

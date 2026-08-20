@@ -25,7 +25,14 @@ see "./version.vox".
 see "./rng.vox".
 see "./harness.vox".
 see "./runner.vox".
-see "./gen.vox".
+see "./gen_core.vox".
+see "./gen_buffers.vox".
+see "./gen_files.vox".
+see "./gen_collections.vox".
+see "./gen_text.vox".
+see "./gen_things.vox".
+see "./gen_flow.vox".
+see "./gen_misc.vox".
 see "./findings.vox".
 see "./loop_gen.vox".
 

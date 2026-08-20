@@ -1,0 +1,236 @@
+(Plan 327 Part B: the bytes this program will find on its stdin, and
+ whether it was given any reads to consume them with. Written to the
+ per-run scratch directory by the gen loop and handed to BOTH of the
+ oracle's runs — the same rule as argv, for the same reason.
+
+ Unlike argv, the generator does NOT assert on these. It knows what
+ bytes it wrote, but a program's reaction to them runs through buffer
+ sizing, truncation and EOF, and predicting the result would mean
+ reimplementing those semantics in the generator — which is how a
+ fuzzer ends up asserting its own bugs. The bytes are here to be
+ CONSUMED, not predicted: the finding is a crash, a hang, or output
+ that disagrees with itself between runs.)
+
+a text called gen_input is "".
+
+a boolean called gen_reads_stdin is false.
+
+(Whether this program does real file I/O. The path comes in on the
+ command line — the harness knows the program's per-run scratch
+ directory and passes it as a flag, which is only possible now that argv
+ exists at all. Confined by construction: the program can only write
+ where it was told, that directory is per-run and pid-keyed, and the
+ existing sweep removes it. No allowlist enforcement is needed because
+ the program is never given another path to try.)
+
+a boolean called gen_does_file_io is false.
+
+(Counters, so a program that COMMITTED to an input channel is guaranteed
+ to use it — the same guarantee the grid sink already has. Without it
+ the leaf still has to win a 1-in-45 kind draw, so committing meant
+ little: measured over 150 programs, stdin reads appeared in 9 and file
+ I/O in 22, against a 50% commitment rate each. A channel worth
+ deciding on is worth exercising.)
+
+a number called gen_stdin_reads is 0.
+
+a number called gen_file_ios is 0.
+
+(File I/O, write half only — plan 324 Part B, partially unblocked.
+
+ The plan puts this behind the per-run sandbox, but the WRITE half needs
+ no sandbox at all: `/dev/stdout` is a path every process already has,
+ writing to it cannot escape anywhere, and it never blocks.
+
+ The READ half is deliberately NOT emitted, and the reason is recorded
+ as defect 7 in docs/FUZZER_DEFECTS.md: `supervise` forks and Executes
+ the generated program with no stdio redirection, so the child inherits
+ the fuzzer's own stdin. A generated `/dev/stdin` read therefore blocks
+ until the deadline and is classified `hang` — a false finding on every
+ such program. Proved before emitting: with `< /dev/null` the read
+ returns 0 bytes and exits 0; with an open-but-silent pipe it blocks
+ until killed. The harness must redirect the child's stdin before the
+ read half can be emitted.
+
+ This leaf also reaches the FILE PROPERTY surface, which is where the
+ red team found #37 (`readable` always true) and #38 (`exists` is a
+ parse error) — the least-covered documented surface in the language.
+ `exists` is not emitted because it does not compile; `readable` IS
+ emitted even though #37 makes it always answer 1, because a wrong
+ answer is not a crash and the program still runs. When #37 is fixed
+ this leaf starts exercising the fix for free.)
+(DISABLED 2026-08-20, and the reason is worth keeping.
+
+ Writing to "/dev/stdout" from a generated program corrupts the
+ HARNESS's own captured output. Opening /dev/stdout gives the child an
+ independent file description with its own offset starting at 0. When
+ the harness's stdout is a redirected FILE - which is exactly what
+ test.sh does when capturing a golden - the child writes at offset 0
+ while the parent goes on writing at its own, much larger offset. The
+ result is a sparse file: a hole between them that reads back as a run
+ of NUL bytes, which is how this was found (tests/060_loop_gen.expected
+ went from text to binary, 526 NULs, passing locally on a terminal and
+ failing in CI where stdout is a file).
+
+ It is not a compiler bug - `Write` itself is clean, 6 bytes for 6
+ bytes - and not visible interactively. It is a consequence of choosing
+ /dev/stdout as the "needs no sandbox" write target, which was my
+ shortcut around plan 324 Part B.
+
+ The correct target is a path inside the per-run scratch directory,
+ which defect 5's isolation now provides. That needs the harness to
+ tell the program where its scratch dir is - the same plumbing plan 324
+ T3 needs for seeded input, and the same plumbing defect 7 needs for
+ stdin. The leaf is kept intact so it can be re-pointed at that path
+ rather than rewritten.
+
+ The leaf also printed `permissions`, which is machine-dependent for
+ /dev/stdout - a tty, a pipe and a file all differ - so it could never
+ have lived in a golden fixture either way.)
+
+To 'gen leaf file write' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the payload' is 'rng below' of 100000.
+    a text called 'open line' is "open a file for writing called fh{n} at \"/dev/stdout\"".
+    a text called 'write line' is "Write \"fuzz{n} {'the payload'}\\n\" to fh{n}".
+    a text called 'descriptor line' is "Print fh{n}'s descriptor".
+    a text called 'writable line' is "Print fh{n}'s writable".
+    a text called 'readable line' is "Print fh{n}'s readable".
+    a text called 'permissions line' is "Print fh{n}'s permissions".
+    a text called 'close line' is "Close fh{n}".
+    a list called 'the lines' is ['open line', 'write line', 'descriptor line', 'writable line', 'readable line', 'permissions line', 'close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Reading stdin. Both documented spellings are emitted — a path
+ ("/dev/stdin") and the descriptor (0) — because they are different code
+ paths through the compiler, and LANGUAGE.md offers both.
+
+ The buffer is deliberately sometimes SMALLER than the input the harness
+ wrote, because truncation is where buffer bugs live. Verified against
+ 0.4.7 before emitting: a 4-byte buffer given 10 bytes reads 4, a second
+ read on the same handle at EOF returns 0, and empty input reads 0 —
+ none of which crash or raise.
+
+ This leaf is only ever emitted when the harness will actually supply
+ input, and it requires defect 7's fix: before that, the child inherited
+ the fuzzer's stdin and any read here would have blocked until the
+ deadline and been misreported as a hang.)
+
+To 'gen leaf stdin read' with a text called indent and a boolean called nested.
+    (A program given no input still reads legally — it gets EOF — but
+     emitting the read only when there is something to consume keeps the
+     interesting case common rather than incidental.)
+    If gen_reads_stdin is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_stdin_reads to gen_stdin_reads add 1.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the size' is 'rng below' of 60 add 4.
+    a number called 'by descriptor' is 'rng below' of 2.
+    a text called 'the source' is "\"/dev/stdin\"".
+    If 'by descriptor' is 1 then,
+        Set 'the source' to "0".
+    a text called 'open line' is "open a file for reading called sin{n} at {'the source'}".
+    a text called 'buffer line' is "a buffer called sb{n} is {'the size'} bytes".
+    a text called 'read line' is "Read from sin{n} into sb{n}".
+    a text called 'size line' is "Print sb{n}'s size".
+    a text called 'empty line' is "If sb{n} is empty then, Print \"sb{n} empty\". Otherwise, Print \"sb{n} filled\"".
+    a text called 'second read' is "a buffer called sc{n} is 8 bytes".
+    a text called 'second line' is "Read from sin{n} into sc{n}".
+    a text called 'second size' is "Print sc{n}'s size".
+    a text called 'close line' is "Close sin{n}".
+    a list called 'the lines' is ['open line', 'buffer line', 'read line', 'size line', 'empty line', 'second read', 'second line', 'second size', 'close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Real file I/O, into the program's own per-run scratch directory.
+
+ Plan 324 Part B wanted this behind a path allowlist. It turns out not
+ to need one: the program is TOLD its directory on the command line and
+ is never given another path, so it cannot write anywhere else by
+ construction — and the directory is pid-and-seed keyed and swept after
+ the run.
+
+ The earlier attempt wrote to "/dev/stdout" instead, to avoid needing a
+ sandbox at all, and that corrupted the harness's own captured output:
+ the child got an independent file offset, so it wrote at position 0
+ while the parent wrote further on, leaving a sparse hole that read back
+ as NUL bytes and turned a golden fixture binary. This is the correct
+ target that shortcut was avoiding.
+
+ Write, then read back, then check the size — a round trip, so a defect
+ in either direction shows up. Verified by hand first: a program given
+ --scratch writes 23 bytes and reads back 23.)
+
+To 'gen leaf file round trip' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called f is gen_flags.
+    a number called 'the payload' is 'rng below' of 100000.
+    a number called 'the buffer size' is 'rng below' of 60 add 8.
+    a text called 'path line' is "a text called fp{n} is \"{{fl{f}scratch}}/out{n}\"".
+    a text called 'open write' is "open a file for writing called fw{n} at fp{n}".
+    a text called 'write line' is "Write \"payload {'the payload'}\\n\" to fw{n}".
+    a text called 'close write' is "Close fw{n}".
+    a text called 'open read' is "open a file for reading called fr{n} at fp{n}".
+    a text called 'buffer line' is "a buffer called fb{n} is {'the buffer size'} bytes in size".
+    a text called 'read line' is "Read from fr{n} into fb{n}".
+    a text called 'size line' is "Print fb{n}'s size".
+    a text called 'readable line' is "Print fr{n}'s readable".
+    a text called 'close read' is "Close fr{n}".
+    a list called 'the lines' is ['path line', 'open write', 'write line', 'close write', 'open read', 'buffer line', 'read line', 'size line', 'readable line', 'close read'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Seeded input bytes. Shapes chosen for the boundaries a reader trips
+ over: nothing at all, less than a buffer, more than a buffer (the
+ truncation path), embedded NULs (a C-string reader stops early, a
+ length-bounded one does not — the distinction that buffer bugs live
+ in), and a long line with no trailing newline.)
+(Input bytes, built as TEXT and appended — not written byte by byte.
+
+ The obvious route, `Set byte N of buf to value` then `Write b to file`,
+ is unavailable twice over. Writing a scalar to a file segfaults
+ (compiler bug #40, found doing exactly this). And a fixed-size buffer
+ starts EMPTY — `is 4096 bytes in size` sets capacity, not length — so
+ indexed writes past the used length are out of bounds and silently do
+ nothing. Buffer indexing is also 1-based, which cost a wrong bug report
+ before it cost anything else.
+
+ Appending text is the idiom gen_out already uses and is proven. The
+ cost is that embedded NUL bytes are currently unreachable — a NUL
+ cannot be spelled inside a text literal — so the input alphabet is
+ printable ASCII. That shape is worth having eventually, because a
+ C-string reader stopping early where a length-bounded one does not is
+ exactly where buffer bugs live; it needs a byte-level write path that
+ does not go through #40.)
+
+To 'gen build input'.
+    Set gen_input to "".
+    a number called shape is 'rng below' of 5.
+    If shape is 0 then,
+        Return a number, 0.
+    a number called 'how many' is 'rng below' of 40 add 1.
+    If shape is 2 then,
+        Set 'how many' to 'rng below' of 800 add 200.
+    a number called i is 0.
+    While i is less than 'how many',
+        a number called pick is 'rng below' of 62,
+        a text called c is 'gen digit for value' of pick,
+        If pick is greater than 35 then,
+            Set c to "{pick}".
+        Set gen_input to "{gen_input}{c}",
+        Set i to i add 1.
+    If shape is 4 then,
+        Return a number, 0.
+    Set gen_input to "{gen_input}\n".
+    Return a number, 0.
+
+To 'gen write input' with a text called path.
+    open a file for writing called 'the input file' at path.
+    Write gen_input to 'the input file'.
+    Close 'the input file'.
