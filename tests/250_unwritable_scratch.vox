@@ -1,0 +1,22 @@
+see "../src/harness.vox".
+
+(D2 - a campaign whose scratch root cannot be written must abort loudly,
+ not report "findings: 0". Provenance: a run whose cwd was deleted under
+ it sailed to completion through 2,817 getcwd errors, compiled nothing,
+ and reported success on top of total failure. Here we make the scratch
+ root read-only (mkdir + chmod 555) and run a tiny campaign through
+ 'run shell', capturing the exit code and combined stdout+stderr. The run
+ must exit non-zero and must NOT print the line "findings: 0". Cleanup is
+ UNCONDITIONAL - a failed run must not leave ./vf_scratch read-only for
+ the next test - so the chmod 755 + rm -rf runs regardless of how the
+ assertions came out. 'run shell' of chmod/mkdir is harness setup, not a
+ generated program, so the signal-vs-exit distinction rule does not
+ apply here.)
+
+a number called 'the clean before' is 'run shell' of "rm -rf ./vf_scratch ./vf_uw_findings ./vf_uw_out" and 5000.
+a number called 'the ro dir' is 'run shell' of "mkdir ./vf_scratch && chmod 555 ./vf_scratch" and 5000.
+a number called 'the run exit' is 'run shell' of "./build/vox-fuzz gen --count 2 --seed 1 --out ./vf_uw_findings > ./vf_uw_out 2>&1" and 30000.
+a number called 'the findings grep' is 'run shell' of "grep -q -x 'findings: 0' ./vf_uw_out" and 5000.
+Print "scratch abort exit non-zero: {'the run exit' is not 0}".
+Print "no findings: 0 in output: {'the findings grep' is not 0}".
+a number called 'the cleanup' is 'run shell' of "chmod 755 ./vf_scratch 2>/dev/null; rm -rf ./vf_scratch ./vf_uw_findings ./vf_uw_out" and 5000.

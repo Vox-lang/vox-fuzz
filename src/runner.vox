@@ -27,8 +27,64 @@ To 'vox path'.
  misread against the run timeout.)
 a number called 'the compile budget in milliseconds' is 60000.
 
-To 'compile vox' with a text called source and a text called out.
-    a text called 'the compile command' is "VOX_CORE_PATH={'shell quote' of vox_core} {'shell quote' of vox_binary} {source} -o {out} > ./vf_cerr 2>&1".
+(The cerr path is now per-seed, handed in by the caller: D1 moved every
+ compile artefact under sandbox.vox's pid+seed scratch directory so two
+ concurrently-running vox-fuzz processes can no longer overwrite each
+ other's half-written source or cerr. Quoting it through 'shell quote'
+ is belt-and-braces - the path is harness-generated (digits, underscores,
+ slashes), never user input - but it keeps the one-audit-point property
+ (plan 322 A2): every value that did not originate in this source reaches
+ 'run shell' through the same single-quoted helper.
+
+ 'the work dir' is the second half of D1's isolation. The vox compiler
+ writes its intermediate `{stem}.asm` and `{stem}.o` to its OWN working
+ directory (src/main.rs:637-638, `fs::write(&asm_path, ...)` with a
+ bare relative name), not next to the source - so even with the source,
+ binary and cerr each in their own per-seed scratch dir, two concurrent
+ compiles of a same-stemmed source still collide on `vf_gen.asm` /
+ `vf_gen.o` in the cwd, and the loser dies with `ld: cannot find
+ vf_gen.o` / `NASM assembly failed` - a false asm-reject, exactly the
+ defect D1 exists to close (hand-reproduced: the same source compiled
+ solo exits 0, compiled 6x concurrently 5/6 fail on the intermediate).
+ `cd`-ing the compile shell into the per-seed scratch dir first moves
+ those intermediates inside it, so pid+seed isolation covers them too,
+ and the per-seed sweep cleans them up along with everything else.
+ source/out/cerr are leaf names relative to 'the work dir'; the unit
+ tests pass "." so their fixture paths resolve exactly as before.)
+(compile vox cds into the per-seed scratch dir so the compiler's
+ intermediates land inside it (see the D1 note above). That cd breaks any
+ vox_binary/vox_core path that was RELATIVE to the fuzzer's original cwd:
+ the unit tests pass "." as the work dir (cd "." is a no-op, so a relative
+ path still resolves), but the live gen loop passes the scratch path
+ ./vf_scratch/run_{pid}_{seed}, and tests/110, 120, 130 and the confined
+ runner all hand compile vox a relative --vox / default ../vox/... that no
+ longer reaches the right file from inside the scratch dir. 'resolve from
+ scratch' re-spells a relative path against the ORIGINAL cwd by walking up
+ one directory per '/' in the work dir, so the path resolves from inside
+ the scratch dir exactly as it did from the cwd. Absolute paths (leading
+ '/') already resolve from anywhere and are returned unchanged.)
+To 'resolve from scratch' with a text called path and a text called 'the work dir'.
+    a buffer called 'the path bytes' is path.
+    a number called 'the first byte' is byte 1 of 'the path bytes'.
+    If 'the first byte' is 47 then,
+        Return a text, path.
+    a buffer called 'the dir bytes' is 'the work dir'.
+    a number called 'the byte count' is 'the dir bytes's size.
+    a number called 'the scan position' is 1.
+    a buffer called 'the climb bytes'.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the dir bytes',
+        If 'the current byte' is 47 then,
+            append "../" to 'the climb bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    a text called 'the climb prefix' is 'the climb bytes' as text.
+    a text called 'the resolved path' is "{'the climb prefix'}{path}".
+    Return a text, 'the resolved path'.
+
+To 'compile vox' with a text called 'the work dir' and a text called source and a text called out and a text called 'the cerr path'.
+    a text called 'the resolved vox' is 'resolve from scratch' of vox_binary and 'the work dir'.
+    a text called 'the resolved core' is 'resolve from scratch' of vox_core and 'the work dir'.
+    a text called 'the compile command' is "cd {'shell quote' of 'the work dir'} && VOX_CORE_PATH={'shell quote' of 'the resolved core'} {'shell quote' of 'the resolved vox'} {source} -o {out} > {'shell quote' of 'the cerr path'} 2>&1".
     a number called 'the compiler exit code' is 'run shell' of 'the compile command' and 'the compile budget in milliseconds'.
     Return a number, 'the compiler exit code'.
 

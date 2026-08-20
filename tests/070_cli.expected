@@ -23,7 +23,6 @@ vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
 0
 767536
 1
-./vf_gen_bin
 1
 23
 mixed1
@@ -38,7 +37,6 @@ list read out of range
 31.503712871287132
 1150.099999999999909
 1
-./vf_gen_bin
 1
 28
 929

@@ -5,11 +5,9 @@ mixed1
 mixed3
 34.509999999999998
 1
-./vf_gen_bin
 1
 137
 1
-./vf_gen_bin
 1
 tag1
 245
@@ -17,7 +15,6 @@ tag1
 label
 count
 1
-./vf_gen_bin
 1
 357
 -357
@@ -39,7 +36,6 @@ label
 count
 word3-word3
 1
-./vf_gen_bin
 1
 29
 35
@@ -60,7 +56,6 @@ word3-word3
 0
 map key missing
 1
-./vf_gen_bin
 1
 programs: 5
 compiled: 5
