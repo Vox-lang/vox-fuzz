@@ -243,7 +243,19 @@ To 'gen build argv'.
         a number called 'the word' is 'rng below' of 100000,
         a text called 'the label value' is "v{'the word'}",
         a number called 'the count value' is 'rng below' of 10000,
-        a number called 'long form' is 'rng below' of 2,
+        (Prime modulus. Two consecutive `'rng below' of 2` draws in this
+         LCG ALWAYS differ — measured 2000 trials, 2000 disagreements,
+         zero agreements. Each draw's own distribution stays a fair
+         50/50, which is exactly why this hides: the marginals look
+         perfect while the PAIR is locked. Here that meant short form
+         always carried the boolean flag and long form never did, so two
+         of the four combinations were unreachable for every seed.
+         The same trap as 'gen leaf loop control' documents, which is
+         now three sightings.)
+        a number called 'the form draw' is 'rng below' of 13,
+        a number called 'long form' is 0,
+        If 'the form draw' is greater than 6 then,
+            Set 'long form' to 1.
         If 'long form' is 0 then,
             append "-a" to gen_argv,
             append 'the label value' to gen_argv,
@@ -258,7 +270,10 @@ To 'gen build argv'.
             append 'the long count' to gen_argv.
         Set gen_expected_label to 'the label value',
         Set gen_expected_count to 'the count value',
-        a number called 'boolean pick' is 'rng below' of 2,
+        a number called 'the boolean draw' is 'rng below' of 11,
+        a number called 'boolean pick' is 1,
+        If 'the boolean draw' is less than 6 then,
+            Set 'boolean pick' to 0,
         If 'boolean pick' is 0 then,
             append "-c" to gen_argv,
             Set gen_expects_on to true.
