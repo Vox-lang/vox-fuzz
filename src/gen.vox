@@ -2069,7 +2069,7 @@ To 'gen leaf predicate probe' with a text called indent and a boolean called nes
  an empty spec concatenated blindly would produce. The doubled braces are
  this file's own escapes: `{{` emits one `{` into the generated source.)
 To 'gen format slot' with a text called 'the inner' and a text called spec.
-    If spec is "" then,
+    If spec is empty then,
         a text called plain is "{{{'the inner'}}}",
         Return a text, plain.
     a text called specified is "{{{'the inner'}:{spec}}}".
