@@ -287,7 +287,18 @@ To 'gen join lines' with a text called indent and a boolean called nested and a 
  divisor would make a large fraction of programs into division-by-zero
  tests rather than precedence tests. The zero case deserves its own
  leaf; it is not this one's job.)
-To 'gen deep expr' with a number called depth.
+(`grouped` false builds the SAME expression without Vox's `{ }` grouping
+ punctuation, which is what a format string needs. Hand-verified against
+ 0.4.6 before this parameter existed: inside a format string, `{{` is the
+ documented literal-brace ESCAPE (LANGUAGE.md "Escape Sequences"), so a
+ grouped expression handed to an interpolation slot does not group - it
+ renders as literal text. `Print "{{{x add y} multiply z}}"` prints
+ `{13 multiply z}`, not `52`. That is the escape rule working as
+ documented, not a defect, and it is why 'gen leaf format expression'
+ asks for the flat form rather than a second helper: one operator table,
+ two renderings. A flat chain still exercises precedence for real -
+ `x add y multiply z` is 22, not 52 - it just cannot override it.)
+To 'gen deep expr' with a number called depth and a boolean called grouped.
     a text called 'the expression' is 'gen var ref'.
     a number called i is 0.
     While i is less than depth,
@@ -308,10 +319,15 @@ To 'gen deep expr' with a number called depth.
             a number called 'the safe divisor' is 'rng below' of 9 add 2,
             Set operand to "{'the safe divisor'}".
         a number called 'the side' is 'rng below' of 2,
-        If 'the side' is 0 then,
-            Set 'the expression' to "{{{'the expression'} {op} {operand}}}".
+        a text called 'the left side' is 'the expression',
+        a text called 'the right side' is operand,
         If 'the side' is 1 then,
-            Set 'the expression' to "{{{operand} {op} {'the expression'}}}".
+            Set 'the left side' to operand,
+            Set 'the right side' to 'the expression'.
+        If grouped then,
+            Set 'the expression' to "{{{'the left side'} {op} {'the right side'}}}".
+        If grouped is false then,
+            Set 'the expression' to "{'the left side'} {op} {'the right side'}".
         Set i to i add 1.
     Return a text, 'the expression'.
 
@@ -319,7 +335,7 @@ To 'gen leaf deep expression' with a text called indent and a boolean called nes
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
     a number called depth is 'rng below' of 8 add 2.
-    a text called e is 'gen deep expr' of depth.
+    a text called e is 'gen deep expr' of depth and true.
     a text called decl is "a number called dx{n} is {e}".
     a text called 'print line' is "Print dx{n}".
     a list called 'the lines' is [decl, 'print line'].
@@ -1286,8 +1302,19 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf timer and clock' of indent and nested.
     If kind is 38 then,
         'gen leaf deep expression' of indent and nested.
-    If kind is 39 then,
+    (99 is outside every draw: the file-write leaf is disabled — see its
+     own comment — and parking it here keeps the drawn range contiguous
+     rather than leaving a dead number inside it.)
+    If kind is 99 then,
         'gen leaf file write' of indent and nested.
+    If kind is 39 then,
+        'gen leaf format specifiers' of indent and nested.
+    If kind is 40 then,
+        'gen leaf format expression' of indent and nested.
+    If kind is 41 then,
+        'gen leaf format value' of indent and nested.
+    If kind is 42 then,
+        'gen leaf format types' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1439,15 +1466,26 @@ To 'gen if' with a number called depth and a text called indent.
  self-closing top-level sentence, which nested positions are not); depth
  0 drops loop/if and every T3 addition too, leaves 0-15 only (nesting
  budget exhausted - kept to the pre-T3 range rather than widened, since
- the deepest level is the lowest-value place to add more surface).)
+ the deepest level is the lowest-value place to add more surface).
+
+ 31-38 and 39-42 join 29-30 in the top-level-only band, since depth 2/1
+ stop at 28 and depth 0 at 15. 39-42 are the format-string leaves
+ (specifiers, expressions, values, every type); only 42 opens a clause -
+ the If/Otherwise its formatted-time assertion needs - so only 42 joins
+ the remap below. The others are declarations and Prints throughout and
+ close a block correctly on their own period. Every remap entry for a
+ kind above 28 is defensive rather than load-bearing: avoid_onerror is
+ only ever true below 'gen body', which recurses at depth 2 or lower,
+ where those kinds cannot be drawn in the first place. They are written
+ anyway so the guarantee does not have to hold forever for the remap to
+ stay correct.)
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        (39 was the file-write leaf and is deliberately NOT drawn - see
-         'gen leaf file write' for why. The draw stops at 39 so kinds
-         0..38 stay reachable and the leaf's code stays present for
-         whoever re-enables it against a scratch-dir path.)
-        Set kind to 'rng below' of 39.
+        (0..42: the four format leaves are 39-42. The file-write leaf
+         is parked at 99, outside the draw, so no number in this range
+         dispatches to nothing.)
+        Set kind to 'rng below' of 43.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
@@ -1549,6 +1587,10 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         If kind is 35 then,
             Set 'safe kind' to 1.
         If kind is 37 then,
+            Set 'safe kind' to 1.
+        (42 is 'gen leaf format types', which opens a clause of its own —
+         carried over from the format-coverage branch's own remap.)
+        If kind is 42 then,
             Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
@@ -1602,6 +1644,15 @@ To 'gen emit prelude functions'.
     'gen emit' of fn2.
     a text called fn3 is "To f3 with a number called p1 and a number called p2.\n    a number called r is p1 add p2.\n    Return a number, r.\n\n".
     'gen emit' of fn3.
+    (f4 takes a TEXT, which f1/f2/f3 between them never did - so before
+     it there was no function in a generated program that a format
+     string could be passed to, and item 3's "passing one to a function"
+     was unreachable. It prints its argument rather than returning it,
+     because the sink under test is the ARGUMENT position: a format
+     string materializes at the call site, and what has to survive is
+     the value the callee receives.)
+    a text called fn4 is "To f4 with a text called p1.\n    Print \"f4 {{p1}}\".\n\n".
+    'gen emit' of fn4.
 
 (One callee per supported grid depth, emitted once in the prelude
  rather than beside the call site. A function definition is only legal
@@ -1967,6 +2018,360 @@ To 'gen leaf predicate probe' with a text called indent and a boolean called nes
     a text called 'sign probe' is "If pn{n} is positive then, Print \"pn{n} positive\". Otherwise, Print \"pn{n} nonpositive\"".
     a text called 'zero probe' is "If pn{n} is zero then, Print \"pn{n} zero\". Otherwise, Print \"pn{n} nonzero\"".
     a list called 'the lines' is ['blank decl', 'blank probe', 'number decl', 'even probe', 'sign probe', 'zero probe'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Format strings: the full documented surface, reachable in exactly ONE
+ place before this. src/gen.vox emitted a format SPEC only in 'gen leaf
+ base conversion's round-trip line; everything else was plain `{name}`
+ interpolation, so padding, precision, bases, expressions-inside and
+ format-strings-as-values were unfuzzed. That surface has already
+ produced compiler bug #36 - a width specifier printed a float's raw
+ bits and a text's ADDRESS - which is the same story as the flag schema
+ (#31/#32) and `is empty` (#33): a documented facility with no real user
+ carries bugs indefinitely.
+
+ Every shape below was compiled and RUN by hand against 0.4.6 before its
+ emitter was written. What that turned up, recorded so nobody has to
+ re-derive it:
+
+ - #36 is fixed on the vox side, so its shapes are fair game: `{f:06}`
+   prints 3.5 and `{t:6}` prints the text, not a pointer. The width is
+   still not APPLIED to a float or a text - the cosmetic residue that
+   bug entry already records - so those render unpadded, which is a
+   stable, deterministic answer and fine to emit.
+ - Grouping does not work inside a format string. `{{` is the documented
+   literal-brace ESCAPE, so `"{{x add y} multiply z}"` prints
+   `{13 multiply z}` rather than 52. Documented behaviour, not a defect -
+   and the reason 'gen deep expr' grew a `grouped` parameter instead of
+   this file growing a second expression builder.
+ - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3037
+   says: `{255}` and `{255:x}` both fail with "Unknown variable: 255".
+   A literal inside an EXPRESSION is fine - `{v1 add 5}`, `{5 add v1}`
+   and `{v1 divide 7}` all compile and run - which is what makes 'gen
+   deep expr's literal divisors safe here. Every slot this file emits
+   is either a declared name or an expression carrying an operator, and
+   'gen leaf format expression' draws its depth from 2 upward so the
+   degenerate one-operand case can never reach a slot.
+ - `<n> as text padded to 2`, which LANGUAGE.md's "Formatted Time
+   Output" section uses in all three of its lines, does not compile
+   ("Unknown function: padded"). LANGUAGE.md:2001-2008 documents the
+   zero-pad SPECIFIER as the way to do that same job, and that form
+   works - so the specifier form is what 'gen leaf format types' emits.
+   Reported as a documentation defect, not worked around silently.
+ - A format string as the FIRST element of an INLINE collection makes
+   every element of that collection print as a raw pointer. Reported as
+   a genuine compiler bug. Deliberately NOT emitted: the value printed
+   is a live heap address that changes between runs of the same binary,
+   and a generated program's output must not wander (the same rule 'gen
+   leaf timer and clock' follows for the clock).)
+
+(A slot renders as `{inner}` or `{inner:spec}` - never `{inner:}`, which
+ an empty spec concatenated blindly would produce. The doubled braces are
+ this file's own escapes: `{{` emits one `{` into the generated source.)
+To 'gen format slot' with a text called 'the inner' and a text called spec.
+    If spec is "" then,
+        a text called plain is "{{{'the inner'}}}",
+        Return a text, plain.
+    a text called specified is "{{{'the inner'}:{spec}}}".
+    Return a text, specified.
+
+(The integer half of LANGUAGE.md's specifier table (3022-3034): default,
+ width, zero-pad, x, X, b, o, and padded hex. Widths run to 20 so a
+ padded 18-digit extreme literal and a 63-digit binary both overflow
+ their field - the case where the width must be IGNORED rather than
+ truncate the value.)
+To 'gen pick integer spec'.
+    a number called pick is 'rng below' of 8.
+    If pick is 0 then,
+        Return a text, "".
+    If pick is 1 then,
+        a number called 'the width' is 'rng below' of 20 add 1,
+        Return a text, "{'the width'}".
+    If pick is 2 then,
+        a number called 'the zero width' is 'rng below' of 20 add 1,
+        Return a text, "0{'the zero width'}".
+    If pick is 3 then,
+        Return a text, "x".
+    If pick is 4 then,
+        Return a text, "X".
+    If pick is 5 then,
+        Return a text, "b".
+    If pick is 6 then,
+        Return a text, "o".
+    a number called 'the pad width' is 'rng below' of 12 add 2.
+    a text called 'the padded hex' is "0{'the pad width'}x".
+    Return a text, 'the padded hex'.
+
+(The float half: precision alone (`.N`, the one form #36 confirmed was
+ always correct), width alone, and width-with-precision - the exact
+ combination #36 named as the one that breaks a working precision case.
+ It is emitted rather than avoided: #36's harm half is fixed, the value
+ is now right, and if the residue ever regresses from cosmetic to wrong
+ this is what stands over it.)
+To 'gen pick float spec'.
+    a number called pick is 'rng below' of 4.
+    If pick is 0 then,
+        Return a text, "".
+    If pick is 1 then,
+        a number called 'the precision' is 'rng below' of 7,
+        Return a text, ".{'the precision'}".
+    If pick is 2 then,
+        a number called 'the width' is 'rng below' of 16 add 2,
+        Return a text, "{'the width'}".
+    a number called 'the field' is 'rng below' of 16 add 2.
+    a number called 'the digits' is 'rng below' of 7.
+    a text called 'the combined' is "{'the field'}.{'the digits'}".
+    Return a text, 'the combined'.
+
+(Every row of the specifier table, in one program, applied to the type
+ each row is meaningful for: the integer specs on a number, precision
+ and width on a float, a width on a text and on a boolean, and a padded
+ hex on a THING'S FIELD - a possessive inside a slot, which is a
+ documented name form the generator never placed in one before.
+
+ The table is emitted in full and unconditionally rather than sampled,
+ so a single seed that draws this kind demonstrates the whole table;
+ the widths, precisions and operands are what vary. b and o get their
+ own modest operand (zk): a 63-digit binary rendering of an i64 extreme
+ is worth emitting, and is, on the zn line - but having every base row
+ share one extreme would make the octal and binary rows nothing but
+ length tests.
+
+ All plain declarations and Prints - nothing here opens a clause, so
+ this is a safe block closer.)
+To 'gen leaf format specifiers' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the number literal' is 'gen extreme number'.
+    a text called 'the float literal' is 'gen extreme float'.
+    a number called 'the small number' is 'rng below' of 250 add 5.
+    a number called 'the field value' is 'rng below' of 65535 add 1.
+    a number called 'the width' is 'rng below' of 20 add 1.
+    a number called 'the zero width' is 'rng below' of 20 add 1.
+    a number called 'the text width' is 'rng below' of 12 add 1.
+    a number called 'the precision' is 'rng below' of 7.
+    a number called 'the hex width' is 'rng below' of 12 add 2.
+    a text called 'number decl' is "a number called zn{n} is {'the number literal'}".
+    a text called 'small decl' is "a number called zk{n} is {'the small number'}".
+    a text called 'float decl' is "a float called zd{n} is {'the float literal'}".
+    a text called 'text decl' is "a text called zs{n} is \"word{n}\"".
+    a text called 'boolean decl' is "a boolean called zb{n} is true".
+    a text called 'thing decl' is "a t1 called zi{n}".
+    a text called 'thing set' is "Set zi{n}'s x1 to {'the field value'}".
+    a text called 'print default' is "Print \"{{zn{n}}}\"".
+    a text called 'print width' is "Print \"{{zn{n}:{'the width'}}}\"".
+    a text called 'print zero pad' is "Print \"{{zn{n}:0{'the zero width'}}}\"".
+    a text called 'print hex' is "Print \"{{zn{n}:x}}\"".
+    a text called 'print hex upper' is "Print \"{{zn{n}:X}}\"".
+    a text called 'print binary' is "Print \"{{zk{n}:b}}\"".
+    a text called 'print octal' is "Print \"{{zk{n}:o}}\"".
+    a text called 'print padded hex' is "Print \"{{zn{n}:0{'the hex width'}x}}\"".
+    a text called 'print precision' is "Print \"{{zd{n}:.{'the precision'}}}\"".
+    a text called 'print float field' is "Print \"{{zd{n}:{'the width'}.{'the precision'}}}\"".
+    a text called 'print text width' is "Print \"{{zs{n}:{'the text width'}}}\"".
+    a text called 'print boolean pad' is "Print \"{{zb{n}:0{'the zero width'}}}\"".
+    a text called 'print field hex' is "Print \"{{zi{n}'s x1:0{'the hex width'}x}}\"".
+    a list called 'the lines' is ['number decl', 'small decl', 'float decl', 'text decl', 'boolean decl', 'thing decl', 'thing set', 'print default', 'print width', 'print zero pad', 'print hex', 'print hex upper', 'print binary', 'print octal', 'print padded hex', 'print precision', 'print float field', 'print text width', 'print boolean pad', 'print field hex'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Expressions inside slots - LANGUAGE.md:3041-3049. The two shapes that
+ section names by example (`{x add y}`, `{x multiply y}`) plus its
+ `{arguments's count}` line, a chained three-operand form, an arbitrarily
+ deep flat chain from 'gen deep expr', and a specifier applied to an
+ expression's RESULT, which is the combination neither section shows and
+ the one where a width has to be applied to something computed rather
+ than to a slot that names a variable.
+
+ The depth draw starts at 2, never 0: 'gen deep expr' with depth 0
+ returns a single operand, and with an empty global pool that operand is
+ the literal `0` - a lone literal in a slot is the one shape LANGUAGE.md
+ rejects outright. From 2 up, every rendering carries an operator and is
+ an expression by construction.
+
+ Flat, not grouped - see 'gen deep expr's own comment for why grouping
+ cannot survive a format string.)
+To 'gen leaf format expression' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'first value' is 'rng below' of 1000 add 1.
+    a number called 'second value' is 'rng below' of 90 add 10.
+    a number called 'the modulus' is 'rng below' of 5 add 2.
+    a number called depth is 'rng below' of 7 add 2.
+    a text called 'the deep expression' is 'gen deep expr' of depth and false.
+    a text called 'the deep spec' is 'gen pick integer spec'.
+    a text called 'the result spec' is 'gen pick integer spec'.
+    a text called 'x decl' is "a number called xn{n} is {'first value'}".
+    a text called 'y decl' is "a number called xy{n} is {'second value'}".
+    a text called 'the sum' is "xn{n} add xy{n}".
+    a text called 'the product' is "xn{n} multiply xy{n}".
+    a text called 'the chain' is "xn{n} multiply xy{n} modulo {'the modulus'}".
+    a text called 'sum slot' is 'gen format slot' of 'the sum' and "".
+    a text called 'product slot' is 'gen format slot' of 'the product' and "".
+    a text called 'chain slot' is 'gen format slot' of 'the chain' and 'the result spec'.
+    a text called 'deep slot' is 'gen format slot' of 'the deep expression' and 'the deep spec'.
+    a text called 'count slot' is 'gen format slot' of "arguments's count" and "".
+    a text called 'print sum' is "Print \"sum {'sum slot'}\"".
+    a text called 'print product' is "Print \"product {'product slot'}\"".
+    a text called 'print chain' is "Print \"chain {'chain slot'}\"".
+    a text called 'print deep' is "Print \"deep {'deep slot'}\"".
+    a text called 'print count' is "Print \"arguments {'count slot'}\"".
+    (A format string carrying an expression used as a VALUE rather than
+     as a Print argument - the two features of items 2 and 3 crossed,
+     which is where a tag bug like #17's would surface.)
+    a text called 'held decl' is "a text called xt{n} is \"held {'sum slot'} {'chain slot'}\"".
+    a text called 'print held' is "Print xt{n}".
+    a list called 'the lines' is ['x decl', 'y decl', 'print sum', 'print product', 'print chain', 'print deep', 'print count', 'held decl', 'print held'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Format strings as VALUES - LANGUAGE.md:3051-3074 and 3076-3090. Every
+ sink those two sections name that this generator can reach safely:
+
+ - a text initialized from a format string over a BUFFER's contents,
+   which is that section's own worked example;
+ - a text built from that text, so a format string is fed a variable
+   that itself came from one - the chained case item 3 asks for;
+ - a buffer INITIALIZED from a format string, and a buffer `set` and
+   `append`ed from one;
+ - a format string passed as a function ARGUMENT (f4, added to the
+   prelude for this - f1/f2/f3 all take numbers);
+ - one appended to a list and read back by element, which is bug #17's
+   exact shape, now fixed and worth standing over;
+ - a map value assigned from one, and a `value` initialized from one;
+ - one WRITTEN to a file, the first sink "Format Strings Everywhere"
+   names.
+
+ Every slot carries a specifier somewhere, so the shared name resolver's
+ claim - that specifiers "render identically whether the result is
+ printed, written to a file, or built into a buffer" - is what is
+ actually on trial here, not just interpolation.
+
+ The buffer is sized generously (192 bytes) because a `:b` rendering of
+ an i64 extreme is 63 characters and this leaf concatenates several
+ slots into one buffer; a too-small buffer would be testing truncation,
+ which is a different question and one this leaf must not ask by
+ accident. Hand-verified at the extreme end before the size was fixed.
+
+ /dev/stdout is the write path, the same one 'gen leaf file write' uses
+ and for the same reason: every process already has it, it cannot escape
+ anywhere, and it never blocks.
+
+ Declarations, assignments, a call and Prints - no clause opened, safe
+ as a closer.)
+To 'gen leaf format value' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the number literal' is 'gen extreme number'.
+    a number called 'the tag value' is 'rng below' of 1000.
+    a text called 'first spec' is 'gen pick integer spec'.
+    a text called 'second spec' is 'gen pick integer spec'.
+    a text called 'number slot' is 'gen format slot' of "gn{n}" and 'first spec'.
+    a text called 'other slot' is 'gen format slot' of "gn{n}" and 'second spec'.
+    a text called 'word slot' is 'gen format slot' of "gw{n}" and "".
+    a text called 'token slot' is 'gen format slot' of "gt{n}" and "".
+    a text called 'number decl' is "a number called gn{n} is {'the number literal'}".
+    a text called 'buffer decl' is "a buffer called gw{n} is 192 bytes in size".
+    a text called 'buffer fill' is "copy \"hello{n}\" to gw{n}".
+    (The worked example from "Format Strings as Values": a text from a
+     buffer's contents, then a text from that text.)
+    a text called 'token decl' is "a text called gt{n} is \"{'word slot'}\"".
+    a text called 'path decl' is "a text called gu{n} is \"/bin/{'token slot'}-{'number slot'}\"".
+    a text called 'print token' is "Print gt{n}".
+    a text called 'print path' is "Print gu{n}".
+    (A buffer initialized from a format string, then one built by set and
+     append - the buffer sinks "Format Strings Everywhere" names.)
+    a text called 'built decl' is "a buffer called gb{n} is \"{'token slot'}|{'other slot'}\"".
+    a text called 'print built' is "Print gb{n}".
+    a text called 'scratch decl' is "a buffer called gc{n} is 192 bytes in size".
+    a text called 'scratch set' is "set gc{n} to \"set {'number slot'}\"".
+    a text called 'scratch append' is "append \" {'token slot'}\" to gc{n}".
+    a text called 'print scratch' is "Print gc{n}".
+    (A function argument, a list element, a map value and a `value`.)
+    a text called 'call line' is "f4 of \"{'token slot'}/{'other slot'}\"".
+    a text called 'list decl' is "a list called gl{n} is []".
+    a text called 'list append' is "append \"{'number slot'}\" to gl{n}".
+    a text called 'print element' is "Print element 1 of gl{n}".
+    a text called 'map decl' is "a map called gm{n} is {{\"label\": \"tag{n}\"}}".
+    a text called 'map set' is "Set gm{n}'s \"label\" to \"{'token slot'}-{'other slot'}\"".
+    a text called 'print map' is "Print gm{n}'s \"label\"".
+    a text called 'value decl' is "a value called gv{n} is \"{'number slot'}\"".
+    a text called 'print value' is "Print gv{n}".
+    (The file sink.)
+    a text called 'open line' is "open a file for writing called gh{n} at \"/dev/stdout\"".
+    a text called 'write line' is "Write \"fmt{n} {'token slot'} {'other slot'}\\n\" to gh{n}".
+    a text called 'close line' is "Close gh{n}".
+    a list called 'the lines' is ['number decl', 'buffer decl', 'buffer fill', 'token decl', 'path decl', 'print token', 'print path', 'built decl', 'print built', 'scratch decl', 'scratch set', 'scratch append', 'print scratch', 'call line', 'list decl', 'list append', 'print element', 'map decl', 'map set', 'print map', 'value decl', 'print value', 'open line', 'write line', 'close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Interpolating EVERY type the language has, in one slot each and then
+ all of them in a single string: number, float, text, buffer, boolean,
+ list, map, `value`, and a thing's field. Item 5 of the brief, and the
+ direct descendant of #36's control table - that bug was found by asking
+ what a width does to each type in turn, and this is the generated form
+ of that question.
+
+ Also the "Formatted Time Output" capability, in the spelling that
+ actually compiles. LANGUAGE.md:4149-4155 shows `now's hour as text
+ padded to 2`, which does not exist ("Unknown function: padded");
+ LANGUAGE.md:2001-2008 shows `"{h:02}"` for the same job, which does.
+ The result is asserted rather than printed: an hour zero-padded to 2 is
+ two characters whatever the clock says, so the program's output stays
+ the same across runs while the formatting is still genuinely exercised.
+ That is the rule 'gen leaf timer and clock' set for clock-dependent
+ output and this leaf follows it.
+
+ Emits an If/Otherwise for that assertion, so it is NOT a safe block
+ closer - registered in 'gen statement's remap alongside 28/34/36, for
+ the reason 'gen leaf rich condition' documents.)
+To 'gen leaf format types' with a text called indent and a boolean called nested.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a text called 'the number literal' is 'gen extreme number'.
+    a text called 'the float literal' is 'gen extreme float'.
+    a number called 'the field value' is 'rng below' of 65535 add 1.
+    a number called 'the map value' is 'rng below' of 1000.
+    a number called 'the value literal' is 'rng below' of 1000.
+    a text called 'the number spec' is 'gen pick integer spec'.
+    a text called 'the float spec' is 'gen pick float spec'.
+    a text called 'number decl' is "a number called hn{n} is {'the number literal'}".
+    a text called 'float decl' is "a float called hd{n} is {'the float literal'}".
+    a text called 'text decl' is "a text called hs{n} is \"word{n}\"".
+    a text called 'buffer decl' is "a buffer called hw{n} is 64 bytes in size".
+    a text called 'buffer fill' is "copy \"buf{n}\" to hw{n}".
+    a text called 'boolean decl' is "a boolean called hb{n} is true".
+    a text called 'list decl' is "a list called hl{n} is [{'the field value'}, {'the map value'}]".
+    a text called 'map decl' is "a map called hm{n} is {{\"label\": \"tag{n}\", \"count\": {'the map value'}}}".
+    a text called 'value decl' is "a value called hv{n} is {'the value literal'}".
+    a text called 'thing decl' is "a t1 called hi{n}".
+    a text called 'thing set' is "Set hi{n}'s x1 to {'the field value'}".
+    a text called 'number slot' is 'gen format slot' of "hn{n}" and 'the number spec'.
+    a text called 'float slot' is 'gen format slot' of "hd{n}" and 'the float spec'.
+    a text called 'text slot' is 'gen format slot' of "hs{n}" and "".
+    a text called 'buffer slot' is 'gen format slot' of "hw{n}" and "".
+    a text called 'boolean slot' is 'gen format slot' of "hb{n}" and "".
+    a text called 'list slot' is 'gen format slot' of "hl{n}" and "".
+    a text called 'map slot' is 'gen format slot' of "hm{n}" and "".
+    a text called 'value slot' is 'gen format slot' of "hv{n}" and 'the number spec'.
+    a text called 'field slot' is 'gen format slot' of "hi{n}'s x1" and 'the number spec'.
+    a text called 'print number' is "Print \"number {'number slot'}\"".
+    a text called 'print float' is "Print \"float {'float slot'}\"".
+    a text called 'print text' is "Print \"text {'text slot'}\"".
+    a text called 'print buffer' is "Print \"buffer {'buffer slot'}\"".
+    a text called 'print boolean' is "Print \"boolean {'boolean slot'}\"".
+    a text called 'print list' is "Print \"list {'list slot'}\"".
+    a text called 'print map' is "Print \"map {'map slot'}\"".
+    a text called 'print value' is "Print \"value {'value slot'}\"".
+    a text called 'print field' is "Print \"field {'field slot'}\"".
+    (All nine in one string, which is the shape a real formatting bug
+     shows up in - one slot's mis-rendering derailing the ones after it.)
+    a text called 'print all' is "Print \"all {'number slot'}|{'float slot'}|{'text slot'}|{'buffer slot'}|{'boolean slot'}|{'list slot'}|{'map slot'}|{'value slot'}|{'field slot'}\"".
+    (Literal braces, the escape table's own rows, next to a live slot.)
+    a text called 'print escapes' is "Print \"braces {{{{lit}}}} tab\\there {'number slot'}\"".
+    (Formatted time output, asserted rather than printed - see above.)
+    a text called 'time line' is "Get current time into hq{n}".
+    a text called 'clock decl' is "a text called ht{n} is \"{{hq{n}'s hour:02}}\"".
+    a text called 'clock buffer' is "a buffer called hc{n} is \"{{ht{n}}}\"".
+    a text called 'clock check' is "If hc{n}'s length is equal to 2 then, Print \"ht{n} ok\". Otherwise, Print \"ht{n} BAD\"".
+    a list called 'the lines' is ['number decl', 'float decl', 'text decl', 'buffer decl', 'buffer fill', 'boolean decl', 'list decl', 'map decl', 'value decl', 'thing decl', 'thing set', 'print number', 'print float', 'print text', 'print buffer', 'print boolean', 'print list', 'print map', 'print value', 'print field', 'print all', 'print escapes', 'time line', 'clock decl', 'clock buffer', 'clock check'].
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen emit prelude grid sinks'.
