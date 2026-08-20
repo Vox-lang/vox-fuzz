@@ -121,7 +121,17 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
  read-only directory fails with EACCES and the 'On error' fires.)
 To 'scratch root is writable'.
     a number called 'the mkdir result' is 'make directories' of 'the scratch root'.
-    a text called 'the probe path' is "{'the scratch root'}/.vf_probe".
+    (The probe filename carries this process's pid, for exactly the reason
+     the scratch DIRECTORIES do. A fixed '.vf_probe' made this check
+     reintroduce the very defect D1 exists to cure: two concurrent runs
+     each created, wrote, read and DELETED the same probe file, so one
+     deleted the other's mid-sequence and the loser's read or delete hit
+     'On error Return a boolean, false' - reporting the scratch root as
+     unwritable and aborting a campaign whose root was perfectly fine.
+     Both runs lost that race as often as not, so a concurrent pair could
+     abort on a false negative before generating a single program.)
+    a number called 'the probe pid' is 'self pid'.
+    a text called 'the probe path' is "{'the scratch root'}/.vf_probe_{'the probe pid'}".
     open a file for writing called 'the probe file' at 'the probe path'.
     On error Return a boolean, false.
     Write "x" to 'the probe file'.
