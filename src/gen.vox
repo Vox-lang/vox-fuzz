@@ -34,6 +34,7 @@ a number called gen_whiles is 0.
 a number called gen_repeats is 0.
 a number called gen_envs is 0.
 a number called gen_flags is 0.
+a number called gen_grid_depth is 3.
 
 To 'gen emit' with a text called s.
     a buffer called piece is "{s}".
@@ -57,34 +58,45 @@ To 'gen new var'.
  invariant is untouched. i64's exact limits are included deliberately:
  they are the values a saturating or wrapping conversion gets wrong, and
  they are exactly where the compiler stops being able to be lazy.)
+(Josj, 2026-08-20, on seeing literal diversity FALL from 0.42 to 0.25:
+ "I was giving an example of a big number." Quite. The first version of
+ these tables hardcoded his example literal, so every program shared the
+ same handful of constants - wide magnitudes, no entropy. These build a
+ literal digit by digit instead: random length, random digits. The exact
+ i64 boundaries keep a small fixed weight because they are genuinely
+ special - they are what found compiler bugs #34 and #35, and a uniform
+ draw would land on them essentially never.
+
+ At most 18 digits, so a generated integer literal stays inside i64 by
+ construction: whether an over-wide LITERAL is a compile error or a
+ silent wrap is a question worth asking deliberately one day, not one to
+ trip over while testing something else.)
+To 'gen random digits' with a number called 'how many'.
+    a number called 'the first digit' is 'rng below' of 9 add 1.
+    a text called digits is "{'the first digit'}".
+    a number called made is 1.
+    While made is less than 'how many',
+        a number called d is 'rng below' of 10,
+        Set digits to "{digits}{d}",
+        Set made to made add 1.
+    Return a text, digits.
+
 To 'gen extreme number'.
-    a number called pick is 'rng below' of 12.
+    a number called pick is 'rng below' of 10.
     If pick is 0 then,
         Return a text, "0".
     If pick is 1 then,
-        Return a text, "1".
-    If pick is 2 then,
         Return a text, "9223372036854775807".
-    If pick is 3 then,
-        Return a text, "9223372036854775806".
-    If pick is 4 then,
-        Return a text, "4611686018427387904".
-    If pick is 5 then,
+    If pick is 2 then,
         Return a text, "2147483648".
-    If pick is 6 then,
-        Return a text, "4294967296".
-    If pick is 7 then,
-        a number called mid is 'rng below' of 1000000000,
-        Return a text, "{mid}".
-    If pick is 8 then,
-        a number called high is 'rng below' of 2000000000 add 2000000000,
-        Return a text, "{high}".
-    If pick is 9 then,
-        Return a text, "65536".
-    If pick is 10 then,
-        Return a text, "255".
-    a number called ordinary is 'rng below' of 1000.
-    Return a text, "{ordinary}".
+    If pick is 3 then,
+        a number called 'a short length' is 'rng below' of 3 add 1,
+        a text called 'a small number' is 'gen random digits' of 'a short length',
+        Return a text, 'a small number'.
+    a number called 'the length' is 'rng below' of 18 add 1.
+    a text called 'the number' is 'gen random digits' of 'the length'.
+    Return a text, 'the number'.
+
 
 (Floats get their own extremes: a long mantissa the double cannot hold
  exactly (rounding is correct behaviour and must not be reported as a
@@ -94,28 +106,15 @@ To 'gen extreme number'.
 To 'gen extreme float'.
     a number called pick is 'rng below' of 10.
     If pick is 0 then,
-        Return a text, "1243626351836374761.1224435542121323".
-    If pick is 1 then,
         Return a text, "0.000000000000000000001".
-    If pick is 2 then,
+    If pick is 1 then,
         Return a text, "9223372036854775807.5".
-    If pick is 3 then,
-        Return a text, "0.1".
-    If pick is 4 then,
-        Return a text, "3.141592653589793238462643383279".
-    If pick is 5 then,
-        Return a text, "1000000000000000000.0".
-    If pick is 6 then,
-        Return a text, "0.5".
-    If pick is 7 then,
-        a number called whole is 'rng below' of 1000000,
-        a number called frac is 'rng below' of 1000000,
-        Return a text, "{whole}.{frac}".
-    If pick is 8 then,
-        Return a text, "2.2250738585072014".
-    a number called w is 'rng below' of 1000.
-    a number called f is 'rng below' of 100.
-    Return a text, "{w}.{f}".
+    a number called 'the whole length' is 'rng below' of 18 add 1.
+    a number called 'the fraction length' is 'rng below' of 20 add 1.
+    a text called 'the whole part' is 'gen random digits' of 'the whole length'.
+    a text called 'the fraction part' is 'gen random digits' of 'the fraction length'.
+    Return a text, "{'the whole part'}.{'the fraction part'}".
+
 
 To 'gen var ref'.
     If gen_vars is 0 then,
@@ -469,7 +468,7 @@ To 'gen call grid' with a text called indent and a boolean called nested.
 To 'gen leaf deep grid' with a text called indent and a boolean called nested.
     Set gen_grid to gen_grid add 1.
     a number called 'the run' is gen_grid.
-    a number called depth is 'rng below' of 15 add 3.
+    a number called depth is gen_grid_depth.
     a text called clauses is "".
     a number called 'spread budget' is 3.
     a number called i is 1.
@@ -1553,11 +1552,71 @@ To 'gen digit for value' with a number called v.
     a text called d is element 'the position' of 'the digit alphabet'.
     Return a text, d.
 
+To 'gen pick parse form' with a number called base.
+    (The six documented text-to-number forms, LANGUAGE.md:1926-1931. The
+     three named aliases are fixed-base, so they are only offered when the
+     digits were generated for that base; the two base-N forms - spaced
+     and fused, both documented and both real syntax - take any base 2-36,
+     and plain `as a number` is base 10.)
+    a number called pick is 'rng below' of 4.
+    If base is 16 and pick is 0 then,
+        Return a text, "as a hex number".
+    If base is 16 and pick is 1 then,
+        Return a text, "as a hexadecimal number".
+    If base is 8 and pick is 0 then,
+        Return a text, "as an octal number".
+    If base is 2 and pick is 0 then,
+        Return a text, "as a binary number".
+    If base is 10 and pick is 1 then,
+        Return a text, "as a number".
+    If pick is 2 then,
+        Return a text, "as a base{base} number".
+    a text called 'the spaced form' is "as a base {base} number".
+    Return a text, 'the spaced form'.
+
+To 'gen pick format spec'.
+    (Number-to-text in a base, LANGUAGE.md:3030-3034 - the other
+     direction, and one Josj had to point out was even a thing. `b`
+     renders bare while `x`/`X`/`o` carry 0x/0o prefixes, which is what
+     the table documents.
+     A space width on a prefixed base pads the DIGIT FIELD, so `{n:8x}`
+     renders `0x      ff` - spaces inside the token. That is self-
+     consistent with `{n:04x}` giving `0x00ff` (width = digits, not the
+     whole token), so it is a design wart rather than a defect, and it is
+     emitted deliberately: if it ever becomes a crash rather than an
+     oddity, this is what catches it.)
+    a number called pick is 'rng below' of 6.
+    If pick is 0 then,
+        Return a text, "x".
+    If pick is 1 then,
+        Return a text, "X".
+    If pick is 2 then,
+        Return a text, "b".
+    If pick is 3 then,
+        Return a text, "o".
+    If pick is 4 then,
+        a number called 'the zero width' is 'rng below' of 8 add 2,
+        Return a text, "0{'the zero width'}x".
+    a number called 'the space width' is 'rng below' of 8 add 2.
+    Return a text, "{'the space width'}o".
+
 To 'gen leaf base conversion' with a text called indent and a boolean called nested.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
+    (Weighted so the three named aliases are actually reachable: a
+     uniform 2-36 draw would hit base 16 once in 35 programs and the
+     `as a hex number` spelling almost never.)
+    a number called 'the base choice' is 'rng below' of 6.
     a number called base is 'rng below' of 35 add 2.
-    a number called 'how many digits' is 'rng below' of 5 add 1.
+    If 'the base choice' is 0 then,
+        Set base to 16.
+    If 'the base choice' is 1 then,
+        Set base to 8.
+    If 'the base choice' is 2 then,
+        Set base to 2.
+    If 'the base choice' is 3 then,
+        Set base to 10.
+    a number called 'how many digits' is 'rng below' of 8 add 1.
     a text called digits is "".
     a number called i is 0.
     While i is less than 'how many digits',
@@ -1565,14 +1624,18 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
         a text called d is 'gen digit for value' of v,
         Set digits to "{digits}{d}",
         Set i to i add 1.
+    a text called 'the parse form' is 'gen pick parse form' of base.
+    a text called 'the format spec' is 'gen pick format spec'.
     a text called 'good decl' is "a text called bs{n} is \"{digits}\"".
-    a text called 'good conv' is "a number called bn{n} is bs{n} as a base {base} number".
+    a text called 'good conv' is "a number called bn{n} is bs{n} {'the parse form'}".
     a text called 'good print' is "Print bn{n}".
-    a text called 'big decl' is "a text called bx{n} is \"99999999999999999999999\"".
+    a text called 'round trip' is "Print \"{{bn{n}:{'the format spec'}}}\"".
+    a text called 'big decl' is "a text called bx{n} is \"{'gen random digits' of 20}\"".
     a text called 'big conv' is "a number called bg{n} is bx{n} as a number".
     a text called 'big print' is "Print bg{n}".
-    a list called 'the lines' is ['good decl', 'good conv', 'good print', 'big decl', 'big conv', 'big print'].
+    a list called 'the lines' is ['good decl', 'good conv', 'good print', 'round trip', 'big decl', 'big conv', 'big print'].
     'gen join lines' of indent and nested and 'the lines'.
+
 
 To 'gen emit prelude flags'.
     Set gen_flags to gen_flags add 1.
@@ -1636,22 +1699,24 @@ To 'gen leaf predicate probe' with a text called indent and a boolean called nes
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen emit prelude grid sinks'.
-    a number called depth is 3.
-    While depth is less than 18,
-        a text called 'the parameter list' is "",
-        a text called sum is "",
-        a number called i is 1,
-        While i is less than depth add 1,
-            If i is 1 then,
-                Set 'the parameter list' to "a number called p{i}",
-                Set sum to "p{i}".
-            If i is greater than 1 then,
-                Set 'the parameter list' to "{'the parameter list'} and a number called p{i}",
-                Set sum to "{sum} add p{i}".
-            Set i to i add 1.
-        a text called 'the definition' is "To 'grid sink {depth}' with {'the parameter list'}.\n    a number called gtotal is {sum}.\n    Print gtotal.\n\n",
-        'gen emit' of 'the definition',
-        Set depth to depth add 1.
+    (ONE callee, at the depth this program actually uses. The first
+     version emitted all fifteen (depths 3..17) into every program
+     whether or not any was called - measured cost: the shared prelude
+     grew from 25 lines to 65, most of it dead definitions, which is
+     boilerplate wearing coverage's coat. gen_grid_depth is drawn once
+     per program in 'gen program' before any prelude is emitted, so the
+     definition is top-level and legal by construction and the deep-grid
+     leaf calls a sink that exists. Depth variety now lives ACROSS seeds
+     instead of inside one program's dead code.)
+    a text called 'the parameter list' is "a number called p1".
+    a text called sum is "p1".
+    a number called i is 2.
+    While i is less than gen_grid_depth add 1,
+        Set 'the parameter list' to "{'the parameter list'} and a number called p{i}",
+        Set sum to "{sum} add p{i}",
+        Set i to i add 1.
+    a text called 'the definition' is "To 'grid sink {gen_grid_depth}' with {'the parameter list'}.\n    a number called gtotal is {sum}.\n    Print gtotal.\n\n".
+    'gen emit' of 'the definition'.
 
 (Section ordering. Plan 324 Part A, and Josj's own words on 2026-08-20:
  "globals can't be defined before functions". They could not: the
@@ -1759,6 +1824,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_envs to 0.
     Set gen_flags to 0.
     'rng seed' of seed.
+    Set gen_grid_depth to 'rng below' of 15 add 3.
     'gen emit prelude flags'.
     'gen emit prelude things'.
     'gen emit prelude thing methods'.
