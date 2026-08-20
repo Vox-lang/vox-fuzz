@@ -1,4 +1,9 @@
 --- seed 42 ---
+a flag called fl1label is "-a" or "--alpha1", it is a text with default "d1".
+a flag called fl1count is "-b" or "--beta1", it is a number.
+a flag called fl1on is "-c" or "--gamma1", it is a boolean.
+Parse flags.
+
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -26,62 +31,128 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
+To 'read flags 1'.
+    a text called fl1local is fl1label.
+    a number called fl1bumped is fl1count add 1.
+    Print fl1local.
+    Print fl1bumped.
+    Print fl1on.
+
+a number called v1 is 255.
+a number called v2 is 71666532.
+a number called v3 is 2147483648.
 To f1.
-    Return a number, 27.
+    Return a number, 266.
 
 To f2 with a number called p1.
-    a number called r is p1 add 15.
+    a number called r is p1 add 10.
     Return a number, r.
 
 To f3 with a number called p1 and a number called p2.
     a number called r is p1 add p2.
     Return a number, r.
 
-a number called v1 is 753.
-a number called v2 is 806.
-print each item from arguments's all treating "-" as "none".
-a t1 called i1.
-Set i1's x1 to 266.
-a t1 called i2 is i1.
-Set i2's x1 to 459.
-Print i1's x1.
-Print i2's x1.
-a t1 called i3.
-Set i3's x1 to 865.
-a t1 called i4 is i3.
-Set i4's x1 to 142.
-Print i3's x1.
-Print i4's x1.
-If v1 is greater than v2 then,
-  a t3 called i5,
-  Set i5's g1's x1 to 0,
-  Print i5's g1's x1,
-  Print i5.
-a buffer called b1 is 46 bytes in size.
-Print byte 106 of b1.
-On error print "buffer read out of range".
-a list called l1 is [93, 34].
-Print element 501 of l1.
-On error print "list read out of range".
-print each item from [70, 47] treating 16 as 85.
-a float called d1 is 219.92.
-a float called d2 is 10.26.
-a float called d3 is d1 multiply d2.
-Print d3.
-a float called d4 is d1 divide d2.
-Print d4.
-a float called d5 is d1 add v2.
-Print d5.
-a list called l2 is [].
-append v2 to l2, but if v2 is less than v1 or v2 modulo 4 is equal to 0 append v1 add v2, but if v2 is not equal to v1 or v2 modulo 6 is equal to 0 append v1 add v2, but if v2 is less than or equal to v1 append v1 add v2, otherwise append v2.
-a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_830413".
+To 'grid sink 3' with a number called p1 and a number called p2 and a number called p3.
+    a number called gtotal is p1 add p2 add p3.
+    Print gtotal.
+
+To 'grid sink 4' with a number called p1 and a number called p2 and a number called p3 and a number called p4.
+    a number called gtotal is p1 add p2 add p3 add p4.
+    Print gtotal.
+
+To 'grid sink 5' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5.
+    Print gtotal.
+
+To 'grid sink 6' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6.
+    Print gtotal.
+
+To 'grid sink 7' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7.
+    Print gtotal.
+
+To 'grid sink 8' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8.
+    Print gtotal.
+
+To 'grid sink 9' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9.
+    Print gtotal.
+
+To 'grid sink 10' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10.
+    Print gtotal.
+
+To 'grid sink 11' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11.
+    Print gtotal.
+
+To 'grid sink 12' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12.
+    Print gtotal.
+
+To 'grid sink 13' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13.
+    Print gtotal.
+
+To 'grid sink 14' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14.
+    Print gtotal.
+
+To 'grid sink 15' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15.
+    Print gtotal.
+
+To 'grid sink 16' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15 and a number called p16.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15 add p16.
+    Print gtotal.
+
+To 'grid sink 17' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15 and a number called p16 and a number called p17.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15 add p16 add p17.
+    Print gtotal.
+
+a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_441865".
 On error print "environment variable not set".
 Print 'the missing value 1'.
-a number called r1 is 0.
-Repeat 4 times, Increment r1.
-
-Print r1.
-Print f1.
-Exit 142.
+a buffer called b1 is 55 bytes in size.
+Set byte 2 of b1 to 133.
+Print byte 2 of b1.
+a list called l1 is [19, 0].
+append 53 to l1.
+Print element 1 of l1.
+a t4 called i1 is a t4's 'made at' with 559.
+Print i1's x1.
+a t4 called i2 is i1's 'reflected across'.
+Print i2's x1.
+a text called s1 is "word1".
+a text called s2 is "{s1}-{s1}".
+Print s2.
+a buffer called b2 is 58 bytes in size.
+Print byte 550 of b2.
+On error print "buffer read out of range".
+Print v3 multiply v1.
+a list called l2 is [].
+append v1 to l2, but if v3 is less than v3 or v3 modulo 2 is equal to 0 append v3 add v3, but if v2 is less than v1 or v2 modulo 4 is equal to 0 append v3 add v1, otherwise append v1.
+a number called c1 is 46.
+a number called c2 is 43.
+Print f3 of c1 and c2.
+a number called cn3 is 2147483648.
+a text called ct3 is cn3 as text.
+Print ct3.
+a number called cb3 is ct3 as a number.
+Print cb3.
+Print cn3's absolute.
+For each ce3 from 1 to 19,
+    a number called cs3 is ce3 multiply 2,
+    If cs3 is greater than 19 then, Break.
+Set v3 to v1 minus v1.
+a map called m1 is {"label": "tag1", "count": 153}.
+Print m1's "label".
+Set m1's "count" to 294.
+Print m1's "count".
+Print m1's length.
+For each k1 in m1's keys, Print k1.
+Exit 183.
 
 reproducible: 1
