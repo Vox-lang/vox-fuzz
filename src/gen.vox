@@ -100,6 +100,14 @@ a boolean called gen_reads_stdin is false.
  existing sweep removes it. No allowlist enforcement is needed because
  the program is never given another path to try.)
 a boolean called gen_does_file_io is false.
+(Counters, so a program that COMMITTED to an input channel is guaranteed
+ to use it — the same guarantee the grid sink already has. Without it
+ the leaf still has to win a 1-in-45 kind draw, so committing meant
+ little: measured over 150 programs, stdin reads appeared in 9 and file
+ I/O in 22, against a 50% commitment rate each. A channel worth
+ deciding on is worth exercising.)
+a number called gen_stdin_reads is 0.
+a number called gen_file_ios is 0.
 a text called gen_expected_label is "".
 a number called gen_expected_count is 0.
 a boolean called gen_expects_on is false.
@@ -1992,6 +2000,7 @@ To 'gen leaf file round trip' with a text called indent and a boolean called nes
     If gen_does_file_io is false then,
         'gen leaf print' of indent,
         Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
     a number called f is gen_flags.
@@ -2017,6 +2026,7 @@ To 'gen leaf stdin read' with a text called indent and a boolean called nested.
     If gen_reads_stdin is false then,
         'gen leaf print' of indent,
         Return a boolean, false.
+    Set gen_stdin_reads to gen_stdin_reads add 1.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
     a number called 'the size' is 'rng below' of 60 add 4.
@@ -2818,11 +2828,22 @@ To 'gen program' with a number called seed and a number called budget.
     'gen build input'.
     Set gen_reads_stdin to false.
     Set gen_does_file_io to false.
-    a number called 'the file choice' is 'rng below' of 2.
-    If 'the file choice' is 0 then,
+    Set gen_stdin_reads to 0.
+    Set gen_file_ios to 0.
+    (Drawn through a PRIME modulus, not 'rng below' of 2. This LCG has
+     correlated low bits — the hazard is documented above 'gen leaf loop
+     control', and I walked straight into it anyway. Two consecutive
+     `'rng below' of 2` draws are anti-correlated: measured over 150
+     programs, two supposedly even coin flips came out 75% and 25%, one
+     high exactly where the other was low.
+     `r modulo 13` depends on the whole of r rather than its bottom bit,
+     so consecutive draws are independent. Thresholds of 6 and 7 give
+     roughly 46% and 54%.)
+    a number called 'the file choice' is 'rng below' of 13.
+    If 'the file choice' is less than 6 then,
         Set gen_does_file_io to true.
-    a number called 'the stdin choice' is 'rng below' of 2.
-    If 'the stdin choice' is 0 then,
+    a number called 'the stdin choice' is 'rng below' of 13.
+    If 'the stdin choice' is less than 7 then,
         Set gen_reads_stdin to true.
     Set gen_grid_calls to 0.
     Set gen_reader_calls to 0.
@@ -2852,6 +2873,10 @@ To 'gen program' with a number called seed and a number called budget.
      which is why the grid guarantee silently never fired while the
      reader's did: the reader's inner body was comma-joined and happened
      to close both.)
+    If gen_reads_stdin and gen_stdin_reads is 0 then,
+        'gen leaf stdin read' of "" and false.
+    If gen_does_file_io and gen_file_ios is 0 then,
+        'gen leaf file round trip' of "" and false.
     If gen_uses_grid and gen_grid_calls is 0 then,
         'gen leaf deep grid' of "" and false.
     If gen_uses_flag_reader and gen_reader_calls is 0 then,
