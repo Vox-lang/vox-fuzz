@@ -67,6 +67,13 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     a text called 'the scratch path' is 'scratch dir path' of seed.
     'scratch dir create' of 'the scratch path'.
     a text called 'the source path' is "{'the scratch path'}/vf_gen.vox".
+    (Plan 327 Part B: the bytes this program will find on stdin, written
+     into its own per-run scratch directory. Both of the oracle's runs
+     are given this same path — if they were given different input, the
+     difference between the runs would BE the input and every program
+     would be a false nondeterminism finding.)
+    a text called 'the input path' is "{'the scratch path'}/vf_input".
+    'gen write input' of 'the input path'.
     'gen write' of 'the source path'.
     a number called 'the kept' is 'keep source' of 'the source path' and seed.
     a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".
@@ -112,8 +119,7 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     (Plan 327: the generator chose this program's argv, and BOTH runs
      must get the same one — see runner.vox. gen_argv is a global set by
      'gen build argv' during generation, so the two runs cannot drift.)
-    a text called 'no input yet' is "".
-    a text called 'the verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path' and gen_argv and 'no input yet'.
+    a text called 'the verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run1 output path' and gen_argv and 'the input path'.
     If 'the verdict' is "hang" then,
         a number called 'the hang finding' is 'finding save' of "hang" and seed and 'the source path' and "killed at the deadline",
         Set stat_findings to stat_findings add 1,
@@ -136,7 +142,7 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      exactly a leaked pointer (bug #39's shape). No expected value is
      needed: the output only has to disagree with itself.)
     a text called 'run2 output path' is "{'the scratch path'}/vf_out2".
-    a text called 'the second verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path' and gen_argv and 'no input yet'.
+    a text called 'the second verdict' is 'run program capturing with input' of 'the binary path' and 'the deadline in milliseconds' and 'run2 output path' and gen_argv and 'the input path'.
     (Plan 327 A3: an argv assertion failed. The generator chose this
      program's arguments, so it KNOWS what the flags should have parsed
      to; 91-94 mean the program disagreed. That is a wrong VALUE caught

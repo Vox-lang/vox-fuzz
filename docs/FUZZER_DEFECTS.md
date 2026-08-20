@@ -505,7 +505,12 @@ outputs, since the diff IS the evidence.
 
 ### 10. Generated programs are never given arguments, so the whole flag-PARSING surface is untested
 
-**Status:** **open**, identified by Josj 2026-08-20: *"Do we actually
+**Status:** **FIXED** (2026-08-20). Argv is generated per program and
+weighted 60/40 between valid invocations (which the program then asserts
+on — plan 327 A3) and hostile shapes. Stdin is generated too: seeded
+bytes written to the per-run scratch directory, with reads emitted into
+a share of programs. All three input channels now vary. Originally
+identified by Josj 2026-08-20: *"Do we actually
 pass values to flags? valid and invalid?"* We do not.
 
 `runner.vox`'s `run program` builds `a list called 'no arguments' is

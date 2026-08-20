@@ -78,6 +78,20 @@ a number called gen_grid_calls is 0.
  Asserting on those would be asserting on behaviour the fuzzer is
  supposed to be QUESTIONING.)
 a list called gen_argv is [].
+(Plan 327 Part B: the bytes this program will find on its stdin, and
+ whether it was given any reads to consume them with. Written to the
+ per-run scratch directory by the gen loop and handed to BOTH of the
+ oracle's runs — the same rule as argv, for the same reason.
+
+ Unlike argv, the generator does NOT assert on these. It knows what
+ bytes it wrote, but a program's reaction to them runs through buffer
+ sizing, truncation and EOF, and predicting the result would mean
+ reimplementing those semantics in the generator — which is how a
+ fuzzer ends up asserting its own bugs. The bytes are here to be
+ CONSUMED, not predicted: the finding is a crash, a hang, or output
+ that disagrees with itself between runs.)
+a text called gen_input is "".
+a boolean called gen_reads_stdin is false.
 a text called gen_expected_label is "".
 a number called gen_expected_count is 0.
 a boolean called gen_expects_on is false.
@@ -1340,6 +1354,8 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf format value' of indent and nested.
     If kind is 42 then,
         'gen leaf format types' of indent and nested.
+    If kind is 43 then,
+        'gen leaf stdin read' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1510,7 +1526,7 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         (0..42: the four format leaves are 39-42. The file-write leaf
          is parked at 99, outside the draw, so no number in this range
          dispatches to nothing.)
-        Set kind to 'rng below' of 43.
+        Set kind to 'rng below' of 44.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
@@ -1930,6 +1946,46 @@ To 'gen pick format spec'.
     a number called 'the space width' is 'rng below' of 8 add 2.
     Return a text, "{'the space width'}o".
 
+(Reading stdin. Both documented spellings are emitted — a path
+ ("/dev/stdin") and the descriptor (0) — because they are different code
+ paths through the compiler, and LANGUAGE.md offers both.
+
+ The buffer is deliberately sometimes SMALLER than the input the harness
+ wrote, because truncation is where buffer bugs live. Verified against
+ 0.4.7 before emitting: a 4-byte buffer given 10 bytes reads 4, a second
+ read on the same handle at EOF returns 0, and empty input reads 0 —
+ none of which crash or raise.
+
+ This leaf is only ever emitted when the harness will actually supply
+ input, and it requires defect 7's fix: before that, the child inherited
+ the fuzzer's stdin and any read here would have blocked until the
+ deadline and been misreported as a hang.)
+To 'gen leaf stdin read' with a text called indent and a boolean called nested.
+    (A program given no input still reads legally — it gets EOF — but
+     emitting the read only when there is something to consume keeps the
+     interesting case common rather than incidental.)
+    If gen_reads_stdin is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_texts to gen_texts add 1.
+    a number called n is gen_texts.
+    a number called 'the size' is 'rng below' of 60 add 4.
+    a number called 'by descriptor' is 'rng below' of 2.
+    a text called 'the source' is "\"/dev/stdin\"".
+    If 'by descriptor' is 1 then,
+        Set 'the source' to "0".
+    a text called 'open line' is "open a file for reading called sin{n} at {'the source'}".
+    a text called 'buffer line' is "a buffer called sb{n} is {'the size'} bytes".
+    a text called 'read line' is "Read from sin{n} into sb{n}".
+    a text called 'size line' is "Print sb{n}'s size".
+    a text called 'empty line' is "If sb{n} is empty then, Print \"sb{n} empty\". Otherwise, Print \"sb{n} filled\"".
+    a text called 'second read' is "a buffer called sc{n} is 8 bytes".
+    a text called 'second line' is "Read from sin{n} into sc{n}".
+    a text called 'second size' is "Print sc{n}'s size".
+    a text called 'close line' is "Close sin{n}".
+    a list called 'the lines' is ['open line', 'buffer line', 'read line', 'size line', 'empty line', 'second read', 'second line', 'second size', 'close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
 To 'gen leaf base conversion' with a text called indent and a boolean called nested.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
@@ -1978,6 +2034,54 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
  the one that has never run — while a minority get something hostile.
  The hostile shapes are drawn from behaviour probed by hand against
  0.4.7 and recorded in defect 10, so none of them is a guess.)
+(Seeded input bytes. Shapes chosen for the boundaries a reader trips
+ over: nothing at all, less than a buffer, more than a buffer (the
+ truncation path), embedded NULs (a C-string reader stops early, a
+ length-bounded one does not — the distinction that buffer bugs live
+ in), and a long line with no trailing newline.)
+(Input bytes, built as TEXT and appended — not written byte by byte.
+
+ The obvious route, `Set byte N of buf to value` then `Write b to file`,
+ is unavailable twice over. Writing a scalar to a file segfaults
+ (compiler bug #40, found doing exactly this). And a fixed-size buffer
+ starts EMPTY — `is 4096 bytes in size` sets capacity, not length — so
+ indexed writes past the used length are out of bounds and silently do
+ nothing. Buffer indexing is also 1-based, which cost a wrong bug report
+ before it cost anything else.
+
+ Appending text is the idiom gen_out already uses and is proven. The
+ cost is that embedded NUL bytes are currently unreachable — a NUL
+ cannot be spelled inside a text literal — so the input alphabet is
+ printable ASCII. That shape is worth having eventually, because a
+ C-string reader stopping early where a length-bounded one does not is
+ exactly where buffer bugs live; it needs a byte-level write path that
+ does not go through #40.)
+To 'gen build input'.
+    Set gen_input to "".
+    a number called shape is 'rng below' of 5.
+    If shape is 0 then,
+        Return a number, 0.
+    a number called 'how many' is 'rng below' of 40 add 1.
+    If shape is 2 then,
+        Set 'how many' to 'rng below' of 800 add 200.
+    a number called i is 0.
+    While i is less than 'how many',
+        a number called pick is 'rng below' of 62,
+        a text called c is 'gen digit for value' of pick,
+        If pick is greater than 35 then,
+            Set c to "{pick}".
+        Set gen_input to "{gen_input}{c}",
+        Set i to i add 1.
+    If shape is 4 then,
+        Return a number, 0.
+    Set gen_input to "{gen_input}\n".
+    Return a number, 0.
+
+To 'gen write input' with a text called path.
+    open a file for writing called 'the input file' at path.
+    Write gen_input to 'the input file'.
+    Close 'the input file'.
+
 To 'gen build argv'.
     (A list is emptied by assignment; `clear` is buffer-only.)
     Set gen_argv to [].
@@ -2656,6 +2760,11 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_grid_depth to 'rng below' of 15 add 3.
     Set gen_flags to 1.
     'gen build argv'.
+    'gen build input'.
+    Set gen_reads_stdin to false.
+    a number called 'the stdin choice' is 'rng below' of 2.
+    If 'the stdin choice' is 0 then,
+        Set gen_reads_stdin to true.
     Set gen_grid_calls to 0.
     Set gen_reader_calls to 0.
     (Branch form, not `Set x to <comparison>` — a comparison cannot be
