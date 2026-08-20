@@ -35,6 +35,29 @@ a number called gen_repeats is 0.
 a number called gen_envs is 0.
 a number called gen_flags is 0.
 a number called gen_grid_depth is 3.
+(Whether THIS program will actually use its grid sink and its flag
+ reader. Josj, reading forty programs: "I see good function definitions,
+ but no call sites." He was right, and the count was damning — the grid
+ sink was DEFINED in 40 of 40 programs and CALLED in 8, the flag reader
+ defined in 40 and called in 10. So four fifths of programs carried a
+ function nobody ever called: dead weight that pads the source, dilutes
+ everything else a reader sees, and proves nothing about the compiler
+ beyond its willingness to parse an unused definition.
+
+ Both are now decided once per program, before any block is emitted, and
+ the definition is emitted only when the program commits to calling it.
+ The statement stream reads the same decision, so a program that defines
+ the sink is guaranteed to reach for it.)
+a boolean called gen_uses_grid is true.
+a boolean called gen_uses_flag_reader is true.
+(Call counters. Committing to emit a definition does not by itself
+ produce a CALL — the leaf that calls it has to win the kind draw, which
+ is why 22 of 40 programs still defined an uncalled grid sink after the
+ first attempt at this. 'gen program' checks these after the statement
+ budget is spent and emits one call if none happened, so a definition
+ always has a call site.)
+a number called gen_grid_calls is 0.
+a number called gen_reader_calls is 0.
 
 To 'gen emit' with a text called s.
     a buffer called piece is "{s}".
@@ -466,6 +489,13 @@ To 'gen call grid' with a text called indent and a boolean called nested.
  Verified by hand at depth 17 before this leaf was written: compiles,
  runs, and sums correctly. Deeper is reachable by raising the cap.)
 To 'gen leaf deep grid' with a text called indent and a boolean called nested.
+    (A program that did not commit to a grid sink has no such function to
+     call, so this leaf stands aside for one that always works. The
+     decision is made once per program in 'gen program', which is what
+     keeps definition and call site in step.)
+    If gen_uses_grid is false then,
+        'gen call two' of indent and nested,
+        Return a boolean, false.
     Set gen_grid to gen_grid add 1.
     a number called 'the run' is gen_grid.
     a number called depth is gen_grid_depth.
@@ -484,6 +514,7 @@ To 'gen leaf deep grid' with a text called indent and a boolean called nested.
         If i is greater than 1 then,
             Set clauses to "{clauses} and each q{'the run'}s{i} from {low} to {high}".
         Set i to i add 1.
+    Set gen_grid_calls to gen_grid_calls add 1.
     a text called 'call line' is "'grid sink {depth}' of {clauses}".
     a list called 'the lines' is ['call line'].
     'gen join lines' of indent and nested and 'the lines'.
@@ -1885,6 +1916,8 @@ To 'gen emit prelude flags'.
  in scope there. Reading each flag both ways is what makes the
  difference observable.)
 To 'gen emit prelude flag reader'.
+    If gen_uses_flag_reader is false then,
+        Return a number, 0.
     a number called n is gen_flags.
     'gen emit' of "To 'read flags {n}'.\n".
     'gen emit' of "    a text called fl{n}local is fl{n}label.\n".
@@ -1906,8 +1939,17 @@ To 'gen leaf flag read' with a text called indent and a boolean called nested.
     a text called 'print label' is "Print fl{n}label".
     a text called 'print count' is "Print fl{n}count".
     a text called 'print on' is "Print fl{n}on".
-    a text called 'call reader' is "'read flags {n}'".
-    a list called 'the lines' is ['print label', 'print count', 'print on', 'call reader'].
+    (The top-level reads always work; the CALL only goes in when this
+     program actually defined the reader. Flags are still read either
+     way, so coverage of the flag surface does not depend on the
+     decision — only the function call does.)
+    a list called 'the lines' is ['print label', 'print count', 'print on'].
+    If gen_uses_flag_reader then,
+        Set gen_reader_calls to gen_reader_calls add 1,
+        a text called 'call reader' is "'read flags {n}'",
+        a list called 'the calling lines' is ['print label', 'print count', 'print on', 'call reader'],
+        'gen join lines' of indent and nested and 'the calling lines',
+        Return a boolean, false.
     'gen join lines' of indent and nested and 'the lines'.
 
 (An `is empty` probe on the flag and on plain values, in branch form.
@@ -1928,6 +1970,8 @@ To 'gen leaf predicate probe' with a text called indent and a boolean called nes
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen emit prelude grid sinks'.
+    If gen_uses_grid is false then,
+        Return a number, 0.
     (ONE callee, at the depth this program actually uses. The first
      version emitted all fifteen (depths 3..17) into every program
      whether or not any was called - measured cost: the shared prelude
@@ -2096,11 +2140,39 @@ To 'gen program' with a number called seed and a number called budget.
     'rng seed' of seed.
     Set gen_grid_depth to 'rng below' of 15 add 3.
     Set gen_flags to 1.
+    Set gen_grid_calls to 0.
+    Set gen_reader_calls to 0.
+    (Branch form, not `Set x to <comparison>` — a comparison cannot be
+     assigned or used to initialise in Vox, which the compiler rejects
+     with "Expected a statement, got Is". Roughly two programs in three
+     commit to each.)
+    a number called 'the grid choice' is 'rng below' of 3.
+    Set gen_uses_grid to false.
+    If 'the grid choice' is not 0 then,
+        Set gen_uses_grid to true.
+    a number called 'the reader choice' is 'rng below' of 3.
+    Set gen_uses_flag_reader to false.
+    If 'the reader choice' is not 0 then,
+        Set gen_uses_flag_reader to true.
     'gen emit ordered blocks'.
     a number called i is 0.
     While i is less than budget,
         a boolean called 'top opened' is 'gen statement' of 3 and "" and false,
         Set i to i add 1.
+    (Guarantee the definitions earn their place: if the program committed
+     to a block but the statement stream never happened to call it, emit
+     one call now, at the true top level where it is always legal.)
+    (Flat conditions, not nested Ifs. A period closes only the INNERMOST
+     open clause, so `If a then, If b then, <one statement>.` closes the
+     inner If and leaves the OUTER one open to swallow whatever follows —
+     which is why the grid guarantee silently never fired while the
+     reader's did: the reader's inner body was comma-joined and happened
+     to close both.)
+    If gen_uses_grid and gen_grid_calls is 0 then,
+        'gen leaf deep grid' of "" and false.
+    If gen_uses_flag_reader and gen_reader_calls is 0 then,
+        a text called 'the forced reader call' is "'read flags {gen_flags}'.\n",
+        'gen emit' of 'the forced reader call'.
     a number called code is 'rng below' of 256.
     a text called tail is "Exit {code}.\n".
     'gen emit' of tail.

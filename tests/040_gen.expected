@@ -1,20 +1,4 @@
 --- seed 42 ---
-To f1.
-    Return a number, 735.
-
-To f2 with a number called p1.
-    a number called r is p1 add 33.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To 'grid sink 15' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15.
-    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15.
-    Print gtotal.
-
-a number called v1 is 352363490389034107.
 To 'read flags 1'.
     a text called fl1local is fl1label.
     a number called fl1bumped is fl1count add 1.
@@ -22,11 +6,7 @@ To 'read flags 1'.
     Print fl1bumped.
     Print fl1on.
 
-a flag called fl1label is "-a" or "--alpha1", it is a text with default "d1".
-a flag called fl1count is "-b" or "--beta1", it is a number.
-a flag called fl1on is "-c" or "--gamma1", it is a boolean.
-Parse flags.
-
+a number called v1 is 352363490389034107.
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -54,9 +34,26 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
-a map called m1 is {"label": "tag1", "count": 516}.
-Print m1's "missing".
-On error print "map key missing".
+a flag called fl1label is "-a" or "--alpha1", it is a text with default "d1".
+a flag called fl1count is "-b" or "--beta1", it is a number.
+a flag called fl1on is "-c" or "--gamma1", it is a boolean.
+Parse flags.
+
+To f1.
+    Return a number, 447.
+
+To f2 with a number called p1.
+    a number called r is p1 add 17.
+    Return a number, r.
+
+To f3 with a number called p1 and a number called p2.
+    a number called r is p1 add p2.
+    Return a number, r.
+
+To 'grid sink 15' with a number called p1 and a number called p2 and a number called p3 and a number called p4 and a number called p5 and a number called p6 and a number called p7 and a number called p8 and a number called p9 and a number called p10 and a number called p11 and a number called p12 and a number called p13 and a number called p14 and a number called p15.
+    a number called gtotal is p1 add p2 add p3 add p4 add p5 add p6 add p7 add p8 add p9 add p10 add p11 add p12 add p13 add p14 add p15.
+    Print gtotal.
+
 a number called c1 is 19.
 a number called c2 is 92.
 Print f3 of c1 and c2.
@@ -88,10 +85,26 @@ a t1 called i4 is i3.
 Set i4's x1 to 43.
 Print i3's x1.
 Print i4's x1.
-a map called m2 is {"label": "tag2", "count": 313}.
-Print m2's "missing".
+a map called m1 is {"label": "tag1", "count": 313}.
+Print m1's "missing".
 On error print "map key missing".
 Print {v1 add v1} multiply v1 modulo 3.
-Exit 219.
+a timer called tk2.
+Start tk2.
+a number called ta2 is 0.
+For each te2 from 1 to 34,
+    Set ta2 to ta2 add te2.
+Stop tk2.
+Print ta2.
+a number called tl2 is the tk2's elapsed in milliseconds.
+If tl2 is negative then, Print "tl2 NEGATIVE". Otherwise, Print "tl2 ok".
+Get current time into tn2.
+a number called tu2 is the tn2's unix.
+If tu2 is positive then, Print "tu2 ok". Otherwise, Print "tu2 BAD".
+a number called ty2 is the tn2's year.
+If ty2 is greater than 2000 then, Print "ty2 ok". Otherwise, Print "ty2 BAD".
+'grid sink 15' of each q1s1 from 0 to 0 and each q1s2 from 5 to 6 and each q1s3 from 4 to 4 and each q1s4 from 3 to 4 and each q1s5 from 0 to 0 and each q1s6 from 4 to 5 and each q1s7 from 4 to 4 and each q1s8 from 4 to 4 and each q1s9 from 6 to 6 and each q1s10 from 3 to 3 and each q1s11 from 7 to 7 and each q1s12 from 7 to 7 and each q1s13 from 1 to 1 and each q1s14 from 3 to 3 and each q1s15 from 2 to 2.
+'read flags 1'.
+Exit 187.
 
 reproducible: 1
