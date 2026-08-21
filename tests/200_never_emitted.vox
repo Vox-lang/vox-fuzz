@@ -143,6 +143,16 @@ To 'sweep budget' with a number called budget and a number called 'seed count' a
             Set 'the failing budget' to budget.
         Set seed to seed add 1.
 
+(Plain layout. Every needle here is a word or a two-word phrase, and a
+ two-word phrase is exactly what a drawn layout may split across a line -
+ so scanning a randomly laid out program would let "pivot root" hide
+ behind a newline and weaken the guard. What is being asked is whether
+ the generator EMITS a banned construct, which is a question about
+ content; 270_layout proves the two layouts hold identical content once
+ whitespace is stripped, so scanning the plain one scans what the
+ campaign runs.)
+'gen set layout' of "plain".
+
 'sweep budget' of 4 and 600 and 1.
 If 'the failing word' is "" then,
     'sweep budget' of 12 and 600 and 601.

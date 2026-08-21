@@ -10,6 +10,13 @@ see "../src/gen_misc.vox".
 
 (a large budget across many seeds should exercise nesting: the generated
  text must contain at least one nested construct and one buffer)
+(Plain layout, because the nesting marker below is four spaces and this
+ test is asking about CONTENT - whether the generator nests at all - not
+ about how that content is laid out. Under the random layout an indent is
+ drawn, so four spaces in a row is a coin toss and this would be a flaky
+ test of the wrong thing. 270_layout is where layout is gated, and it
+ proves the two modes differ in whitespace alone.)
+'gen set layout' of "plain".
 'gen program' of 7 and 40.
 a text called 'the generated program' is 'gen text'.
 a text called 'the buffer marker' is "a buffer called".
