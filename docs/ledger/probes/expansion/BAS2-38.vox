@@ -1,0 +1,17 @@
+(BAS2-38: the even/odd example: a matching clause's action runs INSTEAD of the base action, and the base action runs when nothing matches.
+ Also covers: BAS2-42, BAS2-44
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-38.vox -o p && ./p
+ expected output:
+   1
+   even
+   3
+   even
+   5
+   even
+   7
+   even
+   9
+   even
+)
+print each number from 1 to 10,
+    but if the number modulo 2 is equal to 0 print "even".

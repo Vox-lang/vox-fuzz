@@ -1,0 +1,4 @@
+(Fixture for VAR-63: a source file included by `see`. It defines nothing
+ and only prints, so the including probe's output shows that the include
+ really happened.)
+Print "helper included".

@@ -1,0 +1,17 @@
+(LST-60 — `is a <type-noun>` compares the value's runtime type tag, so it
+ works on a mixed-list element whose type is only known at run time.
+ Also covers: LST-61 (the worked dispatch example of
+ LANGUAGE.md:2394-2400).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-60.vox -o p && ./p
+ expected output:
+   number: 1
+   text: two
+   decimal: 3.5
+   boolean: 1
+)
+a list called mixedbag is [1, "two", 3.5, yes].
+For each item in mixedbag,
+  if item is a text, print "text: {item}",
+  otherwise if item is a decimal, print "decimal: {item}",
+  otherwise if item is a boolean, print "boolean: {item}",
+  otherwise print "number: {item}".

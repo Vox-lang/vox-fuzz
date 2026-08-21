@@ -1,0 +1,11 @@
+(BAS2-08: a descending range (start greater than end) runs zero times - it neither counts down nor raises; a one-element range runs once. Neither is documented.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-08.vox -o p && ./p
+ expected output:
+   before the descending range
+   after the descending range
+   3
+)
+print "before the descending range".
+For each number from 5 to 1, print the number.
+print "after the descending range".
+For each number from 3 to 3, print the number.

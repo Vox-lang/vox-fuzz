@@ -1,0 +1,14 @@
+(KEY-67 — `raw` is contextual: the unfiltered-arguments property after a
+ possessive, and an ordinary identifier elsewhere. With no arguments passed
+ the raw view is empty, so the loop expansion prints nothing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-67.vox -o p && ./p
+ expected output:
+   raw view follows
+   raw view ended
+   3
+)
+a number called raw is 3.
+Print "raw view follows".
+Print each item from arguments's raw.
+Print "raw view ended".
+Print raw.

@@ -1,0 +1,14 @@
+(BAS-30 - the error-handler example, LANGUAGE.md:105:
+ `On error print "Something went wrong", exit 1.`
+ Both actions belong to the handler, so the exit fires and `Print "not
+ reached"` never runs. The handler binds to the statement BEFORE it - the
+ out-of-bounds byte read - which is what raises the flag.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-30.vox -o p && ./p
+ expected output:
+   Something went wrong
+   (exit 1)
+)
+a buffer called small is 4 bytes in size.
+a number called stray is byte 99 of small.
+On error print "Something went wrong", exit 1.
+Print "not reached".

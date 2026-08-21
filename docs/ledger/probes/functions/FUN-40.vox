@@ -1,0 +1,28 @@
+(FUN-40 — (gap) printing a call result DIRECTLY, without routing it
+ through a declared variable, is correct for text, boolean and list but
+ renders a `float` as its raw IEEE-754 bit pattern — even though the
+ return type IS declared, which is the thing vox bug #45 says fixes this
+ class. The recorded output below is what the compiler actually prints
+ (2.5 as a double is 0x4004000000000000 = 4612811918334230528). A `map`
+ return is broken the same way, printing a raw heap address; it is left
+ out of THIS probe only because the address varies per run and would make
+ the probe uncomparable — D5.vox carries that half. See Discrepancy 5.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-40.vox -o p && ./p
+ expected output:
+   2.5
+   4612811918334230528
+   seven
+   1
+   [1, 2, 3]
+)
+To 'give float'. Return a float, 2.5.
+To 'give text'. Return a text, "seven".
+To 'give boolean'. Return a boolean, true.
+To 'give list'. Return a list, [1, 2, 3].
+
+a float called routed is 'give float'.
+Print routed.
+Print 'give float'.
+Print 'give text'.
+Print 'give boolean'.
+Print 'give list'.

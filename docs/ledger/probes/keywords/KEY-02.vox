@@ -1,0 +1,9 @@
+(KEY-02 — the article `the` references an already-declared variable rather
+ than declaring one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-02.vox -o p && ./p
+ expected output:
+   5
+)
+a number called counter is 1.
+Set the counter to 5.
+Print the counter.

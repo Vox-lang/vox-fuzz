@@ -1,0 +1,35 @@
+(Discrepancy 3 — a top-level TEXT global PRINTED from inside a function
+ defined EARLIER in the file renders a raw pointer instead of the text.
+ The value itself is intact: assigning it to a local first and printing
+ the local is correct, and so is a comparison against the literal. Only
+ the print/format path is wrong, and only for a text (a number global is
+ fine). Moving the function definition below the declaration fixes it.
+ LANGUAGE.md:705 says top-level variables "can be used inside functions"
+ with no ordering caveat; LANGUAGE.md:3167 leans on that same promise for
+ branch-declared names ("exactly like a top-level declaration" — which it
+ is, defect included, so FMT-42 stands). Reached from this section via
+ FMT-42, but the defect belongs to Functions / Variables, not here.
+ Pro-compiler reading: the function body is analysed before the
+ declaration is seen, so `label` has no known type yet and the printer
+ falls through to the number path — i.e. this is a forward-reference
+ ordering rule the manual never states, not a wrong answer for a
+ well-formed program.
+ Written as comparisons rather than raw prints because the address,
+ though stable within one build, is not something to pin in a ledger.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   top level printed the text
+   the local copy printed the text
+   the comparison inside the function succeeded
+   the direct print inside the function did NOT print the text
+)
+To 'show label'.
+  a text called copied is label.
+  If copied is equal to "one" then, Print "the local copy printed the text". Otherwise, Print "the local copy did NOT print the text".
+  If label is equal to "one" then, Print "the comparison inside the function succeeded". Otherwise, Print "the comparison inside the function FAILED".
+  a text called printed is "{label}".
+  If printed is equal to "one" then, Print "the direct print inside the function printed the text". Otherwise, Print "the direct print inside the function did NOT print the text".
+
+a text called label is "one".
+If label is equal to "one" then, Print "top level printed the text". Otherwise, Print "top level did NOT print the text".
+'show label'.

@@ -1,0 +1,18 @@
+(KEY-73, half two of two — the `see <lib> version "…" from "…"` header, in a
+ program that also uses `version` as an ordinary variable name. Build
+ kwlib.vox first (same directory), then:
+ Ran: cd docs/ledger/probes/keywords/fixtures
+      VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+      /home/josj/scr/english/vox/target/release/vox user.vox -o user && ./user
+ expected output:
+   42
+   7
+ These two files are NOT run by docs/check-probes.sh: they need a companion
+ .so built first and a fixed compile-time working directory, neither of
+ which the probe runner guarantees. KEY-73.vox carries the half that does
+ run unaided.
+)
+see kwlib version "1.0" from "./libkwlib.lib".
+a number called version is 7.
+Print 'doubled' of 21.
+Print version.

@@ -1,0 +1,12 @@
+(VAL-11: the same phrase in condition position is a type predicate, not a
+ cast — `If numstr is a number then` tests the runtime tag and is false
+ while numstr still holds the text "357", so the Otherwise branch fires.
+ Position — statement versus condition — is what distinguishes cast from
+ predicate.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-11.vox -o p && ./p
+ expected output:
+   not num
+)
+a value called numstr is "357".
+if numstr is a number then, print "num".
+otherwise, print "not num".

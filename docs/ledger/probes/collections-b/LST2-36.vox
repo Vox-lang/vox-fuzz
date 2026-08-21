@@ -1,0 +1,46 @@
+(LST2-36 — "the first append determines the list's element type for
+ printing" (LANGUAGE.md:2753) is NOT what happens: every element renders
+ by its own runtime tag whatever the first append was, in both directions
+ and whether the list started empty or from a literal. See Discrepancy 5.
+ Also covers: LST2-37 (append works with integers, texts, booleans,
+ variables and expressions), LST2-38 (the append-integers example),
+ LST2-40 (the append-from-variables example), LST2-41 (the
+ append-in-a-loop example, whose value is an expression).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-36.vox -o p && ./p
+ expected output:
+   ["text first", 42]
+   [42, "then text"]
+   [1, 2, "late text"]
+   [10, "ten", 1, 42, 84]
+   [1, 4, 9, 16, 25]
+)
+a list called sayings is [].
+append "text first" to sayings.
+append 42 to sayings.
+print sayings.
+
+a list called tallies is [].
+append 42 to tallies.
+append "then text" to tallies.
+print tallies.
+
+a list called seeded is [1, 2].
+append "late text" to seeded.
+print seeded.
+
+a list called assorted is [].
+append 10 to assorted.
+append "ten" to assorted.
+append yes to assorted.
+a number called seed is 42.
+append seed to assorted.
+append seed multiply 2 to assorted.
+print assorted.
+
+a list called squares is [].
+a number called step is 1.
+While step is less than or equal to 5,
+  append step multiply step to squares,
+  increment step.
+
+print squares.

@@ -1,0 +1,9 @@
+(ARG-06 — `arguments's last` is the last argument. With user arguments
+ present that is the last of them; the no-user-argument case is ARG-43,
+ where it is the program name instead.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-06.vox -o p && ./p alpha beta gamma
+ Args: alpha beta gamma
+ expected output:
+   gamma
+)
+Print arguments's last.

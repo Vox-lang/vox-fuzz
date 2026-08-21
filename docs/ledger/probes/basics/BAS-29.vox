@@ -1,0 +1,18 @@
+(BAS-29 - the for-loop example, LANGUAGE.md:102:
+ `For each number from 1 to 10, print the number, print " ".`
+ Both actions belong to the loop, so the separator prints once per
+ iteration. Shortened to 1 to 3 so the recorded output stays small.
+ `print` appends a newline of its own, so the separator lands on its own
+ line - that is Print's documented behaviour (LANGUAGE.md Input/Output),
+ not a Basics claim, and the spacing the example implies is only achieved
+ with `without newline`. The separator lines below each hold one space.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-29.vox -o p && ./p
+ expected output:
+   1
+    
+   2
+    
+   3
+    
+)
+For each number from 1 to 3, print the number, print " ".

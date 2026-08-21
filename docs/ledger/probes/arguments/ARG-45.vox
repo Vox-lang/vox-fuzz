@@ -1,0 +1,18 @@
+(ARG-45 — *(not a manual claim — a gap in the manual)* a schema must
+ carry exactly TWO alias strings. One is a compile error. The manual
+ only ever shows two ("including aliases", 4364) and never states the
+ count as a rule, so this is the compiler declaring it.
+ The diagnostic is worth reading twice: it demands a LONG alias, yet
+ `"-a" or "-b"` — two short aliases, no long one — compiles and both
+ spellings work (ARG-52 runs that). See Discrepancy 5.
+ (Compile-error claim: not assertable from a generated leaf, since
+ emitting it produces a program that does not compile.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-45.vox -o p && ./p
+ expected output:
+   error: Expected long flag alias string like '--number'
+   (no binary produced; compile error)
+)
+a flag called solo is "-s", it is a boolean.
+Parse flags.
+
+Print "unreachable".

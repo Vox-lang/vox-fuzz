@@ -1,0 +1,14 @@
+(D3 - Discrepancy 3 repro: the range loop variable outlives the loop and
+ holds end+1. LANGUAGE.md:2105-2106 introduces `the number` under "Inside
+ the loop", and nothing in the section says it is readable afterwards or
+ what it would hold - here it resolves at top level to 4, the value that
+ failed the loop test.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   4
+)
+For each number from 1 to 3, print the number.
+print the number.

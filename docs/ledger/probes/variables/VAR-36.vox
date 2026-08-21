@@ -1,0 +1,13 @@
+(VAR-36: reusing an already-declared name as the target of `open ... called`
+ rejects a conflicting type. (Compile-error claim: not assertable from a
+ runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-36.vox -o p && ./p
+ expected output:
+   error: cannot bind 'source' to a file in this open statement; 'source' is already declared as a number
+   note: 'source' was declared as a number
+   help: use a different name here, or declare 'source' as a file instead
+   (no binary produced; compile error)
+)
+a number called source is 5.
+open a file for reading called source at "input.txt".
+Print 1.

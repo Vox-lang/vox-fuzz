@@ -1,0 +1,13 @@
+(KEY-63 — `available` is contextual: claimed in `is available` and an
+ ordinary identifier elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-63.vox -o p && ./p
+ expected output:
+   /dev/null is available
+   6
+)
+a number called available is 6.
+If "/dev/null" is available then,
+    Print "/dev/null is available".
+If "/no/such/path/voxfuzz" is available then,
+    Print "a missing path should not be available".
+Print available.

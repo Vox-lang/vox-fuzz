@@ -1,0 +1,9 @@
+(LST-58 — map keys are text only; a non-text key is rejected at compile time
+ with "Map keys must be text".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-58.vox -o p && ./p
+ expected output:
+   error: Map keys must be text
+   (compile error - no binary is produced)
+)
+a map called numbered is {1: "one"}.
+print numbered.

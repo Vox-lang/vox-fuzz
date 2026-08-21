@@ -1,0 +1,29 @@
+(D6 — Discrepancy 6 repro: `Return a file, <handle>.` is accepted, and the
+ returned handle is usable — but only if it is received with `Set`. The
+ `a file called X is <call>.` declaration form does not track the type,
+ and the first property read off X is rejected with the caret on the
+ DECLARATION. LANGUAGE.md:725-727 lists `file` among the eleven legal
+ return types and :748-750 says "a function call's declared return type is
+ tracked through assignment".
+ The strongest pro-compiler reading is that this is not about functions
+ at all: `a file called alias is src.` — aliasing one top-level file
+ variable to another, no call in sight — is rejected identically, so the
+ `a file called X is <expr>` form simply does not exist and the call is
+ an innocent bystander. The `Set` form below proves the value itself is
+ fine.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
+ expected output:
+   error: Property 'size' requires a buffer, list, map, or file variable: viadecl
+   (no binary produced; compile error)
+)
+To 'give file'.
+  open a file for reading called inner at "docs/ledger/probes/functions/fixtures/data.txt".
+  Return a file, inner.
+
+open a file for reading called viaset at "docs/ledger/probes/functions/fixtures/data.txt".
+Set viaset to 'give file'.
+Print viaset's size.
+
+(This next line is the discrepancy, and it does not compile.)
+a file called viadecl is 'give file'.
+Print viadecl's size.

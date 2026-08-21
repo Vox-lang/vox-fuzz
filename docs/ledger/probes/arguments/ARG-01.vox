@@ -1,0 +1,13 @@
+(ARG-01 — command-line arguments are read through the `'s` property
+ syntax on the special name `arguments`.
+ Also covers: ARG-02 (count includes the program name: two user
+ arguments plus argv[0] is 3) and the false half of ARG-07 (with user
+ arguments present, `empty` is false — printed as 0).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-01.vox -o p && ./p alpha beta
+ Args: alpha beta
+ expected output:
+   3
+   0
+)
+Print arguments's count.
+Print arguments's empty.

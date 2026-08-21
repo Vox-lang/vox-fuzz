@@ -1,0 +1,17 @@
+(OPR-33: bitwise operations chain without braces and associate
+ left to right (LANGUAGE.md:4606,
+ `Set result to value bit-shift-right 8 bit-and 0xFF.`).
+ First line is the manual's own shape with a declared operand:
+ 0x12345678 shifted right 8 is 0x123456, masked with 0xFF is 0x56 = 86.
+ Second line discriminates the associativity: left to right gives
+ {240 >> 4} AND 3 = 15 AND 3 = 3; right to left would give
+ 240 >> {4 AND 3} = 240 >> 0 = 240.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-33.vox -o p && ./p
+ expected output:
+   86
+   3
+)
+a number called payload is 0x12345678.
+a number called lhs is 0b11110000.
+Print payload bit-shift-right 8 bit-and 0xFF.
+Print lhs bit-shift-right 4 bit-and 3.

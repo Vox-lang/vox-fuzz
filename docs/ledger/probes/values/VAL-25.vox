@@ -1,0 +1,13 @@
+(VAL-25: test for `nothing` with `is nothing` / `is not nothing` — an
+ equality (like `is true`), not a type predicate. Also covers VAL-31:
+ comparisons are not arithmetic, so `is nothing` / `is not nothing` work on
+ a nothing without raising the error flag (this program has no `On error`
+ and runs clean).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-25.vox -o p && ./p
+ expected output:
+   no value stored
+   has a value
+)
+a map called m is {"found": 4, "absent": nothing}.
+If m's "absent" is nothing, print "no value stored".
+If m's "found" is not nothing, print "has a value".

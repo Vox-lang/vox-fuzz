@@ -1,0 +1,22 @@
+(LST-36 — a map is a key/value collection printed as a JSON object.
+ Also covers: LST-37 (the `{"key": value}` literal and the empty map `{}`),
+ LST-38 (the worked example of LANGUAGE.md:2323-2326),
+ LST-46 (`length` is the live entry count and `empty` is true only at zero
+ entries).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-36.vox -o p && ./p
+ expected output:
+   {"name": "Ada", "age": 36}
+   {}
+   2
+   0
+   0
+   1
+)
+a map called person is {"name": "Ada", "age": 36}.
+a map called emptymap is {}.
+print person.
+print emptymap.
+print person's length.
+print person's empty.
+print emptymap's length.
+print emptymap's empty.

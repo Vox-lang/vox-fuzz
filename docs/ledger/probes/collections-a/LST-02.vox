@@ -1,0 +1,19 @@
+(LST-02 — lists are 1-indexed: `element 1 of` is the FIRST element, and
+ index 0 is out of bounds exactly as index length+1 is. Both out-of-range
+ reads yield 0 and set the error flag rather than crashing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-02.vox -o p && ./p
+ expected output:
+   10
+   30
+   0
+   zero index errored
+   0
+   past end errored
+)
+a list called nums is [10, 20, 30].
+print element 1 of nums.
+print element 3 of nums.
+print element 0 of nums.
+on error print "zero index errored".
+print element 4 of nums.
+on error print "past end errored".

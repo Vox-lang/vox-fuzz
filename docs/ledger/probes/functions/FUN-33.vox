@@ -1,0 +1,21 @@
+(FUN-33 — the three example call fragments (LANGUAGE.md:762-764) parse
+ and evaluate: a quoted name `of` two literals, a quoted name `of` a
+ `the`-prefixed variable reference and a literal, and a bare name `with`
+ two variables.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-33.vox -o p && ./p
+ expected output:
+   8
+   1
+   20
+)
+To 'add numbers' with a number called x and a number called y. Return a number, the x add y.
+To 'check divisibility' of a number called divisor and a number called dividend. Return a boolean, the divisor modulo the dividend is 0.
+To calculate with a number called x and a number called y. Return a number, x multiply y.
+
+a number called 'the number' is 12.
+a number called x is 4.
+a number called y is 5.
+
+Print 'add numbers' of 3 and 5.
+Print 'check divisibility' of the 'the number' and 6.
+Print calculate with x and y.

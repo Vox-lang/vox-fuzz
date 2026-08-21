@@ -1,0 +1,10 @@
+(FMT-35 — a `treating` clause's replacement accepts a format string: the
+ substituted-in value is the RENDERED string, not the braces verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Anonymous nested
+   Bea
+)
+a text called leaf is "nested".
+a list called names is ["", "Bea"].
+print each name from names treating "" as "Anonymous {leaf}".

@@ -1,0 +1,18 @@
+(TIM-13 - `current time's <property>` reads a property of the current
+ time with nothing stored, and gives the same answer as a time read into
+ a name a moment earlier.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-13.vox -o p && ./p
+ expected output:
+   the inline hour matches the stored one
+   the inline year is at least 2026
+   the inline unix is an epoch second count
+)
+Get current time into now.
+a number called 'the stored hour' is now's hour.
+a number called 'the inline hour' is current time's hour.
+If 'the inline hour' is 'the stored hour' then, print "the inline hour matches the stored one".
+Otherwise, print "inline {'the inline hour'} against stored {'the stored hour'}".
+If current time's year is greater than 2025 then, print "the inline year is at least 2026".
+Otherwise, print "the inline year is {current time's year}".
+If current time's unix is greater than 1750000000 then, print "the inline unix is an epoch second count".
+Otherwise, print "the inline unix is {current time's unix}".

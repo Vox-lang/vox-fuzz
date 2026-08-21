@@ -1,0 +1,15 @@
+(BAS-19 - a function definition is closed by a blank line, and that is
+ what makes the statements after it top-level. With the blank line in
+ place the call runs and `Print "top"` runs after it.
+ Also covers: BAS-22's first half is a separate probe; the contrast case
+ (no blank line) is BAS-21.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-19.vox -o p && ./p
+ expected output:
+   hi
+   top
+)
+To greet.
+    Print "hi".
+
+greet.
+Print "top".

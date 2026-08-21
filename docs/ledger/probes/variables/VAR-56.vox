@@ -1,0 +1,11 @@
+(VAR-56: a quoted identifier is two or more characters between single
+ quotes. Two characters is enough, and spaces are allowed inside.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-56.vox -o p && ./p
+ expected output:
+   1
+   2
+)
+a number called 'ab' is 1.
+a number called 'a longer name with spaces' is 2.
+Print 'ab'.
+Print 'a longer name with spaces'.

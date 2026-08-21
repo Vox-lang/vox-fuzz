@@ -1,0 +1,11 @@
+(KEY-55 — a keyword listed in the tables above is reserved as a variable
+ name. `Print` is the representative case; note that this claim does NOT
+ hold for every word in the tables — see Discrepancy 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-55.vox -o p && ./p
+ expected output:
+   error: Cannot use 'print' as a variable name - it's a reserved keyword.
+     Tip: Try a more descriptive name like 'print_value' or 'my_print'
+   (no binary produced; compile error)
+)
+a number called print is 1.
+Print print.

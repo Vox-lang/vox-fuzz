@@ -1,0 +1,15 @@
+(KEY-66 — `capacity` is contextual: the buffer property after a possessive
+ and the `with capacity N` / `of capacity N` phrase in a Create, and an
+ ordinary identifier elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-66.vox -o p && ./p
+ expected output:
+   16
+   32
+   9
+)
+a number called capacity is 9.
+Create a buffer called 'the with form' with capacity 16.
+Create a buffer called 'the of form' of capacity 32.
+Print 'the with form''s capacity.
+Print 'the of form''s capacity.
+Print capacity.

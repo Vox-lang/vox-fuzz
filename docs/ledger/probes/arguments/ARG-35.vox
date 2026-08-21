@@ -1,0 +1,28 @@
+(ARG-35 — `--` stops flag processing (LANGUAGE.md:4438). `--verbose`
+ before it is parsed as a flag; `-v` after it is not.
+ Also covers: ARG-36 (tokens after `--` are treated as positional
+ arguments — they appear in `all`) and ARG-37 (the manual's own example
+ invocation, `myprog --verbose -- -v file.txt`, at 4443-4449).
+ Note the separator's own fate, which the manual does not state: `--` is
+ removed from the filtered view but kept in `raw`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-35.vox -o p && ./p --verbose -- -v file.txt
+ Args: --verbose -- -v file.txt
+ expected output:
+   verbose is 1
+   ALL
+   -v
+   file.txt
+   RAW
+   --verbose
+   --
+   -v
+   file.txt
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+Parse flags.
+
+Print "verbose is {verbose}".
+Print "ALL".
+Print each item from arguments's all.
+Print "RAW".
+Print each item from arguments's raw.

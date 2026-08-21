@@ -1,0 +1,33 @@
+(PRC-34 — the no-argument form synthesizes argv = [path, NULL], argc 1.
+ /bin/echo with no arguments prints one empty line; with any argument it
+ would print that argument, so the single empty line is the observation.
+ Hand-verified more directly with a Vox helper that prints its own argv,
+ which is not retained here because Execute needs a compiled target and
+ this probe directory holds source. The helper was:
+
+   a text called marker is environment's "PRC_MARKER".
+   print "argv0={arguments's name}".
+   print "argc={arguments's count}".
+   For each 'the argument' in arguments's raw,
+       print "arg={'the argument'}".
+   print "MARKER={marker}".
+
+ and `Execute "./argvdump.bin".` printed exactly:
+   argv0=./argvdump.bin
+   argc=1
+   MARKER=inherited2
+ confirming both argc 1 and that argv[0] is the path (PRC-40).
+ NOTE: /bin/echo's empty line IS printed, but it is the last thing on
+ stdout and command substitution strips trailing newlines, so the
+ recorded block below ends at the probe's own line. docs/check-probes.sh
+ captures the actual output the same way, so the two still match.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-34.vox -o p && ./p
+ expected output:
+   the next line is all /bin/echo printed:
+)
+print "the next line is all /bin/echo printed:".
+Execute "/bin/echo".
+On error print "the exec failed".

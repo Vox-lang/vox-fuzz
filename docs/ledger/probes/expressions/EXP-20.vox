@@ -1,0 +1,22 @@
+(EXP-20: the `add` arithmetic keyword.
+ Also covers: EXP-21 `subtract`, EXP-22 `multiply`, EXP-23 `divide`,
+ EXP-24 `modulo` - the five spellings the Arithmetic block names, each in the
+ exact operand shape the block shows.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-20.vox -o p && ./p
+ expected output:
+   15
+   0
+   42
+   10
+   1
+)
+a number called x is 10.
+a number called y is 3.
+a number called total is 20.
+a number called lhs is 6.
+a number called rhs is 7.
+Print the x add 5.
+Print y subtract 3.
+Print the lhs multiply rhs.
+Print total divide 2.
+Print x modulo 3.

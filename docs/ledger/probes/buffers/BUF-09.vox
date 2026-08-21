@@ -1,0 +1,17 @@
+(BUF-09: reading into a full fixed buffer stops, sets an error flag, discards data beyond capacity, and the program continues normally - catchable with On error.)
+(expected output:
+read overflow errored
+8
+1
+This is 
+program continued
+)
+open a file for reading called f at "docs/ledger/probes/buffers/fixtures/long.txt".
+a buffer called small is 8 bytes in size.
+Read from f into small.
+On error print "read overflow errored".
+print small's size.
+print small's full.
+print small.
+Close f.
+print "program continued".

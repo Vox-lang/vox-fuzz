@@ -1,0 +1,24 @@
+(THG2-10: the comparison is written out by the compiler, so it recurses into
+ nested things: a difference two levels down separates the two segments, and
+ matching that same field again makes them equal.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-10.vox -o p && ./p
+ expected output:
+   the nested field made them differ
+   matching at depth makes them equal
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+a segment called first.
+a segment called second.
+Set first's end's y to 2.
+If first is not second then,
+    Print "the nested field made them differ".
+Set second's end's y to 2.
+If first is second then,
+    Print "matching at depth makes them equal".

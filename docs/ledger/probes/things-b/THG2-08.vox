@@ -1,0 +1,22 @@
+(THG2-08: `is` between two values of the same thing compares those same fields,
+ and `is not` is its negation. Both instances start equal; setting one field
+ apart flips both tests.
+ Also covers: THG2-09.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-08.vox -o p && ./p
+ expected output:
+   the marker is where the origin is
+   the marker has moved off the origin
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+Set origin's x to 5.
+a point called marker.
+Set marker's x to 5.
+If origin is marker then,
+    Print "the marker is where the origin is".
+Set marker's y to 9.
+If origin is not marker then,
+    Print "the marker has moved off the origin".

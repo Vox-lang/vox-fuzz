@@ -1,0 +1,16 @@
+(KEY-76 — `thing` is claimed only in `A thing called <name> has ...`; it is
+ an ordinary identifier everywhere else, in the same program.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-76.vox -o p && ./p
+ expected output:
+   1
+   3
+)
+A thing called point has
+    a number called x is 0,
+    a number called y is 0.
+
+a number called thing is 3.
+a point called origin.
+Set origin's x to 1.
+Print origin's x.
+Print thing.

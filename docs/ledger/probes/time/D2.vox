@@ -1,0 +1,13 @@
+(D2 - Discrepancy 2 repro: LANGUAGE.md:4232-4233 marks `duration` and
+ `elapsed` "requires cast". Neither does. Both read with no `in <unit>` at
+ all, and the uncast reading is the seconds one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   0
+   0
+)
+a timer called lap.
+Start the lap.
+Stop the lap.
+print lap's duration.
+print lap's elapsed.

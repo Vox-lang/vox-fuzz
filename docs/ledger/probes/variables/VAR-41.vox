@@ -1,0 +1,20 @@
+(VAR-41: the `value` exemption. A name declared `a value called ...` keeps
+ accepting any type across reassignment — number, text, boolean, list — and
+ its type property tracks what it currently holds, reported as (dynamic).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-41.vox -o p && ./p
+ expected output:
+   5
+   abc
+   1
+   [1, 2]
+   List (dynamic)
+)
+a value called slot is 5.
+Print slot.
+slot is "abc".
+Print slot.
+slot is true.
+Print slot.
+slot is [1, 2].
+Print slot.
+Print slot's type.

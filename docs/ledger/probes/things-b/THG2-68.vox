@@ -1,0 +1,15 @@
+(THG2-68: declaring with an unknown type name keeps the existing unknown-type
+ error, extended to suggest near-miss USER-DEFINED type names alongside the
+ builtins. `point` appears both in the "Known here" list and in the suggestion.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-68.vox -o p && ./p
+ expected output:
+   error: Unknown type 'poimt'
+   followed by "Known here: boolean, buffer, file, float, list, map, number,
+   point, text, time, timer, value" and "help: did you mean `point`?".
+   No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a poimt called origin.

@@ -1,0 +1,9 @@
+(BAS2-23: `arguments's all` is a legal expansion collection; with no arguments passed it is empty and the body runs zero times. Hand-run separately with arguments - `./p one two` printed before/one/two/after - which also confirms argv[0] (the program name) is excluded.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-23.vox -o p && ./p
+ expected output:
+   before
+   after
+)
+print "before".
+print each entry from arguments's all.
+print "after".

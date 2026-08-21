@@ -1,0 +1,22 @@
+(BAS-56 - get the period count wrong and nothing tells you: both halves
+ below compile cleanly and run to exit 0. Too few periods and the
+ following statement is absorbed into a clause you thought you had left
+ (nothing prints); too many and it escapes one you meant to stay in (it
+ prints when it should not have). No error, no warning, either way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-56.vox -o p && ./p
+ expected output:
+   escaped a clause it was meant to stay in
+)
+(too few: absorbed into a false If, so it never prints)
+a number called n is 0.
+If n is equal to 1 then,
+    If n is equal to 1 then, print "innermost".
+print "absorbed, never printed".
+
+(too many: the second period escapes the outer If, so it prints even
+ though the condition that guarded it is true and the statement was meant
+ to stay inside)
+a number called m is 1.
+If m is equal to 1 then,
+    If m is equal to 2 then, print "inner"..
+print "escaped a clause it was meant to stay in".

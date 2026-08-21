@@ -1,0 +1,27 @@
+(PRC-22 — `Create a device node called "<path>" with type "c" major N
+ minor M.` performs mknod(2).
+ Also covers: PRC-23 (type "b" is accepted), PRC-25 (major/minor are the
+ standard Linux device numbers — 1:3 is /dev/null, 7:0 is /dev/loop0) and
+ PRC-26 (the error flag is set on failure).
+ SAFETY: creating a CHARACTER or BLOCK device node needs CAP_MKNOD, so
+ both calls return EPERM here and nothing appears on disk — the probe
+ checks that. Type "p" is the exception and really does create something;
+ see D1.vox.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-22.vox -o p && ./p
+ expected output:
+   the character device node set the error flag
+   the block device node set the error flag
+   no character node was created
+   no block node was created
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a device node called "vf_scratch/process-control/scratch_null" with type "c" major 1 minor 3.
+On error print "the character device node set the error flag".
+Create a device node called "vf_scratch/process-control/scratch_loop" with type "b" major 7 minor 0.
+On error print "the block device node set the error flag".
+If "vf_scratch/process-control/scratch_null" is not available then, print "no character node was created".
+If "vf_scratch/process-control/scratch_loop" is not available then, print "no block node was created".

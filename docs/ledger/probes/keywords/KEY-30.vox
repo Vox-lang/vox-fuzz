@@ -1,0 +1,10 @@
+(KEY-30 — `required` marks a flag as required: run with the flag missing,
+ the program refuses at the parse point rather than continuing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-30.vox -o p && ./p
+ expected output:
+   (exit 1)
+)
+a flag called retries is "-r" or "--retries", it is a number and is required.
+Parse flags.
+Print retries.
+Print "parsing returned".

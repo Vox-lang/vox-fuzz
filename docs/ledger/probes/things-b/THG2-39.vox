@@ -1,0 +1,33 @@
+(THG2-39: a member name belongs to its owner, not to the program: two things
+ may each declare a 'placed at', and the two definitions compile under
+ distinct internal names. LANGUAGE.md:1511-1536, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-39.vox -o p && ./p
+ expected output:
+   5
+   6
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called 'grid square' has
+  a function called 'placed at',
+  a number called column is 0,
+  a number called row is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+To do the 'grid square''s 'placed at', with a number called column and a number called row.
+  a 'grid square' called square.
+  Set square's column to column.
+  Set square's row to row.
+  Return a 'grid square', square.
+
+The 'marked square' is a 'grid square''s 'placed at' with 5 and 6.
+Print 'marked square''s column.
+Print 'marked square''s row.

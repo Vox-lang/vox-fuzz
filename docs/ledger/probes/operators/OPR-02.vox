@@ -1,0 +1,11 @@
+(OPR-02: `plus` is an accepted spelling of addition (LANGUAGE.md:4552).
+ Both lines are printed so the two spellings can be compared directly.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-02.vox -o p && ./p
+ expected output:
+   26
+   26
+)
+a number called lhs is 20.
+a number called rhs is 6.
+Print lhs plus rhs.
+Print lhs add rhs.

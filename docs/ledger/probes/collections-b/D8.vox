@@ -1,0 +1,14 @@
+(D8 — Discrepancy 8 repro: LANGUAGE.md:2673-2675 says each element
+ "renders exactly as it does when printed individually: text elements are
+ quoted". The two halves contradict each other — a text prints bare on its
+ own and quoted inside a list — and the colon clause is the half the
+ compiler follows.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p && ./p
+ expected output:
+   alpha
+   ["alpha"]
+)
+a text called word is "alpha".
+print word.
+a list called packed is [word].
+print packed.

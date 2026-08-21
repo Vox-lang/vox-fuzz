@@ -1,0 +1,15 @@
+Library statusprobe version "0.1".
+
+(A shared library that reads `the reaped status` and nothing else. It
+ exists to test LANGUAGE.md's claim that the -1 sentinel lives in
+ loader-initialized .data rather than .bss: `_start` — which would zero a
+ .bss global — is only emitted for executables, so a library reading a
+ .bss sentinel would see 0 and report "exited cleanly" with no child ever
+ reaped. Built with:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/fixtures/statusprobe.vox --shared \
+   -o docs/ledger/probes/process-control/fixtures/libstatusprobe.so)
+
+To 'the status a library sees'.
+  Return a number, the reaped status.

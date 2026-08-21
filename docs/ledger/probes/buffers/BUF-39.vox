@@ -1,0 +1,14 @@
+(BUF-39: LANGUAGE.md:3310-3323's full worked example, reproduced verbatim - Create-with-size, 4 hex byte writes, formatted read-back, OOB read caught by On error.)
+(expected output:
+First byte: 0xDE
+Index out of bounds!
+)
+Create a buffer called data with size 16.
+Set byte 1 of data to 0xDE.
+Set byte 2 of data to 0xAD.
+Set byte 3 of data to 0xBE.
+Set byte 4 of data to 0xEF.
+a number called b1 is byte 1 of data.
+Print "First byte: {b1:02X}".
+a number called bad is byte 100 of data.
+On error print "Index out of bounds!".

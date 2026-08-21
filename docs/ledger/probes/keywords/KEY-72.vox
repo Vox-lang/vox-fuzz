@@ -1,0 +1,19 @@
+(KEY-72 — `size` and its synonym `length` are contextual: properties after
+ a possessive and phrases (`with size N`, `N bytes in size`), and ordinary
+ identifiers elsewhere, all in one program.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-72.vox -o p && ./p
+ expected output:
+   24
+   3
+   3
+   3
+)
+a number called size is 1.
+a number called length is 2.
+Create a buffer called 'the created one' with size 24.
+a buffer called 'the declared one' is 12 bytes in size.
+append "ABC" to 'the declared one'.
+Print 'the created one''s capacity.
+Print 'the declared one''s size.
+Print 'the declared one''s length.
+Print size add length.

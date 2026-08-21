@@ -1,0 +1,19 @@
+(EXP-29: a cast binds tighter than arithmetic and applies to the expression
+ immediately to its left.
+ Also covers: EXP-30, bracing to cast a whole arithmetic expression.
+ The two floats are chosen so the two readings differ: tight binding gives
+ 3.5 add {2.5 as a number} = 5.5, loose binding would give 6. The third line
+ is the manual's own `n as a number add 1` shape on a text, which only
+ compiles at all under tight binding, since text arithmetic is EXP-11.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-29.vox -o p && ./p
+ expected output:
+   5.5
+   6
+   11
+)
+a float called half is 2.5.
+a float called seedling is 3.5.
+a text called tally is "10".
+Print seedling add half as a number.
+Print {seedling add half} as a number.
+Print tally as a number add 1.

@@ -1,0 +1,25 @@
+(LST-01 — the four list-literal declaration forms of LANGUAGE.md:2200-2205
+ all compile: a number list, a text list, a mixed list, and an empty list.
+ Also covers: LST-03 (a literal may mix types), LST-04 (`[]` is allowed and
+ has length 0).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-01.vox -o p && ./p
+ expected output:
+   [1, 2, 3]
+   ["Alice", "Bob", "Charlie"]
+   [1, "two", 3]
+   []
+   1
+   3
+   0
+)
+a list called nums is [1, 2, 3].
+a list called names is ["Alice", "Bob", "Charlie"].
+a list called mixedlist is [1, "two", 3].
+a list called emptylist is [].
+print nums.
+print names.
+print mixedlist.
+print emptylist.
+print element 1 of nums.
+print nums's length.
+print emptylist's length.

@@ -1,0 +1,24 @@
+(LST2-90 — the file-reading `treating` example: "-" on the command line is
+ substituted for "/dev/stdin" for that iteration, so the same sentence
+ reads a named file or standard input. The recorded block is the
+ NO-ARGUMENT run (docs/check-probes.sh passes none), where arguments's all
+ is empty and the loop runs zero times. Hand-run with a filename it copies
+ that file; hand-run with `-` and a pipe it copies stdin — both verified:
+   printf 'from stdin\n' | ./p -     ->  out.txt contains "from stdin"
+   ./p docs/ledger/probes/collections-b/fixtures/two-lines.txt
+                                     ->  out.txt contains "alpha\nbeta"
+ Note: the manual's version of this block omits the `content` buffer
+ declaration, which is an "Unknown buffer: content" compile error; the
+ declaration below is the minimum that makes the example runnable.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-90.vox -o p && ./p
+ expected output:
+   copied every argument
+)
+open a file for writing called output at "/tmp/lst2-90-out.txt".
+a buffer called content is 256 bytes in size.
+open a file for reading called source at each filename from arguments's all treating "-" as "/dev/stdin",
+  read from source into content,
+  write content to output,
+  close source.
+close output.
+print "copied every argument".

@@ -1,0 +1,21 @@
+(BAS2-27: the grid form is identical to the equivalent nested `For each` loops written left to right - both halves of this probe print the same four pairs in the same order.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-27.vox -o p && ./p
+ expected output:
+   1,10
+   1,20
+   2,10
+   2,20
+   ---
+   1,10
+   1,20
+   2,10
+   2,20
+)
+To 'pair' with a number called left and a number called right.
+  print "{left},{right}".
+
+'pair' of each x from [1, 2] and each y from [10, 20].
+print "---".
+For each x from [1, 2],
+    For each y from [10, 20],
+        'pair' of x and y.

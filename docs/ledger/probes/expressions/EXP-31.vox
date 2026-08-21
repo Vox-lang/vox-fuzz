@@ -1,0 +1,12 @@
+(EXP-31: comma-separated arithmetic continuation is not valid syntax - the
+ comma is a clause separator, so it ends the sentence rather than continuing
+ the expression.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-31.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Comma
+   no binary produced; compile error
+)
+a number called x is 10.
+a number called y is 3.
+a number called total is x add y, add 5.
+Print total.

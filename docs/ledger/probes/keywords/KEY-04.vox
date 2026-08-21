@@ -1,0 +1,15 @@
+(KEY-04 — `Set` and `Create` both start a variable declaration:
+ `Set a TYPE called NAME to VALUE.`, `Create a TYPE called NAME to VALUE.`,
+ and bare `Create a TYPE called NAME.` for the type's default.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-04.vox -o p && ./p
+ expected output:
+   1
+   Hello
+   0
+)
+Set a number called counter to 1.
+Create a text called greeting to "Hello".
+Create a number called untouched.
+Print counter.
+Print greeting.
+Print untouched.

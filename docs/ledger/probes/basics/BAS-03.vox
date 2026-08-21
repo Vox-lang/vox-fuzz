@@ -1,0 +1,32 @@
+(BAS-03 - keywords are case-insensitive.
+ Also covers: BAS-04 (Print/print/PRINT), BAS-05 (If/if/IF), and the
+ wider claim, since To/While/Increment/A NUMBER CALLED are upper-cased
+ here too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-03.vox -o p && ./p
+ expected output:
+   5
+   Print
+   print
+   PRINT
+   PrInT
+   If
+   if
+   IF
+   7
+   HI
+)
+A NUMBER CALLED x IS 5.
+PRINT x.
+Print "Print".
+print "print".
+PRINT "PRINT".
+PrInT "PrInT".
+If x is equal to 5 then, Print "If".
+if x is equal to 5 then, Print "if".
+IF x is equal to 5 then, Print "IF".
+WHILE x IS LESS THAN 7, INCREMENT x.
+PRINT x.
+TO greet.
+    PRINT "HI".
+
+greet.

@@ -1,0 +1,13 @@
+(BAS-06 - undocumented precision on BAS-03: only KEYWORDS are
+ case-insensitive. Identifiers are case-SENSITIVE - referring to a
+ variable declared `counter` as `COUNTER` is a compile error, and the
+ compiler's own "did you mean" suggestion confirms it looked and did not
+ find it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-06.vox -o p && ./p
+ expected output:
+   error: Unknown identifier 'COUNTER'
+     help: did you mean `count`?
+   (no binary produced; compile error)
+)
+a number called counter is 5.
+Print COUNTER.

@@ -1,0 +1,17 @@
+(D4 — Discrepancy 4 repro: a number flag given a value past i64 sets the
+ error flag AND leaves a wrapped value behind:
+ 99999999999999999999 - 5 * 2^64 = 7766279631452241919. A program that
+ does not wrap the read in `On error` — which is every program the
+ manual's own examples show — silently computes with that number.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p -r 99999999999999999999
+ Args: -r 99999999999999999999
+ expected output:
+   retries is 7766279631452241919
+   and it computes: -2914184810805067778
+)
+a flag called retries is "-r" or "--retries", it is a number.
+Parse flags.
+
+Print "retries is {retries}".
+a number called doubled is retries multiply 2.
+Print "and it computes: {doubled}".

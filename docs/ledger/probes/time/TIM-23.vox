@@ -1,0 +1,14 @@
+(TIM-23 - `a timer called <name>.` is the second creation form, with no
+ `Create` in front of it and a bare one-word name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-23.vox -o p && ./p
+ expected output:
+   the bare declaration made a timer
+   the declared timer ran
+)
+a timer called benchmark.
+If benchmark's type is "Timer (static)" then, print "the bare declaration made a timer".
+Otherwise, print "the bare declaration made a {benchmark's type}".
+Start the benchmark.
+Stop the benchmark.
+If benchmark's end time is greater than or equal to benchmark's start time then, print "the declared timer ran".
+Otherwise, print "the declared timer did not run".

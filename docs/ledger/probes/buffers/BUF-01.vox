@@ -1,0 +1,9 @@
+(BUF-01: two buffer declaration forms exist - dynamic (no size) vs fixed-size - and are distinguishable via capacity.)
+(expected output:
+4096
+32
+)
+a buffer called dyn.
+a buffer called fixed is 32 bytes in size.
+print dyn's capacity.
+print fixed's capacity.

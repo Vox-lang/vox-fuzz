@@ -1,0 +1,16 @@
+(D6 — Discrepancy 6 repro: the cyclic-list example at
+ LANGUAGE.md:2300-2303 records its output as "(prints: [[...]] then
+ cyclic)". The compiler prints 64 opening brackets, `...`, 64 closing
+ brackets, then `cyclic`. The surrounding PROSE (2293-2297) is exact and
+ correct; only the example's inline comment is abbreviated. Recorded because
+ a leaf that asserted the example's literal text would manufacture a
+ false finding on every run.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
+ expected output:
+   [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+   cyclic
+)
+a list called x is [].
+append x to x.
+print x.
+on error print "cyclic".

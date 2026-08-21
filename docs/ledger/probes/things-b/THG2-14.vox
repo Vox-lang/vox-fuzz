@@ -1,0 +1,32 @@
+(THG2-14: a thing's callable API is declared in one place, the manifest: each
+ `a function called <name>` entry names a member, and the member is then
+ defined with `To do the <type>'s <name>`. Both declared members are reached
+ here, proving each manifest entry is a real callable.
+ Also covers: THG2-15.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-14.vox -o p && ./p
+ expected output:
+   {x: 1, y: 0}
+   {x: -1, y: 0}
+)
+A thing called point has
+  a function called 'placed at',
+  a function called 'reflected through the origin',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+To do the point's 'reflected through the origin', with a point called original.
+  a point called reflection.
+  Set reflection's x to 0 subtract original's x.
+  Set reflection's y to 0 subtract original's y.
+  Return a point, reflection.
+
+The pin is a point's 'placed at' with 1 and 0.
+The flipped is pin's 'reflected through the origin'.
+Print pin.
+Print flipped.

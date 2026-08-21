@@ -1,0 +1,12 @@
+(TIM-54 - printing a `time` value, or putting one in a format slot,
+ renders it as its unix second count. Undocumented; the manual only ever
+ prints properties.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-54.vox -o p && ./p
+ expected output:
+   a time renders as its unix seconds
+)
+Get current time into now.
+a text called 'the printed time' is "{now}".
+a text called 'the printed unix' is "{now's unix}".
+If 'the printed time' is 'the printed unix' then, print "a time renders as its unix seconds".
+Otherwise, print "a time renders as {'the printed time'} against unix {'the printed unix'}".

@@ -1,0 +1,15 @@
+(VAR-38, VAR-39: a nested declaration that reuses an outer name at a
+ different type is rejected — Vox has no block-level scoping, so there is no
+ inner slot for it to occupy. This is the worked example at
+ LANGUAGE.md:572-577, and the message matches the one the manual quotes.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-38.vox -o p && ./p
+ expected output:
+   error: cannot bind 'n' to text in this declaration; 'n' is already declared as a number
+   note: 'n' was declared as a number
+   help: use a different name here, or declare 'n' as text instead
+   (no binary produced; compile error)
+)
+a number called n is 5.
+If 1 is equal to 2,
+  a text called n is "abc".

@@ -1,0 +1,21 @@
+(OPR-31: a bitwise expression is legal as a `Set ... to ...` value
+ (LANGUAGE.md:4596, 4599, 4602, 4603). All four of the example's Set
+ lines are reproduced in order.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-31.vox -o p && ./p
+ expected output:
+   250
+   90
+   960
+   15
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+a number called result is lhs bit-and rhs.
+Set result to lhs bit-or rhs.
+Print result.
+Set result to lhs bit-xor rhs.
+Print result.
+Set result to lhs bit-shift-left 2.
+Print result.
+Set result to lhs bit-shift-right 4.
+Print result.

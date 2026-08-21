@@ -1,0 +1,8 @@
+(FMT-15 — `{var:b}` is binary and, unlike x/X/o, carries NO base prefix.
+ The manual's own row: `{n:b}` -> `101`, with n = 5.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   101
+)
+a number called n is 5.
+Print "{n:b}".

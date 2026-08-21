@@ -1,0 +1,38 @@
+(PRC-78 — `Shutdown.` performs reboot(2) with LINUX_REBOOT_CMD_POWER_OFF
+ and needs CAP_SYS_BOOT.
+ Also covers: PRC-79 (`Reboot.`), PRC-80 (`Halt.`), PRC-81 (`Poweroff` is
+ an alias for Shutdown), PRC-82 (`Restart` is an alias for Reboot) and
+ PRC-86 (on failure the error flag is set instead of crashing or exiting,
+ `On error` catches it, and execution continues).
+ SAFETY, read this before running it: this probe really does issue five
+ reboot(2) calls. It is safe ONLY because the process is unprivileged --
+ uid 1000 with an empty effective capability set, so every call returns
+ EPERM before the kernel does anything. Run as root, or with CAP_SYS_BOOT,
+ it powers the machine off at the first line. Check with `id` and
+ `grep CapEff /proc/self/status` (0000000000000000) before running it.
+ PRC-85 (on success none of these return) and PRC-84 (each calls sync(2)
+ first) are NOT verified here and cannot be without taking the machine
+ down.
+ Ran, from the repo root, as uid 1000 with CapEff 0000000000000000:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-78.vox -o p && ./p
+ expected output:
+   Shutdown set the error flag
+   Poweroff set the error flag
+   Reboot set the error flag
+   Restart set the error flag
+   Halt set the error flag
+   the machine is still here and execution continued
+)
+Shutdown.
+On error print "Shutdown set the error flag".
+Poweroff.
+On error print "Poweroff set the error flag".
+Reboot.
+On error print "Reboot set the error flag".
+Restart.
+On error print "Restart set the error flag".
+Halt.
+On error print "Halt set the error flag".
+print "the machine is still here and execution continued".

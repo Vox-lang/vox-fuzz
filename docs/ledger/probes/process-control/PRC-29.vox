@@ -1,0 +1,26 @@
+(PRC-29 — `Pivot root to "<new_root>" with old root "<put_old>".` performs
+ pivot_root(2).
+ Also covers: PRC-32 (the error flag is set on failure).
+ SAFETY / LIMIT: pivot_root(2) needs CAP_SYS_ADMIN, so this returns EPERM
+ and the root filesystem is untouched. The success-path claims — PRC-30
+ (put_old must already exist inside new_root) and PRC-31 (the old root
+ then lives at put_old and should be released with `Unmount ... lazily`) —
+ are NOT verified by this probe and cannot be without root or a user
+ namespace.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-29.vox -o p && ./p
+ expected output:
+   pivot root set the error flag
+   the root filesystem is unchanged and execution continued
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_newroot".
+Create a directory called "vf_scratch/process-control/scratch_newroot/oldroot".
+Pivot root to "vf_scratch/process-control/scratch_newroot" with old root "vf_scratch/process-control/scratch_newroot/oldroot".
+On error print "pivot root set the error flag".
+Remove the directory called "vf_scratch/process-control/scratch_newroot/oldroot".
+Remove the directory called "vf_scratch/process-control/scratch_newroot".
+print "the root filesystem is unchanged and execution continued".

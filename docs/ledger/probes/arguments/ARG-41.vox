@@ -1,0 +1,31 @@
+(ARG-41 — *(not a manual claim — a gap in the manual)* after parsing,
+ EVERY positional property follows the filtered view, not the raw argv:
+ `count`, `empty`, `first`, `second`, `last` and `the argument at` all
+ count and index the positionals only. The manual says this of `all`
+ (4417) and of nothing else; 4309 still describes `count` as "Total
+ number of arguments (including program name)".
+ Here five user arguments are passed, of which three are a recognized
+ flag and its value; count is 3, not 6. See Discrepancy 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-41.vox -o p && ./p -o mine.txt pos1 -v pos2
+ Args: -o mine.txt pos1 -v pos2
+ expected output:
+   raw length is 5
+   count is 3
+   first is pos1
+   second is pos2
+   last is pos2
+   at one is pos1
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+a flag called output is "-o" or "--output", it is a text.
+Parse flags.
+
+a list called original is arguments's raw.
+Print "raw length is {original's length}".
+Print "count is {arguments's count}".
+Print "first is {arguments's first}".
+Print "second is {arguments's second}".
+Print "last is {arguments's last}".
+a number called firstth is 1.
+a text called 'at one' is the argument at the firstth.
+Print "at one is {'at one'}".

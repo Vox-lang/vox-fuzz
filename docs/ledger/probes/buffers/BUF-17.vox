@@ -1,0 +1,12 @@
+(BUF-17: shrinking a buffer below its current data length truncates the data to the new capacity.)
+(expected output:
+4
+4
+0123
+)
+a buffer called buf is 64 bytes in size.
+append "0123456789" to buf.
+resize buf to 4.
+print buf's size.
+print buf's capacity.
+print buf.

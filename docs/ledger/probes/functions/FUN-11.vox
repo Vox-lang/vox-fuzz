@@ -1,0 +1,26 @@
+(FUN-11 — variables declared at top level are global and can be read
+ inside a function. Every type is read correctly SO LONG AS the global is
+ declared ABOVE the function; when it is declared below, every non-number
+ type is read as a raw machine word instead. See Discrepancy 1 and D1.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-11.vox -o p && ./p
+ expected output:
+   42
+   hello
+   2.5
+   [1, 2, 3]
+   ABC
+)
+a number called counter is 42.
+a text called label is "hello".
+a float called ratio is 2.5.
+a list called items is [1, 2, 3].
+a buffer called payload is "ABC".
+
+To 'show all'.
+  Print counter.
+  Print label.
+  Print ratio.
+  Print items.
+  Print payload.
+
+'show all'.

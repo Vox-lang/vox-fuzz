@@ -1,0 +1,16 @@
+(EXP-10: arithmetic operates on numbers, and a boolean counts as 0 or 1 when
+ it reaches an arithmetic operator.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-10.vox -o p && ./p
+ expected output:
+   1
+   0
+   2
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+a number called upvote is affirmed add 0.
+a number called downvote is denied add 0.
+a number called tally is affirmed add affirmed.
+Print upvote.
+Print downvote.
+Print tally.

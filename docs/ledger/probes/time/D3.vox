@@ -1,0 +1,17 @@
+(D3 - Discrepancy 3 repro: a negative MILLISECOND duration never returns.
+ `Wait -5 milliseconds.` divides the count by 1000 with an UNSIGNED
+ divide (coreasm/x86_64/time.asm, SLEEP_MILLISECONDS), so -5 becomes
+ 18446744073709551611 milliseconds and tv_sec becomes about 1.8e16
+ seconds - roughly 585 million years. The seconds spelling of the same
+ nonsense returns at once (TIM-51.vox), because a negative tv_sec is
+ rejected by the kernel rather than reinterpreted.
+ `print "the wait returned".` never runs, so the program prints nothing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && timeout 10 ./p
+ expected output:
+   (no output: the program is still sleeping when the 10-second harness
+   timeout fires, so the recorded outcome is exit 124. Not a crash and not
+   a busy loop - a sleep nobody will outlive.)
+   exit 124
+)
+Wait -5 milliseconds.
+print "the wait returned".

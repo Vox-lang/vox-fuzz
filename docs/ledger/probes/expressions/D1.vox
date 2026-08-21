@@ -1,0 +1,24 @@
+(Discrepancy 1 - minimal repro. LANGUAGE.md:1827 offers
+ `{fibonacci of n subtract 1} add {fibonacci of n subtract 2}` as an arithmetic
+ example. `of` binds only the next primary, so the argument is `n` and the
+ `subtract 1` applies to the RESULT. Taken literally the example never
+ terminates - see EXP-26.vox, which records the stack-overflow exit.
+ This repro shows the binding itself without recursing. `halve of 10 subtract 4`
+ is `{halve of 10} subtract 4` = 5 subtract 4 = 1, not `halve of 6` = 3.
+ The braced argument form gives 3, which is what the manual's example meant.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   1
+   3
+   55
+)
+To halve with a number called n. Return a number, n divide 2.
+
+Print {halve of 10 subtract 4}.
+Print {halve of {10 subtract 4}}.
+
+To fibonacci with a number called n.
+  If n is less than 2 then, Return a number, n.
+  Return a number, {fibonacci of {n subtract 1}} add {fibonacci of {n subtract 2}}.
+
+Print fibonacci of 10.

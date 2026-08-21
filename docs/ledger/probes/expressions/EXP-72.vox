@@ -1,0 +1,10 @@
+(EXP-72: `data as text` yields a copy of the buffer's current bytes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-72.vox -o p && ./p
+ expected output:
+   hello
+   hello
+)
+a buffer called data is "hello".
+a text called line is data as text.
+Print line.
+Print data as text.

@@ -1,0 +1,14 @@
+(FMT-18 — the value inside a slot must be a variable or expression, never
+ a bare literal: a bare number in a slot is read as a VARIABLE NAME and
+ the program is refused. Hand-verified that the specifier is irrelevant —
+ the same slot with no specifier is rejected with the same diagnostic.
+ The slot is deliberately not written out in this comment: the compiler
+ anchors this diagnostic at the first TEXTUAL occurrence of the slot in
+ the file, comments included, so spelling it here would move the caret
+ off the offending code (Discrepancy 5).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   error: Unknown variable: 255
+   (a compile error — vox refuses the program and emits no binary)
+)
+Print "{255:x}".

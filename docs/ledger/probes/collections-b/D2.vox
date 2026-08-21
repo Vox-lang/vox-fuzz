@@ -1,0 +1,17 @@
+(D2 — Discrepancy 2 repro: the `otherwise` clause the manual documents
+ (LANGUAGE.md:2960, 2966) used to be a parse error after a `print` base
+ action while being accepted after an `append` base.
+ **RESOLVED — fixed by vox #50 (0.4.8+).** The bare spelling now compiles
+ after `print` too, and this probe records the fixed behaviour: it
+ compiles and takes the `otherwise` branch. Before #50 it failed to
+ compile with `error: Expected a statement, got Otherwise`. The three
+ neighbouring spellings compiled then and still do:
+   print gauge, but if ... print "high", but otherwise print "low".   -> low
+   append 1 to kept, but if ... append 7, otherwise append 9.         -> [9]
+   append 1 to kept, but if ... append 7, but otherwise append 9.     -> [9]
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   low
+)
+a number called gauge is 8.
+print gauge, but if gauge is greater than 50 print "high", otherwise print "low".

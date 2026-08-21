@@ -1,0 +1,29 @@
+(FUN-43 — (gap) a function body written on indented lines is closed by a
+ BLANK LINE, not by end of file and not by the body's last period. This is
+ the paragraph-break rule of the Basics chapter reaching functions, and it
+ is what justifies the one real sameness this section imposes on
+ generated programs: every emitted function definition is followed by a
+ blank line. `greet` below is closed properly and runs; `never closed`
+ is not, so the top-level `Print` after it is read as part of its body
+ and never runs — the last line of this program produces no output at
+ all. The compiler does warn, on stderr at compile time:
+    warning: Function 'never closed' is still open at end of file: its body
+    reached EOF with no closing blank line. A function body is closed by a
+    blank line (paragraph break), not by EOF, so without one everything
+    after the signature is read as part of the body. If statements after
+    the body were meant to run at the top level, add a blank line after
+    the function body to close it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-43.vox -o p && ./p
+ expected output:
+   hello
+   the closed body did not swallow this
+)
+To greet.
+  Print "hello".
+
+greet.
+Print "the closed body did not swallow this".
+
+To 'never closed'.
+  Print "this line is inside the body".
+Print "this top-level line was swallowed".

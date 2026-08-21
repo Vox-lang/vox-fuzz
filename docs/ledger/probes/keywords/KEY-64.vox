@@ -1,0 +1,16 @@
+(KEY-64 — `name` is contextual: the program-name property after a
+ possessive, an ordinary identifier elsewhere. `arguments's name` is the
+ binary's own path, which differs per run, so the probe only asserts that
+ it is non-empty.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-64.vox -o p && ./p
+ expected output:
+   argv zero came back non-empty
+   an ordinary variable
+)
+a text called name is "an ordinary variable".
+a text called 'the program path' is arguments's name.
+If 'the program path' is empty then,
+    Print "argv zero was empty".
+If 'the program path' is not empty then,
+    Print "argv zero came back non-empty".
+Print name.

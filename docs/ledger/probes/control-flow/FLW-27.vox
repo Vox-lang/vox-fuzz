@@ -1,0 +1,11 @@
+(FLW-27: a blank line force-closes a Repeat (termination rule 2), giving
+ the same result as the period does.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-27.vox -o p && ./p
+ expected output:
+   r
+   r
+   after
+)
+Repeat 2 times, print "r".
+
+Print "after".

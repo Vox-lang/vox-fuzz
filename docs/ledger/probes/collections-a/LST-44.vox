@@ -1,0 +1,24 @@
+(LST-44 — a map reallocates as it grows and the new pointer is stored back
+ into the variable automatically. The reallocation itself is not observable
+ from Vox; what IS observable is that a map survives 200 inserts with every
+ entry still readable, which is the behaviour the automatic store-back
+ exists to produce.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-44.vox -o p && ./p
+ expected output:
+   200
+   1
+   200
+   137
+   0
+)
+a map called ledger is {}.
+a number called counter is 1.
+While counter is less than or equal to 200,
+    set ledger's "key{counter}" to counter,
+    Set counter to counter add 1.
+
+print ledger's length.
+print ledger's "key1".
+print ledger's "key200".
+print ledger's "key137".
+print ledger's empty.

@@ -1,0 +1,30 @@
+(FUN-28 — file parameters support file properties. `size` and `descriptor`
+ read correctly through a parameter; `readable` does NOT — the file was
+ opened for reading and reads back 1 at top level but 0 through the
+ parameter. The recorded output below is the WRONG answer the compiler
+ actually gives, not the documented one. See Discrepancy 4 and D4.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-28.vox -o p && ./p
+ expected output:
+   12
+   3
+   1
+   0
+   --- through the parameter ---
+   12
+   3
+   0
+   0
+)
+To 'read file' with a file called handle.
+  Print handle's size.
+  Print handle's descriptor.
+  Print handle's readable.
+  Print handle's writable.
+
+open a file for reading called src at "docs/ledger/probes/functions/fixtures/data.txt".
+Print src's size.
+Print src's descriptor.
+Print src's readable.
+Print src's writable.
+Print "--- through the parameter ---".
+'read file' of src.

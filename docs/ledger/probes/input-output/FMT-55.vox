@@ -1,0 +1,8 @@
+(FMT-55 — the default value prints when no condition matches: 7 is neither
+ even nor divisible by 3, so the bare number comes out.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   7
+)
+a number called plain is 7.
+Print the plain, but if the plain modulo 2 is equal to 0 print "fizz" but if the plain modulo 3 is equal to 0 print "buzz".

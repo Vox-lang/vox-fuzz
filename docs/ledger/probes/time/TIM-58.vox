@@ -1,0 +1,13 @@
+(TIM-58 - `in` accepts only the second and millisecond units. `minutes`
+ is rejected at compile time, and so are `hours` and `nanoseconds`
+ (hand-run). The manual says "cast duration to a specific unit" without
+ saying which units exist.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-58.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Minute
+   (no binary produced; compile error)
+)
+a timer called lap.
+Start the lap.
+Stop the lap.
+print lap's duration in minutes.

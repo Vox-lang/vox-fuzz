@@ -1,0 +1,9 @@
+(OPR-21: `not` is logical negation (LANGUAGE.md:4575).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-21.vox -o p && ./p
+ expected output:
+   not fired on false
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+If not denied then, Print "not fired on false".
+If not affirmed then, Print "not MISFIRED on true".

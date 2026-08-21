@@ -1,0 +1,21 @@
+(EXP-17: `the x` references the variable `x`.
+ Also covers: EXP-18 `the number` references the `for each` iterator, EXP-19 a
+ bare identifier references the same variable as the `the`-prefixed form.
+ The last line records that the bare iterator spelling works too, which is the
+ only spelling any existing leaf emits.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-17.vox -o p && ./p
+ expected output:
+   41
+   41
+   1
+   2
+   3
+   1
+   2
+   3
+)
+a number called tally is 41.
+Print the tally.
+Print tally.
+For each number from 1 to 3, Print the number.
+For each number from 1 to 3, Print number.

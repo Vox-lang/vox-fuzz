@@ -1,0 +1,25 @@
+(KEY-78 — `do` is claimed only in `To do the <type>'s <member>`; it is an
+ ordinary identifier everywhere else — including as a function's own name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-78.vox -o p && ./p
+ expected output:
+   7
+   the function named do ran
+   5
+)
+A thing called point has
+    a function called 'placed at',
+    a number called x is 0.
+
+To do the point's 'placed at', with a number called across.
+    a point called plotted.
+    Set plotted's x to across.
+    Return a point, plotted.
+
+To do.
+    Print "the function named do ran".
+
+a number called do is 5.
+The pin is a point's 'placed at' with 7.
+Print pin's x.
+do.
+Print do.

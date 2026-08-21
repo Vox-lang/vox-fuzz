@@ -1,0 +1,69 @@
+(THG-42: a field may be a thing, so things nest to ANY depth. Twenty levels
+ here, read back through a nineteen-link chained possessive; the innermost
+ default survives.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-42.vox -o p && ./p
+ expected output:
+   7
+)
+A thing called level1 has
+  a number called x is 7.
+
+A thing called level2 has
+  a level1 called down.
+
+A thing called level3 has
+  a level2 called down.
+
+A thing called level4 has
+  a level3 called down.
+
+A thing called level5 has
+  a level4 called down.
+
+A thing called level6 has
+  a level5 called down.
+
+A thing called level7 has
+  a level6 called down.
+
+A thing called level8 has
+  a level7 called down.
+
+A thing called level9 has
+  a level8 called down.
+
+A thing called level10 has
+  a level9 called down.
+
+A thing called level11 has
+  a level10 called down.
+
+A thing called level12 has
+  a level11 called down.
+
+A thing called level13 has
+  a level12 called down.
+
+A thing called level14 has
+  a level13 called down.
+
+A thing called level15 has
+  a level14 called down.
+
+A thing called level16 has
+  a level15 called down.
+
+A thing called level17 has
+  a level16 called down.
+
+A thing called level18 has
+  a level17 called down.
+
+A thing called level19 has
+  a level18 called down.
+
+A thing called level20 has
+  a level19 called down.
+
+a level20 called deep.
+Print deep's down's down's down's down's down's down's down's down's down's down's down's down's down's down's down's down's down's down's down's x.

@@ -1,0 +1,12 @@
+(OPR-12: bare `is` is an accepted spelling of equality (LANGUAGE.md:4562).
+ Note `is` is also the declaration and assignment word; here it is the
+ comparison, in a condition position.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-12.vox -o p && ./p
+ expected output:
+   bare is fired
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is rhs then, Print "bare is fired".
+If lhs is other then, Print "bare is MISFIRED".

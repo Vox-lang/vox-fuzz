@@ -1,0 +1,17 @@
+(LST2-29 — `append <value> to <list>` adds the value to the END of the
+ list and grows its length by one. The manual's own "Appending to Lists"
+ block, verbatim.
+ Also covers: LST2-30 (the worked example's length of 5), LST2-31
+ (`append <value> to <list>` appends exactly one element).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-29.vox -o p && ./p
+ expected output:
+   5
+   [1, 2, 3, 4, 5]
+   5
+)
+a list called nums is [1, 2, 3].
+append 4 to nums.
+append 5 to nums.
+print nums's length.
+print nums.
+print nums's last.

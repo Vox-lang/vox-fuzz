@@ -1,0 +1,8 @@
+(VAR-10: the default for `text` on a bare `Create` is the empty string.
+ Printed inside brackets so the blank is visible in the recorded output.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-10.vox -o p && ./p
+ expected output:
+   []
+)
+Create a text called greeting.
+Print "[{greeting}]".

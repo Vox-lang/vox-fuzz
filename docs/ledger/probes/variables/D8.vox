@@ -1,0 +1,11 @@
+(Discrepancy 8: LANGUAGE.md:469 says every declarable type supports two
+ equivalent forms. A timer supports only the bare form; there is no
+ initializer form for it, and the parser does not even reach a type error.
+ (Compile-error claim.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Is
+   (no binary produced; compile error)
+)
+a timer called clock is 0.
+Print 1.

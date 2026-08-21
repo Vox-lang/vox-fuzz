@@ -1,0 +1,18 @@
+(THG-66: assigning a single VALUE to a whole thing is rejected, with the
+ field to write named instead.
+ Also covers: THG-67 (the exact diagnostic, LANGUAGE.md:1104-1114).
+ The caret lands on line 5 - the DECLARATION of `origin` - not on line 6,
+ the offending `Set`. See Discrepancy 3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-66.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, so only a whole point can be copied into it
+       A copy source is a variable holding a point, a field that holds one, or a call that returns one (plan 310 §5).
+       To write one field instead, name it - point's fields are: x, y
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+Set origin to 5.

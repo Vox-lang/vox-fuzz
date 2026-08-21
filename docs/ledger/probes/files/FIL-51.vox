@@ -1,0 +1,22 @@
+(FIL-51: Read line from standard input into <buffer> reads one line of stdin at a time and returns an empty buffer at EOF.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-51.vox -o p && printf 'sky\nsea\n' | ./p
+ actual output:
+   4
+   sky
+  
+   4
+   sea
+  
+   0
+)
+a buffer called linebuf is 64 bytes in size.
+Read line from standard input into linebuf.
+print linebuf's size.
+print linebuf.
+Read line from standard input into linebuf.
+print linebuf's size.
+print linebuf.
+Read line from standard input into linebuf.
+print linebuf's size.

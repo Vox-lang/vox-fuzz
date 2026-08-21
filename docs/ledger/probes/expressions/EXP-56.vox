@@ -1,0 +1,25 @@
+(EXP-56: values are converted between types with `as` or with `in`.
+ Also covers: EXP-57 the `as a <type>` syntax, EXP-58 the article-free
+ `as <type>` syntax being equivalent to it, EXP-59 the `<value> in <unit>`
+ syntax existing at all.
+ `in` is only legal on a timer's duration or elapsed, so the `in` line here is
+ a timer one; EXP-88 records what happens on a plain number. The wait is a
+ whole second so the recorded elapsed does not straddle a boundary.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-56.vox -o p && ./p
+ expected output:
+   10
+   10
+   3.9
+   3.9
+   1
+)
+a text called tally is "10".
+Print tally as a number.
+Print tally as number.
+Print 3.9 as a float.
+Print 3.9 as float.
+a timer called benchmark.
+Start the benchmark.
+Wait 1 second.
+Stop the benchmark.
+Print the benchmark's duration in seconds.

@@ -1,0 +1,29 @@
+(assertion-shape: not a claim row - the two assertion shapes every
+ assertable row in this ledger names, proven to compile and to reach
+ exit 95. Kept because OPR-40 makes the obvious shape illegal: a
+ comparison is not a first-class expression, so a comparison row cannot
+ assert `If <comparison> is not true`. It has to route through a
+ witness variable instead, which is the second half of this file.
+ Arithmetic and bitwise rows have no such problem and use the first
+ half.
+ Proven by hand once in each direction: changing the 26 on line 3 to 99
+ makes this program print `ASSERT OPR-01: expected 99` and exit 95,
+ and changing the 1 on line 8 to 0 makes it print the OPR-15 line and
+ exit 95. Both were run; neither is left in the file, so the recorded
+ output below is the passing one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox assertion-shape.vox -o p && ./p
+ expected output:
+   value assertion passed
+   witness assertion passed
+)
+(Shape one - arithmetic and bitwise rows assert the value directly.)
+a number called lhs is 20.
+a number called rhs is 6.
+If lhs add rhs is not 26 then, Print "ASSERT OPR-01: expected 26", Exit 95.
+Print "value assertion passed".
+
+(Shape two - comparison and logical rows route through a witness.)
+a number called witness is 0.
+If lhs is greater than rhs then, Set witness to 1.
+If witness is not 1 then, Print "ASSERT OPR-15: expected greater-than to fire", Exit 95.
+Print "witness assertion passed".

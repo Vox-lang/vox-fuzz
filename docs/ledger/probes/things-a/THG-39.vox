@@ -1,0 +1,24 @@
+(THG-39: a thing declared inside a function is LOCAL to that function - the
+ name is not in scope at the top level after the call returns.
+ Note the caret: the compiler reports the error against line 9, the
+ out-of-scope read, which is right. When the same name is ALSO read legally
+ inside the function, the caret moves to the legal in-function line instead
+ - see Discrepancy 5, which reproduces with builtin types too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-39.vox -o p && ./p
+ expected output:
+   error: Unknown variable: cursor
+     --> THG-39.vox:9:7  (the top-level read, which is the right line)
+     hint: `cursor` is declared only in some branches of an `if`/`otherwise`, so it
+           is not in scope after it - declare it in every branch, or before the `if`
+           (there is no `if` in this program - see Discrepancy 5)
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0.
+
+To 'plot a point'.
+  a point called cursor.
+  Print "ran".
+
+'plot a point'.
+Print cursor's x.

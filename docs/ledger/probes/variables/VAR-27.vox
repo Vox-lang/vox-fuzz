@@ -1,0 +1,11 @@
+(VAR-27: the `the x is <value>.` write form is type-checked exactly like the
+ bare form — same message, pointing at the name rather than at `the`.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-27.vox -o p && ./p
+ expected output:
+   error: cannot assign text to 'n', which is a number
+   (no binary produced; compile error)
+)
+a number called n is 5.
+the n is "abc".
+Print n.

@@ -1,0 +1,12 @@
+(VAL-26: `nothing` is not zero — `0 is nothing` is false and `nothing is 0`
+ is false; `is nothing` compares the runtime type tag rather than the stored
+ number, so the two never collide. Neither "never" line prints.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-26.vox -o p && ./p
+ expected output:
+   reached
+   reached2
+)
+If 0 is nothing, print "never printed".
+print "reached".
+If nothing is 0, print "also never".
+print "reached2".

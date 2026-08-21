@@ -1,0 +1,13 @@
+(BAS2-04: range bounds may be variables rather than literals (`from start to end`).
+ Also covers: BAS2-21
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-04.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   4
+   5
+)
+Set start to 1.
+Set end to 5.
+For each number from start to end, print the number.

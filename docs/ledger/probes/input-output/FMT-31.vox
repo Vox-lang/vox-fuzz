@@ -1,0 +1,13 @@
+(FMT-31 — the umbrella claim: EVERY statement taking a string value accepts
+ a format string. Probed here on a sink the manual's own list does NOT
+ name — the path of `Open a file ... at` — because a list of five named
+ sinks is weaker evidence for "every" than one unnamed sink working.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   opened /tmp/vox-FMT-31.txt
+)
+a text called stem is "vox-FMT-31".
+Open a file for writing called out at "/tmp/{stem}.txt".
+write "x\n" to out.
+close out.
+Print "opened /tmp/{stem}.txt".

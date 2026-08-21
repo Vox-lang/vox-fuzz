@@ -1,0 +1,32 @@
+(D5 - Discrepancy 5 repro: when a function-local name is ALSO read
+ out of scope, the "Unknown variable" error is reported against the LEGAL
+ in-function read, and the hint names an `if`/`otherwise` the program does
+ not contain.
+ Line 6 (`Print cursor's x.` inside the function) is correct Vox; line 9 is
+ the mistake. Compare THG-39, where deleting the in-function read moves the
+ caret to line 9, which is right.
+ NOT specific to things: the same shape with `a number called cursor is 4.`
+ reproduces identically, so this belongs to whoever maps Function Scope
+ (LANGUAGE.md:703). Recorded here because it was found while probing
+ LANGUAGE.md:929-930.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   error: Unknown variable: cursor
+     --> D5.vox:6:9      (the LEGAL in-function read; line 9 is the mistake)
+       |
+     6 |   Print cursor's x.
+       |         ^--- here
+     hint: `cursor` is declared only in some branches of an `if`/`otherwise`, so it
+           is not in scope after it - declare it in every branch, or before the `if`
+           (this program has no `if`)
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0.
+
+To 'plot a point'.
+  a point called cursor.
+  Print cursor's x.
+
+'plot a point'.
+Print cursor's x.

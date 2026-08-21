@@ -1,0 +1,42 @@
+(D5: Discrepancy 5 - `Read from` and `Read line from` used to disagree
+ about whether a dead handle is an error, and `Read from` disagreed with
+ itself between a negative descriptor and a merely invalid one. A failed
+ open leaves descriptor -2; `Read from` that handle was silently a 0-byte
+ read while `Read line from` set the flag. Against descriptor 2147483647
+ both set the flag.
+ **RESOLVED - fixed by vox #48 (0.4.8), the same change that fixed D4.**
+ Re-run against current main, `Read from` a failed handle now sets the flag
+ too, so the two verbs agree in both directions. The buffer is still left
+ at size 0 by each dead read, which is the truthful answer.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/D5.vox -o p && ./p
+ actual output:
+   the failed open set the error flag
+   -2
+   Read from a failed handle set the error flag
+   0
+   Read line from a failed handle set the error flag
+   0
+   Read from an invalid descriptor set the error flag
+   Read line from an invalid descriptor set the error flag
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+(A handle whose open failed - its descriptor is a negative errno.)
+open a file for reading called missing at "vf_scratch/files/absent.txt".
+On error print "the failed open set the error flag".
+print missing's descriptor.
+a buffer called chunk is 16 bytes in size.
+Read from missing into chunk.
+On error print "Read from a failed handle set the error flag".
+print chunk's size.
+Read line from missing into chunk.
+On error print "Read line from a failed handle set the error flag".
+print chunk's size.
+(The same two reads against a descriptor that is merely invalid, not negative.)
+open a file for reading called bogus at 2147483647.
+Read from bogus into chunk.
+On error print "Read from an invalid descriptor set the error flag".
+Read line from bogus into chunk.
+On error print "Read line from an invalid descriptor set the error flag".

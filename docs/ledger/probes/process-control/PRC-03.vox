@@ -1,0 +1,24 @@
+(PRC-03 — the directory mkdir(2) requests mode 0755.
+ Not observable from inside Vox: the language has no stat/mode accessor,
+ so this probe only creates the directory and the mode was read outside
+ Vox with stat(1). Recorded here so the claim is not taken on trust:
+
+   $ rm -rf d && (umask 0;   ./p) && stat -c '%a' d   ->  755
+   $ rm -rf d && (umask 077; ./p) && stat -c '%a' d   ->  700
+
+ 0755 is the mode ARGUMENT; umask still applies, which is mkdir(2)'s own
+ documented behaviour and not a departure from the manual's wording.
+ The probe removes the directory again so it can re-run clean, which is
+ why the mode check above uses a copy that does not.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-03.vox -o p && ./p
+ expected output:
+   the directory was created
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_mode".
+If "vf_scratch/process-control/scratch_mode" is available then, print "the directory was created".
+Remove the directory called "vf_scratch/process-control/scratch_mode".

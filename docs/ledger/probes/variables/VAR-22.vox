@@ -1,0 +1,14 @@
+(VAR-22, VAR-23, VAR-24: `the` before a name references an already-declared
+ variable — as the target of an assignment (`the x is 10.`) and as a read
+ on the right-hand side of one (`the counter is the counter add 1.`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-22.vox -o p && ./p
+ expected output:
+   10
+   2
+)
+a number called x is 5.
+a number called counter is 1.
+the x is 10.
+the counter is the counter add 1.
+Print x.
+Print counter.

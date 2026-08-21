@@ -1,0 +1,15 @@
+(LST2-54 — `open ... at each <var> from <collection>` opens the file once
+ per element, with the rest of the sentence as the per-iteration body.
+ Reads the same 11-byte fixture twice and prints the byte count each time.
+ The fixture path is relative to the REPO ROOT, which is where
+ docs/check-probes.sh runs probe binaries from.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-54.vox -o p && ./p
+ expected output:
+   11
+   11
+)
+a buffer called content is 64 bytes in size.
+open a file for reading called source at each path from ["docs/ledger/probes/collections-b/fixtures/two-lines.txt", "docs/ledger/probes/collections-b/fixtures/two-lines.txt"],
+  read from source into content,
+  print content's size,
+  close source.

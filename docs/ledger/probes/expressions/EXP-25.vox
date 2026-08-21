@@ -1,0 +1,17 @@
+(EXP-25: `{x add y} multiply z` - curly braces group a subexpression and
+ override the default precedence.
+ Also covers: EXP-28, the instruction to brace each complex subexpression.
+ The first line is the same expression unbraced, so the pair records what the
+ grouping actually changes: 2 add 3 multiply 4 is 14, braced it is 20.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-25.vox -o p && ./p
+ expected output:
+   14
+   20
+   6
+)
+a number called x is 2.
+a number called y is 3.
+a number called z is 4.
+Print x add y multiply z.
+Print {x add y} multiply z.
+Print {{x add y} multiply z} modulo 7.

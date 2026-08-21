@@ -1,0 +1,12 @@
+(KEY-36 — `or` is the logical OR connector in a condition.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-36.vox -o p && ./p
+ expected output:
+   or matched the second arm
+   done
+)
+a number called height is 2.
+If height is 1 or height is 2 then,
+    Print "or matched the second arm".
+If height is 7 or height is 9 then,
+    Print "or should not have matched".
+Print "done".

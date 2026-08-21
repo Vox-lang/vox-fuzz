@@ -1,0 +1,13 @@
+(EXP-100: undocumented precision on LANGUAGE.md:1942 - a base outside 2 to 36
+ is rejected at COMPILE time, not at run time, and not silently clamped.
+ The manual says which bases are supported but never says what happens to an
+ unsupported one, so this row records the answer rather than a claim. It also
+ means a leaf that draws a random base must draw it from 2 to 36 or the
+ generated program will not compile at all.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-100.vox -o p && ./p
+ expected output:
+   error: Only base 2 through base 36 are supported
+   no binary produced; compile error
+)
+a text called digits is "11".
+Print digits as a base 37 number.

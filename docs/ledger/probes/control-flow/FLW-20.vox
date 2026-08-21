@@ -1,0 +1,10 @@
+(FLW-20 (undocumented precision): a range whose start is above its end runs
+ the body zero times. It is not an error and it does not run once.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-20.vox -o p && ./p
+ expected output:
+   backwards:
+   done
+)
+print "backwards:".
+For each number from 5 to 1, print the number.
+print "done".

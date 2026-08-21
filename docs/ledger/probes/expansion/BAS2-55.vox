@@ -1,0 +1,11 @@
+(BAS2-55: a function-call expansion carries a treating clause the same way a print expansion does.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-55.vox -o p && ./p
+ expected output:
+   /dev/stdin
+   real.txt
+)
+To process with a text called filename.
+  print filename.
+
+a list called files is ["-", "real.txt"].
+process of each filename from files treating "-" as "/dev/stdin".

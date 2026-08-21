@@ -1,0 +1,31 @@
+(EXP-44: `and` is true only when both conditions are true.
+ Also covers: EXP-45 `or` is true when either is true, EXP-46 `not` is true
+ when its condition is false.
+ All four rows of each truth table are recorded, so a leaf asserting on a
+ logical join has the whole table hand-verified rather than the one row that
+ happened to be tried.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-44.vox -o p && ./p
+ expected output:
+   and TT true
+   and TF false
+   and FT false
+   and FF false
+   or TT true
+   or TF true
+   or FT true
+   or FF false
+   not T false
+   not F true
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+If affirmed and affirmed then, Print "and TT true". Otherwise, Print "and TT false".
+If affirmed and denied then, Print "and TF true". Otherwise, Print "and TF false".
+If denied and affirmed then, Print "and FT true". Otherwise, Print "and FT false".
+If denied and denied then, Print "and FF true". Otherwise, Print "and FF false".
+If affirmed or affirmed then, Print "or TT true". Otherwise, Print "or TT false".
+If affirmed or denied then, Print "or TF true". Otherwise, Print "or TF false".
+If denied or affirmed then, Print "or FT true". Otherwise, Print "or FT false".
+If denied or denied then, Print "or FF true". Otherwise, Print "or FF false".
+If not affirmed then, Print "not T true". Otherwise, Print "not T false".
+If not denied then, Print "not F true". Otherwise, Print "not F false".

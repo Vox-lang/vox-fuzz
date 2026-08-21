@@ -1,0 +1,33 @@
+(EXP-82: the radix worked example at LANGUAGE.md:1947-1962 compiles verbatim
+ and produces the values its own trailing comments claim.
+ The example prints nothing on its own, so the five Print lines at the end are
+ the only addition; every declaration above them is the manual's text
+ unchanged, comments included. 0x3fa2c1e4 is 1067631076.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-82.vox -o p && ./p
+ expected output:
+   1067631076
+   2334
+   2334
+   -26
+   255
+)
+(Hex string to number)
+a text called hexstr is "3fa2c1e4".
+a number called n is hexstr as a hex number.
+
+(Arbitrary base, fused or spaced form - both work)
+a text called s is "6543".
+a number called n2 is s as a base7 number.
+a number called n3 is s as a base 7 number.
+
+(Negative numbers and uppercase hex digits both work)
+a text called neg is "-1a".
+a number called n4 is neg as a hex number.
+a text called upper is "FF".
+a number called n5 is upper as a hex number.
+
+Print n.
+Print n2.
+Print n3.
+Print n4.
+Print n5.

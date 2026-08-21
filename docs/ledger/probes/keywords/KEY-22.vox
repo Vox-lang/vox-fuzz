@@ -1,0 +1,12 @@
+(KEY-22 — `Pivot` starts `pivot_root(2)`. The statement is compiled but
+ deliberately NOT executed: a successful pivot would replace the root
+ filesystem of whoever ran the probe. The guard is a runtime-false boolean,
+ so the compiler still parses and lowers the statement.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-22.vox -o p && ./p
+ expected output:
+   pivot compiled, not executed
+)
+a boolean called 'the root should move' is false.
+If 'the root should move' then,
+    Pivot root to "/newroot" with old root "/newroot/oldroot".
+Print "pivot compiled, not executed".

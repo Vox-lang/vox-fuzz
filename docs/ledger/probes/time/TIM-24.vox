@@ -1,0 +1,18 @@
+(TIM-24 - `Start the <timer>.` and `Stop the <timer>.` are the two halves
+ of the stopwatch, and `running` flips between them.
+ Also covers: TIM-35 (running is a boolean that answers the question).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-24.vox -o p && ./p
+ expected output:
+   a fresh timer is not running
+   after Start it is running
+   after Stop it is not running
+)
+a timer called 'job timer'.
+If the 'job timer''s running then, print "a fresh timer says it is running".
+Otherwise, print "a fresh timer is not running".
+Start the 'job timer'.
+If the 'job timer''s running then, print "after Start it is running".
+Otherwise, print "after Start it is not running".
+Stop the 'job timer'.
+If the 'job timer''s running then, print "after Stop it is still running".
+Otherwise, print "after Stop it is not running".

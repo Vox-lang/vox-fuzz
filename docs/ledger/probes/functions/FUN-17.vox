@@ -1,0 +1,16 @@
+(FUN-17 — declaring a variable inside a function shadows a top-level
+ variable of the same name: the function sees 99, and the global is still
+ 5 after the call returns.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-17.vox -o p && ./p
+ expected output:
+   99
+   5
+)
+a number called g is 5.
+
+To 'shadow g'.
+  a number called g is 99.
+  Print g.
+
+'shadow g'.
+Print g.

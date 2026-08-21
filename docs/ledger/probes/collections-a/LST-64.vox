@@ -1,0 +1,20 @@
+(LST-64 — `is not a` negates the predicate.
+ Also covers: LST-66 (on a statically-typed value the predicate folds at
+ compile time and is always true, so the sentence is legal on any value, not
+ just a mixed one).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-64.vox -o p && ./p
+ expected output:
+   a number
+   not a number
+   not a number
+   static number folds true
+   static text folds true
+)
+a list called mixedbag is [1, "two", 3.5].
+For each item in mixedbag,
+  if item is not a number, print "not a number". otherwise print "a number".
+
+a number called plain is 7.
+if plain is a number then, print "static number folds true". otherwise print "static number folds false".
+a text called label is "hi".
+if label is a text then, print "static text folds true". otherwise print "static text folds false".

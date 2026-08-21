@@ -1,0 +1,16 @@
+(BAS-25 - an action-consuming construct consumes the ENTIRE sentence it
+ appears in: the While below owns both of its comma-separated actions, and
+ the sentence ends at the period, so `Print "after"` is outside the loop.
+ Also covers: BAS-26 (commas separate the actions), BAS-32 (the period
+ ends the whole construct including all its actions), BAS-33 (the comma
+ is what separates them).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-25.vox -o p && ./p
+ expected output:
+   7
+   8
+   9
+   after
+)
+a number called x is 7.
+While x is less than 10, print x, increment x.
+Print "after".

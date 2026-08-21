@@ -1,0 +1,26 @@
+(THG-45: LANGUAGE.md:953-972 verbatim - a chained possessive three deep,
+ read and written, incremented, alongside the outer thing's own quoted
+ field.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-45.vox -o p && ./p
+ expected output:
+   3
+   66
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+A thing called route has
+  a segment called leg,
+  a number called 'route number'.
+
+a route called commute.
+Set commute's leg's start's x to 3.
+Print commute's leg's start's x.
+increment commute's leg's end's y.
+Set commute's 'route number' to 66.
+Print commute's 'route number'.

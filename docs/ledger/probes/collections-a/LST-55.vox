@@ -1,0 +1,13 @@
+(LST-55 — `is a map` folds to true on a statically-typed map variable and
+ compares the runtime tag on a list element that holds a map.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-55.vox -o p && ./p
+ expected output:
+   static map folds true
+   map
+   map
+)
+a map called person is {"name": "Ada"}.
+if person is a map then, print "static map folds true". otherwise print "static map folds false".
+a list called holder is [{"tag": 1}, {"tag": 2}].
+For each entry in holder,
+  if entry is a map then, print "map". otherwise print "not map".

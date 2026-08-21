@@ -1,0 +1,9 @@
+(FMT-11 — `{var:N}` pads to N characters. Hand-verified detail the table
+ does not spell out: the padding is SPACES on the LEFT, i.e. right-aligned
+ in the field. The manual's own row: `{x:6}` -> `    42`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   [    42]
+)
+a number called x is 42.
+Print "[{x:6}]".

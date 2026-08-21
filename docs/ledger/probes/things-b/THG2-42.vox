@@ -1,0 +1,12 @@
+(THG2-42: reusing a name is first-come-first-served; the second definition
+ errors at its own line, naming the first. LANGUAGE.md:1550-1555, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-42.vox -o p && ./p
+ expected output:
+   error: 'point' is already defined as a variable on line 1
+   followed by "Type names, variable names, and function names share one
+   identifier space; the first definition wins." No binary is produced;
+   this is a compile error.
+)
+a number called point is 0.
+A thing called point has
+  a number called x is 0.

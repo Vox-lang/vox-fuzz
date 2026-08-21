@@ -1,0 +1,30 @@
+(D7 — Discrepancy 7 repro: `Return a buffer, "ABC".` — a text literal in
+ the return expression of a buffer-returning function — yields an EMPTY
+ buffer at the call site, size 0, printing nothing. The identical text in
+ a buffer DECLARATION (`a buffer called direct is "ABC".`, the first two
+ lines of output) yields size 3, and a function that builds a buffer
+ variable that way and returns THAT also yields size 3 (FUN-23). So the
+ text-to-buffer conversion the declaration form performs is not performed
+ in the return expression, and no diagnostic says so.
+ The strongest pro-compiler reading: `Return a buffer, <text literal>` is
+ a type mismatch the analyzer chose to accept rather than reject, and the
+ manual never promises a text literal converts to a buffer anywhere
+ except in a declaration's initializer. On that reading this is a missing
+ diagnostic rather than a wrong answer — but it is silent either way.
+ Add ONE more string-initialised buffer anywhere in the program — top
+ level or inside a function body — and it stops being silent and starts
+ segfaulting. See Discrepancy 8 and D8.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
+ expected output:
+   3
+   ABC
+   0
+)
+To 'give literal'. Return a buffer, "ABC".
+
+a buffer called direct is "ABC".
+Print direct's size.
+Print direct.
+a buffer called 'from literal' is 'give literal'.
+Print 'from literal''s size.
+Print 'from literal'.

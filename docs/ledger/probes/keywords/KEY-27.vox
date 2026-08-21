@@ -1,0 +1,21 @@
+(KEY-27 — `Send signal` is a statement performing `kill(2)`, and `child`
+ is accepted as an alias for `process`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-27.vox -o p && ./p
+ expected output:
+   signal 0 delivered
+   signal 9 delivered
+   signal to a stranger set the error flag
+)
+Set pid to fork the process.
+If pid is 0 then,
+    Wait 5000 milliseconds,
+    Exit 0.
+Send signal 0 to process pid.
+On error print "signal 0 to a live child failed".
+Print "signal 0 delivered".
+Send signal 9 to child pid.
+On error print "signal 9 failed".
+Print "signal 9 delivered".
+Set reaped to reap child pid.
+Send signal 9 to process 999999.
+On error print "signal to a stranger set the error flag".

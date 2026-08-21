@@ -1,0 +1,15 @@
+(BUF-13: `full` is true iff size = capacity. Manual scopes this "for fixed buffers"; also probed on a dynamic buffer since the manual does not say it fails there.)
+(expected output:
+0
+1
+0
+0
+)
+a buffer called fx is 4 bytes in size.
+print fx's full.
+append "abcd" to fx.
+print fx's full.
+a buffer called dyn.
+print dyn's full.
+append "hello" to dyn.
+print dyn's full.

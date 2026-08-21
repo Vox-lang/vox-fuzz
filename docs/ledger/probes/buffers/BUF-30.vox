@@ -1,0 +1,11 @@
+(BUF-30: undocumented precision on OOB - a READ is bounds-checked against current SIZE, not capacity, so an index within capacity but past current size still errors.)
+(expected output:
+read past size (but within capacity) errored
+0
+)
+a buffer called fx is 8 bytes in size.
+append "ABCD" to fx.
+Set byte 6 of fx to 88.
+a number called atcap is byte 8 of fx.
+On error print "read past size (but within capacity) errored".
+print atcap.

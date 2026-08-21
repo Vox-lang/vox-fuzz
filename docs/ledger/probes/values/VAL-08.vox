@@ -1,0 +1,13 @@
+(VAL-08: bare arithmetic on a value is a compile error — a value's type is
+ only known at runtime, so `v add 1` inside a value-parameter function is
+ rejected at compile time. (Compile-error claim: not assertable from a
+ runtime leaf, since emitting it produces a non-compiling program — outside
+ the generator's "legal Vox that should compile and run" contract.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-08.vox -o p && ./p
+ expected output:
+   error: Cannot use a value v in arithmetic: its type is only known at
+   runtime, and arithmetic on a dynamically-tagged value is not currently
+   supported.   (no binary produced; compile error)
+)
+To bump with a value called v. Return a number, v add 1.
+print bump of 5.

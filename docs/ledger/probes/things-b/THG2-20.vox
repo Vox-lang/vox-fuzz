@@ -1,0 +1,20 @@
+(THG2-20: every declared member returns its owner. A definition whose Return
+ hands back some other thing is a compile error naming both lines - the
+ definition line and the Return line. LANGUAGE.md:1315-1329, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-20.vox -o p && ./p
+ expected output:
+   error: A declared member returns its own thing: point's 'placed at' must return a point
+   followed by "The definition on line 8 makes ... and the Return on line 11
+   hands back a grid square." No binary is produced; this is a compile error.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0.
+
+A thing called 'grid square' has
+  a number called column is 0.
+
+To do the point's 'placed at', with a number called x.
+  a 'grid square' called square.
+  Set square's column to x.
+  Return a 'grid square', square.

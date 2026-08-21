@@ -1,0 +1,23 @@
+(FIL-10: a list's length, size, empty, first and last properties return the documented values, and size equals length.
+ Also covers: FIL-11, FIL-12, FIL-13, FIL-14.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-10.vox -o p && ./p
+ actual output:
+   3
+   3
+   0
+   Alice
+   Charlie
+   0
+   1
+)
+a list called names is ["Alice", "Bob", "Charlie"].
+print names's length.
+print names's size.
+print names's empty.
+print names's first.
+print names's last.
+a list called 'the empty list' is [].
+print 'the empty list's length.
+print 'the empty list's empty.

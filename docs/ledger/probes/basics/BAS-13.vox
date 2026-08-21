@@ -1,0 +1,10 @@
+(BAS-13 - nested parentheses inside a comment are supported: the comment
+ ends at the parenthesis that balances the one that opened it, not at the
+ first close-paren. Six levels here, and the statement after it still runs.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-13.vox -o p && ./p
+ expected output:
+   after the nest
+)
+(Nested (parentheses (are supported)) too)
+(a (nested (comment (four (levels (deep))))) here)
+print "after the nest".

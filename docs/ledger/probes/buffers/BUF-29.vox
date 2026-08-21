@@ -1,0 +1,14 @@
+(BUF-29: undocumented precision on OOB - a WRITE at an index within capacity but past current size succeeds and silently EXTENDS the buffer's length, zero-filling the gap, rather than erroring.)
+(expected output:
+4
+6
+0
+88
+)
+a buffer called fx is 8 bytes in size.
+append "ABCD" to fx.
+print fx's size.
+Set byte 6 of fx to 88.
+print fx's size.
+print byte 5 of fx.
+print byte 6 of fx.

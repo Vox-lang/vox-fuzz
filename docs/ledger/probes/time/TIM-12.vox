@@ -1,0 +1,38 @@
+(TIM-12 - the manual's Time Properties example, copied verbatim from
+ LANGUAGE.md:4155-4168, compiles and runs. Every value it prints comes
+ from the clock, so this is recorded as an exit-code probe with one real
+ run kept underneath as documentation.
+ Note: each `Print` ends its own line, so the example does NOT produce
+ `Current time: 04:07:49` - it produces eleven lines. `without newline`
+ (LANGUAGE.md:3085) is what the example would need. Legal, but the layout
+ the example implies is not what it does.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-12.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   Current time: 
+   4
+   :
+   13
+   :
+   34
+   Date: 
+   2026
+   -
+   8
+   -
+   21
+)
+Get current time into now.
+Print "Current time: ".
+Print the now's hour.
+Print ":".
+Print the now's minute.
+Print ":".
+Print the now's second.
+
+Print "Date: ".
+Print the now's year.
+Print "-".
+Print the now's month.
+Print "-".
+Print the now's day.

@@ -1,0 +1,20 @@
+(BAS-41 - rule 2: a blank line force-closes EVERY open clause at once,
+ including an enclosing function definition. Three levels are open here
+ (function, While, If) and a single blank line closes all three, so
+ `Print "top"` is top-level.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-41.vox -o p && ./p
+ expected output:
+   deep 0
+   deep 1
+   deep 2
+   top
+)
+To countdown.
+    a number called step is 0.
+    While step is less than 3,
+        If step is greater than or equal to 0 then,
+            print "deep {step}",
+            increment step.
+
+countdown.
+Print "top".

@@ -1,0 +1,14 @@
+(KEY-48 — `ms` is the reserved alias of `milliseconds` in a duration, so
+ `Wait 500 ms.` and `Wait 500 milliseconds.` are the same statement. The
+ probe waits twice and reports that the elapsed time covers both waits.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-48.vox -o p && ./p
+ expected output:
+   both spellings waited
+)
+a timer called clock.
+Start the clock.
+Wait 200 ms.
+Wait 200 milliseconds.
+a number called waited is the clock's elapsed in milliseconds.
+If waited is greater than 350 then,
+    Print "both spellings waited".

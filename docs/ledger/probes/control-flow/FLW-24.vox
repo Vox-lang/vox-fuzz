@@ -1,0 +1,8 @@
+(FLW-24: the manual's single-line example (LANGUAGE.md:2129) verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-24.vox -o p && ./p
+ expected output:
+   hello
+   hello
+   hello
+)
+Repeat 3 times, print "hello".

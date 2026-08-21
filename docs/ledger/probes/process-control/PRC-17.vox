@@ -1,0 +1,30 @@
+(PRC-17 — `Unmount "<target>".` performs umount2(2).
+ Also covers: PRC-18 (`umount` is an accepted alias) and PRC-19 (`lazily`
+ requests MNT_DETACH) — all four spellings are exercised.
+ SAFETY / LIMIT: unprivileged, so every call returns EPERM. The aliases
+ and the `lazily` suffix are proved to PARSE and reach umount2(2); MNT_DETACH
+ semantics (PRC-20) cannot be observed without a real mount to detach.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-17.vox -o p && ./p
+ expected output:
+   Unmount set the error flag
+   Unmount lazily set the error flag
+   the umount alias set the error flag
+   the umount alias with lazily set the error flag
+   all four spellings compiled and reached the syscall
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_unmount".
+Unmount "vf_scratch/process-control/scratch_unmount".
+On error print "Unmount set the error flag".
+Unmount "vf_scratch/process-control/scratch_unmount" lazily.
+On error print "Unmount lazily set the error flag".
+umount "vf_scratch/process-control/scratch_unmount".
+On error print "the umount alias set the error flag".
+umount "vf_scratch/process-control/scratch_unmount" lazily.
+On error print "the umount alias with lazily set the error flag".
+Remove the directory called "vf_scratch/process-control/scratch_unmount".
+print "all four spellings compiled and reached the syscall".

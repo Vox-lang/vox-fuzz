@@ -1,0 +1,19 @@
+(TIM-28 - the same four words are ordinary names everywhere else, so a
+ variable may be called `stop`, `start`, `begin` or `finish`. The manual
+ states the case for `stop`; the other three behave the same way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-28.vox -o p && ./p
+ expected output:
+   10
+   1
+   2
+   3
+)
+a number called stop is 0.
+a number called start is 1.
+a number called begin is 2.
+a number called finish is 3.
+Set stop to stop add 10.
+print stop.
+print start.
+print begin.
+print finish.

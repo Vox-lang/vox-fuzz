@@ -1,0 +1,13 @@
+(THG-13: `thing` is a keyword only inside the definition construct -
+ everywhere else it is an ordinary identifier, so a variable may be
+ called `thing`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-13.vox -o p && ./p
+ expected output:
+   42
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a number called thing is 42.
+Print thing.

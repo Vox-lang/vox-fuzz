@@ -1,0 +1,33 @@
+(BAS-43 - the blank-line rule applies uniformly: `while`, `for each`,
+ `repeat` and `on error` all terminate their body on a blank line,
+ whatever the last body statement was. Each block below is closed only by
+ its blank line, and `Print "end"` runs once at the top level.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-43.vox -o p && ./p
+ expected output:
+   while 0
+   while 1
+   for 7
+   for 8
+   repeat
+   repeat
+   handled
+   end
+)
+a number called first is 0.
+While first is less than 2,
+    print "while {first}",
+    increment first.
+
+a list called items is [7, 8].
+For each item in items,
+    print "for {item}".
+
+Repeat 2 times,
+    print "repeat".
+
+a buffer called tiny is 2 bytes in size.
+a number called stray is byte 40 of tiny.
+On error
+    print "handled".
+
+Print "end".

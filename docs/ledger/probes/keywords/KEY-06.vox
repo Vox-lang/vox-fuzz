@@ -1,0 +1,13 @@
+(KEY-06 — `While` starts a loop that runs while its condition holds.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-06.vox -o p && ./p
+ expected output:
+   3
+   2
+   1
+   while done
+)
+a number called countdown is 3.
+While countdown is greater than 0,
+    Print countdown,
+    Decrement countdown.
+Print "while done".

@@ -1,0 +1,10 @@
+(BAS2-59: the compiler checks that a treating clause's match and replacement
+ agree with EACH OTHER, and rejects the mismatch at compile time. It does not
+ check either against the collection's element type — that case is
+ Discrepancy 3, and it segfaults (D3.vox).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-59.vox -o p && ./p
+ expected output:
+   error: Treating match and replacement must be the same type (got number vs text).
+   (no binary produced; compile error)
+)
+print each item from ["a"] treating 98 as "z".

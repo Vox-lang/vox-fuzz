@@ -1,0 +1,17 @@
+(EXP-84: a string invalid from its very first character gives 0 - the manual's
+ own `"abc" as a base5 number`, since `a` is worth 10 and base 5 cannot hold
+ it.
+ The base-10 and hex cases are recorded alongside it, because they behave the
+ same way and the manual describes them differently. EXP-96 and EXP-97 record
+ what the error flag does in each of these cases.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-84.vox -o p && ./p
+ expected output:
+   0
+   0
+   0
+   0
+)
+Print "abc" as a base5 number.
+Print "abc" as a number.
+Print "zzz" as a hex number.
+Print "" as a number.

@@ -1,0 +1,35 @@
+(KEY-74 — the summary claim: a contextual keyword is a bare variable name
+ everywhere except its one fixed grammatical position, and both readings
+ live in the same program — the manual's own example is `arguments's first`
+ beside `a number called first is 0.`
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-74.vox -o p && ./p
+ expected output:
+   1
+   no user arguments, so arguments's first is not read
+   0
+   0
+   0
+)
+a number called first is 0.
+a number called count is 0.
+a number called last is 0.
+a number called name is 0.
+a number called all is 0.
+a number called raw is 0.
+a number called capacity is 0.
+a number called size is 0.
+a number called length is 0.
+a number called version is 0.
+a number called start is 0.
+a number called send is 0.
+a number called waiting is 0.
+a number called available is 0.
+a number called thing is 0.
+a number called has is 0.
+a number called do is 0.
+Print arguments's count.
+If arguments's empty then,
+    Print "no user arguments, so arguments's first is not read".
+Print first add count add last add name add all add raw add capacity.
+Print size add length add version add start add send add waiting.
+Print available add thing add has add do.

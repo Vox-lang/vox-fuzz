@@ -1,0 +1,20 @@
+(THG2-12: two things of different types cannot be compared - only two of the
+ same thing have the same fields. Note the caret lands on the DECLARATION of
+ the left operand, not on the comparison; see Discrepancy 3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-12.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a point and 'span' holds a segment, so they cannot be compared
+   No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+a point called origin.
+a segment called span.
+If origin is span then,
+    Print "same".

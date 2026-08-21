@@ -1,0 +1,8 @@
+(FMT-16 — `{var:o}` is octal and carries a `0o` prefix.
+ The manual's own row: `{n:o}` -> `0o10`, with n = 8.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   0o10
+)
+a number called n is 8.
+Print "{n:o}".

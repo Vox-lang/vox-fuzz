@@ -1,0 +1,16 @@
+(LST2-62 — arity is checked: the number of argument clauses must equal the
+ callee's parameter count. Two `each` clauses into a one-parameter action
+ is a compile error, not a concatenation.
+ (Compile-error claim: not assertable from a runtime leaf, since emitting
+ it produces a non-compiling program.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-62.vox -o p && ./p
+ expected output:
+   error: Function 'shout' expects 1 argument but was called with 2.
+   (no binary produced; compile error)
+   A two-parameter action given ONE clause is rejected symmetrically:
+   "Function 'pair' expects 2 arguments but was called with 1."
+)
+To shout of a number called mark.
+  print "shout {mark}".
+
+'shout' of each x from [1, 2] and each y from [3, 4].

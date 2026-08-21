@@ -1,0 +1,25 @@
+(LST-34 — LANGUAGE.md:2306-2310 warns that `element N of` yields a
+ REFERENCE to the child list, not a copy, so a child extracted before the
+ parent reallocates "may point at freed memory". Probed at 5000 appends
+ (far past any plausible growth threshold): the child stays intact and
+ readable. The hazard is hedged ("may"), so this is not a discrepancy — but
+ it is the one place in this section where the manual itself points at a
+ use-after-free, and no leaf goes near it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-34.vox -o p && ./p
+ expected output:
+   5003
+   [2, 3]
+   2
+   2
+)
+a list called parent is [1, [2, 3], "four"].
+a list called child is element 2 of parent.
+a number called counter is 1.
+While counter is less than or equal to 5000,
+    append counter to parent,
+    Set counter to counter add 1.
+
+print parent's length.
+print child.
+print child's length.
+print element 1 of child.

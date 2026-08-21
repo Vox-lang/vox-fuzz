@@ -1,0 +1,20 @@
+(THG2-07: a text initializer is a different sink - it builds its bytes in a
+ buffer - so interpolating a whole thing there is rejected, and the message
+ names the fields to interpolate instead. The buffer sink was run by hand from
+ the same shape - `copy "{origin}" to rendered.` into a sized buffer - and gives
+ the identical diagnostic, so no sink but `Print` can render a whole thing.
+ That is why THG2-01, THG2-03, THG2-04 and THG2-06 are marked unassertable
+ from inside a Vox program: there is no way to capture the rendering and
+ compare it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-07.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, which only `Print` can interpolate
+   followed by "Interpolate a field instead - point's fields are: x, y".
+   No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+a text called note is "the point is {origin}".

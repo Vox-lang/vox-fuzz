@@ -1,0 +1,8 @@
+(KEY-53 — `length` is no longer a reserved alias of `size`: it is a
+ contextual keyword, so it is legal as a bare variable name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-53.vox -o p && ./p
+ expected output:
+   1
+)
+a number called length is 1.
+Print length.

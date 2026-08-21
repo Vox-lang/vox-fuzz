@@ -1,0 +1,23 @@
+(KEY-25 — `fork` is an expression, not a statement: it returns 0 in the
+ child and the child's PID in the parent, and the trailing `the process` is
+ optional (bare `fork` also works). The parent reaps before printing so the
+ two processes' output cannot interleave.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-25.vox -o p && ./p
+ expected output:
+   child ran
+   parent saw a positive pid
+   bare fork also returned a pid
+)
+Set pid to fork the process.
+If pid is 0 then,
+    Print "child ran",
+    Exit 0.
+Set reaped to reap child pid.
+If pid is greater than 0 then,
+    Print "parent saw a positive pid".
+Set 'the second pid' to fork.
+If 'the second pid' is 0 then,
+    Exit 0.
+Set 'the second reaped' to reap child 'the second pid'.
+If 'the second pid' is greater than 0 then,
+    Print "bare fork also returned a pid".

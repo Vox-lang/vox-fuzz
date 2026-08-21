@@ -1,0 +1,21 @@
+(D1 — Discrepancy 1 repro: a conditional value return (factorial pattern,
+ no `Return` on the `To` line) that returns a NUMBER literal from a frame
+ whose value parameter holds a TEXT used to segfault the runtime, exit 139,
+ deterministic 6/6. LANGUAGE.md 0.4.7 (:2570-2574) described the whole
+ construct as a limitation — "the value would print as a number" — but in
+ this direction it crashed.
+ **RESOLVED — fixed by vox #43 (0.4.8).** The frame no longer crashes: the
+ `Otherwise` branch returns 99 and it prints 99. LANGUAGE.md was updated in
+ the same change and now documents the construct as working ("Conditional
+ `value` returns work", :2626-2639) with this exact program as its example;
+ running the manual's version verbatim prints `7` then `99`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   99
+)
+To label with a value called v.
+  If v is a number, return a value, v.
+  Otherwise, return a value, 99.
+
+a value called r is label of "hello".
+print r.

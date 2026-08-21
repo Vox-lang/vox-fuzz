@@ -1,0 +1,15 @@
+(EXP-83: parsing stops at the first character invalid for the base rather than
+ failing outright - the manual's own `"12g5" as a hex number` gives 18.
+ The extra lines record the same rule in three other bases, including base 10,
+ which the manual describes differently at :2026. See Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-83.vox -o p && ./p
+ expected output:
+   18
+   12
+   5
+   15
+)
+Print "12g5" as a hex number.
+Print "12xy" as a number.
+Print "1012" as a binary number.
+Print "1789" as an octal number.

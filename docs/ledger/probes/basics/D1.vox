@@ -1,0 +1,29 @@
+(D1 - Discrepancy 1 repro: LANGUAGE.md:39 says "Every statement ends with
+ a period", but the compiler does not require one, and a missing period
+ does not fail - it silently changes which clause the next statement
+ belongs to, differently for `If` than for `While`.
+ Line 1-2: two statements with no periods at all, even run together on one
+ line - both run.
+ Line 4-6: `While ... , Increment x` with no period; `Print "in loop"` is
+ ABSORBED into the loop body (it prints three times).
+ Line 9-11: the same shape with `If`; `Print "after if"` is NOT absorbed -
+ it prints even though the condition is false, so the newline ended the
+ `If` where it did not end the `While`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   one
+   two
+   in loop
+   in loop
+   in loop
+   after if
+   end
+)
+Print "one" Print "two".
+a number called x is 0.
+While x is less than 3, Increment x
+Print "in loop".
+a number called y is 1.
+If y is equal to 2 then, Print "then branch"
+Print "after if".
+Print "end".

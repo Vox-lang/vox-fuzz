@@ -1,0 +1,32 @@
+(TIM-36 - `in <unit>` casts a duration to that unit, and the two units
+ agree with each other: a 1500-millisecond job reads 1500 in milliseconds
+ and 1 in seconds, so the seconds cast truncates rather than rounding.
+ The singular spellings and the `ms` alias take the same position.
+ Also covers: TIM-37, TIM-38, TIM-39.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-36.vox -o p && ./p
+ expected output:
+   the millisecond cast reports the whole 1500
+   the second cast truncates 1.5 seconds to 1
+   millisecond and milliseconds are the same cast
+   ms and milliseconds are the same cast
+   elapsed takes the same cast as duration
+)
+a timer called 'job timer'.
+Start the 'job timer'.
+Wait 1500 milliseconds.
+Stop the 'job timer'.
+a number called 'in milliseconds' is the 'job timer''s duration in milliseconds.
+a number called 'in seconds' is the 'job timer''s duration in seconds.
+a number called 'in the singular' is the 'job timer''s duration in millisecond.
+a number called 'in the alias' is the 'job timer''s duration in ms.
+a number called 'elapsed in seconds' is the 'job timer''s elapsed in seconds.
+If 'in milliseconds' is greater than 1499 and 'in milliseconds' is less than 2500 then, print "the millisecond cast reports the whole 1500".
+Otherwise, print "the millisecond cast reports {'in milliseconds'}".
+If 'in seconds' is 1 then, print "the second cast truncates 1.5 seconds to 1".
+Otherwise, print "the second cast reports {'in seconds'}".
+If 'in the singular' is 'in milliseconds' then, print "millisecond and milliseconds are the same cast".
+Otherwise, print "the singular cast reports {'in the singular'}".
+If 'in the alias' is 'in milliseconds' then, print "ms and milliseconds are the same cast".
+Otherwise, print "the ms cast reports {'in the alias'}".
+If 'elapsed in seconds' is 'in seconds' then, print "elapsed takes the same cast as duration".
+Otherwise, print "elapsed in seconds reports {'elapsed in seconds'}".

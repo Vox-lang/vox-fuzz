@@ -1,0 +1,18 @@
+(TIM-27 - the four timer words open a timer statement whenever a name
+ operand follows, in any of the spellings the manual shows: lowercase or
+ capitalised, with the article or without it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-27.vox -o p && ./p
+ expected output:
+   lowercase begin and stop with no article worked
+   Start with no article and Stop with one worked
+)
+a timer called dash.
+a timer called sprint.
+begin dash.
+stop dash.
+Start sprint.
+Stop the sprint.
+If dash's running then, print "dash is still running".
+Otherwise, print "lowercase begin and stop with no article worked".
+If sprint's running then, print "sprint is still running".
+Otherwise, print "Start with no article and Stop with one worked".
