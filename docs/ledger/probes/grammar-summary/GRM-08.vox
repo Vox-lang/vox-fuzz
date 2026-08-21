@@ -1,0 +1,22 @@
+(GRM-08: func_call ::= identifier ("of"|"with"|"to"|"on") args - all four
+ prepositions are alternatives for the SAME call syntax, not different
+ call kinds. Hand-verified: all four give identical results for a
+ one-argument function. Cross-ref FUN-32 (functions.md:759), which
+ already hand-verified this exact claim ("all four connectors, hand-
+ verified identical") from LANGUAGE.md's own Functions chapter - this row
+ is the Grammar Summary's independent confirmation, not a new finding.
+ `grep "' to \|' on "` in src/gen_*.vox still finds no leaf that emits
+ "to"/"on" (FUN-32 also records this as the coverage gap: `of` only).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-08.vox -o p && ./p
+ expected output:
+   12
+   12
+   12
+   12
+)
+To 'triple' with a number called value. Return a number, value multiply 3.
+
+Print 'triple' of 4.
+Print 'triple' with 4.
+Print 'triple' to 4.
+Print 'triple' on 4.

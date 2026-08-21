@@ -1,0 +1,16 @@
+(LIB-24 -- a --shared build with no Library declaration has no identity
+ and is rejected.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-noidentity.vox --shared -o x.so
+ expected output:
+   error: A shared library must declare its identity with a `Library`
+   declaration giving its name and version -- without one there is no
+   mangling and no `.lib`. Add `Library name version "x.y".` before the
+   function definitions and rebuild with --shared.
+ (exit 1)
+)
+
+To greet.
+  Print "hi".

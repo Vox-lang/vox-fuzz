@@ -1,0 +1,12 @@
+(LIB-47 -- backward compatibility: fixtures/libmathkit_multi.lib/.so was
+ built from two sources declaring mathkit 1.0 and mathkit 2.0 (whose
+ bodies differ, so a wrong symbol would give a visibly wrong answer -- 2.0
+ adds 1000). Seeing version "1.0" out of that combined .so still reaches
+ the 1.0 symbol, unaffected by 2.0 being linked in beside it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-47.vox -o p && ./p
+ expected output:
+   7
+)
+see mathkit version "1.0" from "fixtures/libmathkit_multi.lib".
+
+Print 'add two numbers' of 3 and 4.

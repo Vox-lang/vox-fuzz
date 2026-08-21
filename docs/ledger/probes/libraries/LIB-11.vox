@@ -1,0 +1,17 @@
+(LIB-11 -- a bare name (no `./`, `../`, or leading `/`) checks
+ `/usr/share/vox/lib/<name>` first, falling back to the containing file's
+ directory only if that path does not exist. /usr/share/vox/lib does not
+ exist in this environment (only /usr/share/vox/coreasm does), so this
+ probe only hand-verifies the fallback half: a bare
+ "fixtures/libmathkit.lib" still resolves against this file's own
+ directory. The precedence half needs write access to
+ /usr/share/vox/lib, which requires root -- not verified, see the ledger
+ Report. Also covers LIB-12: the trap is the same mechanism, just no
+ collision was constructed here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-11.vox -o p && ./p
+ expected output:
+   30
+)
+see mathkit version "1.0" from "fixtures/libmathkit.lib".
+
+Print 'add two numbers' of 10 and 20.

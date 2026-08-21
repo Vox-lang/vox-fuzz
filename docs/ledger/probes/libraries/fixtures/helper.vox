@@ -1,0 +1,3 @@
+(Fixture for LIB-01 / LIB-09 — a plain included source file, one function.)
+To 'helper says'.
+  Print "helper".

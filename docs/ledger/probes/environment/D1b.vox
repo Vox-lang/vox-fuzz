@@ -1,0 +1,18 @@
+(Discrepancy 1 (ENV), companion: the identical failure reproduces for
+ `arguments's first`, run with one argument so the property is in
+ range -- confirms the bug is in "declare a buffer directly from a `'s`
+ property-read expression" generally, not anything specific to
+ `environment`. Cross-cutting into ARG's territory; not filed there
+ either, recorded here since this is where it was found.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p hello
+ expected output:
+   content:
+
+   size:
+   -1
+)
+a buffer called ab is arguments's first.
+print "content:".
+print ab.
+print "size:".
+print ab's size.

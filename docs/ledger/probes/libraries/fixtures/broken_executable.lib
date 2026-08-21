@@ -1,0 +1,7 @@
+Library mathkit version "1.0".
+Location "./libmathkit.so".
+
+Print "hi".
+
+Table of Contents:
+    To greet.

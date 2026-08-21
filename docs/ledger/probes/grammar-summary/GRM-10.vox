@@ -1,0 +1,32 @@
+(GRM-10: thing_def ::= "A" "thing" "called" name "has" thing_entry ("," thing_entry)* "."
+ - thing_entry ::= field_decl | member_decl - field_decl ::= "a" type
+ "called" name ("is" literal)? - member_decl ::= "a" "function" "called"
+ name (folded here: none of the three has independent syntax outside a
+ thing_def). Both entry kinds shown, and a field with and without the
+ optional default literal ("capacity is 5" vs. bare "filled"). A member
+ declared via member_decl must be a "maker" whose Return hands back the
+ owning type - see GRM-11 for the full member_def body syntax this row
+ only declares the manifest slot for. Cross-ref THG (things-a.md), which
+ maps this production's full claim set.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-10.vox -o p && ./p
+ expected output:
+   5
+   0
+   3
+)
+A thing called satchel has
+  a function called 'packed with',
+  a number called capacity is 5,
+  a number called filled.
+
+To do the satchel's 'packed with', with a number called amount.
+  a satchel called loaded.
+  Set loaded's capacity to 5.
+  Set loaded's filled to amount.
+  Return a satchel, loaded.
+
+a satchel called sack.
+Print sack's capacity.
+Print sack's filled.
+a satchel called half is a satchel's 'packed with' with 3.
+Print half's filled.

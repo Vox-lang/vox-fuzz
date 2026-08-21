@@ -1,0 +1,11 @@
+(LIB-43, 2 of 6 -- version mismatch: the .lib exists and has the named
+ library, but not the requested version. The diagnostic lists the
+ versions the .lib does offer, as the manual promises.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43b.vox -o p && ./p
+ expected output:
+   error: 'docs/ledger/probes/libraries/fixtures/libmathkit.lib' has library "mathkit" but not version "9.9".
+   (compile error; also lists "The available versions are: "1.0".")
+)
+see mathkit version "9.9" from "fixtures/libmathkit.lib".
+
+Print 1.

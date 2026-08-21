@@ -1,0 +1,9 @@
+(EXA-01: the manual's "Hello World" example, verbatim. The manual shows no
+ explicit output block for any Examples-chapter program; this probe's
+ recorded output is the compiler's actual run, taken as ground truth for
+ what "should compile and print" means here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXA-01.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

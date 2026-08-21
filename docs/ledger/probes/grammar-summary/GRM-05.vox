@@ -1,0 +1,14 @@
+(GRM-05: append_stmt's first form - "append" expr "to" name "." - a
+ single value onto a buffer/list. The second form ("append each name from
+ expr to name (treating expr as expr)? .") is GRM-16's row: it parses
+ differently from how this production literally states it, and its
+ `treating` clause is a silent no-op - see Discrepancy 3. Cross-ref BUF-31
+ (buffers.md) for the buffer-append semantics this exercises.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-05.vox -o p && ./p
+ expected output:
+   hi there
+)
+a buffer called greeting is 32 bytes in size.
+append "hi" to greeting.
+append " there" to greeting.
+Print greeting.

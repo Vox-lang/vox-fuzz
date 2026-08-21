@@ -1,0 +1,49 @@
+(GRM-20: type ::= "number" | "float" | "text" | "boolean" | "list" |
+ "map" | "buffer" | "file" | "time" | "timer" | "value" |
+ <user-defined thing name>. All twelve declared and printed/accessed.
+ Booleans print as 1/0 everywhere in Vox, not something this row
+ contradicts. Cross-ref the type-specific ledgers (variables.md,
+ buffers.md, files.md, time-and-timers.md, values.md, collections-a.md,
+ things-a.md), each of which maps its own type's full claim set - this
+ row's job is only "every listed type name parses in a var_decl and
+ produces a working value", which none of those sibling ledgers state as
+ a single combined claim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-20.vox -o p && ./p
+ expected output:
+   1
+   2.5
+   hi
+   1
+   [1, 2, 3]
+   {"a": 1}
+   8
+   3
+   9
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a number called n is 1.
+a float called f is 2.5.
+a text called s is "hi".
+a boolean called b is true.
+a list called items is [1, 2, 3].
+a map called scores is {"a": 1}.
+a buffer called buf is 8 bytes in size.
+open a file called fh for reading at "docs/ledger/PROCEDURE.md".
+a time called now is current time.
+a timer called clock.
+a value called v is 3.
+a point called p.
+Set p's x to 9.
+Print n.
+Print f.
+Print s.
+Print b.
+Print items.
+Print scores.
+Print buf's capacity.
+Print v.
+Print p's x.
+close fh.

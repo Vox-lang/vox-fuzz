@@ -1,0 +1,9 @@
+(EXA-02: the manual's "Variables and Arithmetic" example, verbatim.
+ 3 add 5 = 8, which is the compiler's actual output too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXA-02.vox -o p && ./p
+ expected output:
+   8
+)
+a number called x is 3.
+a number called y is 5.
+Print the x add the y.

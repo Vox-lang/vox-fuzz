@@ -1,0 +1,12 @@
+(LIB-43, 6b of 6 -- type mismatch at the call site: 'add two numbers'
+ takes two numbers; this call passes text for the first. The diagnostic
+ names the library, version, argument position and name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43g.vox -o p && ./p
+ expected output:
+   error: Function 'add two numbers' (library "mathkit" version "1.0") expects a number for argument 1 ("x") but was called with text.
+   (compile error)
+)
+see mathkit version "1.0" from "fixtures/libmathkit.lib".
+
+a number called sum is 'add two numbers' of "hi" and 4.
+Print sum.

@@ -1,0 +1,11 @@
+(LIB-43, 4 of 6 -- missing .so at Location: fixtures/nolib/ has a copy of
+ libmathkit.lib but no libmathkit.so beside it, so Location resolution
+ fails.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43d.vox -o p && ./p
+ expected output:
+   error: the .so named by Location "./libmathkit.so" does not exist at the resolved path 'docs/ledger/probes/libraries/fixtures/nolib/libmathkit.so'.
+   (compile error; also names "The library binary belongs beside the .lib that describes it (or in a directory given by --lib-path).")
+)
+see mathkit version "1.0" from "fixtures/nolib/libmathkit.lib".
+
+Print 1.

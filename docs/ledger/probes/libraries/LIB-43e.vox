@@ -1,0 +1,12 @@
+(LIB-43, 5 of 6 -- symbol absent from the .so, the stale-.lib case:
+ fixtures/libstalekit.lib was hand-edited to promise a 'phantom function'
+ that fixtures/libstalekit.so does not export. The manual promises this
+ names the symbol; it does.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43e.vox -o p && ./p
+ expected output:
+   error: the .lib entry 'To 'phantom function' ...' promises the symbol 'stalekit_1_0_phantom_function', but 'docs/ledger/probes/libraries/fixtures/libstalekit.so' does not export it (not in .dynsym).
+   (compile error; also states "The .lib is stale: it does not match the library binary. Rebuild the library with `vox --shared` to regenerate the pair.")
+)
+see stalekit version "1.0" from "fixtures/libstalekit.lib".
+
+Print 'phantom function' of 3.

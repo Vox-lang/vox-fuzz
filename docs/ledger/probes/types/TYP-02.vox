@@ -1,0 +1,13 @@
+(TYP-02: `float` is documented as 64-bit IEEE 754 (LANGUAGE.md:433).
+ 0.1 + 0.2 is not exactly representable in binary64 and rounds to a
+ value strictly greater than the nearest representation of 0.3 — the
+ textbook double-rounding fingerprint. Confirms the claim; not a
+ discrepancy.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TYP-02.vox -o p && ./p
+ expected output:
+   inexact (double rounding)
+)
+a float called f is 0.1.
+a float called g is 0.2.
+a float called s is f add g.
+if s is equal to 0.3, print "exact". otherwise print "inexact (double rounding)".

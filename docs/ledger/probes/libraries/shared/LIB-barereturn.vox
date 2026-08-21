@@ -1,0 +1,26 @@
+(LIB-39 -- a bare `Return <expr>.`, with no `a <type>,` clause, records
+ no return type at all in the .lib -- not even a list's element type --
+ unlike `Return a list, out.`, which LIB-listinfer.vox shows does record
+ one. See also Discrepancy 3: a caller of `five` below can still assign
+ its result to a typed variable with no diagnostic, even though the .lib
+ says it returns nothing.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-barereturn.vox --shared -o barereturn.so
+   cat barereturn.lib
+ expected output: exit 0, and barereturn.lib reads:
+   Library barekit version "1.0".
+   Location "./barereturn.so".
+
+   Table of Contents:
+       To five with a number called x.
+       To 'echo list bare' with a list called items.
+)
+
+Library barekit version "1.0".
+
+To five with a number called x. Return x add 1.
+
+To 'echo list bare' with a list called items.
+  Return items.

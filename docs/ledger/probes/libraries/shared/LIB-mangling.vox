@@ -1,0 +1,27 @@
+(LIB-50 through LIB-52 -- mangling. Every exported function mangles to
+ flat `<library>_<version>_<func>`, every component sanitized by mapping
+ characters outside [A-Za-z0-9_] to _, and a leading-digit prefix applies
+ only to the library component since it begins the symbol. A bare
+ identifier cannot start with a digit (`Library 123kit ...` fails to
+ parse as a name at all -- it lexes as an integer literal), so this uses
+ the single-quoted spelling `'123kit'`, which is legal, to reach the
+ leading-digit case at all: sanitizing "123kit" leaves it unchanged, but
+ since it opens the mangled symbol it gets an underscore prefix. Version
+ "2.0" sanitizes to "2_0" with no such prefix, since it is interior, not
+ the symbol's first component. Function name "foo-bar!" sanitizes both
+ punctuation characters to underscores.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-mangling.vox --shared -o mangling.so
+   nm -D --defined-only mangling.so
+ expected output: exit 0, and:
+   0000000000000396 T _123kit_2_0_foo_bar_
+ (the address column is whatever this build happens to lay out; only the
+ symbol name is the claim under test)
+)
+
+Library '123kit' version "2.0".
+
+To 'foo-bar!'.
+  Print "hi".

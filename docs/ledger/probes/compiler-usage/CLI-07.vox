@@ -1,0 +1,16 @@
+(CLI-07: `-o <file>` - output file name. Also the flag test.sh's own
+ harness (`"$VOX" "$f" -o "$bin"`, test.sh:38) and the crates.io launcher
+ (src/main.rs:77) rely on for every single compile they do - this is the
+ most heavily-exercised CLI flag in the whole repo, already `exercised`
+ by the harness independent of this probe.
+ Hand-run separately (custom name, distinct from the source stem):
+   $ vox hello.vox -o myprogram
+   $ ls myprogram
+   myprogram
+   $ ./myprogram
+   Hello, World!
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-07.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

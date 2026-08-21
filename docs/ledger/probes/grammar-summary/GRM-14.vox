@@ -1,0 +1,17 @@
+(GRM-14: for_stmt's two forms - "For each" name "from" expr "to" expr ","
+ block "." (a numeric range) and "For each" name "in" expr "," block "."
+ (a collection). Cross-ref FLW (control-flow.md, the range form) and
+ LST2/collections-b.md (the collection form), which map this production's
+ full claim set.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-14.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   red
+   green
+   blue
+)
+For each number from 1 to 3, print number.
+a list called colors is ["red", "green", "blue"].
+For each color in colors, print color.
