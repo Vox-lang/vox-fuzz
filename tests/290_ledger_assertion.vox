@@ -36,7 +36,15 @@ see "../src/loop_gen.vox".
  generated program's stdout can carry NUL bytes; a Vox text stops at the
  first one, so the text route silently dropped every finding whose
  program had printed one - three of seven, when a BUF-05 assertion was
- broken on purpose to check this whole path end to end.)
+ broken on purpose to check this whole path end to end.
+
+ Reading every byte is only half of it - fuzzer defect 14 was the other
+ half. A hole punched through a capture holds no newline, so the ASSERT
+ line after it does not start after a newline, and a scan that begins
+ lines only at newlines never tested the marker where the line actually
+ begins. The last three groups below are that: the byte shape of seed
+ 40252's capture, a hole after the last line rather than before it, and
+ a real program compiled and run that punches the hole itself.)
 
 Print "--- the line scan ---".
 
@@ -67,7 +75,7 @@ Print 'the assert line in' of 'nothing at all'.
 Print "--- a real program exiting 95 ---".
 
 Set findings_dir to "./vf_ledger_findings".
-a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul" and 5000.
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul ./vf_ledger_hole ./vf_ledger_tail ./vf_ledger_hole_bin ./vf_ledger_hole_cerr ./vf_ledger_hole_out" and 5000.
 
 a number called 'the compile result' is 'compile vox' of "." and "tests/fixtures/ledger_assertion.vox" and "./vf_ledger_bin" and "./vf_ledger_cerr".
 Print "compiled: {'the compile result' is 0}".
@@ -106,6 +114,42 @@ Print "detail through a text: {'the assert line in' of 'the truncated capture'}"
 a text called 'the missing capture detail' is 'the assert line in file' of "./vf_ledger_absent".
 Print "detail from a capture that is not there: {'the missing capture detail'}".
 
+Print "--- a hole with no newline in it ---".
+
+(The capture from vox-notes/env-a-seed-40252, byte for byte: a 14-byte
+ first line, 158 NULs where a /dev/stdout write truncated the file under
+ the running program, and the ASSERT line after the hole - with no
+ newline anywhere between the two. The hole is not a line, so the line
+ the ASSERT is on starts where the hole ends, and the scan must say so.)
+a number called 'the holed capture' is 'run shell' of "printf 'fmt4 hello4 0\\n' > ./vf_ledger_hole; head -c 158 /dev/zero >> ./vf_ledger_hole; printf 'ASSERT ENV-06: expected 9 got -1\\n' >> ./vf_ledger_hole" and 5000.
+Print "detail across the hole: {'the assert line in file' of \"./vf_ledger_hole\"}".
+
+(A hole AFTER the last ASSERT line - the same sparse capture, sparse at
+ the end instead. The line ends where the hole starts, so the detail
+ carries the line and none of the NULs.)
+a number called 'the trailing hole capture' is 'run shell' of "printf 'noise\\nASSERT BUF-13: expected 1 got 0\\n' > ./vf_ledger_tail; head -c 64 /dev/zero >> ./vf_ledger_tail" and 5000.
+Print "detail with the hole after the line: {'the assert line in file' of \"./vf_ledger_tail\"}".
+
+Print "--- a program that punches the hole itself ---".
+
+(End to end, through the same three calls the gen loop makes on the
+ exit-95 path: compile, run under capture, scan the capture. The fixture
+ opens /dev/stdout while its stdout IS the capture file, which is how
+ seed 40252 produced a capture with a hole in it without anything in the
+ generator intending one.)
+a number called 'the hole compile result' is 'compile vox' of "." and "tests/fixtures/ledger_assertion_hole.vox" and "./vf_ledger_hole_bin" and "./vf_ledger_hole_cerr".
+Print "compiled: {'the hole compile result' is 0}".
+a text called 'the hole verdict' is 'run program capturing' of "./vf_ledger_hole_bin" and 5000 and "./vf_ledger_hole_out".
+Print "verdict: {'the hole verdict'}".
+a number called 'the hole exit code' is 'exit code of' of 'the last status'.
+Print "exit code: {'the hole exit code'}".
+(the capture must really be holed, or the test proves nothing: fewer
+ bytes survive stripping NULs than the file holds.)
+a number called 'the hole present check' is 'run shell' of "test $(tr -d '\\000' < ./vf_ledger_hole_out | wc -c) -lt $(wc -c < ./vf_ledger_hole_out)" and 5000.
+Print "the capture really has a NUL hole: {'the hole present check' is 0}".
+a text called 'the holed detail' is 'the assert line in file' of "./vf_ledger_hole_out".
+Print "detail: {'the holed detail'}".
+
 Print "--- the reserved exit band ---".
 
 (90-99 must be unreachable as an ordinary exit code, or a program that
@@ -125,4 +169,4 @@ While 'the draws made' is less than 4000,
     Set 'the draws made' to 'the draws made' add 1.
 Print "exit codes drawn inside 90-99: {'the codes in the band'}".
 
-a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul" and 5000.
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul ./vf_ledger_hole ./vf_ledger_tail ./vf_ledger_hole_bin ./vf_ledger_hole_cerr ./vf_ledger_hole_out" and 5000.

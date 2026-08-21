@@ -1,22 +1,17 @@
 --- seed 42 ---
-To 'read flags 1'.
-    a text called fl1local is fl1label.
-    a number called fl1bumped is fl1count add 1.
-    Print fl1local.
-    Print fl1bumped.
-    Print fl1on.
-
 a flag called fl1label is "-a" or "--alpha1", it is a text.
 a flag called fl1count is "-b" or "--beta1", it is a number.
 a flag called fl1on is "-c" or "--gamma1", it is a boolean.
 a flag called fl1scratch is "-s" or "--scratch1", it is a text.
 Parse flags.
 
-If fl1label is not "v36333" then, Exit 91.
-If fl1count is not 1266 then, Exit 92.
+If fl1label is not "v41738" then, Exit 91.
+If fl1count is not 8087 then, Exit 92.
 If fl1on then, Exit 94.
 
-a number called v1 is 69414907254369.
+a number called v1 is 209045463.
+a number called v2 is 82642.
+a number called v3 is 4870604931445145.
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -45,10 +40,10 @@ To do the t4's 'reflected across', with a t4 called original.
     Return a t4, mirrored.
 
 To f1.
-    Return a number, 000009179.
+    Return a number, 0000843.
 
 To f2 with a number called p1.
-    a number called r is p1 add -07.
+    a number called r is p1 add -0000000000000000.
     Return a number, r.
 
 To f3 with a number called p1 and a number called p2.
@@ -58,93 +53,58 @@ To f3 with a number called p1 and a number called p2.
 To f4 with a text called p1.
     Print "f4 {p1}".
 
-a float called d1 is 9223372036854775807.5.
-a float called d2 is 5.1.
-a float called d3 is d1 multiply d2.
-Print d3.
-a float called d4 is d1 divide d2.
-Print d4.
-a float called d5 is d1 add v1.
-Print d5.
-a text called 'the dispatch note path' is "{fl1scratch}/buffer1".
-open a file for writing called 'the dispatch note being written' at 'the dispatch note path'.
-Write "4xe3s9ercxq70lizohqjk16rctq3052vc96jw1ir4hars967g96341encdurwtyzwxe301af8h2b4lajgt2jw5674dy7khm70lu3gtmrodyvwlmjklirkpqj4t" to 'the dispatch note being written'.
-Close 'the dispatch note being written'.
-open a file for reading called 'the dispatch note being read' at 'the dispatch note path'.
-a buffer called 'the dispatch note' is 54 bytes.
-a boolean called 'the dispatch note was truncated' is false.
-Read from 'the dispatch note being read' into 'the dispatch note'.
-On error Set 'the dispatch note was truncated' to true.
-Close 'the dispatch note being read'.
-If 'the dispatch note's size is not 54 then, Print "ASSERT BUF-07: expected 54 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
-If 'the dispatch note's size is not 'the dispatch note's capacity then, Print "ASSERT BUF-07: expected {'the dispatch note's capacity} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+Create a buffer called 'the mailbag' with size 89857.
+If 'the mailbag's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the mailbag's size}", Exit 95. Print 'the mailbag's size.
+If 'the mailbag's capacity is not 89857 then, Print "ASSERT BUF-05: expected 89857 got {'the mailbag's capacity}", Exit 95. Print 'the mailbag's capacity.
+Create a buffer called 'the manifest' with size 6656.
+If 'the manifest's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
+If 'the manifest's capacity is not 6656 then, Print "ASSERT BUF-05: expected 6656 got {'the manifest's capacity}", Exit 95. Print 'the manifest's capacity.
+a buffer called 'the envelope' is 5557 bytes in size.
+If 'the envelope's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
+If 'the envelope's capacity is not 5557 then, Print "ASSERT BUF-05: expected 5557 got {'the envelope's capacity}", Exit 95. Print 'the envelope's capacity.
+Print 'the envelope's size.
+a buffer called scratch is 41 bytes.
+If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
+append "w2jrfizg" to scratch.
+If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
+append "ddr42un2v3hakzygdj7smwo8m7" to scratch.
+If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
+append "mei4obi" to scratch.
+If scratch's full is false then, Print "ASSERT BUF-13: expected 1 got {scratch's full}", Exit 95. Print scratch's full.
+If scratch's size is not 41 then, Print "ASSERT BUF-13: expected 41 got {scratch's size}", Exit 95. Print scratch's size.
+Create a buffer called 'the sketchpad'.
+append "ovvi915kpydchthzyp9cpkd" to 'the sketchpad'.
+Print 'the sketchpad's full.
+Print scratch's size.
+Set v2 to v1.
+Set v3 to v2 multiply v2.
+Create a buffer called cupboard with size 4097.
+If cupboard's empty is false then, Print "ASSERT BUF-12: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+Print v2 multiply v3.
+append "4dncwq5y2oy39ko66mw41wckdb3qw7ov2m" to cupboard.
+If cupboard's size is not 34 then, Print "ASSERT BUF-10: expected 34 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {cupboard's capacity}", Exit 95. Print cupboard's capacity.
+If cupboard's length is not 34 then, Print "ASSERT BUF-11: expected 34 got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's length is not cupboard's size then, Print "ASSERT BUF-11: expected {cupboard's size} got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's empty then, Print "ASSERT BUF-12: expected 0 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+Print cupboard's length.
+Print {v1 add v1} multiply v1 modulo 4.
+f3 of each e1 from [34, 5] treating 65 as 30 and each e2 from 4 to 6 treating 2 as 99.
+Create a buffer called 'the dispatch note' with size 86.
+If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
+append "j0z4k17s9mcb4d873fnyvm87qcoftte0ekh44042m4clfky4vtxtslrvajay06huzvik9ivsi4j11q8a" to 'the dispatch note'.
+If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
+append "v" to 'the dispatch note'.
+If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
+append "njs1s" to 'the dispatch note'.
+If 'the dispatch note's full is false then, Print "ASSERT BUF-13: expected 1 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
+If 'the dispatch note's size is not 86 then, Print "ASSERT BUF-13: expected 86 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
 Print 'the dispatch note's size.
-Set v1 to v1.
-a text called 'the workshop' is environment's "XDG_RUNTIME_DIR".
-a buffer called 'the workshop in bytes' is 'the workshop'.
-a value called 'the headcount' is environment's "XDG_RUNTIME_DIR".
-If 'the headcount' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
-a value called 'the lodging' is environment's "XDG_RUNTIME_DIR".
-If 'the lodging' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
-Print 'the workshop in bytes''s size.
-a number called u1 is 0.
-While u1 is less than 6, Print u1, If u1 is equal to 2 then, Break. Increment u1.
-Print u1.
-For each number from 1 to 2, Print number, If number is equal to 5 then, Continue. Print "x".
-If v1 is greater than v1 then,
-  Set v1 to v1 minus v1.
-Set v1 to v1 multiply v1.
-a text called fp1 is "{fl1scratch}/out1".
-open a file for writing called fw1 at fp1.
-Write "payload 1417\n" to fw1.
-Close fw1.
-open a file for reading called fr1 at fp1.
-a buffer called fb1 is 50 bytes in size.
-Read from fr1 into fb1.
-Print fb1's size.
-Print fr1's readable.
-Close fr1.
-a number called gn2 is 2147483648.
-a buffer called gw2 is 192 bytes in size.
-copy "hello2" to gw2.
-a text called gt2 is "{gw2}".
-a text called gu2 is "/bin/{gt2}-{gn2:020}".
-Print gt2.
-Print gu2.
-a buffer called gb2 is "{gt2}|{gn2}".
-Print gb2.
-a buffer called gc2 is 192 bytes in size.
-set gc2 to "set {gn2:020}".
-append " {gt2}" to gc2.
-Print gc2.
-f4 of "{gt2}/{gn2}".
-a list called gl2 is [].
-append "{gn2:020}" to gl2.
-Print element 1 of gl2.
-a map called gm2 is {"label": "tag2"}.
-Set gm2's "label" to "{gt2}-{gn2}".
-Print gm2's "label".
-a value called gv2 is "{gn2:020}".
-Print gv2.
-open a file for writing called gh2 at "/dev/stdout".
-Write "fmt2 {gt2} {gn2}\n" to gh2.
-Close gh2.
-a map called m1 is {"label": "tag1", "count": 606}.
-Print m1's "label".
-Set m1's "count" to 903.
-Print m1's "count".
-Print m1's length.
-For each k1 in m1's keys, Print k1.
-a buffer called 'loading bay'.
-a number called 'loading bay appends made' is 0.
-a boolean called 'loading bay overflowed' is false.
-a boolean called 'loading bay found an error already pending' is false.
-On error Set 'loading bay found an error already pending' to true.
-While 'loading bay appends made' is less than 145, append "45ynolizw1uzg1qvwdavghyfgh6f0duj85e7wtu3g1ezs56bs9q" to 'loading bay', On error Set 'loading bay overflowed' to true. Set 'loading bay appends made' to 'loading bay appends made' add 1.
-If 'loading bay's size is not 7395 then, Print "ASSERT BUF-03: expected 7395 got {'loading bay's size}", Exit 95. Print 'loading bay's size.
-If 'loading bay overflowed' then, Print "ASSERT BUF-03: expected 0 got {'loading bay overflowed'}", Exit 95. Print 'loading bay overflowed'.
-Print 'loading bay's size.
-'read flags 1'.
-Exit 33.
+f3 of each e3 from [14, 12] treating 60 as 97 and each e4 from 4 to 4 treating 2 as 32.
+Set v1 to v3 minus v3.
+Print arguments's count.
+Print arguments's empty.
+Set v1 to v2 minus v2.
+Exit 214.
 
 reproducible: 1

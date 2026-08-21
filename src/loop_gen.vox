@@ -65,7 +65,27 @@ To 'classify compile exit' with a number called code.
  plainly the last thing the program printed. Reading into a dynamic
  buffer keeps every byte - one Read takes a 5,050-byte file with 5,000
  NULs in the middle, hand-verified - so the scan sees the whole
- capture.)
+ capture.
+
+ Reading every byte is not enough on its own, and fuzzer defect 14 is
+ what the difference costs. A program that opens /dev/stdout while its
+ stdout IS the capture file reopens that file at offset 0 and writes
+ there, while the descriptor the ordinary Prints go through keeps its
+ own offset - so the capture comes back as a short first line, a hole of
+ NULs, and then the rest, ASSERT line included. Retained repro:
+ vox-notes/env-a-seed-40252, seed 40252, whose capture is 205 bytes -
+ `fmt4 hello4 0\n`, 158 NULs, then
+ `ASSERT ENV-06: expected 9 got -1\n`.
+
+ The hole holds no newline, so the last newline before the ASSERT line
+ is the one at byte 14, and a scan that starts lines only after a
+ NEWLINE was still testing the marker at byte 15 - a NUL - when it
+ reached the end. The finding said "no ASSERT line was found on stdout"
+ about a capture whose last line is the ASSERT. Swapping one NUL of that
+ capture for a newline made the same scan find the line, which is the
+ whole mechanism. So a NUL ends a line here too: it is the hole, not
+ something a program printed, and the line after it starts where it
+ ends.)
 
 a text called 'the missing assert line' is "ledger assertion failed (exit 95) but no ASSERT line was found on stdout".
 
@@ -114,7 +134,16 @@ To 'the assert line in bytes' with a buffer called 'the captured bytes'.
         a number called 'the byte here' is 10,
         If 'the position' is less than or equal to 'the byte count' then,
             Set 'the byte here' to byte 'the position' of 'the captured bytes'.
+        (A NUL ends a line here exactly as a newline does. It is not part
+         of any line a program printed - it is the hole - and the line
+         the ASSERT is on starts after it, not at the last newline before
+         it. See the note above for the capture this was proven on.)
+        a boolean called 'this ends the line' is false,
         If 'the byte here' is 10 then,
+            Set 'this ends the line' to true.
+        If 'the byte here' is 0 then,
+            Set 'this ends the line' to true.
+        If 'this ends the line' then,
             a boolean called 'this line is an assertion' is 'the assert marker starts at' of 'the captured bytes' and 'the line start',
             If 'this line is an assertion' then,
                 Set 'the found start' to 'the line start',

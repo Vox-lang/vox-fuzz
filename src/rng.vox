@@ -12,6 +12,34 @@ To 'rng next'.
     Set rng_state to rng_state modulo 2147483648.
     Return a number, rng_state.
 
+(A draw below nn, taken from the HIGH bits of the state - fuzzer defect
+ 13.
+
+ The low bits of a power-of-two-modulus LCG are not random: bit 0 has
+ period 2, so `r modulo nn` handed every caller a sequence whose parity
+ alternated. Measured over 10 000 draws before this changed: `'rng
+ below' of 2` gave 0,1,0,1,... - 5000 of each, longest run 1, lag-1
+ autocorrelation -0.999 - and `of 10` never repeated a value either,
+ longest run 1, because consecutive draws always disagreed in parity.
+ Every coin flip in every leaf was perfectly anti-correlated with the
+ one before it, and any helper spending a fixed number of draws per
+ construct locked onto the alternation and stopped varying at all.
+
+ Multiply-high instead of modulo: r is below 2^31, so `r multiply nn`
+ divided by 2^31 is r's position below nn scaled by its HIGH bits, and
+ the low bit no longer reaches the result at all. The same 10 000 draws
+ after the change: below 2 gives longest run 12 and lag-1 -0.014, below
+ 3 longest run 9 and -0.006, below 10 longest run 4 and -0.004 - the
+ runs are now what fair draws give, log2 10000 and log10 10000.
+ tests/230_units.vox pins all three.
+
+ nn is small everywhere it is called - the largest is 1000000 - so
+ `r multiply nn` stays far below the 64-bit ceiling. nn of 0 still
+ yields 0, as `r modulo 0` did: tests/230_units.vox pins that too,
+ because the fuzzer's seed reproduction must not become a divide by
+ zero.)
+
 To 'rng below' with a number called nn.
     a number called r is 'rng next'.
-    Return a number, r modulo nn.
+    a number called 'the scaled draw' is r multiply nn.
+    Return a number, 'the scaled draw' divide 2147483648.
