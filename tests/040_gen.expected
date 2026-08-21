@@ -80,21 +80,16 @@ If 'the dispatch note's size is not 54 then, Print "ASSERT BUF-07: expected 54 g
 If 'the dispatch note's size is not 'the dispatch note's capacity then, Print "ASSERT BUF-07: expected {'the dispatch note's capacity} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
 Print 'the dispatch note's size.
 Set v1 to v1.
-a number called env1count is environment's count.
-Print env1count as a boolean.
-Print environment's empty.
-a buffer called env1pathbuf is environment's "PATH".
-Print env1pathbuf's empty.
-Set v1 to v1.
-a buffer called 'the pigeonhole' is 2 bytes in size.
-If 'the pigeonhole's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the pigeonhole's empty}", Exit 95. Print 'the pigeonhole's empty.
-append "3s" to 'the pigeonhole'.
-If 'the pigeonhole's size is not 2 then, Print "ASSERT BUF-10: expected 2 got {'the pigeonhole's size}", Exit 95. Print 'the pigeonhole's size.
-If 'the pigeonhole's capacity is not 2 then, Print "ASSERT BUF-10: expected 2 got {'the pigeonhole's capacity}", Exit 95. Print 'the pigeonhole's capacity.
-If 'the pigeonhole's length is not 2 then, Print "ASSERT BUF-11: expected 2 got {'the pigeonhole's length}", Exit 95. Print 'the pigeonhole's length.
-If 'the pigeonhole's length is not 'the pigeonhole's size then, Print "ASSERT BUF-11: expected {'the pigeonhole's size} got {'the pigeonhole's length}", Exit 95. Print 'the pigeonhole's length.
-If 'the pigeonhole's empty then, Print "ASSERT BUF-12: expected 0 got {'the pigeonhole's empty}", Exit 95. Print 'the pigeonhole's empty.
-Print 'the pigeonhole's length.
+a text called 'the workshop' is environment's "XDG_RUNTIME_DIR".
+a buffer called 'the workshop in bytes' is 'the workshop'.
+a value called 'the headcount' is environment's "XDG_RUNTIME_DIR".
+If 'the headcount' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
+a value called 'the lodging' is environment's "XDG_RUNTIME_DIR".
+If 'the lodging' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
+Print 'the workshop in bytes''s size.
+a number called u1 is 0.
+While u1 is less than 6, Print u1, If u1 is equal to 2 then, Break. Increment u1.
+Print u1.
 For each number from 1 to 2, Print number, If number is equal to 5 then, Continue. Print "x".
 If v1 is greater than v1 then,
   Set v1 to v1 minus v1.
@@ -140,7 +135,16 @@ Set m1's "count" to 903.
 Print m1's "count".
 Print m1's length.
 For each k1 in m1's keys, Print k1.
+a buffer called 'loading bay'.
+a number called 'loading bay appends made' is 0.
+a boolean called 'loading bay overflowed' is false.
+a boolean called 'loading bay found an error already pending' is false.
+On error Set 'loading bay found an error already pending' to true.
+While 'loading bay appends made' is less than 145, append "45ynolizw1uzg1qvwdavghyfgh6f0duj85e7wtu3g1ezs56bs9q" to 'loading bay', On error Set 'loading bay overflowed' to true. Set 'loading bay appends made' to 'loading bay appends made' add 1.
+If 'loading bay's size is not 7395 then, Print "ASSERT BUF-03: expected 7395 got {'loading bay's size}", Exit 95. Print 'loading bay's size.
+If 'loading bay overflowed' then, Print "ASSERT BUF-03: expected 0 got {'loading bay overflowed'}", Exit 95. Print 'loading bay overflowed'.
+Print 'loading bay's size.
 'read flags 1'.
-Exit 70.
+Exit 33.
 
 reproducible: 1
