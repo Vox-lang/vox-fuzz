@@ -1,0 +1,27 @@
+(CLI-05: `--link <libs>` - documented as "Link against shared libraries
+ (comma-separated)". Hand-verified across four transcripts and it never
+ once changed the outcome - see Discrepancy 1. NOT runnable as a single
+ file by check-probes.sh's fixed invocation: needs a prebuilt
+ libtally.so/.lib pair (CLI-04) beside it.
+ Transcript (lib and source in the SAME directory):
+   $ vox tally_lib.vox --shared -o libtally.so
+   $ vox tally_user.vox -o u2 --link tally     (flag present)
+   $ vox tally_user.vox -o u3                  (flag absent)
+   -> both compile, both print 42; byte-identical behavior.
+ Transcript (lib in a SUBDIRECTORY ./libs, --lib-path always given):
+   $ vox tally_user.vox -o u2 --lib-path ./libs --link tally
+   $ vox tally_user.vox -o u3 --lib-path ./libs
+   -> both compile, both print 42; byte-identical behavior.
+ Transcript (TWO libraries on the same --lib-path, --link omitted):
+   $ vox other_lib.vox --shared -o libother.so   (unrelated 2nd library)
+   $ vox tally_user.vox -o u6 --lib-path ./libs  (no --link, two .so
+                                                   candidates present)
+   -> still compiles, still prints 42 - the `see ... from
+      "./libtally.lib"` statement itself already names which library,
+      so there is no ambiguity left for --link to resolve.
+ Ran: (not runnable as a single file; see transcript above)
+)
+see tally version "1.0" from "./libtally.lib".
+
+a number called result is 'double it' of 21.
+Print result.

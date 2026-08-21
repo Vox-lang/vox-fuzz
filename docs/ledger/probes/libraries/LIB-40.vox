@@ -1,0 +1,12 @@
+(LIB-40 -- a .lib is lexed with the Vox lexer but parsed by a dedicated
+ parser that cannot carry executable statements. fixtures/broken_executable.lib
+ is libmathkit.lib with a `Print "hi".` statement spliced into the
+ Library block.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-40.vox -o p && ./p
+ expected output:
+   error: could not parse 'docs/ledger/probes/libraries/fixtures/broken_executable.lib': line 4: expected 'table' in a Library block, found Print
+   (compile error)
+)
+see mathkit version "1.0" from "fixtures/broken_executable.lib".
+
+Print 1.

@@ -1,0 +1,9 @@
+(EXA-03: the manual's "Function Definition and Call" example, verbatim.
+ 'add numbers' of 3 and 5 = 8.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXA-03.vox -o p && ./p
+ expected output:
+   8
+)
+To 'add numbers' with a number called x and a number called y. Return a number, the x add y.
+
+Print 'add numbers' of 3 and 5.

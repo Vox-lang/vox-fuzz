@@ -1,0 +1,12 @@
+(CLI-03: `--run` - compile and run the program in one command. The
+ compiler's own stdout is the program's stdout; check-probes.sh's plain
+ build-then-run form gives the same observable result, so the standard
+ probe run below doubles as the --run hand-check.
+ Hand-run separately:
+   $ vox hello.vox --run
+   Hello, World!
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-03.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

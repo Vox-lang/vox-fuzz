@@ -1,0 +1,17 @@
+(GRM-06: func_def ::= "To" identifier (("with"|"of") params)? "." "Return"
+ "a" type "," expr "." — and params ::= param ("and" param)*, param ::= "a"
+ type "called" name (folded into this row: neither has independent syntax
+ outside a func_def). Both introducer prepositions shown ("with"/"of"),
+ and a two-parameter case for "and". Cross-ref FUN (functions.md), which
+ maps this production's full claim set.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-06.vox -o p && ./p
+ expected output:
+   7
+   12
+)
+To 'sum three' with a number called first and a number called second and a number called third. Return a number, first add second add third.
+
+To 'doubled' of a number called value. Return a number, value multiply 2.
+
+Print 'sum three' of 1 and 2 and 4.
+Print 'doubled' of 6.

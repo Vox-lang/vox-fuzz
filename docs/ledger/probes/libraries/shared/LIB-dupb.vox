@@ -1,0 +1,6 @@
+(Companion to LIB-dupa.vox for LIB-48 -- same Library name and version,
+ different filename, so the duplicate-identity check fires on the pair.)
+
+Library alib version "1.0".
+To greet.
+  Print "hi from a".

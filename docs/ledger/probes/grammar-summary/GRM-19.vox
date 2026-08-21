@@ -1,0 +1,19 @@
+(GRM-19: primary ::= literal | identifier | func_call | "(" expr ")" - the
+ first three alternatives hold (a literal, a bare identifier, and a call,
+ all exercised elsewhere in this ledger). The fourth is FALSE - see
+ Discrepancy 2 (cross-ref EXP-D5, expressions.md, which already found
+ this: parentheses are Vox's comment delimiters, so `(x add y)` is a
+ comment and "Print (x add y) multiply z." errors with "Expected a
+ statement, got Multiply"). The real grouping punctuation is `{...}`
+ (LANGUAGE.md:1826, 1832), which this production does not list as a
+ `primary` alternative at all - so `primary` as literally written is
+ both wrong (parens don't group) and incomplete (braces do, unlisted).
+ This probe shows the working form.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-19.vox -o p && ./p
+ expected output:
+   20
+)
+a number called x is 2.
+a number called y is 3.
+a number called z is 4.
+Print {x add y} multiply z.

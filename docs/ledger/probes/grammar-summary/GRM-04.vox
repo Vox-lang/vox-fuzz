@@ -1,0 +1,14 @@
+(GRM-04: assignment ::= "the" name "is" expr "." - reassigns a variable
+ that already exists (distinct from var_decl's "is"/"to", GRM-03, which
+ brings the variable into being). Cross-ref VAR (variables.md) for the
+ wider set of assignment forms; this is the Grammar Summary's own minimal
+ witness.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-04.vox -o p && ./p
+ expected output:
+   3
+   9
+)
+a number called total is 3.
+Print total.
+the total is 9.
+Print total.

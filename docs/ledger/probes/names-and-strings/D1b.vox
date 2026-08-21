@@ -1,0 +1,31 @@
+(Discrepancy 1 (NAM), companion: D1.vox's garbage value is not a fixed
+ sentinel and not derived from the string's content -- it is the
+ ADDRESS of that declaration's own string literal in the compiled
+ binary. Proof: two declarations of the identical string "abc" print
+ two DIFFERENT values (n1 vs n2 below), ruling out both "a hash of the
+ content" and "a fixed constant"; the gap between each consecutive pair
+ equals the PRECEDING string's byte length plus one (3+1, 3+1, 2+1,
+ 1+1), consistent with each string sitting immediately after the
+ previous one in the binary's data and the printed value being that
+ string's own address. Also reproduces for `boolean` (b1). (The
+ reassignment form is separately confirmed NOT to reproduce this --
+ see variables.md VAR-26/VAR-26.vox, "cannot assign text to 'n', which
+ is a number".)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p
+ expected output:
+   4198488
+   4198492
+   4198496
+   4198499
+   4198501
+)
+a number called n1 is "abc".
+a number called n2 is "abc".
+a number called n3 is "42".
+a number called n4 is "a".
+a boolean called b1 is "totally different string here".
+print n1.
+print n2.
+print n3.
+print n4.
+print b1.

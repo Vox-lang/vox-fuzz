@@ -1,0 +1,14 @@
+(CLI-02: `--emit-asm` - output assembly only, don't assemble/link. No
+ executable is produced; the source stem's `.asm` file is written instead.
+ Hand-run separately:
+   $ rm -f hello.asm hello
+   $ vox hello.vox --emit-asm ; echo "rc=$?"
+   rc=0
+   $ ls hello.asm hello
+   hello.asm
+   ls: cannot access 'hello': No such file or directory
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-02.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

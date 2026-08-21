@@ -1,0 +1,30 @@
+(LIB-55 through LIB-58 -- calling a library from a non-Vox host. Builds
+ the mathkit library, then a hand-written nasm+ld driver (LIB-driver.asm)
+ calls its exports directly by their mangled labels, using the Vox
+ calling convention: integer arguments in rdi, rsi, ...; result in rax.
+ Reproduces LANGUAGE.md:5062-5099 verbatim except for the output filename.
+ Ran, from the repo root, in a scratch directory:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   V=/home/josj/scr/english/vox/target/release/vox
+   $V docs/ledger/probes/libraries/shared/LIB-driver.vox --shared -o libdriverlib.so
+   nm -D --defined-only libdriverlib.so
+   nasm -f elf64 -o LIB-driver.o docs/ledger/probes/libraries/shared/LIB-driver.asm
+   ld -dynamic-linker /lib64/ld-linux-x86-64.so.2 -rpath '$ORIGIN' \
+      -o LIB-driver LIB-driver.o -L. -ldriverlib
+   ./LIB-driver
+ expected output:
+   nm:
+     000000000000072c T mathkit_1_0_add_two_numbers
+     000000000000076c T mathkit_1_0_greet
+   link: exit 0
+   run:
+     hello from mathkit
+   (exit 0)
+)
+
+Library mathkit version "1.0".
+
+To 'add two numbers' with a number called x and a number called y. Return a number, x add y.
+
+To greet.
+  Print "hello from mathkit".

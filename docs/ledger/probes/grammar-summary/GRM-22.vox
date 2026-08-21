@@ -1,0 +1,23 @@
+(GRM-22: literal ::= string | number | "true" | "false" | "nothing".
+ All five shown as a declaration initializer; `nothing` can only be
+ tested via `is`/`is not` (VAL-25/VAL-26, values.md - comparisons are
+ not arithmetic, so this works outside condition position rules that
+ block ordinary comparisons, cross-ref Discrepancy 1/GRM-17).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-22.vox -o p && ./p
+ expected output:
+   hello
+   42
+   1
+   0
+   v is nothing
+)
+a text called s is "hello".
+a number called n is 42.
+a boolean called t is true.
+a boolean called f is false.
+a value called v is nothing.
+Print s.
+Print n.
+Print t.
+Print f.
+If v is nothing, print "v is nothing".

@@ -1,0 +1,13 @@
+(LIB-05 -- retired form 1 of 3: `see "<path>.so".` pointed `see` at a .so
+ directly. It is retired: refused with a diagnostic naming the canonical
+ `.lib` form. Also covers LIB-07 (both this and LIB-05b name the canonical
+ form) and LIB-08 (`see` of a .vox source, exercised throughout this
+ ledger, is unaffected by this retirement).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-05.vox -o p && ./p
+ expected output:
+   error: see of a .so is not supported. A .so is a binary; consume it through its .lib interface file.
+   (compile error; also names "Canonical form: see '<lib>' version "<x.y>" from "<path>.lib".")
+)
+see "./fixtures/libmathkit.so".
+
+Print 1.

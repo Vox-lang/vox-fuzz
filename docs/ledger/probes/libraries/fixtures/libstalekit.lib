@@ -1,0 +1,6 @@
+Library stalekit version "1.0".
+Location "./libstalekit.so".
+
+Table of Contents:
+    To greet.
+    To 'phantom function' with a number called n, returning a number.

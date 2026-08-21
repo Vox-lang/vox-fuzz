@@ -1,0 +1,11 @@
+(LIB-43, 3 of 6 -- no such library: the .lib exists but declares no
+ library by the requested name. The diagnostic names what it does
+ declare.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43c.vox -o p && ./p
+ expected output:
+   error: 'docs/ledger/probes/libraries/fixtures/libmathkit.lib' has no library named "notreal".
+   (compile error; also states "It declares: "mathkit" version "1.0".")
+)
+see notreal version "1.0" from "fixtures/libmathkit.lib".
+
+Print 1.

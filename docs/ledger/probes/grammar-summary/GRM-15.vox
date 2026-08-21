@@ -1,0 +1,30 @@
+(GRM-15: print_stmt's three forms - plain "Print" expr with a "but if"
+ tail (note: THIS "but if" has no "then" and no comma before the
+ branch's own "print", unlike if_stmt's "but if...then," - GRM-12 - two
+ different productions sharing the words "but if"), "Print each name from
+ expr (treating)? " with a "but if" tail, and "Print <func> of each name
+ from expr" (the function-return-per-item form). A firing "but if" arm
+ REPLACES the base Print for that iteration, it does not print
+ alongside it (see EXA-05, which is this exact plain form at scale).
+ Cross-ref FMT (input-output.md, the plain form) and LST2/BAS2
+ (collections-b.md, basics-expansion.md, the each/treating forms), which
+ map this production's full claim set.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-15.vox -o p && ./p
+ expected output:
+   four
+   1
+   20
+   three
+   1
+   4
+   9
+)
+a number called n is 4.
+Print n, but if n is 4 print "four".
+
+a list called nums is [1, 2, 3].
+Print each num from nums treating 2 as 20, but if num is 3 print "three".
+
+To 'square' with a number called x. Return a number, x multiply x.
+
+Print 'square' of each num from nums.

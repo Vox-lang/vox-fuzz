@@ -1,0 +1,26 @@
+(ENV-03: `first` (LANGUAGE.md:4480) is documented as the full
+ "NAME=value" string. Scan its bytes for `=` to confirm the shape,
+ vacuously true on an empty environment (`first` returns an empty
+ string with no error there -- confirmed separately). NOTE: this reads
+ `environment's first` into a `text` first, THEN declares a buffer from
+ that text -- declaring a buffer directly from `environment's first`
+ is broken (empty content, size -1) -- see Discrepancy 1, D1.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-03.vox -o p && ./p
+ expected output:
+   well-formed: contains =
+)
+(Second run, hand-verified, NOT checked by check-probes.sh:
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-03.vox -o p && env -i ./p
+ output:
+   empty environment: vacuously well-formed
+)
+a text called 'first raw' is environment's first.
+a buffer called 'first scan' is 'first raw'.
+a number called 'found equals' is 0.
+For each position from 1 to 'first scan''s size,
+    if byte position of 'first scan' is 61,
+        Set 'found equals' to 1.
+
+if 'first scan''s size is 0, print "empty environment: vacuously well-formed".
+if 'first scan''s size is not 0 and 'found equals' is 1, print "well-formed: contains =".
+if 'first scan''s size is not 0 and 'found equals' is 0, print "MALFORMED: no = found".

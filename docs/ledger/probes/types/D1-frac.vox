@@ -1,0 +1,13 @@
+(TYP-01 Discrepancy 1, companion: the same `number` variable holding a
+ WHOLE value classifies the opposite way under `is a` — proves the
+ predicate's tag tracks the runtime value's shape, not the variable's
+ static declared type, since TYP-01.vox's `n` (declared identically,
+ `a number called n`) flips both answers when its value is whole.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1-frac.vox -o p && ./p
+ expected output:
+   is a number: yes
+   is a decimal: no
+)
+a number called n is 3.
+if n is a number, print "is a number: yes". otherwise print "is a number: no".
+if n is a decimal, print "is a decimal: yes". otherwise print "is a decimal: no".

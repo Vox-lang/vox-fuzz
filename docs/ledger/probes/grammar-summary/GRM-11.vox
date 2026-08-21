@@ -1,0 +1,28 @@
+(GRM-11: member_def ::= "To" "do" "the" name "'s" name (("," ("with"|"of"))? params)? "." body "Return" "a" name "," expr "." - the body of a
+ manifest member (GRM-10's member_decl). Note the comma before "with"/"of"
+ that a plain func_def (GRM-06) doesn't have: `To do the point's 'placed
+ at', with ...` - the trailing comma is part of this production, not
+ punctuation noise (dropping it is a compile error, not probed here to
+ keep this row to the positive case; see THG2 for the negative form).
+ Cross-ref THG2-14/THG2-15 (things-b.md), whose probe this one is adapted
+ from almost verbatim - the existing ledger already establishes the wider
+ claim set (manifest-as-single-source-of-truth, the owner-return rule).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-11.vox -o p && ./p
+ expected output:
+   3
+   4
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+The pin is a point's 'placed at' with 3 and 4.
+Print pin's x.
+Print pin's y.

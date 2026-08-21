@@ -1,0 +1,14 @@
+(LIB-27 -- a --shared compile with no function definitions exports
+ nothing and is rejected.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-empty.vox --shared -o x.so
+ expected output:
+   error: A shared library must export at least one function, but this
+   file defines none. Add a function definition, or drop --shared to
+   build an executable.
+ (exit 1)
+)
+
+Library emptykit version "1.0".

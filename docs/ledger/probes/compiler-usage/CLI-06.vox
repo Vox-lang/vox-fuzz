@@ -1,0 +1,23 @@
+(CLI-06: `--lib-path <paths>` - additional library search paths
+ (comma-separated). Unlike --link (CLI-05/Discrepancy 1), this one is
+ load-bearing: when the .lib/.so pair lives outside the source's own
+ directory, compilation fails without it and succeeds with it. NOT
+ runnable as a single file by check-probes.sh's fixed invocation: needs
+ a prebuilt libtally.so/.lib pair (CLI-04) in a SUBDIRECTORY relative to
+ this source.
+ Transcript (lib in ./libs, source beside ./libs, not inside it):
+   $ vox tally_lib.vox --shared -o libs/libtally.so
+   $ vox tally_user.vox -o u1                    (no --lib-path)
+   Error: could not find the library interface file './libtally.lib'.
+   Paths tried:
+     libtally.lib
+   Use --lib-path <dir> to add directories to this search.
+   $ vox tally_user.vox -o u2 --lib-path ./libs  (with --lib-path)
+   $ ./u2
+   42
+ Ran: (not runnable as a single file; see transcript above)
+)
+see tally version "1.0" from "./libtally.lib".
+
+a number called result is 'double it' of 21.
+Print result.

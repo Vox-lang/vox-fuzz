@@ -1,0 +1,7 @@
+(Fixture for LIB-15 — circular includes. circ_a sees circ_b, which sees
+ circ_a right back; the compiler tracks files already seen and skips the
+ re-entrant see rather than looping.)
+see "./circ_b.vox".
+
+To 'from a'.
+  Print "a".

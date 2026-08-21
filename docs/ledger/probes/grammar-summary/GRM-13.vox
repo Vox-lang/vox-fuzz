@@ -1,0 +1,11 @@
+(GRM-13: while_stmt ::= "While" condition "," block "." - no alternatives
+ to enumerate. Cross-ref FLW (control-flow.md), which maps this
+ production's full claim set.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-13.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+a number called counter is 1.
+While counter is less than 4, print counter, increment counter.

@@ -1,0 +1,15 @@
+(GRM-01: `program ::= statement*` - a program is zero or more statements
+ in sequence, run top to bottom. This production has no alternatives of
+ its own to enumerate; it is trivially exercised by every probe in every
+ ledger in this repo (a program with N statements, for every N a probe
+ has ever used). This file just picks a small N>1 as the on-record
+ instance.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-01.vox -o p && ./p
+ expected output:
+   first
+   second
+   third
+)
+Print "first".
+Print "second".
+Print "third".

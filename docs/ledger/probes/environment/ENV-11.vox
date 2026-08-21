@@ -1,0 +1,34 @@
+(ENV-11: the "Complete Example" (LANGUAGE.md:4519-4540), adapted --
+ the greeting/precedence half only, with a namespaced env-var name
+ instead of `GREET_NAME` (so no real host accidentally sets it) and the
+ trailing `environment's "USER"` print DROPPED rather than reproduced,
+ on the same principle `gen_misc.vox:39-101` already establishes for
+ this project: a probe must never print raw host environment state,
+ since one already leaked into a checked-in fixture. The USER lookup
+ itself is exactly ENV-06/ENV-07's construct and doesn't need
+ re-proving here. Checked block is the default run (no arg, no
+ variable, namespaced so no host sets it by accident); the other two
+ precedence conditions are the second, unchecked block, hand-verified
+ once each.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-11.vox -o p && ./p
+ expected output:
+   Hello,
+   World
+   !
+)
+(Second and third runs, hand-verified, NOT checked by check-probes.sh:
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-11.vox -o p && VF_PROBE_GREET_NAME=Zoe ./p
+ output: Hello, / Zoe / !  (env var used since no argument passed)
+ Ran: ... && VF_PROBE_GREET_NAME=Zoe ./p Bob
+ output: Hello, / Bob / !  (argument beats env var, exactly as documented)
+)
+a text called name is "World".
+
+If arguments's count is greater than 1 then,
+    the name is arguments's first.
+But if the environment variable "VF_PROBE_GREET_NAME" exists then,
+    the name is environment's "VF_PROBE_GREET_NAME".
+
+Print "Hello, ".
+Print the name.
+Print "!".

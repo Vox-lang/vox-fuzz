@@ -1,0 +1,20 @@
+(ENV-04: same as ENV-03, on `last` (LANGUAGE.md:4481).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-04.vox -o p && ./p
+ expected output:
+   well-formed: contains =
+)
+(Second run, hand-verified, NOT checked by check-probes.sh:
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-04.vox -o p && env -i ./p
+ output:
+   empty environment: vacuously well-formed
+)
+a text called 'last raw' is environment's last.
+a buffer called 'last scan' is 'last raw'.
+a number called 'found equals' is 0.
+For each position from 1 to 'last scan''s size,
+    if byte position of 'last scan' is 61,
+        Set 'found equals' to 1.
+
+if 'last scan''s size is 0, print "empty environment: vacuously well-formed".
+if 'last scan''s size is not 0 and 'found equals' is 1, print "well-formed: contains =".
+if 'last scan''s size is not 0 and 'found equals' is 0, print "MALFORMED: no = found".
