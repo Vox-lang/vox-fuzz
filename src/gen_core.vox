@@ -542,7 +542,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 21 then,
         'gen leaf butif append' of indent and nested.
     If kind is 22 then,
-        'gen leaf environment inrange' of indent and nested.
+        'gen leaf environment' of indent and nested.
     If kind is 23 then,
         'gen leaf arguments inrange' of indent and nested.
     If kind is 24 then,
@@ -552,7 +552,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 26 then,
         'gen leaf treating grid' of indent and nested.
     If kind is 27 then,
-        'gen leaf environment oob' of indent and nested.
+        'gen leaf environment with a loop or handler' of indent and nested.
     If kind is 28 then,
         'gen leaf rich condition' of indent and nested.
     If kind is 29 then,
@@ -1115,6 +1115,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_whiles to 0.
     Set gen_repeats to 0.
     Set gen_envs to 0.
+    'gen environment names reset'.
     Set gen_flags to 0.
     'rng seed' of seed.
     (The value leaves spend names out of a vocabulary on a per-program
