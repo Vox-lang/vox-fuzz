@@ -8,7 +8,7 @@ a number called gen_values is 0.
 
 To 'gen leaf value roundtrip' with a text called indent and a boolean called nested.
     Set gen_values to gen_values add 1.
-    a number called 'starting number' is 'rng below' of 1000.
+    a text called 'starting number' is 'literal integer'.
     a text called decl is "a value called y{gen_values} is {'starting number'}".
     a text called 'print number' is "Print y{gen_values}".
     a text called reassign is "Set y{gen_values} to \"reassigned{gen_values}\"".
@@ -16,127 +16,300 @@ To 'gen leaf value roundtrip' with a text called indent and a boolean called nes
     a list called 'the lines' is [decl, 'print number', reassign, 'print text'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(Thing member functions: the manifest entry plus its two `To do the
- T's m` definitions live in the prelude (see 'gen emit prelude thing
- methods'); this leaf drives both call forms - the type-possessive maker
- (`a t4's 'made at' with ...`) and the instance-possessive receiver
- (`i's 'reflected across'`) - and reads the owner-return field back
- after each (finding 03). Today only data fields are generated; this is
- the dispatch and owner-return path fields alone cannot reach.)
+(Thing member functions: this leaf drives both call forms - the
+ type-possessive maker (`a <type>'s <maker> with ...`, the only way to
+ reach a member whose first parameter is not the thing,
+ LANGUAGE.md:1483) and the instance-possessive receiver
+ (`i's <receiver>`, LANGUAGE.md:1422) - and reads the owner-return field
+ back after each (finding 03). Data fields alone cannot reach the
+ dispatch and owner-return path.
+
+ It needs a thing that has BOTH kinds of member and a number field for
+ them to write, and no rule says a program has one, so it asks the
+ manifest and stands aside when this program's prelude has none. The
+ field it prints is the one the manifest recorded the method as writing,
+ so the print shows what the call put there.)
 
 To 'gen leaf thing member' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a thing with both members'.
+    If 'a thing is available' is false then,
+        'gen leaf thing copy' of indent and nested,
+        Return a boolean, false.
+    a number called 'the thing' is gen_pick_thing.
+    a number called 'the maker' is gen_pick_maker.
+    a number called 'the receiver' is gen_pick_receiver.
+    a text called 'the type' is 'gen thing written' of 'the thing'.
+    a text called 'the type possessive' is 'gen thing possessive' of 'the thing'.
+    a text called 'the maker name' is 'gen method written' of 'the maker'.
+    a text called 'the receiver name' is 'gen method written' of 'the receiver'.
+    a number called 'the maker field' is element 'the maker' of gen_method_field.
+    a number called 'the receiver field' is element 'the receiver' of gen_method_field.
+    a text called 'the maker field name' is 'gen field written' of 'the maker field'.
+    a text called 'the receiver field name' is 'gen field written' of 'the receiver field'.
     Set gen_instances to gen_instances add 1.
     a number called 'maker name' is gen_instances.
-    a number called 'starting x' is 'rng below' of 1000.
+    a text called 'starting value' is 'literal integer'.
     Set gen_instances to gen_instances add 1.
     a number called 'mirror name' is gen_instances.
-    a text called decl is "a t4 called i{'maker name'} is a t4's 'made at' with {'starting x'}".
-    a text called 'print maker' is "Print i{'maker name'}'s x1".
-    a text called 'mirror decl' is "a t4 called i{'mirror name'} is i{'maker name'}'s 'reflected across'".
-    a text called 'print mirror' is "Print i{'mirror name'}'s x1".
+    a text called decl is "a {'the type'} called i{'maker name'} is a {'the type possessive'} {'the maker name'} with {'starting value'}".
+    a text called 'print maker' is "Print i{'maker name'}'s {'the maker field name'}".
+    a text called 'mirror decl' is "a {'the type'} called i{'mirror name'} is i{'maker name'}'s {'the receiver name'}".
+    a text called 'print mirror' is "Print i{'mirror name'}'s {'the receiver field name'}".
     a list called 'the lines' is [decl, 'print maker', 'mirror decl', 'print mirror'].
     'gen join lines' of indent and nested and 'the lines'.
 
 (Things: instance declaration, possessive field read/write, and
- whole-thing printing. t1/t2 are flat; t3 nests one of each, so a
- chained possessive (i's g1's x1) is always reachable.)
+ whole-thing printing. The flat form wants any thing with a number
+ field; the nested form wants a thing whose field is a thing that has
+ one, so the chained possessive `i's <outer>'s <inner>` has something to
+ read. Neither shape is guaranteed - the old prelude guaranteed both
+ with t1/t2 and t3, which is precisely the sameness this replaces - so
+ each asks first.)
 
 To 'gen thing flat' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
     Set gen_instances to gen_instances add 1.
-    a number called 'type choice' is 'rng below' of 2.
-    a text called 'type name' is "t1".
-    If 'type choice' is 1 then,
-        Set 'type name' to "t2".
-    a number called val is 'rng below' of 1000.
-    a text called decl is "a {'type name'} called i{gen_instances}".
-    a text called 'set line' is "Set i{gen_instances}'s x1 to {val}".
+    a text called val is 'literal integer'.
+    a text called decl is "a {'the type'} called i{gen_instances}".
+    a text called 'set line' is "Set i{gen_instances}'s {'the field'} to {val}".
     a text called 'print line' is "Print i{gen_instances}".
     a list called 'the lines' is [decl, 'set line', 'print line'].
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen thing nested' with a text called indent and a boolean called nested.
+    a boolean called 'a nesting is available' is 'gen manifest pick a nested thing'.
+    If 'a nesting is available' is false then,
+        'gen thing flat' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    (The outer field is written as a POSSESSIVE and the inner as a plain
+     name: `i1's 'the inner mark's 'the north offset'`, one apostrophe
+     between them, never two. Hand-verified against 0.4.7.)
+    a text called 'the outer' is 'gen field possessive' of gen_pick_field.
+    a text called 'the inner' is 'gen field written' of gen_pick_inner_field.
     Set gen_instances to gen_instances add 1.
-    a number called val is 'rng below' of 1000.
-    a text called decl is "a t3 called i{gen_instances}".
-    a text called 'set line' is "Set i{gen_instances}'s g1's x1 to {val}".
-    a text called 'field line' is "Print i{gen_instances}'s g1's x1".
+    a text called val is 'literal integer'.
+    a text called decl is "a {'the type'} called i{gen_instances}".
+    a text called 'set line' is "Set i{gen_instances}'s {'the outer'} {'the inner'} to {val}".
+    a text called 'field line' is "Print i{gen_instances}'s {'the outer'} {'the inner'}".
     a text called 'whole line' is "Print i{gen_instances}".
     a list called 'the lines' is [decl, 'set line', 'field line', 'whole line'].
     'gen join lines' of indent and nested and 'the lines'.
 
+(Drawn through a PRIME modulus, not `'rng below' of 2`. This LCG's low
+ bits are correlated - the hazard is documented above 'gen leaf loop
+ control' - and the flat/nested coin was locked by it: measured over 150
+ programs on main, `a t3 called i#` appeared in ZERO of them, so the
+ nested leaf had never once run in a campaign. `r modulo 11` depends on
+ the whole of r rather than its bottom bit.)
+
 To 'gen leaf thing' with a text called indent and a boolean called nested.
-    a number called 'thing kind' is 'rng below' of 2.
-    If 'thing kind' is 0 then,
-        'gen thing flat' of indent and nested.
-    If 'thing kind' is 1 then,
-        'gen thing nested' of indent and nested.
+    a number called 'the kind draw' is 'rng below' of 11.
+    If 'the kind draw' is less than 5 then,
+        'gen thing flat' of indent and nested,
+        Return a boolean, false.
+    'gen thing nested' of indent and nested.
 
 (Value-copy check: assign one instance to another, mutate the copy,
  and print both fields back out - the two must differ, proving the
  copy shares nothing with the original.)
 
 To 'gen leaf thing copy' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
     Set gen_instances to gen_instances add 1.
     a number called 'original name' is gen_instances.
-    a number called val is 'rng below' of 1000.
+    a text called val is 'literal integer'.
     Set gen_instances to gen_instances add 1.
     a number called 'copy name' is gen_instances.
-    a number called val2 is 'rng below' of 1000.
-    a text called decl is "a t1 called i{'original name'}".
-    a text called 'set line' is "Set i{'original name'}'s x1 to {val}".
-    a text called 'copy decl' is "a t1 called i{'copy name'} is i{'original name'}".
-    a text called 'mutate line' is "Set i{'copy name'}'s x1 to {val2}".
-    a text called 'print orig' is "Print i{'original name'}'s x1".
-    a text called 'print copy' is "Print i{'copy name'}'s x1".
+    a text called val2 is 'literal integer'.
+    a text called decl is "a {'the type'} called i{'original name'}".
+    a text called 'set line' is "Set i{'original name'}'s {'the field'} to {val}".
+    a text called 'copy decl' is "a {'the type'} called i{'copy name'} is i{'original name'}".
+    a text called 'mutate line' is "Set i{'copy name'}'s {'the field'} to {val2}".
+    a text called 'print orig' is "Print i{'original name'}'s {'the field'}".
+    a text called 'print copy' is "Print i{'copy name'}'s {'the field'}".
     a list called 'the lines' is [decl, 'set line', 'copy decl', 'mutate line', 'print orig', 'print copy'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(Prelude: thing types and functions, emitted once per program before
- the statement stream that uses them (definitions before instances,
- instances before access - valid by construction). t3 nests one t1 and
- one t2, so a chained possessive is always reachable. t4 carries the
- manifest for 'gen leaf thing member' - a maker ('made at', first
- parameter is a number, not a t4) and a receiver ('reflected across',
- first parameter is a t4), each obeying the owner-return rule, the same
- shape as LANGUAGE.md's own point/'placed at' example (finding 03).
- f1/f2/f3 cover 0, 1, and 2 number parameters.)
+(--- the things block ---
 
-To 'gen emit prelude things'.
-    'gen emit' of "A thing called t1 has\n".
-    'gen emit' of "    a number called x1 is 0,\n".
-    'gen emit' of "    a number called x2 is 0.\n".
-    'gen emit' of "\n".
-    'gen emit' of "A thing called t2 has\n".
-    'gen emit' of "    a number called x1 is 0,\n".
-    'gen emit' of "    a number called x2 is 0.\n".
-    'gen emit' of "\n".
-    'gen emit' of "A thing called t3 has\n".
-    'gen emit' of "    a t1 called g1,\n".
-    'gen emit' of "    a t2 called g2.\n".
-    'gen emit' of "\n".
-    'gen emit' of "A thing called t4 has\n".
-    'gen emit' of "    a function called 'made at',\n".
-    'gen emit' of "    a function called 'reflected across',\n".
-    'gen emit' of "    a number called x1 is 0.\n".
-    'gen emit' of "\n".
+ Emitted once per program, before the statement stream that uses it.
+ Everything here reads the manifest; nothing decides anything, which is
+ what makes the definitions and the leaves agree.
 
-To 'gen emit prelude thing methods'.
-    'gen emit' of "To do the t4's 'made at', with a number called x1.\n".
-    'gen emit' of "    a t4 called plotted.\n".
-    'gen emit' of "    Set plotted's x1 to x1.\n".
-    'gen emit' of "    Return a t4, plotted.\n".
-    'gen emit' of "\n".
-    'gen emit' of "To do the t4's 'reflected across', with a t4 called original.\n".
-    'gen emit' of "    a t4 called mirrored.\n".
-    'gen emit' of "    Set mirrored's x1 to 0 subtract original's x1.\n".
-    'gen emit' of "    Return a t4, mirrored.\n".
-    'gen emit' of "\n".
+ What pins the order, and all that does:
 
-(Things and their methods travel together as ONE block: a method names
- its owner type, so the definition must precede it. Nothing else pins
- them — verified by hand against 0.4.7 that a thing may be defined AFTER
- a function that does not use it.)
+ - A nested field's type must be a PREVIOUSLY DEFINED thing
+   (LANGUAGE.md:879), so the definitions go out in manifest order, which
+   is the order they were built in and therefore the order in which a
+   nesting target always precedes the field that nests it. Which thing
+   nests which IS drawn, so the dependency structure varies even though
+   the traversal does not.
+ - A member definition names its owner type (LANGUAGE.md:1309), so a
+   thing's methods follow its definition.
+
+ Nothing pins whether the methods follow IMMEDIATELY. Hand-verified
+ against 0.4.7 both ways: all the definitions and then all the methods
+ compiles, and each definition followed by its own methods compiles.
+ So which of the two a program gets is drawn - and the fifteen-line
+ t3-to-mirrored block that `scripts/invariants` reported as "always
+ contiguous and in this order" in 150 of 150 programs has nothing left
+ to be contiguous about.)
 
 To 'gen emit things block'.
-    'gen emit prelude things'.
-    'gen emit prelude thing methods'.
+    a number called 'how many things' is gen_thing_names's length.
+    If 'how many things' is 0 then,
+        Return a number, 0.
+    a number called 'the grouping draw' is 'rng below' of 11.
+    If 'the grouping draw' is less than 5 then,
+        'gen emit things grouped' of 'how many things',
+        Return a number, 0.
+    'gen emit things interleaved' of 'how many things'.
+    Return a number, 0.
+
+To 'gen emit things grouped' with a number called 'how many things'.
+    a number called 'the thing' is 1.
+    While 'the thing' is less than or equal to 'how many things',
+        'gen emit one thing definition' of 'the thing',
+        Set 'the thing' to 'the thing' add 1.
+    a number called 'the owner' is 1.
+    While 'the owner' is less than or equal to 'how many things',
+        'gen emit methods of' of 'the owner',
+        Set 'the owner' to 'the owner' add 1.
+    Return a number, 0.
+
+To 'gen emit things interleaved' with a number called 'how many things'.
+    a number called 'the thing' is 1.
+    While 'the thing' is less than or equal to 'how many things',
+        'gen emit one thing definition' of 'the thing',
+        'gen emit methods of' of 'the thing',
+        Set 'the thing' to 'the thing' add 1.
+    Return a number, 0.
+
+(One definition. Data fields and manifest entries may appear in any
+ order inside the body - hand-verified against 0.4.7 with a function
+ member between two data fields - so the two runs are shuffled together
+ by a drawn interleave rather than emitted methods-first the way the old
+ template did.
+
+ The last entry ends with a period and every earlier one with a comma,
+ which is the language's own list punctuation (LANGUAGE.md:838-840), and
+ the blank line after the body is what closes it (LANGUAGE.md:78-84).)
+
+To 'gen emit one thing definition' with a number called 'the thing'.
+    a text called 'the type' is 'gen thing written' of 'the thing'.
+    'gen emit' of "A thing called {'the type'} has\n".
+    a number called 'the first field' is element 'the thing' of gen_thing_field_first.
+    a number called 'how many fields' is element 'the thing' of gen_thing_field_count.
+    a number called 'the first method' is element 'the thing' of gen_thing_method_first.
+    a number called 'how many methods' is element 'the thing' of gen_thing_method_count.
+    a number called 'the fields left' is 'how many fields'.
+    a number called 'the methods left' is 'how many methods'.
+    a number called 'the field step' is 0.
+    a number called 'the method step' is 0.
+    a number called 'how many entries' is 'how many fields' add 'how many methods'.
+    a number called 'the entries written' is 0.
+    (The increment is the loop's LAST plain statement, so its period
+     closes the loop - language note 6b. An earlier draft ended the body
+     on an If instead, which left the loop open and swallowed the
+     paragraph break that closes the thing: every entry came out
+     followed by a blank line, and a blank line closes the body
+     (LANGUAGE.md:78-84).)
+    While 'the entries written' is less than 'how many entries',
+        a number called 'the choice' is 'rng below' of 13,
+        a boolean called 'write a method here' is false,
+        If 'the methods left' is greater than 0 and 'the choice' is greater than 6 then,
+            Set 'write a method here' to true.
+        If 'the fields left' is 0 then,
+            Set 'write a method here' to true.
+        a number called 'the entries after this' is 'how many entries' minus 'the entries written',
+        a text called 'the ending' is ",",
+        If 'the entries after this' is 1 then,
+            Set 'the ending' to ".".
+        a number called 'the entry' is 'the first field' add 'the field step',
+        If 'write a method here' then,
+            Set 'the entry' to 'the first method' add 'the method step',
+            Set 'the method step' to 'the method step' add 1,
+            Set 'the methods left' to 'the methods left' minus 1.
+        If 'write a method here' is false then,
+            Set 'the field step' to 'the field step' add 1,
+            Set 'the fields left' to 'the fields left' minus 1.
+        'gen emit one thing entry' of 'the entry' and 'write a method here' and 'the ending',
+        Set 'the entries written' to 'the entries written' add 1.
+    'gen emit' of "\n".
+    Return a number, 0.
+
+(One line of a thing's body: a manifest entry, or a data field with or
+ without its default. LANGUAGE.md:853 says a field without a default
+ takes its type's zero value, so both spellings are legal and which one
+ a field gets is drawn; a nested thing and a time have no literal to
+ default to and never carry one.)
+
+To 'gen emit one thing entry' with a number called 'the entry' and a boolean called 'it is a method' and a text called 'the ending'.
+    If 'it is a method' then,
+        a text called 'the method name' is 'gen method written' of 'the entry',
+        'gen emit' of "    a function called {'the method name'}{'the ending'}\n",
+        Return a number, 0.
+    a text called 'the field name' is 'gen field written' of 'the entry'.
+    a text called 'the field type' is 'gen field type written' of 'the entry'.
+    a text called 'the default' is 'gen field default written' of 'the entry'.
+    a text called 'the field line' is "    a {'the field type'} called {'the field name'}{'the ending'}\n".
+    If 'the default' is not "" then,
+        Set 'the field line' to "    a {'the field type'} called {'the field name'} is {'the default'}{'the ending'}\n".
+    'gen emit' of 'the field line'.
+    Return a number, 0.
+
+(A thing's members. Every declared member returns its owner
+ (LANGUAGE.md:1337) and is defined exactly once (LANGUAGE.md:1396); a
+ maker's first parameter is a number and a receiver's is the owner
+ itself, which is what decides whether the type possessive alone reaches
+ it or both call forms do.
+
+ A thing whose fields are all floats, booleans, times or nested things
+ has no number field to write, and then the body is just the declaration
+ and the Return - still a legal member, verified against 0.4.7.)
+
+To 'gen emit methods of' with a number called 'the thing'.
+    a number called 'the first method' is element 'the thing' of gen_thing_method_first.
+    a number called 'how many methods' is element 'the thing' of gen_thing_method_count.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many methods',
+        a number called 'the method' is 'the first method' add 'the step',
+        'gen emit one method' of 'the thing' and 'the method',
+        Set 'the step' to 'the step' add 1.
+    Return a number, 0.
+
+To 'gen emit one method' with a number called 'the thing' and a number called 'the method'.
+    a text called 'the type' is 'gen thing written' of 'the thing'.
+    a text called 'the type possessive' is 'gen thing possessive' of 'the thing'.
+    a text called 'the method name' is 'gen method written' of 'the method'.
+    a text called 'the parameter' is 'gen method param written' of 'the method'.
+    a text called 'the parameter possessive' is 'gen method param possessive' of 'the method'.
+    a text called 'the local' is 'gen method local written' of 'the method'.
+    a text called 'the local possessive' is 'gen method local possessive' of 'the method'.
+    a number called 'the kind' is element 'the method' of gen_method_kind.
+    a number called 'the field' is element 'the method' of gen_method_field.
+    a text called 'the parameter type' is "number".
+    If 'the kind' is 1 then,
+        Set 'the parameter type' to 'the type'.
+    'gen emit' of "To do the {'the type possessive'} {'the method name'}, with a {'the parameter type'} called {'the parameter'}.\n".
+    'gen emit' of "    a {'the type'} called {'the local'}.\n".
+    If 'the field' is not 0 then,
+        a text called 'the field name' is 'gen field written' of 'the field',
+        a text called 'the written value' is 'the parameter',
+        If 'the kind' is 1 then,
+            Set 'the written value' to "0 subtract {'the parameter possessive'} {'the field name'}".
+        'gen emit' of "    Set {'the local possessive'} {'the field name'} to {'the written value'}.\n".
+    'gen emit' of "    Return a {'the type'}, {'the local'}.\n".
+    'gen emit' of "\n".
+    Return a number, 0.

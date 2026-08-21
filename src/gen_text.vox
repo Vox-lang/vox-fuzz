@@ -273,8 +273,23 @@ To 'gen leaf format specifiers' with a text called indent and a boolean called n
     a text called 'float decl' is "a float called zd{n} is {'the float literal'}".
     a text called 'text decl' is "a text called zs{n} is \"word{n}\"".
     a text called 'boolean decl' is "a boolean called zb{n} is true".
-    a text called 'thing decl' is "a t1 called zi{n}".
-    a text called 'thing set' is "Set zi{n}'s x1 to {'the field value'}".
+    (The thing-field slot. Which thing and which field is drawn per
+     program, so this asks the manifest; a program whose prelude has no
+     thing with a number field simply does not get this one row, and the
+     other nineteen specifier rows are unaffected. Hand-verified against
+     0.4.7 that a QUOTED multi-word field name interpolates and takes a
+     specifier - `{i's 'the north offset':04x}` prints 0x00ff - so the
+     row survives whatever the manifest drew.)
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    a text called 'thing decl' is "".
+    a text called 'thing set' is "".
+    a text called 'print field hex' is "".
+    If 'a thing is available' then,
+        a text called 'the type' is 'gen thing written' of gen_pick_thing,
+        a text called 'the field' is 'gen field written' of gen_pick_field,
+        Set 'thing decl' to "a {'the type'} called zi{n}",
+        Set 'thing set' to "Set zi{n}'s {'the field'} to {'the field value'}",
+        Set 'print field hex' to "Print \"{{zi{n}'s {'the field'}:0{'the hex width'}x}}\"".
     a text called 'print default' is "Print \"{{zn{n}}}\"".
     a text called 'print width' is "Print \"{{zn{n}:{'the width'}}}\"".
     a text called 'print zero pad' is "Print \"{{zn{n}:0{'the zero width'}}}\"".
@@ -287,8 +302,24 @@ To 'gen leaf format specifiers' with a text called indent and a boolean called n
     a text called 'print float field' is "Print \"{{zd{n}:{'the width'}.{'the precision'}}}\"".
     a text called 'print text width' is "Print \"{{zs{n}:{'the text width'}}}\"".
     a text called 'print boolean pad' is "Print \"{{zb{n}:0{'the zero width'}}}\"".
-    a text called 'print field hex' is "Print \"{{zi{n}'s x1:0{'the hex width'}x}}\"".
-    a list called 'the lines' is ['number decl', 'small decl', 'float decl', 'text decl', 'boolean decl', 'thing decl', 'thing set', 'print default', 'print width', 'print zero pad', 'print hex', 'print hex upper', 'print binary', 'print octal', 'print padded hex', 'print precision', 'print float field', 'print text width', 'print boolean pad', 'print field hex'].
+    a list called 'the lines' is ['number decl', 'small decl', 'float decl', 'text decl', 'boolean decl'].
+    If 'a thing is available' then,
+        append 'thing decl' to 'the lines',
+        append 'thing set' to 'the lines'.
+    append 'print default' to 'the lines'.
+    append 'print width' to 'the lines'.
+    append 'print zero pad' to 'the lines'.
+    append 'print hex' to 'the lines'.
+    append 'print hex upper' to 'the lines'.
+    append 'print binary' to 'the lines'.
+    append 'print octal' to 'the lines'.
+    append 'print padded hex' to 'the lines'.
+    append 'print precision' to 'the lines'.
+    append 'print float field' to 'the lines'.
+    append 'print text width' to 'the lines'.
+    append 'print boolean pad' to 'the lines'.
+    If 'a thing is available' then,
+        append 'print field hex' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
 (Expressions inside slots - LANGUAGE.md:3041-3049. The two shapes that
@@ -405,7 +436,18 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
     a text called 'scratch append' is "append \" {'token slot'}\" to gc{n}".
     a text called 'print scratch' is "Print gc{n}".
     (A function argument, a list element, a map value and a `value`.)
-    a text called 'call line' is "f4 of \"{'token slot'}/{'other slot'}\"".
+    (The function-argument sink: a format string materializes at the
+     call site and what must survive is the value the callee receives.
+     It needs a function taking exactly one text, which the manifest may
+     not have drawn - the old prelude guaranteed it with f4, and that
+     guarantee was itself an undeclared rule. When there is none, this
+     one sink drops out and the other two dozen stay.)
+    a boolean called 'a sink is available' is 'gen manifest pick a text function'.
+    a text called 'call line' is "".
+    If 'a sink is available' then,
+        a text called 'the sink' is 'gen function written' of gen_pick_function,
+        a text called 'the sink preposition' is 'gen call preposition',
+        Set 'call line' to "{'the sink'} {'the sink preposition'} \"{'token slot'}/{'other slot'}\"".
     a text called 'list decl' is "a list called gl{n} is []".
     a text called 'list append' is "append \"{'number slot'}\" to gl{n}".
     a text called 'print element' is "Print element 1 of gl{n}".
@@ -418,7 +460,20 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
     a text called 'open line' is "open a file for writing called gh{n} at \"/dev/stdout\"".
     a text called 'write line' is "Write \"fmt{n} {'token slot'} {'other slot'}\\n\" to gh{n}".
     a text called 'close line' is "Close gh{n}".
-    a list called 'the lines' is ['number decl', 'buffer decl', 'buffer fill', 'token decl', 'path decl', 'print token', 'print path', 'built decl', 'print built', 'scratch decl', 'scratch set', 'scratch append', 'print scratch', 'call line', 'list decl', 'list append', 'print element', 'map decl', 'map set', 'print map', 'value decl', 'print value', 'open line', 'write line', 'close line'].
+    a list called 'the lines' is ['number decl', 'buffer decl', 'buffer fill', 'token decl', 'path decl', 'print token', 'print path', 'built decl', 'print built', 'scratch decl', 'scratch set', 'scratch append', 'print scratch'].
+    If 'a sink is available' then,
+        append 'call line' to 'the lines'.
+    append 'list decl' to 'the lines'.
+    append 'list append' to 'the lines'.
+    append 'print element' to 'the lines'.
+    append 'map decl' to 'the lines'.
+    append 'map set' to 'the lines'.
+    append 'print map' to 'the lines'.
+    append 'value decl' to 'the lines'.
+    append 'print value' to 'the lines'.
+    append 'open line' to 'the lines'.
+    append 'write line' to 'the lines'.
+    append 'close line' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
 (Interpolating EVERY type the language has, in one slot each and then
@@ -461,8 +516,22 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
     a text called 'list decl' is "a list called hl{n} is [{'the field value'}, {'the map value'}]".
     a text called 'map decl' is "a map called hm{n} is {{\"label\": \"tag{n}\", \"count\": {'the map value'}}}".
     a text called 'value decl' is "a value called hv{n} is {'the value literal'}".
-    a text called 'thing decl' is "a t1 called hi{n}".
-    a text called 'thing set' is "Set hi{n}'s x1 to {'the field value'}".
+    (Same manifest question as 'gen leaf format specifiers': the thing
+     sink exists only when this program's prelude has a thing with a
+     number field. When it does not, the field slot drops out of both
+     its own line and the all-in-one line rather than being faked from
+     another variable - a slot that does not name a thing field is not
+     testing the thing field.)
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    a text called 'thing decl' is "".
+    a text called 'thing set' is "".
+    a text called 'the field access' is "".
+    If 'a thing is available' then,
+        a text called 'the type' is 'gen thing written' of gen_pick_thing,
+        a text called 'the field' is 'gen field written' of gen_pick_field,
+        Set 'thing decl' to "a {'the type'} called hi{n}",
+        Set 'thing set' to "Set hi{n}'s {'the field'} to {'the field value'}",
+        Set 'the field access' to "hi{n}'s {'the field'}".
     a text called 'number slot' is 'gen format slot' of "hn{n}" and 'the number spec'.
     a text called 'float slot' is 'gen format slot' of "hd{n}" and 'the float spec'.
     a text called 'text slot' is 'gen format slot' of "hs{n}" and "".
@@ -471,7 +540,9 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
     a text called 'list slot' is 'gen format slot' of "hl{n}" and "".
     a text called 'map slot' is 'gen format slot' of "hm{n}" and "".
     a text called 'value slot' is 'gen format slot' of "hv{n}" and 'the number spec'.
-    a text called 'field slot' is 'gen format slot' of "hi{n}'s x1" and 'the number spec'.
+    a text called 'field slot' is "".
+    If 'a thing is available' then,
+        Set 'field slot' to 'gen format slot' of 'the field access' and 'the number spec'.
     a text called 'print number' is "Print \"number {'number slot'}\"".
     a text called 'print float' is "Print \"float {'float slot'}\"".
     a text called 'print text' is "Print \"text {'text slot'}\"".
@@ -481,9 +552,12 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
     a text called 'print map' is "Print \"map {'map slot'}\"".
     a text called 'print value' is "Print \"value {'value slot'}\"".
     a text called 'print field' is "Print \"field {'field slot'}\"".
+    a text called 'the field tail' is "".
+    If 'a thing is available' then,
+        Set 'the field tail' to "|{'field slot'}".
     (All nine in one string, which is the shape a real formatting bug
      shows up in - one slot's mis-rendering derailing the ones after it.)
-    a text called 'print all' is "Print \"all {'number slot'}|{'float slot'}|{'text slot'}|{'buffer slot'}|{'boolean slot'}|{'list slot'}|{'map slot'}|{'value slot'}|{'field slot'}\"".
+    a text called 'print all' is "Print \"all {'number slot'}|{'float slot'}|{'text slot'}|{'buffer slot'}|{'boolean slot'}|{'list slot'}|{'map slot'}|{'value slot'}{'the field tail'}\"".
     (Literal braces, the escape table's own rows, next to a live slot.)
     a text called 'print escapes' is "Print \"braces {{{{lit}}}} tab\\there {'number slot'}\"".
     (Formatted time output, asserted rather than printed - see above.)
@@ -491,5 +565,24 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
     a text called 'clock decl' is "a text called ht{n} is \"{{hq{n}'s hour:02}}\"".
     a text called 'clock buffer' is "a buffer called hc{n} is \"{{ht{n}}}\"".
     a text called 'clock check' is "If hc{n}'s length is equal to 2 then, Print \"ht{n} ok\". Otherwise, Print \"ht{n} BAD\"".
-    a list called 'the lines' is ['number decl', 'float decl', 'text decl', 'buffer decl', 'buffer fill', 'boolean decl', 'list decl', 'map decl', 'value decl', 'thing decl', 'thing set', 'print number', 'print float', 'print text', 'print buffer', 'print boolean', 'print list', 'print map', 'print value', 'print field', 'print all', 'print escapes', 'time line', 'clock decl', 'clock buffer', 'clock check'].
+    a list called 'the lines' is ['number decl', 'float decl', 'text decl', 'buffer decl', 'buffer fill', 'boolean decl', 'list decl', 'map decl', 'value decl'].
+    If 'a thing is available' then,
+        append 'thing decl' to 'the lines',
+        append 'thing set' to 'the lines'.
+    append 'print number' to 'the lines'.
+    append 'print float' to 'the lines'.
+    append 'print text' to 'the lines'.
+    append 'print buffer' to 'the lines'.
+    append 'print boolean' to 'the lines'.
+    append 'print list' to 'the lines'.
+    append 'print map' to 'the lines'.
+    append 'print value' to 'the lines'.
+    If 'a thing is available' then,
+        append 'print field' to 'the lines'.
+    append 'print all' to 'the lines'.
+    append 'print escapes' to 'the lines'.
+    append 'time line' to 'the lines'.
+    append 'clock decl' to 'the lines'.
+    append 'clock buffer' to 'the lines'.
+    append 'clock check' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.

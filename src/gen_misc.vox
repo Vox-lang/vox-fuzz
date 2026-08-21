@@ -1,5 +1,10 @@
 a number called gen_envs is 0.
 
+(How many flag schemas this program declared. Kept because loop_gen and
+ the tests report on it; it is no longer a NAME - names come off the
+ manifest (gen_manifest.vox), which is what let the flag block stop
+ being four identical lines in every program.)
+
 a number called gen_flags is 0.
 
 a boolean called gen_uses_flag_reader is true.
@@ -26,9 +31,20 @@ a boolean called gen_uses_flag_reader is true.
 
 a list called gen_argv is [].
 
+(Which flags this program's argv actually supplies, and what each
+ should therefore hold. A manifest may hold no text flag, or no number
+ flag, or none at all, so each is a pair: whether there is one, and what
+ it should be.)
+
+a number called gen_text_flag is 0.
+
 a text called gen_expected_label is "".
 
-a number called gen_expected_count is 0.
+a number called gen_number_flag is 0.
+
+a text called gen_expected_count is "0".
+
+a number called gen_boolean_flag is 0.
 
 a boolean called gen_expects_on is false.
 
@@ -80,9 +96,24 @@ a number called gen_reader_calls is 0.
  are the words a generated program's environment readings are actually
  called - things you would read off a wall or a door. A word is claimed
  at most once per program; a numeric suffix appears only if a program
- asks for more names than there are words.)
+ asks for more names than there are words.
 
-a list called gen_environment_words is ["the nameplate", "the doormat", "the noticeboard", "the roll call", "the headcount", "the signpost", "the waypoint", "the placard", "the lantern", "the compass", "the opening entry", "the closing entry", "the second reading", "the first reading", "the label", "the badge", "the locale", "the surroundings", "the lodging", "the workshop", "the porch light", "the letterbox", "the doorbell", "the welcome mat", "the hallway", "the coat hook", "the key rack", "the visitor book", "the house number", "the street sign"].
+ Every word here is a TOP-LEVEL declaration in the generated program, so
+ this pool must stay disjoint from every other pool that spends into
+ Vox's one global identifier space (LANGUAGE.md:1571, under the heading
+ "One identifier space": "Type names, variable names, and function names
+ share a single global identifier namespace") - the manifest's type,
+ function and flag pools (gen_manifest.vox), gen_buffer_words
+ (gen_buffers.vox) and the value nouns and verbs (gen_collections.vox).
+ Three words here collided when
+ the environment batch met the prelude manifest on this branch and each
+ would have been a rare, seed-dependent compile failure: `the waypoint`
+ was also a type word, `the closing entry` also a function word, and
+ `the label` also a value noun. They are now `the gatepost`, `the
+ parting entry` and `the door tag`, and tests/230_units.vox counts every
+ pairing so the next one cannot land silently.)
+
+a list called gen_environment_words is ["the nameplate", "the doormat", "the noticeboard", "the roll call", "the headcount", "the signpost", "the gatepost", "the placard", "the lantern", "the compass", "the opening entry", "the parting entry", "the second reading", "the first reading", "the door tag", "the badge", "the locale", "the surroundings", "the lodging", "the workshop", "the porch light", "the letterbox", "the doorbell", "the welcome mat", "the hallway", "the coat hook", "the key rack", "the visitor book", "the house number", "the street sign"].
 
 a list called gen_environment_word_taken is [].
 
@@ -167,12 +198,16 @@ To 'gen environment variable name'.
 a text called gen_environment_last_row is "ENV-06".
 
 To 'gen environment source'.
-    a number called 'the source draw' is 'rng below' of 6.
-    If 'the source draw' is 0 then,
+    (13, not 6. Six is even, and this LCG's low bit alternates, so
+     `first` and `last` - which differed only in that bit - could not be
+     drawn independently of each other. Two shares in thirteen each is
+     the same split it was reaching for.)
+    a number called 'the source draw' is 'rng below' of 13.
+    If 'the source draw' is less than 2 then,
         Set gen_environment_last_row to "ENV-03",
         Set gen_environment_last_name_is_unset to false,
         Return a text, "environment's first".
-    If 'the source draw' is 1 then,
+    If 'the source draw' is less than 4 then,
         Set gen_environment_last_row to "ENV-04",
         Set gen_environment_last_name_is_unset to false,
         Return a text, "environment's last".
@@ -196,14 +231,14 @@ To 'gen leaf environment agreement' with a text called indent and a boolean call
     Set gen_envs to gen_envs add 1.
     a list called 'the lines' is [].
     a text called 'the count' is "environment's count".
-    a number called 'the count draw' is 'rng below' of 2.
-    If 'the count draw' is 0 then,
+    a number called 'the count draw' is 'rng below' of 13.
+    If 'the count draw' is less than 6 then,
         a text called 'the count stem' is 'gen environment name',
         Set 'the count' to 'gen buffer reference' of 'the count stem',
         append "a number called {'the count'} is environment's count" to 'the lines'.
     a text called 'the emptiness' is "environment's empty".
-    a number called 'the emptiness draw' is 'rng below' of 2.
-    If 'the emptiness draw' is 0 then,
+    a number called 'the emptiness draw' is 'rng below' of 13.
+    If 'the emptiness draw' is less than 7 then,
         a text called 'the emptiness stem' is 'gen environment name',
         Set 'the emptiness' to 'gen buffer reference' of 'the emptiness stem',
         append "a boolean called {'the emptiness'} is environment's empty" to 'the lines'.
@@ -211,11 +246,11 @@ To 'gen leaf environment agreement' with a text called indent and a boolean call
     a text called 'the count shown' is 'gen buffer slot of' of 'the count'.
     a text called 'none but not empty' is "If {'the count'} is 0 and {'the emptiness'} is false then, Print \"ASSERT ENV-02: expected 1 got {'the emptiness shown'}\", Exit 95. Print {'the emptiness'}".
     a text called 'some but empty' is "If {'the count'} is not 0 and {'the emptiness'} then, Print \"ASSERT ENV-05: expected 0 got {'the emptiness shown'}\", Exit 95. Print {'the count'} as a boolean".
-    a number called 'the order draw' is 'rng below' of 2.
-    If 'the order draw' is 0 then,
+    a number called 'the order draw' is 'rng below' of 13.
+    If 'the order draw' is less than 6 then,
         append 'none but not empty' to 'the lines',
         append 'some but empty' to 'the lines'.
-    If 'the order draw' is 1 then,
+    If 'the order draw' is greater than 5 then,
         append 'some but empty' to 'the lines',
         append 'none but not empty' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
@@ -367,8 +402,8 @@ To 'gen leaf environment entry scan' with a text called indent and a boolean cal
     a list called 'the lines' is [].
     a text called 'the row' is "ENV-03".
     a text called 'the source' is "environment's first".
-    a number called 'the end draw' is 'rng below' of 2.
-    If 'the end draw' is 1 then,
+    a number called 'the end draw' is 'rng below' of 13.
+    If 'the end draw' is less than 6 then,
         Set 'the row' to "ENV-04",
         Set 'the source' to "environment's last".
     a text called 'the entry stem' is 'gen environment name'.
@@ -383,8 +418,8 @@ To 'gen leaf environment entry scan' with a text called indent and a boolean cal
     append "For each {'the place'} from 1 to {'the scan size'}, If byte {'the place'} of {'the scan'} is 61 then, Set {'the tally'} to {'the tally'} add 1." to 'the lines'.
     a text called 'the tally shown' is 'gen buffer slot of' of 'the tally'.
     append "If {'the scan size'} is not 0 and {'the tally'} is 0 then, Print \"ASSERT {'the row'}: expected 1 got {'the tally shown'}\", Exit 95. Print {'the tally'} as a boolean" to 'the lines'.
-    a number called 'the second reading draw' is 'rng below' of 2.
-    If 'the second reading draw' is 0 then,
+    a number called 'the second reading draw' is 'rng below' of 13.
+    If 'the second reading draw' is less than 7 then,
         a text called 'the direct stem' is 'gen environment name',
         a text called 'the direct' is 'gen buffer reference' of 'the direct stem',
         a text called 'the direct size' is 'gen buffer property' of 'the direct stem' and "size",
@@ -408,7 +443,23 @@ To 'gen environment loop word'.
  safe closer - no loop, no On error, every line closes its own If - and
  draws one of the three closer-safe leaves above. Kind 27 is top-level
  only and draws either the unset-lookup-under-On-error leaf below or the
- entry scan.)
+ entry scan.
+
+ Every two-way choice in the environment leaves above goes through a
+ PRIME modulus, not `'rng below' of 2`. rng.vox is an LCG modulo 2^31
+ with an odd multiplier, so its low bit simply alternates, and a leaf
+ that spends a fixed number of draws before flipping locks onto that
+ alternation. This is documented twice already - above
+ 'literal draw below' (gen_literals.vox) and above the file-I/O choice
+ in 'gen program' (gen_core.vox) - and it caught this file anyway.
+ Measured on the acceptance corpus, seeds 5000-5149, plain layout,
+ before the fix: the entry scan ran in 0 of 150 programs, the agreement
+ leaf named its count in 13 of 13 and its emptiness in 13 of 13, and
+ wrote its two assertions in the ENV-02-first order 13 times out of 13.
+ Four coin flips, four constants, no citation for any of them.
+ `r modulo 13` depends on the whole of r rather than its bottom bit, so
+ consecutive draws are independent; thresholds of 6 and 7 give roughly
+ 46% and 54%.)
 
 To 'gen leaf environment' with a text called indent and a boolean called nested.
     a number called 'the leaf draw' is 'rng below' of 3.
@@ -420,10 +471,10 @@ To 'gen leaf environment' with a text called indent and a boolean called nested.
         'gen leaf environment exists' of indent and nested.
 
 To 'gen leaf environment with a loop or handler' with a text called indent and a boolean called nested.
-    a number called 'the leaf draw' is 'rng below' of 2.
-    If 'the leaf draw' is 0 then,
+    a number called 'the leaf draw' is 'rng below' of 13.
+    If 'the leaf draw' is less than 6 then,
         'gen leaf environment oob' of indent and nested.
-    If 'the leaf draw' is 1 then,
+    If 'the leaf draw' is greater than 5 then,
         'gen leaf environment entry scan' of indent and nested.
 
 (The unset lookup under On error - bug #24 (an unset variable segfaulted,
@@ -563,77 +614,193 @@ To 'gen build argv'.
     (A list is emptied by assignment; `clear` is buffer-only.)
     Set gen_argv to [].
     Set gen_expected_label to "".
-    Set gen_expected_count to 0.
+    Set gen_expected_count to "0".
     Set gen_expects_on to false.
     Set gen_asserts_argv to false.
+    (Which flags there are to play with. The old builder wrote "-a",
+     "-b" and "-c" as literals because the schema was a fixed template;
+     now each is whatever this program's manifest drew, and a program
+     that drew no text flag simply has no label to pass or assert.)
+    Set gen_text_flag to 0.
+    Set gen_number_flag to 0.
+    Set gen_boolean_flag to 0.
+    a boolean called 'a text flag exists' is 'gen manifest pick a flag of kind' of 0.
+    If 'a text flag exists' then,
+        Set gen_text_flag to gen_pick_flag.
+    a boolean called 'a number flag exists' is 'gen manifest pick a flag of kind' of 1.
+    If 'a number flag exists' then,
+        Set gen_number_flag to gen_pick_flag.
+    a boolean called 'a boolean flag exists' is 'gen manifest pick a flag of kind' of 2.
+    If 'a boolean flag exists' then,
+        Set gen_boolean_flag to gen_pick_flag.
     a number called shape is 'rng below' of 10.
     (0-5: a valid invocation, asserted. Long form and short form are
      different code paths through one schema, so both are drawn.)
     If shape is less than 6 then,
-        Set gen_asserts_argv to true,
-        a number called 'the word' is 'rng below' of 100000,
-        a text called 'the label value' is "v{'the word'}",
-        a number called 'the count value' is 'rng below' of 10000,
-        (Prime modulus. Two consecutive `'rng below' of 2` draws in this
-         LCG ALWAYS differ — measured 2000 trials, 2000 disagreements,
-         zero agreements. Each draw's own distribution stays a fair
-         50/50, which is exactly why this hides: the marginals look
-         perfect while the PAIR is locked. Here that meant short form
-         always carried the boolean flag and long form never did, so two
-         of the four combinations were unreachable for every seed.
-         The same trap as 'gen leaf loop control' documents, which is
-         now three sightings.)
-        a number called 'the form draw' is 'rng below' of 13,
-        a number called 'long form' is 0,
-        If 'the form draw' is greater than 6 then,
-            Set 'long form' to 1.
-        If 'long form' is 0 then,
-            append "-a" to gen_argv,
-            append 'the label value' to gen_argv,
-            append "-b" to gen_argv,
-            a text called 'the short count' is "{'the count value'}",
-            append 'the short count' to gen_argv.
-        If 'long form' is 1 then,
-            append "--alpha{gen_flags}" to gen_argv,
-            append 'the label value' to gen_argv,
-            append "--beta{gen_flags}" to gen_argv,
-            a text called 'the long count' is "{'the count value'}",
-            append 'the long count' to gen_argv.
-        Set gen_expected_label to 'the label value',
-        Set gen_expected_count to 'the count value',
-        a number called 'the boolean draw' is 'rng below' of 11,
-        a number called 'boolean pick' is 1,
-        If 'the boolean draw' is less than 6 then,
-            Set 'boolean pick' to 0,
-        If 'boolean pick' is 0 then,
-            append "-c" to gen_argv,
-            Set gen_expects_on to true.
+        'gen build a valid argv',
         Return a number, 0.
     (6: a value of the wrong type for a number flag. Yields 0 AND raises,
-     so a program can tell it from a real -b 0 - verified, defect 10.)
+     so a program can tell it from a real 0 - verified, defect 10.)
     If shape is 6 then,
-        append "-b" to gen_argv,
-        append "notanumber" to gen_argv,
+        'gen pass a bad value to' of gen_number_flag and "notanumber",
         Return a number, 0.
     (7: a value past i64. Raises too - compiler bug #35's fix reaching
      the flag path.)
     If shape is 7 then,
-        append "-b" to gen_argv,
-        append "99999999999999999999" to gen_argv,
+        'gen pass a bad value to' of gen_number_flag and "99999999999999999999",
         Return a number, 0.
     (8: a flag whose value is missing because argv ends. Leaves the flag
      empty and does not raise.)
     If shape is 8 then,
-        append "-a" to gen_argv,
+        'gen pass a lone alias for' of gen_text_flag,
         Return a number, 0.
     (9: an unknown flag plus positionals. Consumes nothing, so both fall
      through to arguments's all - which has only ever seen the empty
-     case.)
-    append "-z" to gen_argv.
+     case. The alias is drawn from OUTSIDE the manifest's letters where
+     it can be: an alias this program happens to declare is not unknown.)
+    a text called 'the unknown alias' is 'gen an undeclared alias'.
+    append 'the unknown alias' to gen_argv.
     a number called extra is 'rng below' of 100.
     a text called 'the extra' is "extra{extra}".
     append 'the extra' to gen_argv.
     Return a number, 0.
+
+(One alias for a flag, short or long. Both reach the same schema and the
+ two are different code paths through the parser, so which one an
+ invocation uses is drawn - and drawn through a prime modulus, because
+ two consecutive small-range draws out of this LCG are anti-correlated
+ (measured 2000 trials, 2000 disagreements) and this decision sits right
+ next to two others.)
+
+To 'gen alias for' with a number called 'the flag'.
+    a number called 'the form draw' is 'rng below' of 13.
+    If 'the form draw' is greater than 6 then,
+        a text called 'the long alias' is element 'the flag' of gen_flag_long,
+        Return a text, 'the long alias'.
+    a text called 'the short alias' is element 'the flag' of gen_flag_short.
+    Return a text, 'the short alias'.
+
+(A valid invocation: pass whichever of the three flag types this program
+ actually declared, and remember what each should hold so the assertions
+ can check it. A program with no flags at all passes nothing and asserts
+ nothing, which is a perfectly ordinary invocation of a program that
+ takes no flags.)
+
+To 'gen build a valid argv'.
+    Set gen_asserts_argv to true.
+    If gen_text_flag is not 0 then,
+        a text called 'the label alias' is 'gen alias for' of gen_text_flag,
+        a text called 'the label value' is 'gen a flag value',
+        append 'the label alias' to gen_argv,
+        append 'the label value' to gen_argv,
+        Set gen_expected_label to 'the label value'.
+    If gen_number_flag is not 0 then,
+        a text called 'the count alias' is 'gen alias for' of gen_number_flag,
+        (No ceiling. This used to be `'rng below' of 10000`, which the
+         invariant report read back as "never above 9984" - a bound no
+         line of LANGUAGE.md sets. Eighteen digits is the widest a
+         literal can be and stay inside i64 by construction, and a
+         number flag parses one: hand-verified against 0.4.7 with a
+         fifteen-digit value.)
+        a number called 'the digit count' is 'rng below' of 18 add 1,
+        a text called 'the count value' is 'gen random digits' of 'the digit count',
+        append 'the count alias' to gen_argv,
+        append 'the count value' to gen_argv,
+        Set gen_expected_count to 'the count value'.
+    If gen_boolean_flag is not 0 then,
+        a number called 'the boolean draw' is 'rng below' of 11,
+        If 'the boolean draw' is less than 6 then,
+            a text called 'the boolean alias' is 'gen alias for' of gen_boolean_flag,
+            append 'the boolean alias' to gen_argv,
+            Set gen_expects_on to true.
+    Return a number, 0.
+
+(A flag's text value. Any bytes would do - it is compared as text - so
+ this is a drawn word plus drawn digits, which is wide enough that the
+ assertion line's literal is never the same twice and narrow enough that
+ nothing in it needs escaping in a Vox string or a shell-free argv.)
+
+To 'gen a flag value'.
+    a text called 'a word' is 'gen word from' of gen_type_words.
+    a number called 'the digit count' is 'rng below' of 6 add 1.
+    a text called 'the digits' is 'gen random digits' of 'the digit count'.
+    Return a text, "{'a word'} {'the digits'}".
+
+(The hostile shapes, aimed at a flag of the right type when there is
+ one. A program with no number flag cannot be given a bad number, so it
+ gets the undeclared-alias shape instead - the hostile case that needs
+ nothing from the schema.)
+
+To 'gen pass a bad value to' with a number called 'the flag' and a text called 'the value'.
+    If 'the flag' is 0 then,
+        a text called 'the unknown alias' is 'gen an undeclared alias',
+        append 'the unknown alias' to gen_argv,
+        append 'the value' to gen_argv,
+        Return a number, 0.
+    a text called 'the alias' is 'gen alias for' of 'the flag'.
+    append 'the alias' to gen_argv.
+    append 'the value' to gen_argv.
+    Return a number, 0.
+
+To 'gen pass a lone alias for' with a number called 'the flag'.
+    If 'the flag' is 0 then,
+        a text called 'the unknown alias' is 'gen an undeclared alias',
+        append 'the unknown alias' to gen_argv,
+        Return a number, 0.
+    a text called 'the alias' is 'gen alias for' of 'the flag'.
+    append 'the alias' to gen_argv.
+    Return a number, 0.
+
+(An alias no schema in this program claims. The letters a program uses
+ are drawn from the alphabet on a coprime walk, so a scan for an unused
+ one always terminates; if every letter were somehow spoken for the long
+ form falls back to a spelling the dashed-alias rule can never produce,
+ since a manifest phrase never contains a digit.)
+
+To 'gen an undeclared alias'.
+    (Marks first, then one scan. A scan nested inside a scan would put a
+     While inside a While, and this generator's own rule (note 6b) is
+     that a loop lives at its own level - so the two passes are two
+     loops, not one inside the other.)
+    a list called 'the letter is taken' is [].
+    a number called 'the step' is 0.
+    While 'the step' is less than 26,
+        append 0 to 'the letter is taken',
+        Set 'the step' to 'the step' add 1.
+    a number called 'how many flags' is gen_flag_short's length.
+    a number called 'the flag' is 1.
+    While 'the flag' is less than or equal to 'how many flags',
+        a text called 'the taken alias' is element 'the flag' of gen_flag_short,
+        a number called 'the taken slot' is 'gen letter slot of' of 'the taken alias',
+        If 'the taken slot' is not 0 then,
+            Set element 'the taken slot' of 'the letter is taken' to 1.
+        Set 'the flag' to 'the flag' add 1.
+    a number called 'the letter' is 0.
+    a number called 'the scan' is 1.
+    While 'the scan' is less than or equal to 26,
+        a number called 'the mark' is element 'the scan' of 'the letter is taken',
+        If 'the mark' is 0 and 'the letter' is 0 then,
+            Set 'the letter' to 'the scan'.
+        Set 'the scan' to 'the scan' add 1.
+    If 'the letter' is 0 then,
+        (Every letter is spoken for, which needs 26 flags in one
+         program. A manifest phrase never contains a digit, so the
+         dashed-alias rule can never produce this spelling and it is
+         undeclared by construction.)
+        Return a text, "--no-such-flag-1".
+    a text called 'the free letter' is element 'the letter' of gen_alias_letters.
+    Return a text, "-{'the free letter'}".
+
+To 'gen letter slot of' with a text called alias.
+    a number called 'the slot' is 0.
+    a number called 'the step' is 1.
+    While 'the step' is less than or equal to 26,
+        a text called 'the letter' is element 'the step' of gen_alias_letters,
+        a text called 'the candidate' is "-{'the letter'}",
+        If alias is 'the candidate' then,
+            Set 'the slot' to 'the step'.
+        Set 'the step' to 'the step' add 1.
+    Return a number, 'the slot'.
 
 (The assertions. Only emitted for a valid invocation, and only for the
  flags actually passed. A distinct Exit code per assertion means a
@@ -643,14 +810,39 @@ To 'gen build argv'.
 To 'gen emit argv assertions'.
     If gen_asserts_argv is false then,
         Return a number, 0.
-    a number called n is gen_flags.
-    'gen emit' of "If fl{n}label is not \"{gen_expected_label}\" then, Exit 91.\n".
-    'gen emit' of "If fl{n}count is not {gen_expected_count} then, Exit 92.\n".
-    If gen_expects_on then,
-        'gen emit' of "If fl{n}on is false then, Exit 93.\n".
-    If gen_expects_on is false then,
-        'gen emit' of "If fl{n}on then, Exit 94.\n".
+    (Only the flags this invocation actually supplied. A program whose
+     manifest holds no number flag was passed no number and has nothing
+     to check; a program with no flags at all asserts nothing, which is
+     what a program that takes no flags should do.)
+    If gen_text_flag is not 0 then,
+        a text called 'the label name' is 'gen flag written' of gen_text_flag,
+        'gen emit' of "If {'the label name'} is not \"{gen_expected_label}\" then, Exit 91.\n".
+    If gen_number_flag is not 0 then,
+        a text called 'the count name' is 'gen flag written' of gen_number_flag,
+        'gen emit' of "If {'the count name'} is not {gen_expected_count} then, Exit 92.\n".
+    If gen_boolean_flag is not 0 then,
+        'gen emit boolean flag assertion'.
     'gen emit' of "\n".
+    Return a number, 0.
+
+(The boolean flag, both ways round. When the invocation passed it, it
+ must be true; when it did not, it must hold its DECLARED DEFAULT -
+ false when it has none (LANGUAGE.md:4465-4468), true when the manifest
+ gave it `with default true`. Asserting `is false` unconditionally is
+ what would break the moment a boolean flag drew a default, which is
+ exactly the sort of assertion CLAUDE.md calls a false-finding factory.)
+
+To 'gen emit boolean flag assertion'.
+    a text called 'the switch name' is 'gen flag written' of gen_boolean_flag.
+    If gen_expects_on then,
+        'gen emit' of "If {'the switch name'} is false then, Exit 93.\n",
+        Return a number, 0.
+    a text called 'the default' is element gen_boolean_flag of gen_flag_default.
+    If 'the default' is "true" then,
+        'gen emit' of "If {'the switch name'} is false then, Exit 93.\n",
+        Return a number, 0.
+    'gen emit' of "If {'the switch name'} then, Exit 94.\n".
+    Return a number, 0.
 
 (Flags. Josj, 2026-08-20: "Flags don't appear anywhere." They did not,
  and the language's own flag schema went unexercised by anything real
@@ -660,94 +852,177 @@ To 'gen emit argv assertions'.
  whatever it was declared). A documented facility with no real user
  carries bugs indefinitely; this makes the fuzzer that user.
 
- The schema goes first, before anything else in the program: a
- declaration must precede `Parse flags.`, and using a flag variable
- before the parse point is a compile-time error. Everything after the
- parse point may read them freely.
-
- Generated programs are run with NO arguments (runner.vox passes an
- empty argument list), so an undefaulted flag always takes the
- "unsupplied" path - exactly #31's crash site - for free. That also
- means a `required` flag would abort every program at runtime, so none
- is emitted: the invariant is a program that should compile AND run.
-
  NOTE this raises the fuzzer's floor to vox 0.4.6. On 0.4.5 and earlier
  an undefaulted text flag segfaults on read, so every generated program
  would "find" #31 - a true finding, but one already fixed and recorded.
- SEEDS.md pins the compiler commit, which is what keeps that honest.)
+ SEEDS.md pins the compiler commit, which is what keeps that honest.
+
+ What the old block asserted without a citation, and what replaces it:
+
+ - "every program has four flags": nothing says so. The count is drawn
+   0..4 plus the scratch flag when this program does file I/O, and zero
+   flags is a legal, ordinary Vox program.
+ - "they are called fl<N>label / fl<N>count / fl<N>on / fl<N>scratch,
+   with -a/-b/-c/-s and --alpha<N>/--beta<N>/--gamma<N>/--scratch<N>":
+   nothing says so. Names and both aliases come off the manifest.
+ - "one text, one number, one boolean, in that order": nothing says so.
+   Each flag's type is drawn.
+ - "only the text flag may carry a default": nothing says so.
+   LANGUAGE.md:4465-4468 gives every type an empty value AND allows
+   `with default` on every type - both hand-verified against 0.4.7,
+   including `with default true` on a boolean.
+ - "`Parse flags.` is always written": LANGUAGE.md:4478 says the
+   opposite - omit it and Vox inserts parsing immediately after the last
+   schema declaration. Verified: a program with two flags, a global
+   between them and no `Parse flags.` compiles and reads both.
+ - "the four declarations are contiguous": LANGUAGE.md:4484 explicitly
+   permits normal code before and between schema declarations, and the
+   compiler agrees.
+
+ What genuinely holds, and is enforced here:
+
+ - a schema must precede the parse point, and a flag read before the
+   parse point is a compile-time error (LANGUAGE.md:4487). Every read
+   this generator emits is either in the statement stream, which follows
+   every block, or inside a function body, which is legal wherever the
+   function is defined because the CALL happens after the parse point -
+   verified, and the reason the reader may be emitted before the schema.
+ - declaring a schema AFTER `Parse flags.` is a compile-time error
+   (LANGUAGE.md:4486), so the parse line, when it is written at all,
+   goes after every declaration in this block.
+ - a `required` flag would abort at runtime whenever argv did not
+   supply it, and the invariant is a program that compiles AND runs, so
+   none is ever emitted.)
 
 To 'gen emit prelude flags'.
-    a number called n is gen_flags.
-    a number called 'default pick' is 'rng below' of 3.
-    a text called 'the text flag' is "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text.\n".
-    If 'default pick' is 0 then,
-        Set 'the text flag' to "a flag called fl{n}label is \"-a\" or \"--alpha{n}\", it is a text with default \"d{n}\".\n".
-    'gen emit' of 'the text flag'.
-    'gen emit' of "a flag called fl{n}count is \"-b\" or \"--beta{n}\", it is a number.\n".
-    'gen emit' of "a flag called fl{n}on is \"-c\" or \"--gamma{n}\", it is a boolean.\n".
-    (The harness always passes --scratch, so the flag is always
-     declared; only programs that chose file I/O actually use it. A text
-     flag with no default reads as "" when unsupplied, which is compiler
-     bug #31's fix — before 0.4.6 this would have segfaulted.)
-    'gen emit' of "a flag called fl{n}scratch is \"-s\" or \"--scratch{n}\", it is a text.\n".
-    'gen emit' of "Parse flags.\n".
+    a number called 'how many flags' is gen_flag_names's length.
+    a number called 'the flag' is 1.
+    While 'the flag' is less than or equal to 'how many flags',
+        'gen emit one flag' of 'the flag',
+        (LANGUAGE.md:4484: "You may place normal code before/between
+         schema declarations." So sometimes something else goes here -
+         an ordinary global, the same declaration 'gen emit globals
+         block' writes - and the flag block stops being a contiguous
+         run of lines.)
+        a number called 'the interleave draw' is 'rng below' of 13,
+        If 'the interleave draw' is less than 4 then,
+            a number called 'the fresh global' is 'gen new var'.
+        Set 'the flag' to 'the flag' add 1.
+    (LANGUAGE.md:4478: omit it and Vox inserts parsing immediately after
+     the last schema declaration, so writing it is optional whether or
+     not there are flags to parse. Hand-verified both edges against
+     0.4.7: `Parse flags.` with no schema at all compiles and runs, and
+     two flags read with no parse line compile and hold their values.)
+    a number called 'the parse draw' is 'rng below' of 11.
+    If 'the parse draw' is greater than 3 then,
+        'gen emit' of "Parse flags.\n".
     'gen emit' of "\n".
     (Immediately after the parse point: a flag read before it is a
      compile-time error, and putting the assertions here means they run
      before anything else can Exit for its own reasons.)
     'gen emit argv assertions'.
+    Return a number, 0.
 
-(gen_flags is fixed for the whole program in 'gen program', not
- incremented here. It used to be bumped on entry, which meant the flag
- READER — if the seeded order placed it first — named fl0label and
- referred to flags that did not exist yet. The reader being emitted
- before the schema is perfectly legal Vox, verified by hand: a function
- may read a flag declared below it so long as it is CALLED after
- `Parse flags.` So the ordering was fine and only the naming was broken.)
+To 'gen emit one flag' with a number called 'the flag'.
+    a text called 'the name' is 'gen flag written' of 'the flag'.
+    a text called 'the short alias' is element 'the flag' of gen_flag_short.
+    a text called 'the long alias' is element 'the flag' of gen_flag_long.
+    a number called 'the kind' is element 'the flag' of gen_flag_kind.
+    a text called 'the default' is element 'the flag' of gen_flag_default.
+    a text called 'the type' is "text".
+    If 'the kind' is 1 then,
+        Set 'the type' to "number".
+    If 'the kind' is 2 then,
+        Set 'the type' to "boolean".
+    a text called 'the line' is "a flag called {'the name'} is \"{'the short alias'}\" or \"{'the long alias'}\", it is a {'the type'}.\n".
+    If 'the default' is not "" then,
+        Set 'the line' to "a flag called {'the name'} is \"{'the short alias'}\" or \"{'the long alias'}\", it is a {'the type'} with default {'the default'}.\n".
+    'gen emit' of 'the line'.
+    Return a number, 0.
 
 (The reader function is the #32 shape and the whole reason this is
  worth emitting: a flag read INSIDE a function body was mis-typed, and
  was invisible at top level because the declaration's own type is still
  in scope there. Reading each flag both ways is what makes the
- difference observable.)
+ difference observable - so the reader reads EVERY flag this program
+ declared, whatever their types, rather than the three the old template
+ knew about.
+
+ A program with no flags gets no reader: there would be nothing in its
+ body, and a function body cannot be empty.)
 
 To 'gen emit prelude flag reader'.
     If gen_uses_flag_reader is false then,
         Return a number, 0.
-    a number called n is gen_flags.
-    'gen emit' of "To 'read flags {n}'.\n".
-    'gen emit' of "    a text called fl{n}local is fl{n}label.\n".
-    'gen emit' of "    a number called fl{n}bumped is fl{n}count add 1.\n".
-    'gen emit' of "    Print fl{n}local.\n".
-    'gen emit' of "    Print fl{n}bumped.\n".
-    'gen emit' of "    Print fl{n}on.\n".
+    a number called 'how many flags' is gen_flag_names's length.
+    If 'how many flags' is 0 then,
+        Return a number, 0.
+    'gen emit' of "To {gen_reader_name}.\n".
+    a number called 'the flag' is 1.
+    While 'the flag' is less than or equal to 'how many flags',
+        'gen emit one flag read' of 'the flag',
+        Set 'the flag' to 'the flag' add 1.
     'gen emit' of "\n".
+    Return a number, 0.
 
-(Top-level flag reads, plus a call into the reader. `is empty` on the
- text flag is deliberate: compiler bug #33 - `is empty` on a text was
- always false, testing the pointer instead of the contents - was fixed
- in 0.4.6, and an undefaulted unsupplied flag holding "" is the exact
- shape that proves it. Both branches print, so neither answer crashes
- the program; a WRONG answer is invisible to a signal-death oracle and
- is what plan 325's knowable-answer work is for.)
+(A flag read inside a function body, in the shape bug #32 broke: bind it
+ to a local of its declared type first, then print the local. A number
+ also gets an arithmetic use, which is what made the mis-typing show.)
+
+To 'gen emit one flag read' with a number called 'the flag'.
+    a text called 'the name' is 'gen flag written' of 'the flag'.
+    a number called 'the kind' is element 'the flag' of gen_flag_kind.
+    a text called 'the local' is 'gen reader local for' of 'the flag'.
+    If 'the kind' is 0 then,
+        'gen emit' of "    a text called {'the local'} is {'the name'}.\n",
+        'gen emit' of "    Print {'the local'}.\n",
+        Return a number, 0.
+    If 'the kind' is 1 then,
+        a text called 'the addend' is 'literal integer',
+        'gen emit' of "    a number called {'the local'} is {'the name'} add {'the addend'}.\n",
+        'gen emit' of "    Print {'the local'}.\n",
+        Return a number, 0.
+    'gen emit' of "    a boolean called {'the local'} is {'the name'}.\n".
+    'gen emit' of "    Print {'the local'}.\n".
+    Return a number, 0.
+
+(A local named after the flag it copies, so the reader still reads
+ aloud. It is a function local, so it may repeat a top-level name
+ without colliding - but it never does, because the suffix is a word no
+ flag phrase ends in.)
+
+To 'gen reader local for' with a number called 'the flag'.
+    a text called 'the phrase' is element 'the flag' of gen_flag_names.
+    a text called 'the local phrase' is "{'the phrase'} as read".
+    a text called 'the local' is 'gen written name' of 'the local phrase'.
+    Return a text, 'the local'.
+
+(Top-level flag reads, plus a call into the reader. Every flag is read
+ at top level as well as inside the reader, which is what makes bug
+ #32's difference observable. A program with no flags has nothing to
+ read and stands aside.)
 
 To 'gen leaf flag read' with a text called indent and a boolean called nested.
-    a number called n is gen_flags.
-    a text called 'print label' is "Print fl{n}label".
-    a text called 'print count' is "Print fl{n}count".
-    a text called 'print on' is "Print fl{n}on".
+    a number called 'how many flags' is gen_flag_names's length.
+    If 'how many flags' is 0 then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a list called 'the lines' is [].
+    a number called 'the flag' is 1.
+    While 'the flag' is less than or equal to 'how many flags',
+        a text called 'the name' is 'gen flag written' of 'the flag',
+        a text called 'the print line' is "Print {'the name'}",
+        append 'the print line' to 'the lines',
+        Set 'the flag' to 'the flag' add 1.
     (The top-level reads always work; the CALL only goes in when this
      program actually defined the reader. Flags are still read either
      way, so coverage of the flag surface does not depend on the
-     decision — only the function call does.)
-    a list called 'the lines' is ['print label', 'print count', 'print on'].
+     decision - only the function call does.)
     If gen_uses_flag_reader then,
         Set gen_reader_calls to gen_reader_calls add 1,
-        a text called 'call reader' is "'read flags {n}'",
-        a list called 'the calling lines' is ['print label', 'print count', 'print on', 'call reader'],
-        'gen join lines' of indent and nested and 'the calling lines',
-        Return a boolean, false.
+        append gen_reader_name to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
+    Return a boolean, false.
 
 (An `is empty` probe on the flag and on plain values, in branch form.
  Every answer here is knowable at generation time, which is what makes

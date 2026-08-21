@@ -4,18 +4,18 @@ If environment's count is 0 and 'the opening entry' is false then, Print "ASSERT
 If environment's count is not 0 and 'the opening entry' then, Print "ASSERT ENV-05: expected 0 got {'the opening entry'}", Exit 95. Print environment's count as a boolean.
 
     a number called 'the letterbox' is environment's count,
-    If 'the letterbox' is 0 and environment's empty is false then, Print "ASSERT ENV-02: expected 1 got {environment's empty}", Exit 95. Print environment's empty,
-    If 'the letterbox' is not 0 and environment's empty then, Print "ASSERT ENV-05: expected 0 got {environment's empty}", Exit 95. Print 'the letterbox' as a boolean.
+    If 'the letterbox' is not 0 and environment's empty then, Print "ASSERT ENV-05: expected 0 got {environment's empty}", Exit 95. Print 'the letterbox' as a boolean,
+    If 'the letterbox' is 0 and environment's empty is false then, Print "ASSERT ENV-02: expected 1 got {environment's empty}", Exit 95. Print environment's empty.
 
 --- ENV-06 (ENV-03, ENV-04): a lookup read several ways agrees with itself ---
 a text called 'the first reading' is environment's "TERM".
 a buffer called 'the first reading in bytes' is 'the first reading'.
-a buffer called 'the closing entry' is environment's "TERM".
-If 'the closing entry's size is not 'the first reading in bytes''s size then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s size} got {'the closing entry's size}", Exit 95. Print 'the closing entry's size.
-If 'the closing entry's empty is not 'the first reading in bytes''s empty then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s empty} got {'the closing entry's empty}", Exit 95. Print 'the closing entry's empty.
+a buffer called 'the parting entry' is environment's "TERM".
+If 'the parting entry's size is not 'the first reading in bytes''s size then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s size} got {'the parting entry's size}", Exit 95. Print 'the parting entry's size.
+If 'the parting entry's empty is not 'the first reading in bytes''s empty then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s empty} got {'the parting entry's empty}", Exit 95. Print 'the parting entry's empty.
 a value called 'the placard' is environment's "TERM".
 If 'the placard' is not 'the first reading' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the first reading in bytes''s empty.
-Print 'the closing entry's size.
+Print 'the parting entry's size.
 
     a text called 'the porch light' is environment's last,
     a buffer called 'the porch light in bytes' is 'the porch light',
@@ -29,14 +29,12 @@ Print 'the closing entry's size.
     If 'the lantern' is not 'the porch light' then, Print "ASSERT ENV-04: expected the text got a different value", Exit 95. Print 'the porch light in bytes''s empty,
     Print 'the house number's size.
 
-a text called 'the headcount' is environment's last.
-a buffer called 'the headcount in bytes' is 'the headcount'.
-a buffer called 'the compass' is environment's last.
-If 'the compass's size is not 'the headcount in bytes''s size then, Print "ASSERT ENV-04: expected {'the headcount in bytes''s size} got {'the compass's size}", Exit 95. Print 'the compass's size.
-If 'the compass's empty is not 'the headcount in bytes''s empty then, Print "ASSERT ENV-04: expected {'the headcount in bytes''s empty} got {'the compass's empty}", Exit 95. Print 'the compass's empty.
-a buffer called 'the surroundings' is environment's last.
-If 'the surroundings's size is not 'the headcount in bytes''s size then, Print "ASSERT ENV-04: expected {'the headcount in bytes''s size} got {'the surroundings's size}", Exit 95. Print 'the surroundings's size.
-If 'the surroundings's empty is not 'the headcount in bytes''s empty then, Print "ASSERT ENV-04: expected {'the headcount in bytes''s empty} got {'the surroundings's empty}", Exit 95. Print 'the surroundings's empty.
+a text called 'the compass' is environment's "VOXFUZZ_UNSET_396906".
+a buffer called 'the compass in bytes' is 'the compass'.
+a buffer called 'the surroundings' is environment's "VOXFUZZ_UNSET_396906".
+If 'the surroundings's size is not 'the compass in bytes''s size then, Print "ASSERT ENV-06: expected {'the compass in bytes''s size} got {'the surroundings's size}", Exit 95. Print 'the surroundings's size.
+If 'the surroundings's empty is not 'the compass in bytes''s empty then, Print "ASSERT ENV-06: expected {'the compass in bytes''s empty} got {'the surroundings's empty}", Exit 95. Print 'the surroundings's empty.
+If the environment variable "VOXFUZZ_UNSET_396906" exists then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. Print 'the compass in bytes''s empty.
 Print 'the surroundings's size.
 
 --- ENV-10, ENV-11: the exists predicate ---
@@ -50,17 +48,17 @@ If 'the first reading' then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. P
     If the environment variable "DISPLAY" exists then, Print "at home". Otherwise, Print "away". Print 'the street sign',
     Print 'the street sign'.
 
-a boolean called 'the label' is false.
-If the environment variable "TERM" exists then, Set 'the label' to true. Print 'the label'.
-If the environment variable "TERM" exists then, Print "present". Otherwise, Print "here". Print 'the label'.
-Print 'the label'.
+a boolean called 'the door tag' is false.
+If the environment variable "TERM" exists then, Set 'the door tag' to true. Print 'the door tag'.
+If the environment variable "TERM" exists then, Print "present". Otherwise, Print "here". Print 'the door tag'.
+Print 'the door tag'.
 
 --- ENV-03, ENV-04: an entry contains an equals sign ---
-a text called 'the street sign' is environment's first.
+a text called 'the street sign' is environment's last.
 a buffer called 'the street sign in bytes' is 'the street sign'.
 a number called 'the street sign equals signs' is 0.
 For each slot from 1 to 'the street sign in bytes''s size, If byte slot of 'the street sign in bytes' is 61 then, Set 'the street sign equals signs' to 'the street sign equals signs' add 1..
-If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-03: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
+If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-04: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
 Print 'the street sign in bytes''s size as a boolean.
 
 --- the dispatchers ---
@@ -69,11 +67,11 @@ a boolean called 'the porch light' is environment's empty.
 If 'the badge' is 0 and 'the porch light' is false then, Print "ASSERT ENV-02: expected 1 got {'the porch light'}", Exit 95. Print 'the porch light'.
 If 'the badge' is not 0 and 'the porch light' then, Print "ASSERT ENV-05: expected 0 got {'the porch light'}", Exit 95. Print 'the badge' as a boolean.
 
-a text called 'the street sign' is environment's last.
+a text called 'the street sign' is environment's first.
 a buffer called 'the street sign in bytes' is 'the street sign'.
 a number called 'the street sign equals signs' is 0.
 For each step from 1 to 'the street sign in bytes''s size, If byte step of 'the street sign in bytes' is 61 then, Set 'the street sign equals signs' to 'the street sign equals signs' add 1..
-If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-04: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
+If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-03: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
 Print 'the street sign in bytes''s size as a boolean.
 
 --- names: thirty words, no repeats, then a suffix ---
@@ -91,7 +89,7 @@ Print 'the street sign in bytes''s size as a boolean.
 'the workshop'
 'the porch light'
 'the doorbell'
-'the closing entry'
+'the parting entry'
 'the badge'
 'the key rack'
 'the doormat'
@@ -104,8 +102,8 @@ Print 'the street sign in bytes''s size as a boolean.
 'the headcount'
 'the lantern'
 'the signpost'
-'the waypoint'
+'the gatepost'
 'the first reading'
-'the label'
-'the waypoint 31'
+'the door tag'
+'the gatepost 31'
 'the street sign 32'

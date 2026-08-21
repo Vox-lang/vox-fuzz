@@ -1,110 +1,148 @@
 --- seed 42 ---
-a flag called fl1label is "-a" or "--alpha1", it is a text.
-a flag called fl1count is "-b" or "--beta1", it is a number.
-a flag called fl1on is "-c" or "--gamma1", it is a boolean.
-a flag called fl1scratch is "-s" or "--scratch1", it is a text.
+A thing called 'the coordinate' has
+    a function called 'set down at',
+    a number called 'the clearance' is -09,
+    a float called depth is 9223372036854775807.5,
+    a function called 'turned over'.
+
+A thing called 'the sighting' has
+    a function called 'reflected across',
+    a function called 'recorded once',
+    a boolean called 'the north offset' is false,
+    a time called 'the chain length'.
+
+A thing called 'the fix' has
+    a boolean called 'the gradient' is false,
+    a function called 'sited on',
+    a function called mirrored.
+
+A thing called landmark has
+    a 'the coordinate' called 'the margin'.
+
+A thing called cairn has
+    a number called drift,
+    a time called offset,
+    a number called 'the paces walked' is 0000009254,
+    a number called 'the arc' is 00000000199394.
+
+To do the 'the coordinate's 'set down at', with a number called 'the second portion'.
+    a 'the coordinate' called 'the incoming stint'.
+    Set 'the incoming stint's 'the clearance' to 'the second portion'.
+    Return a 'the coordinate', 'the incoming stint'.
+
+To do the 'the coordinate's 'turned over', with a 'the coordinate' called 'the odd smidgen'.
+    a 'the coordinate' called slice.
+    Set slice's 'the clearance' to 0 subtract 'the odd smidgen's 'the clearance'.
+    Return a 'the coordinate', slice.
+
+To do the 'the sighting's 'reflected across', with a 'the sighting' called crop.
+    a 'the sighting' called crumb.
+    Return a 'the sighting', crumb.
+
+To do the 'the sighting's 'recorded once', with a number called 'the trailing load'.
+    a 'the sighting' called 'the brief trimming'.
+    Return a 'the sighting', 'the brief trimming'.
+
+To do the 'the fix's 'sited on', with a number called allowance.
+    a 'the fix' called spell.
+    Return a 'the fix', spell.
+
+To do the 'the fix's mirrored, with a 'the fix' called estimate.
+    a 'the fix' called 'the lower slice'.
+    Return a 'the fix', 'the lower slice'.
+
+To 'the reckoning' with a number called 'the wet crop' and a number called 'the level crumb' and a number called heap and a number called scrap and a number called 'the third allowance' and a number called 'the outgoing spell' and a number called 'the running estimate' and a number called wedge and a number called gain.
+    a number called speck is 'the wet crop' add 'the level crumb' add heap add scrap add 'the third allowance' add 'the outgoing spell' add 'the running estimate' add wedge add gain.
+    Print speck.
+
+To 'the summed parts'.
+    a number called 'endnote as read' is endnote add -036043.
+    Print 'endnote as read'.
+    a text called 'annotation as read' is annotation.
+    Print 'annotation as read'.
+    a text called 'the byline as read' is 'the byline'.
+    Print 'the byline as read'.
+    a boolean called 'the callsign as read' is 'the callsign'.
+    Print 'the callsign as read'.
+    a boolean called 'banner as read' is banner.
+    Print 'banner as read'.
+
+a number called v1 is 1794482551.
+a flag called endnote is "-m" or "--endnote", it is a number with default 312364.
+a flag called annotation is "-v" or "--annotation", it is a text.
+a flag called 'the byline' is "-e" or "--the-byline", it is a text.
+a number called v2 is 58029989774.
+a flag called 'the callsign' is "-n" or "--the-callsign", it is a boolean.
+a number called v3 is 9223372036854775807.
+a flag called banner is "-w" or "--banner", it is a boolean.
+a number called v4 is 64733562.
 Parse flags.
 
-If fl1label is not "v41738" then, Exit 91.
-If fl1count is not 8087 then, Exit 92.
-If fl1on then, Exit 94.
+If 'the byline' is not "the survey plot 47215" then, Exit 91.
+If endnote is not 1118016078 then, Exit 92.
+If 'the callsign' is false then, Exit 93.
 
-a number called v1 is 209045463.
-a number called v2 is 82642.
-a number called v3 is 4870604931445145.
-A thing called t1 has
-    a number called x1 is 0,
-    a number called x2 is 0.
-
-A thing called t2 has
-    a number called x1 is 0,
-    a number called x2 is 0.
-
-A thing called t3 has
-    a t1 called g1,
-    a t2 called g2.
-
-A thing called t4 has
-    a function called 'made at',
-    a function called 'reflected across',
-    a number called x1 is 0.
-
-To do the t4's 'made at', with a number called x1.
-    a t4 called plotted.
-    Set plotted's x1 to x1.
-    Return a t4, plotted.
-
-To do the t4's 'reflected across', with a t4 called original.
-    a t4 called mirrored.
-    Set mirrored's x1 to 0 subtract original's x1.
-    Return a t4, mirrored.
-
-To f1.
-    Return a number, 0000843.
-
-To f2 with a number called p1.
-    a number called r is p1 add -0000000000000000.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To f4 with a text called p1.
-    Print "f4 {p1}".
-
-Create a buffer called 'the mailbag' with size 89857.
-If 'the mailbag's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the mailbag's size}", Exit 95. Print 'the mailbag's size.
-If 'the mailbag's capacity is not 89857 then, Print "ASSERT BUF-05: expected 89857 got {'the mailbag's capacity}", Exit 95. Print 'the mailbag's capacity.
-Create a buffer called 'the manifest' with size 6656.
-If 'the manifest's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
-If 'the manifest's capacity is not 6656 then, Print "ASSERT BUF-05: expected 6656 got {'the manifest's capacity}", Exit 95. Print 'the manifest's capacity.
-a buffer called 'the envelope' is 5557 bytes in size.
-If 'the envelope's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
-If 'the envelope's capacity is not 5557 then, Print "ASSERT BUF-05: expected 5557 got {'the envelope's capacity}", Exit 95. Print 'the envelope's capacity.
-Print 'the envelope's size.
-a buffer called scratch is 41 bytes.
-If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
-append "w2jrfizg" to scratch.
-If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
-append "ddr42un2v3hakzygdj7smwo8m7" to scratch.
-If scratch's full then, Print "ASSERT BUF-13: expected 0 got {scratch's full}", Exit 95. Print scratch's full.
-append "mei4obi" to scratch.
-If scratch's full is false then, Print "ASSERT BUF-13: expected 1 got {scratch's full}", Exit 95. Print scratch's full.
-If scratch's size is not 41 then, Print "ASSERT BUF-13: expected 41 got {scratch's size}", Exit 95. Print scratch's size.
+Set v3 to v2 minus v2.
+Print v4 minus v1, but if v1 is less than v2 print v4 multiply v2.
+Set v2 to v3 multiply v3.
+a list called l1 is [].
+append v1 to l1, but if v4 is less than v2 or v4 modulo 4 is equal to 0 append v2 add v4, but if v2 is less than or equal to v4 and v2 modulo 2 is equal to 0 append v1 add v4, but if v4 is less than or equal to v1 and v4 modulo 3 is equal to 0 append v2, otherwise append v1.
+Print v2 multiply v2.
+a list called l2 is [].
+append v4 multiply v3 to l2, but if v1 is less than or equal to v3 and v1 modulo 3 is equal to 0 append v3 multiply v4, otherwise append v3 multiply v2.
+Create a buffer called storeroom with size 4095.
+If storeroom's empty is false then, Print "ASSERT BUF-12: expected 1 got {storeroom's empty}", Exit 95. Print storeroom's empty.
+Print v2 minus v2.
+append "rogkiqtj7tcocs02mn384875dys2810stztla01" to storeroom.
+If storeroom's size is not 39 then, Print "ASSERT BUF-10: expected 39 got {storeroom's size}", Exit 95. Print storeroom's size.
+If storeroom's capacity is not 4095 then, Print "ASSERT BUF-10: expected 4095 got {storeroom's capacity}", Exit 95. Print storeroom's capacity.
+If storeroom's length is not 39 then, Print "ASSERT BUF-11: expected 39 got {storeroom's length}", Exit 95. Print storeroom's length.
+If storeroom's length is not storeroom's size then, Print "ASSERT BUF-11: expected {storeroom's size} got {storeroom's length}", Exit 95. Print storeroom's length.
+If storeroom's empty then, Print "ASSERT BUF-12: expected 0 got {storeroom's empty}", Exit 95. Print storeroom's empty.
+Print storeroom's length.
+Set v1 to v1.
 Create a buffer called 'the sketchpad'.
-append "ovvi915kpydchthzyp9cpkd" to 'the sketchpad'.
-Print 'the sketchpad's full.
-Print scratch's size.
-Set v2 to v1.
-Set v3 to v2 multiply v2.
-Create a buffer called cupboard with size 4097.
-If cupboard's empty is false then, Print "ASSERT BUF-12: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+a number called 'the sketchpad appends made' is 0.
+a boolean called 'the sketchpad overflowed' is false.
+a boolean called 'the sketchpad found an error already pending' is false.
+On error Set 'the sketchpad found an error already pending' to true.
+While 'the sketchpad appends made' is less than 235, append "slvx72bh2atw4f8e0s0jbfzkdvl8bifkm" to 'the sketchpad', On error Set 'the sketchpad overflowed' to true. Set 'the sketchpad appends made' to 'the sketchpad appends made' add 1.
+If 'the sketchpad's size is not 7755 then, Print "ASSERT BUF-03: expected 7755 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the sketchpad overflowed'}", Exit 95. Print 'the sketchpad overflowed'.
+Print 'the sketchpad's size.
+Print v2 minus v2.
+Set v2 to v1 multiply v2.
+a buffer called cupboard is 59017 bytes in size.
+If cupboard's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {cupboard's size}", Exit 95. Print cupboard's size.
 Print v2 multiply v3.
-append "4dncwq5y2oy39ko66mw41wckdb3qw7ov2m" to cupboard.
-If cupboard's size is not 34 then, Print "ASSERT BUF-10: expected 34 got {cupboard's size}", Exit 95. Print cupboard's size.
-If cupboard's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {cupboard's capacity}", Exit 95. Print cupboard's capacity.
-If cupboard's length is not 34 then, Print "ASSERT BUF-11: expected 34 got {cupboard's length}", Exit 95. Print cupboard's length.
-If cupboard's length is not cupboard's size then, Print "ASSERT BUF-11: expected {cupboard's size} got {cupboard's length}", Exit 95. Print cupboard's length.
-If cupboard's empty then, Print "ASSERT BUF-12: expected 0 got {cupboard's empty}", Exit 95. Print cupboard's empty.
-Print cupboard's length.
-Print {v1 add v1} multiply v1 modulo 4.
-f3 of each e1 from [34, 5] treating 65 as 30 and each e2 from 4 to 6 treating 2 as 99.
-Create a buffer called 'the dispatch note' with size 86.
-If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
-append "j0z4k17s9mcb4d873fnyvm87qcoftte0ekh44042m4clfky4vtxtslrvajay06huzvik9ivsi4j11q8a" to 'the dispatch note'.
-If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
-append "v" to 'the dispatch note'.
-If 'the dispatch note's full then, Print "ASSERT BUF-13: expected 0 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
-append "njs1s" to 'the dispatch note'.
-If 'the dispatch note's full is false then, Print "ASSERT BUF-13: expected 1 got {'the dispatch note's full}", Exit 95. Print 'the dispatch note's full.
-If 'the dispatch note's size is not 86 then, Print "ASSERT BUF-13: expected 86 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
-Print 'the dispatch note's size.
-f3 of each e3 from [14, 12] treating 60 as 97 and each e4 from 4 to 4 treating 2 as 32.
-Set v1 to v3 minus v3.
-Print arguments's count.
-Print arguments's empty.
-Set v1 to v2 minus v2.
-Exit 214.
+If cupboard's capacity is not 59017 then, Print "ASSERT BUF-05: expected 59017 got {cupboard's capacity}", Exit 95. Print cupboard's capacity.
+Create a buffer called 'the tally sheet'.
+If 'the tally sheet's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
+Create a buffer called 'the drawer' with size 70036.
+If 'the drawer's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the drawer's size}", Exit 95. Print 'the drawer's size.
+Print v2 add v3.
+If 'the drawer's capacity is not 70036 then, Print "ASSERT BUF-05: expected 70036 got {'the drawer's capacity}", Exit 95. Print 'the drawer's capacity.
+Print 'the drawer's size.
+open a file for reading called sin1 at 0.
+a buffer called sb1 is 8 bytes.
+Read from sin1 into sb1.
+Print sb1's size.
+If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
+a buffer called sc1 is 8 bytes.
+Read from sin1 into sc1.
+Print sc1's size.
+Close sin1.
+a text called fp2 is "{annotation}/out2".
+open a file for writing called fw2 at fp2.
+Write "payload 52028\n" to fw2.
+Close fw2.
+open a file for reading called fr2 at fp2.
+a buffer called fb2 is 42 bytes in size.
+Read from fr2 into fb2.
+Print fb2's size.
+Print fr2's readable.
+Close fr2.
+'the reckoning' of each q1s1 from 5 to 5 and each q1s2 from 4 to 5 and each q1s3 from 0 to 1 and each q1s4 from 6 to 7 and each q1s5 from 4 to 4 and each q1s6 from 0 to 0 and each q1s7 from 2 to 2 and each q1s8 from 4 to 4 and each q1s9 from 8 to 8.
+'the summed parts'.
 
 reproducible: 1

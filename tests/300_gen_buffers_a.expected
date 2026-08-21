@@ -1,6 +1,6 @@
 --- BUF-01, BUF-05: declaration forms and exact capacity ---
-a buffer called 'the postbag'.
-If 'the postbag's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+a buffer called notebook.
+If notebook's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {notebook's size}", Exit 95. Print notebook's size.
 a buffer called 'toolbox' is 80526 bytes in size.
 If 'toolbox's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
 Print 0 minus 0.
@@ -8,8 +8,8 @@ If 'toolbox's capacity is not 80526 then, Print "ASSERT BUF-05: expected 80526 g
 Print 'toolbox's size.
 
 --- the same leaf, nested ---
-  a buffer called 'the postbag',
-  If 'the postbag's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size,
+  a buffer called notebook,
+  If notebook's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {notebook's size}", Exit 95. Print notebook's size,
   a buffer called 'toolbox' is 80526 bytes in size,
   If 'toolbox's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'toolbox's size}", Exit 95. Print 'toolbox's size,
   Print 0 minus 0,
@@ -46,23 +46,23 @@ If 'the register's full then, Print "ASSERT BUF-13: expected 0 got {'the registe
 append "sjqzlxnpnciv1zqmrbpt9t628l76ztov" to 'the register'.
 If 'the register's full is false then, Print "ASSERT BUF-13: expected 1 got {'the register's full}", Exit 95. Print 'the register's full.
 If 'the register's size is not 32 then, Print "ASSERT BUF-13: expected 32 got {'the register's size}", Exit 95. Print 'the register's size.
-a buffer called 'the parcel'.
-append "0aiz" to 'the parcel'.
-Print 'the parcel's full.
+a buffer called 'the mailbag'.
+append "0aiz" to 'the mailbag'.
+Print 'the mailbag's full.
 Print 'the register's size.
 
 --- BUF-13 again, a different split and a dynamic buffer ---
-Create a buffer called 'the drawer' with size 63.
-If 'the drawer's full then, Print "ASSERT BUF-13: expected 0 got {'the drawer's full}", Exit 95. Print 'the drawer's full.
-append "tdq8y5ook" to 'the drawer'.
-If 'the drawer's full then, Print "ASSERT BUF-13: expected 0 got {'the drawer's full}", Exit 95. Print 'the drawer's full.
-append "nrr0hlbk6eu7qmxcq5mwv1ls4cqoe8stikzpu37nw3kqwvrc3zi4oe" to 'the drawer'.
-If 'the drawer's full is false then, Print "ASSERT BUF-13: expected 1 got {'the drawer's full}", Exit 95. Print 'the drawer's full.
-If 'the drawer's size is not 63 then, Print "ASSERT BUF-13: expected 63 got {'the drawer's size}", Exit 95. Print 'the drawer's size.
+Create a buffer called 'the waybill' with size 63.
+If 'the waybill's full then, Print "ASSERT BUF-13: expected 0 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+append "tdq8y5ook" to 'the waybill'.
+If 'the waybill's full then, Print "ASSERT BUF-13: expected 0 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+append "nrr0hlbk6eu7qmxcq5mwv1ls4cqoe8stikzpu37nw3kqwvrc3zi4oe" to 'the waybill'.
+If 'the waybill's full is false then, Print "ASSERT BUF-13: expected 1 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+If 'the waybill's size is not 63 then, Print "ASSERT BUF-13: expected 63 got {'the waybill's size}", Exit 95. Print 'the waybill's size.
 Create a buffer called 'the shipping label'.
 append "ninhe4ywd1mu14iu1rthrs1rqsq6" to 'the shipping label'.
 Print 'the shipping label's full.
-Print 'the drawer's size.
+Print 'the waybill's size.
 
 --- BUF-03: dynamic growth past the reserve ---
 Create a buffer called 'the dispatch note'.
@@ -76,7 +76,7 @@ If 'the dispatch note overflowed' then, Print "ASSERT BUF-03: expected 0 got {'t
 Print 'the dispatch note's size.
 
 --- BUF-07: a read that truncates, detected by size ---
-a text called 'outgoing post path' is "{fl1scratch}/buffer1".
+a text called 'outgoing post path' is "{'the workspace'}/buffer1".
 open a file for writing called 'outgoing post being written' at 'outgoing post path'.
 Write "mbhx81qc3lmujkpvwn0u8zx9hy2vt7crlf05lrbj1mv9efd2" to 'outgoing post being written'.
 Close 'outgoing post being written'.
@@ -93,7 +93,7 @@ Print 'outgoing post's size.
 --- BUF-07 with no file I/O committed ---
 emits a file open: 0
 emits a property assertion instead: 1
---- names: thirty words, no repeats, suffix only after that ---
-'ledger' 'the sketchpad' 'loading bay' 'the pigeonhole' 'the postbag' scratch 'the inbox' 'notebook' 'satchel' 'the pallet' 'the mailbag' 'the greeting' 'the crate' 'outgoing post' 'the shipping label' 'the envelope' 'the manifest' 'the tray' cupboard workbench 'the dispatch note' 'the parcel' 'the tally sheet' 'the register' pantry toolbox 'the drawer' 'the message slip' 'the waybill' storeroom 'the message slip 31' 'the parcel 32' 'the mailbag 33' 
+--- names: the whole vocabulary, no repeats, suffix only after that ---
+'ledger' 'the sketchpad' 'loading bay' 'the pigeonhole' 'the postbag' scratch 'the inbox' 'notebook' 'satchel' 'the pallet' 'the mailbag' 'the greeting' 'the crate' 'outgoing post' 'the shipping label' 'the envelope' 'the manifest' 'the tray' cupboard 'the dispatch note' 'the register' workbench 'the tally sheet' pantry toolbox 'the drawer' 'the waybill' storeroom 'the message slip' 'the envelope 30' 'the tally sheet 31' 'outgoing post 32' 'ledger 33' 
 a fresh program starts the vocabulary over: 
-'the greeting's capacity
+'the message slip's capacity

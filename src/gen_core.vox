@@ -357,36 +357,78 @@ To 'gen leaf assign' with a text called indent.
     'gen emit' of line.
     Return a boolean, false.
 
-(Function calls: the generated program always defines f1/f2/f3 (0, 1,
- and 2 number parameters) in its prelude, so a call site only has to
- pick one and precompute its arguments into fresh locals - language
- note 3.)
+(Function calls. The prelude's functions are DRAWN per program - how
+ many, their names, their arity, their parameter types, whether they
+ return at all - so a call site asks the manifest for one and writes a
+ call that fits what it found, instead of naming f1/f2/f3 and knowing
+ their shapes in advance.
 
-To 'gen call zero' with a text called indent and a boolean called nested.
-    a text called line is "Print f1".
-    a list called 'the lines' is [line].
-    'gen join lines' of indent and nested and 'the lines'.
+ That is what retires the zero/one/two split: it existed only because
+ the prelude had exactly those three shapes, and it is also why no call
+ could ever pass three arguments. LANGUAGE.md:671-701 puts no ceiling on
+ arity, so neither does this.
 
-To 'gen call one' with a text called indent and a boolean called nested.
-    Set gen_args to gen_args add 1.
-    a number called 'arg value' is 'rng below' of 100.
-    a text called 'arg decl' is "a number called c{gen_args} is {'arg value'}".
-    a text called 'call line' is "Print f2 of c{gen_args}".
-    a list called 'the lines' is ['arg decl', 'call line'].
-    'gen join lines' of indent and nested and 'the lines'.
+ `of`, `with`, `on` and `to` all introduce arguments
+ (LANGUAGE.md:1404) - all four hand-verified against 0.4.7 on a
+ two-parameter call - so which one appears is drawn. Whether the result
+ is printed follows the function rather than the call site: `Print
+ <call>` needs a value, and a function that only prints has none.)
 
-To 'gen call two' with a text called indent and a boolean called nested.
-    Set gen_args to gen_args add 1.
-    a number called 'first name' is gen_args.
-    a number called 'first value' is 'rng below' of 100.
-    a text called 'first decl' is "a number called c{'first name'} is {'first value'}".
-    Set gen_args to gen_args add 1.
-    a number called 'second name' is gen_args.
-    a number called 'second value' is 'rng below' of 100.
-    a text called 'second decl' is "a number called c{'second name'} is {'second value'}".
-    a text called 'call line' is "Print f3 of c{'first name'} and c{'second name'}".
-    a list called 'the lines' is ['first decl', 'second decl', 'call line'].
+To 'gen call preposition'.
+    a number called 'the draw' is 'rng below' of 4.
+    If 'the draw' is 0 then,
+        Return a text, "of".
+    If 'the draw' is 1 then,
+        Return a text, "with".
+    If 'the draw' is 2 then,
+        Return a text, "on".
+    Return a text, "to".
+
+To 'gen call any function' with a text called indent and a boolean called nested.
+    a boolean called 'a function is available' is 'gen manifest pick a function'.
+    If 'a function is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    'gen emit a call to' of gen_pick_function and indent and nested.
+    Return a boolean, false.
+
+(Arguments go into fresh locals first - language note 3 - one per
+ parameter, typed to match what the manifest says that parameter is.)
+
+To 'gen emit a call to' with a number called 'the function' and a text called indent and a boolean called nested.
+    a text called 'the name' is 'gen function written' of 'the function'.
+    a number called 'the arity' is element 'the function' of gen_function_arity.
+    a number called 'the first parameter' is element 'the function' of gen_function_first_param.
+    a number called 'the returns' is element 'the function' of gen_function_returns.
+    a list called 'the lines' is [].
+    a text called 'the argument list' is "".
+    a number called 'the step' is 0.
+    While 'the step' is less than 'the arity',
+        a number called 'the parameter' is 'the first parameter' add 'the step',
+        a number called 'the kind' is element 'the parameter' of gen_param_kind,
+        Set gen_args to gen_args add 1,
+        a text called 'the argument name' is "c{gen_args}",
+        a text called 'the number literal' is 'literal integer',
+        a text called 'the declaration' is "a number called {'the argument name'} is {'the number literal'}",
+        If 'the kind' is 1 then,
+            a text called 'the word' is 'gen word from' of gen_type_words,
+            Set 'the declaration' to "a text called {'the argument name'} is \"{'the word'}\"".
+        append 'the declaration' to 'the lines',
+        If 'the step' is 0 then,
+            Set 'the argument list' to 'the argument name'.
+        If 'the step' is not 0 then,
+            Set 'the argument list' to "{'the argument list'} and {'the argument name'}".
+        Set 'the step' to 'the step' add 1.
+    a text called 'the call' is 'the name'.
+    If 'the arity' is not 0 then,
+        a text called 'the preposition' is 'gen call preposition',
+        Set 'the call' to "{'the name'} {'the preposition'} {'the argument list'}".
+    a text called 'the call line' is 'the call'.
+    If 'the returns' is 1 then,
+        Set 'the call line' to "Print {'the call'}".
+    append 'the call line' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
+    Return a boolean, false.
 
 (Floats: decimal literals, float multiply and divide, and a mixed
  float/int expression - the whole float codegen path, unfuzzed until
@@ -426,29 +468,24 @@ To 'gen leaf float arithmetic' with a text called indent and a boolean called ne
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen leaf call' with a text called indent and a boolean called nested.
-    a number called 'call kind' is 'rng below' of 4.
-    If 'call kind' is 0 then,
-        'gen call zero' of indent and nested.
-    If 'call kind' is 1 then,
-        'gen call one' of indent and nested.
-    If 'call kind' is 2 then,
-        'gen call two' of indent and nested.
-    If 'call kind' is 3 then,
-        'gen call grid' of indent and nested.
+    (Prime modulus: two consecutive small-range draws out of this LCG
+     are anti-correlated, which is documented above 'gen leaf loop
+     control' and has caught this generator out three times.)
+    a number called 'the call kind' is 'rng below' of 13.
+    If 'the call kind' is less than 4 then,
+        'gen call grid' of indent and nested,
+        Return a boolean, false.
+    'gen call any function' of indent and nested.
+    Return a boolean, false.
 
-(Same three call shapes, minus the grid - kind 19's job is standing in
- for kind 6 wherever the grid's `each ... and each ...` clause would be
- unsafe as a block closer (see 'gen statement's avoid-onerror remap),
- without losing zero/one/two's coverage in that position too.)
+(Kind 19's job: standing in for kind 6 wherever the grid's `each ... and
+ each ...` clause would be unsafe as a block closer (see 'gen statement's
+ avoid-onerror remap), without losing the ordinary call in that position
+ too.)
 
 To 'gen leaf call safe' with a text called indent and a boolean called nested.
-    a number called 'call kind' is 'rng below' of 3.
-    If 'call kind' is 0 then,
-        'gen call zero' of indent and nested.
-    If 'call kind' is 1 then,
-        'gen call one' of indent and nested.
-    If 'call kind' is 2 then,
-        'gen call two' of indent and nested.
+    'gen call any function' of indent and nested.
+    Return a boolean, false.
 
 (Deep expressions and the operator matrix: modulo, precedence (`*`/`%`
  binding tighter than `+`), and `{...}` grouping to override it - Vox's
@@ -946,34 +983,107 @@ To 'gen statement' with a number called depth and a text called indent and a boo
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
 
-(f1's and f2's constants come from 'literal integer' (src/gen_literals.vox),
- not from a bounded draw. They used to be `'rng below' of 1000` and
- `'rng below' of 50 add 1`, and the invariant report said exactly what
- that meant: two never-exceeded-bound rows present in 100% of programs,
- "never above 999" and "never above 50". No line of LANGUAGE.md sets
- either ceiling, so both were undeclared rules of the kind CLAUDE.md
- calls the real enemy. The helper's only bound is the compiler's own
- i64 literal range, which it applies to the VALUE - so the digits that
- land here now have no maximum length and can carry a sign.)
+(The prelude's functions, straight off the manifest. Nothing here
+ decides anything - 'gen build manifest' drew how many there are, what
+ they are called, their arity, their parameter types and whether they
+ return, and this only writes it out. That is what keeps a call site and
+ a definition in step now that neither is fixed.
+
+ What the old template asserted without a citation, and what replaces
+ it:
+
+ - "every program has four functions": nothing says so. The count is
+   drawn and zero is reachable.
+ - "arities are 0, 1, 2 and 1": nothing says so. LANGUAGE.md:671-701
+   puts no ceiling on arity and says parameters are optional.
+ - "f1 always precedes f2 always precedes f3": nothing orders one
+   function against another - Vox even permits a function body to
+   reference a global declared below it, verified - so the block starts
+   at a drawn function and wraps.
+ - "Return a number, # never above 991" and "p1 add # never above 50":
+   those were `'rng below' of 1000` and `'rng below' of 50 add 1`. The
+   constants now come from 'literal integer' (gen_literals.vox), whose
+   only bound is the compiler's own i64 literal range.
+
+ `with` and `of` introduce parameters identically (LANGUAGE.md:698), so
+ which one a definition uses is drawn too.)
 
 To 'gen emit prelude functions'.
-    a text called c1 is 'literal integer'.
-    a text called fn1 is "To f1.\n    Return a number, {c1}.\n\n".
-    'gen emit' of fn1.
-    a text called c2 is 'literal integer'.
-    a text called fn2 is "To f2 with a number called p1.\n    a number called r is p1 add {c2}.\n    Return a number, r.\n\n".
-    'gen emit' of fn2.
-    a text called fn3 is "To f3 with a number called p1 and a number called p2.\n    a number called r is p1 add p2.\n    Return a number, r.\n\n".
-    'gen emit' of fn3.
-    (f4 takes a TEXT, which f1/f2/f3 between them never did - so before
-     it there was no function in a generated program that a format
-     string could be passed to, and item 3's "passing one to a function"
-     was unreachable. It prints its argument rather than returning it,
-     because the sink under test is the ARGUMENT position: a format
-     string materializes at the call site, and what has to survive is
-     the value the callee receives.)
-    a text called fn4 is "To f4 with a text called p1.\n    Print \"f4 {{p1}}\".\n\n".
-    'gen emit' of fn4.
+    a number called 'how many functions' is gen_function_names's length.
+    If 'how many functions' is 0 then,
+        Return a number, 0.
+    a number called 'the rotation' is 'rng below' of 'how many functions'.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many functions',
+        a number called 'the raw slot' is 'the step' add 'the rotation',
+        a number called 'the slot' is 'the raw slot' modulo 'how many functions',
+        a number called 'the function' is 'the slot' add 1,
+        'gen emit one function' of 'the function',
+        Set 'the step' to 'the step' add 1.
+    Return a number, 0.
+
+To 'gen emit one function' with a number called 'the function'.
+    a text called 'the name' is 'gen function written' of 'the function'.
+    a number called 'the arity' is element 'the function' of gen_function_arity.
+    a number called 'the first parameter' is element 'the function' of gen_function_first_param.
+    a number called 'the returns' is element 'the function' of gen_function_returns.
+    a text called 'the parameter list' is "".
+    a text called 'the sum' is "".
+    a text called 'the text slots' is "".
+    a number called 'how many numbers' is 0.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'the arity',
+        a number called 'the parameter' is 'the first parameter' add 'the step',
+        a text called 'the parameter name' is 'gen parameter written' of 'the parameter',
+        a number called 'the kind' is element 'the parameter' of gen_param_kind,
+        a text called 'the type' is "number",
+        If 'the kind' is 1 then,
+            Set 'the type' to "text".
+        a text called 'the piece' is "a {'the type'} called {'the parameter name'}",
+        If 'the step' is 0 then,
+            Set 'the parameter list' to 'the piece'.
+        If 'the step' is not 0 then,
+            Set 'the parameter list' to "{'the parameter list'} and {'the piece'}".
+        If 'the kind' is 0 then,
+            Set 'how many numbers' to 'how many numbers' add 1,
+            a text called 'the next sum' is 'the parameter name',
+            If 'how many numbers' is greater than 1 then,
+                Set 'the next sum' to "{'the sum'} add {'the parameter name'}".
+            Set 'the sum' to 'the next sum'.
+        If 'the kind' is 1 then,
+            a text called 'the slot' is 'gen format slot' of 'the parameter name' and "",
+            Set 'the text slots' to "{'the text slots'} {'the slot'}".
+        Set 'the step' to 'the step' add 1.
+    a text called 'the header' is "To {'the name'}.\n".
+    If 'the arity' is not 0 then,
+        a text called 'the introducer' is 'gen parameter introducer',
+        Set 'the header' to "To {'the name'} {'the introducer'} {'the parameter list'}.\n".
+    'gen emit' of 'the header'.
+    a boolean called 'the body has a statement' is false.
+    If 'the text slots' is not "" then,
+        'gen emit' of "    Print \"{'the text slots'}\".\n",
+        Set 'the body has a statement' to true.
+    If 'the returns' is 1 then,
+        a text called 'the local' is 'gen function local written' of 'the function',
+        a text called 'the value' is 'the sum',
+        If 'how many numbers' is 0 then,
+            Set 'the value' to 'literal integer'.
+        'gen emit' of "    a number called {'the local'} is {'the value'}.\n",
+        'gen emit' of "    Return a number, {'the local'}.\n",
+        Set 'the body has a statement' to true.
+    (A function body cannot be empty, and a program's only zero-arity
+     non-returning function would otherwise have nothing in it.)
+    If 'the body has a statement' is false then,
+        a text called 'a word' is 'gen word from' of gen_type_words,
+        'gen emit' of "    Print \"{'a word'}\".\n".
+    'gen emit' of "\n".
+    Return a number, 0.
+
+To 'gen parameter introducer'.
+    a number called 'the draw' is 'rng below' of 11.
+    If 'the draw' is less than 5 then,
+        Return a text, "of".
+    Return a text, "with".
 
 (Section ordering. Plan 324 Part A, and Josj's own words on 2026-08-20:
  "globals can't be defined before functions". They could not: the
@@ -1126,9 +1236,6 @@ To 'gen program' with a number called seed and a number called budget.
      exactly what 040_gen's `reproducible` line caught.)
     'gen reset value names'.
     Set gen_grid_depth to 'rng below' of 15 add 3.
-    Set gen_flags to 1.
-    'gen build argv'.
-    'gen build input'.
     Set gen_reads_stdin to false.
     Set gen_does_file_io to false.
     Set gen_stdin_reads to 0.
@@ -1148,6 +1255,16 @@ To 'gen program' with a number called seed and a number called budget.
     a number called 'the stdin choice' is 'rng below' of 13.
     If 'the stdin choice' is less than 7 then,
         Set gen_reads_stdin to true.
+    (The prelude, drawn: what things, functions and flags this program
+     has. It comes AFTER the file-I/O decision, because the scratch flag
+     exists only for a program that does file I/O, and BEFORE
+     'gen build argv', because the argv builder passes and asserts the
+     flags this manifest actually declared. Every leaf reads it and none
+     of them writes to it.)
+    'gen build manifest'.
+    Set gen_flags to gen_flag_names's length.
+    'gen build argv'.
+    'gen build input'.
     Set gen_grid_calls to 0.
     Set gen_reader_calls to 0.
     (Branch form, not `Set x to <comparison>` — a comparison cannot be
@@ -1162,6 +1279,11 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_uses_flag_reader to false.
     If 'the reader choice' is not 0 then,
         Set gen_uses_flag_reader to true.
+    (A reader with nothing to read would have an empty body, which is
+     not a function. A program that drew no flags therefore never has
+     one, whatever the draw above said.)
+    If gen_flags is 0 then,
+        Set gen_uses_flag_reader to false.
     'gen emit ordered blocks'.
     a number called i is 0.
     While i is less than budget,
@@ -1183,7 +1305,7 @@ To 'gen program' with a number called seed and a number called budget.
     If gen_uses_grid and gen_grid_calls is 0 then,
         'gen leaf deep grid' of "" and false.
     If gen_uses_flag_reader and gen_reader_calls is 0 then,
-        a text called 'the forced reader call' is "'read flags {gen_flags}'.\n",
+        a text called 'the forced reader call' is "{gen_reader_name}.\n",
         'gen emit' of 'the forced reader call'.
     (90-99 is RESERVED, whole, for assertions and must never be drawn as
      an ordinary exit code, or a program that passed every assertion
@@ -1206,7 +1328,7 @@ To 'gen program' with a number called seed and a number called budget.
     a number called code is 'the raw code'.
     If 'the raw code' is greater than 89 then,
         Set code to 'the raw code' add 10.
-    a text called tail is "Exit {code}.\n".
+    a text called tail is 'gen program ending' of code.
     'gen emit' of tail.
     (Last, after every content decision, so the RNG draws it makes cannot
      shift the program's CONTENT for a seed - only its whitespace.)
@@ -1216,6 +1338,66 @@ To 'gen program' with a number called seed and a number called budget.
  ones a shell-reported status would have misclassified as signal deaths -
  the native harness must prove it tells them apart, so the generator must
  produce them.)
+
+(How a program stops. Three samenesses lived in the one line that used to
+ write this, and not one of them had a citation.
+
+ - The keyword. LANGUAGE.md:2230 ends the Program Termination section
+   with "Alternative keywords: `quit`, `terminate`", and the compiler
+   takes each of them in either capitalisation. Six spellings, all six
+   compiled and run against 0.4.9 before this was written.
+ - Whether a code is written at all. LANGUAGE.md:2228: "Exit code
+   defaults to 0 if not specified" - so `quit.` is a whole statement and
+   the program exits 0. Verified.
+ - Whether the program says anything at all. Nothing in the manual
+   requires a program to terminate explicitly; one that runs off its end
+   exits 0, verified the same way. So sometimes it does not.
+
+ What this fixes. `scripts/invariants` reported
+ `template "Exit #." slot 1: never above 254` at 100% presence, and the
+ row is not about the bound - the code is drawn flat over 246 values and
+ 255 is reachable (`Exit 255.` exits 255, verified) - it is about the
+ template being in every single program. Only a corpus that stops
+ writing the same template everywhere removes it, which is CLAUDE.md's
+ rule rather than a tuning of the detector.
+
+ Every modulus here is odd. This LCG's low bits are correlated - the
+ trap that left 'gen leaf thing' drawing nested things 0 times in 150
+ programs - so a draw over 2 or 6 would not be a draw.)
+
+To 'gen program ending' with a number called code.
+    a number called 'the ending draw' is 'rng below' of 23.
+    If 'the ending draw' is less than 3 then,
+        Return a text, "".
+    a number called 'the keyword draw' is 'rng below' of 3.
+    a text called 'the keyword' is "Exit".
+    If 'the keyword draw' is 1 then,
+        Set 'the keyword' to "Quit".
+    If 'the keyword draw' is 2 then,
+        Set 'the keyword' to "Terminate".
+    a number called 'the case draw' is 'rng below' of 7.
+    If 'the case draw' is less than 3 then,
+        Set 'the keyword' to 'gen in lower case' of 'the keyword'.
+    a number called 'the code draw' is 'rng below' of 11.
+    If 'the code draw' is less than 3 then,
+        Return a text, "{'the keyword'}.\n".
+    Return a text, "{'the keyword'} {code}.\n".
+
+(An ASCII word in lower case. Only the first byte can differ for the
+ three words above, but the whole text is walked so the helper is not
+ quietly specific to them.)
+
+To 'gen in lower case' with a text called 'the word'.
+    a buffer called 'the word bytes' is "{'the word'}".
+    a number called 'the byte count' is 'the word bytes's size.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the byte count',
+        a number called 'the byte here' is byte 'the position' of 'the word bytes',
+        If 'the byte here' is greater than 64 and 'the byte here' is less than 91 then,
+            Set byte 'the position' of 'the word bytes' to 'the byte here' add 32.
+        Set 'the position' to 'the position' add 1.
+    a text called 'the lower case word' is 'the word bytes' as text.
+    Return a text, 'the lower case word'.
 
 (The layout randomiser: the last pass over a finished program.
 
@@ -1483,9 +1665,9 @@ To 'layout gap follows a possessive' with a number called 'the run start'.
    1. `is less than or equal` + newline + `to` is rejected with "Expected
       a statement, got To". The same gap written as spaces or as a tab
       compiles and runs. Same for `greater than or equal`.
-   2. a thing's method call - `a t4's 'made at'` + newline + `with 101` -
-      is rejected with "Expected a statement, got With". Spaces and tabs
-      are fine, and the ordinary function call `Print f2` + newline +
+   2. a thing's method call - `a point's 'placed at'` + newline + `with
+      101` - is rejected with "Expected a statement, got With". Spaces
+      and tabs are fine, and an ordinary function call + newline +
       `with 4 and 5` is fine too, so it is the thing-method form.
    3. `a value` + newline + `called v is "x".` is rejected with "Unknown
       type 'value'" - which lists `value` among the known types in the
@@ -1557,8 +1739,8 @@ To 'layout copy comment' with a number called 'the opening position'.
         Set i to i add 1.
     Return a number, i.
 
-(Copy a single-quoted name through untouched. The space in 'made at' is
- part of the name, not layout.)
+(Copy a single-quoted name through untouched. The space in 'set down at'
+ is part of the name, not layout.)
 To 'layout copy quoted name' with a number called 'the opening position'.
     a number called n is layout_src's length.
     a number called 'the opening byte' is byte 'the opening position' of layout_src.
@@ -1575,7 +1757,7 @@ To 'layout copy quoted name' with a number called 'the opening position'.
 
 (An apostrophe is one of two different things and the pass has to tell
  them apart: the possessive in arguments's count, which is ordinary
- source, or the opening quote of a multi-word name like 'made at', whose
+ source, or the opening quote of a multi-word name like 'set down at', whose
  insides are untouchable. The tell is what follows. An s and then a byte
  that cannot continue a name is a possessive; anything else opens a name,
  including 'sum of', where that s starts a word.
