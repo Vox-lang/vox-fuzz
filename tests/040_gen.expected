@@ -58,74 +58,74 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
-If v1 is greater than v1 then,
-  Set v1 to v1.
-a text called bs1 is "41".
-a number called bn1 is bs1 as a base 10 number.
-Print bn1.
-Print "{bn1:o}".
-a text called bx1 is "71434123696529832545".
-a number called bg1 is bx1 as a number.
-Print bg1.
-If v1 is less than v1 and v1 modulo 5 is equal to 0 then, Print v1 times v1. Otherwise, Print v1 multiply v1.
-a buffer called b1 is 67 bytes in size.
-Print byte 456 of b1.
-On error print "buffer read out of range".
-Print fl1label.
-Print fl1count.
-Print fl1on.
-'read flags 1'.
-a number called u1 is 0.
-While u1 is less than 8, Increment u1.
-Print u1.
-a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_509229".
-On error print "environment variable not set".
-Print 'the missing value 1'.
-a buffer called b2 is 59 bytes in size.
-Print byte 328 of b2.
-On error print "buffer read out of range".
-a list called l1 is [].
-append v1 add v1 to l1, but if v1 is greater than or equal to v1 append v1 minus v1, but if v1 is greater than v1 or v1 modulo 5 is equal to 0 append v1 minus v1, otherwise append v1 add v1.
-a number called r1 is 0.
-Repeat 7 times, Increment r1.
-
-Print r1.
+a number called env1count is environment's count.
+Print env1count as a boolean.
+Print environment's empty.
+a buffer called env1pathbuf is environment's "PATH".
+Print env1pathbuf's empty.
 a t2 called i1.
-Set i1's x1 to 50.
+Set i1's x1 to 334.
 Print i1.
-a timer called tk2.
-Start tk2.
-a number called ta2 is 0.
-For each te2 from 1 to 10,
-    Set ta2 to ta2 add te2.
-Stop tk2.
-Print ta2.
-a number called tl2 is the tk2's elapsed in milliseconds.
-If tl2 is negative then, Print "tl2 NEGATIVE". Otherwise, Print "tl2 ok".
-Get current time into tn2.
-a number called tu2 is the tn2's unix.
-If tu2 is positive then, Print "tu2 ok". Otherwise, Print "tu2 BAD".
-a number called ty2 is the tn2's year.
-If ty2 is greater than 2000 then, Print "ty2 ok". Otherwise, Print "ty2 BAD".
-open a file for reading called sin3 at "/dev/stdin".
-a buffer called sb3 is 49 bytes.
-Read from sin3 into sb3.
-Print sb3's size.
-If sb3 is empty then, Print "sb3 empty". Otherwise, Print "sb3 filled".
-a buffer called sc3 is 8 bytes.
-Read from sin3 into sc3.
-Print sc3's size.
-Close sin3.
-a text called fp4 is "{fl1scratch}/out4".
-open a file for writing called fw4 at fp4.
-Write "payload 75631\n" to fw4.
-Close fw4.
-open a file for reading called fr4 at fp4.
-a buffer called fb4 is 8 bytes in size.
-Read from fr4 into fb4.
-Print fb4's size.
-Print fr4's readable.
-Close fr4.
-Exit 217.
+a buffer called b1 is 60 bytes in size.
+Print byte 498 of b1.
+On error print "buffer read out of range".
+Create a buffer called 'ledger' with size 88735.
+If 'ledger's empty is false then, Print "ASSERT BUF-12: expected 1 got {'ledger's empty}", Exit 95. Print 'ledger's empty.
+append "8967w9ensdu3c9yvsdivwxa3gpu7o1m30tuf0x2f0puz0lynkde74duns1efod2z" to 'ledger'.
+If 'ledger's size is not 64 then, Print "ASSERT BUF-10: expected 64 got {'ledger's size}", Exit 95. Print 'ledger's size.
+If 'ledger's capacity is not 88735 then, Print "ASSERT BUF-10: expected 88735 got {'ledger's capacity}", Exit 95. Print 'ledger's capacity.
+If 'ledger's length is not 64 then, Print "ASSERT BUF-11: expected 64 got {'ledger's length}", Exit 95. Print 'ledger's length.
+If 'ledger's length is not 'ledger's size then, Print "ASSERT BUF-11: expected {'ledger's size} got {'ledger's length}", Exit 95. Print 'ledger's length.
+If 'ledger's empty then, Print "ASSERT BUF-12: expected 0 got {'ledger's empty}", Exit 95. Print 'ledger's empty.
+Print 'ledger's length.
+Create a buffer called 'toolbox'.
+a number called 'toolbox appends made' is 0.
+a boolean called 'toolbox overflowed' is false.
+a boolean called 'toolbox found an error already pending' is false.
+On error Set 'toolbox found an error already pending' to true.
+While 'toolbox appends made' is less than 230, append "q7k9yjclun0xuzopevwtmf8tu7452n8567kp6fodefoh6vo9e" to 'toolbox', On error Set 'toolbox overflowed' to true. Set 'toolbox appends made' to 'toolbox appends made' add 1.
+If 'toolbox's size is not 11270 then, Print "ASSERT BUF-03: expected 11270 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
+If 'toolbox overflowed' then, Print "ASSERT BUF-03: expected 0 got {'toolbox overflowed'}", Exit 95. Print 'toolbox overflowed'.
+Print 'toolbox's size.
+Print f1.
+a buffer called b2 is 40 bytes in size.
+Print byte 222 of b2.
+On error print "buffer read out of range".
+a t1 called i2.
+Set i2's x1 to 943.
+a t1 called i3 is i2.
+Set i3's x1 to 756.
+Print i2's x1.
+Print i3's x1.
+a list called l1 is [].
+append v1 add v1 to l1, but if v1 is greater than v1 or v1 modulo 3 is equal to 0 append v1 minus v1, but if v1 is greater than or equal to v1 or v1 modulo 3 is equal to 0 append v1 minus v1, otherwise append v1 add v1.
+a number called u1 is 0.
+While u1 is less than 3, Increment u1.
+Print u1.
+a buffer called b3 is 8 bytes in size.
+Print byte 322 of b3.
+On error print "buffer read out of range".
+If v1 is less than or equal to v1 or v1 modulo 4 is equal to 0 then, Print v1. Otherwise, Print v1 minus v1.
+open a file for reading called sin1 at 0.
+a buffer called sb1 is 22 bytes.
+Read from sin1 into sb1.
+Print sb1's size.
+If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
+a buffer called sc1 is 8 bytes.
+Read from sin1 into sc1.
+Print sc1's size.
+Close sin1.
+a text called fp2 is "{fl1scratch}/out2".
+open a file for writing called fw2 at fp2.
+Write "payload 30832\n" to fw2.
+Close fw2.
+open a file for reading called fr2 at fp2.
+a buffer called fb2 is 61 bytes in size.
+Read from fr2 into fb2.
+Print fb2's size.
+Print fr2's readable.
+Close fr2.
+'read flags 1'.
+Exit 40.
 
 reproducible: 1
