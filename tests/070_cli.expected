@@ -15,6 +15,7 @@ gen options:
   --core DIR     coreasm dir (default ../vox/coreasm)
   --out DIR      findings directory (default ./findings)
   --keep DIR     also save every generated program here (default: off)
+  --layout MODE  random (default) or plain: whether a program's whitespace is drawn or laid out one statement per line
 bad subcommand exits 2: 1
 vox-fuzz gen: seeds 500.. count 3 budget 12 timeout 10000ms
 programs: 3

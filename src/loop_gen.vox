@@ -54,6 +54,9 @@ To 'keep source' with a text called 'the source path' and a number called seed.
 To 'fuzz gen once' with a number called seed and a number called budget and a number called 'the deadline in milliseconds'.
     Set stat_total to stat_total add 1.
     'gen program' of seed and budget.
+    (Mirror the layout mode into the findings store, so every finding
+     records which whitespace the program that ran was written in.)
+    Set findings_layout to gen_layout.
     (D1: every artefact of this seed's compile/run lives under its own
      pid+seed scratch directory from sandbox.vox, so a second vox-fuzz
      process running the same seed range concurrently cannot overwrite

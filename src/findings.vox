@@ -4,6 +4,18 @@
 a text called findings_dir is "./findings".
 a number called findings_count is 0.
 
+(Which layout the recorded program was written in, so a reader of a
+ finding knows whether program.vox's whitespace was drawn or plain - and
+ so a campaign that reproduces the finding can ask for the same mode.
+ The program.vox in the finding is a byte copy of the file that actually
+ compiled and ran, so repro.sh reproduces byte-for-byte whatever this
+ says; the line is metadata for the human, not an instruction to the
+ script. Mirrored from gen_core.vox's gen_layout by loop_gen.vox, which
+ is the only place a finding is created from a generated program - this
+ file is included by tests that do not load the generator at all, so it
+ cannot read that global directly.)
+a text called findings_layout is "random".
+
 To 'finding path' with a text called category and a number called seed.
     a text called p is "{findings_dir}/{category}/{seed}".
     Return a text, p.
@@ -49,7 +61,7 @@ To 'finding save' with a text called category and a number called seed and a tex
     Close 'the program copy'.
     a text called 'the classification path' is "{'the finding directory'}/classification.txt".
     open a file for writing called 'the classification file' at 'the classification path'.
-    Write "category: {category}\nseed: {seed}\ndetail: {detail}\n" to 'the classification file'.
+    Write "category: {category}\nseed: {seed}\nlayout: {findings_layout}\ndetail: {detail}\n" to 'the classification file'.
     Close 'the classification file'.
     a text called 'the version command' is "{'shell quote' of vox_binary} --version >> {'shell quote' of 'the finding directory'}/classification.txt 2>&1".
     a number called 'the version result' is 'run shell' of 'the version command' and 10000.

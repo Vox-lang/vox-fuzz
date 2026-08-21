@@ -5,7 +5,7 @@
    vox-fuzz gen [--seed N] [--count N]       generate, compile, and run
               [--budget N] [--timeout MS]    random Vox programs
               [--vox PATH] [--core DIR]
-              [--out DIR]
+              [--out DIR] [--layout MODE]
    anything else                             usage to stderr, exit 2
 
  Flag precedence for --vox / --core is flag beats environment beats
@@ -62,7 +62,25 @@ To 'print usage'.
     Write "  --vox PATH     vox binary (default ../vox/target/release/vox)\n" to 'the error stream'.
     Write "  --core DIR     coreasm dir (default ../vox/coreasm)\n" to 'the error stream'.
     Write "  --out DIR      findings directory (default ./findings)\n  --keep DIR     also save every generated program here (default: off)\n" to 'the error stream'.
+    Write "  --layout MODE  random (default) or plain: whether a program's whitespace is drawn or laid out one statement per line\n" to 'the error stream'.
     Close 'the error stream'.
+
+(A campaign that thinks it randomised its layout and did not is a
+ campaign that proves less than its operator believes, and a typo in a
+ flag value is the cheapest way to end up there - so an unrecognised
+ --layout is a hard stop, not a silent fall back to plain.)
+
+To 'set the layout mode' with a text called 'the requested mode'.
+    If 'the requested mode' is "random" then,
+        'gen set layout' of "random",
+        Return a number, 0.
+    If 'the requested mode' is "plain" then,
+        'gen set layout' of "plain",
+        Return a number, 0.
+    open a file for writing called 'the layout error stream' at 2.
+    Write "vox-fuzz: --layout takes 'random' or 'plain', not '{'the requested mode'}'.\n" to 'the layout error stream'.
+    Close 'the layout error stream'.
+    Exit 2.
 
 (Parse the gen subcommand's flags. arguments's all is argv[1..], so
  element 1 is the subcommand itself and the flags start at element 2.
@@ -105,6 +123,8 @@ To 'parse options'.
             Set findings_dir to 'the value'.
         If 'the option' is "--keep" then,
             Set keep_dir to 'the value'.
+        If 'the option' is "--layout" then,
+            'set the layout mode' of 'the value'.
         Set 'the position' to 'the position' add 2.
 
 (Dispatch. Top-level literal comparisons are legal - bug #21 bites only

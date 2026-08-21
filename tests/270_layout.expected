@@ -1,0 +1,4 @@
+seeds checked: 32
+both layouts compiled every seed: 1
+whitespace-stripped sources identical: 1
+layout never changed stdout or exit status: 1
