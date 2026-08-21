@@ -1,0 +1,25 @@
+(FMT-38 — format specifiers render identically in all three sinks. The same
+ slot text is printed, built into a buffer, and written to a file, then the
+ file is read back: three identical lines.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   255 0xff 0xFF 000042
+   255 0xff 0xFF 000042
+   255 0xff 0xFF 000042
+)
+a number called n is 255.
+a number called x is 42.
+Print "{n} {n:x} {n:X} {x:06}".
+
+a buffer called built is 128 bytes in size.
+copy "{n} {n:x} {n:X} {x:06}" to built.
+Print built.
+
+Open a file for writing called log at "/tmp/vox-FMT-38.txt".
+write "{n} {n:x} {n:X} {x:06}\n" to log.
+close log.
+Open a file for reading called back at "/tmp/vox-FMT-38.txt".
+a buffer called got is 128 bytes in size.
+read from back into got.
+close back.
+Print got without newline.

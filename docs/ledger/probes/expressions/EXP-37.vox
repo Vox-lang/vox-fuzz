@@ -1,0 +1,15 @@
+(EXP-37: the Comparisons block sits under `## Expressions`, and the Grammar
+ Summary at LANGUAGE.md:5230-5232 derives `comparison` from `expr`, so a
+ comparison should be usable anywhere an expression is. It is not - the
+ compiler accepts one only in a condition position. See Discrepancy 3.
+ This probe records the refusal for the binding form; D3.vox records the
+ `Print` form and the property-check form alongside it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-37.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Is
+   no binary produced; compile error
+)
+a number called x is 7.
+a number called y is 3.
+a boolean called dominant is x is greater than y.
+Print dominant.

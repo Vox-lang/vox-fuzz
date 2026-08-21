@@ -1,0 +1,12 @@
+(BAS2-13: `open a file ... at each <var> from <collection>` opens one file per element and runs the whole comma-separated body once per file. Adapted from the manual's argv example: run from the REPO ROOT (the fixture paths are repo-relative). The argv form was hand-run separately - `./p docs/ledger/probes/expansion/fixtures/alpha.txt docs/ledger/probes/expansion/fixtures/beta.txt` on the arguments's-all variant printed the same two lines.
+ Also covers: BAS2-19
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-13.vox -o p && ./p
+ expected output:
+   alpha
+   beta
+)
+a buffer called content is 64 bytes in size.
+open a file for reading called source at each filename from ["docs/ledger/probes/expansion/fixtures/alpha.txt", "docs/ledger/probes/expansion/fixtures/beta.txt"],
+  read from source into content,
+  print the content,
+  close source.

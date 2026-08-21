@@ -1,0 +1,23 @@
+(KEY-60 — `start`, `begin`, `stop` and `finish` are contextual: each is a
+ timer verb in front of a timer name and an ordinary identifier everywhere
+ else, in the same program.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-60.vox -o p && ./p
+ expected output:
+   10
+   the started-and-stopped timer ran
+)
+a number called start is 1.
+a number called begin is 2.
+a number called stop is 3.
+a number called finish is 4.
+a timer called clock.
+Start the clock.
+Wait 20 milliseconds.
+Stop the clock.
+a timer called 'the other clock'.
+Begin the 'the other clock'.
+Wait 20 milliseconds.
+Finish the 'the other clock'.
+Print start add begin add stop add finish.
+If the clock's elapsed in milliseconds is greater than 10 then,
+    Print "the started-and-stopped timer ran".

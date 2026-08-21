@@ -1,0 +1,12 @@
+(FMT-50 — the escape example at LANGUAGE.md:3192-3196 verbatim.
+ Composite of FMT-45/46/47/48.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Use {braces} for literal braces.
+   Tab:	here
+   Line1
+   Line2
+)
+Print "Use {{braces}} for literal braces.".
+Print "Tab:\there".
+Print "Line1\nLine2".

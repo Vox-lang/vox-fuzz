@@ -1,0 +1,10 @@
+(OPR-13: `is not equal to` tests inequality (LANGUAGE.md:4563).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-13.vox -o p && ./p
+ expected output:
+   not equal to fired
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is not equal to other then, Print "not equal to fired".
+If lhs is not equal to rhs then, Print "not equal to MISFIRED".

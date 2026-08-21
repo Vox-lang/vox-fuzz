@@ -1,0 +1,22 @@
+(OPR-38 (undocumented precision): every bitwise operator applied to a
+ float operand yields 0.0, whatever the operands. The float is not
+ truncated to an integer and no diagnostic is issued - contrast a text
+ or list operand, which is a compile error (OPR-42). See Discrepancy 3
+ and probes/operators/D3.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-38.vox -o p && ./p
+ expected output:
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+   0.0
+)
+a float called fraction is 3.5.
+Print fraction bit-and 1.
+Print fraction bit-or 8.
+Print fraction bit-xor 1.
+Print fraction bit-shift-left 1.
+a float called whole is 6.0.
+Print whole bit-and 4.
+Print whole bit-shift-right 1.

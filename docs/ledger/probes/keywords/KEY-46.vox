@@ -1,0 +1,15 @@
+(KEY-46 — disambiguation rule 2: an `and` between two conditions with no
+ comma is the logical operator, so each side is evaluated as its own
+ comparison rather than as a subject of a shared predicate.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-46.vox -o p && ./p
+ expected output:
+   two independent comparisons, both true
+   done
+)
+a number called left is 4.
+a number called right is 9.
+If left is 4 and right is 9 then,
+    Print "two independent comparisons, both true".
+If left is 4 and right is 4 then,
+    Print "should not fire - second comparison is false".
+Print "done".

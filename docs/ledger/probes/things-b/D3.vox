@@ -1,0 +1,23 @@
+(D3 - Discrepancy 3 repro: the two whole-thing comparison diagnostics point
+ their caret at the DECLARATION of the left operand rather than at the
+ comparison that is wrong. Here the offending line is 11; the caret lands on
+ line 9. LANGUAGE.md:1310-1313 shows the sibling owner-return diagnostic naming
+ both lines, so the section does treat location as part of the message.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, which nothing puts in order
+   with the caret on line 9, `a point called origin.`, not on line 11, the
+   comparison. No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+a point called origin.
+a point called marker.
+If origin is greater than marker then,
+    Print "further along".

@@ -1,0 +1,13 @@
+(ARG-09 — `arguments's raw` is the original user arguments as a
+ collection. With no flag schema in the program nothing is filtered, so
+ raw and all agree here; the case where they diverge is ARG-32.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-09.vox -o p && ./p alpha beta
+ Args: alpha beta
+ expected output:
+   2
+   alpha
+   beta
+)
+a list called original is arguments's raw.
+Print the original's length.
+Print each item from arguments's raw.

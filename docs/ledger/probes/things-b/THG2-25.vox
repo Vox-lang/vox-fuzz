@@ -1,0 +1,23 @@
+(THG2-25: a member is defined once - a second `To do the point's 'placed at'`
+ errors at the second definition, naming the first.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-25.vox -o p && ./p
+ expected output:
+   error: point's 'placed at' is already defined on line 14
+   followed by "The manifest declares a member once and one `To do` defines it
+   once". No binary is produced; this is a compile error.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  Return a point, plotted.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Return a point, plotted.
+
+Print 1.

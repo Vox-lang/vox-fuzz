@@ -1,0 +1,15 @@
+(LST2-50 — `arguments's all` is a legal loop-expansion collection: it
+ yields one iteration per command-line argument, and zero when none were
+ passed. The recorded block below is the NO-ARGUMENT run, because
+ docs/check-probes.sh runs every probe without arguments. Run by hand
+ with `./p alpha beta gamma` the same binary prints:
+   alpha
+   beta
+   gamma
+   --- end of arguments
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-50.vox -o p && ./p
+ expected output:
+   --- end of arguments
+)
+print each entry from arguments's all.
+print "--- end of arguments".

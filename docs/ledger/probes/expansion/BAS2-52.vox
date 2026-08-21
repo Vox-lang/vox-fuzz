@@ -1,0 +1,10 @@
+(BAS2-52: `treating <match> as <replacement>` substitutes for exactly the iterations whose loop variable equals the match; the others pass through untouched.
+ Also covers: BAS2-54, BAS2-57
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-52.vox -o p && ./p
+ expected output:
+   ann
+   Anonymous
+   bob
+)
+a list called names is ["ann", "", "bob"].
+print each name from names treating "" as "Anonymous".

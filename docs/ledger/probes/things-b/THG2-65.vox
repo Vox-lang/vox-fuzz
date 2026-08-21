@@ -1,0 +1,8 @@
+(THG2-65: `A thing called point has.` - a thing needs at least one field.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-65.vox -o p && ./p
+ expected output:
+   error: A thing needs at least one field
+   followed by the canonical form spelled out over three lines.
+   No binary is produced; this is a compile error.
+)
+A thing called point has.

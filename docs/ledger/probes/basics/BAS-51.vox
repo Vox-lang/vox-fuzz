@@ -1,0 +1,18 @@
+(BAS-51 - an `Otherwise` (or `But if`) continues the innermost `if` that
+ is still open. Both chains below are attached to the INNER `if`, so the
+ whole construct sits inside the outer `If m is equal to 1`, which is
+ false - nothing in either runs.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-51.vox -o p && ./p
+ expected output:
+   done
+)
+a number called m is 5.
+If m is equal to 1 then,
+    If m is equal to 2 then,
+        print "inner then".
+    But if m is equal to 5 then,
+        print "inner but if".
+    Otherwise,
+        print "inner else".
+
+Print "done".

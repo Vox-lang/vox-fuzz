@@ -1,0 +1,13 @@
+(TIM-20 - the manual's four Sleep/Wait example lines, verbatim from
+ LANGUAGE.md:4186-4189, compile and run. They take 6.5 seconds of wall
+ clock between them, which is why nothing is printed: the claim is that
+ the program reaches its end.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-20.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   
+)
+Wait 1 second.
+Wait 2 seconds.
+Wait 500 milliseconds.
+Sleep for 3 seconds.

@@ -1,0 +1,24 @@
+(FIL-37: the for-reading/writing/appending, called <name> and at <path> clauses may appear in any order; all three permutations the manual shows compile and run.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-37.vox -o p && ./p
+ actual output:
+   first-second
+   12
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called output at "vf_scratch/files/order.txt".
+Write "first" to output.
+Close output.
+open a file at "vf_scratch/files/order.txt" for appending called log.
+Write "-second" to log.
+Close log.
+open a file called source for reading at "vf_scratch/files/order.txt".
+a buffer called contents is 64 bytes in size.
+Read from source into contents.
+print contents.
+Close source.
+open a file at "vf_scratch/files/order.txt" called reread for reading.
+print reread's size.
+Close reread.

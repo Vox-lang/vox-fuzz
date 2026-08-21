@@ -1,0 +1,19 @@
+(KEY-45 — disambiguation rule 1: an `and` that comes after a comma and
+ before `are` is a subject-list terminator, so the word after it is read as
+ a SUBJECT, not as a condition. Proof: the trailing subject is a bare
+ number, which is meaningless as a condition but fine as a subject of
+ `are 4`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-45.vox -o p && ./p
+ expected output:
+   every subject compared against 4
+   done
+)
+a number called left is 4.
+a number called middle is 4.
+a number called right is 4.
+If left, middle, and right are 4 then,
+    Print "every subject compared against 4".
+Set right to 5.
+If left, middle, and right are 4 then,
+    Print "should not fire - one subject differs".
+Print "done".

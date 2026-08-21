@@ -1,0 +1,12 @@
+(OPR-29: the binary literals the Operators example opens with
+ (LANGUAGE.md:4589-4590) are legal number initialisers and carry the
+ values the section then relies on: 0b11110000 is 240, 0b10101010 is 170.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-29.vox -o p && ./p
+ expected output:
+   240
+   170
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+Print lhs.
+Print rhs.

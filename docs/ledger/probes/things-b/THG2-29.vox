@@ -1,0 +1,25 @@
+(THG2-29: the instance possessive `receiver's 'member'` is sugar for
+ `'member' of receiver` - the same function, the same answer, written twice.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-29.vox -o p && ./p
+ expected output:
+   25
+   25
+   the two forms agree
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'magnitude squared' with a point called corner.
+  a number called 'x squared' is corner's x multiply corner's x.
+  a number called 'y squared' is corner's y multiply corner's y.
+  Return a number, 'x squared' add 'y squared'.
+
+a point called origin.
+Set origin's x to 3.
+Set origin's y to 4.
+a number called 'by receiver' is origin's 'magnitude squared'.
+a number called 'by free call' is 'magnitude squared' of origin.
+Print 'by receiver'.
+Print 'by free call'.
+If 'by receiver' is 'by free call' then, Print "the two forms agree".

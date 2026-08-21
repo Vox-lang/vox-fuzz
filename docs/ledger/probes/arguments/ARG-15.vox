@@ -1,0 +1,26 @@
+(ARG-15 — the flag schema form: a name, two alias strings joined by
+ `or`, and `it is a <type>` (LANGUAGE.md:4364-4369).
+ Also covers: ARG-14 (declarative schema-first flag parsing exists at
+ all), ARG-17 (a boolean flag's presence sets it true — printed as 1),
+ ARG-18 (a text flag consumes the next token as text), ARG-19 (a number
+ flag consumes the next token and parses it as a number). The
+ invocation deliberately mixes the short alias of one flag with the long
+ alias of another, so both spellings of the same schema are on trial.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-15.vox -o p && ./p -v -o out.txt --retries 5
+ Args: -v -o out.txt --retries 5
+ expected output:
+   verbose is 1
+   output is out.txt
+   retries is 5
+   retries doubled is 10
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+a flag called output is "-o" or "--output", it is a text.
+a flag called retries is "-r" or "--retries", it is a number.
+Parse flags.
+
+Print "verbose is {verbose}".
+Print "output is {output}".
+Print "retries is {retries}".
+a number called doubled is retries multiply 2.
+Print "retries doubled is {doubled}".

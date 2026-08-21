@@ -1,0 +1,14 @@
+(KEY-33 — `called` and `named` both name a variable being declared, in
+ both the bare and the quoted-name form.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-33.vox -o p && ./p
+ expected output:
+   1
+   2
+   third
+)
+a number called plain is 1.
+a number named spoken is 2.
+a text named 'the long way round' is "third".
+Print plain.
+Print spoken.
+Print 'the long way round'.

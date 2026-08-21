@@ -1,0 +1,18 @@
+(THG2-53: a type name is one identifier across the whole compilation - defining
+ the same thing in two files reached by `see` errors at the second definition
+ and names the file that defined it first. The manual writes that filename
+ relative; the compiler prints it absolute.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-53.vox -o p && ./p
+ expected output:
+   error: 'point' is already defined as a thing on line 5 of
+   ... the absolute path of include/point_defined_elsewhere.vox, followed by
+   "Type names, variable names, and function names share one identifier space;
+   the first definition wins." No binary is produced; this is a compile error.
+)
+see "./include/point_defined_elsewhere.vox".
+
+A thing called point has
+  a number called x is 0.
+
+a point called origin.
+Print origin's x.

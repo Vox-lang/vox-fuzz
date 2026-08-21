@@ -1,0 +1,18 @@
+(OPR-41 (undocumented precision): `times` (OPR-06) is rejected in the
+ value slot of an `append <value> to <collection>` statement, where
+ `multiply` is accepted. The alias reaches every other position
+ (Print, Set, declaration initialiser). This limit on OPR-06 was found
+ by the generator before this ledger existed - see the comment above
+ `gen append expr` in src/gen_core.vox:139 - and still reproduces on
+ 0.4.8.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-41.vox -o p && ./p
+ expected output:
+   error: Expected 'to' after value in append statement
+   (no binary produced; compile error)
+)
+a list called tally is [1, 2].
+a number called lhs is 3.
+a number called rhs is 4.
+append lhs times rhs to tally.
+Print tally.

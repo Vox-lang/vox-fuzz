@@ -1,0 +1,8 @@
+Library process version "0.1".
+Location "./libprocess.so".
+
+Table of Contents:
+    To 'exit code of' with a number called status, returning a number.
+    To 'signal of' with a number called status, returning a number.
+    To crashed with a number called status, returning a boolean.
+    To 'exited normally' with a number called status, returning a boolean.

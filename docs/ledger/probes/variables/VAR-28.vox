@@ -1,0 +1,10 @@
+(VAR-28: the `Set x to <value>.` write form is type-checked exactly like the
+ other two. (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-28.vox -o p && ./p
+ expected output:
+   error: cannot assign text to 'n', which is a number
+   (no binary produced; compile error)
+)
+a number called n is 5.
+Set n to "abc".
+Print n.

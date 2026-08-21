@@ -1,0 +1,32 @@
+(D1b — Discrepancy 1, in the exact shape the generator already emits.
+ `src/gen_misc.vox:383` emits a flag-reader function, and
+ `src/gen_core.vox:963` rotates six prelude blocks so that the reader can
+ be emitted BEFORE the flag schema it reads — deliberately, and the
+ comment at `src/gen_misc.vox:369-375` records that this was hand-verified
+ as legal Vox. It is legal. It is also one line away from printing a
+ pointer.
+ The reader as emitted survives only because it copies the text flag into
+ a DECLARED text local first (`a text called fl1local is fl1label.`) and
+ prints the local. This probe is that function with the copy removed —
+ `Print fl1label.` straight from the forward-referenced global — and it
+ prints a stack address. Run with no arguments so the flag takes its
+ declared default `"d1"`; the top-level read prints `d1` and the
+ in-function read prints the pointer.
+ Same defect as D1.vox, reached through the generator's own prelude rather
+ than a hand-written example. The address varies per run, so this probe
+ is compared on its EXIT CODE: it exits 3 unconditionally.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p
+ expected output:
+   d1
+   4198488
+   exit 3
+)
+To 'read flags 1'.
+    Print fl1label.
+
+a flag called fl1label is "-a" or "--alpha1", it is a text with default "d1".
+Parse flags.
+
+Print fl1label.
+'read flags 1'.
+Exit 3.

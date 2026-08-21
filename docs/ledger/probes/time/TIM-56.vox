@@ -1,0 +1,13 @@
+(TIM-56 - `Start` applied to something that is not a timer is a compile
+ error, so a generated program cannot start a number by accident.
+ Note where the diagnostic points: at the DECLARATION of `counter` on line
+ 1, not at the offending `Start` on line 2. Recorded because it will
+ mislead anyone triaging a generated program that fails to compile.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-56.vox -o p && ./p
+ expected output:
+   error: Start requires a timer: counter
+   (no binary produced; compile error)
+)
+a number called counter is 3.
+Start the counter.
+print counter.

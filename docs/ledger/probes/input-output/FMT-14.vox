@@ -1,0 +1,9 @@
+(FMT-14 — `{var:X}` is uppercase hexadecimal and also includes the `0x`
+ prefix (lowercase `x` in the prefix, uppercase digits).
+ The manual's own row: `{n:X}` -> `0xFF`, with n = 255.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   0xFF
+)
+a number called n is 255.
+Print "{n:X}".

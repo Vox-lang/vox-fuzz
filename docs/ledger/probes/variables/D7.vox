@@ -1,0 +1,28 @@
+(Discrepancy 7: LANGUAGE.md:467-476 is headed "Two Canonical Forms" and
+ describes the no-initializer form only under `Create`. There are more forms
+ than two: the lead-in may be absent, `Set` or `Create`, and the initializer
+ may be `is V`, `to V` (after Set/Create only) or absent — and the entirely
+ undocumented `a TYPE called NAME.` below works and takes the default. The
+ two spellings are also not diagnostically equal: `a buffer called NAME.`
+ emits a declaration warning on stderr at compile time while the documented
+ `Create a buffer called NAME.` emits none, for the same resulting buffer.
+ (The compile-time warning is not part of the recorded run output below; run
+ the compiler on this file to see it.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
+ expected output:
+   0
+   0
+   []
+   4096
+   4096
+)
+a number called undocumented.
+Create a number called documented.
+a list called 'also undocumented'.
+a buffer called warned.
+Create a buffer called unwarned.
+Print undocumented.
+Print documented.
+Print 'also undocumented'.
+Print warned's capacity.
+Print unwarned's capacity.

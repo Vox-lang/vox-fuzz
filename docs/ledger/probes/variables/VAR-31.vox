@@ -1,0 +1,14 @@
+(VAR-31, VAR-33: an explicit cast is what makes the assignment legal, and it
+ is the ordinary Type Casting mechanism rather than syntax invented for this
+ rule — `as a number` and `as text` both work as the fix.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-31.vox -o p && ./p
+ expected output:
+   42
+   5
+)
+a number called n is 5.
+a text called label is "hi".
+n is "42" as a number.
+label is 5 as text.
+Print n.
+Print label.

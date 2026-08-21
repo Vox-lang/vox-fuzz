@@ -1,0 +1,24 @@
+(EXP-87: `in` casts a timer's `duration` or `elapsed` to a unit.
+ Wall-clock readings cannot be recorded literally, so every reading is turned
+ into a range check whose answer is fixed: after a one-second wait the elapsed
+ is at least 1 second and under 2, and the duration in milliseconds is at
+ least 1000. Both `elapsed` and `duration` are exercised, and two units are
+ used, since only `elapsed in milliseconds` is emitted by any existing leaf.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-87.vox -o p && ./p
+ expected output:
+   elapsed reached a second
+   elapsed under two seconds
+   duration reached a second
+   duration reached a thousand millis
+)
+a timer called benchmark.
+Start the benchmark.
+Wait 1 second.
+a number called 'seconds so far' is the benchmark's elapsed in seconds.
+Stop the benchmark.
+a number called 'seconds total' is the benchmark's duration in seconds.
+a number called 'millis total' is the benchmark's duration in milliseconds.
+If 'seconds so far' is greater than or equal to 1 then, Print "elapsed reached a second". Otherwise, Print "elapsed short".
+If 'seconds so far' is less than 2 then, Print "elapsed under two seconds". Otherwise, Print "elapsed overran".
+If 'seconds total' is greater than or equal to 1 then, Print "duration reached a second". Otherwise, Print "duration short".
+If 'millis total' is greater than or equal to 1000 then, Print "duration reached a thousand millis". Otherwise, Print "duration short in millis".

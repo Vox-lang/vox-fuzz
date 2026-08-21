@@ -1,0 +1,11 @@
+(BAS-09 - a comment can appear on its own line, between statements, with
+ no effect on what runs.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-09.vox -o p && ./p
+ expected output:
+   before
+   after
+)
+(a comment occupying its own line)
+print "before".
+(another one, between two statements)
+print "after".

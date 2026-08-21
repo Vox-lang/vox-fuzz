@@ -1,0 +1,20 @@
+(FIL-89: a program that exits with a buffer un-freed and a file handle un-closed exits cleanly, and the bytes it wrote are on disk.
+ Also covers: FIL-84, FIL-88, FIL-98, FIL-99.
+ Only the observable half of the automatic-cleanup claim. Whether the FD
+ was actually released at exit is not observable from inside Vox - that is
+ FIL-95, and it is marked not assertable for exactly this reason.
+ Write is unbuffered here: a reader opened in the same program before any
+ Close already sees the bytes, so surviving exit is what this proves.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-89.vox -o p && ./p
+ actual output:
+   exiting without a Close - the runtime must close the handle
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a buffer called data is 32 bytes in size.
+append "auto-freed on exit" to data.
+open a file for writing called log at "vf_scratch/files/never-closed.txt".
+Write "written but never closed" to log.
+print "exiting without a Close - the runtime must close the handle".

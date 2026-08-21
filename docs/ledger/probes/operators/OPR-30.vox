@@ -1,0 +1,10 @@
+(OPR-30: a bitwise expression is legal as a declaration initialiser
+ (LANGUAGE.md:4593, `a number called result is lhs bit-and rhs.`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-30.vox -o p && ./p
+ expected output:
+   160
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+a number called result is lhs bit-and rhs.
+Print result.

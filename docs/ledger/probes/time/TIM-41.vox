@@ -1,0 +1,24 @@
+(TIM-41 - a time property can be read straight out of a format slot, and
+ the `:02` zero-pad specifier applies to it, whether the time is stored in
+ a name or read inline. The value is clock-dependent, but its width is
+ not: a zero-padded hour is two characters whatever the clock says, which
+ is how this stays a fixed-output probe.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-41.vox -o p && ./p
+ expected output:
+   the padded hour is two characters
+   the padded minute is two characters
+   an inline current time pads in a slot too
+)
+Get current time into now.
+a text called 'the padded hour' is "{now's hour:02}".
+a text called 'the padded minute' is "{now's minute:02}".
+a text called 'the inline hour' is "{current time's hour:02}".
+a buffer called 'the hour bytes' is "{'the padded hour'}".
+a buffer called 'the minute bytes' is "{'the padded minute'}".
+a buffer called 'the inline bytes' is "{'the inline hour'}".
+If 'the hour bytes''s length is 2 then, print "the padded hour is two characters".
+Otherwise, print "the padded hour is {'the hour bytes''s length} characters".
+If 'the minute bytes''s length is 2 then, print "the padded minute is two characters".
+Otherwise, print "the padded minute is {'the minute bytes''s length} characters".
+If 'the inline bytes''s length is 2 then, print "an inline current time pads in a slot too".
+Otherwise, print "the inline padded hour is {'the inline bytes''s length} characters".

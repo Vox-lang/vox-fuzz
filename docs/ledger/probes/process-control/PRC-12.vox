@@ -1,0 +1,27 @@
+(PRC-12 — `Mount "<source>" at "<target>" with type "<fstype>".` lowers to
+ mount(2).
+ Also covers: PRC-13 (the `with options "<options>"` clause is optional and
+ accepted) and PRC-21 (Mount sets the error flag on failure).
+ SAFETY: this probe is only safe because the process is unprivileged.
+ mount(2) needs CAP_SYS_ADMIN, so every call here returns EPERM and no
+ filesystem is touched. Run as root it would mount a real proc and a real
+ tmpfs over the scratch directory. What is verified here is the ERROR
+ path; the success path is not reachable without privilege.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-12.vox -o p && ./p
+ expected output:
+   the three-operand mount set the error flag
+   the four-operand mount set the error flag
+   execution continued past both
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_mount".
+Mount "proc" at "vf_scratch/process-control/scratch_mount" with type "proc".
+On error print "the three-operand mount set the error flag".
+Mount "tmpfs" at "vf_scratch/process-control/scratch_mount" with type "tmpfs" with options "size=64m".
+On error print "the four-operand mount set the error flag".
+Remove the directory called "vf_scratch/process-control/scratch_mount".
+print "execution continued past both".

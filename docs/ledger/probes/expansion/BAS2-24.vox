@@ -1,0 +1,13 @@
+(BAS2-24: two `each` clauses joined by `and` run the action once per element of the Cartesian product, in row-major order (leftmost clause outermost).
+ Also covers: BAS2-25, BAS2-26
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-24.vox -o p && ./p
+ expected output:
+   1,10
+   1,20
+   2,10
+   2,20
+)
+To 'pair' with a number called left and a number called right.
+  print "{left},{right}".
+
+'pair' of each x from [1, 2] and each y from [10, 20].

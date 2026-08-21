@@ -1,0 +1,19 @@
+(Discrepancy 4 — LANGUAGE.md:3211 says a conditional-print chain may be
+ chained "with `but if` or `and if`", which reads as the two spellings
+ being interchangeable. They are not interchangeable in the first
+ position: a chain whose FIRST clause is `and if` is a parse error. The
+ same statement with `but if` first and `and if` second compiles and runs
+ (FMT-54), so `and if` is a valid continuation, never an opener.
+ Pro-compiler reading: `and` is a connector joining a clause to a
+ preceding one (LANGUAGE.md's keyword chapter treats `and` as exactly
+ that), so there is nothing for the first `and if` to join to and the
+ comma before it has no statement to close. Under that reading the
+ sentence at 3211 is imprecise rather than the parser being wrong — it
+ should say the chain OPENS with `but if` and CONTINUES with either.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Comma
+   (a compile error — vox refuses the program and emits no binary)
+)
+a number called score is 4.
+Print the score, and if the score modulo 2 is equal to 0 print "two".

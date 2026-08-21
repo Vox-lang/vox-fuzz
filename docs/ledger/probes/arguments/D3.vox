@@ -1,0 +1,15 @@
+(D3 — Discrepancy 3 repro: LANGUAGE.md:4380 says flags may be marked
+ required "and/or" given defaults, and 4387 says a default "initializes
+ the flag value if the flag is not passed". Declare both on one flag and
+ the two rules meet head-on: the flag is not passed, so the default
+ should initialize it — but required aborts the program first, silently,
+ with exit 1 and no output on either stream. The default is unreachable
+ for the one invocation it exists to serve.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   (exit 1)
+)
+a flag called output is "-o" or "--output", it is a text with default "out.txt" and is required.
+Parse flags.
+
+Print "output is {output}".

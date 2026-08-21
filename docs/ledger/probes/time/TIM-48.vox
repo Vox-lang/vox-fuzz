@@ -1,0 +1,20 @@
+(TIM-48 - once the timer is stopped, `elapsed` stops moving and settles on
+ the same number as `duration`. The manual calls elapsed "elapsed time
+ while running" and does not say what it reads afterwards.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-48.vox -o p && ./p
+ expected output:
+   elapsed froze when the timer stopped
+   the frozen elapsed is the duration
+)
+a timer called lap.
+Start the lap.
+Wait 1100 milliseconds.
+Stop the lap.
+a number called 'the first read' is lap's elapsed in milliseconds.
+Wait 700 milliseconds.
+a number called 'the second read' is lap's elapsed in milliseconds.
+a number called 'the duration' is lap's duration in milliseconds.
+If 'the second read' is 'the first read' then, print "elapsed froze when the timer stopped".
+Otherwise, print "elapsed moved from {'the first read'} to {'the second read'} after the stop".
+If 'the duration' is 'the first read' then, print "the frozen elapsed is the duration".
+Otherwise, print "elapsed {'the first read'} against duration {'the duration'}".

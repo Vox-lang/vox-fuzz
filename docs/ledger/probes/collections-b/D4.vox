@@ -1,0 +1,27 @@
+(D4 — Discrepancy 4 repro, the quiet sibling of D3: a loop-expansion
+ clause whose collection was a MAP used to be accepted with no diagnostic
+ and printed one garbage value per entry (0, 0, 3) instead of erroring; a
+ BUFFER collection behaved the same way (6513249, 0, 0 -- 0x636261 is
+ "abc" read as a list header). The manual's supported-collection list
+ (LANGUAGE.md:2803-2806) contains neither.
+ **RESOLVED — fixed by vox #49 (0.4.8+), the same check that fixed D3.**
+ Both clauses are now compile errors, each with a kind-specific hint:
+   scores is a map - iterate `scores's keys` or `scores's values`
+   sink is a buffer - `each ... from` walks a list, a range, or
+   `arguments's all`
+ The caret points at the DECLARATION of the offending collection rather
+ than at the loop clause; see also Discrepancy 10 (`D10.vox`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   error: Loop collection must be a list: scores
+   (no binary produced; compile error)
+   a second error is reported for the buffer clause:
+     error: Loop collection must be a list: sink
+)
+a map called scores is {"a": 1, "b": 2, "c": 3}.
+print "three entries, three garbage values follow".
+print each entry from scores.
+print "--- and a buffer collection".
+a buffer called sink is "abc".
+print each part from sink.
+print "--- end".

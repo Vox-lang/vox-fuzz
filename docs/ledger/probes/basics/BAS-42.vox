@@ -1,0 +1,14 @@
+(BAS-42 - the `retries` worked example, LANGUAGE.md:138-146, verbatim. The
+ manual says it prints `retrying` once and `done` once after the loop runs
+ its full three iterations, and it does.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-42.vox -o p && ./p
+ expected output:
+   retrying
+   done
+)
+a number called retries is 0.
+While retries is less than 3,
+    if retries is equal to 1 then, print "retrying".
+    the retries is retries add 1.
+
+Print "done".

@@ -1,0 +1,17 @@
+(KEY-71 — `second` is contextual three ways over: the second-argument
+ property after a possessive, the `Wait N second(s)` duration unit, and an
+ ordinary identifier — the manual's own example is
+ `Set second to 1. Wait second seconds.`
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-71.vox -o p && ./p
+ expected output:
+   a variable named second measured out one second
+   1
+)
+Set second to 1.
+a timer called clock.
+Start the clock.
+Wait second seconds.
+Stop the clock.
+If the clock's elapsed in milliseconds is greater than 900 then,
+    Print "a variable named second measured out one second".
+Print second.

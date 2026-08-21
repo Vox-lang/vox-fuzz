@@ -1,0 +1,15 @@
+(LST-40 — a quoted key carrying `{...}` interpolation builds a DYNAMIC key,
+ on both the read and the write side.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-40.vox -o p && ./p
+ expected output:
+   Ada
+   dynamic
+   3
+)
+a map called person is {"name": "Ada", "age": 36}.
+a text called wanted is "name".
+print person's "{wanted}".
+a number called index is 1.
+set person's "slot{index}" to "dynamic".
+print person's "slot1".
+print person's length.

@@ -1,0 +1,15 @@
+(ARG-48 — *(not a manual claim — a gap in the manual)* a number flag
+ given a decimal value truncates toward zero, silently: no error flag,
+ no diagnostic, 1.5 becomes 1. Unlike ARG-46 and ARG-47 there is nothing
+ for a program to notice.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-48.vox -o p && ./p -r 1.5
+ Args: -r 1.5
+ expected output:
+   retries is 1
+)
+a flag called retries is "-r" or "--retries", it is a number.
+Parse flags.
+
+a number called seen is retries.
+On error print "reading the flag errored".
+Print "retries is {seen}".

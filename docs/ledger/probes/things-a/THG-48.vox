@@ -1,0 +1,15 @@
+(THG-48: a thing containing ITSELF has no finite size, so the definition
+ that closes the cycle is a compile error naming the chain.
+ LANGUAGE.md:998-1003 abbreviates the diagnostic to two lines; the real one
+ has three and opens "A thing cannot contain itself:" - see Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-48.vox -o p && ./p
+ expected output:
+   error: A thing cannot contain itself: ouroboros contains ouroboros
+       A thing's fields are stored inline, so this definition has no finite size.
+       A field may name any thing defined before this one.
+   (no binary produced; compile error)
+)
+A thing called ouroboros has
+  an ouroboros called tail.
+
+Print "made".

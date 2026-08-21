@@ -1,0 +1,15 @@
+(FMT-29 — each evaluation allocates a NEW string: the source buffer can be
+ cleared and refilled without disturbing a text already made from it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   first
+   second
+)
+a buffer called word is 64 bytes in size.
+copy "first" to word.
+a text called earlier is "{word}".
+clear word.
+copy "second" to word.
+a text called later is "{word}".
+Print earlier.
+Print later.

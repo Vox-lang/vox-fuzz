@@ -1,0 +1,9 @@
+(BAS-14 - undocumented precision on BAS-07: parentheses inside a STRING
+ LITERAL are ordinary text, not a comment. The Comments section never says
+ so, and a reader who took "comments use parentheses" literally would
+ expect the parenthesised half of this string to disappear.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-14.vox -o p && ./p
+ expected output:
+   parentheses (inside a string) stay in the string
+)
+Print "parentheses (inside a string) stay in the string".

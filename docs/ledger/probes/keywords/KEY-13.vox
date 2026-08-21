@@ -1,0 +1,14 @@
+(KEY-13 — `Continue` skips to the next iteration.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-13.vox -o p && ./p
+ expected output:
+   1
+   2
+   4
+   5
+   after the loop
+)
+For each step from 1 to 5,
+    If step is 3 then,
+        Continue.
+    Print step.
+Print "after the loop".

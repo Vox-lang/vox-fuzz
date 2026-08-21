@@ -1,0 +1,18 @@
+(PRC-49 — a reap of a PID that is not your child sets the error flag and
+ `On error` catches it (ECHILD).
+ Also covers: PRC-47 (the reap returns a negative value on error — -10 is
+ -ECHILD).
+ 999999 is a deliberately invalid PID, not somebody else's process: reaping
+ can only ever touch your own children, so nothing outside this program is
+ reachable here.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-49.vox -o p && ./p
+ expected output:
+   the foreign reap set the error flag
+   it returned -10
+)
+a number called 'the foreign reap' is reap process 999999.
+On error print "the foreign reap set the error flag".
+print "it returned {'the foreign reap'}".

@@ -1,0 +1,12 @@
+(THG2-61: indenting the entries is conventional but not required - the commas
+ and the terminator carry the structure. Nothing below is indented.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-61.vox -o p && ./p
+ expected output:
+   {x: 0, y: 0}
+)
+A thing called point has
+a number called x is 0,
+a number called y is 0.
+
+a point called origin.
+Print origin.

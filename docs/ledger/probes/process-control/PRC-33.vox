@@ -1,0 +1,17 @@
+(PRC-33 — `Execute "<path>".` performs execve(2) and replaces the current
+ process image entirely: the line after it never runs.
+ SAFETY: the target is /bin/sh with a fixed, harmless -c script. A leaf
+ must do the same — an allowlisted binary and a fixed argument list, never
+ a generated command line (plan 323 Tier CONFINE).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-33.vox -o p && ./p
+ expected output:
+   the parent printed this
+   the replacement program printed this
+)
+print "the parent printed this".
+Execute "/bin/sh" with arguments ["-c", "echo the replacement program printed this"].
+On error print "the exec failed".
+print "this line is unreachable".

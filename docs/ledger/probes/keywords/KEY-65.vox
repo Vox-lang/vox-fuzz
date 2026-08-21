@@ -1,0 +1,19 @@
+(KEY-65 — `count` is contextual: it is the count property after a
+ possessive and in the `the argument count` / `the environment variable
+ count` phrases, and an ordinary identifier elsewhere. Run with no
+ arguments, `arguments's count` is 1 (the program name); the environment
+ count varies per machine, so it is only tested for being positive.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-65.vox -o p && ./p
+ expected output:
+   1
+   1
+   the environment variable count phrase returned a positive count
+   0
+)
+a number called count is 0.
+Print arguments's count.
+Print the argument count.
+a number called 'how many variables' is the environment variable count.
+If 'how many variables' is greater than 0 then,
+    Print "the environment variable count phrase returned a positive count".
+Print count.

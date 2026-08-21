@@ -1,0 +1,12 @@
+(KEY-73, half one of two — the `Library <name> version "…"` header. Build it
+ with --shared; that writes both libkwlib.so and its libkwlib.lib interface.
+ Ran: cd docs/ledger/probes/keywords/fixtures
+      VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+      /home/josj/scr/english/vox/target/release/vox kwlib.vox --shared -o libkwlib.so
+ expected output:
+   (no output; writes libkwlib.so and libkwlib.lib, whose first line is
+    `Library kwlib version "1.0".`)
+)
+Library kwlib version "1.0".
+
+To 'doubled' with a number called factor. Return a number, factor multiply 2.

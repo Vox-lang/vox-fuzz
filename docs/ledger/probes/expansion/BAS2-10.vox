@@ -1,0 +1,9 @@
+(BAS2-10: a list literal is a legal loop-expansion collection, and the action runs exactly once per element.
+ Also covers: BAS2-09, BAS2-15, BAS2-22
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-10.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+print each number from [1, 2, 3].

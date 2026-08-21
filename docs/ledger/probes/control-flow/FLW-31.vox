@@ -1,0 +1,18 @@
+(FLW-31: `Continue.` skips the rest of the body and goes to the next
+ iteration - iteration 3 prints its number but not its "tail", and the
+ loop still runs to 5.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-31.vox -o p && ./p
+ expected output:
+   1
+   tail
+   2
+   tail
+   3
+   4
+   tail
+   5
+   tail
+   after
+)
+For each number from 1 to 5, print the number, If number is equal to 3 then, Continue. print "tail".
+print "after".

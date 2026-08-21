@@ -1,0 +1,27 @@
+(VAR-07, and the default-value rows VAR-08 number, VAR-09 float, VAR-11
+ boolean, VAR-12 list, VAR-13 map, VAR-15 value: `Create a TYPE called
+ NAME.` declares NAME with no initializer and gives it that type's zero
+ value. `text` is probed separately on VAR-10 because an empty string
+ prints as a blank line; `buffer` on VAR-14 and `timer` on VAR-16 because
+ their defaults are not printable values.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-07.vox -o p && ./p
+ expected output:
+   0
+   0.0
+   0
+   []
+   {}
+   nothing
+)
+Create a number called counted.
+Create a float called measured.
+Create a boolean called ready.
+Create a list called items.
+Create a map called lookup.
+Create a value called slot.
+Print counted.
+Print measured.
+Print ready.
+Print items.
+Print lookup.
+Print slot.

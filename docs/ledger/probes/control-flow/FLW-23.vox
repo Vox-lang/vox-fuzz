@@ -1,0 +1,12 @@
+(FLW-23: `Repeat <count> times, <statements>.` runs the body exactly count
+ times, and the count may be a variable, not only a literal.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-23.vox -o p && ./p
+ expected output:
+   var
+   var
+   var
+   after var
+)
+a number called trips is 3.
+Repeat trips times, print "var".
+print "after var".

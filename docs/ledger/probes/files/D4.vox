@@ -1,0 +1,42 @@
+(D4: Discrepancy 4 - a failing `Write` never set the error flag, so a
+ write failure was undetectable from Vox. LANGUAGE.md:3574 (0.4.7
+ numbering) lists file operation failures as catchable.
+ **RESOLVED - fixed by vox #48 (0.4.8).** Re-run against current main, all
+ four failure modes now raise the flag and `On error` catches every one.
+ The final line is the survival marker, not a verdict.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/D4.vox -o p && ./p
+ actual output:
+   the write to an invalid descriptor set the error flag
+   the write to a read-only handle set the error flag
+   the open of an uncreatable path set the error flag
+   the write to a failed handle set the error flag
+   the write to a closed handle set the error flag
+   survived all four failing writes
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+(1. a write to a descriptor that was never valid)
+open a file for writing called bogus at 2147483647.
+Write "one" to bogus.
+On error print "the write to an invalid descriptor set the error flag".
+(2. a write to a handle opened read-only)
+open a file for reading called readonly at "vf_scratch/files/lines.txt".
+Write "two" to readonly.
+On error print "the write to a read-only handle set the error flag".
+(3. a write to a handle whose open failed)
+open a file for writing called denied at "vf_scratch/files/no-such-dir/x.txt".
+On error print "the open of an uncreatable path set the error flag".
+Write "three" to denied.
+On error print "the write to a failed handle set the error flag".
+(4. a write to a handle that was closed)
+open a file for writing called 'the closed handle' at "vf_scratch/files/closed.txt".
+Close 'the closed handle'.
+Write "four" to 'the closed handle'.
+On error print "the write to a closed handle set the error flag".
+print "survived all four failing writes".
+Close readonly.

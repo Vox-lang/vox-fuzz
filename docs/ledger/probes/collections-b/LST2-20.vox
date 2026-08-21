@@ -1,0 +1,23 @@
+(LST2-20 — undocumented precision: on an EMPTY list, `first` and `last`
+ each print 0 AND set the error flag, the same contract the manual states
+ for an out-of-range `element N of`. `length`/`size` are 0 and `empty` is
+ 1, all without raising the flag. The manual's property table (2698-2704)
+ says nothing about the empty case.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-20.vox -o p && ./p
+ expected output:
+   0
+   0
+   1
+   0
+   first on an empty list set the error flag
+   0
+   last on an empty list set the error flag
+)
+a list called blank is [].
+print blank's length.
+print blank's size.
+print blank's empty.
+print blank's first.
+On error print "first on an empty list set the error flag".
+print blank's last.
+On error print "last on an empty list set the error flag".

@@ -1,0 +1,24 @@
+(D2 - Discrepancy 2 repro: the section's `(compile error: ...)` blocks read
+ as verbatim transcripts but are abbreviated.
+ This is the `increment origin.` case, LANGUAGE.md:1116-1126. The manual's
+ block ends its second line at "(plan 310 §5)"; the compiler continues
+ ", printed as its fields (§7), and compared field by field (§8); no other
+ position reads it as one value."
+ The same abbreviation happens at :1104-1114 (THG-66/67), at :1136-1149
+ (THG-72/73, where "What a call returns is copied into a point" is followed
+ by ": write `a point called <name> is ...`"), and at :998-1003 (THG-48,
+ where the two-line block is really three lines opening "A thing cannot
+ contain itself:").
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, not a value
+       A whole thing is copied, passed, and returned whole (plan 310 §5), printed as its fields (§7), and compared field by field (§8); no other position reads it as one value.
+       its fields are: x, y
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+increment origin.

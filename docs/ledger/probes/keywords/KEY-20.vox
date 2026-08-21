@@ -1,0 +1,13 @@
+(KEY-20 — `Create symbolic link from "<target>" to "<linkpath>".` is
+ `symlink(2)`, and works unprivileged.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-20.vox -o p && ./p
+ expected output:
+   symlink made
+   symlink removed
+)
+Create symbolic link from "/tmp" to "/tmp/voxfuzz-key-20-link".
+On error print "symlink failed".
+Print "symlink made".
+Delete the file "/tmp/voxfuzz-key-20-link".
+On error print "unlink failed".
+Print "symlink removed".

@@ -1,0 +1,12 @@
+(LST-08 — a list the compiler can prove homogeneous keeps the
+ statically-typed fast path, so arithmetic on the loop variable of a
+ `For each` over `[1, 2, 3]` compiles and runs. The mixed counterpart does
+ NOT compile; that half of the claim is Discrepancy 3, repro `D3.vox`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-08.vox -o p && ./p
+ expected output:
+   2
+   3
+   4
+)
+a list called nums is [1, 2, 3].
+For each item in nums, print item add 1.

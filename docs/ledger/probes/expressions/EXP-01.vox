@@ -1,0 +1,37 @@
+(EXP-01: the four plain literal forms of the Literals table - integer, float,
+ string and boolean - are all writable as a declaration initializer.
+ Also covers: EXP-02, EXP-03, EXP-04, EXP-08.
+ EXP-08 is the decimal-point claim: `0` declared as a number prints `0`,
+ while `0.0` declared as a float prints `0.0`, so the point is what makes
+ the literal a float and the float survives into the value.
+ Booleans print as 1/0 - LANGUAGE.md:2238, not a defect of this section.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-01.vox -o p && ./p
+ expected output:
+   42
+   0
+   -5
+   3.14
+   -2.5
+   0.0
+   Hello, World!
+   1
+   0
+)
+a number called whole is 42.
+a number called nought is 0.
+a number called owed is -5.
+a float called ratio is 3.14.
+a float called descent is -2.5.
+a float called origin is 0.0.
+a text called greeting is "Hello, World!".
+a boolean called affirmed is true.
+a boolean called denied is false.
+Print whole.
+Print nought.
+Print owed.
+Print ratio.
+Print descent.
+Print origin.
+Print greeting.
+Print affirmed.
+Print denied.

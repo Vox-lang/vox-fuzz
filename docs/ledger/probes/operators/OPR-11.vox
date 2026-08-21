@@ -1,0 +1,11 @@
+(OPR-11: `is equal to` tests equality (LANGUAGE.md:4562).
+ The second If proves it is a real test and not an unconditional branch.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-11.vox -o p && ./p
+ expected output:
+   equal to fired
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is equal to rhs then, Print "equal to fired".
+If lhs is equal to other then, Print "equal to MISFIRED".

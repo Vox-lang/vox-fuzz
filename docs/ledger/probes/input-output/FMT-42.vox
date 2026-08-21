@@ -1,0 +1,22 @@
+(FMT-42 — a branch-declared variable is usable FROM INSIDE FUNCTIONS,
+ "exactly like a top-level declaration". It is — including the ordering
+ defect a top-level declaration has: a function defined BEFORE the
+ declaration reads a raw pointer instead of the text (see Discrepancy 3
+ and D3.vox). Defined after, as here, it is correct. The claim as written
+ holds; the probe is placed after the branch deliberately.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   one
+   one
+)
+a number called mode is 1.
+if mode is 1 then,
+  a text called label is "one".
+Otherwise,
+  a text called label is "other".
+
+To 'show label'.
+  Print label.
+
+Print label.
+'show label'.

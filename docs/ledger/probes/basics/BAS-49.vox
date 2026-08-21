@@ -1,0 +1,19 @@
+(BAS-49 - written with one period or two, the same program prints nothing
+ at all, with no error: the trailing statement is still inside an `if`
+ whose condition is false. Both variants are here; the program compiles
+ cleanly and exits 0 with no output.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-49.vox -o p && ./p
+ expected output:
+   (exit 0)
+)
+a number called n is 0.
+If n is equal to 1 then,
+    If n is equal to 1 then,
+        If n is equal to 1 then, print "innermost".
+print "one period: swallowed".
+
+a number called m is 0.
+If m is equal to 1 then,
+    If m is equal to 1 then,
+        If m is equal to 1 then, print "innermost"..
+print "two periods: still swallowed".

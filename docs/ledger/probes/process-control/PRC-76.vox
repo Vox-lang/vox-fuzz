@@ -1,0 +1,21 @@
+(PRC-76 — the worked pattern at LANGUAGE.md:4088-4097: fork a child, send
+ it a real signal, reap any child, and find the reaped pid matches.
+ VERBATIM from the manual except that the child's `Wait 30 seconds.` is
+ kept as written — it never elapses, because the parent kills the child
+ first, which is the point of the example.
+ SAFETY: signal 9 goes only to the pid this program forked.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-76.vox -o p && ./p
+ expected output:
+   sigkilled child reaped with matching pid
+)
+Set pid to fork the process.
+If pid is 0 then,
+    Wait 30 seconds.
+If pid is greater than 0 then,
+    Send signal 9 to process pid.
+    Set reaped to reap any child process.
+    If reaped is pid then,
+        Print "sigkilled child reaped with matching pid".

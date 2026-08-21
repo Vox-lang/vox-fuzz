@@ -1,0 +1,14 @@
+(Discrepancy 4 repro — the Keywords chapter's tables under-enumerate. These
+ fourteen words are reserved as variable names but appear in no table in the
+ chapter, and several of them (`read`, `write`, `open`, `close`, `wait`)
+ are statement starters missing from the Statement Starters table
+ (4620-4643). This probe shows one of them; each of the others fails the
+ same way on its own. Full list in the ledger.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   error: Cannot use 'read' as a variable name - it's a reserved keyword.
+     Tip: Try a more descriptive name like 'read_value' or 'my_read'
+   (no binary produced; compile error)
+)
+a number called read is 1.
+Print read.

@@ -1,0 +1,15 @@
+(FLW-13: a multi-action While body is comma-separated inside one sentence,
+ and every action runs on every iteration (LANGUAGE.md:2081).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-13.vox -o p && ./p
+ expected output:
+   2
+   looping
+   3
+   looping
+   4
+   looping
+   done
+)
+a number called x is 2.
+While x is less than 5, print x, increment x, print "looping".
+print "done".

@@ -1,0 +1,22 @@
+(EXP-98: zero is false and any non-zero number is true, negative numbers
+ included.
+ The condition form and the `as a boolean` form are both recorded, since they
+ are two different paths to the same rule.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-98.vox -o p && ./p
+ expected output:
+   0 false
+   42 true
+   -7 true
+   false
+   true
+   true
+)
+a number called blank is 0.
+a number called filled is 42.
+a number called owed is -7.
+If blank then, Print "0 true". Otherwise, Print "0 false".
+If filled then, Print "42 true". Otherwise, Print "42 false".
+If owed then, Print "-7 true". Otherwise, Print "-7 false".
+Print 0 as a boolean as text.
+Print 42 as a boolean as text.
+Print -7 as a boolean as text.

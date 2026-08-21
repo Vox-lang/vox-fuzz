@@ -1,0 +1,14 @@
+(VAR-17 and VAR-19: `Create a file called NAME.` is rejected at compile
+ time, and the message names what to supply — the diagnostic text at
+ LANGUAGE.md:509-511 is reproduced exactly, `Example:` line included.
+ (Compile-error claim: not assertable from a runtime leaf, since emitting
+ it produces a non-compiling program — outside the generator's "legal Vox
+ that should compile and run" contract.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-17.vox -o p && ./p
+ expected output:
+   error: A file variable must be initialized with a path
+     Example: a file called source is "input.txt".
+   (no binary produced; compile error)
+)
+Create a file called src.
+Print 1.

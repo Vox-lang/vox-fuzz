@@ -1,0 +1,23 @@
+(D5 — Discrepancy 5 repro: LANGUAGE.md:2232-2235 says an opaque value
+ "widens the list to mixed, so the element is always read back as what it is
+ rather than silently reinterpreted". A function with no declared return
+ type that returns a TEXT is silently reinterpreted as a number: the slot
+ prints a raw address and `is a number` fires on it. The address is stable
+ across runs (4210906, 5/5), so it looks like data, not like a crash.
+ LANGUAGE.md:2250-2254 concedes the conservative TAG_INTEGER guess but only
+ promises correctness "when it really is a number" - the two paragraphs
+ disagree with each other.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   4210906
+   text
+   number
+)
+To 'opaque label'. Return "hi".
+
+a list called items is [].
+append "anchor" to items.
+append 'opaque label' to items.
+print element 2 of items.
+For each item in items,
+  if item is a text, print "text". otherwise if item is a number, print "number". otherwise print "other".

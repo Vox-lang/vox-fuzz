@@ -1,0 +1,17 @@
+(ARG-25 — an explicit `Parse flags.` parses at exactly that point
+ (LANGUAGE.md:4396-4400). The Print before it proves the parse point is
+ chosen rather than implicit: ordinary code runs first, and
+ every flag read after the statement sees parsed values.
+ Also covers: ARG-29 (LANGUAGE.md:4409 — the explicit form chooses
+ exactly when parsing happens; the same statement, stated twice).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-25.vox -o p && ./p -v
+ Args: -v
+ expected output:
+   before the parse point
+   verbose is 1
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+Print "before the parse point".
+Parse flags.
+
+Print "verbose is {verbose}".

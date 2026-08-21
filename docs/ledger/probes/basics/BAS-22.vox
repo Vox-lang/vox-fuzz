@@ -1,0 +1,20 @@
+(BAS-22 - a following `To` or `Library` does begin a new top-level
+ construct and so ends an open function body. Neither definition here is
+ followed by a blank line, yet both close correctly: `To other` ends
+ greet's body and `Library ...` ends other's body, so all three top-level
+ statements at the end run.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-22.vox -o p && ./p
+ expected output:
+   hi
+   other
+   top
+)
+To greet.
+    Print "hi".
+To other.
+    Print "other".
+Library mathkit version "1.0".
+
+greet.
+other.
+Print "top".

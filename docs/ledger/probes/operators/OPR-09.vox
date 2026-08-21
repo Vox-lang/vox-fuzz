@@ -1,0 +1,10 @@
+(OPR-09: `mod` is an accepted spelling of modulo (LANGUAGE.md:4556).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-09.vox -o p && ./p
+ expected output:
+   2
+   2
+)
+a number called lhs is 20.
+a number called rhs is 6.
+Print lhs mod rhs.
+Print lhs modulo rhs.

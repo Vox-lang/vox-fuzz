@@ -1,0 +1,32 @@
+(FUN-30 — a function call's declared return type is tracked through
+ assignment: reassigning an EXISTING variable from a call preserves the
+ variable's type, in both the `the X is <call>.` and `Set X to <call>.`
+ spellings, for a text and for a buffer (whose size changes with the
+ new contents, so the assignment really replaced the payload).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-30.vox -o p && ./p
+ expected output:
+   start
+   n is 7
+   n is 9
+   5
+   3
+   XYZ
+)
+To classify with a number called n. Return a text, "n is {n}".
+
+To 'make buffer'.
+  a buffer called made is "XYZ".
+  Return a buffer, made.
+
+a text called label is "start".
+Print label.
+the label is classify of 7.
+Print label.
+Set label to classify of 9.
+Print label.
+
+a buffer called held is "start".
+Print held's size.
+Set held to 'make buffer'.
+Print held's size.
+Print held.

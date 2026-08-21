@@ -1,0 +1,20 @@
+(THG2-44: a thing's own fields and members live in a separate per-type member
+ space, one per type, so point's x and segment's x do not collide.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-44.vox -o p && ./p
+ expected output:
+   1
+   2
+)
+A thing called point has
+  a number called x is 0.
+
+A thing called segment has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+a segment called span.
+Set origin's x to 1.
+Set span's x to 2.
+Print origin's x.
+Print span's x.

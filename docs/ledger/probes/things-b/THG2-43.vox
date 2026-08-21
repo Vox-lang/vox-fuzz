@@ -1,0 +1,16 @@
+(THG2-43: the same error names whichever kind came first. This probe takes the
+ FUNCTION case, which the compiler labels precisely. The other four kinds the
+ manual lists - a parameter, a loop variable, an inferred variable, another
+ thing - were each run by hand: another thing reports "already defined as a
+ thing", and a parameter, a loop variable and an inferred variable all report
+ "already defined as a variable" rather than naming their own kind. See
+ Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-43.vox -o p && ./p
+ expected output:
+   error: 'point' is already defined as a function on line 1
+   No binary is produced; this is a compile error.
+)
+To point. Print 1.
+
+A thing called point has
+  a number called x is 0.

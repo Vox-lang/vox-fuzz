@@ -1,0 +1,15 @@
+(EXP-94: the documented rounding idiom - add 0.5 before casting - turns 3.7
+ into 4, where the bare cast gives 3.
+ The extra pair records that the idiom rounds 3.2 down, so it really is
+ rounding rather than a way of always adding one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-94.vox -o p && ./p
+ expected output:
+   3
+   4
+   3
+   3
+)
+Print 3.7 as a number.
+Print {3.7 add 0.5} as a number.
+Print 3.2 as a number.
+Print {3.2 add 0.5} as a number.

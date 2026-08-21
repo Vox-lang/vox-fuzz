@@ -1,0 +1,10 @@
+(BAS2-39: the append example: an append branch may omit `to <target>` and inherits the base statement's target.
+ Also covers: BAS2-50
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-39.vox -o p && ./p
+ expected output:
+   [1, 0, 3, 0, 5]
+)
+a list called out is [].
+append each number from 1 to 5 to out,
+    but if the number modulo 2 is equal to 0 append 0.
+print out.

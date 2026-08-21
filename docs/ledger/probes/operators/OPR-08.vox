@@ -1,0 +1,8 @@
+(OPR-08: `modulo` is the modulo operator (LANGUAGE.md:4556).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-08.vox -o p && ./p
+ expected output:
+   2
+)
+a number called lhs is 20.
+a number called rhs is 6.
+Print lhs modulo rhs.

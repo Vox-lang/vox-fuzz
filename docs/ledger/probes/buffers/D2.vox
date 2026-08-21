@@ -1,7 +1,7 @@
-(Discrepancy 2: LANGUAGE.md:3202-3208 says a statically-typed variable, buffer included, reports its `type` property with "(static)". A buffer declared with a byte count is mistagged as "Text (dynamic)"; a buffer declared from a string literal is tagged correctly.)
+(Discrepancy 2: LANGUAGE.md:3202-3208 says a statically-typed variable, buffer included, reports its `type` property with "(static)". A buffer declared with a byte count is mistagged as "Buffer (static)"; a buffer declared from a string literal is tagged correctly.)
 (expected output:
 Number (static)
-Text (dynamic)
+Buffer (static)
 Buffer (static)
 )
 a number called n is 3.

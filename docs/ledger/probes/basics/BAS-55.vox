@@ -1,0 +1,20 @@
+(BAS-55 - the empty-Otherwise example, LANGUAGE.md:243-254, verbatim: an
+ `Otherwise,.` takes the inner if's else branch and does nothing with it,
+ closing that chain, so the second `Otherwise` continues the outer if.
+ Same result as two periods.
+ Also covers: BAS-54 (an empty `Otherwise,.` closes an inner chain the
+ same way a stacked period does).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-55.vox -o p && ./p
+ expected output:
+   outer else
+   done
+)
+a number called m is 5.
+If m is equal to 1 then,
+    If m is equal to 2 then,
+        print "inner then".
+    Otherwise,.
+    Otherwise,
+        print "outer else".
+
+Print "done".

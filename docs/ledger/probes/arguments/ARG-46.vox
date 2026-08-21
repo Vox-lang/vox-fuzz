@@ -1,0 +1,18 @@
+(ARG-46 — *(not a manual claim — a gap in the manual)* a number flag
+ whose value does not parse as a number sets the error flag on the first
+ read and holds 0. LANGUAGE.md:4376 says the token is "parsed as a
+ number" and stops there.
+ The `On error` binds to the DECLARATION above it, which is where the
+ read happens — not to the Print.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-46.vox -o p && ./p -r notanumber
+ Args: -r notanumber
+ expected output:
+   reading the flag errored
+   retries is 0
+)
+a flag called retries is "-r" or "--retries", it is a number.
+Parse flags.
+
+a number called seen is retries.
+On error print "reading the flag errored".
+Print "retries is {seen}".

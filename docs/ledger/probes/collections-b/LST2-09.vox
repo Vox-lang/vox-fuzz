@@ -1,0 +1,19 @@
+(LST2-09 — an empty list prints exactly [].
+ Also covers: LST2-10 (a nested list element renders recursively with its
+ own brackets intact), LST2-11 (a map element, and a whole map, render as
+ {"key": value, ...}).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-09.vox -o p && ./p
+ expected output:
+   []
+   [1, [2, 3], "four"]
+   {"a": 1, "b": "two"}
+   [{"a": 1, "b": "two"}, 9]
+)
+a list called blank is [].
+print blank.
+a list called nested is [1, [2, 3], "four"].
+print nested.
+a map called scores is {"a": 1, "b": "two"}.
+print scores.
+a list called holder is [scores, 9].
+print holder.

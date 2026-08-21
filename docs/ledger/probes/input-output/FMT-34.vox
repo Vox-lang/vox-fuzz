@@ -1,0 +1,13 @@
+(FMT-34 — a filesystem path accepts a format string, the manual's own
+ example shape `Create a directory called "{base}/{name}"`. Hand-verified
+ idempotent: a second run over an existing directory exits 0 silently, so
+ this probe re-runs clean.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   made /tmp/vox-FMT-34/nested
+)
+a text called base is "/tmp/vox-FMT-34".
+a text called leaf is "nested".
+Create a directory called "{base}".
+Create a directory called "{base}/{leaf}".
+Print "made {base}/{leaf}".

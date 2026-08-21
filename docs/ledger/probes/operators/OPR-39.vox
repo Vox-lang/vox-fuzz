@@ -1,0 +1,23 @@
+(OPR-39 (undocumented precision): the logical operators carry the
+ conventional precedence - `not` binds tighter than `and`, and `and`
+ binds tighter than `or`. LANGUAGE.md:4569-4575 lists the three
+ operators with no precedence at all.
+ Line 1: `not denied and affirmed` fires, so `not` took only `denied`.
+ Line 2: `not affirmed and affirmed` does not fire, confirming the same.
+ Line 3: `denied and denied or affirmed` fires - false-or-true, so the
+ `and` was evaluated first.
+ Line 4: `affirmed or denied and denied` fires. Left to right it would
+ be {true or false} and false, which is false; `and`-tighter gives
+ true or {false and false}, which is true.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-39.vox -o p && ./p
+ expected output:
+   not binds tighter than and
+   and evaluated before or
+   and binds tighter than or
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+If not denied and affirmed then, Print "not binds tighter than and".
+If not affirmed and affirmed then, Print "not swallowed the whole conjunction".
+If denied and denied or affirmed then, Print "and evaluated before or".
+If affirmed or denied and denied then, Print "and binds tighter than or".

@@ -1,0 +1,15 @@
+(LST2-61 — a fixed argument may appear in any position among the clauses
+ of a grid call, and the grid still runs over the remaining `each`
+ clauses. The manual's own examples.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-61.vox -o p && ./p
+ expected output:
+   5-10
+   5-20
+   1-99
+   2-99
+)
+To pair of a number called left and a number called right.
+  print "{left}-{right}".
+
+'pair' of 5 and each y from [10, 20].
+'pair' of each x from [1, 2] and 99.

@@ -1,0 +1,21 @@
+(LST2-15 — a list's `length` property is the number of items, as a Number.
+ The manual's own "List Properties" block, verbatim.
+ Also covers: LST2-14 (properties are reached with the `'s` syntax),
+ LST2-16 (`size` is the same value as `length`), LST2-17 (`empty` is a
+ Boolean, rendered 0 when the list has items), LST2-18 (`first` is the
+ first item), LST2-19 (`last` is the last item).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-15.vox -o p && ./p
+ expected output:
+   3
+   3
+   10
+   30
+   0
+)
+a list called items is [10, 20, 30].
+
+print items's length.
+print items's size.
+print items's first.
+print items's last.
+print items's empty.

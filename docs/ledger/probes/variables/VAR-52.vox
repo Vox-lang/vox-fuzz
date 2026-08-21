@@ -1,0 +1,12 @@
+(VAR-52: where an identifier is expected and a string literal is found, that
+ is a compile error — the diagnostic even names the rule and offers the bare
+ spelling. (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-52.vox -o p && ./p
+ expected output:
+   error: expected a name, found a string literal
+   strings are data; names are bare or 'single-quoted'
+   help: write `total`
+   (no binary produced; compile error)
+)
+a number called "total" is 5.
+Print 1.

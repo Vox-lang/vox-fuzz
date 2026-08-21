@@ -1,0 +1,17 @@
+(THG-04: a thing's name works everywhere a builtin type keyword works -
+ in a declaration, in a parameter type, and in a return type.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-04.vox -o p && ./p
+ expected output:
+   10
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To widened with a point called given.
+  Set given's x to given's x add 10.
+  Return a point, given.
+
+a point called origin.
+The wider is widened of origin.
+Print wider's x.

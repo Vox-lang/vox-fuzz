@@ -1,0 +1,14 @@
+(THG2-16: `do` is a keyword only in the position `To do the <type>'s <name>`;
+ everywhere else it is an ordinary identifier. Here it names a function and a
+ variable in the same program.
+ Also covers: THG2-40.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-16.vox -o p && ./p
+ expected output:
+   did
+   7
+)
+To do. Print "did".
+
+do.
+a number called done is 7.
+Print done.

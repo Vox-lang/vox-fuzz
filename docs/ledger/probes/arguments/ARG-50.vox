@@ -1,0 +1,25 @@
+(ARG-50 — *(not a manual claim — a gap in the manual)* an unrecognized
+ flag is not consumed at all: it stays in the filtered view alongside
+ the real positionals, and so does the token after it. 4417 says
+ "recognized flags removed" and leaves unrecognized ones undefined.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-50.vox -o p && ./p -z extra
+ Args: -z extra
+ expected output:
+   output is out.txt
+   count is 3
+   ALL
+   -z
+   extra
+   RAW
+   -z
+   extra
+)
+a flag called output is "-o" or "--output", it is a text with default "out.txt".
+Parse flags.
+
+Print "output is {output}".
+Print "count is {arguments's count}".
+Print "ALL".
+Print each item from arguments's all.
+Print "RAW".
+Print each item from arguments's raw.

@@ -1,0 +1,27 @@
+(LST2-74 — the fizzbuzz example: `but if` clauses are checked in order and
+ the FIRST match wins, which is why 6 and 12 print "fizzbuzz" and not
+ "fizz". The manual's own two print examples, verbatim.
+ Also covers: LST2-75 (the even/odd example), LST2-78 (clauses checked in
+ order), LST2-82 (first match wins), LST2-83 (multiple clauses chain).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-74.vox -o p && ./p
+ expected output:
+   1
+   fizz
+   buzz
+   fizz
+   5
+   fizzbuzz
+   7
+   fizz
+   buzz
+   fizz
+   11
+   fizzbuzz
+   13
+   fizz
+   buzz
+)
+print each number from 1 to 15,
+    but if the number modulo 6 is equal to 0 print "fizzbuzz",
+    but if the number modulo 2 is equal to 0 print "fizz",
+    but if the number modulo 3 is equal to 0 print "buzz".

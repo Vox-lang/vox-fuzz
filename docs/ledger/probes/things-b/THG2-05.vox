@@ -1,0 +1,48 @@
+(THG2-05: the Printing worked example, LANGUAGE.md:1176-1211, verbatim. It is
+ a composite of THG2-01 (definition order, recursion), THG2-03 (a quoted field
+ name), THG2-04 (a function member takes no part), THG2-06 (a whole thing
+ interpolates under Print) and the type-possessive maker call of THG2-34.
+ Note the boolean field prints as 1, which is how Vox prints a boolean
+ everywhere, not something this section claims otherwise.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-05.vox -o p && ./p
+ expected output:
+   {x: 5, y: 0}
+   {start: {x: 0, y: 0}, end: {x: 0, y: 2}}
+   the span runs {start: {x: 0, y: 0}, end: {x: 0, y: 2}}
+   {'day sent': 25, 'cost in pounds': 1.5, 'first class': 1}
+   {x: 3, y: 4}
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+A thing called stamp has
+  a number called 'day sent' is 25,
+  a float called 'cost in pounds' is 1.5,
+  a boolean called 'first class' is true.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+a point called origin.
+Set origin's x to 5.
+Print origin.
+
+a segment called span.
+Set span's end's y to 2.
+Print span.
+Print "the span runs {span}".
+
+a stamp called posted.
+Print posted.
+
+The corner is a point's 'placed at' with 3 and 4.
+Print corner.

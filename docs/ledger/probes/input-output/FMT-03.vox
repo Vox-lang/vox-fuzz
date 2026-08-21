@@ -1,0 +1,8 @@
+(FMT-03 — `Print 'add numbers' of 3 and 5.` prints a function call's result.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   8
+)
+To 'add numbers' with a number called first and a number called second. Return a number, the first add the second.
+
+Print 'add numbers' of 3 and 5.

@@ -1,0 +1,25 @@
+(THG2-30: the receiver fills the function's FIRST parameter, and any further
+ arguments follow the call preposition. `origin's 'scaled by' on 3` puts origin
+ in `corner` and 3 in `factor`, so x becomes 3 multiply 3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-30.vox -o p && ./p
+ expected output:
+   9
+   8
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'scaled by' with a point called corner and a number called factor.
+  a point called scaled.
+  Set scaled's x to corner's x multiply factor.
+  Set scaled's y to corner's y multiply factor.
+  Return a point, scaled.
+
+a point called origin.
+Set origin's x to 3.
+Set origin's y to 4.
+The 'tripled corner' is origin's 'scaled by' on 3.
+Print 'tripled corner''s x.
+The 'doubled corner' is origin's 'scaled by' on 2.
+Print 'doubled corner''s y.

@@ -1,0 +1,12 @@
+(LST2-67 — binding the same loop variable twice in one sentence is a
+ compile error that names the variable.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-67.vox -o p && ./p
+ expected output:
+   error: Loop variable 'x' is bound twice in one sentence.
+   (no binary produced; compile error)
+)
+To pair of a number called left and a number called right.
+  print "{left}-{right}".
+
+'pair' of each x from [1, 2] and each x from [3, 4].

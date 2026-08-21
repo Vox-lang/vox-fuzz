@@ -1,0 +1,25 @@
+(FMT-39 — the `0x` and `0o` prefixes specifically survive every sink; the
+ prefix is part of the rendering, not something Print adds. Same three-sink
+ comparison as FMT-38, narrowed to the two prefixed bases.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   0xff 0o10
+   0xff 0o10
+   0xff 0o10
+)
+a number called n is 255.
+a number called eight is 8.
+Print "{n:x} {eight:o}".
+
+a buffer called built is 64 bytes in size.
+copy "{n:x} {eight:o}" to built.
+Print built.
+
+Open a file for writing called log at "/tmp/vox-FMT-39.txt".
+write "{n:x} {eight:o}\n" to log.
+close log.
+Open a file for reading called back at "/tmp/vox-FMT-39.txt".
+a buffer called got is 64 bytes in size.
+read from back into got.
+close back.
+Print got without newline.

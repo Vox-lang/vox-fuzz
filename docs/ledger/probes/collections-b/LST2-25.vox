@@ -1,0 +1,37 @@
+(LST2-25 — out-of-bounds list element access sets the error flag and
+ returns 0, and `On error` catches it. Probed at four boundaries the
+ manual does not enumerate: far past the end, index 0, a negative index,
+ and the first index past the end. All four behave identically.
+ Also covers: LST2-26 (`On error` catches it), LST2-27 (the manual's
+ worked bounds example), LST2-28 (a variable index out of range behaves
+ the same as a literal one).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-25.vox -o p && ./p
+ expected output:
+   element 100 set the error flag
+   0
+   element 0 set the error flag
+   0
+   element -1 set the error flag
+   0
+   element 4 set the error flag
+   0
+   a variable index out of range set the error flag
+   0
+)
+a list called items is [11, 22, 33].
+a number called past is element 100 of items.
+On error print "element 100 set the error flag".
+print past.
+a number called zeroth is element 0 of items.
+On error print "element 0 set the error flag".
+print zeroth.
+a number called back is element -1 of items.
+On error print "element -1 set the error flag".
+print back.
+a number called edge is element 4 of items.
+On error print "element 4 set the error flag".
+print edge.
+a number called spot is 9.
+a number called found is element spot of items.
+On error print "a variable index out of range set the error flag".
+print found.

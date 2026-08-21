@@ -1,0 +1,11 @@
+(PRC-70 — `Send signal` is a STATEMENT, not an expression: unlike
+ fork/reap it cannot be read for a value, and trying is a compile error.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-70.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got IntegerLiteral(0)
+   (no binary produced; compile error)
+)
+a number called 'the result' is Send signal 0 to process 999999.

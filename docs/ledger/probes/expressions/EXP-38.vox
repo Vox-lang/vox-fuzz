@@ -1,0 +1,42 @@
+(EXP-38: `is even`.
+ Also covers: EXP-39 `is odd`, EXP-40 `is positive`, EXP-41 `is negative`,
+ EXP-42 `is zero`, EXP-43 `is empty` on a list.
+ Every one of the six is run against a subject that satisfies it and a subject
+ that does not, because a predicate that is always true is indistinguishable
+ from a predicate that is not evaluated at all.
+ `is positive` is recorded against 0 as well: 0 is not positive.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-38.vox -o p && ./p
+ expected output:
+   4 even
+   5 not even
+   5 odd
+   4 not odd
+   5 positive
+   -2 not positive
+   0 not positive
+   -2 negative
+   5 not negative
+   0 zero
+   5 not zero
+   blank empty
+   roster filled
+)
+a number called four is 4.
+a number called five is 5.
+a number called owed is -2.
+a number called origin is 0.
+a list called roster is [1, 2, 3].
+a list called blank is [].
+If four is even then, Print "4 even". Otherwise, Print "4 not even".
+If five is even then, Print "5 even". Otherwise, Print "5 not even".
+If five is odd then, Print "5 odd". Otherwise, Print "5 not odd".
+If four is odd then, Print "4 odd". Otherwise, Print "4 not odd".
+If five is positive then, Print "5 positive". Otherwise, Print "5 not positive".
+If owed is positive then, Print "-2 positive". Otherwise, Print "-2 not positive".
+If origin is positive then, Print "0 positive". Otherwise, Print "0 not positive".
+If owed is negative then, Print "-2 negative". Otherwise, Print "-2 not negative".
+If five is negative then, Print "5 negative". Otherwise, Print "5 not negative".
+If origin is zero then, Print "0 zero". Otherwise, Print "0 not zero".
+If five is zero then, Print "5 zero". Otherwise, Print "5 not zero".
+If blank is empty then, Print "blank empty". Otherwise, Print "blank filled".
+If roster is empty then, Print "roster empty". Otherwise, Print "roster filled".

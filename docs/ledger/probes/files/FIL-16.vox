@@ -1,0 +1,19 @@
+(FIL-16: list element access is 1-indexed, works with a literal index and with a variable index, and first/last agree with element 1 and element length.
+ Also covers: FIL-17, FIL-18, FIL-19, FIL-20.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-16.vox -o p && ./p
+ actual output:
+   10
+   20
+   20
+   10
+   30
+)
+a list called nums is [10, 20, 30].
+Print element 1 of nums.
+Print element 2 of nums.
+a number called position is 2.
+Print element position of nums.
+Print nums's first.
+Print nums's last.

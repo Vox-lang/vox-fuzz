@@ -1,0 +1,13 @@
+(OPR-22: LANGUAGE.md:4575 lists `isn't` as an accepted spelling of `not`.
+ It is not: the apostrophe is a structural token (the possessive marker
+ and the quoted-name delimiter), so the word never reaches the keyword
+ table. See Discrepancy 1 and probes/operators/D1.vox.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-22.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Apostrophe
+   (no binary produced; compile error)
+)
+a number called lhs is 7.
+a number called rhs is 3.
+If lhs isn't rhs then, Print "isnt fired".

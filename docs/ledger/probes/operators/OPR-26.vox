@@ -1,0 +1,9 @@
+(OPR-26: `bit-xor` is bitwise XOR (LANGUAGE.md:4583).
+ 240 XOR 170 is 90 (0b01011010).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-26.vox -o p && ./p
+ expected output:
+   90
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+Print lhs bit-xor rhs.

@@ -1,0 +1,14 @@
+(VAR-43: the same in-place retype statement applied to a statically-typed
+ name is rejected exactly like any other mismatched assignment — only a
+ `value`-declared name can be retyped.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-43.vox -o p && ./p
+ expected output:
+   error: In-place retyping applies only to variables declared as 'value'; 'n' is declared as a number
+   note: 'n' was declared as number
+   help: convert explicitly instead: a text called t is n as text.
+   (no binary produced; compile error)
+)
+a number called n is 5.
+n is a text.
+Print n.

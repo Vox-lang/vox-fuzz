@@ -1,0 +1,14 @@
+(KEY-39 — `otherwise` and `else` both introduce the alternative branch,
+ after a conditional statement and inside a `but if` chain.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-39.vox -o p && ./p
+ expected output:
+   otherwise fired
+   else fired
+   ["else arm"]
+)
+a number called dial is 9.
+If dial is 1 then, Print "one". Otherwise, Print "otherwise fired".
+If dial is 1 then, Print "one". Else, Print "else fired".
+a list called picked is [].
+append "one" to picked, but if dial is 2 append "two", else append "else arm".
+Print picked.

@@ -1,0 +1,18 @@
+(TIM-22 - `Create a timer called '<name>'.` brings a timer into being
+ under a quoted multi-word name, and that name takes the doubled-quote
+ possessive `'job timer''s` the manual's examples use throughout.
+ Note the `type` line has no `the` in front of it: `the <name>'s type`
+ is rejected for every type of variable, not just timers, so it is not a
+ claim of this section - see the Report.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-22.vox -o p && ./p
+ expected output:
+   Create made a timer
+   the created timer ran
+)
+Create a timer called 'job timer'.
+Start the 'job timer'.
+Stop the 'job timer'.
+If 'job timer''s type is "Timer (static)" then, print "Create made a timer".
+Otherwise, print "Create made a {'job timer''s type}".
+If the 'job timer''s start time is greater than 0 then, print "the created timer ran".
+Otherwise, print "the created timer never started".

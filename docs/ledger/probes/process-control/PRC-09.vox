@@ -1,0 +1,21 @@
+(PRC-09 — the removal is rmdir(2), so it is not recursive: removing a
+ directory that still has a child fails and the child survives.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-09.vox -o p && ./p
+ expected output:
+   removing a directory that still has a child failed
+   the child directory survived
+   the emptied directory was removed
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_outer".
+Create a directory called "vf_scratch/process-control/scratch_outer/inner".
+Delete the directory "vf_scratch/process-control/scratch_outer".
+On error print "removing a directory that still has a child failed".
+If "vf_scratch/process-control/scratch_outer/inner" is available then, print "the child directory survived".
+Remove the directory called "vf_scratch/process-control/scratch_outer/inner".
+Remove the directory called "vf_scratch/process-control/scratch_outer".
+If "vf_scratch/process-control/scratch_outer" is not available then, print "the emptied directory was removed".

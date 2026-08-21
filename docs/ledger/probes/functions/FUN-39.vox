@@ -1,0 +1,17 @@
+(FUN-39 — (gap) a call WITH arguments is also legal as a bare statement,
+ its result discarded. LANGUAGE.md:772-777 says only that calls with NO
+ arguments "can be written directly", and the "Calling as Statement"
+ section's only example is a `Print`. Both a value-returning call and a
+ void one stand alone as sentences, and the program continues.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-39.vox -o p && ./p
+ expected output:
+   got 9
+   still running
+)
+To 'add numbers' with a number called x and a number called y. Return a number, the x add y.
+To announce with a number called n.
+  Print "got {n}".
+
+'add numbers' of 3 and 5.
+announce of 9.
+Print "still running".

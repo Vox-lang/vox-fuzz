@@ -1,0 +1,9 @@
+(FLW-21 (undocumented precision): the list form over an EMPTY list runs the
+ body zero times, no error.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-21.vox -o p && ./p
+ expected output:
+   empty list loop done
+)
+a list called nothings is [].
+For each item in nothings, print the item.
+print "empty list loop done".

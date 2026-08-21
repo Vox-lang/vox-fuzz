@@ -1,0 +1,14 @@
+(BAS2-12: a user function may be the expanded action, and the comma-separated additional action runs INSIDE the loop, after the main action (7, done, 8, done - not 7, 8, done).
+ Also covers: BAS2-14, BAS2-16, BAS2-18
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-12.vox -o p && ./p
+ expected output:
+   7
+   done
+   8
+   done
+)
+To process with a number called item.
+  print item.
+
+a list called mylist is [7, 8].
+process of each item from mylist, print "done".

@@ -1,0 +1,16 @@
+(THG2-23: a `To do` naming a member the manifest does not list errors at the
+ definition, naming the entry to add and listing what the type does declare.
+ LANGUAGE.md:1341-1351, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-23.vox -o p && ./p
+ expected output:
+   error: point does not declare sparkle - add `a function called sparkle` to the type
+   followed by "point declares: placed at". No binary is produced; this is a
+   compile error.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's sparkle, with a point called original.
+  Return a point, original.

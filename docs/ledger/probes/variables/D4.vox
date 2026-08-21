@@ -1,0 +1,13 @@
+(Discrepancy 4: LANGUAGE.md:623-625 says a bare identifier "is not a reserved
+ keyword" and that "reserved keywords remain rejected as names". A for-range
+ loop variable may be a reserved keyword: `For each number from 1 to 3`
+ compiles and binds `number`, while `a number called number is 5.` is
+ rejected (VAR-54). The generator already relies on this — src/gen_flow.vox
+ lines 426 and 434 emit exactly this loop — so it is live in every campaign.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+For each number from 1 to 3, Print number.

@@ -1,0 +1,30 @@
+(OPR-34: the Operators section's worked example (LANGUAGE.md:4588-4607),
+ copied verbatim, does not compile: its last line reads from `value`,
+ which the example never declares. Every other line of the block is
+ fine - OPR-29/30/31/32/33 each reproduce one of them with a declared
+ operand and all pass. See Discrepancy 2 and probes/operators/D2.vox.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-34.vox -o p && ./p
+ expected output:
+   error: Unknown identifier 'value'
+     help: did you mean `false`?
+   (no binary produced; compile error)
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+
+(Bitwise AND)
+a number called result is lhs bit-and rhs.
+
+(Bitwise OR)
+Set result to lhs bit-or rhs.
+
+(Bitwise XOR)
+Set result to lhs bit-xor rhs.
+
+(Bit shifting)
+Set result to lhs bit-shift-left 2.
+Set result to lhs bit-shift-right 4.
+
+(Chained operations)
+Set result to value bit-shift-right 8 bit-and 0xFF.

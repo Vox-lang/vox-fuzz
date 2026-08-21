@@ -1,0 +1,26 @@
+(ARG-10 — the Basic Usage example (LANGUAGE.md:4320-4328) compiles and
+ behaves as the surrounding prose says: count into a number, `the argc`
+ with its article, name into a text.
+ One deviation from verbatim, and only one: the example's final
+ `Print the program.` prints argv[0], which is whatever path the binary
+ was invoked by and so cannot be re-checked by diff. It printed `./p`
+ when run by hand with the command below; the probe keeps the
+ declaration and prints a deterministic verdict about it instead.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-10.vox -o p && ./p alpha beta
+ Args: alpha beta
+ expected output:
+   Argument count: 
+   3
+   Program name: 
+   the program name is present
+)
+a number called argc is arguments's count.
+Print "Argument count: ".
+Print the argc.
+
+a text called program is arguments's name.
+Print "Program name: ".
+If the program is empty then,
+    Print "the program name is empty".
+Otherwise,
+    Print "the program name is present".

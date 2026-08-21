@@ -177,6 +177,47 @@ in a brief generated from `briefs/build-leaves.md`. The worker:
   emitted programs by hand, in a `vf_scratch/` directory, before trusting
   the campaign) — the same rule as §4, because a leaf is a probe that
   writes probes;
+- **Process-control and privileged syscalls: emit the ones the kernel
+  refuses, constrain the ones that can take effect (Josj, 2026-08-20).**
+  Two classes on the `PRC-*` surface (Directories/Mount/Process Control,
+  LANGUAGE.md 3658–3999):
+    - **Safe to emit as-is** because an unprivileged process cannot
+      perform them — the kernel returns `EPERM` and nothing happens, which
+      is itself a valuable thing to fuzz (the syscall codegen and the
+      error-flag path, for free): `mount`, `unmount`, `pivot_root`,
+      `reboot`, `shutdown`, `halt`, device-node creation (`mknod`), and
+      the rest of the `CAP_SYS_ADMIN`/`CAP_SYS_BOOT` family. **Caveat that
+      is load-bearing: these are safe ONLY because the fuzzer runs
+      unprivileged.** The harness must never run a generated binary as
+      root; a generated `reboot` under root reboots the machine.
+    - **Need a constraint** because they CAN take effect for a normal
+      user: `Execute` (runs an arbitrary program — think carefully:
+      restrict to a harmless allowlist such as `/bin/true`, `/bin/false`,
+      `echo`, and/or run inside the sandbox, never a random command line);
+      `Send signal` / kill (can hit any same-uid process, including the
+      fuzzer or the master's own sessions — target only the program's own
+      children, its own pid, or a reserved-invalid pid, never an arbitrary
+      one); and anything that creates/unlinks/symlinks in the filesystem
+      (confine to the per-run sandbox, same rule as file opens above).
+- **File opens draw from a fixed allowlist — never a random path.** Josj,
+  2026-08-20: the fuzzer must not open programs at random paths; instead a
+  generated program may open ONLY one of a small, fixed set of safe
+  targets, chosen at random from the set (the randomness is in *which*
+  target and in the *bytes inside* it, never in the path string):
+    1. one of the harness's **per-run sandboxed `/tmp` files**, created and
+       pre-filled with **random binary data** before the run and removed
+       after — these give a read something real (and non-blocking) to
+       consume and a write somewhere safe;
+    2. **file descriptors 1, 2, 3** (the harness sets up fd 3);
+    3. a **safe device node**: `/dev/null`, `/dev/random` (and the like).
+  This is what unblocks the read half of file I/O — reads now come from a
+  sandboxed `/tmp` file or `/dev/random`/`/dev/null`, not the fuzzer's own
+  inherited stdin (`docs/FUZZER_DEFECTS.md` defect 7). Never assemble a
+  path from random bytes and never point outside this set. The FILES
+  surface (`FIL-*`) is exercised against these targets — seek, read,
+  write, the error flags, the properties. A row whose claim can only be
+  shown by opening something outside the set stays `todo`/`not
+  assertable` with that reason;
 - **varies everything no rule pins**: counts, names, sizes, orderings,
   which spelling of a synonym, whether the optional form appears. A
   leaf that always emits four of something is asserting a rule nobody

@@ -1,0 +1,18 @@
+(FUN-10 — (gap) `Return a <type>, <expression>.` is also a statement
+ inside the body, not only a clause on the `To` line, and an early return
+ from inside an `If` leaves the function immediately. LANGUAGE.md:701 says
+ only that "return type follows `Return a <type>,`" and never says where
+ the sentence may stand; the generator already relies on the body form
+ (src/gen_flow.vox:504).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-10.vox -o p && ./p
+ expected output:
+   1
+   0
+)
+To 'grade of' with a number called score.
+  If score is greater than 50 then,
+    Return a number, 1.
+  Return a number, 0.
+
+Print 'grade of' of 80.
+Print 'grade of' of 20.

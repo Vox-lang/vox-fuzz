@@ -1,0 +1,19 @@
+(BAS2-47: the alternative action can be any valid Vox statement, not only a print - a `Set` and a user function call both work as branches.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-47.vox -o p && ./p
+ expected output:
+   1
+   3
+   2
+   1
+   saw 2
+   3
+)
+To announce with a number called item.
+  print "saw {item}".
+
+Set tally to 0.
+print each number from 1 to 4,
+    but if the number modulo 2 is equal to 0 Set tally to tally add 1.
+print tally.
+print each number from 1 to 3,
+    but if the number is equal to 2 announce of the number.

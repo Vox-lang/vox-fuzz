@@ -1,0 +1,27 @@
+(LST2-06 — "each element renders exactly as it does when printed
+ individually: text elements are quoted". The two halves of that sentence
+ disagree: a text prints bare on its own and quoted inside a list. See
+ Discrepancy 8.
+ Also covers: LST2-08 (floats and numbers render as usual, 2.0 keeping its
+ trailing .0 in both positions), LST2-07 (a boolean renders 1 in both).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-06.vox -o p && ./p
+ expected output:
+   alpha
+   2.0
+   1
+   ["alpha", 2.0, 1]
+   ["1"]
+   [1]
+)
+a text called word is "alpha".
+a decimal called round is 2.0.
+a boolean called ok is yes.
+print word.
+print round.
+print ok.
+a list called packed is [word, round, ok].
+print packed.
+a list called quoted is ["1"].
+a list called bare is [1].
+print quoted.
+print bare.

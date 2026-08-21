@@ -1,0 +1,28 @@
+(THG2-01: `Print p.` walks the fields in DEFINITION order - not alphabetical
+ order - and recurses into the things they hold, rendering map-style.
+ The field lists here are deliberately reverse-alphabetical so definition
+ order is distinguishable from any sorting.
+ Also covers: THG2-04 in part.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-01.vox -o p && ./p
+ expected output:
+   {zenith: 3, depth: 2, altitude: 1}
+   {finish: {y: 2, x: 1}, begin: {y: 2, x: 1}}
+)
+A thing called 'weather note' has
+  a number called zenith is 3,
+  a number called depth is 2,
+  a number called altitude is 1.
+
+A thing called point has
+  a number called y is 2,
+  a number called x is 1.
+
+A thing called segment has
+  a point called finish,
+  a point called begin.
+
+a 'weather note' called dawn.
+Print dawn.
+
+a segment called span.
+Print span.

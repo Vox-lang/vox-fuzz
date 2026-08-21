@@ -1,0 +1,28 @@
+(FIL-45: Read from ... into ... REPLACES the buffer's contents rather than appending to them - the opposite of what LANGUAGE.md:3471 says. See Discrepancy 2.
+ Also covers: FIL-47, FIL-49.
+ 4 bytes of pre-existing content, 17 bytes of file, 128 bytes of room.
+ An append would give 21. It gives 17.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-45.vox -o p && ./p
+ actual output:
+   4
+   17
+   alpha
+   beta
+   gamma
+  
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+a buffer called sink is 128 bytes in size.
+append "PRE-" to sink.
+print sink's size.
+open a file for reading called source at "vf_scratch/files/lines.txt".
+Read from source into sink.
+print sink's size.
+print sink.
+Close source.

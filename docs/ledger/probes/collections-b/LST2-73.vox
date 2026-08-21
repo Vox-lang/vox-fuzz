@@ -1,0 +1,41 @@
+(LST2-73 — `but if` is a generic conditional branch over ANY base action,
+ not only loop expansion: over a plain `print`, and inside a handwritten
+ `For each` loop. When a condition holds, the alternative runs INSTEAD of
+ the base action (the plain print never prints 8).
+ Also covers: LST2-77 (the default action is the base statement),
+ LST2-79 (a true condition replaces the default), LST2-80 (no match means
+ the default runs), LST2-84 (the alternative may be any Vox statement —
+ a Set and a function call, not just a print), LST2-86 (works with both
+ ranges and collections), LST2-87 (the loop variable is available in the
+ conditions).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-73.vox -o p && ./p
+ expected output:
+   high
+   1
+   even
+   3
+   even
+   1
+   3
+   6
+   1
+   shout 2
+   3
+)
+To shout of a number called mark.
+  print "shout {mark}".
+
+a number called gauge is 8.
+print gauge, but if gauge is greater than 5 print "high".
+
+a list called gauges is [1, 2, 3, 4].
+For each gauge2 in gauges,
+  print gauge2, but if gauge2 modulo 2 is equal to 0 print "even".
+
+a number called total is 0.
+print each step from 1 to 4,
+    but if the step modulo 2 is equal to 0 set total to total add step.
+print total.
+
+print each step from 1 to 3,
+    but if the step is equal to 2 shout of the step.

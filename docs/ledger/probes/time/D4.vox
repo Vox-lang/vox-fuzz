@@ -1,0 +1,14 @@
+(D4 - Discrepancy 4 repro: LANGUAGE.md:4684-4696 presents its Reserved
+ Aliases table as the list of alternate spellings that are reserved, and
+ the Time and Timers section names no aliases at all. `stopwatch` is one:
+ the compiler rejects it as a variable name and says in so many words that
+ it is an alternate spelling of `timer`. `pause`, `delay`, `retrieve`,
+ `fetch`, `timestamp` and `unixtime` are the same story (TIM-52.vox runs
+ all of them).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   error: Cannot use 'stopwatch' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called stopwatch is 1.
+print stopwatch.

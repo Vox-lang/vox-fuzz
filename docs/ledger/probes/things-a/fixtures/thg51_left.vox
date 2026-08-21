@@ -1,0 +1,6 @@
+(THG-51 fixture: the left half of a mutually-`see`ing pair whose things
+ close a cycle across the file boundary. Not a probe - THG-51.vox is.)
+see "./thg51_right.vox".
+
+A thing called alpha has
+  a beta called partner.

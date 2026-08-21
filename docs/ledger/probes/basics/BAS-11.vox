@@ -1,0 +1,11 @@
+(BAS-11 - a comment can appear in the MIDDLE of a statement, between two
+ tokens: inside a declaration between the type and `called`, inside an
+ arithmetic expression between operands, and inside an If condition.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-11.vox -o p && ./p
+ expected output:
+   5
+   five
+)
+a number (the running total) called total is 2 (an aside) add 3.
+Print total.
+If total (still an aside) is equal to 5 then, Print "five".

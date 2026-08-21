@@ -1,0 +1,16 @@
+(PRC-35 — the literal-argument-list form: `Execute '<path>' with arguments
+ [...]`, argv built at compile time.
+ Also covers: PRC-40 (argv[0] is always the path and the list's elements
+ land at argv[1..]). `sh -c <script> alpha beta` sets $0 to alpha and $# to
+ 1, which is only true if argv is [/bin/sh, -c, script, alpha, beta] — had
+ the list started at argv[0], /bin/sh would have received "-c" as its own
+ name and tried to run the script text as a filename.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-35.vox -o p && ./p
+ expected output:
+   dollar-zero=alpha count=1
+)
+Execute "/bin/sh" with arguments ["-c", "echo dollar-zero=$0 count=$#", "alpha", "beta"].
+On error print "the exec failed".

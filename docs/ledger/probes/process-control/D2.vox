@@ -1,0 +1,18 @@
+(D2 — Discrepancy 2 repro: LANGUAGE.md:3847 says the device-node statement
+ "Sets the error flag on failure", which places the failure at run time. A
+ bad `type` is rejected at COMPILE time instead, so `On error` never sees
+ it and the program never runs. Both behaviours are defensible; the manual
+ documents only one of them.
+ The diagnostic is also where the undocumented `"p"` of D1 surfaces.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/D2.vox -o p && ./p
+ expected output:
+   error: Invalid device type 'x' - expected "c" (character), "b" (block), or "p" (FIFO)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+   (no binary produced; compile error)
+)
+Create a device node called "vf_scratch/process-control/scratch_weird" with type "x" major 1 minor 3.
+On error print "this handler is never reached".

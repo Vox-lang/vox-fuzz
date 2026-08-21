@@ -1,0 +1,21 @@
+(Discrepancy 5 - minimal repro. LANGUAGE.md:1832 says to group arithmetic
+ subexpressions with curly braces, and :1826 shows `{x add y} multiply z`. The
+ Grammar Summary at :5233 instead gives `primary ::= literal | identifier |
+ func_call | "(" expr ")"`, which claims parentheses group.
+ They do not: parentheses are comment delimiters, so `(x add y)` is a comment
+ and the rest of the sentence loses its subject.
+ The recorded output is the brace form working; the commented line is the
+ grammar's parenthesised form, rejected with "Expected a statement, got
+ Multiply".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   20
+)
+a number called x is 2.
+a number called y is 3.
+a number called z is 4.
+Print {x add y} multiply z.
+
+(Rejected: Expected a statement, got Multiply.)
+(Print (x add y) multiply z.)
+

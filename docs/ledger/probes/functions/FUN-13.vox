@@ -1,0 +1,12 @@
+(FUN-13 — referencing an unknown variable inside a function is a
+ compile-time error. (Compile-error claim: not assertable from a runtime
+ leaf, since emitting it produces a non-compiling program.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-13.vox -o p && ./p
+ expected output:
+   error: Unknown variable: nowhere
+   (no binary produced; compile error)
+)
+To 'read ghost'.
+  Print nowhere.
+
+'read ghost'.

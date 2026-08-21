@@ -1,0 +1,22 @@
+(THG-51: across files reached by `see`, a thing cycle is still refused.
+ Two fixture files each `see` the other and each names the other's thing as
+ a field type; the merged registry cannot be built.
+ What the manual credits to "the analyzer's registry DFS"
+ (LANGUAGE.md:1008-1011) is not separately observable: the seen file
+ arrives where the `see` is written, so the SAME defined-earlier ordering
+ rule fires first and produces "unknown field type". The DFS is
+ defence-in-depth, and a Vox program cannot tell which of the two
+ mechanisms refused it.
+ Fixtures: fixtures/thg51_left.vox, fixtures/thg51_right.vox.
+ `see` resolves against the directory of the file that writes it, so this
+ probe must be compiled where it sits, not copied elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-51.vox -o p && ./p
+ expected output:
+   error: Unknown field type 'alpha' in thing 'beta'
+     A field's type is a builtin type noun or a thing defined earlier in the program.
+     --> fixtures/thg51_right.vox:5:6
+   (no binary produced; compile error)
+)
+see "./fixtures/thg51_left.vox".
+
+Print "made".

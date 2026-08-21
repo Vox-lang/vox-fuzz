@@ -1,0 +1,31 @@
+(D2 — Discrepancy 2 repro (wrong-value half): a `map` parameter's `'s size`
+ and `'s length` both return -1, while the same map read at top level
+ returns 2. Element access through the parameter (`lookup's "ann"`) is
+ correct, so it is the size/length property specifically that is wrong.
+ LANGUAGE.md:724-725 says a typed parameter "supports the same properties
+ and operations as a top-level variable of that type".
+ The `a float called pad` line is load-bearing: without a float somewhere
+ in the program the same code does not assemble at all — see D2b.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   2
+   2
+   30
+   --- through the parameter ---
+   -1
+   -1
+   30
+)
+a float called pad is 1.5.
+a map called ages is {"ann": 30, "bob": 40}.
+
+To 'read map' with a map called lookup.
+  Print lookup's size.
+  Print lookup's length.
+  Print lookup's "ann".
+
+Print ages's size.
+Print ages's length.
+Print ages's "ann".
+Print "--- through the parameter ---".
+'read map' of ages.

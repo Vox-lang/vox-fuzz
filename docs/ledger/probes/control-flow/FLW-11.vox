@@ -1,0 +1,14 @@
+(FLW-11: `While <condition>, <statements>.` repeats while the condition
+ holds, and runs the body zero times when the condition is already false
+ at entry.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-11.vox -o p && ./p
+ expected output:
+   10
+   the zero-iteration loop fell straight through
+)
+a number called counter is 7.
+While counter is less than 10, increment counter.
+print counter.
+a number called ceiling is 0.
+While ceiling is greater than 5, print "never".
+print "the zero-iteration loop fell straight through".

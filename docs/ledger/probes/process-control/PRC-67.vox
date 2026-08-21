@@ -1,0 +1,47 @@
+(PRC-67 — the supervisor snippet at LANGUAGE.md:4020-4053 compiles and
+ runs. The child exits immediately, so the deadline never fires and the
+ program reports the child's exit code through the process library.
+ VERBATIM except for ONE token: the manual's first line is
+ `see process version "0.1" from "./libprocess.lib".`, and the `from` path
+ is resolved relative to the SOURCE FILE, so it is pointed at
+ fixtures/libprocess.lib here. Nothing else is changed; the body below is
+ LANGUAGE.md lines 4023-4052 exactly.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-67.vox -o p && ./p
+ expected output:
+   exit 0
+)
+see process version "0.1" from "fixtures/libprocess.lib".
+
+Set pid to fork the process.
+If pid is 0 then,
+    Exit 0.
+
+a timer called clock.
+Start the clock.
+a boolean called 'child is still running' is true.
+a boolean called 'child was killed' is false.
+While 'child is still running',
+    Set 'reap result' to reap child pid without waiting,
+    If 'reap result' is pid then,
+        Set 'child is still running' to false.
+    If 'child is still running' then,
+        a number called 'milliseconds waited' is the clock's elapsed in milliseconds,
+        If 'milliseconds waited' is greater than 5000 then,
+            Send signal 9 to process pid,
+            Set 'reap result' to reap child pid,
+            Set 'child is still running' to false,
+            Set 'child was killed' to true.
+    If 'child is still running' then,
+        Wait 10 milliseconds.
+
+If 'child was killed' then,
+    Print "hang".
+If 'child was killed' is false then,
+    Set status to the reaped status,
+    If crashed of status then,
+        Print "died by signal {'signal of' of status}".
+    If 'exited normally' of status then,
+        Print "exit {'exit code of' of status}".

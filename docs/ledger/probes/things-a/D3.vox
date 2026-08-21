@@ -1,0 +1,31 @@
+(D3 - Discrepancy 3 repro: the whole-thing diagnostics point their caret at
+ the DECLARATION that gave the name its type, not at the offending
+ statement.
+ Here `Set origin to 5.` is line 6, and the caret lands on line 5 column 16 -
+ the `origin` in `a point called origin.`, which is correct Vox.
+ Same shape at LANGUAGE.md:1116-1126 (`increment origin.`), :1130-1131
+ (comparison with a single value), and :1136-1149, where `Print nudged of
+ before.` on line 10 reports against `To nudged with a point called start.`
+ on line 5.
+ `a text called label is "at {origin}"` (THG-70) is the exception - it
+ carets the slot correctly - so the placement is not uniform.
+ Nothing in LANGUAGE.md promises where a caret lands, so this may be
+ intended; see the ledger entry for the reading in which it is.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, so only a whole point can be copied into it
+       A copy source is a variable holding a point, a field that holds one, or a call that returns one (plan 310 §5).
+       To write one field instead, name it - point's fields are: x, y
+     --> D3.vox:5:16
+       |
+     5 | a point called origin.
+       |                ^--- here
+     (line 6, `Set origin to 5.`, is the statement that is wrong)
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+Set origin to 5.

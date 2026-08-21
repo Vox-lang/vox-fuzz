@@ -1,0 +1,21 @@
+(VAR-05: every declarable type is claimed to support two equivalent forms,
+ both routed through the same type resolver. For the types that have both,
+ the initialized form and the default form really do produce the same kind
+ of variable. `timer` has only the default form and `file`/`time` have only
+ the initialized form, so the "every" in the claim does not hold — see
+ Discrepancy 8.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-05.vox -o p && ./p
+ expected output:
+   Number (static)
+   Number (static)
+   List (static)
+   List (static)
+)
+a number called given is 5.
+Create a number called defaulted.
+a list called filled is [1, 2].
+Create a list called blank.
+Print given's type.
+Print defaulted's type.
+Print filled's type.
+Print blank's type.

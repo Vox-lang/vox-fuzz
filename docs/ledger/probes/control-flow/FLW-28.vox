@@ -1,0 +1,14 @@
+(FLW-28: periods stack - a Repeat nested in a For each takes two periods to
+ close both levels (LANGUAGE.md:2157-2162). 2 outer x 2 inner is four
+ `r`s, then `after` once.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-28.vox -o p && ./p
+ expected output:
+   r
+   r
+   r
+   r
+   after
+)
+For each n from 1 to 2,
+    Repeat 2 times, print "r"..
+Print "after".

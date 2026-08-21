@@ -1,0 +1,22 @@
+(THG-46: defaults apply RECURSIVELY - a field whose type is a thing takes
+ that thing's own defaults, written into the nested bytes at declaration.
+ Also covers: THG-47 (the stamp/letter example, LANGUAGE.md:979-992,
+ verbatim).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-46.vox -o p && ./p
+ expected output:
+   25
+   12
+   2
+)
+A thing called stamp has
+  a number called 'day sent' is 25,
+  a number called 'cost in pence' is 12.
+
+A thing called letter has
+  a stamp called posted,
+  a number called 'weight in grams' is 2.
+
+a letter called invitation.
+Print invitation's posted's 'day sent'.
+Print invitation's posted's 'cost in pence'.
+Print invitation's 'weight in grams'.

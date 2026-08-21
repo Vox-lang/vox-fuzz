@@ -1,0 +1,16 @@
+(KEY-24 — `Shutdown`/`Poweroff`, `Reboot`/`Restart` and `Halt` are
+ statement starters lowering to `reboot(2)`. All six spellings are compiled
+ here but deliberately NOT executed — under root they would power the
+ machine off. The guard is a runtime-false boolean.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-24.vox -o p && ./p
+ expected output:
+   reboot statements compiled, not executed
+)
+a boolean called 'the machine should stop' is false.
+If 'the machine should stop' then,
+    Shutdown.
+    Poweroff.
+    Reboot.
+    Restart.
+    Halt.
+Print "reboot statements compiled, not executed".

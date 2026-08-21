@@ -1,0 +1,12 @@
+(FLW-18: the list-based `For each <variable> in <list>,` form binds the
+ loop variable to each element in order - here over a list of text, so the
+ element type is not the range form's number.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-18.vox -o p && ./p
+ expected output:
+   alpha
+   beta
+   done
+)
+a list called words is ["alpha", "beta"].
+For each word in words, print the word.
+print "done".

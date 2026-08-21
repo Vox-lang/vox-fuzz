@@ -1,0 +1,39 @@
+(LST2-57 — `and` joins any number of `each` clauses in one sentence, and
+ the action runs once per element of the Cartesian product, ROW-MAJOR:
+ the leftmost clause is the outermost loop. The manual's own two-clause
+ and three-clause examples, plus a four-clause one to show "any number"
+ is not two or three.
+ Also covers: LST2-58 (row-major ordering — read the first column of the
+ pair output: 1,1,2,2), LST2-59 (the 2x2 example), LST2-60 (the 2x2x2
+ triple grid: a list and two ranges, 8 calls).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-57.vox -o p && ./p
+ expected output:
+   1-10
+   1-20
+   2-10
+   2-20
+   1/1/7
+   1/1/8
+   1/2/7
+   1/2/8
+   2/1/7
+   2/1/8
+   2/2/7
+   2/2/8
+   1346
+   1356
+   2346
+   2356
+)
+To pair of a number called left and a number called right.
+  print "{left}-{right}".
+
+To triple of a number called one and a number called two and a number called three.
+  print "{one}/{two}/{three}".
+
+To quad of a number called one and a number called two and a number called three and a number called four.
+  print "{one}{two}{three}{four}".
+
+'pair' of each x from [1, 2] and each y from [10, 20].
+'triple' of each first from [1, 2] and each second from 1 to 2 and each third from 7 to 8.
+'quad' of each a1 from [1, 2] and each a2 from [3] and each a3 from 4 to 5 and each a4 from [6].

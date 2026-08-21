@@ -1,0 +1,20 @@
+(BAS2-58: a treating clause attaches per `each` clause - each clause of a grid may carry its own - and a range accepts one as readily as a list. Neither is stated in the manual.
+ Also covers: BAS2-56
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-58.vox -o p && ./p
+ expected output:
+   1,5
+   1,60
+   20,5
+   20,60
+   ---
+   1
+   2
+   300
+   4
+)
+To 'pair' with a number called left and a number called right.
+  print "{left},{right}".
+
+'pair' of each x from [1, 2] treating 2 as 20 and each y from 5 to 6 treating 6 as 60.
+print "---".
+print each number from 1 to 4 treating 3 as 300.

@@ -1,0 +1,11 @@
+(FLW-19: the manual's list-based example (LANGUAGE.md:2115-2116) verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-19.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   done
+)
+a list called nums is [1, 2, 3].
+For each n in nums, print the n.
+print "done".

@@ -1,0 +1,18 @@
+(D5 — Discrepancy 5 repro: `Send signal` hands the pid straight to kill(2)
+ (LANGUAGE.md:4067-4068), so pid 0 (the caller's process group) and pid -1
+ (every process this uid may signal) are reachable from an ordinary Vox
+ program with no diagnostic and no guard.
+ SAFETY: signal 0 only. The kernel delivers nothing for signal 0 — it does
+ the permission check and returns — so running this repro is inert. The
+ finding is that both lines succeed: with `9` in place of `0` the second
+ one would kill every process this user owns.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/D5.vox -o p && ./p
+ expected output:
+   kill(2) accepted the broadcast pid
+)
+Send signal 0 to process -1.
+On error print "pid -1 was rejected".
+print "kill(2) accepted the broadcast pid".
