@@ -17,5 +17,14 @@ classification carries the assert line: 1
 detail through the byte scan: ASSERT BUF-13: expected 1 got 0
 detail through a text: ledger assertion failed (exit 95) but no ASSERT line was found on stdout
 detail from a capture that is not there: ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+--- a hole with no newline in it ---
+detail across the hole: ASSERT ENV-06: expected 9 got -1
+detail with the hole after the line: ASSERT BUF-13: expected 1 got 0
+--- a program that punches the hole itself ---
+compiled: 1
+verdict: exit
+exit code: 95
+the capture really has a NUL hole: 1
+detail: ASSERT ENV-06: expected 9 got -1
 --- the reserved exit band ---
 exit codes drawn inside 90-99: 0

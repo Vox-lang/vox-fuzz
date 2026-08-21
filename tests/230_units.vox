@@ -15,6 +15,12 @@
     edge; Vox evaluates it to 0, which is in-bounds, and that is the
     behavior worth pinning so a future change to modulo does not turn the
     fuzzer's seed reproduction into a divide-by-zero.
+  - the SHAPE of 'rng below' (rng.vox), which fuzzer defect 13 was: a
+    histogram, the longest run of one repeated value and the lag-1
+    autocorrelation over 10 000 draws at three bounds. The histogram alone
+    could not have caught that defect -- below 2 was 5000/5000, perfectly
+    flat, while the sequence was 0,1,0,1,... for ever. The run length and
+    the autocorrelation are what caught it, so those are what is pinned.
   - 'finding path' (findings.vox): an odd category and a large seed, to
     pin that the path is built by text concatenation (not a shell), so an
     attacker-controlled category name could never become a shell argument.
@@ -75,6 +81,71 @@ While i is less than 1000,
     If r is greater than 99 then, Set bad to bad add 1.
     Set i to i add 1.
 Print "rng bounds: bad={bad} (0 means all 1000 draws of below 100 stayed in 0..99)".
+
+(The shape of the draw, at three bounds - fuzzer defect 13. For each
+ bound: the histogram over 10 000 draws, the longest run of one repeated
+ value, and the lag-1 autocorrelation in thousandths.
+
+ The autocorrelation is streamed rather than stored. With S the sum of
+ the draws, Q the sum of their squares, P the sum of each draw times the
+ next and m the mean S/n, Pearson at lag 1 is
+
+     P - m*{S - last} - m*{S - first} + {n-1}*m*m
+     ---------------------------------------------
+                   Q - S*S/n
+
+ and multiplying top and bottom by n*n keeps every step a whole number.
+ The numbers below were reproduced independently before being pinned.)
+
+To 'measure draws' with a number called 'the faces' and a number called 'how many draws'.
+    'rng seed' of 12345.
+    a map called 'the histogram' is {}.
+    a number called 'the sum' is 0.
+    a number called 'the sum of squares' is 0.
+    a number called 'the sum of products' is 0.
+    a number called 'the first draw' is 0.
+    a number called 'the last draw' is 0.
+    a number called 'the previous draw' is 0 subtract 1.
+    a number called 'the run length' is 0.
+    a number called 'the longest run' is 0.
+    a number called k is 0.
+    While k is less than 'how many draws',
+        a number called d is 'rng below' of 'the faces',
+        If k is 0 then, Set 'the first draw' to d.
+        a number called 'the count so far' is 'the histogram's "{d}",
+        Set 'the histogram's "{d}" to 'the count so far' add 1,
+        Set 'the sum' to 'the sum' add d,
+        Set 'the sum of squares' to 'the sum of squares' add {d multiply d},
+        If k is greater than 0 then, Set 'the sum of products' to 'the sum of products' add {'the previous draw' multiply d}.
+        If d is 'the previous draw' then, Set 'the run length' to 'the run length' add 1.
+        If d is not 'the previous draw' then, Set 'the run length' to 1.
+        If 'the run length' is greater than 'the longest run' then, Set 'the longest run' to 'the run length'.
+        Set 'the previous draw' to d,
+        Set 'the last draw' to d,
+        Set k to k add 1.
+    a number called n is 'how many draws'.
+    a number called 'n squared' is n multiply n.
+    a number called 'the head sum' is 'the sum' subtract 'the last draw'.
+    a number called 'the tail sum' is 'the sum' subtract 'the first draw'.
+    a number called 'the pairs' is n subtract 1.
+    a number called 'the scaled numerator' is 'n squared' multiply 'the sum of products'.
+    Set 'the scaled numerator' to 'the scaled numerator' subtract {n multiply {'the sum' multiply 'the head sum'}}.
+    Set 'the scaled numerator' to 'the scaled numerator' subtract {n multiply {'the sum' multiply 'the tail sum'}}.
+    Set 'the scaled numerator' to 'the scaled numerator' add {'the pairs' multiply {'the sum' multiply 'the sum'}}.
+    a number called 'the scaled denominator' is {'n squared' multiply 'the sum of squares'} subtract {n multiply {'the sum' multiply 'the sum'}}.
+    a number called 'the autocorrelation in thousandths' is 0.
+    If 'the scaled denominator' is not 0 then, Set 'the autocorrelation in thousandths' to {'the scaled numerator' multiply 1000} divide 'the scaled denominator'.
+    a text called 'the histogram line' is "".
+    a number called f is 0.
+    While f is less than 'the faces',
+        a number called c is 'the histogram's "{f}",
+        Set 'the histogram line' to "{'the histogram line'} {f}={c}",
+        Set f to f add 1.
+    Print "rng below {'the faces'}:{'the histogram line'} longest-run={'the longest run'} lag1x1000={'the autocorrelation in thousandths'}".
+
+'measure draws' of 2 and 10000.
+'measure draws' of 3 and 10000.
+'measure draws' of 10 and 10000.
 
 (finding path: an odd category and a large seed. The result is plain text
  concatenation -- no shell -- which is the property that makes a category

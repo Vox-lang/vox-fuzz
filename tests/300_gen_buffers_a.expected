@@ -1,104 +1,99 @@
 --- BUF-01, BUF-05: declaration forms and exact capacity ---
-Create a buffer called 'the tray'.
-If 'the tray's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the tray's size}", Exit 95. Print 'the tray's size.
-a buffer called 'the register' is 1 bytes.
-If 'the register's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
-If 'the register's capacity is not 1 then, Print "ASSERT BUF-05: expected 1 got {'the register's capacity}", Exit 95. Print 'the register's capacity.
-a buffer called ledger is 83196 bytes.
-If ledger's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {ledger's size}", Exit 95. Print ledger's size.
-Print 0 times 0.
-If ledger's capacity is not 83196 then, Print "ASSERT BUF-05: expected 83196 got {ledger's capacity}", Exit 95. Print ledger's capacity.
-Print ledger's size.
+a buffer called notebook.
+If notebook's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {notebook's size}", Exit 95. Print notebook's size.
+a buffer called 'toolbox' is 80526 bytes in size.
+If 'toolbox's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
+Print 0 minus 0.
+If 'toolbox's capacity is not 80526 then, Print "ASSERT BUF-05: expected 80526 got {'toolbox's capacity}", Exit 95. Print 'toolbox's capacity.
+Print 'toolbox's size.
 
 --- the same leaf, nested ---
-  Create a buffer called 'the tray',
-  If 'the tray's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the tray's size}", Exit 95. Print 'the tray's size,
-  a buffer called 'the register' is 1 bytes,
-  If 'the register's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the register's size}", Exit 95. Print 'the register's size,
-  If 'the register's capacity is not 1 then, Print "ASSERT BUF-05: expected 1 got {'the register's capacity}", Exit 95. Print 'the register's capacity,
-  a buffer called ledger is 83196 bytes,
-  If ledger's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {ledger's size}", Exit 95. Print ledger's size,
-  Print 0 times 0,
-  If ledger's capacity is not 83196 then, Print "ASSERT BUF-05: expected 83196 got {ledger's capacity}", Exit 95. Print ledger's capacity,
-  Print ledger's size.
+  a buffer called notebook,
+  If notebook's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {notebook's size}", Exit 95. Print notebook's size,
+  a buffer called 'toolbox' is 80526 bytes in size,
+  If 'toolbox's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'toolbox's size}", Exit 95. Print 'toolbox's size,
+  Print 0 minus 0,
+  If 'toolbox's capacity is not 80526 then, Print "ASSERT BUF-05: expected 80526 got {'toolbox's capacity}", Exit 95. Print 'toolbox's capacity,
+  Print 'toolbox's size.
 
 --- BUF-10, BUF-11, BUF-12: size, length, capacity, empty ---
-a buffer called 'toolbox' is 7 bytes in size.
-If 'toolbox's empty is false then, Print "ASSERT BUF-12: expected 1 got {'toolbox's empty}", Exit 95. Print 'toolbox's empty.
-append "gtazsxa" to 'toolbox'.
-If 'toolbox's size is not 7 then, Print "ASSERT BUF-10: expected 7 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
-If 'toolbox's capacity is not 7 then, Print "ASSERT BUF-10: expected 7 got {'toolbox's capacity}", Exit 95. Print 'toolbox's capacity.
-If 'toolbox's length is not 7 then, Print "ASSERT BUF-11: expected 7 got {'toolbox's length}", Exit 95. Print 'toolbox's length.
-If 'toolbox's length is not 'toolbox's size then, Print "ASSERT BUF-11: expected {'toolbox's size} got {'toolbox's length}", Exit 95. Print 'toolbox's length.
-If 'toolbox's empty then, Print "ASSERT BUF-12: expected 0 got {'toolbox's empty}", Exit 95. Print 'toolbox's empty.
-Print 'toolbox's length.
+a buffer called 'the message slip' is 4097 bytes.
+If 'the message slip's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the message slip's empty}", Exit 95. Print 'the message slip's empty.
+Print 0 add 0.
+append "gldy87pskwgxv9f36zwhfu5no92s0" to 'the message slip'.
+If 'the message slip's size is not 29 then, Print "ASSERT BUF-10: expected 29 got {'the message slip's size}", Exit 95. Print 'the message slip's size.
+If 'the message slip's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {'the message slip's capacity}", Exit 95. Print 'the message slip's capacity.
+If 'the message slip's length is not 29 then, Print "ASSERT BUF-11: expected 29 got {'the message slip's length}", Exit 95. Print 'the message slip's length.
+If 'the message slip's length is not 'the message slip's size then, Print "ASSERT BUF-11: expected {'the message slip's size} got {'the message slip's length}", Exit 95. Print 'the message slip's length.
+If 'the message slip's empty then, Print "ASSERT BUF-12: expected 0 got {'the message slip's empty}", Exit 95. Print 'the message slip's empty.
+Print 'the message slip's length.
 
 --- the same leaf, nested ---
-  a buffer called 'toolbox' is 7 bytes in size,
-  If 'toolbox's empty is false then, Print "ASSERT BUF-12: expected 1 got {'toolbox's empty}", Exit 95. Print 'toolbox's empty,
-  append "gtazsxa" to 'toolbox',
-  If 'toolbox's size is not 7 then, Print "ASSERT BUF-10: expected 7 got {'toolbox's size}", Exit 95. Print 'toolbox's size,
-  If 'toolbox's capacity is not 7 then, Print "ASSERT BUF-10: expected 7 got {'toolbox's capacity}", Exit 95. Print 'toolbox's capacity,
-  If 'toolbox's length is not 7 then, Print "ASSERT BUF-11: expected 7 got {'toolbox's length}", Exit 95. Print 'toolbox's length,
-  If 'toolbox's length is not 'toolbox's size then, Print "ASSERT BUF-11: expected {'toolbox's size} got {'toolbox's length}", Exit 95. Print 'toolbox's length,
-  If 'toolbox's empty then, Print "ASSERT BUF-12: expected 0 got {'toolbox's empty}", Exit 95. Print 'toolbox's empty,
-  Print 'toolbox's length.
+  a buffer called 'the message slip' is 4097 bytes,
+  If 'the message slip's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the message slip's empty}", Exit 95. Print 'the message slip's empty,
+  Print 0 add 0,
+  append "gldy87pskwgxv9f36zwhfu5no92s0" to 'the message slip',
+  If 'the message slip's size is not 29 then, Print "ASSERT BUF-10: expected 29 got {'the message slip's size}", Exit 95. Print 'the message slip's size,
+  If 'the message slip's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {'the message slip's capacity}", Exit 95. Print 'the message slip's capacity,
+  If 'the message slip's length is not 29 then, Print "ASSERT BUF-11: expected 29 got {'the message slip's length}", Exit 95. Print 'the message slip's length,
+  If 'the message slip's length is not 'the message slip's size then, Print "ASSERT BUF-11: expected {'the message slip's size} got {'the message slip's length}", Exit 95. Print 'the message slip's length,
+  If 'the message slip's empty then, Print "ASSERT BUF-12: expected 0 got {'the message slip's empty}", Exit 95. Print 'the message slip's empty,
+  Print 'the message slip's length.
 
 --- BUF-13: full, filled to capacity exactly ---
-a buffer called workbench is 73 bytes in size.
-If workbench's full then, Print "ASSERT BUF-13: expected 0 got {workbench's full}", Exit 95. Print workbench's full.
-append "0lyb0hafw9q3o12bw5evkdm341mf09qbc9mfw5qzohi3k5ez816vgdy3clifotirw9ebwl6j" to workbench.
-If workbench's full then, Print "ASSERT BUF-13: expected 0 got {workbench's full}", Exit 95. Print workbench's full.
-append "c" to workbench.
-If workbench's full is false then, Print "ASSERT BUF-13: expected 1 got {workbench's full}", Exit 95. Print workbench's full.
-If workbench's size is not 73 then, Print "ASSERT BUF-13: expected 73 got {workbench's size}", Exit 95. Print workbench's size.
-Print workbench's size.
+Create a buffer called 'the register' with size 32.
+If 'the register's full then, Print "ASSERT BUF-13: expected 0 got {'the register's full}", Exit 95. Print 'the register's full.
+append "sjqzlxnpnciv1zqmrbpt9t628l76ztov" to 'the register'.
+If 'the register's full is false then, Print "ASSERT BUF-13: expected 1 got {'the register's full}", Exit 95. Print 'the register's full.
+If 'the register's size is not 32 then, Print "ASSERT BUF-13: expected 32 got {'the register's size}", Exit 95. Print 'the register's size.
+a buffer called 'the mailbag'.
+append "0aiz" to 'the mailbag'.
+Print 'the mailbag's full.
+Print 'the register's size.
 
 --- BUF-13 again, a different split and a dynamic buffer ---
-a buffer called 'the sketchpad' is 23 bytes in size.
-If 'the sketchpad's full then, Print "ASSERT BUF-13: expected 0 got {'the sketchpad's full}", Exit 95. Print 'the sketchpad's full.
-append "un412bgtuf8tij0tano9i" to 'the sketchpad'.
-If 'the sketchpad's full then, Print "ASSERT BUF-13: expected 0 got {'the sketchpad's full}", Exit 95. Print 'the sketchpad's full.
-append "k" to 'the sketchpad'.
-If 'the sketchpad's full then, Print "ASSERT BUF-13: expected 0 got {'the sketchpad's full}", Exit 95. Print 'the sketchpad's full.
-append "9" to 'the sketchpad'.
-If 'the sketchpad's full is false then, Print "ASSERT BUF-13: expected 1 got {'the sketchpad's full}", Exit 95. Print 'the sketchpad's full.
-If 'the sketchpad's size is not 23 then, Print "ASSERT BUF-13: expected 23 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
-a buffer called 'notebook'.
-append "7s1efkpu7k5izw1yngd2v85" to 'notebook'.
-Print 'notebook's full.
-Print 'the sketchpad's size.
+Create a buffer called 'the waybill' with size 63.
+If 'the waybill's full then, Print "ASSERT BUF-13: expected 0 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+append "tdq8y5ook" to 'the waybill'.
+If 'the waybill's full then, Print "ASSERT BUF-13: expected 0 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+append "nrr0hlbk6eu7qmxcq5mwv1ls4cqoe8stikzpu37nw3kqwvrc3zi4oe" to 'the waybill'.
+If 'the waybill's full is false then, Print "ASSERT BUF-13: expected 1 got {'the waybill's full}", Exit 95. Print 'the waybill's full.
+If 'the waybill's size is not 63 then, Print "ASSERT BUF-13: expected 63 got {'the waybill's size}", Exit 95. Print 'the waybill's size.
+Create a buffer called 'the shipping label'.
+append "ninhe4ywd1mu14iu1rthrs1rqsq6" to 'the shipping label'.
+Print 'the shipping label's full.
+Print 'the waybill's size.
 
 --- BUF-03: dynamic growth past the reserve ---
-a buffer called 'the crate'.
-a number called 'the crate appends made' is 0.
-a boolean called 'the crate overflowed' is false.
-a boolean called 'the crate found an error already pending' is false.
-On error Set 'the crate found an error already pending' to true.
-While 'the crate appends made' is less than 269, append "vgp6fcdab41qfwtuv0leno9qr0x6fo" to 'the crate', On error Set 'the crate overflowed' to true. Set 'the crate appends made' to 'the crate appends made' add 1.
-If 'the crate's size is not 8070 then, Print "ASSERT BUF-03: expected 8070 got {'the crate's size}", Exit 95. Print 'the crate's size.
-If 'the crate overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the crate overflowed'}", Exit 95. Print 'the crate overflowed'.
-Print 'the crate's size.
+Create a buffer called 'the dispatch note'.
+a number called 'the dispatch note appends made' is 0.
+a boolean called 'the dispatch note overflowed' is false.
+a boolean called 'the dispatch note found an error already pending' is false.
+On error Set 'the dispatch note found an error already pending' to true.
+While 'the dispatch note appends made' is less than 254, append "9mh4hquiihin0bcd97ygi23osc0r1it" to 'the dispatch note', On error Set 'the dispatch note overflowed' to true. Set 'the dispatch note appends made' to 'the dispatch note appends made' add 1.
+If 'the dispatch note's size is not 7874 then, Print "ASSERT BUF-03: expected 7874 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+If 'the dispatch note overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the dispatch note overflowed'}", Exit 95. Print 'the dispatch note overflowed'.
+Print 'the dispatch note's size.
 
 --- BUF-07: a read that truncates, detected by size ---
-a text called 'the tally sheet path' is "{'the workspace'}/buffer1".
-open a file for writing called 'the tally sheet being written' at 'the tally sheet path'.
-Write "oxibgx6b0xa7ktyzsp2fo1efsdm7wdyv0xmzclqb41y3glangtej4xmf4tqrgt6z4dyb0tirstujctynsdmfcd2j81uzshejw1u3cdunsdqfspqjo1" to 'the tally sheet being written'.
-Close 'the tally sheet being written'.
-open a file for reading called 'the tally sheet being read' at 'the tally sheet path'.
-a buffer called 'the tally sheet' is 22 bytes in size.
-a boolean called 'the tally sheet was truncated' is false.
-Read from 'the tally sheet being read' into 'the tally sheet'.
-On error Set 'the tally sheet was truncated' to true.
-Close 'the tally sheet being read'.
-If 'the tally sheet's size is not 22 then, Print "ASSERT BUF-07: expected 22 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
-If 'the tally sheet's size is not 'the tally sheet's capacity then, Print "ASSERT BUF-07: expected {'the tally sheet's capacity} got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
-Print 'the tally sheet's size.
+a text called 'outgoing post path' is "{'the workspace'}/buffer1".
+open a file for writing called 'outgoing post being written' at 'outgoing post path'.
+Write "mbhx81qc3lmujkpvwn0u8zx9hy2vt7crlf05lrbj1mv9efd2" to 'outgoing post being written'.
+Close 'outgoing post being written'.
+open a file for reading called 'outgoing post being read' at 'outgoing post path'.
+Create a buffer called 'outgoing post' with size 33.
+a boolean called 'outgoing post was truncated' is false.
+Read from 'outgoing post being read' into 'outgoing post'.
+On error Set 'outgoing post was truncated' to true.
+Close 'outgoing post being read'.
+If 'outgoing post's size is not 33 then, Print "ASSERT BUF-07: expected 33 got {'outgoing post's size}", Exit 95. Print 'outgoing post's size.
+If 'outgoing post's size is not 'outgoing post's capacity then, Print "ASSERT BUF-07: expected {'outgoing post's capacity} got {'outgoing post's size}", Exit 95. Print 'outgoing post's size.
+Print 'outgoing post's size.
 
 --- BUF-07 with no file I/O committed ---
 emits a file open: 0
 emits a property assertion instead: 1
 --- names: the whole vocabulary, no repeats, suffix only after that ---
-'satchel' 'the inbox' 'the shipping label' 'cupboard' 'pantry' 'the mailbag' 'the dispatch note' workbench 'the register' 'the pigeonhole' 'the manifest' toolbox 'the sketchpad' 'the pallet' 'the envelope' 'the drawer' 'loading bay' 'outgoing post' 'the tray' 'the waybill' 'the postbag' 'the message slip' 'ledger' 'the crate' 'notebook' 'storeroom' 'the tally sheet' scratch 'the greeting' 'ledger 30' 'storeroom 31' 'the dispatch note 32' 'the postbag 33' 
+'ledger' 'the sketchpad' 'loading bay' 'the pigeonhole' 'the postbag' scratch 'the inbox' 'notebook' 'satchel' 'the pallet' 'the mailbag' 'the greeting' 'the crate' 'outgoing post' 'the shipping label' 'the envelope' 'the manifest' 'the tray' cupboard 'the dispatch note' 'the register' workbench 'the tally sheet' pantry toolbox 'the drawer' 'the waybill' storeroom 'the message slip' 'the envelope 30' 'the tally sheet 31' 'outgoing post 32' 'ledger 33' 
 a fresh program starts the vocabulary over: 
-'the pigeonhole's capacity
+'the message slip's capacity

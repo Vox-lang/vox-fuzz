@@ -1,0 +1,22 @@
+(Fixture for tests/290: a generated program that punches a NUL hole
+ through its own captured stdout and THEN fails a ledger assertion -
+ fuzzer defect 14, reproduced from vox-notes/env-a-seed-40252.
+
+ The mechanism is the one the campaign hit by chance. The harness
+ captures a run by pointing the child's fd 1 at a file, so a program
+ that opens "/dev/stdout" for writing reopens that same file at offset
+ zero and truncates it, while the descriptor its ordinary Prints go
+ through keeps its own offset. Everything printed before the reopen is
+ discarded, everything printed after it lands past the short line the
+ reopen wrote, and the gap between them reads back as NULs.
+
+ The ASSERT line is therefore on the far side of a hole that holds no
+ newline, which is exactly the capture the scan used to give up on.)
+Print "the postbag size 11".
+Print "ASSERT BUF-12: expected 1 got 1 (this one held and kept going)".
+Print "the postbag capacity 64".
+open a file for writing called 'the second view of stdout' at "/dev/stdout".
+Write "fmt4 hello4 0\n" to 'the second view of stdout'.
+Close 'the second view of stdout'.
+If 1 is equal to 1 then, Print "ASSERT ENV-06: expected 9 got -1", Exit 95. Print "unreachable".
+Print "unreachable".

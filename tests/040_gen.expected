@@ -1,130 +1,148 @@
 --- seed 42 ---
-a number called v1 is 0.
-A thing called bearing has
-    a function called 'staked out',
-    a function called 'walked home',
-    a float called 'the paces walked' is 50961896.827292947010705,
-    a number called 'the arc' is 000043,
-    a number called 'the spread' is -00165,
-    a time called reach.
+A thing called 'the coordinate' has
+    a function called 'set down at',
+    a number called 'the clearance' is -09,
+    a float called depth is 9223372036854775807.5,
+    a function called 'turned over'.
 
-A thing called 'the measurement' has
-    a number called fall is 90.
+A thing called 'the sighting' has
+    a function called 'reflected across',
+    a function called 'recorded once',
+    a boolean called 'the north offset' is false,
+    a time called 'the chain length'.
 
-A thing called measurement has
-    a time called 'the bearing in degrees',
-    a number called 'the sweep',
-    a time called 'the delta',
-    a boolean called span is false,
-    a function called reversed,
-    a function called 'placed at'.
+A thing called 'the fix' has
+    a boolean called 'the gradient' is false,
+    a function called 'sited on',
+    a function called mirrored.
 
-To do the bearing's 'staked out', with a number called stretch.
-    a bearing called 'the quick dollop'.
-    Set 'the quick dollop's 'the arc' to stretch.
-    Return a bearing, 'the quick dollop'.
+A thing called landmark has
+    a 'the coordinate' called 'the margin'.
 
-To do the bearing's 'walked home', with a bearing called residue.
-    a bearing called 'the brief trimming'.
-    Set 'the brief trimming's 'the spread' to 0 subtract residue's 'the spread'.
-    Return a bearing, 'the brief trimming'.
+A thing called cairn has
+    a number called drift,
+    a time called offset,
+    a number called 'the paces walked' is 0000009254,
+    a number called 'the arc' is 00000000199394.
 
-To do the measurement's reversed, with a measurement called snippet.
-    a measurement called 'the running estimate'.
-    Set 'the running estimate's 'the sweep' to 0 subtract snippet's 'the sweep'.
-    Return a measurement, 'the running estimate'.
+To do the 'the coordinate's 'set down at', with a number called 'the second portion'.
+    a 'the coordinate' called 'the incoming stint'.
+    Set 'the incoming stint's 'the clearance' to 'the second portion'.
+    Return a 'the coordinate', 'the incoming stint'.
 
-To do the measurement's 'placed at', with a number called gulp.
-    a measurement called 'the bare speck'.
-    Set 'the bare speck's 'the sweep' to gulp.
-    Return a measurement, 'the bare speck'.
+To do the 'the coordinate's 'turned over', with a 'the coordinate' called 'the odd smidgen'.
+    a 'the coordinate' called slice.
+    Set slice's 'the clearance' to 0 subtract 'the odd smidgen's 'the clearance'.
+    Return a 'the coordinate', slice.
 
-a flag called layby is "-h" or "--layby", it is a text with default "milestone".
-a number called v2 is 623.
-a flag called 'the caption' is "-s" or "--the-caption", it is a boolean.
-a flag called legend is "-d" or "--legend", it is a number with default 4652983.
-a number called v3 is 956745618323212169.
+To do the 'the sighting's 'reflected across', with a 'the sighting' called crop.
+    a 'the sighting' called crumb.
+    Return a 'the sighting', crumb.
+
+To do the 'the sighting's 'recorded once', with a number called 'the trailing load'.
+    a 'the sighting' called 'the brief trimming'.
+    Return a 'the sighting', 'the brief trimming'.
+
+To do the 'the fix's 'sited on', with a number called allowance.
+    a 'the fix' called spell.
+    Return a 'the fix', spell.
+
+To do the 'the fix's mirrored, with a 'the fix' called estimate.
+    a 'the fix' called 'the lower slice'.
+    Return a 'the fix', 'the lower slice'.
+
+To 'the reckoning' with a number called 'the wet crop' and a number called 'the level crumb' and a number called heap and a number called scrap and a number called 'the third allowance' and a number called 'the outgoing spell' and a number called 'the running estimate' and a number called wedge and a number called gain.
+    a number called speck is 'the wet crop' add 'the level crumb' add heap add scrap add 'the third allowance' add 'the outgoing spell' add 'the running estimate' add wedge add gain.
+    Print speck.
+
+To 'the summed parts'.
+    a number called 'endnote as read' is endnote add -036043.
+    Print 'endnote as read'.
+    a text called 'annotation as read' is annotation.
+    Print 'annotation as read'.
+    a text called 'the byline as read' is 'the byline'.
+    Print 'the byline as read'.
+    a boolean called 'the callsign as read' is 'the callsign'.
+    Print 'the callsign as read'.
+    a boolean called 'banner as read' is banner.
+    Print 'banner as read'.
+
+a number called v1 is 1794482551.
+a flag called endnote is "-m" or "--endnote", it is a number with default 312364.
+a flag called annotation is "-v" or "--annotation", it is a text.
+a flag called 'the byline' is "-e" or "--the-byline", it is a text.
+a number called v2 is 58029989774.
+a flag called 'the callsign' is "-n" or "--the-callsign", it is a boolean.
+a number called v3 is 9223372036854775807.
+a flag called banner is "-w" or "--banner", it is a boolean.
+a number called v4 is 64733562.
 Parse flags.
 
-If legend is not 48185078967 then, Exit 92.
-If 'the caption' is false then, Exit 93.
+If 'the byline' is not "the survey plot 47215" then, Exit 91.
+If endnote is not 1118016078 then, Exit 92.
+If 'the callsign' is false then, Exit 93.
 
-To 'the joint holding' of a text called 'the last gain' and a number called offcut.
-    Print " {'the last gain'}".
-
-To 'the closing entry'.
-    a number called 'the first share' is 000001.
-    Return a number, 'the first share'.
-
-To 'run the numbers' with a text called morsel and a number called 'the upper ration'.
-    Print " {morsel}".
-    a number called dose is 'the upper ration'.
-    Return a number, dose.
-
-To 'the net weight' with a number called 'the trailing load' and a number called splash.
-    a number called 'the outgoing spell' is 'the trailing load' add splash.
-    Return a number, 'the outgoing spell'.
-
-To 'the standing order'.
-    a number called haul is -3.
-    Return a number, haul.
-
-To 'square away' with a number called smidgen and a number called 'the neat handful' and a number called crumb and a number called 'the tidy nugget' and a number called 'the third allowance' and a number called quota and a number called 'the inner wedge' and a number called lot and a number called 'the closing pinch' and a number called stint and a number called 'the full stretch' and a number called crop and a number called 'the short residue'.
-    a number called scrap is smidgen add 'the neat handful' add crumb add 'the tidy nugget' add 'the third allowance' add quota add 'the inner wedge' add lot add 'the closing pinch' add stint add 'the full stretch' add crop add 'the short residue'.
-    Print scrap.
-
-Print layby.
-Print 'the caption'.
-Print legend.
-'square away' of each q1s1 from 8 to 8 and each q1s2 from 0 to 1 and each q1s3 from 7 to 7 and each q1s4 from 0 to 1 and each q1s5 from 4 to 4 and each q1s6 from 1 to 2 and each q1s7 from 7 to 7 and each q1s8 from 5 to 5 and each q1s9 from 3 to 3 and each q1s10 from 7 to 7 and each q1s11 from 8 to 8 and each q1s12 from 2 to 2 and each q1s13 from 7 to 7.
-Set v2 to v2.
-a list called l1 is [49, 30].
-append 39 to l1.
-Print element 1 of l1.
-a buffer called 'the manifest' is 88605 bytes in size.
-If 'the manifest's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
-Print v3 add v1.
-append "i7g1mfshazc5mb45mvwd23sxmrghmj4ter4167" to 'the manifest'.
-If 'the manifest's size is not 38 then, Print "ASSERT BUF-10: expected 38 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
-If 'the manifest's capacity is not 88605 then, Print "ASSERT BUF-10: expected 88605 got {'the manifest's capacity}", Exit 95. Print 'the manifest's capacity.
-If 'the manifest's length is not 38 then, Print "ASSERT BUF-11: expected 38 got {'the manifest's length}", Exit 95. Print 'the manifest's length.
-If 'the manifest's length is not 'the manifest's size then, Print "ASSERT BUF-11: expected {'the manifest's size} got {'the manifest's length}", Exit 95. Print 'the manifest's length.
-If 'the manifest's empty then, Print "ASSERT BUF-12: expected 0 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
-Print 'the manifest's length.
-a map called m1 is {"label": "tag1", "count": 126}.
-Print m1's "label".
-Set m1's "count" to 31.
-Print m1's "count".
-Print m1's length.
-For each k1 in m1's keys, Print k1.
-Set v3 to v3 multiply v2.
-Set v2 to v2 add v2.
-Set v3 to v3 times v3.
-a text called s1 is "word1".
-a text called s2 is "{s1}-{s1}".
-Print s2.
-a number called xn3 is 182.
-a number called xy3 is 22.
-Print "sum {xn3 add xy3}".
-Print "product {xn3 multiply xy3}".
-Print "chain {xn3 multiply xy3 modulo 3:02x}".
-Print "deep {v2 minus v3 times v1 add v3 multiply v1 add v1:3}".
-Print "arguments {arguments's count}".
-a text called xt3 is "held {xn3 add xy3} {xn3 multiply xy3 modulo 3:02x}".
-Print xt3.
-a measurement called i1.
-Set i1's 'the sweep' to 0007.
-Print i1.
-a text called fp4 is "{layby}/out4".
-open a file for writing called fw4 at fp4.
-Write "payload 70667\n" to fw4.
-Close fw4.
-open a file for reading called fr4 at fp4.
-a buffer called fb4 is 12 bytes in size.
-Read from fr4 into fb4.
-Print fb4's size.
-Print fr4's readable.
-Close fr4.
-Quit 251.
+Set v3 to v2 minus v2.
+Print v4 minus v1, but if v1 is less than v2 print v4 multiply v2.
+Set v2 to v3 multiply v3.
+a list called l1 is [].
+append v1 to l1, but if v4 is less than v2 or v4 modulo 4 is equal to 0 append v2 add v4, but if v2 is less than or equal to v4 and v2 modulo 2 is equal to 0 append v1 add v4, but if v4 is less than or equal to v1 and v4 modulo 3 is equal to 0 append v2, otherwise append v1.
+Print v2 multiply v2.
+a list called l2 is [].
+append v4 multiply v3 to l2, but if v1 is less than or equal to v3 and v1 modulo 3 is equal to 0 append v3 multiply v4, otherwise append v3 multiply v2.
+Create a buffer called storeroom with size 4095.
+If storeroom's empty is false then, Print "ASSERT BUF-12: expected 1 got {storeroom's empty}", Exit 95. Print storeroom's empty.
+Print v2 minus v2.
+append "rogkiqtj7tcocs02mn384875dys2810stztla01" to storeroom.
+If storeroom's size is not 39 then, Print "ASSERT BUF-10: expected 39 got {storeroom's size}", Exit 95. Print storeroom's size.
+If storeroom's capacity is not 4095 then, Print "ASSERT BUF-10: expected 4095 got {storeroom's capacity}", Exit 95. Print storeroom's capacity.
+If storeroom's length is not 39 then, Print "ASSERT BUF-11: expected 39 got {storeroom's length}", Exit 95. Print storeroom's length.
+If storeroom's length is not storeroom's size then, Print "ASSERT BUF-11: expected {storeroom's size} got {storeroom's length}", Exit 95. Print storeroom's length.
+If storeroom's empty then, Print "ASSERT BUF-12: expected 0 got {storeroom's empty}", Exit 95. Print storeroom's empty.
+Print storeroom's length.
+Set v1 to v1.
+Create a buffer called 'the sketchpad'.
+a number called 'the sketchpad appends made' is 0.
+a boolean called 'the sketchpad overflowed' is false.
+a boolean called 'the sketchpad found an error already pending' is false.
+On error Set 'the sketchpad found an error already pending' to true.
+While 'the sketchpad appends made' is less than 235, append "slvx72bh2atw4f8e0s0jbfzkdvl8bifkm" to 'the sketchpad', On error Set 'the sketchpad overflowed' to true. Set 'the sketchpad appends made' to 'the sketchpad appends made' add 1.
+If 'the sketchpad's size is not 7755 then, Print "ASSERT BUF-03: expected 7755 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the sketchpad overflowed'}", Exit 95. Print 'the sketchpad overflowed'.
+Print 'the sketchpad's size.
+Print v2 minus v2.
+Set v2 to v1 multiply v2.
+a buffer called cupboard is 59017 bytes in size.
+If cupboard's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {cupboard's size}", Exit 95. Print cupboard's size.
+Print v2 multiply v3.
+If cupboard's capacity is not 59017 then, Print "ASSERT BUF-05: expected 59017 got {cupboard's capacity}", Exit 95. Print cupboard's capacity.
+Create a buffer called 'the tally sheet'.
+If 'the tally sheet's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
+Create a buffer called 'the drawer' with size 70036.
+If 'the drawer's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the drawer's size}", Exit 95. Print 'the drawer's size.
+Print v2 add v3.
+If 'the drawer's capacity is not 70036 then, Print "ASSERT BUF-05: expected 70036 got {'the drawer's capacity}", Exit 95. Print 'the drawer's capacity.
+Print 'the drawer's size.
+open a file for reading called sin1 at 0.
+a buffer called sb1 is 8 bytes.
+Read from sin1 into sb1.
+Print sb1's size.
+If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
+a buffer called sc1 is 8 bytes.
+Read from sin1 into sc1.
+Print sc1's size.
+Close sin1.
+a text called fp2 is "{annotation}/out2".
+open a file for writing called fw2 at fp2.
+Write "payload 52028\n" to fw2.
+Close fw2.
+open a file for reading called fr2 at fp2.
+a buffer called fb2 is 42 bytes in size.
+Read from fr2 into fb2.
+Print fb2's size.
+Print fr2's readable.
+Close fr2.
+'the reckoning' of each q1s1 from 5 to 5 and each q1s2 from 4 to 5 and each q1s3 from 0 to 1 and each q1s4 from 6 to 7 and each q1s5 from 4 to 4 and each q1s6 from 0 to 0 and each q1s7 from 2 to 2 and each q1s8 from 4 to 4 and each q1s9 from 8 to 8.
+'the summed parts'.
 
 reproducible: 1

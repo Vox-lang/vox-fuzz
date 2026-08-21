@@ -104,9 +104,15 @@ a number called literal_character_piece_count is literal_character_pieces's leng
  on all eight sample literals, an invariant with no citation anywhere.
 
  Shifting the high twenty bits down first costs one divide and fixes it.
- rng.vox itself is deliberately NOT touched - changing the shared
- generator would move the output of every existing seed and every test
- that pins one.)
+
+ Since then rng.vox has been fixed at the source - fuzzer defect 13 -
+ and `'rng below' of 2` no longer alternates: it draws from the high
+ bits by multiply-high, so this helper is no longer the only safe way to
+ ask for a small number. It stays because it is still correct - the high
+ twenty bits are the good ones either way - and because collapsing it
+ into 'rng below' would move every literal in every seed again for no
+ change in behaviour. Whoever next has reason to move the goldens should
+ delete it and call 'rng below'.)
 
 To 'literal draw below' with a number called 'the faces'.
     a number called 'the raw' is 'rng next'.

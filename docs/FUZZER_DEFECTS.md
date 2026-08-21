@@ -612,3 +612,215 @@ for leaf batches are run twice or on a quiet machine, and `compiled:`
 below the program count is investigated by hand.
 
 ---
+
+### 12. `scripts/invariants` measures LINES, so the layout randomiser hides every sameness it is meant to report
+
+**Status:** **fixed** (2026-08-21). Found by the master, 2026-08-21,
+while gating leaf work: the same 150 seeds reported **118 rows at 100%
+presence under `--layout plain` and 35 under the default random layout**.
+Nothing about the programs had changed — only their whitespace.
+
+**Severity: high, and of the quiet kind.** The invariant report is the
+acceptance test for all generator work (CLAUDE.md, *Enforcement*), and
+the honest measure of progress is that list shrinking. A detector that
+reports 35 instead of 115 makes a batch look three times better than it
+is, and it does it silently, on the layout a real campaign runs in.
+
+**Reproduced** with the current generator, one corpus per layout from
+the same seeds (`--seed 5000 --count 150 --budget 12`):
+
+| detector | plain corpus | random corpus |
+|---|---|---|
+| line-based (before) | 115 rows at 100% | **35** |
+| statement-based (after) | 110 | **110** |
+
+(115, not the master's 118: the master measured a corpus generated
+before defect 13's fix moved every seed's program. The number that
+matters is the same either way — the same programs, two layouts, three
+times the sameness reported in one of them.)
+
+The line-based detector's loss, by category, was total rather than
+partial: `identical-line` 30 → 2, `never-exceeded-bound` 41 → 0,
+`fixed-ordering` 9 → 0, `identical-count` 2 → 0. Only
+`fixed-vocabulary` (33) survived, because an identifier is spelled the
+same however the line breaks fall.
+
+**Cause.** `'process program'` read each program with `Read line` and
+made the raw line the unit of comparison, for identical lines, for the
+skeleton/bounds pass, for the identifier pass and for the construct
+counts (which recognised `a flag called `, `To `, `While ` and friends
+only at a line start, so an indented declaration was invisible and an
+unindented one was not). `gen_core.vox`'s layout pass rewrites every
+whitespace run: where the line breaks, how deep the indent, how wide
+each gap and whether a gap beside punctuation exists at all. Those are
+the exact bytes the comparison was keyed on. The sameness never moved;
+the ruler did.
+
+**Fix.** The unit of comparison is now the **statement** — LANGUAGE.md
+"Basics": a sentence ending in a period — and each program is normalised
+before it is measured:
+
+- a whitespace run becomes one space, or nothing when the byte on either
+  side is punctuation the layout pass may close a gap beside
+  (`. , ( ) " [ ] { } :` — `'layout byte is punctuation'`, matched
+  exactly, which is what makes the normal form layout-invariant instead
+  of merely tidier);
+- a period ends the statement unless it has a digit on both sides, where
+  it is a decimal point (`3.14`; `3.` and `.5` are both parse errors —
+  LANGUAGE.md:1803 and `gen_literals.vox`), and a run of periods closing
+  several clauses stays with the statement it ends;
+- string literals, parenthesised comments and quoted multi-word names
+  are copied through untouched, by scanners that mirror `layout copy
+  string` / `layout copy comment` / `layout copy quoted name` /
+  `layout apostrophe opens a name` byte for byte.
+
+Nothing was added to the keyword or ignore list.
+
+**How it was proven** (four legs):
+
+1. **The premise, checked**: strip all whitespace from the plain and the
+   random program of the same seed and the bytes are identical
+   (`tr -d ' \t\n\r' | md5sum`, spot-checked on seeds 5000, 5007, 5042,
+   5100) — so any residual difference the detector reports is the
+   detector's, not the generator's.
+2. **The two reports now agree**: `./build/invariants` over the plain
+   corpus and over the random corpus of the same 150 seeds produce
+   byte-identical output apart from the corpus path in the header line —
+   110 rows at 100%, 181 findings, same rows in the same order.
+3. **Cross-checked against an independent implementation**: the same
+   normalisation written separately in Python picks out exactly the same
+   23 statements as 100%-present across the 150 programs — same count,
+   same set, no difference either way.
+4. **The rows that changed are accounted for**: 115 → 110 under plain is
+   multi-line constructs collapsing into the single statement they
+   always were. The eleven `identical-line` rows for `A thing called t1
+   has` and its field lines become four `identical-statement` rows, one
+   per thing; `never-exceeded-bound` rises 41 → 45 as the
+   merged statements form new templates; `fixed-ordering` falls 9 → 7
+   as adjacent keys merge into one block.
+
+**Two consequences worth knowing.** The report's category is now
+`identical-statement`, and the construct-count row that said `globals:
+always exactly N top-level variable declarations` now says
+`declarations: always exactly N variable declarations` — with the
+indentation gone there is no honest way to tell a top-level declaration
+from a nested one, and claiming otherwise was the line-based reading's
+accident, not a measurement. The rendering is also slightly harder to
+read where a gap sat beside punctuation (`a flag called fl1count
+is"-b"or"--beta1",it is a number.`); that is the price of a normal form
+the randomiser cannot move, and it is paid identically by both layouts.
+
+### 13. `src/rng.vox`'s low bit alternates, so every coin flip in the generator is anti-correlated with the one before it
+
+**Status:** **fixed** (2026-08-21). Found by the literals worker,
+2026-08-21, and recorded in `gen_literals.vox` before it was fixed at
+the source: `'rng below' of 2` returned 0, 1, 0, 1 for ever.
+
+**Cause.** The generator is an LCG modulo 2^31 with an odd multiplier
+and an odd increment, so bit 0 of the state has period 2 — and
+`'rng below'` was `r modulo nn`, which is a function of the LOW bits.
+Every two-way draw in every leaf therefore alternated, and any helper
+spending a fixed number of draws per construct locked onto the
+alternation and stopped varying at all (`literal boolean` emitted
+`false` on all eight sample literals — an invariant with no citation
+anywhere, which is what the whole rule layer exists to prevent).
+
+**Reproduced**, 10 000 draws per bound, seed 12345:
+
+| bound | histogram | longest run | lag-1 autocorrelation |
+|---|---|---|---|
+| 2 | 5000 / 5000 | **1** | **-0.999** |
+| 3 | 3331 / 3381 / 3288 | 10 | -0.006 |
+| 10 | 990…1013, flat | **1** | -0.035 |
+
+The histograms are the point: below 2 is *perfectly* flat and below 10
+is flat to ±4%, so a frequency check could never have caught this. What
+catches it is the run length — a fair coin's longest run in 10 000
+flips is about log2 10000 ≈ 13, and this had 1 — and the
+autocorrelation, which is as close to -1 as an estimator gets. Below 10
+never repeated a value either, for the same reason: consecutive draws
+always disagreed in parity.
+
+**Fix.** Take the draw from the HIGH bits by multiply-high:
+`'rng below' of nn` is now `{r multiply nn} divide 2147483648`, so the
+result is r's position below nn scaled by its top bits and bit 0 never
+reaches the answer. The generator itself is untouched, so `--seed`
+reproducibility is exactly as before; `nn` is at most 1000000 anywhere
+it is called, so the product stays far below the 64-bit ceiling, and
+`'rng below' of 0` still yields 0 as `r modulo 0` did.
+
+**Proven** on the same 10 000 draws, and pinned in
+`tests/230_units.vox` so a future change to the draw has to move a
+golden:
+
+| bound | histogram | longest run | lag-1 |
+|---|---|---|---|
+| 2 | 4996 / 5004 | **12** | **-0.014** |
+| 3 | 3328 / 3307 / 3365 | 9 | -0.006 |
+| 10 | 943…1043 | **4** | -0.004 |
+
+log2 10000 ≈ 13 and log10 10000 = 4: the runs are now what fair draws
+give. Every number in both tables was reproduced by an independent
+implementation of the same LCG and the same estimator before it was
+written down. `tests/220_determinism.vox` stays green — the same seed
+still reproduces the same program — and the goldens that pin generated
+text were regenerated and read (see the branch's report).
+
+### 14. An ASSERT line on the far side of a NUL hole is not seen, and the finding says there was none
+
+**Status:** **fixed** (2026-08-21). Found in a real campaign, retained
+repro `vox-notes/env-a-seed-40252` (seed 40252, `classification.txt`:
+`ledger assertion failed (exit 95) but no ASSERT line was found on
+stdout`).
+
+**Severity: high.** Exit 95 means a generated program caught the
+compiler giving a documented result the manual says is wrong. The line
+it printed names the ledger row and both numbers; without it the finding
+is a shrug, and the row it contradicts has to be found by hand.
+
+**Cause — not the one the comment already warned about.** The scan
+already read the capture as BYTES rather than through a text, so every
+byte was there. What it did not do was treat a **NUL as a line
+boundary**. The capture in the repro is 205 bytes: `fmt4 hello4 0\n`,
+then 158 NULs, then `ASSERT ENV-06: expected 9 got -1\n`. The hole holds
+no newline, so the last line start the scan knew about was byte 15 — the
+first NUL — and the marker test at byte 15 failed against a NUL every
+time. The line was in the buffer, read, and never looked at.
+
+The hole itself is nobody's bug: the harness captures a run by pointing
+the child's fd 1 at a file, so a generated program that opens
+`/dev/stdout` for writing reopens *that file* at offset 0 and truncates
+it, while the Prints keep going through a descriptor with its own
+offset. Everything between the two offsets reads back as NULs. The
+generator emits `/dev/stdout` writes on purpose (`gen_files.vox`), so
+this is a shape campaigns will keep producing.
+
+**Reproduced** by running `'the assert line in file'` over the retained
+capture: it returned the "no ASSERT line" stand-in. Swapping **one** NUL
+of that capture (the byte before the `A`) for a newline made the same
+scan return `ASSERT ENV-06: expected 9 got -1`, which pins the mechanism
+to the line-boundary rule and nothing else.
+
+**Fix.** In `'the assert line in bytes'`, a NUL ends a line exactly as a
+newline does — it is the hole, not something a program printed, and the
+line after it starts where it ends. The scan still runs one past the
+last byte so an unterminated final line is considered, still requires
+the marker to START a line, and still reports the LAST match.
+
+**Proven**, three ways:
+
+1. the retained repro now yields `detail: ASSERT ENV-06: expected 9 got
+   -1` — the leaf's row and its claim, which is what the classification
+   was missing;
+2. `tests/290_ledger_assertion.vox` gains the byte shape of that capture
+   (a 14-byte line, 158 NULs, then the ASSERT line), a hole *after* the
+   last ASSERT line, and an end-to-end leg: a new fixture,
+   `tests/fixtures/ledger_assertion_hole.vox`, punches the hole through
+   its own captured stdout the same way seed 40252 did, exits 95, and is
+   compiled, run under capture and scanned through the same three calls
+   the gen loop makes — the test asserts the capture really is holed
+   before it asserts the line was found;
+3. those new legs were run against the **pre-fix** scanner and fail
+   there (`detail across the hole` and the end-to-end `detail` both come
+   back as the stand-in), so they are a regression guard rather than a
+   restatement.

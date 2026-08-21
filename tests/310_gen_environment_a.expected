@@ -1,108 +1,109 @@
 --- ENV-02, ENV-05: count and empty agree ---
-a number called 'the badge' is environment's count.
-a boolean called 'the compass' is environment's empty.
-If 'the badge' is not 0 and 'the compass' then, Print "ASSERT ENV-05: expected 0 got {'the compass'}", Exit 95. Print 'the badge' as a boolean.
-If 'the badge' is 0 and 'the compass' is false then, Print "ASSERT ENV-02: expected 1 got {'the compass'}", Exit 95. Print 'the compass'.
+a boolean called 'the opening entry' is environment's empty.
+If environment's count is 0 and 'the opening entry' is false then, Print "ASSERT ENV-02: expected 1 got {'the opening entry'}", Exit 95. Print 'the opening entry'.
+If environment's count is not 0 and 'the opening entry' then, Print "ASSERT ENV-05: expected 0 got {'the opening entry'}", Exit 95. Print environment's count as a boolean.
 
-    a number called 'the locale' is environment's count,
-    If 'the locale' is not 0 and environment's empty then, Print "ASSERT ENV-05: expected 0 got {environment's empty}", Exit 95. Print 'the locale' as a boolean,
-    If 'the locale' is 0 and environment's empty is false then, Print "ASSERT ENV-02: expected 1 got {environment's empty}", Exit 95. Print environment's empty.
+    a number called 'the letterbox' is environment's count,
+    If 'the letterbox' is not 0 and environment's empty then, Print "ASSERT ENV-05: expected 0 got {environment's empty}", Exit 95. Print 'the letterbox' as a boolean,
+    If 'the letterbox' is 0 and environment's empty is false then, Print "ASSERT ENV-02: expected 1 got {environment's empty}", Exit 95. Print environment's empty.
 
 --- ENV-06 (ENV-03, ENV-04): a lookup read several ways agrees with itself ---
-a text called 'the letterbox' is environment's first.
-a buffer called 'the letterbox in bytes' is 'the letterbox'.
-a buffer called 'the headcount' is environment's first.
-If 'the headcount's size is not 'the letterbox in bytes''s size then, Print "ASSERT ENV-03: expected {'the letterbox in bytes''s size} got {'the headcount's size}", Exit 95. Print 'the headcount's size.
-If 'the headcount's empty is not 'the letterbox in bytes''s empty then, Print "ASSERT ENV-03: expected {'the letterbox in bytes''s empty} got {'the headcount's empty}", Exit 95. Print 'the headcount's empty.
-Print 'the headcount's size.
+a text called 'the first reading' is environment's "TERM".
+a buffer called 'the first reading in bytes' is 'the first reading'.
+a buffer called 'the parting entry' is environment's "TERM".
+If 'the parting entry's size is not 'the first reading in bytes''s size then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s size} got {'the parting entry's size}", Exit 95. Print 'the parting entry's size.
+If 'the parting entry's empty is not 'the first reading in bytes''s empty then, Print "ASSERT ENV-06: expected {'the first reading in bytes''s empty} got {'the parting entry's empty}", Exit 95. Print 'the parting entry's empty.
+a value called 'the placard' is environment's "TERM".
+If 'the placard' is not 'the first reading' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the first reading in bytes''s empty.
+Print 'the parting entry's size.
 
-    a text called 'the house number' is environment's "MAIL",
-    a buffer called 'the house number in bytes' is 'the house number',
-    a buffer called 'the badge' is environment's "MAIL",
-    If 'the badge's size is not 'the house number in bytes''s size then, Print "ASSERT ENV-06: expected {'the house number in bytes''s size} got {'the badge's size}", Exit 95. Print 'the badge's size,
-    If 'the badge's empty is not 'the house number in bytes''s empty then, Print "ASSERT ENV-06: expected {'the house number in bytes''s empty} got {'the badge's empty}", Exit 95. Print 'the badge's empty,
-    Print 'the badge's size.
+    a text called 'the porch light' is environment's last,
+    a buffer called 'the porch light in bytes' is 'the porch light',
+    a buffer called 'the visitor book' is environment's last,
+    If 'the visitor book's size is not 'the porch light in bytes''s size then, Print "ASSERT ENV-04: expected {'the porch light in bytes''s size} got {'the visitor book's size}", Exit 95. Print 'the visitor book's size,
+    If 'the visitor book's empty is not 'the porch light in bytes''s empty then, Print "ASSERT ENV-04: expected {'the porch light in bytes''s empty} got {'the visitor book's empty}", Exit 95. Print 'the visitor book's empty,
+    a buffer called 'the house number' is environment's last,
+    If 'the house number's size is not 'the porch light in bytes''s size then, Print "ASSERT ENV-04: expected {'the porch light in bytes''s size} got {'the house number's size}", Exit 95. Print 'the house number's size,
+    If 'the house number's empty is not 'the porch light in bytes''s empty then, Print "ASSERT ENV-04: expected {'the porch light in bytes''s empty} got {'the house number's empty}", Exit 95. Print 'the house number's empty,
+    a value called 'the lantern' is environment's last,
+    If 'the lantern' is not 'the porch light' then, Print "ASSERT ENV-04: expected the text got a different value", Exit 95. Print 'the porch light in bytes''s empty,
+    Print 'the house number's size.
 
-a text called 'the locale' is environment's "VOXFUZZ_UNSET_351191".
-a buffer called 'the locale in bytes' is 'the locale'.
-a buffer called 'the doormat' is environment's "VOXFUZZ_UNSET_351191".
-If 'the doormat's size is not 'the locale in bytes''s size then, Print "ASSERT ENV-06: expected {'the locale in bytes''s size} got {'the doormat's size}", Exit 95. Print 'the doormat's size.
-If 'the doormat's empty is not 'the locale in bytes''s empty then, Print "ASSERT ENV-06: expected {'the locale in bytes''s empty} got {'the doormat's empty}", Exit 95. Print 'the doormat's empty.
-a buffer called 'the doorbell' is environment's "VOXFUZZ_UNSET_351191".
-If 'the doorbell's size is not 'the locale in bytes''s size then, Print "ASSERT ENV-06: expected {'the locale in bytes''s size} got {'the doorbell's size}", Exit 95. Print 'the doorbell's size.
-If 'the doorbell's empty is not 'the locale in bytes''s empty then, Print "ASSERT ENV-06: expected {'the locale in bytes''s empty} got {'the doorbell's empty}", Exit 95. Print 'the doorbell's empty.
-If the environment variable "VOXFUZZ_UNSET_351191" exists then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. Print 'the locale in bytes''s empty.
-Print 'the doorbell's size.
+a text called 'the compass' is environment's "VOXFUZZ_UNSET_396906".
+a buffer called 'the compass in bytes' is 'the compass'.
+a buffer called 'the surroundings' is environment's "VOXFUZZ_UNSET_396906".
+If 'the surroundings's size is not 'the compass in bytes''s size then, Print "ASSERT ENV-06: expected {'the compass in bytes''s size} got {'the surroundings's size}", Exit 95. Print 'the surroundings's size.
+If 'the surroundings's empty is not 'the compass in bytes''s empty then, Print "ASSERT ENV-06: expected {'the compass in bytes''s empty} got {'the surroundings's empty}", Exit 95. Print 'the surroundings's empty.
+If the environment variable "VOXFUZZ_UNSET_396906" exists then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. Print 'the compass in bytes''s empty.
+Print 'the surroundings's size.
 
 --- ENV-10, ENV-11: the exists predicate ---
-a boolean called 'the house number' is false.
-If the environment variable "DISPLAY" exists then, Set 'the house number' to true. Print 'the house number'.
-a text called 'the noticeboard' is "elsewhere".
-If arguments's count is greater than 1 then, Set 'the noticeboard' to arguments's first. But if the environment variable "VOXFUZZ_UNSET_422516" exists then, Set 'the noticeboard' to environment's "VOXFUZZ_UNSET_422516". Print 'the noticeboard'.
-Print 'the house number'.
+a boolean called 'the first reading' is false.
+If the environment variable "VOXFUZZ_UNSET_916882" exists then, Set 'the first reading' to true. Print 'the first reading'.
+If the environment variable "VOXFUZZ_UNSET_916882" exists then, Print "missing". Otherwise, Print "yes". Print 'the first reading'.
+If 'the first reading' then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. Print 'the first reading'.
 
     a boolean called 'the street sign' is false,
-    If the environment variable "VOXFUZZ_UNSET_242642" exists then, Set 'the street sign' to true. Print 'the street sign',
-    a boolean called 'the street sign seen again' is false,
-    If the environment variable "VOXFUZZ_UNSET_242642" exists then, Set 'the street sign seen again' to true. Print 'the street sign seen again',
-    If 'the street sign seen again' is not 'the street sign' then, Print "ASSERT ENV-10: expected {'the street sign'} got {'the street sign seen again'}", Exit 95. Print 'the street sign seen again',
-    If 'the street sign' then, Print "ASSERT ENV-10: expected 0 got 1", Exit 95. Print 'the street sign'.
+    If the environment variable "DISPLAY" exists then, Set 'the street sign' to true. Print 'the street sign',
+    If the environment variable "DISPLAY" exists then, Print "at home". Otherwise, Print "away". Print 'the street sign',
+    Print 'the street sign'.
 
-a boolean called 'the visitor book' is false.
-If the environment variable "PWD" exists then, Set 'the visitor book' to true. Print 'the visitor book'.
-a text called 'the signpost' is "present".
-If arguments's count is greater than 1 then, Set 'the signpost' to arguments's first. But if the environment variable "VOXFUZZ_UNSET_902009" exists then, Set 'the signpost' to environment's "VOXFUZZ_UNSET_902009". Print 'the signpost'.
-Print 'the visitor book'.
+a boolean called 'the door tag' is false.
+If the environment variable "TERM" exists then, Set 'the door tag' to true. Print 'the door tag'.
+If the environment variable "TERM" exists then, Print "present". Otherwise, Print "here". Print 'the door tag'.
+Print 'the door tag'.
 
 --- ENV-03, ENV-04: an entry contains an equals sign ---
-a text called 'the badge' is environment's last.
-a buffer called 'the badge in bytes' is 'the badge'.
-a number called 'the badge equals signs' is 0.
-For each mark from 1 to 'the badge in bytes''s size, If byte mark of 'the badge in bytes' is 61 then, Set 'the badge equals signs' to 'the badge equals signs' add 1..
-If 'the badge in bytes''s size is not 0 and 'the badge equals signs' is 0 then, Print "ASSERT ENV-04: expected 1 got {'the badge equals signs'}", Exit 95. Print 'the badge equals signs' as a boolean.
-a buffer called 'the doorbell' is environment's last.
-If 'the doorbell's size is not 'the badge in bytes''s size then, Print "ASSERT ENV-04: expected {'the badge in bytes''s size} got {'the doorbell's size}", Exit 95. Print 'the doorbell's size.
-Print 'the badge in bytes''s size as a boolean.
+a text called 'the street sign' is environment's last.
+a buffer called 'the street sign in bytes' is 'the street sign'.
+a number called 'the street sign equals signs' is 0.
+For each slot from 1 to 'the street sign in bytes''s size, If byte slot of 'the street sign in bytes' is 61 then, Set 'the street sign equals signs' to 'the street sign equals signs' add 1..
+If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-04: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
+Print 'the street sign in bytes''s size as a boolean.
 
 --- the dispatchers ---
-a boolean called 'the letterbox' is environment's empty.
-If environment's count is not 0 and 'the letterbox' then, Print "ASSERT ENV-05: expected 0 got {'the letterbox'}", Exit 95. Print environment's count as a boolean.
-If environment's count is 0 and 'the letterbox' is false then, Print "ASSERT ENV-02: expected 1 got {'the letterbox'}", Exit 95. Print 'the letterbox'.
+a number called 'the badge' is environment's count.
+a boolean called 'the porch light' is environment's empty.
+If 'the badge' is 0 and 'the porch light' is false then, Print "ASSERT ENV-02: expected 1 got {'the porch light'}", Exit 95. Print 'the porch light'.
+If 'the badge' is not 0 and 'the porch light' then, Print "ASSERT ENV-05: expected 0 got {'the porch light'}", Exit 95. Print 'the badge' as a boolean.
 
-a text called 'the missing value 11' is environment's "VOXFUZZ_UNSET_643460".
-On error print "environment variable not set".
-Print 'the missing value 11'.
+a text called 'the street sign' is environment's first.
+a buffer called 'the street sign in bytes' is 'the street sign'.
+a number called 'the street sign equals signs' is 0.
+For each step from 1 to 'the street sign in bytes''s size, If byte step of 'the street sign in bytes' is 61 then, Set 'the street sign equals signs' to 'the street sign equals signs' add 1..
+If 'the street sign in bytes''s size is not 0 and 'the street sign equals signs' is 0 then, Print "ASSERT ENV-03: expected 1 got {'the street sign equals signs'}", Exit 95. Print 'the street sign equals signs' as a boolean.
+Print 'the street sign in bytes''s size as a boolean.
 
 --- names: thirty words, no repeats, then a suffix ---
-'the door tag'
-'the visitor book'
-'the nameplate'
-'the house number'
-'the locale'
-'the street sign'
-'the gatepost'
-'the roll call'
-'the doormat'
-'the welcome mat'
-'the lodging'
-'the signpost'
-'the doorbell'
-'the noticeboard'
-'the porch light'
-'the letterbox'
-'the lantern'
-'the hallway'
-'the coat hook'
+'the surroundings'
 'the placard'
 'the compass'
+'the street sign'
 'the opening entry'
-'the key rack'
-'the parting entry'
-'the headcount'
-'the second reading'
-'the first reading'
+'the welcome mat'
+'the locale'
+'the letterbox'
+'the nameplate'
+'the lodging'
+'the visitor book'
 'the workshop'
+'the porch light'
+'the doorbell'
+'the parting entry'
 'the badge'
-'the surroundings'
-'the placard 31'
-'the compass 32'
+'the key rack'
+'the doormat'
+'the noticeboard'
+'the hallway'
+'the coat hook'
+'the house number'
+'the second reading'
+'the roll call'
+'the headcount'
+'the lantern'
+'the signpost'
+'the gatepost'
+'the first reading'
+'the door tag'
+'the gatepost 31'
+'the street sign 32'
