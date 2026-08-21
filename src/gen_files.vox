@@ -170,10 +170,13 @@ To 'gen leaf file round trip' with a text called indent and a boolean called nes
     Set gen_file_ios to gen_file_ios add 1.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
-    a number called f is gen_flags.
     a number called 'the payload' is 'rng below' of 100000.
     a number called 'the buffer size' is 'rng below' of 60 add 8.
-    a text called 'path line' is "a text called fp{n} is \"{{fl{f}scratch}}/out{n}\"".
+    (The scratch flag's NAME is drawn per program (gen_manifest.vox), so
+     the path line interpolates whatever this program called it. It is
+     never empty here: the flag is declared exactly when gen_does_file_io
+     is true, which is what got this leaf past its own guard.)
+    a text called 'path line' is "a text called fp{n} is \"{{{gen_scratch_flag}}}/out{n}\"".
     a text called 'open write' is "open a file for writing called fw{n} at fp{n}".
     a text called 'write line' is "Write \"payload {'the payload'}\\n\" to fw{n}".
     a text called 'close write' is "Close fw{n}".

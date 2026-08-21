@@ -225,8 +225,15 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      generator built, so BOTH of the oracle's runs get the same value —
      a different scratch path per run would make the program's own
      output differ and every program a false nondeterminism finding.)
-    append "--scratch{gen_flags}" to gen_argv.
-    append 'the scratch path' to gen_argv.
+    (Only when this program declared a scratch flag - it does exactly
+     when it chose file I/O, and a program that did not is invoked with
+     no scratch argument at all. Verified against 0.4.7 that an
+     undeclared flag on argv is neither a compile nor a runtime error,
+     so passing one anyway would have been harmless; there is simply no
+     reason to hand a program an argument it cannot read.)
+    If gen_scratch_argv is not "" then,
+        append gen_scratch_argv to gen_argv,
+        append 'the scratch path' to gen_argv.
     'gen write' of 'the source path'.
     a number called 'the kept' is 'keep source' of 'the source path' and seed.
     a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".

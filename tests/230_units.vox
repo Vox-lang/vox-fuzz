@@ -29,6 +29,7 @@ see "../src/harness.vox".
 see "../src/findings.vox".
 see "../src/runner.vox".
 see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
 see "../src/gen_core.vox".
 see "../src/gen_buffers.vox".
 see "../src/gen_files.vox".
@@ -92,3 +93,128 @@ Print "classify 101: {'classify compile exit' of 101}".
 Print "classify 128: {'classify compile exit' of 128}".
 Print "classify 129: {'classify compile exit' of 129}".
 Print "classify -1: {'classify compile exit' of neg}".
+(The prelude's name pools must stay disjoint from each other and from
+ every other pool that declares a TOP-LEVEL name. Type names, function
+ names, flag names, the buffer names 'gen buffer name' hands out and the
+ value names 'gen fresh noun' hands out all land in Vox's one identifier
+ space (LANGUAGE.md:1569), so one word in two pools is a program that
+ does not compile - and it would surface as a rare, seed-dependent
+ compile failure rather than as anything obviously wrong with the lists.
+ Counted here so a word added to one list cannot silently collide.
+
+ The buffer-versus-value row is NOT zero: "the parcel" is in both, which
+ predates this test and is recorded in the prelude report rather than
+ quietly fixed here. It is printed rather than asserted so it stays
+ visible until someone adjudicates it.
+
+ The lengths are printed too, because 'gen cycled word' takes a drawn
+ stride and only visits every word before repeating when the length is
+ PRIME. A word added to one of these lists without checking that is a
+ silent duplicate name, which is the same compile failure by another
+ route.)
+
+To 'times a pool holds' with a list called 'the pool' and a text called 'the word'.
+    a number called 'the hits' is 0.
+    a number called 'how many' is 'the pool's length.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'how many',
+        a text called 'the candidate' is element 'the position' of 'the pool',
+        If 'the candidate' is 'the word' then,
+            Set 'the hits' to 'the hits' add 1.
+        Set 'the position' to 'the position' add 1.
+    Return a number, 'the hits'.
+
+To 'words in common' with a list called 'the first pool' and a list called 'the second pool'.
+    a number called 'the overlap' is 0.
+    a number called 'how many first' is 'the first pool's length.
+    a number called 'the outer' is 1.
+    While 'the outer' is less than or equal to 'how many first',
+        a text called 'the word' is element 'the outer' of 'the first pool',
+        a number called 'the hits' is 'times a pool holds' of 'the second pool' and 'the word',
+        Set 'the overlap' to 'the overlap' add 'the hits',
+        Set 'the outer' to 'the outer' add 1.
+    Return a number, 'the overlap'.
+
+Print "pool lengths: types={gen_type_words's length} functions={gen_function_words's length} flags={gen_flag_words's length} fields={gen_field_words's length} makers={gen_maker_words's length} receivers={gen_receiver_words's length} parameters={gen_parameter_words's length}".
+Print "types vs functions: {'words in common' of gen_type_words and gen_function_words}".
+Print "types vs flags: {'words in common' of gen_type_words and gen_flag_words}".
+Print "functions vs flags: {'words in common' of gen_function_words and gen_flag_words}".
+Print "types vs buffers: {'words in common' of gen_type_words and gen_buffer_words}".
+Print "functions vs buffers: {'words in common' of gen_function_words and gen_buffer_words}".
+Print "flags vs buffers: {'words in common' of gen_flag_words and gen_buffer_words}".
+Print "types vs value nouns: {'words in common' of gen_type_words and 'the value nouns'}".
+Print "functions vs value nouns: {'words in common' of gen_function_words and 'the value nouns'}".
+Print "flags vs value nouns: {'words in common' of gen_flag_words and 'the value nouns'}".
+Print "types vs value verbs: {'words in common' of gen_type_words and 'the value verbs'}".
+Print "functions vs value verbs: {'words in common' of gen_function_words and 'the value verbs'}".
+Print "flags vs value verbs: {'words in common' of gen_flag_words and 'the value verbs'}".
+Print "buffers vs value nouns (pre-existing, not mine): {'words in common' of gen_buffer_words and 'the value nouns'}".
+
+(No prelude word may CONTAIN one of tests/200_never_emitted.vox's banned
+ needles. That guard scans generated source for the substring, so a name
+ that merely embeds one trips it: "amount" contains "mount" and did,
+ failing the safety guard at seed 2 the first time these pools grew.
+ 200 catches it across a 2000-program sweep; this catches it in the one
+ place it can be fixed, and says which word.)
+
+To 'the word holds' with a text called 'the word' and a text called needle.
+    a buffer called 'the word bytes' is "{'the word'}".
+    a buffer called 'the needle bytes' is "{needle}".
+    a number called 'how long' is 'the word bytes's size.
+    a number called 'how long a needle' is 'the needle bytes's size.
+    a number called 'the start' is 1.
+    a boolean called 'it is here' is false.
+    While 'the start' is less than or equal to 'how long',
+        a boolean called 'this one matches' is 'the word matches at' of 'the word bytes' and 'the start' and 'the needle bytes' and 'how long a needle' and 'how long',
+        If 'this one matches' then,
+            Set 'it is here' to true.
+        Set 'the start' to 'the start' add 1.
+    Return a boolean, 'it is here'.
+
+To 'the word matches at' with a buffer called 'the word bytes' and a number called 'the start' and a buffer called 'the needle bytes' and a number called 'how long a needle' and a number called 'how long'.
+    a number called 'the end' is 'the start' add 'how long a needle' minus 1.
+    If 'the end' is greater than 'how long' then,
+        Return a boolean, false.
+    a number called 'the step' is 0.
+    a boolean called 'still matching' is true.
+    While 'the step' is less than 'how long a needle',
+        a number called 'the word position' is 'the start' add 'the step',
+        a number called 'the needle position' is 'the step' add 1,
+        a number called 'the word byte' is byte 'the word position' of 'the word bytes',
+        a number called 'the needle byte' is byte 'the needle position' of 'the needle bytes',
+        If 'the word byte' is not 'the needle byte' then,
+            Set 'still matching' to false.
+        Set 'the step' to 'the step' add 1.
+    Return a boolean, 'still matching'.
+
+To 'banned needles in' with a list called 'the pool'.
+    a list called 'the needles' is ["shutdown", "poweroff", "reboot", "restart", "halt", "mount", "pivot", "device node"].
+    a number called 'the hits' is 0.
+    a number called 'how many words' is 'the pool's length.
+    a number called 'how many needles' is 'the needles's length.
+    a number called 'the word position' is 1.
+    While 'the word position' is less than or equal to 'how many words',
+        a text called 'the word' is element 'the word position' of 'the pool',
+        a number called 'these hits' is 'banned needles in one' of 'the word' and 'the needles' and 'how many needles',
+        Set 'the hits' to 'the hits' add 'these hits',
+        Set 'the word position' to 'the word position' add 1.
+    Return a number, 'the hits'.
+
+To 'banned needles in one' with a text called 'the word' and a list called 'the needles' and a number called 'how many needles'.
+    a number called 'the hits' is 0.
+    a number called 'the needle position' is 1.
+    While 'the needle position' is less than or equal to 'how many needles',
+        a text called needle is element 'the needle position' of 'the needles',
+        a boolean called 'it is here' is 'the word holds' of 'the word' and needle,
+        If 'it is here' then,
+            Set 'the hits' to 'the hits' add 1.
+        Set 'the needle position' to 'the needle position' add 1.
+    Return a number, 'the hits'.
+
+Print "banned needles in types: {'banned needles in' of gen_type_words}".
+Print "banned needles in fields: {'banned needles in' of gen_field_words}".
+Print "banned needles in makers: {'banned needles in' of gen_maker_words}".
+Print "banned needles in receivers: {'banned needles in' of gen_receiver_words}".
+Print "banned needles in functions: {'banned needles in' of gen_function_words}".
+Print "banned needles in parameters: {'banned needles in' of gen_parameter_words}".
+Print "banned needles in flags: {'banned needles in' of gen_flag_words}".

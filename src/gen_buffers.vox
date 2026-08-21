@@ -621,8 +621,7 @@ To 'gen leaf buffer truncation' with a text called indent and a boolean called n
     a number called 'the surplus' is 'the surplus draw' add 1.
     a number called 'the payload length' is 'the capacity' add 'the surplus'.
     a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
-    a number called f is gen_flags.
-    a text called 'the path line' is "a text called {'the path name'} is \"{{fl{f}scratch}}/buffer{gen_buffer_names}\"".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/buffer{gen_buffer_names}\"".
     a text called 'the open write' is "open a file for writing called {'the handle in'} at {'the path name'}".
     a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle in'}".
     a text called 'the close write' is "Close {'the handle in'}".

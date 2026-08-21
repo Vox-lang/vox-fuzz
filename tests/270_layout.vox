@@ -2,6 +2,7 @@ see "../src/rng.vox".
 see "../src/harness.vox".
 see "../src/runner.vox".
 see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
 see "../src/gen_core.vox".
 see "../src/gen_buffers.vox".
 see "../src/gen_files.vox".
@@ -79,8 +80,9 @@ To 'check one seed' with a number called seed and a number called budget.
     (The argv the generator chose for this seed, plus the scratch
      directory, exactly as loop_gen.vox hands them to a live program.)
     a list called 'the arguments' is gen_argv.
-    append "--scratch{gen_flags}" to 'the arguments'.
-    append "./vf_layout_scratch" to 'the arguments'.
+    If gen_scratch_argv is not "" then,
+        append gen_scratch_argv to 'the arguments',
+        append "./vf_layout_scratch" to 'the arguments'.
     a number called 'the plain compile' is 'compile vox' of "." and "./vf_layout_plain.vox" and "./vf_layout_plain_bin" and "./vf_layout_plain_cerr".
     a number called 'the drawn compile' is 'compile vox' of "." and "./vf_layout_drawn.vox" and "./vf_layout_drawn_bin" and "./vf_layout_drawn_cerr".
     If 'the plain compile' is not 0 or 'the drawn compile' is not 0 then,

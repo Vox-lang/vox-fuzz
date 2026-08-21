@@ -1,5 +1,6 @@
 see "../src/rng.vox".
 see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
 see "../src/gen_core.vox".
 see "../src/gen_buffers.vox".
 see "../src/gen_files.vox".
@@ -30,7 +31,11 @@ see "../src/gen_misc.vox".
  The name allocator is exercised on its own at the end: thirty words,
  never twice in one program, and a suffix only once they run out.)
 
-Set gen_flags to 1.
+(The buffer leaves that write a file interpolate the scratch flag's
+ name, which a live program gets from its manifest. This test drives the
+ leaves directly rather than through 'gen program', so it names one
+ itself.)
+Set gen_scratch_flag to "'the workspace'".
 Set gen_does_file_io to true.
 
 Print "--- BUF-01, BUF-05: declaration forms and exact capacity ---".

@@ -81,7 +81,7 @@ If 'the drawer overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the draw
 Print 'the drawer's size.
 
 --- BUF-07: a read that truncates, detected by size ---
-a text called 'pantry path' is "{fl1scratch}/buffer1".
+a text called 'pantry path' is "{'the workspace'}/buffer1".
 open a file for writing called 'pantry being written' at 'pantry path'.
 Write "oxibgx6b0xa7ktyzsp2fo1efsdm7wdyv0xmzclqb41y3glangtej4xmf4tqrgt6z4dyb0tirstujctynsdmfcd2j81uzshejw1u3cdunsdqfspqjo1" to 'pantry being written'.
 Close 'pantry being written'.

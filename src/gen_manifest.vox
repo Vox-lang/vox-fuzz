@@ -1,0 +1,1251 @@
+(The prelude manifest.
+
+ Josj, 2026-08-21: "Make everything random unless there is a rule to say
+ otherwise. When in doubt, just make it random."
+
+ What this replaces. Until now the prelude was a TEMPLATE: four things
+ called t1..t4 with fields x1/x2/g1/g2, two methods called 'made at' and
+ 'reflected across', four functions called f1..f4, four flags called
+ fl1label/fl1count/fl1on/fl1scratch. Every leaf that touched any of them
+ wrote the name as a literal, which is why the prelude could never move:
+ change it and thirty leaves stop compiling. `scripts/invariants` over
+ 150 programs on the plain layout reported 118 findings at 100%
+ presence, and nearly every one was that template - 30 identical lines,
+ 33 fixed identifiers, 44 never-exceeded bounds, 9 fixed orderings and
+ the two "always exactly 4" counts.
+
+ Not one of them had a citation. LANGUAGE.md does not say a program has
+ four things, or any things; it puts no ceiling on function count or
+ arity; it says `Parse flags.` is optional (LANGUAGE.md:4478) and that
+ ordinary code may sit between flag schema declarations
+ (LANGUAGE.md:4484). Every one of those 118 rows was an undeclared rule
+ - CLAUDE.md's "real enemy" - baked invisibly into the shape of a leaf.
+
+ So the prelude is now DRAWN, per program, and what it drew is recorded
+ here in a manifest. A leaf no longer says "t4"; it asks the manifest
+ for a thing that has a maker, a receiver and a number field, and if
+ this program has none, the leaf stands aside for one that always works
+ - the eligibility pattern 'gen leaf deep grid' and 'gen leaf stdin
+ read' already use. No leaf may depend on the prelude having a
+ particular shape.
+
+ The shape of the manifest: PARALLEL LISTS, one entry per declaration,
+ with each thing recording where its fields and methods start and how
+ many it has. That is the same representation gen_buffers.vox uses for
+ its claimed-word marks and scripts/invariants.vox uses for its report
+ rows, and it was chosen over a list of things for one reason: Vox
+ things are value types with fixed layout and no growable member, so a
+ thing holding a variable number of fields would have to carry a list
+ anyway. Flat lists plus a first/count pair per owner cost nothing and
+ read the same.
+
+ Names are BARE PHRASES here - "the survey marker", not "'the survey
+ marker'". A phrase is written out through 'gen written name' and
+ 'gen possessive name' (gen_collections.vox), which are the two forms
+ Vox needs and which are not the same string: a phrase with a space in
+ it must be quoted, and the possessive puts its `'s` INSIDE the closing
+ quote. Hand-verified against 0.4.7 - the probes are listed against each
+ rule below.
+
+ Every LANGUAGE.md line number in this file was re-derived against the
+ manual as it stood on 2026-08-21 at 14:26 (5316 lines). The manual MOVED
+ during this work - it grew by 76 lines and everything past about line
+ 800 shifted by 20 to 55 - so if a citation here lands on a code fence or
+ the wrong sentence, the manual has moved again: search for the claim,
+ do not trust the number. Several citations elsewhere in this repo are
+ already stale for exactly that reason; see REPORT-PRELUDE.md.
+
+ What the rules genuinely pin, all of it, each verified rather than
+ assumed:
+
+ - A thing needs at least one field. `A thing called sighting has.` is
+   rejected: "A thing needs at least one field". So the per-thing field
+   count starts at 1, and NOTHING else about it is pinned.
+ - A field may be number, float, boolean, time, or any PREVIOUSLY
+   DEFINED thing (LANGUAGE.md:878-880). text/list/map/buffer are
+   deferred, so those five kinds are the whole space.
+ - A thing's methods name their owner type, so a definition precedes
+   them (LANGUAGE.md:1309). Verified that a thing may otherwise sit
+   anywhere: definitions may be emitted all together and then all the
+   methods, or each definition followed by its own methods - both
+   compile, so which one a program gets is drawn.
+ - Every declared member returns its owner (LANGUAGE.md:1337), a maker's
+   first parameter is not the owner and a receiver's is
+   (LANGUAGE.md:1483-1504), and the manifest is checked both ways
+   (LANGUAGE.md:1365) - so an entry without a definition, or a
+   definition without an entry, is a compile error. Both are emitted
+   from the same manifest row, which is what keeps them in step.
+ - A flag needs BOTH aliases. `is "--tag", it is a text.` is rejected:
+   "Expected long flag alias string like '--number'". So the
+   `"-x" or "--long"` shape is the language's, not ours.
+ - Type names, function names and flag names share ONE global identifier
+   space (LANGUAGE.md:1569), so every name this file hands out at top
+   level must be unique. Field, method and parameter names live in a
+   per-type member space or in a function's locals and are free to
+   repeat across owners.
+
+ Everything else varies: how many things, how many fields, which field
+ types, whether a thing has methods and which kinds, how many functions,
+ their arity and parameter types and whether they return, how many
+ flags, their types and defaults and aliases, whether `Parse flags.` is
+ written at all, and whether the flag declarations are contiguous.)
+
+(--- vocabularies ---
+
+ Each list is a PRIME number of words long, because names are spent out
+ of it on a cycle with a drawn stride (see 'gen cycled word' in
+ gen_collections.vox): a prime length makes every stride coprime with
+ it, so the walk visits every word before repeating and two names in one
+ program are distinct by construction.
+
+ The three top-level pools - types, functions, flags - are disjoint from
+ each other AND from gen_buffer_words (gen_buffers.vox) and 'the value
+ nouns'/'the value verbs' (gen_collections.vox), because all five spend
+ names into the one global identifier space and a collision is a compile
+ error. tests/230_units.vox asserts that disjointness so it cannot rot.
+
+ Field, method and parameter pools do not have to be disjoint from
+ anything - a member space belongs to its type and a parameter to its
+ function - but they are kept separate anyway, which costs nothing and
+ removes a whole class of mistake.
+
+ The parameter pool is much the largest, and for a measured reason. A
+ program spends a parameter name per function parameter, per method
+ parameter, per method local, per function local AND once per level of
+ grid-sink depth - which reaches 17 - so 25 to 30 names out of one pool
+ is ordinary. With 29 words in it, every program spent nearly all of
+ them and the invariant report came back with thirty rows reading "76%
+ of programs use the identifier `share`". A pool a program uses a
+ quarter of leaves nothing above the threshold. Sameness measured, not
+ assumed: the first draft of this file had the small pool and the
+ report said so.
+
+ Single-word entries are checked against the keyword tables at
+ LANGUAGE.md:4687-4824: none is a reserved word, and none is a
+ contextual keyword either, since a contextual keyword is only claimed
+ in its own grammatical position and a bare declaration name is not one.
+ They matter more than the phrases do, because a phrase with a space is
+ always written quoted and a quoted name is never read as a keyword.)
+
+a list called gen_type_words is ["sighting", "the sighting", "waypoint", "the waypoint", "measurement", "the measurement", "bearing", "the bearing", "landmark", "the landmark", "the survey marker", "the tide mark", "coordinate", "the coordinate", "milestone", "the milestone", "the anchorage", "the moorings", "beacon", "the beacon", "the fix", "sounding", "the sounding", "the datum point", "the station", "the trig point", "the boundary stone", "cairn", "the cairn", "the survey plot", "the field note"].
+
+a list called gen_field_words is ["span", "reach", "drift", "depth", "height", "width", "rise", "fall", "offset", "the north offset", "the east side", "the tide height", "the depth in fathoms", "the bearing in degrees", "the paces walked", "the chain length", "the run", "the drop", "the lie", "the sweep", "the arc", "the gradient", "the elevation", "the aspect", "the datum", "the delta", "the spread", "the margin", "the clearance", "the freeboard", "the draught"].
+
+(Makers and receivers get separate pools so a thing that has both can
+ never draw the same name twice into one member space - the second
+ declaration of a name in a type's member space is a compile error
+ (LANGUAGE.md:1590).)
+
+a list called gen_maker_words is ["placed at", "set down at", "pinned to", "logged against", "sited on", "fixed upon", "struck at", "raised by", "marked out", "laid flat", "put aside", "planted deep", "recorded once", "staked out", "noted briefly", "entered anew", "posted onward", "struck", "raised"].
+
+a list called gen_receiver_words is ["reflected across", "mirrored about", "turned over", "flipped round", "inverted through", "reversed inward", "swung wide", "folded double", "carried onward", "shifted sideways", "rotated anticlockwise", "cast outward", "thrown clear", "traced back", "walked home", "read aloud", "sent onward", "mirrored", "reversed"].
+
+a list called gen_function_words is ["reckon", "tot up", "the running sum", "work the total", "add them together", "the combined figure", "roll it along", "the net weight", "gather the parts", "the outcome", "settle it", "the balance so far", "figure it out", "the working tally", "carry the rest", "the reckoning", "chalk the score", "the aggregate", "square away", "the standing order", "the closing entry", "the opening gambit", "the sum so far", "the subtotal", "the gross weight", "add it in", "fold together", "the pooled result", "the summed parts", "gather up", "the collected whole", "the joint holding", "run the numbers", "the takings", "the final answer", "put it back", "the whole reckoning"].
+
+a list called gen_parameter_words is ["share", "portion", "allowance", "helping", "morsel", "sliver", "quota", "ration", "slice", "wedge", "chunk", "dose", "batch", "lot", "load", "heap", "pinch", "dash", "splash", "ounce", "stint", "spell", "leg", "stretch", "bout", "haul", "dollop", "crop", "gain", "surplus", "residue", "balance", "offcut", "trimming", "scrap", "shard", "fragment", "snippet", "spoonful", "smidgen", "estimate", "armful", "handful", "scoop", "gulp", "nibble", "crumb", "speck", "grain", "nugget", "sheaf", "the first share", "the second portion", "the third allowance", "the left helping", "the right morsel", "the near sliver", "the far quota", "the upper ration", "the lower slice", "the inner wedge", "the outer chunk", "the earlier dose", "the later batch", "the leading lot", "the trailing load", "the opening heap", "the closing pinch", "the middle dash", "the given splash", "the supplied ounce", "the incoming stint", "the outgoing spell", "the whole leg", "the full stretch", "the untidy bout", "the small haul", "the quick dollop", "the wet crop", "the last gain", "the long surplus", "the short residue", "the final balance", "the home offcut", "the brief trimming", "the heavy scrap", "the generous shard", "the standing fragment", "the net snippet", "the spare spoonful", "the odd smidgen", "the running estimate", "the useful armful", "the neat handful", "the stray scoop", "the sharp gulp", "the loose nibble", "the level crumb", "the bare speck", "the rough grain", "the tidy nugget"].
+
+a list called gen_flag_words is ["caption", "the caption", "heading", "the heading", "banner", "legend", "callsign", "the callsign", "moniker", "byline", "the byline", "strapline", "subtitle", "annotation", "the annotation", "footnote", "endnote", "docket", "the docket", "voucher", "coupon", "stub", "counterfoil", "workspace", "the workspace", "siding", "layby", "depot", "slipway"].
+
+a list called gen_alias_letters is ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"].
+
+(26 is not prime, so the letter walk cannot take an arbitrary stride and
+ still visit every letter. These are the strides coprime with 26 - every
+ odd number below it except 13 - so one is drawn from here rather than
+ from a range.)
+
+a list called gen_alias_strides is [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25].
+
+(--- cycle state, one triple per vocabulary ---)
+
+a number called gen_type_spent is 0.
+a number called gen_type_offset is 0.
+a number called gen_type_stride is 1.
+
+a number called gen_field_spent is 0.
+a number called gen_field_offset is 0.
+a number called gen_field_stride is 1.
+
+a number called gen_maker_spent is 0.
+a number called gen_maker_offset is 0.
+a number called gen_maker_stride is 1.
+
+a number called gen_receiver_spent is 0.
+a number called gen_receiver_offset is 0.
+a number called gen_receiver_stride is 1.
+
+a number called gen_function_spent is 0.
+a number called gen_function_offset is 0.
+a number called gen_function_stride is 1.
+
+a number called gen_param_spent is 0.
+a number called gen_param_offset is 0.
+a number called gen_param_stride is 1.
+
+a number called gen_flagname_spent is 0.
+a number called gen_flagname_offset is 0.
+a number called gen_flagname_stride is 1.
+
+a number called gen_letter_spent is 0.
+a number called gen_letter_offset is 0.
+a number called gen_letter_stride is 1.
+
+(--- the manifest ---
+
+ Things. 'gen thing field first' and 'gen thing field count' bracket
+ this thing's run in the field lists; the method pair does the same.)
+
+a list called gen_thing_names is [].
+(Both written forms, computed once when the name is drawn rather than
+ on every emit. A phrase and its two renderings are not the same string
+ and every one of them is part of what this program's prelude IS, so the
+ manifest holds all three and the accessors below are plain reads.
+
+ Not a speed fix, and measured rather than assumed: it made no
+ difference to tests/200_never_emitted's 2000-program sweep. What DID
+ get slower is inherent - `'the survey marker's 'the north offset'` is
+ four times the bytes of `i1's x1`, every generated program is
+ correspondingly bigger, and the layout pass walks every byte. The sweep
+ went from 2m12 on main to about 3m40 here, which is why test.sh's
+ per-test cap moved.)
+a list called gen_thing_written_names is [].
+a list called gen_thing_possessives is [].
+a list called gen_thing_field_first is [].
+a list called gen_thing_field_count is [].
+a list called gen_thing_method_first is [].
+a list called gen_thing_method_count is [].
+
+(Fields. `kind`: 0 number, 1 float, 2 boolean, 3 time, 4 a nested thing
+ - the five LANGUAGE.md:878-880 allows, and `target` names the nested
+ thing for kind 4.)
+
+a list called gen_field_names is [].
+a list called gen_field_written_names is [].
+a list called gen_field_possessives is [].
+a list called gen_field_owner is [].
+a list called gen_field_kind is [].
+a list called gen_field_target is [].
+
+(Methods. `kind`: 0 a maker - first parameter is a number, so only the
+ type possessive reaches it (LANGUAGE.md:1483); 1 a receiver - first
+ parameter is the owner, so both call forms reach it
+ (LANGUAGE.md:1504).)
+
+a list called gen_method_names is [].
+a list called gen_method_written_names is [].
+a list called gen_method_owner is [].
+a list called gen_method_kind is [].
+
+(A method's own parameter and the local it returns. Both are drawn from
+ the parameter pool at build time rather than at emit time, so the
+ manifest is the single record of what this program's prelude says and
+ the emitter only reads it.)
+
+a list called gen_method_param_written is [].
+a list called gen_method_param_possessives is [].
+a list called gen_method_local_written is [].
+a list called gen_method_local_possessives is [].
+
+(Which of the owner's number fields this method writes, or 0 when the
+ owner has none - a thing whose only fields are floats, booleans, times
+ or nested things still gets a method, it just returns a fresh instance
+ without writing anything. The leaf that calls the method reads this
+ field back, so it prints what the call put there rather than a default
+ that happened to be nearby.)
+
+a list called gen_method_field is [].
+
+(Functions. `returns` is 1 when the body ends in `Return a number,` and
+ 0 when it only prints - a call site has to know, because `Print <call>`
+ needs a value and a bare call does not.)
+
+a list called gen_function_names is [].
+a list called gen_function_written_names is [].
+a list called gen_function_arity is [].
+a list called gen_function_first_param is [].
+a list called gen_function_returns is [].
+
+(The local a returning function computes into, so `Return a number, r`
+ stops being the same line in every program.)
+
+a list called gen_function_local_written is [].
+
+(Parameters. `kind`: 0 number, 1 text.)
+
+a list called gen_param_names is [].
+a list called gen_param_written_names is [].
+a list called gen_param_kind is [].
+
+(Flags. `kind`: 0 text, 1 number, 2 boolean - the three
+ LANGUAGE.md:4450-4452 lists. `default` is the literal as it is written
+ after `with default`, or "" for a flag that has none. `role` is 1 for
+ the one flag that carries the scratch directory and 0 for every other.)
+
+a list called gen_flag_names is [].
+a list called gen_flag_written_names is [].
+a list called gen_flag_short is [].
+a list called gen_flag_long is [].
+a list called gen_flag_kind is [].
+a list called gen_flag_default is [].
+a list called gen_flag_role is [].
+
+(The scratch flag, as the rest of the fuzzer needs it: the name a
+ generated program writes to read it, and the alias loop_gen.vox passes
+ on the command line. Both are "" when this program declares no scratch
+ flag, which is every program that did not choose file I/O.)
+
+a text called gen_scratch_flag is "".
+
+a text called gen_scratch_argv is "".
+
+(The two prelude functions that are not ordinary manifest functions
+ because something else decides whether they exist: the flag reader
+ (gen_uses_flag_reader) and the grid sink (gen_uses_grid, and its arity
+ is gen_grid_depth). Their names are drawn from the same function pool
+ and spent from the same cycle, so they cannot collide with an ordinary
+ function.)
+
+a text called gen_reader_name is "".
+
+a text called gen_grid_sink_name is "".
+
+a list called gen_grid_sink_params is [].
+
+a text called gen_grid_sink_local is "".
+
+(--- query results ---
+
+ A query returns a boolean and leaves what it found in these, which is
+ the cross-call scratch pattern harness.vox uses for 'the last status'
+ and scripts/invariants.vox for 'the slot values'. Vox returns one
+ value, and a thing plus a field plus an inner field is three.)
+
+a number called gen_pick_thing is 0.
+
+a number called gen_pick_field is 0.
+
+a number called gen_pick_inner_thing is 0.
+
+a number called gen_pick_inner_field is 0.
+
+a number called gen_pick_maker is 0.
+
+a number called gen_pick_receiver is 0.
+
+a number called gen_pick_function is 0.
+
+a number called gen_pick_flag is 0.
+
+(--- small helpers ---)
+
+(A stride for a vocabulary of prime length: anything from 1 to len-1 is
+ coprime with a prime, so the walk visits every word.)
+
+To 'gen stride for' with a number called 'how many words'.
+    a number called 'the room' is 'how many words' minus 1.
+    a number called 'the draw' is 'rng below' of 'the room'.
+    Return a number, 'the draw' add 1.
+
+(A long alias from a phrase: spaces become hyphens behind a `--`. Two
+ flags in one program have distinct phrases, so their aliases are
+ distinct too. Hand-verified that `--the-caption` parses and matches.)
+
+To 'gen dashed alias' with a text called phrase.
+    a buffer called 'the phrase bytes' is "{phrase}".
+    a buffer called 'the alias bytes' is "--".
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'the phrase bytes's size.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the byte count',
+        a number called 'the byte here' is byte 'the position' of 'the phrase bytes',
+        a number called 'the written byte' is 'the byte here',
+        If 'the byte here' is 32 then,
+            Set 'the written byte' to 45.
+        Set byte 1 of 'one byte' to 'the written byte',
+        append 'one byte' to 'the alias bytes',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the alias' is 'the alias bytes' as text.
+    Return a text, 'the alias'.
+
+(One unspent letter, as a short alias. The walk takes a coprime stride
+ over the alphabet so no two flags in a program share a letter and the
+ letters a program uses are not consecutive.)
+
+To 'gen short alias'.
+    Set gen_letter_spent to gen_letter_spent add 1.
+    a number called 'the step' is gen_letter_spent multiply gen_letter_stride.
+    a number called 'the raw slot' is 'the step' add gen_letter_offset.
+    a number called 'the slot' is 'the raw slot' modulo 26.
+    a number called 'the position' is 'the slot' add 1.
+    a text called 'the letter' is element 'the position' of gen_alias_letters.
+    a text called 'the alias' is "-{'the letter'}".
+    Return a text, 'the alias'.
+
+(--- reading the manifest back out ---
+
+ A name is stored as a bare phrase and written in one of two forms.
+ These are the only places the generator turns a manifest row into
+ source text, so a name that needs quoting cannot be written unquoted by
+ accident.)
+
+To 'gen thing written' with a number called 'the thing'.
+    a text called 'the name' is element 'the thing' of gen_thing_written_names.
+    Return a text, 'the name'.
+
+To 'gen thing possessive' with a number called 'the thing'.
+    a text called 'the name' is element 'the thing' of gen_thing_possessives.
+    Return a text, 'the name'.
+
+To 'gen field written' with a number called 'the field'.
+    a text called 'the name' is element 'the field' of gen_field_written_names.
+    Return a text, 'the name'.
+
+To 'gen field possessive' with a number called 'the field'.
+    a text called 'the name' is element 'the field' of gen_field_possessives.
+    Return a text, 'the name'.
+
+To 'gen method written' with a number called 'the method'.
+    a text called 'the name' is element 'the method' of gen_method_written_names.
+    Return a text, 'the name'.
+
+To 'gen function written' with a number called 'the function'.
+    a text called 'the name' is element 'the function' of gen_function_written_names.
+    Return a text, 'the name'.
+
+To 'gen parameter written' with a number called 'the parameter'.
+    a text called 'the name' is element 'the parameter' of gen_param_written_names.
+    Return a text, 'the name'.
+
+To 'gen method param written' with a number called 'the method'.
+    a text called 'the name' is element 'the method' of gen_method_param_written.
+    Return a text, 'the name'.
+
+To 'gen method param possessive' with a number called 'the method'.
+    a text called 'the name' is element 'the method' of gen_method_param_possessives.
+    Return a text, 'the name'.
+
+To 'gen method local written' with a number called 'the method'.
+    a text called 'the name' is element 'the method' of gen_method_local_written.
+    Return a text, 'the name'.
+
+To 'gen method local possessive' with a number called 'the method'.
+    a text called 'the name' is element 'the method' of gen_method_local_possessives.
+    Return a text, 'the name'.
+
+To 'gen function local written' with a number called 'the function'.
+    a text called 'the name' is element 'the function' of gen_function_local_written.
+    Return a text, 'the name'.
+
+To 'gen flag written' with a number called 'the flag'.
+    a text called 'the name' is element 'the flag' of gen_flag_written_names.
+    Return a text, 'the name'.
+
+(The type keyword for a field, as it is written in a definition.)
+
+To 'gen field type written' with a number called 'the field'.
+    a number called 'the kind' is element 'the field' of gen_field_kind.
+    If 'the kind' is 0 then,
+        Return a text, "number".
+    If 'the kind' is 1 then,
+        Return a text, "float".
+    If 'the kind' is 2 then,
+        Return a text, "boolean".
+    If 'the kind' is 3 then,
+        Return a text, "time".
+    a number called 'the target' is element 'the field' of gen_field_target.
+    a text called 'the target name' is 'gen thing written' of 'the target'.
+    Return a text, 'the target name'.
+
+(A field's default, written after `is`, or "" for a field that takes its
+ type's zero value. LANGUAGE.md:853 says a field without a default takes
+ its type's zero value, so BOTH forms are legal and which one a field
+ gets is drawn. A nested thing has no literal to default to and a time
+ has none either, so those two never carry one.)
+
+To 'gen field default written' with a number called 'the field'.
+    a number called 'the kind' is element 'the field' of gen_field_kind.
+    If 'the kind' is 3 then,
+        Return a text, "".
+    If 'the kind' is 4 then,
+        Return a text, "".
+    a number called 'the default draw' is 'rng below' of 13.
+    If 'the default draw' is less than 6 then,
+        Return a text, "".
+    If 'the kind' is 0 then,
+        a text called 'a number literal' is 'literal integer',
+        Return a text, 'a number literal'.
+    If 'the kind' is 1 then,
+        a text called 'a float literal' is 'gen extreme float',
+        Return a text, 'a float literal'.
+    a number called 'the truth draw' is 'rng below' of 11.
+    If 'the truth draw' is less than 6 then,
+        Return a text, "false".
+    Return a text, "true".
+
+(--- building the manifest ---
+
+ Called once per program from 'gen program', after the reseed and after
+ gen_does_file_io has been decided - the scratch flag exists only for a
+ program that chose file I/O, and that decision is what tells this
+ whether to declare one.)
+
+To 'gen build manifest'.
+    Set gen_thing_names to [].
+    Set gen_thing_written_names to [].
+    Set gen_thing_possessives to [].
+    Set gen_thing_field_first to [].
+    Set gen_thing_field_count to [].
+    Set gen_thing_method_first to [].
+    Set gen_thing_method_count to [].
+    Set gen_field_names to [].
+    Set gen_field_written_names to [].
+    Set gen_field_possessives to [].
+    Set gen_field_owner to [].
+    Set gen_field_kind to [].
+    Set gen_field_target to [].
+    Set gen_method_names to [].
+    Set gen_method_written_names to [].
+    Set gen_method_owner to [].
+    Set gen_method_kind to [].
+    Set gen_method_param_written to [].
+    Set gen_method_param_possessives to [].
+    Set gen_method_local_written to [].
+    Set gen_method_local_possessives to [].
+    Set gen_method_field to [].
+    Set gen_function_names to [].
+    Set gen_function_written_names to [].
+    Set gen_function_arity to [].
+    Set gen_function_first_param to [].
+    Set gen_function_returns to [].
+    Set gen_function_local_written to [].
+    Set gen_param_names to [].
+    Set gen_param_written_names to [].
+    Set gen_param_kind to [].
+    Set gen_flag_names to [].
+    Set gen_flag_written_names to [].
+    Set gen_flag_short to [].
+    Set gen_flag_long to [].
+    Set gen_flag_kind to [].
+    Set gen_flag_default to [].
+    Set gen_flag_role to [].
+    Set gen_grid_sink_params to [].
+    Set gen_scratch_flag to "".
+    Set gen_scratch_argv to "".
+    Set gen_reader_name to "".
+    Set gen_grid_sink_name to "".
+    Set gen_grid_sink_local to "".
+    'gen reset manifest cycles'.
+    'gen build manifest things'.
+    'gen build manifest functions'.
+    'gen build manifest flags'.
+    'gen build manifest extras'.
+    Return a number, 0.
+
+To 'gen reset manifest cycles'.
+    Set gen_type_spent to 0.
+    a number called 'how many types' is gen_type_words's length.
+    Set gen_type_offset to 'rng below' of 'how many types'.
+    Set gen_type_stride to 'gen stride for' of 'how many types'.
+    Set gen_field_spent to 0.
+    a number called 'how many fields' is gen_field_words's length.
+    Set gen_field_offset to 'rng below' of 'how many fields'.
+    Set gen_field_stride to 'gen stride for' of 'how many fields'.
+    Set gen_maker_spent to 0.
+    a number called 'how many makers' is gen_maker_words's length.
+    Set gen_maker_offset to 'rng below' of 'how many makers'.
+    Set gen_maker_stride to 'gen stride for' of 'how many makers'.
+    Set gen_receiver_spent to 0.
+    a number called 'how many receivers' is gen_receiver_words's length.
+    Set gen_receiver_offset to 'rng below' of 'how many receivers'.
+    Set gen_receiver_stride to 'gen stride for' of 'how many receivers'.
+    Set gen_function_spent to 0.
+    a number called 'how many functions' is gen_function_words's length.
+    Set gen_function_offset to 'rng below' of 'how many functions'.
+    Set gen_function_stride to 'gen stride for' of 'how many functions'.
+    Set gen_param_spent to 0.
+    a number called 'how many parameters' is gen_parameter_words's length.
+    Set gen_param_offset to 'rng below' of 'how many parameters'.
+    Set gen_param_stride to 'gen stride for' of 'how many parameters'.
+    Set gen_flagname_spent to 0.
+    a number called 'how many flag words' is gen_flag_words's length.
+    Set gen_flagname_offset to 'rng below' of 'how many flag words'.
+    Set gen_flagname_stride to 'gen stride for' of 'how many flag words'.
+    Set gen_letter_spent to 0.
+    Set gen_letter_offset to 'rng below' of 26.
+    a number called 'how many strides' is gen_alias_strides's length.
+    a number called 'the stride draw' is 'rng below' of 'how many strides'.
+    a number called 'the stride slot' is 'the stride draw' add 1.
+    Set gen_letter_stride to element 'the stride slot' of gen_alias_strides.
+    Return a number, 0.
+
+(How many things. Zero is a real possibility: LANGUAGE.md nowhere says a
+ program has any things, and a program with none is legal Vox. Every
+ leaf that wants one asks the manifest first.)
+
+To 'gen build manifest things'.
+    a number called 'how many things' is 'rng below' of 7.
+    a number called 'the thing made' is 0.
+    While 'the thing made' is less than 'how many things',
+        'gen build one thing',
+        Set 'the thing made' to 'the thing made' add 1.
+    Return a number, 0.
+
+To 'gen build one thing'.
+    Set gen_type_spent to gen_type_spent add 1.
+    a text called 'the type phrase' is 'gen cycled word' of gen_type_words and gen_type_spent and gen_type_offset and gen_type_stride.
+    append 'the type phrase' to gen_thing_names.
+    a text called 'the type written' is 'gen written name' of 'the type phrase'.
+    append 'the type written' to gen_thing_written_names.
+    a text called 'the type possessive' is 'gen possessive name' of 'the type phrase'.
+    append 'the type possessive' to gen_thing_possessives.
+    a number called 'this thing' is gen_thing_names's length.
+    (A thing needs at least one field - hand-verified against 0.4.7:
+     `A thing called sighting has.` is rejected with "A thing needs at
+     least one field". That floor is the only thing pinned; no rule
+     anywhere sets a ceiling, so the count above it is drawn.)
+    a number called 'the field start' is gen_field_names's length add 1.
+    a number called 'the field draw' is 'rng below' of 4.
+    a number called 'how many fields' is 'the field draw' add 1.
+    a number called 'the field made' is 0.
+    While 'the field made' is less than 'how many fields',
+        'gen build one field' of 'this thing',
+        Set 'the field made' to 'the field made' add 1.
+    append 'the field start' to gen_thing_field_first.
+    append 'how many fields' to gen_thing_field_count.
+    a number called 'the method start' is gen_method_names's length add 1.
+    (Weighted toward two, for the reason 'gen field kind draw' gives: a
+     thing with a maker AND a receiver is the one shape the member leaf
+     can drive, and a flat draw over 0/1/2 left it reachable in 4% of
+     programs. Zero methods stays common - most things have none.)
+    a number called 'the method draw' is 'rng below' of 13.
+    a number called 'how many methods' is 2.
+    If 'the method draw' is less than 3 then,
+        Set 'how many methods' to 0.
+    If 'the method draw' is greater than 2 and 'the method draw' is less than 7 then,
+        Set 'how many methods' to 1.
+    'gen build methods for' of 'this thing' and 'how many methods'.
+    append 'the method start' to gen_thing_method_first.
+    append 'how many methods' to gen_thing_method_count.
+    Return a number, 0.
+
+To 'gen build one field' with a number called 'this thing'.
+    Set gen_field_spent to gen_field_spent add 1.
+    a text called 'the field phrase' is 'gen cycled word' of gen_field_words and gen_field_spent and gen_field_offset and gen_field_stride.
+    append 'the field phrase' to gen_field_names.
+    a text called 'the field written' is 'gen written name' of 'the field phrase'.
+    append 'the field written' to gen_field_written_names.
+    a text called 'the field possessive' is 'gen possessive name' of 'the field phrase'.
+    append 'the field possessive' to gen_field_possessives.
+    append 'this thing' to gen_field_owner.
+    (LANGUAGE.md:878-880: a field may be number, float, boolean, time,
+     or any PREVIOUSLY DEFINED thing. text, list, map and buffer are
+     deferred, so these five are the whole space and the draw covers it.
+     The nesting kind falls back to a number when there is no earlier
+     thing to nest, which is the "previously defined" half of the rule.)
+    a number called 'the earlier things' is 'this thing' minus 1.
+    a number called 'the kind' is 'gen field kind draw'.
+    If 'the kind' is 4 and 'the earlier things' is 0 then,
+        Set 'the kind' to 0.
+    append 'the kind' to gen_field_kind.
+    a number called 'the target' is 0.
+    If 'the kind' is 4 then,
+        a number called 'the target draw' is 'rng below' of 'the earlier things',
+        Set 'the target' to 'the target draw' add 1.
+    append 'the target' to gen_field_target.
+    Return a number, 0.
+
+(All five kinds, weighted rather than uniform. A NUMBER field is the
+ only one the statement stream can write a literal into, so a thing
+ whose fields are all floats and booleans is a thing no leaf can use -
+ and with a flat draw over five kinds, 57% of things came out that way
+ and the member leaf's reach fell from 27 programs in 150 to 6.
+
+ Weighting a draw is not the sameness CLAUDE.md forbids: no line of
+ LANGUAGE.md says how many fields of which type a thing has, so every
+ distribution over the five is equally legal and none of them is a
+ repeatable PATTERN. What would be a defect is a fixed count or a fixed
+ type, and neither is here - every kind stays reachable, floats,
+ booleans, times and nested things included.)
+
+To 'gen field kind draw'.
+    a number called 'the draw' is 'rng below' of 13.
+    If 'the draw' is less than 6 then,
+        Return a number, 0.
+    If 'the draw' is less than 8 then,
+        Return a number, 1.
+    If 'the draw' is less than 10 then,
+        Return a number, 2.
+    If 'the draw' is less than 11 then,
+        Return a number, 3.
+    Return a number, 4.
+
+(Two methods means one of each kind, because a thing that has both is
+ the one shape 'gen leaf thing member' needs - the maker brings an
+ instance into being through the type possessive and the receiver
+ transforms it through the instance possessive. Which of the two is
+ declared first is drawn; nothing pins it.
+
+ Prime moduli throughout. This LCG's low bits are correlated - the
+ hazard is documented above 'gen leaf loop control' and has caught this
+ generator out three times - and a plain `'rng below' of 2` here would
+ lock the kind of a single method to the parity of the draw before it.)
+
+To 'gen build methods for' with a number called 'this thing' and a number called 'how many methods'.
+    If 'how many methods' is 0 then,
+        Return a number, 0.
+    If 'how many methods' is 1 then,
+        a number called 'the kind draw' is 'rng below' of 13,
+        a number called 'the only kind' is 0,
+        If 'the kind draw' is greater than 6 then,
+            Set 'the only kind' to 1.
+        'gen build one method' of 'this thing' and 'the only kind',
+        Return a number, 0.
+    a number called 'the order draw' is 'rng below' of 11.
+    If 'the order draw' is less than 6 then,
+        'gen build one method' of 'this thing' and 0,
+        'gen build one method' of 'this thing' and 1,
+        Return a number, 0.
+    'gen build one method' of 'this thing' and 1.
+    'gen build one method' of 'this thing' and 0.
+    Return a number, 0.
+
+To 'gen build one method' with a number called 'this thing' and a number called 'the kind'.
+    a text called 'the method phrase' is "".
+    If 'the kind' is 0 then,
+        Set gen_maker_spent to gen_maker_spent add 1,
+        Set 'the method phrase' to 'gen cycled word' of gen_maker_words and gen_maker_spent and gen_maker_offset and gen_maker_stride.
+    If 'the kind' is 1 then,
+        Set gen_receiver_spent to gen_receiver_spent add 1,
+        Set 'the method phrase' to 'gen cycled word' of gen_receiver_words and gen_receiver_spent and gen_receiver_offset and gen_receiver_stride.
+    append 'the method phrase' to gen_method_names.
+    a text called 'the method written' is 'gen written name' of 'the method phrase'.
+    append 'the method written' to gen_method_written_names.
+    append 'this thing' to gen_method_owner.
+    append 'the kind' to gen_method_kind.
+    a text called 'the parameter phrase' is 'gen fresh parameter phrase'.
+    a text called 'the parameter written' is 'gen written name' of 'the parameter phrase'.
+    append 'the parameter written' to gen_method_param_written.
+    a text called 'the parameter possessive' is 'gen possessive name' of 'the parameter phrase'.
+    append 'the parameter possessive' to gen_method_param_possessives.
+    a text called 'the local phrase' is 'gen fresh parameter phrase'.
+    a text called 'the local written' is 'gen written name' of 'the local phrase'.
+    append 'the local written' to gen_method_local_written.
+    a text called 'the local possessive' is 'gen possessive name' of 'the local phrase'.
+    append 'the local possessive' to gen_method_local_possessives.
+    a number called 'the written field' is 'gen a number field of' of 'this thing'.
+    append 'the written field' to gen_method_field.
+    Return a number, 0.
+
+(One unspent parameter phrase. A method's parameter, a method's local
+ and an ordinary function's parameters all come from here, so no two
+ names inside one function body can collide however the draws fall.)
+
+To 'gen fresh parameter phrase'.
+    Set gen_param_spent to gen_param_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of gen_parameter_words and gen_param_spent and gen_param_offset and gen_param_stride.
+    Return a text, 'the phrase'.
+
+(How many functions, and of what shape. LANGUAGE.md:671-701 puts no
+ ceiling on either count or arity, and says parameters are optional - so
+ zero functions and zero-parameter functions are both ordinary, and the
+ old prelude's "exactly four, arities 0/1/2/1" was ours alone.)
+
+To 'gen build manifest functions'.
+    a number called 'how many functions' is 'rng below' of 7.
+    a number called 'the function made' is 0.
+    While 'the function made' is less than 'how many functions',
+        'gen build one function',
+        Set 'the function made' to 'the function made' add 1.
+    Return a number, 0.
+
+To 'gen build one function'.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the function phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    append 'the function phrase' to gen_function_names.
+    a text called 'the function written' is 'gen written name' of 'the function phrase'.
+    append 'the function written' to gen_function_written_names.
+    a number called 'the parameter start' is gen_param_names's length add 1.
+    (Arity 0 to 3, weighted a little toward two. A grid clause fills one
+     parameter each and the leaf that chains two of them therefore needs
+     a two-number callee; under a flat draw that leaf's reach fell from
+     37 programs in 150 to 14. Every arity stays reachable, three
+     included - which the old fixed prelude's 0/1/2 never was.)
+    a number called 'the arity draw' is 'rng below' of 13.
+    a number called 'how many parameters' is 0.
+    If 'the arity draw' is greater than 2 and 'the arity draw' is less than 6 then,
+        Set 'how many parameters' to 1.
+    If 'the arity draw' is greater than 5 and 'the arity draw' is less than 10 then,
+        Set 'how many parameters' to 2.
+    If 'the arity draw' is greater than 9 then,
+        Set 'how many parameters' to 3.
+    a number called 'the parameter made' is 0.
+    While 'the parameter made' is less than 'how many parameters',
+        a text called 'the parameter phrase' is 'gen fresh parameter phrase',
+        append 'the parameter phrase' to gen_param_names,
+        a text called 'the parameter written' is 'gen written name' of 'the parameter phrase',
+        append 'the parameter written' to gen_param_written_names,
+        a number called 'the type draw' is 'rng below' of 13,
+        a number called 'the parameter kind' is 0,
+        If 'the type draw' is greater than 9 then,
+            Set 'the parameter kind' to 1.
+        append 'the parameter kind' to gen_param_kind,
+        Set 'the parameter made' to 'the parameter made' add 1.
+    append 'the parameter start' to gen_function_first_param.
+    append 'how many parameters' to gen_function_arity.
+    (A function that returns and one that only prints are both ordinary
+     Vox (LANGUAGE.md:679-687 shows both), so which this is gets drawn.
+     A call site reads it back rather than assuming: `Print <call>` needs
+     a value and a bare call does not.)
+    a number called 'the return draw' is 'rng below' of 13.
+    a number called 'the returns' is 1.
+    If 'the return draw' is less than 4 then,
+        Set 'the returns' to 0.
+    append 'the returns' to gen_function_returns.
+    a text called 'the local phrase' is 'gen fresh parameter phrase'.
+    a text called 'the local written' is 'gen written name' of 'the local phrase'.
+    append 'the local written' to gen_function_local_written.
+    Return a number, 0.
+
+(How many flags, and where the scratch flag sits among them. The scratch
+ flag is declared only when this program chose file I/O, because that is
+ the only reason it exists; loop_gen.vox passes its alias only when it
+ was declared, so a program with no flags is invoked with no flags.
+ Verified against 0.4.7 that an undeclared flag on argv is neither a
+ compile nor a runtime error - it falls through to `arguments's all` -
+ so passing one anyway would have been harmless, but there is no reason
+ to.
+
+ Its SLOT is drawn rather than fixed at the end: nothing pins the order
+ of flag declarations, and a scratch flag always written last would be
+ exactly the kind of sameness with no citation this work is removing.)
+
+To 'gen build manifest flags'.
+    a number called 'how many ordinary flags' is 'rng below' of 5.
+    a number called 'how many slots' is 'how many ordinary flags'.
+    a number called 'the scratch slot' is 0.
+    If gen_does_file_io then,
+        Set 'how many slots' to 'how many ordinary flags' add 1,
+        a number called 'the slot draw' is 'rng below' of 'how many slots',
+        Set 'the scratch slot' to 'the slot draw' add 1.
+    a number called 'the flag made' is 0.
+    While 'the flag made' is less than 'how many slots',
+        a number called 'this slot' is 'the flag made' add 1,
+        a number called 'the role' is 0,
+        If 'this slot' is 'the scratch slot' then,
+            Set 'the role' to 1.
+        'gen build one flag' of 'the role',
+        Set 'the flag made' to 'the flag made' add 1.
+    Return a number, 0.
+
+To 'gen build one flag' with a number called 'the role'.
+    Set gen_flagname_spent to gen_flagname_spent add 1.
+    a text called 'the flag phrase' is 'gen cycled word' of gen_flag_words and gen_flagname_spent and gen_flagname_offset and gen_flagname_stride.
+    append 'the flag phrase' to gen_flag_names.
+    a text called 'the flag written' is 'gen written name' of 'the flag phrase'.
+    append 'the flag written' to gen_flag_written_names.
+    (Both aliases, always. Hand-verified against 0.4.7 that a schema
+     with only a long alias is rejected - "Expected long flag alias
+     string like '--number'" - so the `"-x" or "--long"` shape is the
+     language's rule, not ours, and it is the one piece of the flag line
+     that is the same in every program by right.)
+    a text called 'the short alias' is 'gen short alias'.
+    append 'the short alias' to gen_flag_short.
+    a text called 'the long alias' is 'gen dashed alias' of 'the flag phrase'.
+    append 'the long alias' to gen_flag_long.
+    (The scratch flag carries a path, so it is a text. Every other flag
+     draws across the three types LANGUAGE.md:4450-4452 lists.)
+    a number called 'the kind' is 0.
+    If 'the role' is 0 then,
+        Set 'the kind' to 'rng below' of 3.
+    append 'the kind' to gen_flag_kind.
+    a text called 'the default' is 'gen flag default for' of 'the kind'.
+    append 'the default' to gen_flag_default.
+    append 'the role' to gen_flag_role.
+    If 'the role' is 1 then,
+        Set gen_scratch_flag to 'the flag written',
+        (Either alias reaches the same flag, so which one the harness
+         passes is drawn too - the short and long paths through the
+         parser are different code.)
+        Set gen_scratch_argv to 'the long alias',
+        a number called 'the alias draw' is 'rng below' of 11,
+        If 'the alias draw' is less than 5 then,
+            Set gen_scratch_argv to 'the short alias'.
+    Return a number, 0.
+
+(A default, or none. LANGUAGE.md:4465-4468: a flag with no default holds
+ its type's empty value, so both forms are legal for every type and
+ which one a flag gets is drawn. Hand-verified against 0.4.7 that a
+ boolean flag takes `with default true` and a number flag takes a
+ fifteen-digit default, both of which the old prelude never wrote.
+
+ `and is required` is the one modifier never drawn: a required flag that
+ this program's argv does not supply aborts at runtime, and the
+ invariant every generated program must hold is that it compiles AND
+ runs.)
+
+To 'gen flag default for' with a number called 'the kind'.
+    a number called 'the default draw' is 'rng below' of 13.
+    If 'the default draw' is less than 7 then,
+        Return a text, "".
+    If 'the kind' is 0 then,
+        a text called 'a word' is 'gen word from' of gen_type_words,
+        Return a text, "\"{'a word'}\"".
+    If 'the kind' is 1 then,
+        a number called 'the digit count' is 'rng below' of 15 add 1,
+        a text called 'the digits' is 'gen random digits' of 'the digit count',
+        Return a text, 'the digits'.
+    a number called 'the truth draw' is 'rng below' of 11.
+    If 'the truth draw' is less than 5 then,
+        Return a text, "false".
+    Return a text, "true".
+
+(The two prelude functions whose existence something else decides. Their
+ names come out of the ordinary function cycle so they cannot collide
+ with a manifest function, and they are drawn whether or not the program
+ uses them - drawing them conditionally would make the seed-to-name
+ mapping depend on a decision taken elsewhere, which is exactly the bug
+ the 'gen reset value names' comment in 'gen program' records.)
+
+To 'gen build manifest extras'.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the reader phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Set gen_reader_name to 'gen written name' of 'the reader phrase'.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the sink phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Set gen_grid_sink_name to 'gen written name' of 'the sink phrase'.
+    (The sink's parameters are named from the parameter cycle like any
+     other function's, so `p1..pN` is gone from the corpus too. Drawn to
+     the depth this program committed to in 'gen program'.)
+    a number called 'the parameter made' is 0.
+    While 'the parameter made' is less than gen_grid_depth,
+        a text called 'the parameter phrase' is 'gen fresh parameter phrase',
+        a text called 'the parameter name' is 'gen written name' of 'the parameter phrase',
+        append 'the parameter name' to gen_grid_sink_params,
+        Set 'the parameter made' to 'the parameter made' add 1.
+    a text called 'the local phrase' is 'gen fresh parameter phrase'.
+    Set gen_grid_sink_local to 'gen written name' of 'the local phrase'.
+    Return a number, 0.
+
+(--- queries ---
+
+ Each answers "does this program's prelude have the shape I need", and
+ leaves what it found in the gen_pick_* globals. A leaf that gets false
+ is not eligible and stands aside for one that always works.)
+
+(A thing with at least one number field: what every leaf that writes a
+ field needs, since a number is the only field type the statement stream
+ has a literal for.)
+
+To 'gen manifest pick a plain thing'.
+    a list called 'the candidates' is [].
+    a number called 'how many fields' is gen_field_names's length.
+    a number called 'the field' is 1.
+    While 'the field' is less than or equal to 'how many fields',
+        a number called 'the kind' is element 'the field' of gen_field_kind,
+        If 'the kind' is 0 then,
+            append 'the field' to 'the candidates'.
+        Set 'the field' to 'the field' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_field to element 'the slot' of 'the candidates'.
+    Set gen_pick_thing to element gen_pick_field of gen_field_owner.
+    Return a boolean, true.
+
+(A thing holding a thing that has a number field: the chained possessive
+ shape. The old prelude guaranteed it with t3; nothing in the language
+ does, so a program without one simply cannot host this leaf.)
+
+To 'gen manifest pick a nested thing'.
+    Set gen_nested_outer to [].
+    Set gen_nested_inner to [].
+    a number called 'how many fields' is gen_field_names's length.
+    a number called 'the field' is 1.
+    While 'the field' is less than or equal to 'how many fields',
+        a number called 'the kind' is element 'the field' of gen_field_kind,
+        If 'the kind' is 4 then,
+            'gen collect a number field of' of 'the field'.
+        Set 'the field' to 'the field' add 1.
+    a number called 'how many candidates' is gen_nested_outer's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_field to element 'the slot' of gen_nested_outer.
+    Set gen_pick_inner_field to element 'the slot' of gen_nested_inner.
+    Set gen_pick_thing to element gen_pick_field of gen_field_owner.
+    Set gen_pick_inner_thing to element gen_pick_field of gen_field_target.
+    Return a boolean, true.
+
+(A thing with a maker AND a receiver, plus a number field for both to
+ write - the shape 'gen leaf thing member' drives. All three have to
+ land on the same thing, so the search is per thing rather than per
+ member.)
+
+To 'gen manifest pick a thing with both members'.
+    a list called 'the candidates' is [].
+    a number called 'how many things' is gen_thing_names's length.
+    a number called 'the thing' is 1.
+    While 'the thing' is less than or equal to 'how many things',
+        a boolean called 'this one fits' is 'gen thing has both members' of 'the thing',
+        If 'this one fits' then,
+            append 'the thing' to 'the candidates'.
+        Set 'the thing' to 'the thing' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_thing to element 'the slot' of 'the candidates'.
+    'gen locate members of' of gen_pick_thing.
+    'gen locate a number field of' of gen_pick_thing.
+    Return a boolean, true.
+
+To 'gen thing has both members' with a number called 'the thing'.
+    a number called 'the first method' is element 'the thing' of gen_thing_method_first.
+    a number called 'how many methods' is element 'the thing' of gen_thing_method_count.
+    a boolean called 'a maker is here' is false.
+    a boolean called 'a receiver is here' is false.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many methods',
+        a number called 'the method' is 'the first method' add 'the step',
+        a number called 'the kind' is element 'the method' of gen_method_kind,
+        If 'the kind' is 0 then,
+            Set 'a maker is here' to true.
+        If 'the kind' is 1 then,
+            Set 'a receiver is here' to true.
+        Set 'the step' to 'the step' add 1.
+    If 'a maker is here' is false then,
+        Return a boolean, false.
+    If 'a receiver is here' is false then,
+        Return a boolean, false.
+    a boolean called 'a number field is here' is 'gen thing has a number field' of 'the thing'.
+    Return a boolean, 'a number field is here'.
+
+To 'gen thing has a number field' with a number called 'the thing'.
+    a number called 'the field' is 'gen a number field of' of 'the thing'.
+    If 'the field' is 0 then,
+        Return a boolean, false.
+    Return a boolean, true.
+
+(One of this thing's number fields, drawn, or 0 when it has none. The
+ only search that walks a single owner's run, so everything that needs a
+ writable field goes through it.)
+
+To 'gen a number field of' with a number called 'the thing'.
+    a number called 'the first field' is element 'the thing' of gen_thing_field_first.
+    a number called 'how many fields' is element 'the thing' of gen_thing_field_count.
+    a list called 'the candidates' is [].
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many fields',
+        a number called 'the field' is 'the first field' add 'the step',
+        a number called 'the kind' is element 'the field' of gen_field_kind,
+        If 'the kind' is 0 then,
+            append 'the field' to 'the candidates'.
+        Set 'the step' to 'the step' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a number, 0.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    a number called 'the chosen' is element 'the slot' of 'the candidates'.
+    Return a number, 'the chosen'.
+
+(Side effects, both of them: 'gen locate members of' fills
+ gen_pick_maker and gen_pick_receiver, 'gen locate a number field of'
+ fills gen_pick_field. Only ever called for a thing already known to
+ have what is being looked for.)
+
+To 'gen locate members of' with a number called 'the thing'.
+    a number called 'the first method' is element 'the thing' of gen_thing_method_first.
+    a number called 'how many methods' is element 'the thing' of gen_thing_method_count.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many methods',
+        a number called 'the method' is 'the first method' add 'the step',
+        a number called 'the kind' is element 'the method' of gen_method_kind,
+        If 'the kind' is 0 then,
+            Set gen_pick_maker to 'the method'.
+        If 'the kind' is 1 then,
+            Set gen_pick_receiver to 'the method'.
+        Set 'the step' to 'the step' add 1.
+    Return a number, 0.
+
+To 'gen locate a number field of' with a number called 'the thing'.
+    a number called 'the field' is 'gen a number field of' of 'the thing'.
+    Set gen_pick_field to 'the field'.
+    Return a number, 0.
+
+(The nested search's two accumulators. A pair of parallel lists rather
+ than a returned tuple, for the reason the header gives: Vox returns one
+ value and this search finds two.)
+
+a list called gen_nested_outer is [].
+
+a list called gen_nested_inner is [].
+
+To 'gen collect a number field of' with a number called 'the outer field'.
+    a number called 'the target' is element 'the outer field' of gen_field_target.
+    a number called 'the first field' is element 'the target' of gen_thing_field_first.
+    a number called 'how many fields' is element 'the target' of gen_thing_field_count.
+    a number called 'the step' is 0.
+    While 'the step' is less than 'how many fields',
+        a number called 'the field' is 'the first field' add 'the step',
+        a number called 'the kind' is element 'the field' of gen_field_kind,
+        If 'the kind' is 0 then,
+            append 'the outer field' to gen_nested_outer,
+            append 'the field' to gen_nested_inner.
+        Set 'the step' to 'the step' add 1.
+    Return a number, 0.
+
+(Any function at all. The call leaves read its arity and parameter types
+ back and write a call that matches, so every shape the manifest can
+ hold is callable - including the three-parameter shape the old
+ hardcoded f1/f2/f3 could never reach.)
+
+To 'gen manifest pick a function'.
+    a number called 'how many functions' is gen_function_names's length.
+    If 'how many functions' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many functions'.
+    Set gen_pick_function to 'the draw' add 1.
+    Return a boolean, true.
+
+(A function that yields a value, for a call site that prints the result.)
+
+To 'gen manifest pick a returning function'.
+    a list called 'the candidates' is [].
+    a number called 'how many functions' is gen_function_names's length.
+    a number called 'the function' is 1.
+    While 'the function' is less than or equal to 'how many functions',
+        a number called 'the returns' is element 'the function' of gen_function_returns,
+        If 'the returns' is 1 then,
+            append 'the function' to 'the candidates'.
+        Set 'the function' to 'the function' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_function to element 'the slot' of 'the candidates'.
+    Return a boolean, true.
+
+(A function whose parameters are all numbers and of which there are at
+ least this many: what a grid clause needs, since `each ... from ... to
+ ...` yields numbers and fills one parameter each. The caller reads the
+ arity back and writes that many clauses.)
+
+To 'gen manifest pick a numeric function from' with a number called 'the least arity'.
+    a list called 'the candidates' is [].
+    a number called 'how many functions' is gen_function_names's length.
+    a number called 'the function' is 1.
+    While 'the function' is less than or equal to 'how many functions',
+        a boolean called 'this one fits' is 'gen function is all numbers from' of 'the function' and 'the least arity',
+        If 'this one fits' then,
+            append 'the function' to 'the candidates'.
+        Set 'the function' to 'the function' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_function to element 'the slot' of 'the candidates'.
+    Return a boolean, true.
+
+To 'gen function is all numbers from' with a number called 'the function' and a number called 'the least arity'.
+    a number called 'this arity' is element 'the function' of gen_function_arity.
+    If 'this arity' is less than 'the least arity' then,
+        Return a boolean, false.
+    a boolean called 'all numbers' is 'gen function is all numbers of' of 'the function' and 'this arity'.
+    Return a boolean, 'all numbers'.
+
+To 'gen function is all numbers of' with a number called 'the function' and a number called 'the arity'.
+    a number called 'this arity' is element 'the function' of gen_function_arity.
+    If 'this arity' is not 'the arity' then,
+        Return a boolean, false.
+    a number called 'the first parameter' is element 'the function' of gen_function_first_param.
+    a number called 'the step' is 0.
+    a boolean called 'all numbers' is true.
+    While 'the step' is less than 'this arity',
+        a number called 'the parameter' is 'the first parameter' add 'the step',
+        a number called 'the kind' is element 'the parameter' of gen_param_kind,
+        If 'the kind' is not 0 then,
+            Set 'all numbers' to false.
+        Set 'the step' to 'the step' add 1.
+    Return a boolean, 'all numbers'.
+
+(A function taking exactly one text: the sink a format string can be
+ passed to, which is what 'gen leaf format sink' wants for its
+ function-argument case.)
+
+To 'gen manifest pick a text function'.
+    a list called 'the candidates' is [].
+    a number called 'how many functions' is gen_function_names's length.
+    a number called 'the function' is 1.
+    While 'the function' is less than or equal to 'how many functions',
+        a number called 'this arity' is element 'the function' of gen_function_arity,
+        a number called 'the first parameter' is element 'the function' of gen_function_first_param,
+        a number called 'the kind' is 0,
+        If 'this arity' is 1 then,
+            Set 'the kind' to element 'the first parameter' of gen_param_kind.
+        If 'this arity' is 1 and 'the kind' is 1 then,
+            append 'the function' to 'the candidates'.
+        Set 'the function' to 'the function' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_function to element 'the slot' of 'the candidates'.
+    Return a boolean, true.
+
+(A flag of a given type, for the argv builder and its assertions. The
+ scratch flag is excluded: the harness supplies its value, so passing it
+ a second value would fight with the plumbing that gives a program its
+ own directory.)
+
+To 'gen manifest pick a flag of kind' with a number called 'the kind'.
+    a list called 'the candidates' is [].
+    a number called 'how many flags' is gen_flag_names's length.
+    a number called 'the flag' is 1.
+    While 'the flag' is less than or equal to 'how many flags',
+        a number called 'this kind' is element 'the flag' of gen_flag_kind,
+        a number called 'the role' is element 'the flag' of gen_flag_role,
+        If 'this kind' is 'the kind' and 'the role' is 0 then,
+            append 'the flag' to 'the candidates'.
+        Set 'the flag' to 'the flag' add 1.
+    a number called 'how many candidates' is 'the candidates's length.
+    If 'how many candidates' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many candidates'.
+    a number called 'the slot' is 'the draw' add 1.
+    Set gen_pick_flag to element 'the slot' of 'the candidates'.
+    Return a boolean, true.
+
+(Any flag at all, scratch included - 'gen leaf flag read' only reads
+ them, and reading the scratch flag is as good a read as any.)
+
+To 'gen manifest pick any flag'.
+    a number called 'how many flags' is gen_flag_names's length.
+    If 'how many flags' is 0 then,
+        Return a boolean, false.
+    a number called 'the draw' is 'rng below' of 'how many flags'.
+    Set gen_pick_flag to 'the draw' add 1.
+    Return a boolean, true.
+
+(The stand-aside. A leaf whose shape this program's prelude cannot host
+ emits this instead: one Print of an ordinary expression, which is legal
+ at every depth and closes a block cleanly, and which honours `nested`
+ so it can sit anywhere the leaf it replaced could.
+
+ One helper rather than each leaf naming its own substitute, because the
+ substitute is not the interesting part - what matters is that a leaf
+ never assumes the prelude has a shape, and that the program still gets
+ a statement where one was asked for.)
+
+To 'gen manifest stand aside' with a text called indent and a boolean called nested.
+    a text called 'the expression' is 'gen expr'.
+    a text called line is "Print {'the expression'}".
+    a list called 'the lines' is [line].
+    'gen join lines' of indent and nested and 'the lines'.
+    Return a boolean, false.

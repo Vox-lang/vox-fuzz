@@ -48,9 +48,17 @@ for f in "${FILES[@]}"; do
     # Run from the REPO ROOT: tests reach fixtures (tests/fixtures/...)
     # and the compiler (../vox/...) by repo-relative paths, and their
     # ./vf_* scratch files land here, gitignored and swept after each
-    # test. 150s outlasts the longest per-test deadline any test passes
-    # to 'run shell' (070's 120s).
-    timeout 150 "$bin" > "$WORK/$name.out" 2>&1
+    # test. The cap is here to catch a genuine hang, not to bound how
+    # long a legitimately long test may take, so it outlasts both the
+    # longest deadline any test passes to 'run shell' (070's 120s) and
+    # the longest sweep any test does. 200_never_emitted generates 2000
+    # programs at budgets up to 300 and took 2m12 before the prelude was
+    # randomised and about 3m40 after -- generated names went from `i1's
+    # x1` to `'the survey marker's 'the north offset'`, so every program
+    # is several times the bytes and the layout pass walks every one of
+    # them. 150s had it failing intermittently; 420s does not, and still
+    # catches a hang inside one suite run.
+    timeout 420 "$bin" > "$WORK/$name.out" 2>&1
     rm -rf ./vf_*
     if diff -q "$exp" "$WORK/$name.out" > /dev/null; then
         echo -e "${GREEN}PASS${NC} $name"
