@@ -73,3 +73,798 @@ To 'gen leaf list mixed' with a text called indent and a boolean called nested.
     a text called 'iterate line' is "For each w{gen_lists} in l{gen_lists}, Print w{gen_lists}".
     a list called 'the lines' is [decl, 'iterate line'].
     'gen join lines' of indent and nested and 'the lines'.
+
+(--- Dynamic values: the `value` type --------------------------------
+
+ Ledger docs/ledger/values.md; LANGUAGE.md 2436-2578. Rows VAL-03,
+ VAL-05, VAL-06, VAL-07, VAL-09, VAL-10, VAL-11 and VAL-13.
+
+ Every leaf below ASSERTS. The generator picked the runtime tag and the
+ payload, so it knows what the program must do; where it does not, the
+ program prints one line `ASSERT VAL-NN: expected <x> got <y>` and exits
+ 95, which the runner reports as a wrong-value finding.
+
+ All eight are TOP-LEVEL ONLY - drawn at depth 3 and nowhere else, and
+ deliberately absent from 'gen any leaf'. Two properties of the shapes
+ force that, neither of them special to this file:
+
+ - VAL-03 and VAL-05 emit a `To ...` definition, which is a top-level
+   construct.
+ - every assertion is `If ... then, Print "...", Exit 95.`, and that
+   period closes the If (LANGUAGE.md rule 1). As the last thing in a
+   nested body it would leave the enclosing block open - the same trap
+   documented at length on 'gen statement's avoid-onerror remap. The
+   leaves are safe wherever a following plain statement closes the
+   block, which at the true top level is guaranteed and inside a body
+   is not.
+
+ The `got` half of an assertion message reads `{<name>'s type}`, not
+ `{<name>}`, wherever the value's tag is still dynamic and not a number:
+ interpolating a dynamically-tagged value into a format string prints
+ its raw payload as an integer rather than dispatching on the tag - a
+ text comes out as a pointer, a float as its bit pattern. Hand-reduced;
+ recorded as a discrepancy for the master, NOT worked around anywhere
+ the assertion's own CONDITION depends on it.)
+
+(The generated programs are read by scripts/invariants and by people, so
+ the names in them are held to vox/docs/STYLE.md exactly as the
+ generator's own are: a name is the thing's true name, never y2 or r. A
+ leaf spends its names out of these vocabularies - nouns for the data,
+ verbs for the functions, and a distinguishing word for the second lap
+ round a vocabulary. Both name vocabularies are a PRIME number of words
+ long, which is what lets the cycle below visit every one of them before
+ repeating; adding or removing a word means picking a new prime.
+
+ The nonsense list is different in kind: it is payload, not names -
+ sentences chosen because no reading of them parses as a number.)
+
+a list called 'the value nouns' is ["the parcel", "whatever", "the answer", "payload", "what arrived", "the cargo", "cargo", "the reading", "the tally", "the token", "token", "the slot", "the label", "what came back", "the numeral", "numeral", "the guess", "guess", "the offering", "offering", "the receipt", "receipt", "the sample", "sample", "the shipment", "shipment", "whatever turned up", "the contents", "contents", "the wrapper", "wrapper", "the ticket", "ticket", "the bundle", "bundle", "the remainder", "the message", "the finding", "the delivery", "the note", "the marker"].
+
+a list called 'the value verbs' is ["sort out", "hand back", "describe", "classify", "give back", "echo", "pass through", "inspect", "work out", "relay", "send onward", "identify", "forward", "carry over", "examine", "take a look", "announce", "read it out", "label", "make sense of", "report", "hand along", "recognise", "look it over", "deliver", "name the tag", "make out", "puzzle out", "hand over"].
+
+a list called 'the distinguishing words' is ["again", "once more", "in turn", "later", "as well", "beside it", "in reserve", "after that"].
+
+a list called 'the value nonsense' is ["not a numeral", "wide of the mark", "no digits here", "quite unparseable", "nothing like a number", "words only", "a sentence instead", "plainly not numeric"].
+
+(Names are spent out of the vocabulary on a CYCLE rather than drawn and
+ retried: a random starting point and a random stride per program, both
+ vocabularies being a prime number of words long, so the stride is
+ coprime with the length and the walk visits every word before it
+ repeats. Two names in one program are distinct by construction, with no
+ record of what has been spent to search - which matters, because a
+ budget-300 program spends names in the hundreds and a linear search
+ would make that quadratic.
+
+ Past one full lap the word takes a distinguishing suffix, so lap two of
+ `the parcel` is `the parcel again`.)
+
+a number called gen_nouns_spent is 0.
+
+a number called gen_noun_offset is 0.
+
+a number called gen_noun_stride is 1.
+
+a number called gen_verbs_spent is 0.
+
+a number called gen_verb_offset is 0.
+
+a number called gen_verb_stride is 1.
+
+a boolean called gen_value_word_used is false.
+
+(For payload CONTENT - a word inside a text literal, a map key, a
+ sentence that will not parse as a number. Nothing here has to be
+ unique, so it is a plain draw, unlike the name cycle above.)
+
+To 'gen word from' with a list called vocabulary.
+    a number called 'the pick' is 'rng below' of vocabulary's length.
+    a number called 'the slot' is 'the pick' add 1.
+    a text called 'the word' is element 'the slot' of vocabulary.
+    Return a text, 'the word'.
+
+To 'gen reset value names'.
+    Set gen_nouns_spent to 0.
+    Set gen_verbs_spent to 0.
+    Set gen_value_word_used to false.
+    a number called 'how many nouns' is 'the value nouns's length.
+    Set gen_noun_offset to 'rng below' of 'how many nouns'.
+    a number called 'the noun stride room' is 'how many nouns' minus 1.
+    a number called 'a noun stride' is 'rng below' of 'the noun stride room'.
+    Set gen_noun_stride to 'a noun stride' add 1.
+    a number called 'how many verbs' is 'the value verbs's length.
+    Set gen_verb_offset to 'rng below' of 'how many verbs'.
+    a number called 'the verb stride room' is 'how many verbs' minus 1.
+    a number called 'a verb stride' is 'rng below' of 'the verb stride room'.
+    Set gen_verb_stride to 'a verb stride' add 1.
+
+To 'gen cycled word' with a list called vocabulary and a number called spent and a number called offset and a number called stride.
+    a number called 'how many words' is vocabulary's length.
+    a number called 'the step' is spent multiply stride.
+    a number called 'the raw slot' is 'the step' add offset.
+    a number called 'the slot' is 'the raw slot' modulo 'how many words'.
+    a number called 'the position' is 'the slot' add 1.
+    a text called 'the word' is element 'the position' of vocabulary.
+    a number called 'the lap' is spent divide 'how many words'.
+    If 'the lap' is 0 then,
+        Return a text, 'the word'.
+    a number called 'how many distinguishing words' is 'the distinguishing words's length.
+    a number called 'the lap before this one' is 'the lap' minus 1.
+    a number called 'the suffix slot' is 'the lap before this one' modulo 'how many distinguishing words'.
+    a number called 'the suffix position' is 'the suffix slot' add 1.
+    a text called 'a distinguishing word' is element 'the suffix position' of 'the distinguishing words'.
+    a text called 'a longer name' is "{'the word'} {'a distinguishing word'}".
+    Return a text, 'a longer name'.
+
+To 'gen fresh noun'.
+    Set gen_nouns_spent to gen_nouns_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of 'the value nouns' and gen_nouns_spent and gen_noun_offset and gen_noun_stride.
+    Return a text, 'the phrase'.
+
+To 'gen fresh verb'.
+    Set gen_verbs_spent to gen_verbs_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of 'the value verbs' and gen_verbs_spent and gen_verb_offset and gen_verb_stride.
+    Return a text, 'the phrase'.
+
+(A space is what decides whether a name must be written quoted, so the
+ phrase is scanned for one rather than guessed at from the vocabulary it
+ came out of - a distinguishing word turns a bare noun into a phrase.)
+
+To 'phrase has a space' with a text called phrase.
+    a buffer called letters is "{phrase}".
+    a number called position is 1.
+    a boolean called 'a space appears' is false.
+    a number called 'how long' is letters's length.
+    While position is less than or equal to 'how long',
+        a number called 'the character code' is byte position of letters,
+        If 'the character code' is 32 then,
+            Set 'a space appears' to true.
+        Set position to position add 1.
+    Return a boolean, 'a space appears'.
+
+(A name is carried around as its bare phrase and written out in one of
+ two forms, because Vox needs both and they are not the same string: a
+ phrase with a space in it must be quoted, and the possessive puts its
+ `'s` INSIDE the closing quote (`'the contents's type`, never
+ `'the contents''s type`).
+
+ A single word is never quoted, even though `a number called 'wrapper'`
+ is a perfectly legal declaration. Quoting one is legal everywhere the
+ generator needs it EXCEPT inside a format string, where `{'wrapper'}`
+ is rejected as an unknown variable while `{'the parcel'}` - the same
+ quoting, two words - resolves. Hand-reduced; recorded as a discrepancy
+ for the master. The generator writes the form that works rather than
+ encoding a reading of which one ought to.)
+
+To 'gen written name' with a text called phrase.
+    a boolean called 'must be quoted' is 'phrase has a space' of phrase.
+    If 'must be quoted' then,
+        a text called 'the quoted name' is "'{phrase}'",
+        Return a text, 'the quoted name'.
+    Return a text, phrase.
+
+To 'gen possessive name' with a text called phrase.
+    a boolean called 'must be quoted' is 'phrase has a space' of phrase.
+    If 'must be quoted' then,
+        a text called 'the quoted possessive' is "'{phrase}'s",
+        Return a text, 'the quoted possessive'.
+    a text called 'the plain possessive' is "{phrase}'s".
+    Return a text, 'the plain possessive'.
+
+(VAL-06 in passing: `value` is not reserved (LANGUAGE.md:2479), so it is
+ a legal parameter name and the name-pool must not blacklist it. A
+ parameter is local to its own function, so this competes with nothing -
+ hand-verified that a function taking `a value called value` and a
+ top-level variable named `value` coexist in one program. The top-level
+ declaration is the one that has to be unique, and 'gen leaf value name'
+ owns that.)
+
+To 'gen value parameter name'.
+    a number called 'the naming choice' is 'rng below' of 5.
+    If 'the naming choice' is 0 then,
+        Return a text, "value".
+    a text called 'an ordinary name' is 'gen fresh noun'.
+    Return a text, 'an ordinary name'.
+
+(The seven runtime tags a `value` can carry, as LANGUAGE.md:2549 lists
+ them: 0 number, 1 text, 2 float, 3 boolean, 4 list, 5 map, 6 nothing.
+ `nothing` is the odd one out - there is no `is a nothing` predicate
+ (VAL-25), so it matches no branch and lands in Otherwise.)
+
+To 'gen tag predicate' with a number called tag.
+    If tag is 0 then,
+        Return a text, "a number".
+    If tag is 1 then,
+        Return a text, "a text".
+    If tag is 2 then,
+        (LANGUAGE.md:2509 gives `float` and `decimal` as the same target,
+         so neither spelling may be the one this generator always picks.)
+        a number called 'the spelling' is 'rng below' of 2,
+        If 'the spelling' is 0 then,
+            Return a text, "a decimal".
+        Return a text, "a float".
+    If tag is 3 then,
+        Return a text, "a boolean".
+    If tag is 4 then,
+        Return a text, "a list".
+    Return a text, "a map".
+
+To 'gen tag name' with a number called tag.
+    If tag is 0 then,
+        Return a text, "a number".
+    If tag is 1 then,
+        Return a text, "a text".
+    If tag is 2 then,
+        Return a text, "a float".
+    If tag is 3 then,
+        Return a text, "a boolean".
+    If tag is 4 then,
+        Return a text, "a list".
+    If tag is 5 then,
+        Return a text, "a map".
+    Return a text, "nothing".
+
+(A payload, an expression that writes it into a program, and a form
+ that is safe to drop inside an assertion message. They are three
+ functions rather than one because a text payload needs its quotes three
+ different ways: bare when the generator reasons about it, `"..."` in
+ the program, and `\\"..."` inside the double-quoted message.)
+
+(The same seven words without their article, for the message positions
+ where "expected no a number argument" would be the alternative.)
+
+To 'gen bare tag name' with a number called tag.
+    If tag is 0 then,
+        Return a text, "number".
+    If tag is 1 then,
+        Return a text, "text".
+    If tag is 2 then,
+        Return a text, "float".
+    If tag is 3 then,
+        Return a text, "boolean".
+    If tag is 4 then,
+        Return a text, "list".
+    If tag is 5 then,
+        Return a text, "map".
+    Return a text, "nothing".
+
+(A text payload. `"<word> <0-999>"` was every text this generator made,
+ which is a rule nobody wrote: the manual says nothing about what a text
+ in a `value` looks like. Empty, one word, several words, and a word
+ with a trailing number are all drawn.)
+
+To 'gen text payload'.
+    a number called 'the shape' is 'rng below' of 5.
+    If 'the shape' is 0 then,
+        Return a text, "".
+    a text called 'a phrase' is 'gen word from' of 'the value nouns'.
+    If 'the shape' is 1 then,
+        Return a text, 'a phrase'.
+    If 'the shape' is 2 then,
+        a text called 'another phrase' is 'gen word from' of 'the value nouns',
+        a text called 'two phrases' is "{'a phrase'} {'another phrase'}",
+        Return a text, 'two phrases'.
+    If 'the shape' is 3 then,
+        a text called 'a third phrase' is 'gen word from' of 'the value nouns',
+        a text called 'a fourth phrase' is 'gen word from' of 'the value nouns',
+        a text called 'several phrases' is "{'a phrase'} {'a third phrase'} {'a fourth phrase'}",
+        Return a text, 'several phrases'.
+    a number called 'a count' is 'rng below' of 1000.
+    a text called 'a phrase and a number' is "{'a phrase'} {'a count'}".
+    Return a text, 'a phrase and a number'.
+
+(One slot of an aggregate: a scalar of a randomly drawn tag. `nothing`
+ is deliberately NOT drawn here - a `nothing` sitting in a list slot or
+ a map value is VAL-21's own claim and belongs to that leaf, not to a
+ payload builder that no row asserts.)
+
+To 'gen scalar element'.
+    a number called tag is 'rng below' of 4.
+    a text called payload is 'gen value payload' of tag.
+    a text called 'the element' is 'gen value expression' of tag and payload.
+    Return a text, 'the element'.
+
+(A list payload. Every one used to be exactly `[number, "text"]` - two
+ elements, that pair of types, that order - and no line of the manual
+ asks for any of it. Count runs 0 to 4 (the empty list is reachable and
+ keeps its tag, hand-verified) and each slot draws its own type.)
+
+To 'gen list payload'.
+    a number called 'how many elements' is 'rng below' of 5.
+    a text called 'the elements' is "".
+    a number called 'elements built' is 0.
+    While 'elements built' is less than 'how many elements',
+        a text called 'an element' is 'gen scalar element',
+        If 'elements built' is 0 then,
+            Set 'the elements' to 'an element'.
+        If 'elements built' is greater than 0 then,
+            Set 'the elements' to "{'the elements'}, {'an element'}".
+        Set 'elements built' to 'elements built' add 1.
+    a text called 'a list literal' is "[{'the elements'}]".
+    Return a text, 'a list literal'.
+
+(A map payload, on the same reasoning: one entry keyed by a text and
+ holding a number was an invariant nobody declared. Count runs 0 to 3,
+ the empty map included, and each value draws its own type. Two entries
+ may draw the same key - legal, and nothing here asserts a map's length.)
+
+To 'gen map payload'.
+    a number called 'how many entries' is 'rng below' of 4.
+    a text called 'the entries' is "".
+    a number called 'entries built' is 0.
+    While 'entries built' is less than 'how many entries',
+        a text called 'a key' is 'gen word from' of 'the value nouns',
+        a text called 'a mapped value' is 'gen scalar element',
+        a text called 'an entry' is "\"{'a key'}\": {'a mapped value'}",
+        If 'entries built' is 0 then,
+            Set 'the entries' to 'an entry'.
+        If 'entries built' is greater than 0 then,
+            Set 'the entries' to "{'the entries'}, {'an entry'}".
+        Set 'entries built' to 'entries built' add 1.
+    a text called 'a map literal' is "{{{'the entries'}}}".
+    Return a text, 'a map literal'.
+
+To 'gen value payload' with a number called tag.
+    If tag is 0 then,
+        a text called 'a whole number' is 'gen extreme number',
+        Return a text, 'a whole number'.
+    If tag is 1 then,
+        a text called 'some words' is 'gen text payload',
+        Return a text, 'some words'.
+    If tag is 2 then,
+        a text called 'a decimal number' is 'gen extreme float',
+        Return a text, 'a decimal number'.
+    If tag is 3 then,
+        a number called 'the truth' is 'rng below' of 2,
+        If 'the truth' is 0 then,
+            Return a text, "false".
+        Return a text, "true".
+    If tag is 4 then,
+        a text called 'a list literal' is 'gen list payload',
+        Return a text, 'a list literal'.
+    If tag is 5 then,
+        a text called 'a map literal' is 'gen map payload',
+        Return a text, 'a map literal'.
+    (LANGUAGE.md:2596 - all three spellings produce the identical value,
+     so picking one of them always would be an undeclared rule.)
+    a number called 'the absent spelling' is 'rng below' of 3.
+    If 'the absent spelling' is 0 then,
+        Return a text, "nothing".
+    If 'the absent spelling' is 1 then,
+        Return a text, "null".
+    Return a text, "nil".
+
+To 'gen value expression' with a number called tag and a text called payload.
+    If tag is 1 then,
+        a text called 'a text literal' is "\"{payload}\"",
+        Return a text, 'a text literal'.
+    Return a text, payload.
+
+To 'gen value shown' with a number called tag and a text called payload.
+    If tag is 1 then,
+        a text called 'the escaped literal' is "\\\"{payload}\\\"",
+        Return a text, 'the escaped literal'.
+    Return a text, payload.
+
+(What an assertion message may put after `got`. Interpolating a value
+ whose tag is dynamic text, float, list or map prints the raw payload as
+ an integer, so those report the tag instead; a number or a boolean
+ interpolates faithfully and reports the payload.)
+
+To 'gen got phrase' with a text called name and a text called possessive and a number called tag.
+    If tag is 0 then,
+        a text called 'the payload itself' is "{{{name}}}",
+        Return a text, 'the payload itself'.
+    If tag is 3 then,
+        a text called 'the truth itself' is "{{{name}}}",
+        Return a text, 'the truth itself'.
+    a text called 'the tag instead' is 'gen type phrase' of possessive.
+    Return a text, 'the tag instead'.
+
+To 'gen type phrase' with a text called possessive.
+    a text called 'the tag reading' is "{{{possessive} type}}".
+    Return a text, 'the tag reading'.
+
+To 'gen tag other than' with a number called 'the forbidden tag'.
+    a number called 'a tag' is 'rng below' of 7.
+    While 'a tag' is equal to 'the forbidden tag',
+        Set 'a tag' to 'rng below' of 7.
+    Return a number, 'a tag'.
+
+(The same draw restricted to the six tags a predicate can name -
+ `nothing` matches none of them (LANGUAGE.md:2600), so a leaf that has
+ to ASSERT a tag cannot be handed one.)
+
+To 'gen taggable other than' with a number called 'the forbidden tag'.
+    a number called 'a tag' is 'rng below' of 6.
+    While 'a tag' is equal to 'the forbidden tag',
+        Set 'a tag' to 'rng below' of 6.
+    Return a number, 'a tag'.
+
+To 'gen tag list has' with a list called tags and a number called 'the wanted tag'.
+    a boolean called 'the tag appears' is false.
+    For each 'a tag' in tags,
+        If 'a tag' is 'the wanted tag' then,
+            Set 'the tag appears' to true..
+    Return a boolean, 'the tag appears'.
+
+(How a dispatch branch announces itself. The manual's own example prints
+ a bare tag word, but nothing requires that wording, so the three styles
+ are drawn per leaf.)
+
+To 'gen branch label' with a number called style and a text called 'the tag name'.
+    If style is 0 then,
+        Return a text, 'the tag name'.
+    If style is 1 then,
+        a text called 'the sorted form' is "sorted: {'the tag name'}",
+        Return a text, 'the sorted form'.
+    a text called 'the found form' is "found {'the tag name'}".
+    Return a text, 'the found form'.
+
+(VAL-03 (LANGUAGE.md:2450-2460): a `value` parameter dispatches on
+ `is a number` / `is a text` / `is a float` / `is a boolean` /
+ `is a list` / `is a map` / Otherwise, and the tag it reads is the tag
+ the caller passed.
+
+ The wording of every assertion line in this file - `ASSERT VAL-NN:
+ expected <x> got <y>`, then `Exit 95.` - is fixed by PROCEDURE.md §6,
+ which reserves 95 for a ledger assertion and makes the runner carry
+ that line as the finding's detail. So `ASSERT`, `expected`, `got` and
+ `VAL` recurring in most programs is a DECLARED rule, not an undeclared
+ one: it is the finding protocol, and this is its citation.
+
+ The assertion lives in the CALLEE, which is the only place that can see
+ what arrived. The generator picks one tag it will never pass and gives
+ that tag a branch whose body exits 95: if the compiler ever routes an
+ argument there, a tag was lost across the call. The closing Otherwise
+ asserts the other half - that every argument reached SOME branch -
+ except when a `nothing` was passed, which matches no predicate at all
+ (there is no `is a nothing`, LANGUAGE.md:2600) and legitimately lands
+ there.
+
+ Branch order is rotated because nothing pins it: the six predicates are
+ mutually exclusive, hand-verified, so any order classifies the same.)
+
+To 'gen dispatch branch' with a text called indent and a text called 'the parameter phrase' and a number called tag and a boolean called 'was passed' and a boolean called 'is forbidden' and a number called 'branches so far' and a number called 'the label style'.
+    a boolean called 'this branch is wanted' is 'was passed'.
+    If 'is forbidden' then,
+        Set 'this branch is wanted' to true.
+    If 'this branch is wanted' is false then,
+        Return a number, 'branches so far'.
+    a text called opener is "Otherwise if".
+    If 'branches so far' is 0 then,
+        Set opener to "If".
+    a number called 'branches after this one' is 'branches so far' add 1.
+    a text called 'the parameter name' is 'gen written name' of 'the parameter phrase'.
+    a text called 'the parameter possessive' is 'gen possessive name' of 'the parameter phrase'.
+    a text called 'the predicate' is 'gen tag predicate' of tag.
+    a text called 'the tag name' is 'gen tag name' of tag.
+    If 'is forbidden' then,
+        a text called 'the tag it reported' is 'gen type phrase' of 'the parameter possessive',
+        a text called 'the bare tag name' is 'gen bare tag name' of tag,
+        a text called 'the assertion line' is "{indent}    {opener} {'the parameter name'} is {'the predicate'} then, Print \"ASSERT VAL-03: expected no {'the bare tag name'} argument got {'the tag it reported'}\", Exit 95.\n",
+        'gen emit' of 'the assertion line',
+        Return a number, 'branches after this one'.
+    a text called 'the label' is 'gen branch label' of 'the label style' and 'the tag name'.
+    a text called 'the branch line' is "{indent}    {opener} {'the parameter name'} is {'the predicate'} then, Print \"{'the label'}\".\n".
+    'gen emit' of 'the branch line'.
+    Return a number, 'branches after this one'.
+
+(VAL-03: the leaf itself. The reasoning is in the note above
+ 'gen dispatch branch'.)
+
+To 'gen leaf value dispatch' with a text called indent and a boolean called nested.
+    a text called 'the function phrase' is 'gen fresh verb'.
+    a text called 'the function name' is 'gen written name' of 'the function phrase'.
+    a text called 'the parameter phrase' is 'gen value parameter name'.
+    a text called 'the parameter name' is 'gen written name' of 'the parameter phrase'.
+    a text called 'the parameter possessive' is 'gen possessive name' of 'the parameter phrase'.
+    a number called 'the forbidden tag' is 'rng below' of 6.
+    a number called 'the label style' is 'rng below' of 3.
+    a number called 'how many arguments' is 'rng below' of 4 add 1.
+    a list called 'the argument tags' is [].
+    a list called 'the arguments' is [].
+    a number called 'arguments built' is 0.
+    While 'arguments built' is less than 'how many arguments',
+        a number called 'a tag' is 'gen tag other than' of 'the forbidden tag',
+        append 'a tag' to 'the argument tags',
+        a text called 'a payload' is 'gen value payload' of 'a tag',
+        a text called 'an argument' is 'gen value expression' of 'a tag' and 'a payload',
+        append 'an argument' to 'the arguments',
+        Set 'arguments built' to 'arguments built' add 1.
+    a text called 'the definition line' is "{indent}To {'the function name'} with a value called {'the parameter name'}.\n".
+    'gen emit' of 'the definition line'.
+    a number called 'the rotation' is 'rng below' of 6.
+    a number called 'branches written' is 0.
+    a number called offset is 0.
+    While offset is less than 6,
+        a number called 'the slot' is offset add 'the rotation',
+        a number called 'the tag under test' is 'the slot' modulo 6,
+        a boolean called 'this tag was passed' is 'gen tag list has' of 'the argument tags' and 'the tag under test',
+        a boolean called 'this is the forbidden tag' is false,
+        If 'the tag under test' is 'the forbidden tag' then,
+            Set 'this is the forbidden tag' to true.
+        Set 'branches written' to 'gen dispatch branch' of indent and 'the parameter phrase' and 'the tag under test' and 'this tag was passed' and 'this is the forbidden tag' and 'branches written' and 'the label style',
+        Set offset to offset add 1.
+    a boolean called 'an absent value was passed' is 'gen tag list has' of 'the argument tags' and 6.
+    If 'an absent value was passed' then,
+        a text called 'the absent label' is 'gen branch label' of 'the label style' and "nothing",
+        a text called 'the absent line' is "{indent}    Otherwise, Print \"{'the absent label'}\".\n",
+        'gen emit' of 'the absent line'.
+    If 'an absent value was passed' is false then,
+        a text called 'the tag it reported' is 'gen type phrase' of 'the parameter possessive',
+        a text called 'the fallback assertion' is "{indent}    Otherwise, Print \"ASSERT VAL-03: expected a recognised tag got {'the tag it reported'}\", Exit 95.\n",
+        'gen emit' of 'the fallback assertion'.
+    (LANGUAGE.md:76 - a blank line after a function definition.)
+    'gen emit' of "\n".
+    a number called 'how many written' is 'the arguments's length.
+    a number called 'the argument position' is 1.
+    While 'the argument position' is less than or equal to 'how many written',
+        a text called 'an argument text' is element 'the argument position' of 'the arguments',
+        a text called 'the call line' is "{indent}{'the function name'} of {'an argument text'}.\n",
+        'gen emit' of 'the call line',
+        Set 'the argument position' to 'the argument position' add 1.
+
+(VAL-05 (LANGUAGE.md:2465-2477): a function returning `a value` carries
+ the tag back out. The single-expression `Return a value, <expr>.` form
+ on the `To` line is the ONLY form emitted here - the conditional return
+ the manual warns about (VAL-19) segfaults on a tag mismatch, which is
+ discrepancy D1 in the values ledger and is not a leaf.
+
+ The round trip asserts both halves: the tag that came back, and - where
+ the literal can be written into a comparison, so everything but a list
+ or a map - the payload that came back with it.)
+
+To 'gen value round trip' with a text called indent and a text called 'the function name'.
+    a number called tag is 'rng below' of 6.
+    a text called 'the payload' is 'gen value payload' of tag.
+    a text called 'the literal' is 'gen value expression' of tag and 'the payload'.
+    a text called 'the result phrase' is 'gen fresh noun'.
+    a text called 'the result name' is 'gen written name' of 'the result phrase'.
+    a text called 'the result possessive' is 'gen possessive name' of 'the result phrase'.
+    a text called 'the predicate' is 'gen tag predicate' of tag.
+    a text called 'the tag name' is 'gen tag name' of tag.
+    a text called 'the tag it reported' is 'gen type phrase' of 'the result possessive'.
+    a text called 'the declaration line' is "{indent}a value called {'the result name'} is {'the function name'} of {'the literal'}.\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the tag assertion' is "{indent}If {'the result name'} is not {'the predicate'} then, Print \"ASSERT VAL-05: expected {'the tag name'} got {'the tag it reported'}\", Exit 95.\n".
+    'gen emit' of 'the tag assertion'.
+    If tag is less than 4 then,
+        a text called 'the shown literal' is 'gen value shown' of tag and 'the payload',
+        a text called 'what came back' is 'gen got phrase' of 'the result name' and 'the result possessive' and tag,
+        a text called 'the payload assertion' is "{indent}If {'the result name'} is not {'the literal'} then, Print \"ASSERT VAL-05: expected {'the shown literal'} got {'what came back'}\", Exit 95.\n",
+        'gen emit' of 'the payload assertion'.
+    a text called 'the print line' is "{indent}Print {'the result name'}.\n".
+    'gen emit' of 'the print line'.
+
+(VAL-05: the leaf itself. The reasoning is in the note above
+ 'gen value round trip'.)
+
+To 'gen leaf value return' with a text called indent and a boolean called nested.
+    a text called 'the function phrase' is 'gen fresh verb'.
+    a text called 'the function name' is 'gen written name' of 'the function phrase'.
+    a text called 'the parameter phrase' is 'gen value parameter name'.
+    a text called 'the parameter name' is 'gen written name' of 'the parameter phrase'.
+    a text called 'the definition line' is "{indent}To {'the function name'} with a value called {'the parameter name'}. Return a value, {'the parameter name'}.\n".
+    'gen emit' of 'the definition line'.
+    'gen emit' of "\n".
+    a number called 'how many round trips' is 'rng below' of 3 add 1.
+    a number called 'trips made' is 0.
+    While 'trips made' is less than 'how many round trips',
+        'gen value round trip' of indent and 'the function name',
+        Set 'trips made' to 'trips made' add 1.
+
+(VAL-06 (LANGUAGE.md:2479-2482): `value` is recognized only where a type
+ is expected, so `a value is 5.` declares an ordinary variable NAMED
+ value. Once per program - a second declaration would collide - and the
+ same permission is what lets 'gen value parameter name' hand the word
+ to a parameter in the two leaves above.
+
+ The payload is a number, a float or a boolean - never a text.
+ `a value is "some words".` compiles and compares correctly but reports
+ `Number (dynamic)` for its type and PRINTS ITS POINTER, so a leaf that
+ emitted it would put an address on stdout. Hand-reduced; recorded as a
+ discrepancy for the master rather than encoded as a reading of what the
+ form ought to mean - the row's claim is about the NAME, and any of the
+ three settled payloads makes that claim on its own. (The boolean form
+ reports `Number (dynamic)` too, though it prints and compares
+ correctly - the same mis-tagging, one more data point for that
+ discrepancy, and harmless here because this row asserts the payload and
+ never the tag.)
+
+ Which of the three is drawn is unpinned, so it is drawn.)
+
+To 'gen value word tag'.
+    a number called 'the payload choice' is 'rng below' of 3.
+    If 'the payload choice' is 0 then,
+        Return a number, 0.
+    If 'the payload choice' is 1 then,
+        Return a number, 2.
+    Return a number, 3.
+
+(VAL-06: the leaf itself.)
+
+To 'gen leaf value name' with a text called indent and a boolean called nested.
+    If gen_value_word_used then,
+        'gen leaf value retype' of indent and nested.
+    If gen_value_word_used is false then,
+        Set gen_value_word_used to true,
+        a number called tag is 'gen value word tag',
+        a text called 'the payload' is 'gen value payload' of tag,
+        a text called 'the literal' is 'gen value expression' of tag and 'the payload',
+        a text called 'the shown literal' is 'gen value shown' of tag and 'the payload',
+        a text called 'the declaration line' is "{indent}a value is {'the literal'}.\n",
+        'gen emit' of 'the declaration line',
+        a text called 'the assertion line' is "{indent}If value is not {'the literal'} then, Print \"ASSERT VAL-06: expected {'the shown literal'} got {{value}}\", Exit 95.\n",
+        'gen emit' of 'the assertion line',
+        a text called 'the print line' is "{indent}Print value.\n",
+        'gen emit' of 'the print line'.
+
+(VAL-07 (LANGUAGE.md:2484-2494): a `value` local keeps its tag through
+ reassignment, so `set r to 7.` retags a text-holding value as a number.
+ Asserted in both directions - the new tag is there and the old one is
+ gone - because a retag that merely ADDED a tag would pass the first
+ check alone.)
+
+To 'gen leaf value retag' with a text called indent and a boolean called nested.
+    a number called 'the first tag' is 'rng below' of 6.
+    a number called 'the other tag' is 'gen taggable other than' of 'the first tag'.
+    a text called 'the first payload' is 'gen value payload' of 'the first tag'.
+    a text called 'the first literal' is 'gen value expression' of 'the first tag' and 'the first payload'.
+    a text called 'the second payload' is 'gen value payload' of 'the other tag'.
+    a text called 'the second literal' is 'gen value expression' of 'the other tag' and 'the second payload'.
+    a text called 'the phrase' is 'gen fresh noun'.
+    a text called 'the name' is 'gen written name' of 'the phrase'.
+    a text called 'the possessive' is 'gen possessive name' of 'the phrase'.
+    a text called 'the first predicate' is 'gen tag predicate' of 'the first tag'.
+    a text called 'the second predicate' is 'gen tag predicate' of 'the other tag'.
+    a text called 'the first tag name' is 'gen tag name' of 'the first tag'.
+    a text called 'the second tag name' is 'gen tag name' of 'the other tag'.
+    a text called 'the tag it reported' is 'gen type phrase' of 'the possessive'.
+    a text called 'the declaration line' is "{indent}a value called {'the name'} is {'the first literal'}.\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the first assertion' is "{indent}If {'the name'} is not {'the first predicate'} then, Print \"ASSERT VAL-07: expected {'the first tag name'} got {'the tag it reported'}\", Exit 95.\n".
+    'gen emit' of 'the first assertion'.
+    a text called 'the reassignment' is "{indent}Set {'the name'} to {'the second literal'}.\n".
+    'gen emit' of 'the reassignment'.
+    a text called 'the second assertion' is "{indent}If {'the name'} is not {'the second predicate'} then, Print \"ASSERT VAL-07: expected {'the second tag name'} got {'the tag it reported'}\", Exit 95.\n".
+    'gen emit' of 'the second assertion'.
+    a text called 'the first bare tag name' is 'gen bare tag name' of 'the first tag'.
+    a text called 'the old tag assertion' is "{indent}If {'the name'} is {'the first predicate'} then, Print \"ASSERT VAL-07: expected the {'the first bare tag name'} tag to be gone got {'the tag it reported'}\", Exit 95.\n".
+    'gen emit' of 'the old tag assertion'.
+    'gen emit' of "{indent}Print {'the name'}.\n".
+
+(VAL-09 (LANGUAGE.md:2507-2513): `<valuevar> is a <type>.` in STATEMENT
+ position reads the runtime tag, converts, and stores the result back
+ with the new tag - for number, float/decimal, text and boolean targets.
+ The generator picks a payload it can convert itself, so it knows the
+ exact result and asserts it.)
+
+To 'gen retype source' with a number called 'the target'.
+    If 'the target' is 0 then,
+        a number called 'how many digits' is 'rng below' of 17 add 1,
+        a text called digits is 'gen random digits' of 'how many digits',
+        Return a text, digits.
+    If 'the target' is 2 then,
+        a text called 'a decimal number' is 'gen extreme float',
+        Return a text, 'a decimal number'.
+    If 'the target' is 3 then,
+        a number called 'the truth' is 'rng below' of 2,
+        If 'the truth' is 0 then,
+            Return a text, "false".
+        Return a text, "true".
+    a text called 'a whole number' is 'gen extreme number'.
+    Return a text, 'a whole number'.
+
+(VAL-09: the leaf itself. The reasoning is in the note above
+ 'gen retype source'.)
+
+To 'gen leaf value retype' with a text called indent and a boolean called nested.
+    (0 number, 1 text, 2 float, 3 boolean - the four targets the manual
+     names. A text target starts from a number so the conversion has
+     something to do; the other three start from the text spelling of
+     the answer, which is the manual's own worked shape.)
+    a number called 'the target' is 'rng below' of 4.
+    a text called 'the source payload' is 'gen retype source' of 'the target'.
+    a text called 'the phrase' is 'gen fresh noun'.
+    a text called 'the name' is 'gen written name' of 'the phrase'.
+    a text called 'the target predicate' is 'gen tag predicate' of 'the target'.
+    a text called 'the source literal' is "\"{'the source payload'}\"".
+    a text called 'the expected' is 'the source payload'.
+    If 'the target' is 1 then,
+        Set 'the source literal' to 'the source payload',
+        Set 'the expected' to "\\\"{'the source payload'}\\\"".
+    a text called 'the comparison' is 'the source payload'.
+    If 'the target' is 1 then,
+        Set 'the comparison' to "\"{'the source payload'}\"".
+    (After a successful retype the variable is tracked with the new type
+     for the rest of its lifetime (LANGUAGE.md:2533), so interpolating it
+     is faithful whatever the target was.)
+    a text called 'what it holds' is "{{{'the name'}}}".
+    a text called 'the declaration line' is "{indent}a value called {'the name'} is {'the source literal'}.\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the retype line' is "{indent}{'the name'} is {'the target predicate'}.\n".
+    'gen emit' of 'the retype line'.
+    a text called 'the assertion line' is "{indent}If {'the name'} is not {'the comparison'} then, Print \"ASSERT VAL-09: expected {'the expected'} got {'what it holds'}\", Exit 95.\n".
+    'gen emit' of 'the assertion line'.
+    'gen emit' of "{indent}Print {'the name'}.\n".
+
+(VAL-10 (LANGUAGE.md:2516-2519): the worked example - a text of numerals
+ retyped to a number is then TRACKED as a number, so arithmetic on it
+ works and the sum is exactly what the generator computed. The manual's
+ own figures are 357 and 1; neither is a rule, so both vary.)
+
+To 'gen leaf value retype sum' with a text called indent and a boolean called nested.
+    a number called 'how many digits' is 'rng below' of 16 add 1.
+    a text called digits is 'gen random digits' of 'how many digits'.
+    a number called 'the numeral' is digits as a number.
+    a number called addend is 'rng below' of 1000 add 1.
+    a number called 'the sum' is 'the numeral' add addend.
+    a text called 'the phrase' is 'gen fresh noun'.
+    a text called 'the name' is 'gen written name' of 'the phrase'.
+    a text called 'the declaration line' is "{indent}a value called {'the name'} is \"{digits}\".\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the retype line' is "{indent}{'the name'} is a number.\n".
+    'gen emit' of 'the retype line'.
+    a text called 'the assertion line' is "{indent}If {'the name'} add {addend} is not {'the sum'} then, Print \"ASSERT VAL-10: expected {'the sum'} got {{{'the name'} add {addend}}}\", Exit 95.\n".
+    'gen emit' of 'the assertion line'.
+    'gen emit' of "{indent}Print {'the name'} add {addend}.\n".
+
+(VAL-11 (LANGUAGE.md:2521-2531): the SAME phrase in condition position
+ is a predicate, not a cast. The value keeps the tag and the payload it
+ started with, so the leaf asserts both: the wrong-tag predicate is
+ false, and nothing was converted behind its back.)
+
+To 'gen leaf value predicate' with a text called indent and a boolean called nested.
+    a number called 'the real tag' is 'rng below' of 4.
+    a number called 'the tested tag' is 'gen taggable other than' of 'the real tag'.
+    a text called 'the payload' is 'gen value payload' of 'the real tag'.
+    a text called 'the literal' is 'gen value expression' of 'the real tag' and 'the payload'.
+    a text called 'the shown literal' is 'gen value shown' of 'the real tag' and 'the payload'.
+    a text called 'the phrase' is 'gen fresh noun'.
+    a text called 'the name' is 'gen written name' of 'the phrase'.
+    a text called 'the possessive' is 'gen possessive name' of 'the phrase'.
+    a text called 'the tested predicate' is 'gen tag predicate' of 'the tested tag'.
+    a text called 'the tested tag name' is 'gen tag name' of 'the tested tag'.
+    a text called 'the real tag name' is 'gen tag name' of 'the real tag'.
+    a text called 'the tag it reported' is 'gen type phrase' of 'the possessive'.
+    a text called 'what it holds' is 'gen got phrase' of 'the name' and 'the possessive' and 'the real tag'.
+    a number called 'the label style' is 'rng below' of 3.
+    a text called 'the label' is 'gen branch label' of 'the label style' and "still {'the real tag name'}".
+    a text called 'the declaration line' is "{indent}a value called {'the name'} is {'the literal'}.\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the predicate line' is "{indent}If {'the name'} is {'the tested predicate'} then, Print \"ASSERT VAL-11: expected the predicate to be false got {'the tag it reported'}\", Exit 95.\n".
+    'gen emit' of 'the predicate line'.
+    a text called 'the otherwise line' is "{indent}Otherwise, Print \"{'the label'}\".\n".
+    'gen emit' of 'the otherwise line'.
+    a text called 'the payload assertion' is "{indent}If {'the name'} is not {'the literal'} then, Print \"ASSERT VAL-11: expected {'the shown literal'} got {'what it holds'}\", Exit 95.\n".
+    'gen emit' of 'the payload assertion'.
+    'gen emit' of "{indent}Print {'the name'}.\n".
+
+(VAL-13 (LANGUAGE.md:2537-2547): a conversion that cannot succeed sets
+ the error flag and leaves the variable as 0, and `On error` catches it.
+ Both halves are asserted, because a runtime that silently left the text
+ in place would still run the handler.)
+
+To 'gen leaf value bad retype' with a text called indent and a boolean called nested.
+    a number called 'the target' is 'rng below' of 2.
+    a text called 'the target predicate' is "a number".
+    If 'the target' is 1 then,
+        Set 'the target predicate' to 'gen tag predicate' of 2.
+    a text called 'the nonsense' is 'gen word from' of 'the value nonsense'.
+    a text called 'the phrase' is 'gen fresh noun'.
+    a text called 'the name' is 'gen written name' of 'the phrase'.
+    a text called 'the witness phrase' is 'gen fresh noun'.
+    a text called 'the witness name' is 'gen written name' of 'the witness phrase'.
+    a text called 'the declaration line' is "{indent}a value called {'the name'} is \"{'the nonsense'}\".\n".
+    'gen emit' of 'the declaration line'.
+    a text called 'the witness line' is "{indent}a number called {'the witness name'} is 0.\n".
+    'gen emit' of 'the witness line'.
+    a text called 'the retype line' is "{indent}{'the name'} is {'the target predicate'}.\n".
+    'gen emit' of 'the retype line'.
+    a text called 'the handler line' is "{indent}On error Set {'the witness name'} to 1.\n".
+    'gen emit' of 'the handler line'.
+    a text called 'the handler assertion' is "{indent}If {'the witness name'} is not 1 then, Print \"ASSERT VAL-13: expected the error handler to run got {{{'the witness name'}}}\", Exit 95.\n".
+    'gen emit' of 'the handler assertion'.
+    a text called 'the zero assertion' is "{indent}If {'the name'} is not 0 then, Print \"ASSERT VAL-13: expected 0 got {{{'the name'}}}\", Exit 95.\n".
+    'gen emit' of 'the zero assertion'.
+    'gen emit' of "{indent}Print {'the name'}.\n".

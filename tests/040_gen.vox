@@ -8,6 +8,14 @@ see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
 
+(Plain layout: this test's golden file is a full dump of one generated
+ program, and its job is to record what the generator WRITES. Under the
+ random layout that dump is a wall of drawn whitespace, unreadable as a
+ record and churning on any change to the pass. Layout has its own gate
+ in 270_layout, and its determinism is covered by 220_determinism, which
+ runs on the default random layout.)
+'gen set layout' of "plain".
+
 'gen program' of 42 and 12.
 a text called t1 is 'gen text'.
 Print "--- seed 42 ---".

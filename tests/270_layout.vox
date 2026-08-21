@@ -1,0 +1,119 @@
+see "../src/rng.vox".
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The layout randomiser's gate. Two claims, and the second is the one the
+ pass exists to be allowed to make:
+
+   1. Layout never changes behaviour. For each seed the same program is
+      generated twice, once laid out plainly and once with its whitespace
+      drawn, and both are compiled and run with the SAME argv and the
+      SAME stdin. Identical stdout, identical verdict, identical exit
+      status, or the pass is wrong.
+   2. Layout never changes CONTENT. Strip the whitespace out of both
+      sources and the remaining bytes are identical - which is what makes
+      it honest to say the seed-to-program mapping is untouched, and what
+      lets 200_never_emitted scan a plainly laid-out program and still be
+      scanning what the campaign runs.
+
+ Claim 2 is not implied by claim 1: a pass that quietly dropped a whole
+ statement could still produce two programs that agree on stdout.
+
+ Both runs get the scratch directory the campaign hands every generated
+ program, and they SHARE it, exactly as the campaign's own two runs of
+ one binary do - a generated program is insensitive to what the previous
+ run left there, and that is the property the nondeterminism oracle
+ already gates on.)
+
+a number called 'the seeds checked' is 0.
+a number called 'the behaviour mismatches' is 0.
+a number called 'the content mismatches' is 0.
+a number called 'the compile failures' is 0.
+
+(Every space, tab, newline and carriage return removed - the bytes that
+ are left are the program's content.)
+To 'strip whitespace' with a text called source.
+    a buffer called 'the source bytes' is "{source}".
+    a buffer called 'the kept bytes'.
+    a buffer called 'one byte' is 1 bytes in size.
+    a number called 'how many bytes' is 'the source bytes's length.
+    a number called i is 1.
+    While i is less than or equal to 'how many bytes',
+        a number called b is byte i of 'the source bytes',
+        a boolean called 'it is blank' is false,
+        If b is 32 or b is 9 then,
+            Set 'it is blank' to true.
+        If b is 10 or b is 13 then,
+            Set 'it is blank' to true.
+        If 'it is blank' is false then,
+            Set byte 1 of 'one byte' to b,
+            append 'one byte' to 'the kept bytes'.
+        Set i to i add 1.
+    a text called 'the content' is 'the kept bytes' as text.
+    Return a text, 'the content'.
+
+To 'check one seed' with a number called seed and a number called budget.
+    Set 'the seeds checked' to 'the seeds checked' add 1.
+    'gen set layout' of "plain".
+    'gen program' of seed and budget.
+    a text called 'the plain source' is 'gen text'.
+    'gen write' of "./vf_layout_plain.vox".
+    'gen set layout' of "random".
+    'gen program' of seed and budget.
+    a text called 'the drawn source' is 'gen text'.
+    'gen write' of "./vf_layout_drawn.vox".
+    'gen write input' of "./vf_layout_stdin".
+    a text called 'the plain content' is 'strip whitespace' of 'the plain source'.
+    a text called 'the drawn content' is 'strip whitespace' of 'the drawn source'.
+    If 'the plain content' is not 'the drawn content' then,
+        Set 'the content mismatches' to 'the content mismatches' add 1.
+    (The argv the generator chose for this seed, plus the scratch
+     directory, exactly as loop_gen.vox hands them to a live program.)
+    a list called 'the arguments' is gen_argv.
+    append "--scratch{gen_flags}" to 'the arguments'.
+    append "./vf_layout_scratch" to 'the arguments'.
+    a number called 'the plain compile' is 'compile vox' of "." and "./vf_layout_plain.vox" and "./vf_layout_plain_bin" and "./vf_layout_plain_cerr".
+    a number called 'the drawn compile' is 'compile vox' of "." and "./vf_layout_drawn.vox" and "./vf_layout_drawn_bin" and "./vf_layout_drawn_cerr".
+    If 'the plain compile' is not 0 or 'the drawn compile' is not 0 then,
+        Set 'the compile failures' to 'the compile failures' add 1,
+        Return a number, 0.
+    a text called 'the plain verdict' is 'run program capturing with input' of "./vf_layout_plain_bin" and 10000 and "./vf_layout_plain_out" and 'the arguments' and "./vf_layout_stdin".
+    a number called 'the plain exit code' is 'exit code of' of 'the last status'.
+    a text called 'the drawn verdict' is 'run program capturing with input' of "./vf_layout_drawn_bin" and 10000 and "./vf_layout_drawn_out" and 'the arguments' and "./vf_layout_stdin".
+    a number called 'the drawn exit code' is 'exit code of' of 'the last status'.
+    a text called 'the plain output' is 'read whole file' of "./vf_layout_plain_out".
+    a text called 'the drawn output' is 'read whole file' of "./vf_layout_drawn_out".
+    a boolean called 'the two agree' is true.
+    If 'the plain verdict' is not 'the drawn verdict' then,
+        Set 'the two agree' to false.
+    If 'the plain exit code' is not 'the drawn exit code' then,
+        Set 'the two agree' to false.
+    If 'the plain output' is not 'the drawn output' then,
+        Set 'the two agree' to false.
+    If 'the two agree' is false then,
+        Set 'the behaviour mismatches' to 'the behaviour mismatches' add 1,
+        Print "layout changed behaviour at seed {seed}: verdicts {'the plain verdict'}/{'the drawn verdict'} exits {'the plain exit code'}/{'the drawn exit code'}".
+    Return a number, 1.
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_layout_*" and 5000.
+a number called 'the scratch made' is 'make directories' of "./vf_layout_scratch".
+
+a number called 'the seed' is 1000.
+While 'the seed' is less than 1032,
+    a number called 'the checked' is 'check one seed' of 'the seed' and 12,
+    Set 'the seed' to 'the seed' add 1.
+
+Print "seeds checked: {'the seeds checked'}".
+Print "both layouts compiled every seed: {'the compile failures' is 0}".
+Print "whitespace-stripped sources identical: {'the content mismatches' is 0}".
+Print "layout never changed stdout or exit status: {'the behaviour mismatches' is 0}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_layout_*" and 5000.

@@ -1,5 +1,4 @@
 --- seed 42 ---
-a number called v1 is 2147483648.
 To 'read flags 1'.
     a text called fl1local is fl1label.
     a number called fl1bumped is fl1count add 1.
@@ -7,30 +6,17 @@ To 'read flags 1'.
     Print fl1bumped.
     Print fl1on.
 
-To f1.
-    Return a number, 743.
-
-To f2 with a number called p1.
-    a number called r is p1 add 33.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To f4 with a text called p1.
-    Print "f4 {p1}".
-
 a flag called fl1label is "-a" or "--alpha1", it is a text.
 a flag called fl1count is "-b" or "--beta1", it is a number.
 a flag called fl1on is "-c" or "--gamma1", it is a boolean.
 a flag called fl1scratch is "-s" or "--scratch1", it is a text.
 Parse flags.
 
-If fl1label is not "v76753" then, Exit 91.
-If fl1count is not 4806 then, Exit 92.
-If fl1on is false then, Exit 93.
+If fl1label is not "v36333" then, Exit 91.
+If fl1count is not 1266 then, Exit 92.
+If fl1on then, Exit 94.
 
+a number called v1 is 69414907254369.
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -58,74 +44,77 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
-a number called env1count is environment's count.
-Print env1count as a boolean.
-Print environment's empty.
-a buffer called env1pathbuf is environment's "PATH".
-Print env1pathbuf's empty.
-a t2 called i1.
-Set i1's x1 to 334.
-Print i1.
-a buffer called b1 is 60 bytes in size.
-Print byte 498 of b1.
-On error print "buffer read out of range".
-Create a buffer called 'ledger' with size 88735.
-If 'ledger's empty is false then, Print "ASSERT BUF-12: expected 1 got {'ledger's empty}", Exit 95. Print 'ledger's empty.
-append "8967w9ensdu3c9yvsdivwxa3gpu7o1m30tuf0x2f0puz0lynkde74duns1efod2z" to 'ledger'.
-If 'ledger's size is not 64 then, Print "ASSERT BUF-10: expected 64 got {'ledger's size}", Exit 95. Print 'ledger's size.
-If 'ledger's capacity is not 88735 then, Print "ASSERT BUF-10: expected 88735 got {'ledger's capacity}", Exit 95. Print 'ledger's capacity.
-If 'ledger's length is not 64 then, Print "ASSERT BUF-11: expected 64 got {'ledger's length}", Exit 95. Print 'ledger's length.
-If 'ledger's length is not 'ledger's size then, Print "ASSERT BUF-11: expected {'ledger's size} got {'ledger's length}", Exit 95. Print 'ledger's length.
-If 'ledger's empty then, Print "ASSERT BUF-12: expected 0 got {'ledger's empty}", Exit 95. Print 'ledger's empty.
-Print 'ledger's length.
-Create a buffer called 'toolbox'.
-a number called 'toolbox appends made' is 0.
-a boolean called 'toolbox overflowed' is false.
-a boolean called 'toolbox found an error already pending' is false.
-On error Set 'toolbox found an error already pending' to true.
-While 'toolbox appends made' is less than 230, append "q7k9yjclun0xuzopevwtmf8tu7452n8567kp6fodefoh6vo9e" to 'toolbox', On error Set 'toolbox overflowed' to true. Set 'toolbox appends made' to 'toolbox appends made' add 1.
-If 'toolbox's size is not 11270 then, Print "ASSERT BUF-03: expected 11270 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
-If 'toolbox overflowed' then, Print "ASSERT BUF-03: expected 0 got {'toolbox overflowed'}", Exit 95. Print 'toolbox overflowed'.
-Print 'toolbox's size.
-Print f1.
-a buffer called b2 is 40 bytes in size.
-Print byte 222 of b2.
-On error print "buffer read out of range".
-a t1 called i2.
-Set i2's x1 to 943.
-a t1 called i3 is i2.
-Set i3's x1 to 756.
-Print i2's x1.
-Print i3's x1.
-a list called l1 is [].
-append v1 add v1 to l1, but if v1 is greater than v1 or v1 modulo 3 is equal to 0 append v1 minus v1, but if v1 is greater than or equal to v1 or v1 modulo 3 is equal to 0 append v1 minus v1, otherwise append v1 add v1.
+To f1.
+    Return a number, 806.
+
+To f2 with a number called p1.
+    a number called r is p1 add 22.
+    Return a number, r.
+
+To f3 with a number called p1 and a number called p2.
+    a number called r is p1 add p2.
+    Return a number, r.
+
+To f4 with a text called p1.
+    Print "f4 {p1}".
+
+Set v1 to v1 times v1.
+Print fl1label.
+Print fl1count.
+Print fl1on.
+'read flags 1'.
+a number called xn1 is 408.
+a number called xy1 is 16.
+Print "sum {xn1 add xy1}".
+Print "product {xn1 multiply xy1}".
+Print "chain {xn1 multiply xy1 modulo 6:06x}".
+Print "deep {v1 minus 4 divide 3 divide v1 add v1 multiply v1:15}".
+Print "arguments {arguments's count}".
+a text called xt1 is "held {xn1 add xy1} {xn1 multiply xy1 modulo 6:06x}".
+Print xt1.
 a number called u1 is 0.
 While u1 is less than 3, Increment u1.
 Print u1.
-a buffer called b3 is 8 bytes in size.
-Print byte 322 of b3.
-On error print "buffer read out of range".
-If v1 is less than or equal to v1 or v1 modulo 4 is equal to 0 then, Print v1. Otherwise, Print v1 minus v1.
-open a file for reading called sin1 at 0.
-a buffer called sb1 is 22 bytes.
-Read from sin1 into sb1.
-Print sb1's size.
-If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
-a buffer called sc1 is 8 bytes.
-Read from sin1 into sc1.
-Print sc1's size.
-Close sin1.
-a text called fp2 is "{fl1scratch}/out2".
-open a file for writing called fw2 at fp2.
-Write "payload 30832\n" to fw2.
-Close fw2.
-open a file for reading called fr2 at fp2.
-a buffer called fb2 is 61 bytes in size.
-Read from fr2 into fb2.
-Print fb2's size.
-Print fr2's readable.
-Close fr2.
-'read flags 1'.
-Exit 40.
+a text called s2 is "word2".
+a text called s3 is "{s2}-{s2}".
+Print s3.
+a number called c1 is 30.
+Print f2 of c1.
+Set v1 to v1 times v1.
+Print {v1 add v1} multiply v1 modulo 2.
+Set v1 to v1 minus v1.
+a text called fp4 is "{fl1scratch}/out4".
+open a file for writing called fw4 at fp4.
+Write "payload 78135\n" to fw4.
+Close fw4.
+open a file for reading called fr4 at fp4.
+a buffer called fb4 is 20 bytes in size.
+Read from fr4 into fb4.
+Print fb4's size.
+Print fr4's readable.
+Close fr4.
+a number called zn5 is 0.
+a number called zk5 is 108.
+a float called zd5 is 7147670343872.82.
+a text called zs5 is "word5".
+a boolean called zb5 is true.
+a t1 called zi5.
+Set zi5's x1 to 50875.
+Print "{zn5}".
+Print "{zn5:4}".
+Print "{zn5:017}".
+Print "{zn5:x}".
+Print "{zn5:X}".
+Print "{zk5:b}".
+Print "{zk5:o}".
+Print "{zn5:013x}".
+Print "{zd5:.0}".
+Print "{zd5:4.0}".
+Print "{zs5:2}".
+Print "{zb5:017}".
+Print "{zi5's x1:013x}".
+a number called c2 is 58.
+Print f2 of c2.
+Exit 247.
 
 reproducible: 1

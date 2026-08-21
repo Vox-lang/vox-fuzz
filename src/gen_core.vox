@@ -608,6 +608,26 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf buffer growth' of indent and nested.
     If kind is 104 then,
         'gen leaf buffer truncation' of indent and nested.
+    (The values band, 140-147, reserved above for the collections
+     surface. They are drawn only at depth 3 - see the section header in
+     src/gen_collections.vox for why a leaf that both defines a function
+     and closes on an If assertion cannot sit in a nested body.)
+    If kind is 140 then,
+        'gen leaf value dispatch' of indent and nested.
+    If kind is 141 then,
+        'gen leaf value return' of indent and nested.
+    If kind is 142 then,
+        'gen leaf value name' of indent and nested.
+    If kind is 143 then,
+        'gen leaf value retag' of indent and nested.
+    If kind is 144 then,
+        'gen leaf value retype' of indent and nested.
+    If kind is 145 then,
+        'gen leaf value retype sum' of indent and nested.
+    If kind is 146 then,
+        'gen leaf value predicate' of indent and nested.
+    If kind is 147 then,
+        'gen leaf value bad retype' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -763,8 +783,18 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         (0..44: the four format leaves are 39-42. The file-write leaf
          is parked at 99, outside the draw, so no number in this range
          dispatches to nothing. 45..49 are the five reserved-span
-         buffer leaves, remapped to 100..104 just below.)
-        Set kind to 'rng below' of 50.
+         buffer leaves, remapped to 100..104 just below.
+         50..57 are drawn as one contiguous span with the rest and then
+         shifted into the collections surface's reserved 140-147 band -
+         the eight `value` leaves. The shift keeps a single flat draw
+         (so the existing kinds' odds move by exactly the new ones'
+         share, and no seed's leaf choice depends on where a band
+         happens to sit) while leaving the band numbers themselves
+         where the reservation table put them, out of the way of the
+         other surfaces' parallel work.)
+        Set kind to 'rng below' of 58.
+        If kind is greater than 49 then,
+            Set kind to kind add 90.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 32.
     If depth is equal to 1 then,
@@ -782,8 +812,11 @@ To 'gen statement' with a number called depth and a text called indent and a boo
      Deeper positions get fewer of them, on the same rule the pre-existing
      bands follow: 103 (a While) and 104 (an On error, plus real file I/O)
      are top-level-only, exactly like 'gen leaf while' and 'gen leaf file
-     round trip', so only depth 3 reaches past 102.)
-    If depth is equal to 3 and kind is greater than 44 then,
+     round trip', so only depth 3 reaches past 102. The upper bound below
+     (kind less than 50) keeps this remap off the value band, which has
+     already been shifted to 140-147 by the time this runs - without it
+     a value kind would be greater than 44 twice over and land past 147.)
+    If depth is equal to 3 and kind is greater than 44 and kind is less than 50 then,
         Set kind to kind add 55.
     If depth is equal to 2 and kind is greater than 28 then,
         Set kind to kind add 71.
@@ -901,6 +934,15 @@ To 'gen statement' with a number called depth and a text called indent and a boo
             Set 'safe kind' to 100.
         If kind is 104 then,
             Set 'safe kind' to 101..
+        (140-147, the `value` leaves. Defensive in the same sense as the
+         entries above: avoid_onerror is only ever true below 'gen body',
+         which recurses at depth 2 or lower, and the band is drawn at
+         depth 3 alone - so these can never be reached here. Written
+         anyway, because every one of them either defines a function or
+         ends on an `If ... Exit 95.` assertion, and both would leave an
+         enclosing block open if the guarantee ever moved.)
+        If kind is greater than 139 then,
+            Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
 
@@ -1065,6 +1107,13 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_envs to 0.
     Set gen_flags to 0.
     'rng seed' of seed.
+    (The value leaves spend names out of a vocabulary on a per-program
+     cycle whose start and stride are DRAWN, so the reset has to sit
+     after the reseed, not with the plain counters above it: drawn from
+     the previous program's leftover stream, two programs generated in
+     one process stop being byte-identical for the same seed - which is
+     exactly what 040_gen's `reproducible` line caught.)
+    'gen reset value names'.
     Set gen_grid_depth to 'rng below' of 15 add 3.
     Set gen_flags to 1.
     'gen build argv'.
@@ -1148,11 +1197,481 @@ To 'gen program' with a number called seed and a number called budget.
         Set code to 'the raw code' add 10.
     a text called tail is "Exit {code}.\n".
     'gen emit' of tail.
+    (Last, after every content decision, so the RNG draws it makes cannot
+     shift the program's CONTENT for a seed - only its whitespace.)
+    'gen relayout'.
 
 (256, not 101: the shell-era cap is gone, and codes above 128 are the
  ones a shell-reported status would have misclassified as signal deaths -
  the native harness must prove it tells them apart, so the generator must
  produce them.)
+
+(The layout randomiser: the last pass over a finished program.
+
+ Josj, 2026-08-20: "indentation and line separation are purely cosmetic;
+ periods, commas and paragraph breaks are the only flow-control
+ constructs, so Vox programs should essentially be minified with random
+ blank characters and new lines." LANGUAGE.md:207 says the same thing
+ from the other side - Vox ignores leading whitespace entirely, so a
+ program can be minified without changing its meaning, and the period
+ count is the only thing that closes a clause.
+
+ So four-space indentation and one statement per line were an UNDECLARED
+ RULE. No line of LANGUAGE.md asks for either, and every program the
+ generator has ever written obeyed both - which is exactly the shape
+ CLAUDE.md calls a defect in the rule layer, sameness with no citation,
+ and which scripts/invariants reported as a 100% invariant.
+
+ There is exactly ONE thing about whitespace that is not cosmetic, and
+ LANGUAGE.md:78-84 states it: a blank line is a PARAGRAPH BREAK, and a
+ paragraph break closes open clauses - a function body is closed by
+ nothing else. So the pass has one hard rule of its own, and everything
+ else is free:
+
+     a run of whitespace holding two or more newlines stays a run of
+     whitespace holding two or more newlines, and a run holding one or
+     fewer never grows a second.
+
+ Everything else - how many spaces, spaces or tabs, where the line ends,
+ how deep the next line is indented, whether there is any whitespace at
+ all - is drawn. Hand-verified against vox 0.4.7; the probes and their
+ recorded output live in vf_scratch/layout-probes.
+
+ The pass runs LAST, after every content decision, so the seed-to-content
+ mapping is untouched: strip the whitespace out of two programs generated
+ from one seed in the two modes and the bytes are identical. Test 270
+ asserts that, alongside the property that actually matters - layout
+ never changes what a program does.)
+
+(Which layout a program gets: "random" or "plain". Plain is the old
+ four-space, one-statement-per-line shape, kept because a test that
+ asserts on generated TEXT is asking about content, not layout, and
+ should not have to spell whitespace-insensitivity itself.)
+a text called gen_layout is "random".
+
+To 'gen set layout' with a text called 'the mode'.
+    Set gen_layout to 'the mode'.
+
+(The pass reads from layout_src and writes to layout_out, both globals,
+ so the helpers below are position-in, position-out functions rather than
+ passing a buffer down every call. layout_byte is the one-byte staging
+ buffer every emission goes through: Vox appends buffers to buffers, so a
+ single byte is a one-byte buffer. Hand-verified - setting byte 1 of a
+ fresh one-byte fixed buffer works and leaves its length at 1.)
+Create a buffer called layout_src.
+Create a buffer called layout_out.
+a buffer called layout_byte is 1 bytes in size.
+
+To 'layout put byte' with a number called b.
+    Set byte 1 of layout_byte to b.
+    append layout_byte to layout_out.
+
+(Space is 32, tab 9, newline 10, carriage return 13.)
+To 'layout byte is whitespace' with a number called b.
+    If b is 32 then, Return a boolean, true.
+    If b is 9 then, Return a boolean, true.
+    If b is 10 then, Return a boolean, true.
+    If b is 13 then, Return a boolean, true.
+    Return a boolean, false.
+
+(The bytes a gap may shrink to nothing beside: period 46, comma 44, open
+ paren 40, close paren 41, double quote 34, open bracket 91, close
+ bracket 93, open brace 123, close brace 125, colon 58. Probes 030, 031,
+ 095, 096, 097, 099, 101, 103, 104 and 105 compiled and ran with zero
+ whitespace on one side or the other of each. Probe 102 fixes the
+ boundary from the other end: two WORDS run together is a compile error,
+ so a gap between two words always keeps at least one blank character.
+
+ The apostrophe is deliberately absent. It closes a multi-word name, and
+ nothing has been probed about a name run flush against the token after
+ it, so the doubt costs a little randomisation rather than a program.)
+To 'layout byte is punctuation' with a number called b.
+    If b is 46 then, Return a boolean, true.
+    If b is 44 then, Return a boolean, true.
+    If b is 40 then, Return a boolean, true.
+    If b is 41 then, Return a boolean, true.
+    If b is 34 then, Return a boolean, true.
+    If b is 91 then, Return a boolean, true.
+    If b is 93 then, Return a boolean, true.
+    If b is 123 then, Return a boolean, true.
+    If b is 125 then, Return a boolean, true.
+    If b is 58 then, Return a boolean, true.
+    Return a boolean, false.
+
+(Letters, digits and underscore - what a name is made of. Used only to
+ tell a possessive apostrophe from the one that opens a quoted name.)
+To 'layout byte is name character' with a number called b.
+    If b is greater than 96 and b is less than 123 then, Return a boolean, true.
+    If b is greater than 64 and b is less than 91 then, Return a boolean, true.
+    If b is greater than 47 and b is less than 58 then, Return a boolean, true.
+    If b is 95 then, Return a boolean, true.
+    Return a boolean, false.
+
+(Emit 'how many' blank characters, each independently a space or a tab.
+ Probes 020, 021 and 022 put tabs at a line start, between two tokens and
+ mixed with spaces; all three ran.)
+To 'layout put blanks' with a number called 'how many'.
+    a number called k is 0.
+    While k is less than 'how many',
+        a number called 'the pick' is 'rng below' of 5,
+        a number called 'the blank byte' is 32,
+        If 'the pick' is 0 then,
+            Set 'the blank byte' to 9.
+        'layout put byte' of 'the blank byte',
+        Set k to k add 1.
+
+(0 to 16 columns of mixed spaces and tabs. Nothing in LANGUAGE.md names
+ an indent width, so nothing here does either.)
+To 'layout put indent'.
+    a number called 'the width' is 'rng below' of 17.
+    'layout put blanks' of 'the width'.
+
+(A paragraph break, kept a paragraph break. Probes 050, 051 and 052 ran
+ two, three and five consecutive blank lines to identical behaviour, so
+ the COUNT is free; probes 042 and 043 proved a line holding only spaces,
+ or only a tab, closes a clause exactly as an empty one does, so the FILL
+ is free too. What is not free is the newline count falling below two,
+ which is why every path through here emits at least two.)
+To 'layout put paragraph break'.
+    a number called 'the trailing width' is 'rng below' of 3.
+    'layout put blanks' of 'the trailing width'.
+    'layout put byte' of 10.
+    a number called 'how many blank lines' is 'rng below' of 3 add 1.
+    a number called k is 0.
+    While k is less than 'how many blank lines',
+        a number called 'the fill width' is 'rng below' of 4,
+        'layout put blanks' of 'the fill width',
+        'layout put byte' of 10,
+        Set k to k add 1.
+    'layout put indent'.
+
+(A gap that is not a paragraph break: spaces, tabs, at most one newline,
+ and sometimes nothing at all. At most one, never two - two would close
+ every open clause and the program would mean something else.
+
+ A newline is suppressed when the gap opens the file, because a first
+ line holding only whitespace IS a paragraph break; probe 060 says that
+ is harmless with nothing yet open, but there is no reason to lean on it.
+ Everywhere else the line a new newline ends already holds the token
+ before the gap, so no whitespace-only line can come out of a run this
+ short.)
+To 'layout put inline gap' with a number called 'the previous byte' and a number called 'the next byte' and a boolean called 'a newline is allowed' and a boolean called 'a blank is required'.
+    a boolean called 'nothing is legal here' is false.
+    a boolean called 'the previous is punctuation' is 'layout byte is punctuation' of 'the previous byte'.
+    a boolean called 'the next is punctuation' is 'layout byte is punctuation' of 'the next byte'.
+    If 'the previous is punctuation' or 'the next is punctuation' then,
+        Set 'nothing is legal here' to true.
+    (Byte 0 means there is no neighbour - the gap opens the file or ends
+     it. Probes 060, 061 and 062 ran a program with leading blank lines,
+     one with no trailing newline, and one with several.)
+    If 'the previous byte' is 0 or 'the next byte' is 0 then,
+        Set 'nothing is legal here' to true.
+    (The possessive overrides both: see 'layout gap follows a possessive'.)
+    If 'a blank is required' then,
+        Set 'nothing is legal here' to false.
+    a number called 'the gap width' is 'rng below' of 4.
+    If 'nothing is legal here' is false and 'the gap width' is 0 then,
+        Set 'the gap width' to 1.
+    'layout put blanks' of 'the gap width'.
+    a number called 'the break choice' is 'rng below' of 11.
+    a boolean called 'break the line here' is false.
+    If 'the break choice' is less than 4 then,
+        Set 'break the line here' to true.
+    If 'the previous byte' is 0 then,
+        Set 'break the line here' to false.
+    If 'a newline is allowed' is false then,
+        Set 'break the line here' to false.
+    If 'break the line here' then,
+        'layout put byte' of 10,
+        'layout put indent'.
+
+(Does the word beginning at 'the word position' spell 'the word' - the
+ whole word, not a prefix of a longer one?)
+To 'layout word starts at' with a number called 'the word position' and a text called 'the word'.
+    a buffer called 'the needle' is "{'the word'}".
+    a number called 'the needle length' is 'the needle's length.
+    a number called n is layout_src's length.
+    a number called 'the last position' is 'the word position' add 'the needle length' minus 1.
+    If 'the last position' is greater than n then,
+        Return a boolean, false.
+    a number called 'the offset' is 0.
+    a boolean called 'the bytes match' is true.
+    While 'the offset' is less than 'the needle length',
+        a number called 'the source position' is 'the word position' add 'the offset',
+        a number called 'the source byte' is byte 'the source position' of layout_src,
+        a number called 'the needle position' is 'the offset' add 1,
+        a number called 'the needle byte' is byte 'the needle position' of 'the needle',
+        If 'the source byte' is not 'the needle byte' then,
+            Set 'the bytes match' to false.
+        Set 'the offset' to 'the offset' add 1.
+    If 'the bytes match' is false then,
+        Return a boolean, false.
+    a number called 'the following position' is 'the last position' add 1.
+    If 'the following position' is greater than n then,
+        Return a boolean, true.
+    a number called 'the following byte' is byte 'the following position' of layout_src.
+    a boolean called 'the word runs on' is 'layout byte is name character' of 'the following byte'.
+    If 'the word runs on' then,
+        Return a boolean, false.
+    Return a boolean, true.
+
+(Does the word ending just before 'the position after the word' spell
+ 'the word'?)
+To 'layout word ends at' with a number called 'the position after the word' and a text called 'the word'.
+    a buffer called 'the needle' is "{'the word'}".
+    a number called 'the needle length' is 'the needle's length.
+    a number called 'the word position' is 'the position after the word' minus 'the needle length'.
+    If 'the word position' is less than 1 then,
+        Return a boolean, false.
+    a boolean called 'the word is here' is 'layout word starts at' of 'the word position' and 'the word'.
+    If 'the word is here' is false then,
+        Return a boolean, false.
+    a number called 'the position before' is 'the word position' minus 1.
+    If 'the position before' is less than 1 then,
+        Return a boolean, true.
+    a number called 'the byte before' is byte 'the position before' of layout_src.
+    a boolean called 'a longer name runs into it' is 'layout byte is name character' of 'the byte before'.
+    If 'a longer name runs into it' then,
+        Return a boolean, false.
+    Return a boolean, true.
+
+(A gap that opens right after a possessive marker keeps at least one
+ blank character, whatever the punctuation on either side says.
+
+ vox 0.4.7 mis-parses a possessive run flush against the string that
+ indexes it, but only once a LATER apostrophe appears on the same line:
+
+     a map called m1 is {"count": 7}.
+     Print m1's"count". Print m1's "count".
+
+ is rejected with "Expected a statement, got Apostrophe", while the same
+ two statements on two lines, or with one space after the first `'s`,
+ both compile and print 7 and 7. LANGUAGE.md asks for no space there and
+ `Print"a".` proves a string may sit flush against the token before it in
+ general, so this too is a discrepancy for the report rather than a rule
+ anyone declared - and, like the other three, the pass simply stays out
+ of the position.)
+To 'layout gap follows a possessive' with a number called 'the run start'.
+    a number called 'the s position' is 'the run start' minus 1.
+    If 'the s position' is less than 2 then,
+        Return a boolean, false.
+    a number called 'the s byte' is byte 'the s position' of layout_src.
+    If 'the s byte' is not 115 then,
+        Return a boolean, false.
+    a number called 'the apostrophe position' is 'the s position' minus 1.
+    a number called 'the apostrophe byte' is byte 'the apostrophe position' of layout_src.
+    If 'the apostrophe byte' is not 39 then,
+        Return a boolean, false.
+    Return a boolean, true.
+
+(The three places where vox 0.4.7 does NOT treat a line break the way it
+ treats a space, each reproduced by hand and each recorded in the report
+ as a discrepancy against LANGUAGE.md:207, which says a program can be
+ minified without changing its meaning:
+
+   1. `is less than or equal` + newline + `to` is rejected with "Expected
+      a statement, got To". The same gap written as spaces or as a tab
+      compiles and runs. Same for `greater than or equal`.
+   2. a thing's method call - `a t4's 'made at'` + newline + `with 101` -
+      is rejected with "Expected a statement, got With". Spaces and tabs
+      are fine, and the ordinary function call `Print f2` + newline +
+      `with 4 and 5` is fine too, so it is the thing-method form.
+   3. `a value` + newline + `called v is "x".` is rejected with "Unknown
+      type 'value'" - which lists `value` among the known types in the
+      same breath. Every other type noun survives the same break.
+
+ None of these is adjudicated here: the reading in which the compiler is
+ right is in the report, and a human decides. What IS decided here is
+ that the generator must emit programs that compile, so the pass does not
+ put a newline in any of the three places. The guard is deliberately
+ wider than the three repros - any `to`, any `with`, anything after
+ `value` - because a narrow guard tuned to three examples would be its
+ own undeclared rule, and the cost is only a little randomisation.)
+To 'layout a newline is safe here' with a number called 'the run start' and a number called 'the run end'.
+    a boolean called 'to follows the gap' is 'layout word starts at' of 'the run end' and "to".
+    If 'to follows the gap' then,
+        Return a boolean, false.
+    a boolean called 'with follows the gap' is 'layout word starts at' of 'the run end' and "with".
+    If 'with follows the gap' then,
+        Return a boolean, false.
+    a boolean called 'value precedes the gap' is 'layout word ends at' of 'the run start' and "value".
+    If 'value precedes the gap' then,
+        Return a boolean, false.
+    Return a boolean, true.
+
+(Copy a double-quoted string literal through untouched, from its opening
+ quote to just past its closing one. A backslash escapes whatever
+ follows, so an escaped quote does not close the string - probe 081. The
+ whitespace inside a string is DATA, not layout: probe 080 confirms a
+ newline put into one is printed, which is the whole reason this pass has
+ to know where strings are.)
+To 'layout copy string' with a number called 'the opening position'.
+    a number called n is layout_src's length.
+    a number called 'the opening byte' is byte 'the opening position' of layout_src.
+    'layout put byte' of 'the opening byte'.
+    a number called i is 'the opening position' add 1.
+    a boolean called 'the string is closed' is false.
+    While 'the string is closed' is false and i is less than or equal to n,
+        a number called b is byte i of layout_src,
+        'layout put byte' of b,
+        a number called 'the stride' is 1,
+        If b is 92 and i is less than n then,
+            a number called 'the escaped position' is i add 1,
+            a number called 'the escaped byte' is byte 'the escaped position' of layout_src,
+            'layout put byte' of 'the escaped byte',
+            Set 'the stride' to 2.
+        If b is 34 then,
+            Set 'the string is closed' to true.
+        Set i to i add 'the stride'.
+    Return a number, i.
+
+(Copy a parenthesised comment through untouched, nesting and all. Probes
+ 090, 091 and 093 ran a comment spanning lines, a triply nested one, and
+ one holding a double quote - which is why the string scanner does not
+ run in here, and why this does not stop at the first close paren.)
+To 'layout copy comment' with a number called 'the opening position'.
+    a number called n is layout_src's length.
+    a number called 'the nesting depth' is 0.
+    a number called i is 'the opening position'.
+    a boolean called 'the comment is closed' is false.
+    While 'the comment is closed' is false and i is less than or equal to n,
+        a number called b is byte i of layout_src,
+        'layout put byte' of b,
+        If b is 40 then,
+            Set 'the nesting depth' to 'the nesting depth' add 1.
+        If b is 41 then,
+            Set 'the nesting depth' to 'the nesting depth' minus 1.
+        If b is 41 and 'the nesting depth' is 0 then,
+            Set 'the comment is closed' to true.
+        Set i to i add 1.
+    Return a number, i.
+
+(Copy a single-quoted name through untouched. The space in 'made at' is
+ part of the name, not layout.)
+To 'layout copy quoted name' with a number called 'the opening position'.
+    a number called n is layout_src's length.
+    a number called 'the opening byte' is byte 'the opening position' of layout_src.
+    'layout put byte' of 'the opening byte'.
+    a number called i is 'the opening position' add 1.
+    a boolean called 'the name is closed' is false.
+    While 'the name is closed' is false and i is less than or equal to n,
+        a number called b is byte i of layout_src,
+        'layout put byte' of b,
+        If b is 39 then,
+            Set 'the name is closed' to true.
+        Set i to i add 1.
+    Return a number, i.
+
+(An apostrophe is one of two different things and the pass has to tell
+ them apart: the possessive in arguments's count, which is ordinary
+ source, or the opening quote of a multi-word name like 'made at', whose
+ insides are untouchable. The tell is what follows. An s and then a byte
+ that cannot continue a name is a possessive; anything else opens a name,
+ including 'sum of', where that s starts a word.
+
+ The doubt is resolved toward "a name opens here" on purpose. Reading a
+ name as a possessive rewrites the whitespace INSIDE the name and breaks
+ the program; reading a possessive as a name only skips to the next
+ apostrophe and randomises a little less.)
+To 'layout apostrophe opens a name' with a number called 'the apostrophe position'.
+    a number called n is layout_src's length.
+    a number called 'the next position' is 'the apostrophe position' add 1.
+    If 'the next position' is greater than n then,
+        Return a boolean, false.
+    a number called 'the next byte' is byte 'the next position' of layout_src.
+    If 'the next byte' is not 115 then,
+        Return a boolean, true.
+    a number called 'the third position' is 'the apostrophe position' add 2.
+    If 'the third position' is greater than n then,
+        Return a boolean, false.
+    a number called 'the third byte' is byte 'the third position' of layout_src.
+    a boolean called 'the third continues a name' is 'layout byte is name character' of 'the third byte'.
+    If 'the third continues a name' then,
+        Return a boolean, true.
+    Return a boolean, false.
+
+(Copy one non-whitespace token - a string, a comment, a quoted name, or a
+ single ordinary byte - and return the position just after it.)
+To 'layout copy token' with a number called 'the token position'.
+    a number called b is byte 'the token position' of layout_src.
+    If b is 34 then,
+        a number called 'after the string' is 'layout copy string' of 'the token position',
+        Return a number, 'after the string'.
+    If b is 40 then,
+        a number called 'after the comment' is 'layout copy comment' of 'the token position',
+        Return a number, 'after the comment'.
+    If b is 39 then,
+        a boolean called 'a name opens here' is 'layout apostrophe opens a name' of 'the token position',
+        If 'a name opens here' then,
+            a number called 'after the name' is 'layout copy quoted name' of 'the token position',
+            Return a number, 'after the name'..
+    'layout put byte' of b.
+    a number called 'after the byte' is 'the token position' add 1.
+    Return a number, 'after the byte'.
+
+(Rewrite one whitespace run. Measure it first - the newline count is the
+ one property that has to survive - then emit a fresh run of the same
+ KIND and a freely chosen shape.)
+To 'layout rewrite whitespace run' with a number called 'the run start'.
+    a number called n is layout_src's length.
+    a number called i is 'the run start'.
+    a number called 'how many newlines' is 0.
+    a boolean called scanning is true.
+    While scanning and i is less than or equal to n,
+        a number called b is byte i of layout_src,
+        a boolean called 'still whitespace' is 'layout byte is whitespace' of b,
+        a number called 'the stride' is 0,
+        If 'still whitespace' is false then,
+            Set scanning to false.
+        If 'still whitespace' and b is 10 then,
+            Set 'how many newlines' to 'how many newlines' add 1.
+        If 'still whitespace' then,
+            Set 'the stride' to 1.
+        Set i to i add 'the stride'.
+    (Byte 0 stands in for a neighbour that is not there, at either end of
+     the file.)
+    a number called 'the previous byte' is 0.
+    If 'the run start' is greater than 1 then,
+        a number called 'the previous position' is 'the run start' minus 1,
+        Set 'the previous byte' to byte 'the previous position' of layout_src.
+    a number called 'the next byte' is 0.
+    If i is less than or equal to n then,
+        Set 'the next byte' to byte i of layout_src.
+    a boolean called 'a newline is allowed' is 'layout a newline is safe here' of 'the run start' and i.
+    a boolean called 'a blank is required' is 'layout gap follows a possessive' of 'the run start'.
+    If 'how many newlines' is greater than 1 then,
+        'layout put paragraph break'.
+    If 'how many newlines' is less than 2 then,
+        'layout put inline gap' of 'the previous byte' and 'the next byte' and 'a newline is allowed' and 'a blank is required'.
+    Return a number, i.
+
+To 'layout rewrite the program'.
+    clear layout_src.
+    append gen_out to layout_src.
+    clear layout_out.
+    a number called n is layout_src's length.
+    a number called i is 1.
+    While i is less than or equal to n,
+        a number called b is byte i of layout_src,
+        a boolean called 'this is whitespace' is 'layout byte is whitespace' of b,
+        a number called 'the position after' is i add 1,
+        If 'this is whitespace' then,
+            a number called 'the run end' is 'layout rewrite whitespace run' of i,
+            Set 'the position after' to 'the run end'.
+        If 'this is whitespace' is false then,
+            a number called 'the token end' is 'layout copy token' of i,
+            Set 'the position after' to 'the token end'.
+        Set i to 'the position after'.
+    clear gen_out.
+    append layout_out to gen_out.
+
+(The pass, as 'gen program' calls it.)
+To 'gen relayout'.
+    a boolean called 'the layout is random' is false.
+    If gen_layout is "random" then,
+        Set 'the layout is random' to true.
+    If 'the layout is random' then,
+        'layout rewrite the program'.
 
 To 'gen text'.
     a text called t is "{gen_out}".
