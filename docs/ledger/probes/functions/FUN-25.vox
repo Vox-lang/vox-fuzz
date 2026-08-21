@@ -1,0 +1,25 @@
+(FUN-25 — the `'contains token'` example fragment (LANGUAGE.md:733-739)
+ compiles and behaves: parameters introduced with `of`, a buffer
+ parameter and a text parameter, a buffer declared INSIDE the body from a
+ format string that interpolates the text parameter, and `'s size` and
+ `byte 1 of` read off the buffer parameter. The manual elides the body
+ with `...`; the three statements it does show are reproduced verbatim
+ and their values printed. `byte 1 of hay` is 65, the ASCII code of the
+ `A` the caller passed, which pins the 1-indexing at the same time.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-25.vox -o p && ./p
+ expected output:
+    sda
+   
+   3
+   65
+)
+To 'contains token' of a buffer called hay and a text called devname.
+  a buffer called needle is " {devname}\n".
+  a number called H is hay's size.
+  a number called b is byte 1 of hay.
+  Print needle.
+  Print H.
+  Print b.
+
+a buffer called haystack is "ABC".
+'contains token' of haystack and "sda".

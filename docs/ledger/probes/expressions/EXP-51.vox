@@ -1,0 +1,33 @@
+(EXP-51: `if x, y, and z are true` expands to
+ `if x is true and y is true and z is true` - the plural form and the written-
+ out conjunction agree on every combination.
+ Both forms are asked the same question three times, with a different subject
+ flipped each time, so an expansion that dropped or duplicated a subject would
+ show up as a disagreement rather than as a coincidence.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-51.vox -o p && ./p
+ expected output:
+   plural TTT
+   written TTT
+   plural FTT false
+   written FTT false
+   plural TFT false
+   written TFT false
+   plural TTF false
+   written TTF false
+)
+a boolean called armed is true.
+a boolean called latched is true.
+a boolean called sealed is true.
+If armed, latched, and sealed are true then, Print "plural TTT". Otherwise, Print "plural TTT false".
+If armed is true and latched is true and sealed is true then, Print "written TTT". Otherwise, Print "written TTT false".
+Set armed to false.
+If armed, latched, and sealed are true then, Print "plural FTT". Otherwise, Print "plural FTT false".
+If armed is true and latched is true and sealed is true then, Print "written FTT". Otherwise, Print "written FTT false".
+Set armed to true.
+Set latched to false.
+If armed, latched, and sealed are true then, Print "plural TFT". Otherwise, Print "plural TFT false".
+If armed is true and latched is true and sealed is true then, Print "written TFT". Otherwise, Print "written TFT false".
+Set latched to true.
+Set sealed to false.
+If armed, latched, and sealed are true then, Print "plural TTF". Otherwise, Print "plural TTF false".
+If armed is true and latched is true and sealed is true then, Print "written TTF". Otherwise, Print "written TTF false".

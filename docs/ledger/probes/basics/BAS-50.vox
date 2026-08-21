@@ -1,0 +1,14 @@
+(BAS-50 - indentation is not what decides this. Vox ignores leading
+ whitespace entirely, so the deeply indented statement below is NOT inside
+ the false `If` (its period closed the `If`), and the same program
+ minified onto one line behaves identically.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-50.vox -o p && ./p
+ expected output:
+   after indented form
+   after minified form
+)
+a number called n is 0.
+If n is equal to 1 then,
+                    print "not reached".
+print "after indented form".
+a number called m is 0. If m is equal to 1 then, print "not reached". print "after minified form".

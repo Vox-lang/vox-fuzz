@@ -1,0 +1,17 @@
+(VAR-53: the bare-identifier character set. LANGUAGE.md:623 gives the set as
+ [A-Za-z_][A-Za-z0-9_]*, which admits a leading underscore. The compiler
+ rejects a leading underscore as reserved for the runtime — see Discrepancy 9
+ — so what this probe records is the set the compiler ACTUALLY accepts: a
+ leading letter in either case, digits and underscores after it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-53.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+a number called Total2 is 1.
+a number called a_b_9 is 2.
+a number called z is 3.
+Print Total2.
+Print a_b_9.
+Print z.

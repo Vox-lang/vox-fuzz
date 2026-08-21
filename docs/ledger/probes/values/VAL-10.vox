@@ -1,0 +1,10 @@
+(VAL-10: the retype worked example — numstr is "357"; `numstr is a number.`
+ converts in place; `print numstr add 1` then prints 358 (arithmetic works
+ because the variable is now tracked as a number).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-10.vox -o p && ./p
+ expected output:
+   358
+)
+a value called numstr is "357".
+numstr is a number.
+print numstr add 1.

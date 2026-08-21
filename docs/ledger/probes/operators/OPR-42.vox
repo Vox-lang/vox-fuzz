@@ -1,0 +1,15 @@
+(OPR-42 (undocumented precision): a text, buffer or list operand in a
+ BITWISE expression is a compile error, the same as in arithmetic.
+ LANGUAGE.md:1805 states this for arithmetic only; the Operators
+ section says nothing about the bitwise operators' domain, and the
+ bitwise table sits 2700 lines away from that note. Memory safety is
+ preserved by the compiler, not by luck - this is the row that says so.
+ Contrast OPR-38: a FLOAT operand is silently accepted and gives 0.0.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-42.vox -o p && ./p
+ expected output:
+   error: Cannot use text label in arithmetic; cast it first with 'as a number' or 'as a float'.
+   (no binary produced; compile error)
+)
+a text called label is "hello".
+Print label bit-and 1.

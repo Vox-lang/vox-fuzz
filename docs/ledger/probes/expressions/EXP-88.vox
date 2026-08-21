@@ -1,0 +1,9 @@
+(EXP-88: `<number> in <unit>` on a plain number is not valid syntax - `in` is
+ refused outright rather than treated as a no-op or a divide.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-88.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got In
+   no binary produced; compile error
+)
+a number called millis is 5000.
+Print the millis in seconds.

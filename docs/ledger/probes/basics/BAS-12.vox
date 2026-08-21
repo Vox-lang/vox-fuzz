@@ -1,0 +1,13 @@
+(BAS-12 - a comment can span multiple lines, and the lines it spans are
+ not paragraph breaks: this one sits between two top-level statements and
+ neither of them is disturbed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-12.vox -o p && ./p
+ expected output:
+   before
+   after
+)
+print "before".
+(Multi-line comments
+work naturally across
+several lines)
+print "after".

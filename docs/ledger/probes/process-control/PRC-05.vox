@@ -1,0 +1,13 @@
+(PRC-05 — `called` is required in the create form; omitting it is a
+ compile error, not a runtime failure.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-05.vox -o p && ./p
+ expected output:
+   error: Expected 'called' after directory
+   (no binary produced; compile error)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+)
+Create a directory "vf_scratch/process-control/scratch_nocalled".

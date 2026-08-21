@@ -1,0 +1,12 @@
+(THG2-54: a `see` of a file that cannot be read is an error - it was previously
+ silent without -v.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-54.vox -o p && ./p
+ expected output:
+   error: Cannot read
+   ... the absolute path of include/nothing_here.vox, "the file this `see`
+   names: No such file or directory". No binary is produced; this is a
+   compile error.
+)
+see "./include/nothing_here.vox".
+
+Print 1.

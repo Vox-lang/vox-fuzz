@@ -1,0 +1,9 @@
+(FLW-41: the `terminate` spelling, hand-run separately from FLW-40
+ because a process can only exit once.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-41.vox -o p && ./p
+ expected output:
+   before
+   exit 6
+)
+print "before".
+terminate 6.

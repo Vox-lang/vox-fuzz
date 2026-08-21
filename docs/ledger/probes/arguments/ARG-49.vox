@@ -1,0 +1,22 @@
+(ARG-49 — *(not a manual claim — a gap in the manual)* a flag whose
+ value token is missing because argv ends leaves the flag at its empty
+ value and raises nothing. The flag itself is still consumed: it does
+ not fall through into the positional view.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-49.vox -o p && ./p -o
+ Args: -o
+ expected output:
+   output is []
+   ALL
+   RAW
+   -o
+)
+a flag called output is "-o" or "--output", it is a text.
+Parse flags.
+
+a text called seen is output.
+On error print "reading the flag errored".
+Print "output is [{seen}]".
+Print "ALL".
+Print each item from arguments's all.
+Print "RAW".
+Print each item from arguments's raw.

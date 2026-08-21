@@ -1,0 +1,11 @@
+(VAR-18 and VAR-20: `Create a time called NAME.` is rejected at compile
+ time, with the diagnostic at LANGUAGE.md:513-515 reproduced exactly.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-18.vox -o p && ./p
+ expected output:
+   error: A time variable must be initialized
+     Example: a time called now is current time.
+   (no binary produced; compile error)
+)
+Create a time called clk.
+Print 1.

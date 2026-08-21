@@ -1,0 +1,14 @@
+(TIM-14 - the manual's Inline Time Access example, verbatim from
+ LANGUAGE.md:4176-4178. Clock-dependent, so recorded as an exit-code
+ probe. Also covers TIM-13's construct (`current time's hour` with no
+ stored time), which TIM-13.vox checks against a stored reading.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-14.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   It is currently hour 
+   4
+    of the day.
+)
+Print "It is currently hour ".
+Print current time's hour.
+Print " of the day.".

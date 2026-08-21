@@ -1,0 +1,13 @@
+(FLW-12: the manual's single-line example (LANGUAGE.md:2075) verbatim,
+ including the `the` articles and the lowercase `print`/`increment`
+ spellings.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-12.vox -o p && ./p
+ expected output:
+   7
+   8
+   9
+   done
+)
+a number called counter is 7.
+While the counter is less than 10, print the counter, increment the counter.
+print "done".

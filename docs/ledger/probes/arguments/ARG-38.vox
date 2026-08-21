@@ -1,0 +1,28 @@
+(ARG-38 — the Practical Pattern example (LANGUAGE.md:4453-4466),
+ verbatim, including the two quoted flag names: `'version'` and
+ `'number'` are only legal because they are quoted — both are reserved
+ words unquoted.
+ Also covers: ARG-39 (a boolean flag's own name used bare as an If
+ condition, with no comparison) and ARG-40 (`Print each item from
+ arguments's all` prints each positional argument, one per line).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-38.vox -o p && ./p -h -V a.txt b.txt
+ Args: -h -V a.txt b.txt
+ expected output:
+   Usage: myprog [options] [files]
+   myprog 1.0.0
+   a.txt
+   b.txt
+)
+a flag called help is "-h" or "--help", it is a boolean.
+a flag called 'version' is "-V" or "--version", it is a boolean.
+a flag called 'number' is "-n" or "--number", it is a boolean.
+
+Parse flags.
+
+If help then,
+    Print "Usage: myprog [options] [files]".
+
+If 'version' then,
+    Print "myprog 1.0.0".
+
+Print each item from arguments's all.

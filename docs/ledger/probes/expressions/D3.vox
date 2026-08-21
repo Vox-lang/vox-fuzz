@@ -1,0 +1,26 @@
+(Discrepancy 3 - minimal repro. The Comparisons and Property Checks blocks sit
+ under `## Expressions`, and the Grammar Summary at LANGUAGE.md:5230-5232
+ derives `comparison` from `expr` while :5187 lets a var_decl take any `expr`.
+ So `a boolean called dominant is x is greater than y.` should parse. It does
+ not, and neither does a comparison in a Print. Both are accepted only in a
+ condition position.
+ Uncomment either of the last two lines to see the refusal; as written the
+ file compiles, so the recorded output is the condition-position form working.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   condition position: accepted
+   loop ran, x is now:
+   3
+)
+a number called x is 7.
+a number called y is 3.
+If x is greater than y then, Print "condition position: accepted".
+While x is greater than y, Set x to x subtract 1.
+
+Print "loop ran, x is now:".
+Print x.
+
+(Each of these is rejected with "Expected a statement, got Is":)
+(a boolean called dominant is x is greater than y.)
+(Print x is greater than y.)
+(a boolean called lopsided is x is odd.)

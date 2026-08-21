@@ -1,0 +1,10 @@
+(BAS2-51: `but if` also attaches to a plain, non-loop base statement - a context the manual does not mention. This is the only form the generator emits today.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-51.vox -o p && ./p
+ expected output:
+   big
+   1
+)
+a number called depth is 4.
+Print depth, but if depth is greater than 2 print "big", otherwise print "small".
+a number called shallow is 1.
+Print shallow, but if shallow is greater than 2 print "big".

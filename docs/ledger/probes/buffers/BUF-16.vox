@@ -1,0 +1,12 @@
+(BUF-16: resize preserves data up to min(old_length, new_capacity) - growing case, old data must survive intact.)
+(expected output:
+5
+64
+hello
+)
+a buffer called buf is 8 bytes in size.
+append "hello" to buf.
+resize buf to 64 bytes.
+print buf's size.
+print buf's capacity.
+print buf.

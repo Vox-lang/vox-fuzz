@@ -1,0 +1,10 @@
+(ARG-07 — `arguments's empty` is true when there are no user arguments,
+ which is exactly argc <= 1. Run with none: count is 1 and empty is true
+ (printed as 1). The false half is in ARG-01.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-07.vox -o p && ./p
+ expected output:
+   1
+   1
+)
+Print arguments's count.
+Print arguments's empty.

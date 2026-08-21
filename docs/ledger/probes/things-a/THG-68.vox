@@ -1,0 +1,17 @@
+(THG-68: stepping a whole thing with `increment` is rejected, naming its
+ fields. LANGUAGE.md:1116-1126.
+ The manual's block stops the second line at "(plan 310 §5)"; the compiler
+ says more - see Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-68.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, not a value
+       A whole thing is copied, passed, and returned whole (plan 310 §5), printed as its fields (§7), and compared field by field (§8); no other position reads it as one value.
+       its fields are: x, y
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+increment origin.

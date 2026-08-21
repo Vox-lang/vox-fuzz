@@ -1,0 +1,12 @@
+(THG-14: a thing name may be a bare word or a quoted multi-word name,
+ the same forms any identifier takes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-14.vox -o p && ./p
+ expected output:
+   1
+)
+A thing called 'bounding box' has
+  a number called width is 1,
+  a number called height is 1.
+
+a 'bounding box' called viewport.
+Print viewport's width.

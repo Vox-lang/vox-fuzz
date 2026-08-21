@@ -1,0 +1,37 @@
+(PRC-27 — `Create symbolic link from '<target>' to "<linkpath>".` performs
+ symlink(2): the SECOND path is the link that gets created, and it points
+ at the FIRST. The probe pins the direction two ways — it reads a file
+ through the link, and it makes a link to a target that does not exist and
+ finds the link unresolvable rather than the statement failing.
+ Also covers: PRC-28 (the error flag is set on failure — the second
+ identical symlink fails with EEXIST).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-27.vox -o p && ./p
+ expected output:
+   the link resolves
+   payload
+   a link to a missing target does not resolve
+   creating the same link twice set the error flag
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+open a file for writing called scribe at "vf_scratch/process-control/scratch_real.txt".
+Write "payload" to scribe.
+Close scribe.
+Create symbolic link from "scratch_real.txt" to "vf_scratch/process-control/scratch_link".
+On error print "the symbolic link failed".
+If "vf_scratch/process-control/scratch_link" is available then, print "the link resolves".
+a buffer called 'read through the link' is 32 bytes in size.
+open a file for reading called reader at "vf_scratch/process-control/scratch_link".
+Read from reader into 'read through the link'.
+Close reader.
+print 'read through the link'.
+Create symbolic link from "scratch_nothing" to "vf_scratch/process-control/scratch_dangling".
+If "vf_scratch/process-control/scratch_dangling" is not available then, print "a link to a missing target does not resolve".
+Create symbolic link from "scratch_nothing" to "vf_scratch/process-control/scratch_dangling".
+On error print "creating the same link twice set the error flag".
+Delete the file "vf_scratch/process-control/scratch_link".
+Delete the file "vf_scratch/process-control/scratch_dangling".
+Delete the file "vf_scratch/process-control/scratch_real.txt".

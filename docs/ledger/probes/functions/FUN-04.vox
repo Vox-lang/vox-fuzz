@@ -1,0 +1,12 @@
+(FUN-04 — the `'check divisibility'` worked example: parameters
+ introduced with `of` rather than `with`, and a `Return a boolean,` whose
+ expression is a comparison. Booleans print as 1 and 0.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-04.vox -o p && ./p
+ expected output:
+   1
+   0
+)
+To 'check divisibility' of a number called divisor and a number called dividend. Return a boolean, the divisor modulo the dividend is 0.
+
+Print 'check divisibility' of 10 and 5.
+Print 'check divisibility' of 10 and 3.

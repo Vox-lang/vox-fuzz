@@ -1,0 +1,11 @@
+(KEY-58 — quoting a reserved word makes it usable as a name: `'flag'` and
+ `'empty'` declare and read back fine.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-58.vox -o p && ./p
+ expected output:
+   1
+   2
+)
+a number called 'flag' is 1.
+a number called 'empty' is 2.
+Print 'flag'.
+Print 'empty'.

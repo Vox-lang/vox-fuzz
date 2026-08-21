@@ -1,0 +1,14 @@
+(FLW-04: each `then,` / `but if ... then,` / `otherwise,` branch consumes
+ actions until the sentence ends.
+ Also covers FLW-05 (commas separate several actions in one branch) and
+ FLW-06 (the period ends the whole if sentence, so `print "outside"` is
+ unconditional).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-04.vox -o p && ./p
+ expected output:
+   seven
+   still seven
+   outside
+)
+a number called score is 7.
+If score is 1 then, print "one", print "still one". But if score is 7 then, print "seven", print "still seven". Otherwise, print "other", print "still other".
+print "outside".

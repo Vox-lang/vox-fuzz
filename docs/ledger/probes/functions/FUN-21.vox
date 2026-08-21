@@ -1,0 +1,71 @@
+(FUN-21 — all eleven expressible types are legal parameter types: number,
+ float, text, boolean, list, map, buffer, file, time, timer, value. Every
+ declaration below is accepted and every function is reached. This probe
+ proves ACCEPTANCE only; whether each parameter then behaves like a
+ top-level variable of its type is FUN-22, and three of them do not — see
+ Discrepancies 2 (map), 3 (timer) and 4 (file).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-21.vox -o p && ./p
+ expected output:
+   3
+   2.5
+   hi
+   1
+   3
+   30
+   3
+   12
+   2026
+   timer parameter accepted
+   value parameter carries its tag
+)
+To 'take number' with a number called n.
+  Print n.
+
+To 'take float' with a float called f.
+  Print f.
+
+To 'take text' with a text called t.
+  Print t.
+
+To 'take boolean' with a boolean called b.
+  Print b.
+
+To 'take list' with a list called items.
+  Print items's length.
+
+To 'take map' with a map called lookup.
+  Print lookup's "ann".
+
+To 'take buffer' with a buffer called payload.
+  Print payload's size.
+
+To 'take file' with a file called handle.
+  Print handle's size.
+
+To 'take time' with a time called moment.
+  Print moment's year.
+
+To 'take timer' with a timer called clock.
+  Print "timer parameter accepted".
+
+To 'take value' with a value called item.
+  If item is a text, print "value parameter carries its tag".
+
+a map called ages is {"ann": 30}.
+a buffer called blob is "ABC".
+a time called now is current time.
+a timer called wallclock.
+Start the wallclock.
+open a file for reading called src at "docs/ledger/probes/functions/fixtures/data.txt".
+
+'take number' of 3.
+'take float' of 2.5.
+'take text' of "hi".
+'take boolean' of true.
+'take list' of [1, 2, 3].
+'take map' of ages.
+'take buffer' of blob.
+'take file' of src.
+'take time' of now.
+'take timer' of wallclock.
+'take value' of "two".

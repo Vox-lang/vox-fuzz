@@ -1,0 +1,29 @@
+(VAL-18: recursion with value works — a value parameter threads its tag
+ through every frame, so a walker over mixed data classifies correctly at
+ any depth; and value parameters compose, a value passed straight to
+ another value function round-trips its tag.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-18.vox -o p && ./p
+ expected output:
+   number
+   text
+   list
+   other
+   tagtest
+   Text (dynamic)
+)
+To classify with a value called item.
+  If item is a number, print "number".
+  Otherwise if item is a text, print "text".
+  Otherwise if item is a list, print "list".
+  Otherwise, print "other".
+
+To inner with a value called v. Return a value, v.
+To outer with a value called v. Return a value, inner of v.
+
+a list called data is [1, "hello", [2, "x"], 3.5].
+For each d in data,
+  classify of d.
+
+a value called r is outer of "tagtest".
+print r.
+print r's type.

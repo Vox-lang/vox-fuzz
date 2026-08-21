@@ -1,0 +1,16 @@
+(LST-59 — there is no map entry deletion. There is also no silent
+ near-miss: `Delete <map>'s "key".` parses as the FILE-deletion sentence of
+ LANGUAGE.md:3552-3555 applied to the key's value, so it sets the error flag
+ and the map is unchanged. Hand-checked in a directory containing a file
+ named `36`: that file was not removed either.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-59.vox -o p && ./p
+ expected output:
+   delete errored
+   {"name": "Ada", "age": 36}
+   2
+)
+a map called person is {"name": "Ada", "age": 36}.
+delete person's "age".
+on error print "delete errored".
+print person.
+print person's length.

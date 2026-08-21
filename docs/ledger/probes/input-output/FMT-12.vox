@@ -1,0 +1,8 @@
+(FMT-12 — `{var:0N}` zero-pads to N characters.
+ The manual's own row: `{x:06}` -> `000042`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   000042
+)
+a number called x is 42.
+Print "{x:06}".

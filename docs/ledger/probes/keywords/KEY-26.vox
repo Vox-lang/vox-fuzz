@@ -1,0 +1,23 @@
+(KEY-26 — `reap` is an expression: `reap any child process`,
+ `reap process <pid>` and `reap child <pid>` all wait for a child and
+ return its PID; reaping a PID that is not our child sets the error flag.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-26.vox -o p && ./p
+ expected output:
+   reap any child returned the child pid
+   reap child returned the child pid
+   reap of a stranger set the error flag
+)
+Set pid to fork the process.
+If pid is 0 then,
+    Exit 0.
+Set reaped to reap any child process.
+If reaped is pid then,
+    Print "reap any child returned the child pid".
+Set another to fork the process.
+If another is 0 then,
+    Exit 0.
+Set 'the second reaped' to reap child another.
+If 'the second reaped' is another then,
+    Print "reap child returned the child pid".
+Set doomed to reap process 999999.
+On error print "reap of a stranger set the error flag".

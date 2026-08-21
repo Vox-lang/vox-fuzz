@@ -1,0 +1,12 @@
+(LST2-71 — `respectively` is described as reserved as a possible future
+ zip marker and "not parsed today". The second half is true: a sentence
+ using it does not compile. The first half is not: `respectively` is
+ accepted as an ordinary variable name. See Discrepancy 9.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-71.vox -o p && ./p
+ expected output:
+   4
+   a zip marker sentence does not compile: see D9.vox
+)
+a number called respectively is 4.
+print respectively.
+print "a zip marker sentence does not compile: see D9.vox".

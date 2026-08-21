@@ -1,0 +1,8 @@
+(FMT-10 — `{var:.N}` renders a float to N decimal places, rounded.
+ The manual's own row: `{pi:.2}` -> `3.14`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   3.14
+)
+a float called pi is 3.14159.
+Print "{pi:.2}".

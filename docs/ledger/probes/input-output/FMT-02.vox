@@ -1,0 +1,10 @@
+(FMT-02 — `Print the x.` prints a variable reference written with the
+ article `the`; the bare form prints the same value.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   42
+   42
+)
+a number called x is 42.
+Print the x.
+Print x.

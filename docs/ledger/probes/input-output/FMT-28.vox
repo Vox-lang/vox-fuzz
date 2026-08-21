@@ -1,0 +1,17 @@
+(FMT-28 — the whole worked example at LANGUAGE.md:3135-3145, compiled and
+ run. The manual's `copy hello to word.` names an undeclared `hello`, so
+ the fragment is not runnable verbatim; `copy "echo" to word.` is the
+ minimal repair and is the only change. Composite of FMT-24/25/26/27.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   echo
+)
+a buffer called word is 64 bytes in size.
+copy "echo" to word.
+
+a text called tok is "{word}".
+a text called path is "/bin/{tok}".
+
+a list called cmdargs is [].
+append tok to cmdargs.
+Execute "/bin/echo" with arguments cmdargs.

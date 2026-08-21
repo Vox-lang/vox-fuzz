@@ -1,0 +1,9 @@
+(OPR-24: `bit-and` is bitwise AND (LANGUAGE.md:4581).
+ 0b11110000 is 240, 0b10101010 is 170, and 240 AND 170 is 160 (0b10100000).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-24.vox -o p && ./p
+ expected output:
+   160
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+Print lhs bit-and rhs.

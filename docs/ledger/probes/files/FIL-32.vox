@@ -1,0 +1,28 @@
+(FIL-32: the three open modes behave as documented: reading opens an existing file, writing creates/overwrites (truncating), appending adds to the end.
+ Also covers: FIL-33, FIL-34, FIL-41.
+ "0123456789" is overwritten by "AB" (truncate), then "-appended" is added:
+ 11 bytes, not 19, is the proof that writing truncated.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-32.vox -o p && ./p
+ actual output:
+   AB-appended
+   11
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called output at "vf_scratch/files/modes.txt".
+Write "0123456789" to output.
+Close output.
+open a file for writing called 'the overwriter' at "vf_scratch/files/modes.txt".
+Write "AB" to 'the overwriter'.
+Close 'the overwriter'.
+open a file for appending called log at "vf_scratch/files/modes.txt".
+Write "-appended" to log.
+Close log.
+open a file for reading called source at "vf_scratch/files/modes.txt".
+a buffer called contents is 64 bytes in size.
+Read from source into contents.
+print contents.
+print contents's size.
+Close source.

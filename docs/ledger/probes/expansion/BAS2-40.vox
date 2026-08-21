@@ -1,0 +1,26 @@
+(BAS2-40: the `For each` + `but if` example, with a user predicate in the condition. (The manual's snippet assumes a `divisible` function; this probe supplies one.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-40.vox -o p && ./p
+ expected output:
+   1
+   2
+   divisible by 3
+   4
+   5
+   divisible by 3
+   7
+   8
+   divisible by 3
+   10
+   11
+   divisible by 3
+   13
+   14
+   divisible by 3
+)
+To divisible with a number called candidate and a number called factor.
+  If candidate modulo factor is equal to 0 then, Return a boolean, true.
+  Return a boolean, false.
+
+For each number from 1 to 15,
+  print the number,
+    but if divisible of the number and 3 is true print "divisible by 3".

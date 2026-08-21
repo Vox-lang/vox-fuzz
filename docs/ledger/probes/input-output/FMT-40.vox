@@ -1,0 +1,13 @@
+(FMT-40 — a VARIABLE declared in every branch of an if/otherwise chain
+ definitely exists afterwards and can be used after the branch.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   one
+)
+a number called mode is 1.
+if mode is 1 then,
+  a text called label is "one".
+Otherwise,
+  a text called label is "other".
+
+Print label.

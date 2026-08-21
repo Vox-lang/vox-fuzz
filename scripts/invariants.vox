@@ -1,0 +1,633 @@
+(invariants.vox - the sameness detector.
+
+ Takes a directory of generated .vox programs (produced by
+ `vox-fuzz gen --keep <dir>`) and reports everything that does NOT vary
+ across the corpus: identical lines, construct counts fixed at the same
+ N in every program, fixed relative ordering between constructs, numeric
+ literals that never exceed some bound, and identifiers spelled the same
+ in every program (the signature of a hardcoded prelude).
+
+ The standard this enforces (see the brief): variation is the default:
+ sameness is what needs a citation. This tool does not adjudicate which
+ invariants are justified - it reports them all, ranked by how suspicious
+ they are (100% presence outranks 80%), and leaves a citation column for
+ a human to fill in.
+
+ Vox has no directory-listing primitive (no readdir/glob), so file
+ discovery shells out to `find`, exactly the way src/harness.vox already
+ shells out for anything a single execve cannot do alone. Everything
+ downstream - line reading, tokenizing, counting, sorting - is plain Vox:
+ `Read line` (0.1.x+) gives real line-at-a-time reads, maps give O(1)
+ frequency tables keyed by arbitrary text, and buffers give byte-level
+ scanning for the classifier and the digit-run bounds check.)
+
+a number called 'suspicion threshold percent' is 50.
+(300, not a small number, on purpose: for a 60-program run the raw
+ finding count lands well under 1000, and every 100%-suspicion finding
+ ties on score, so a small cap plus stable tie-breaking would silently
+ drop entire categories - fixed-ordering and half of fixed-vocabulary
+ vanished below an 80-item cap in testing. Aggregation still kicks in
+ above this, so a truly noisy corpus does not flood the report.)
+a number called 'max findings shown' is 300.
+
+(accumulator maps: text key -> number)
+a map called program_count_of_line is {}.
+a map called total_count_of_line is {}.
+a map called program_count_of_ident is {}.
+a map called skeleton_program_count is {}.
+a map called skeleton_max_slot is {}.
+a map called skeleton_slot_count is {}.
+
+(cross-call scratch, written by helper functions as documented side
+ effects - the same pattern src/harness.vox uses for 'the last status')
+a list called 'the slot values' is [].
+a list called 'the tokens' is [].
+
+(corpus-wide accumulators)
+a list called 'all program paths' is [].
+a list called 'all program lines' is [].
+a number called 'programs processed' is 0.
+
+(min starts absurdly high and max absurdly low so the very first
+ program's counts always win both comparisons - no "is this the first
+ program" branch needed anywhere below)
+a number called flags_min is 999999.
+a number called flags_max is 0.
+a number called things_min is 999999.
+a number called things_max is 0.
+a number called functions_min is 999999.
+a number called functions_max is 0.
+a number called globals_min is 999999.
+a number called globals_max is 0.
+a number called buffers_min is 999999.
+a number called buffers_max is 0.
+a number called loops_min is 999999.
+a number called loops_max is 0.
+
+(the ranked report, built as three parallel lists)
+a list called 'report scores' is [].
+a list called 'report categories' is [].
+a list called 'report texts' is [].
+
+(the 100%-present lines, used for the ordering / contiguity pass)
+a list called 'invariant line keys' is [].
+
+(---------------------------------------------------------------------
+ small helpers
+ ---------------------------------------------------------------------)
+
+(shell out and wait - the one place this tool touches a process outside
+ itself, for the one thing Vox cannot do alone: list a directory.)
+To 'run shell' with a text called 'the command'.
+    a list called 'the shell arguments' is [].
+    append "-c" to 'the shell arguments'.
+    append 'the command' to 'the shell arguments'.
+    a number called 'the pid' is fork the process.
+    If 'the pid' is 0 then, Execute "/bin/sh" with arguments 'the shell arguments', Exit 127.
+    a number called 'the reaped' is reap process 'the pid'.
+    Return a number, 'the reaped'.
+
+(single-quote the whole value POSIX-style, so a corpus directory with
+ spaces or quotes in its path cannot break the `find` command line.)
+To 'shell quote' with a text called path.
+    a buffer called 'the source bytes' is path.
+    a buffer called 'the quoted bytes' is "'".
+    a number called 'the scan position' is 1.
+    a number called 'the byte count' is 'the source bytes's size.
+    a buffer called 'one byte' is " ".
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the source bytes',
+        If 'the current byte' is 39 then, append "'\\''" to 'the quoted bytes'.
+        If 'the current byte' is not 39 then, Set byte 1 of 'one byte' to 'the current byte', append 'one byte' to 'the quoted bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    append "'" to 'the quoted bytes'.
+    a text called result is 'the quoted bytes' as text.
+    Return a text, result.
+
+(does `line` begin with the literal text `prefix`? Used for construct
+ classification - flags/things/functions/buffers/loops are all
+ recognisable from a fixed top-of-line spelling.)
+To 'starts with' with a buffer called line and a text called prefix.
+    a buffer called 'prefix bytes' is prefix.
+    a number called 'prefix length' is 'prefix bytes's size.
+    a boolean called result is true.
+    If line's size is less than 'prefix length' then, Set result to false.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'prefix length' and result,
+        a number called 'the line byte' is byte 'the scan position' of line,
+        a number called 'the prefix byte' is byte 'the scan position' of 'prefix bytes',
+        If 'the line byte' is not 'the prefix byte' then, Set result to false.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a boolean, result.
+
+(is `token` one of Vox's own keywords, rather than a name the generator
+ chose? Checked case-insensitively against a lowercase copy, since
+ statement starters are capitalized and everything else generally is
+ not. This list only needs to cover words that could plausibly appear
+ as a bare alphabetic token inside generated source - see LANGUAGE.md's
+ Keywords section.)
+To 'lowercase copy' with a text called value.
+    a buffer called 'source bytes' is value.
+    a buffer called out.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'source bytes's size.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the byte' is byte 'the scan position' of 'source bytes',
+        a number called 'lowercase byte' is 'the byte',
+        If 'the byte' is greater than or equal to 65 and 'the byte' is less than or equal to 90 then, Set 'lowercase byte' to 'the byte' add 32.
+        Set byte 1 of 'one byte' to 'lowercase byte',
+        append 'one byte' to out,
+        Set 'the scan position' to 'the scan position' add 1.
+    a text called result is out as text.
+    Return a text, result.
+
+To 'is keyword' with a text called token.
+    a text called 'lowercase token' is 'lowercase copy' of token.
+    a list called keywords is ["a", "an", "the", "print", "set", "create", "if", "when", "while", "for", "to", "return", "increment", "decrement", "break", "continue", "exit", "append", "change", "remove", "delete", "mount", "unmount", "umount", "pivot", "execute", "shutdown", "poweroff", "reboot", "restart", "halt", "fork", "reap", "send", "signal", "flag", "flags", "parse", "required", "default", "with", "called", "named", "of", "on", "and", "or", "but", "then", "otherwise", "else", "from", "is", "not", "equal", "greater", "less", "than", "each", "in", "element", "byte", "bytes", "number", "text", "boolean", "float", "buffer", "list", "map", "value", "thing", "has", "do", "function", "true", "false", "nothing", "empty", "size", "length", "capacity", "raw", "all", "first", "last", "second", "count", "type", "add", "subtract", "multiply", "divide", "modulo", "times", "absolute", "even", "odd", "positive", "negative", "zero", "arguments", "environment", "open", "close", "read", "write", "seek", "line", "standard", "input", "output", "error", "without", "waiting", "available", "as", "at", "into", "resize", "reallocate", "grow", "shrink", "copy", "clear", "keys", "values", "treating", "repeat", "times.", "current", "time", "wait", "or_equal", "start", "stop", "begin", "finish"].
+    a number called 'the keyword count' is keywords's length.
+    a number called 'the scan position' is 1.
+    a boolean called found is false.
+    While 'the scan position' is less than or equal to 'the keyword count' and found is false,
+        a text called 'candidate keyword' is element 'the scan position' of keywords,
+        If 'lowercase token' is 'candidate keyword' then, Set found to true.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a boolean, found.
+
+(line -> skeleton: every maximal run of ASCII digits becomes one '#',
+ and the run's numeric value is pushed to the global 'the slot values',
+ in left-to-right order. Two programs whose lines differ only in which
+ literal or which generator-assigned numeric suffix they used collapse
+ to the same skeleton, which is what lets the bounds check see through
+ "b1"/"b2"/"b3" and "40"/"61" to the shared template underneath.)
+To 'skeletonize' with a text called 'line text'.
+    Set 'the slot values' to [].
+    a buffer called 'source bytes' is 'line text'.
+    a buffer called 'skeleton bytes'.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'source bytes's size.
+    a number called 'the scan position' is 1.
+    a boolean called 'in run' is false.
+    a number called 'run value' is 0.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the byte' is byte 'the scan position' of 'source bytes',
+        a boolean called 'is digit' is false,
+        If 'the byte' is greater than or equal to 48 and 'the byte' is less than or equal to 57 then, Set 'is digit' to true.
+        a boolean called 'start of run' is false,
+        If 'is digit' and 'in run' is false then, Set 'start of run' to true.
+        If 'start of run' then, Set byte 1 of 'one byte' to '#', append 'one byte' to 'skeleton bytes', Set 'in run' to true, Set 'run value' to 0.
+        If 'is digit' then, Set 'run value' to {'run value' multiply 10} add {'the byte' subtract 48}.
+        a boolean called 'end of run' is false,
+        If 'is digit' is false and 'in run' then, Set 'end of run' to true.
+        If 'end of run' then, append 'run value' to 'the slot values', Set 'in run' to false.
+        If 'is digit' is false then, Set byte 1 of 'one byte' to 'the byte', append 'one byte' to 'skeleton bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'in run' then, append 'run value' to 'the slot values'.
+    a text called skeleton is 'skeleton bytes' as text.
+    Return a text, skeleton.
+
+(line -> identifier tokens: maximal runs of [A-Za-z0-9_] whose first
+ character is a letter. Pushed to the global 'the tokens', left to
+ right; duplicates within one line are fine, the caller dedupes.)
+To 'tokenize identifiers' with a text called 'line text'.
+    Set 'the tokens' to [].
+    a buffer called 'source bytes' is 'line text'.
+    a buffer called 'token bytes'.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'source bytes's size.
+    a number called 'the scan position' is 1.
+    a boolean called 'in token' is false.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the byte' is byte 'the scan position' of 'source bytes',
+        a boolean called 'is upper' is false,
+        If 'the byte' is greater than or equal to 65 and 'the byte' is less than or equal to 90 then, Set 'is upper' to true.
+        a boolean called 'is lower' is false,
+        If 'the byte' is greater than or equal to 97 and 'the byte' is less than or equal to 122 then, Set 'is lower' to true.
+        a boolean called 'is digit' is false,
+        If 'the byte' is greater than or equal to 48 and 'the byte' is less than or equal to 57 then, Set 'is digit' to true.
+        a boolean called 'is underscore' is false,
+        If 'the byte' is 95 then, Set 'is underscore' to true.
+        a boolean called 'is letter' is false,
+        If 'is upper' or 'is lower' then, Set 'is letter' to true.
+        a boolean called 'is alnum' is false,
+        If 'is letter' or 'is digit' or 'is underscore' then, Set 'is alnum' to true.
+        a boolean called 'start of token' is false,
+        If 'in token' is false and 'is letter' then, Set 'start of token' to true.
+        If 'start of token' then, clear 'token bytes', Set 'in token' to true.
+        If 'in token' and 'is alnum' then, Set byte 1 of 'one byte' to 'the byte', append 'one byte' to 'token bytes'.
+        a boolean called 'end of token' is false,
+        If 'in token' and 'is alnum' is false then, Set 'end of token' to true.
+        ('token bytes' is cleared and reused for every token in this
+         line, so a text taken straight off it would alias whatever it
+         holds by the time the caller reads 'the tokens' back - same
+         "as text does not copy" hazard as the Read-line buffers, see
+         the report. Copy through a fresh buffer per token instead.)
+        a buffer called 'token bytes copy' is 'token bytes',
+        If 'end of token' then, a text called finished is 'token bytes copy' as text, append finished to 'the tokens', Set 'in token' to false.
+        Set 'the scan position' to 'the scan position' add 1.
+    a buffer called 'token bytes copy last' is 'token bytes'.
+    If 'in token' then, a text called last is 'token bytes copy last' as text, append last to 'the tokens'.
+
+(---------------------------------------------------------------------
+ per-program pass: read the file once, update every accumulator.
+ ---------------------------------------------------------------------)
+
+To 'process program' with a text called path.
+    open a file for reading called 'the program file' at path.
+    a buffer called 'line buf'.
+    a list called 'program lines' is [].
+    a map called 'seen lines' is {}.
+    a map called 'seen skeletons' is {}.
+    a map called 'seen idents' is {}.
+    a number called 'flags count' is 0.
+    a number called 'things count' is 0.
+    a number called 'functions count' is 0.
+    a number called 'globals count' is 0.
+    a number called 'buffers count' is 0.
+    a number called 'loops count' is 0.
+    a number called 'lines seen' is 0.
+    While true,
+        Read line from 'the program file' into 'line buf',
+        If 'line buf' is empty then, Break.
+        (trim a trailing \n then a trailing \r, as two flat resize calls -
+         not a While loop around resize, which corrupts the NEXT `Read
+         line` on this same buffer; see the report for the minimal repro)
+        a number called 'length before lf trim' is 'line buf's size,
+        a number called 'last byte before lf trim' is 0,
+        If 'length before lf trim' is greater than 0 then, Set 'last byte before lf trim' to byte 'length before lf trim' of 'line buf'.
+        a boolean called 'ends lf' is false,
+        If 'last byte before lf trim' is 10 then, Set 'ends lf' to true.
+        If 'ends lf' then, resize 'line buf' to {'length before lf trim' subtract 1}.
+        a number called 'length before cr trim' is 'line buf's size,
+        a number called 'last byte before cr trim' is 0,
+        If 'length before cr trim' is greater than 0 then, Set 'last byte before cr trim' to byte 'length before cr trim' of 'line buf'.
+        a boolean called 'ends cr' is false,
+        If 'last byte before cr trim' is 13 then, Set 'ends cr' to true.
+        If 'ends cr' then, resize 'line buf' to {'length before cr trim' subtract 1}.
+        If 'line buf' is empty then, Continue.
+        (`buffer as text` does NOT copy - it aliases the buffer's own
+         storage, so a text taken straight off a buffer that `Read line`
+         reuses next iteration goes stale the moment the next line is
+         read. A fresh `a buffer called ... is <buffer>` declaration
+         does copy, so cast that copy instead. See the report for the
+         minimal repro.)
+        a buffer called 'this line copy' is 'line buf',
+        a text called 'this line' is 'this line copy' as text,
+        append 'this line' to 'program lines',
+        (classify: which construct, if any, does this line declare?
+         precedence matters - "A thing called" and "a flag called" both
+         start with the article that also opens a bare global.)
+        a boolean called 'is flag' is 'starts with' of 'line buf' and "a flag called ",
+        a boolean called 'is thing' is 'starts with' of 'line buf' and "A thing called ",
+        a boolean called 'is function' is 'starts with' of 'line buf' and "To ",
+        a boolean called 'is buffer' is 'starts with' of 'line buf' and "a buffer called ",
+        a boolean called 'is loop' is false,
+        a boolean called 'is while' is 'starts with' of 'line buf' and "While ",
+        a boolean called 'is for' is 'starts with' of 'line buf' and "For each ",
+        If 'is while' or 'is for' then, Set 'is loop' to true.
+        a boolean called 'is bare a' is 'starts with' of 'line buf' and "a ",
+        a boolean called 'is bare cap a' is 'starts with' of 'line buf' and "A ",
+        a boolean called 'is bare either' is false,
+        If 'is bare a' then, Set 'is bare either' to true.
+        If 'is bare cap a' then, Set 'is bare either' to true.
+        a boolean called 'is global' is false,
+        If 'is flag' is false and 'is thing' is false and 'is buffer' is false and 'is bare either' then, Set 'is global' to true.
+        If 'is flag' then, Set 'flags count' to 'flags count' add 1.
+        If 'is thing' then, Set 'things count' to 'things count' add 1.
+        If 'is function' then, Set 'functions count' to 'functions count' add 1.
+        If 'is buffer' then, Set 'buffers count' to 'buffers count' add 1.
+        If 'is loop' then, Set 'loops count' to 'loops count' add 1.
+        If 'is global' then, Set 'globals count' to 'globals count' add 1.
+        (identical-line dedup: only the first occurrence in THIS program
+         advances the corpus-wide program_count_of_line map)
+        a number called 'already this line' is 'seen lines's "{'this line'}",
+        a number called 'line pcount' is program_count_of_line's "{'this line'}",
+        a number called 'line pcount next' is 'line pcount' add 1,
+        If 'already this line' is 0 then, Set program_count_of_line's "{'this line'}" to 'line pcount next', Set 'seen lines's "{'this line'}" to 1.
+        a number called 'line tcount' is total_count_of_line's "{'this line'}",
+        a number called 'line tcount next' is 'line tcount' add 1,
+        Set total_count_of_line's "{'this line'}" to 'line tcount next',
+        (skeleton / bounds)
+        a text called skeleton is 'skeletonize' of 'this line',
+        a number called 'slot count' is 'the slot values's length,
+        a boolean called 'has slots' is false,
+        If 'slot count' is greater than 0 then, Set 'has slots' to true.
+        If 'has slots' then, Set skeleton_slot_count's "{skeleton}" to 'slot count'.
+        a number called 'already this skeleton' is 0,
+        If 'has slots' then, Set 'already this skeleton' to 'seen skeletons's "{skeleton}".
+        a number called 'skel pcount' is 0,
+        If 'has slots' then, Set 'skel pcount' to skeleton_program_count's "{skeleton}".
+        a number called 'skel pcount next' is 'skel pcount' add 1,
+        If 'has slots' and 'already this skeleton' is 0 then, Set skeleton_program_count's "{skeleton}" to 'skel pcount next', Set 'seen skeletons's "{skeleton}" to 1.
+        a number called sj is 1,
+        While sj is less than or equal to 'slot count',
+            a number called val is element sj of 'the slot values',
+            a text called 'slot key' is "{skeleton}#{sj}",
+            a number called cur is skeleton_max_slot's "{'slot key'}",
+            If val is greater than cur then, Set skeleton_max_slot's "{'slot key'}" to val.
+            Set sj to sj add 1.
+        (fixed vocabulary: identifier tokens, keywords excluded)
+        'tokenize identifiers' of 'this line',
+        a number called 'token count' is 'the tokens's length,
+        a number called tj is 1,
+        While tj is less than or equal to 'token count',
+            a text called 'this token' is element tj of 'the tokens',
+            a boolean called 'is a keyword' is 'is keyword' of 'this token',
+            a boolean called 'not a keyword' is false,
+            If 'is a keyword' is false then, Set 'not a keyword' to true.
+            a number called 'already this ident' is 0,
+            If 'not a keyword' then, Set 'already this ident' to 'seen idents's "{'this token'}".
+            a number called 'ident pcount' is 0,
+            If 'not a keyword' then, Set 'ident pcount' to program_count_of_ident's "{'this token'}".
+            a number called 'ident pcount next' is 'ident pcount' add 1,
+            If 'not a keyword' and 'already this ident' is 0 then, Set program_count_of_ident's "{'this token'}" to 'ident pcount next', Set 'seen idents's "{'this token'}" to 1.
+            Set tj to tj add 1.
+        (the loop's LAST statement must be a plain, unconditional,
+         non-nested one - see the report for why: a bare `If` with no
+         `Otherwise`, or a nested `While`, left as the last thing in a
+         loop body does not close the loop's own clause, so the loop
+         either stops after one pass or swallows the code after it.)
+        Set 'lines seen' to 'lines seen' add 1.
+    Close 'the program file'.
+    append 'program lines' to 'all program lines'.
+    If 'flags count' is less than flags_min then, Set flags_min to 'flags count'.
+    If 'flags count' is greater than flags_max then, Set flags_max to 'flags count'.
+    If 'things count' is less than things_min then, Set things_min to 'things count'.
+    If 'things count' is greater than things_max then, Set things_max to 'things count'.
+    If 'functions count' is less than functions_min then, Set functions_min to 'functions count'.
+    If 'functions count' is greater than functions_max then, Set functions_max to 'functions count'.
+    If 'globals count' is less than globals_min then, Set globals_min to 'globals count'.
+    If 'globals count' is greater than globals_max then, Set globals_max to 'globals count'.
+    If 'buffers count' is less than buffers_min then, Set buffers_min to 'buffers count'.
+    If 'buffers count' is greater than buffers_max then, Set buffers_max to 'buffers count'.
+    If 'loops count' is less than loops_min then, Set loops_min to 'loops count'.
+    If 'loops count' is greater than loops_max then, Set loops_max to 'loops count'.
+    Set 'programs processed' to 'programs processed' add 1.
+
+(find the first index of `target` in `the list`, or 0 if absent - used
+ both to locate an invariant line's position within one program's line
+ list, and by the sort below.)
+To 'first index of' with a text called target and a list called 'the list'.
+    a number called 'the list length' is 'the list's length.
+    a number called 'the scan position' is 1.
+    a number called found is 0.
+    While 'the scan position' is less than or equal to 'the list length' and found is 0,
+        a text called 'candidate value' is element 'the scan position' of 'the list',
+        If 'candidate value' is target then, Set found to 'the scan position'.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a number, found.
+
+(---------------------------------------------------------------------
+ main
+ ---------------------------------------------------------------------)
+
+a list called 'the args' is arguments's all.
+a number called 'argument count' is 'the args's length.
+If 'argument count' is less than 1 then,
+    open a file for writing called 'the error stream' at 2,
+    Write "usage: invariants <corpus-dir>\n" to 'the error stream',
+    Close 'the error stream',
+    Exit 2.
+
+a text called 'the corpus dir' is element 1 of 'the args'.
+
+(Vox has no readdir/glob - shell out to `find`, write the listing to a
+ dotfile inside the corpus dir so it never matches *.vox itself, then
+ read it back with the same 'Read line' loop used for the programs.)
+a text called 'the list path' is "{'the corpus dir'}/.invariants-filelist.tmp".
+a text called 'the quoted dir' is 'shell quote' of 'the corpus dir'.
+a text called 'the quoted list path' is 'shell quote' of 'the list path'.
+a text called 'the list command' is "find {'the quoted dir'} -maxdepth 1 -type f -name '*.vox' | sort > {'the quoted list path'}".
+'run shell' of 'the list command'.
+
+open a file for reading called listf at 'the list path'.
+a buffer called 'list line'.
+While true,
+    Read line from listf into 'list line',
+    If 'list line' is empty then, Break.
+    a number called 'length before lf trim' is 'list line's size,
+    a number called 'last byte before lf trim' is 0,
+    If 'length before lf trim' is greater than 0 then, Set 'last byte before lf trim' to byte 'length before lf trim' of 'list line'.
+    a boolean called 'ends lf2' is false,
+    If 'last byte before lf trim' is 10 then, Set 'ends lf2' to true.
+    If 'ends lf2' then, resize 'list line' to {'length before lf trim' subtract 1}.
+    a number called 'length before cr trim' is 'list line's size,
+    a number called 'last byte before cr trim' is 0,
+    If 'length before cr trim' is greater than 0 then, Set 'last byte before cr trim' to byte 'length before cr trim' of 'list line'.
+    a boolean called 'ends cr2' is false,
+    If 'last byte before cr trim' is 13 then, Set 'ends cr2' to true.
+    If 'ends cr2' then, resize 'list line' to {'length before cr trim' subtract 1}.
+    If 'list line' is empty then, Continue.
+    a buffer called 'one path copy' is 'list line',
+    a text called 'one path' is 'one path copy' as text,
+    append 'one path' to 'all program paths'.
+Close listf.
+'run shell' of "rm -f {'the quoted list path'}".
+
+a number called 'total programs' is 'all program paths's length.
+If 'total programs' is 0 then,
+    Print "invariants: no .vox files found in {'the corpus dir'}",
+    Exit 1.
+
+(pass 1: read every program once, fill every accumulator)
+For each path in 'all program paths', 'process program' of path.
+
+Print "invariants: {'total programs'} programs in {'the corpus dir'}".
+
+(--- construct counts: report only the categories fixed at min==max ---)
+If flags_min is equal to flags_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "flags: always exactly {flags_min} flag declarations per program" to 'report texts'.
+If things_min is equal to things_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "things: always exactly {things_min} thing declarations per program" to 'report texts'.
+If functions_min is equal to functions_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "functions: always exactly {functions_min} function declarations per program" to 'report texts'.
+If globals_min is equal to globals_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "globals: always exactly {globals_min} top-level variable declarations per program" to 'report texts'.
+If buffers_min is equal to buffers_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "buffers: always exactly {buffers_min} buffer declarations per program" to 'report texts'.
+If loops_min is equal to loops_max then, append 100 to 'report scores', append "identical-count" to 'report categories', append "loops: always exactly {loops_min} while/for-each loops per program" to 'report texts'.
+
+(--- identical lines, and the 100%-present subset for the ordering pass ---)
+a list called 'all line keys' is program_count_of_line's keys.
+For each key in 'all line keys',
+    a number called 'program count' is program_count_of_line's "{key}",
+    a number called 'percent present' is {'program count' multiply 100} divide 'total programs',
+    If 'percent present' is greater than or equal to 'suspicion threshold percent' then,
+        a number called 'total occurrences' is total_count_of_line's "{key}",
+        append 'percent present' to 'report scores',
+        append "identical-line" to 'report categories',
+        append "{'percent present'}% ({'program count'}/{'total programs'} programs, {'total occurrences'} occurrences): \"{key}\"" to 'report texts'.
+    If 'program count' is equal to 'total programs' then, append key to 'invariant line keys'.
+    Continue.
+
+(--- fixed vocabulary: identifiers spelled the same in every program ---)
+a list called 'all ident keys' is program_count_of_ident's keys.
+For each identifier in 'all ident keys',
+    a number called 'program count' is program_count_of_ident's "{identifier}",
+    a number called 'percent present' is {'program count' multiply 100} divide 'total programs',
+    If 'percent present' is greater than or equal to 'suspicion threshold percent' then,
+        append 'percent present' to 'report scores',
+        append "fixed-vocabulary" to 'report categories',
+        append "{'percent present'}% ({'program count'}/{'total programs'} programs) use the identifier `{identifier}`" to 'report texts'.
+    Continue.
+
+(--- never-exceeded bounds: recurring templates with >=1 digit slot ---)
+a list called 'all skel keys' is skeleton_program_count's keys.
+For each skeleton in 'all skel keys',
+    a number called 'program count' is skeleton_program_count's "{skeleton}",
+    a number called 'percent present' is {'program count' multiply 100} divide 'total programs',
+    a boolean called 'skel meets threshold' is false,
+    If 'percent present' is greater than or equal to 'suspicion threshold percent' then, Set 'skel meets threshold' to true.
+    a number called 'slot count' is 0,
+    If 'skel meets threshold' then, Set 'slot count' to skeleton_slot_count's "{skeleton}".
+    (a nested While that is a sibling of the outer loop's body, not
+     wrapped in the threshold If's then-branch - 'slot count' is
+     already 0 when the threshold is not met, so this is a no-op then,
+     matching the loop-at-its-own-level discipline used throughout)
+    a number called slotj is 1,
+    While slotj is less than or equal to 'slot count',
+        a text called 'bound key' is "{skeleton}#{slotj}",
+        a number called 'max value' is skeleton_max_slot's "{'bound key'}",
+        append 'percent present' to 'report scores',
+        append "never-exceeded-bound" to 'report categories',
+        append "{'percent present'}% ({'program count'}/{'total programs'} programs) template \"{skeleton}\" slot {slotj}: never above {'max value'}" to 'report texts',
+        Set slotj to slotj add 1.
+    Continue.
+
+(--- fixed ordering / contiguity over the 100%-present line set ---)
+a number called 'inv count' is 'invariant line keys's length.
+(there is always at least one program by this point - 'total programs'
+ was checked above - so element 1 is always safe regardless of how many
+ invariant lines there are)
+a list called 'first program lines' is element 1 of 'all program lines'.
+(canonical order candidate: position in program 1, ascending, via a
+ selection sort that only ever reads by index and rebuilds by
+ appending - Vox lists document append/read but not an in-place
+ index-assignment for lists, so removal-by-rebuild avoids relying on
+ one. Every If below sits at its own While's level - none nested inside
+ another If's then-branch - so a period never closes more than the one
+ clause it plainly ends. If 'invariant line keys' has 0 or 1 entries the
+ loop bounds below are never satisfied, so no special-casing is needed.)
+a list called 'remaining keys' is 'invariant line keys'.
+a list called 'ordered keys' is [].
+While 'remaining keys's length is greater than 0,
+    a number called 'remaining count' is 'remaining keys's length,
+    a text called 'first remaining key' is element 1 of 'remaining keys',
+    a number called 'best line index' is 1,
+    a number called 'best line position' is 'first index of' of 'first remaining key' and 'first program lines',
+    a number called 'candidate index' is 2,
+    While 'candidate index' is less than or equal to 'remaining count',
+        a text called 'candidate key' is element 'candidate index' of 'remaining keys',
+        a number called 'candidate position' is 'first index of' of 'candidate key' and 'first program lines',
+        If 'candidate position' is less than 'best line position' then, Set 'best line position' to 'candidate position', Set 'best line index' to 'candidate index'.
+        Set 'candidate index' to 'candidate index' add 1.
+    a text called 'chosen key' is element 'best line index' of 'remaining keys',
+    append 'chosen key' to 'ordered keys',
+    a list called 'rebuilt keys' is [],
+    a number called 'rebuild index' is 1,
+    While 'rebuild index' is less than or equal to 'remaining count',
+        a text called 'rebuild key' is element 'rebuild index' of 'remaining keys',
+        If 'rebuild index' is not 'best line index' then, append 'rebuild key' to 'rebuilt keys'.
+        Set 'rebuild index' to 'rebuild index' add 1.
+    Set 'remaining keys' to 'rebuilt keys'.
+
+(walk adjacent pairs in canonical order; classify each edge as
+ contiguous / ordered-but-not-contiguous / broken, and merge runs of
+ contiguous edges into one block finding each)
+a number called blockstart is 1.
+a number called pk is 1.
+a number called 'ordering pass limit' is 'inv count' subtract 1.
+While pk is less than or equal to 'ordering pass limit',
+    a text called keyA is element pk of 'ordered keys',
+    a number called pkplus1 is pk add 1,
+    a text called keyB is element pkplus1 of 'ordered keys',
+    a boolean called 'ordering holds' is true,
+    a boolean called 'contiguous holds' is true,
+    a number called pp is 1,
+    While pp is less than or equal to 'total programs',
+        a list called 'these lines' is element pp of 'all program lines',
+        a number called posA is 'first index of' of keyA and 'these lines',
+        a number called posB is 'first index of' of keyB and 'these lines',
+        a number called posAplus1 is posA add 1,
+        If posB is less than or equal to posA then, Set 'ordering holds' to false.
+        If posB is not posAplus1 then, Set 'contiguous holds' to false.
+        Set pp to pp add 1.
+    a boolean called 'flush block' is false,
+    If 'contiguous holds' is false and pk is greater than blockstart then, Set 'flush block' to true.
+    a text called firstkey is element blockstart of 'ordered keys',
+    a text called lastkey is element pk of 'ordered keys',
+    a number called blocklenraw is pk subtract blockstart,
+    a number called blocklen is blocklenraw add 1,
+    If 'flush block' then, append 100 to 'report scores', append "fixed-ordering" to 'report categories', append "100% ({'total programs'}/{'total programs'} programs) block of {blocklen} lines always contiguous and in this order, from \"{firstkey}\" to \"{lastkey}\"" to 'report texts'.
+    a boolean called 'emit single edge' is false,
+    If 'contiguous holds' is false and 'ordering holds' then, Set 'emit single edge' to true.
+    If 'emit single edge' then, append 100 to 'report scores', append "fixed-ordering" to 'report categories', append "100% ({'total programs'}/{'total programs'} programs) \"{keyA}\" always precedes \"{keyB}\" (gap varies)" to 'report texts'.
+    If 'contiguous holds' is false then, Set blockstart to pkplus1.
+    Set pk to pk add 1.
+
+a boolean called 'flush final block' is false.
+If 'inv count' is greater than blockstart then, Set 'flush final block' to true.
+a text called firstkey2 is "".
+a text called lastkey2 is "".
+a number called blocklen2 is 0.
+If 'flush final block' then, Set firstkey2 to element blockstart of 'ordered keys', Set lastkey2 to element 'inv count' of 'ordered keys', Set blocklen2 to 'inv count' subtract blockstart, Set blocklen2 to blocklen2 add 1.
+If 'flush final block' then, append 100 to 'report scores', append "fixed-ordering" to 'report categories', append "100% ({'total programs'}/{'total programs'} programs) block of {blocklen2} lines always contiguous and in this order, from \"{firstkey2}\" to \"{lastkey2}\"" to 'report texts'.
+
+(---------------------------------------------------------------------
+ sort all findings by suspicion (score desc) and print, capped at
+ 'max findings shown' with an aggregated tail count per category.
+ ---------------------------------------------------------------------)
+
+Print "".
+Print "suspicion  category              finding                                                        citation".
+
+a list called 'remaining scores' is 'report scores'.
+a list called 'remaining categories' is 'report categories'.
+a list called 'remaining texts' is 'report texts'.
+a number called 'total findings' is 'report scores's length.
+a number called shown is 0.
+a number called 'agg identical-line' is 0.
+a number called 'agg identical-count' is 0.
+a number called 'agg fixed-vocabulary' is 0.
+a number called 'agg never-exceeded-bound' is 0.
+a number called 'agg fixed-ordering' is 0.
+
+While 'remaining scores's length is greater than 0,
+    a number called 'remaining count' is 'remaining scores's length,
+    a number called 'best finding index' is 1,
+    a number called 'best score' is element 1 of 'remaining scores',
+    a number called 'candidate index' is 2,
+    While 'candidate index' is less than or equal to 'remaining count',
+        a number called 'candidate score' is element 'candidate index' of 'remaining scores',
+        If 'candidate score' is greater than 'best score' then, Set 'best score' to 'candidate score', Set 'best finding index' to 'candidate index'.
+        Set 'candidate index' to 'candidate index' add 1.
+    a text called 'chosen category' is element 'best finding index' of 'remaining categories',
+    a text called 'chosen text' is element 'best finding index' of 'remaining texts',
+    a boolean called 'is capped' is false,
+    If shown is greater than or equal to 'max findings shown' then, Set 'is capped' to true.
+    If 'is capped' is false then, Print "{'best score'}%\t{'chosen category'}\t{'chosen text'}\t", Set shown to shown add 1.
+    If 'is capped' and 'chosen category' is "identical-line" then, Set 'agg identical-line' to 'agg identical-line' add 1.
+    If 'is capped' and 'chosen category' is "identical-count" then, Set 'agg identical-count' to 'agg identical-count' add 1.
+    If 'is capped' and 'chosen category' is "fixed-vocabulary" then, Set 'agg fixed-vocabulary' to 'agg fixed-vocabulary' add 1.
+    If 'is capped' and 'chosen category' is "never-exceeded-bound" then, Set 'agg never-exceeded-bound' to 'agg never-exceeded-bound' add 1.
+    If 'is capped' and 'chosen category' is "fixed-ordering" then, Set 'agg fixed-ordering' to 'agg fixed-ordering' add 1.
+    a list called 'rebuilt scores' is [],
+    a list called 'rebuilt categories' is [],
+    a list called 'rebuilt texts' is [],
+    a number called 'rebuild index' is 1,
+    While 'rebuild index' is less than or equal to 'remaining count',
+        a number called 'rebuild score' is element 'rebuild index' of 'remaining scores',
+        a text called 'rebuild category' is element 'rebuild index' of 'remaining categories',
+        a text called 'rebuild text' is element 'rebuild index' of 'remaining texts',
+        If 'rebuild index' is not 'best finding index' then, append 'rebuild score' to 'rebuilt scores', append 'rebuild category' to 'rebuilt categories', append 'rebuild text' to 'rebuilt texts'.
+        Set 'rebuild index' to 'rebuild index' add 1.
+    Set 'remaining scores' to 'rebuilt scores',
+    Set 'remaining categories' to 'rebuilt categories',
+    Set 'remaining texts' to 'rebuilt texts'.
+
+Print "".
+Print "total findings: {'total findings'} (threshold {'suspicion threshold percent'}%, showing top {'max findings shown'})".
+If 'total findings' is greater than 'max findings shown' then,
+    Print "aggregated remainder below the display cap, by category:",
+    Print "  identical-line: {'agg identical-line'}",
+    Print "  identical-count: {'agg identical-count'}",
+    Print "  fixed-vocabulary: {'agg fixed-vocabulary'}",
+    Print "  never-exceeded-bound: {'agg never-exceeded-bound'}",
+    Print "  fixed-ordering: {'agg fixed-ordering'}".
+
+Exit 0.

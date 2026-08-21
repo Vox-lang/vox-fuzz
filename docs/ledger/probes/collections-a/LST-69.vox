@@ -1,0 +1,17 @@
+(LST-69 — a predicate result is itself a boolean value, so it can be stored
+ in a list, and each stored slot carries the boolean tag so a later
+ `is a boolean` recognises it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-69.vox -o p && ./p
+ expected output:
+   [1, 0, 0]
+   boolean marker
+   boolean marker
+   boolean marker
+)
+a list called mixedbag is [1, "two", 3.5].
+a list called markers is [].
+For each item in mixedbag, append item is a number to markers.
+
+print markers.
+For each marker in markers,
+  if marker is a boolean, print "boolean marker". otherwise print "not boolean".

@@ -1,0 +1,13 @@
+(KEY-52 — the reserved-alias diagnostic names the spelling that was written
+ and the canonical keyword it aliases, not the internal canonical name.
+ The `ms`/`milliseconds` pair is at KEY-51; this one shows the same
+ wording for a second alias.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-52.vox -o p && ./p
+ expected output:
+   error: Cannot use 'message' as a variable name - it's a reserved keyword.
+     'message' is an alternate spelling of the reserved keyword 'text'.
+     Tip: Try a more descriptive name like 'message_value' or 'my_message'
+   (no binary produced; compile error)
+)
+a number called message is 1.
+Print message.

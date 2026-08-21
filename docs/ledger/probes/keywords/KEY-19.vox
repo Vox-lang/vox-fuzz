@@ -1,0 +1,12 @@
+(KEY-19 — `Create a device node called ... with type ... major ... minor ...`
+ is `mknod(2)`. Unprivileged, it sets the error flag rather than crashing;
+ this probe therefore records the FAILURE path — the success path needs root
+ and cannot be probed here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-19.vox -o p && ./p
+ expected output:
+   mknod refused, error flag set
+   still running
+)
+Create a device node called "/tmp/voxfuzz-key-19-null" with type "c" major 1 minor 3.
+On error print "mknod refused, error flag set".
+Print "still running".

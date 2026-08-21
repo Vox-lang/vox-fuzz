@@ -1,0 +1,9 @@
+(BUF-10: `size`/`capacity` properties return current bytes stored / max bytes holdable, as Numbers.)
+(expected output:
+5
+20
+)
+a buffer called b is 20 bytes in size.
+append "hello" to b.
+print b's size.
+print b's capacity.

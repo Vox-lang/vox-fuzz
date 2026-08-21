@@ -1,0 +1,23 @@
+(ARG-52 — *(not a manual claim — a gap in the manual)* two schemas may
+ share a name: they merge into one variable and every alias of both
+ triggers it. LANGUAGE.md:4364 says "Define each supported flag once"
+ and nothing enforces it — no error, no warning.
+ This probe also runs the two-short-alias schema that ARG-45's
+ diagnostic claims is impossible: `-a` or `-b`, no long alias, both
+ working.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-52.vox -o p && ./p -e -b
+ Args: -e -b
+ expected output:
+   dupe is 1
+   twoshort is 1
+   ALL
+)
+a flag called dupe is "-d" or "--dupe", it is a boolean.
+a flag called dupe is "-e" or "--else", it is a boolean.
+a flag called twoshort is "-a" or "-b", it is a boolean.
+Parse flags.
+
+Print "dupe is {dupe}".
+Print "twoshort is {twoshort}".
+Print "ALL".
+Print each item from arguments's all.

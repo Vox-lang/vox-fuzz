@@ -1,0 +1,37 @@
+(FIL-63: of the four invalid Seek targets probed here, the three the
+ manual actually names - a line past EOF, a position < 1, an invalid
+ descriptor - all set the error flag. A byte past EOF does not, and the
+ manual does not claim it should: LANGUAGE.md names only "line past EOF",
+ and lseek(2) is explicitly allowed to seek past the end. That absence is
+ the compiler being POSIX-correct on a case the manual is silent about, not
+ a finding.
+ **Refreshed 2026-08-21.** Until vox #47 (0.4.8) the line-past-EOF handler
+ did not fire either - see Discrepancy 3, now resolved - so this probe
+ recorded only two of the three. The missing line "a line past EOF set the
+ error flag" is present now.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-63.vox -o p && ./p
+ actual output:
+   a position below 1 set the error flag
+   a line past EOF set the error flag
+   an invalid descriptor set the error flag
+   survived every invalid seek
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+open a file for reading called source at "vf_scratch/files/lines.txt".
+Seek source to byte 0.
+On error print "a position below 1 set the error flag".
+Seek source to line 99.
+On error print "a line past EOF set the error flag".
+Seek source to byte 9999.
+On error print "a byte past EOF set the error flag".
+Close source.
+open a file for reading called bogus at 2147483647.
+Seek bogus to byte 4.
+On error print "an invalid descriptor set the error flag".
+print "survived every invalid seek".

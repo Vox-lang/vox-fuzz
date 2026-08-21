@@ -1,0 +1,14 @@
+(FLW-37 (see Discrepancy 1): the manual's usage-guard example
+ (LANGUAGE.md:2184-2186) verbatim. It compiles and, with no arguments,
+ prints the usage line and exits 1 - which is why the example looks
+ correct. What it does NOT do is guard: `Print "Usage..."`'s period closes
+ the If, so `Exit 1.` is a top-level statement that runs whatever the
+ condition was. D1.vox is the arg-free repro of that half.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-37.vox -o p && ./p
+ expected output:
+   Usage: ./program <file>
+   exit 1
+)
+If arguments's empty then,
+    Print "Usage: ./program <file>".
+    Exit 1.

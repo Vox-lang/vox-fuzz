@@ -1,0 +1,13 @@
+(BAS2-07: the loop variable is available inside the loop body under both spellings - `the number` and bare `number`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-07.vox -o p && ./p
+ expected output:
+   1
+   1
+   2
+   2
+   3
+   3
+)
+For each number from 1 to 3,
+  print the number,
+  print number.

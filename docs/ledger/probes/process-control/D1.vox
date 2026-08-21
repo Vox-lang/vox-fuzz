@@ -1,0 +1,26 @@
+(D1 — Discrepancy 1 repro: LANGUAGE.md:3844 says the device-node `type` is
+ `"c"` (character device) or `"b"` (block device). The compiler accepts a
+ third, `"p"` (FIFO), and its own diagnostic names it — and `"p"` is the
+ one form that needs no privilege, so unlike "c" and "b" it really does
+ create something on disk.
+ Outside Vox, before the probe removes it:
+   $ ls -l vf_scratch/process-control/scratch_fifo
+   prw-r--r--. 1 josj josj 0 ... scratch_fifo
+ Re-verified 2026-08-21 against vox 0.4.8: still reproduces, still a real
+ FIFO on disk. This probe used to point at docs/ledger/probes/map-process/,
+ a directory that no longer exists, so the mknod failed with ENOENT and it
+ reported "the fifo node failed" instead. That was a path bug in the probe,
+ not a change in the compiler.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/D1.vox -o p && ./p
+ expected output:
+   type p created a real node with no privilege at all
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a device node called "vf_scratch/process-control/scratch_fifo" with type "p" major 0 minor 0.
+On error print "the fifo node failed".
+If "vf_scratch/process-control/scratch_fifo" is available then, print "type p created a real node with no privilege at all".
+Delete the file "vf_scratch/process-control/scratch_fifo".

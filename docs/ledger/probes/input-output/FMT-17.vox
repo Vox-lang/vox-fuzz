@@ -1,0 +1,11 @@
+(FMT-17 — `{var:04x}` is width-4 zero-padded lowercase hex. Hand-verified
+ detail the table does not spell out: the width counts the DIGITS, not the
+ whole rendering — `{n:04x}` on 255 is `0x00ff`, six characters, because
+ the `0x` prefix sits outside the padded field.
+ The manual's own row: `{n:04x}` -> `0x00ff`, with n = 255.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   0x00ff
+)
+a number called n is 255.
+Print "{n:04x}".

@@ -1,0 +1,18 @@
+(FLW-45 (undocumented precision - see Discrepancy 2): `Increment` and
+ `Decrement` are number-only, and the two ways they say so disagree. On a
+ `float` they are a SILENT NO-OP - no diagnostic, no change. On a `text`
+ the compiler refuses the program with "Increment requires a number
+ variable: label". This probe carries the float half, which compiles; the
+ text half is D2.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-45.vox -o p && ./p
+ expected output:
+   2.25
+   2.25
+   2.25
+)
+a float called rate is 2.25.
+print rate.
+Increment rate.
+print rate.
+Decrement rate.
+print rate.

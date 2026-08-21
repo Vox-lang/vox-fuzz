@@ -1,0 +1,12 @@
+(OPR-19: `and` is logical conjunction (LANGUAGE.md:4573).
+ All four rows of the truth table are exercised; only the true row fires.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-19.vox -o p && ./p
+ expected output:
+   and fired on true-true
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+If affirmed and affirmed then, Print "and fired on true-true".
+If affirmed and denied then, Print "and MISFIRED on true-false".
+If denied and affirmed then, Print "and MISFIRED on false-true".
+If denied and denied then, Print "and MISFIRED on false-false".

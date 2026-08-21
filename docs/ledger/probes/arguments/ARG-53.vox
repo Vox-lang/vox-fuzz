@@ -1,0 +1,17 @@
+(ARG-53 — *(not a manual claim — a gap in the manual)* a second
+ `Parse flags.` is a compile-time error. The manual gives the parse
+ point as a choice between explicit and automatic (4394-4402) and never
+ says the explicit form is once-only.
+ (Compile-error claim: not assertable from a generated leaf, since
+ emitting it produces a program that does not compile.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-53.vox -o p && ./p
+ expected output:
+   error: Duplicate 'parse flags.' statement
+   (no binary produced; compile error)
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+Parse flags.
+
+Parse flags.
+
+Print "unreachable".

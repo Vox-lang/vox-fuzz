@@ -1,0 +1,15 @@
+(D10 — Discrepancy 10 repro: the collection-kind diagnostic introduced by
+ vox #49 locates its caret by searching the SOURCE TEXT for the clause, so
+ it points at the first textual occurrence -- here, inside a comment --
+ instead of at the statement that actually failed. Two lines is the whole
+ program. The message and the hint are correct; only the span is wrong.
+ Found while refreshing D3 after #49 landed; nothing is blocked on it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D10.vox -o p && ./p
+ expected output:
+   error: Loop collection must be a list: a number
+   (no binary produced; compile error)
+   and the caret is printed on line 14 -- the comment line below -- not on
+   the final line, which is the statement the analyzer actually rejected.
+)
+(this comment quotes print each part from gauge. in prose)
+print each part from 4.

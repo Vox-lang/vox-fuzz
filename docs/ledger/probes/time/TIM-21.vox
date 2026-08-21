@@ -1,0 +1,24 @@
+(TIM-21 - a timer tracks all three of the things the manual says it does:
+ a start time, an end time, and the duration between them. The job here is
+ a known one second, so all three can be checked against each other rather
+ than printed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-21.vox -o p && ./p
+ expected output:
+   the start time is a unix stamp from this run
+   the end time is not before the start time
+   the duration is the second that was waited
+)
+Get current time into 'the reference clock'.
+a timer called 'job timer'.
+Start the 'job timer'.
+Wait 1 second.
+Stop the 'job timer'.
+a number called 'the start stamp' is the 'job timer''s start time.
+a number called 'the end stamp' is the 'job timer''s end time.
+a number called 'the measured job' is the 'job timer''s duration in milliseconds.
+If 'the start stamp' is greater than or equal to 'the reference clock''s unix then, print "the start time is a unix stamp from this run".
+Otherwise, print "the start time {'the start stamp'} predates the program".
+If 'the end stamp' is greater than or equal to 'the start stamp' then, print "the end time is not before the start time".
+Otherwise, print "the end time {'the end stamp'} is before the start time {'the start stamp'}".
+If 'the measured job' is greater than 999 and 'the measured job' is less than 3000 then, print "the duration is the second that was waited".
+Otherwise, print "the duration is {'the measured job'} milliseconds".

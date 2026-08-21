@@ -1,0 +1,20 @@
+(THG2-35: the type possessive is the ONLY way to call a maker. A member is not
+ in the global function namespace at all, so the free-call form does not find
+ it - the diagnostic is "Unknown function".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-35.vox -o p && ./p
+ expected output:
+   error: Unknown function: placed at
+   No binary is produced; this is a compile error. The caret lands on the
+   MANIFEST ENTRY, not on the call - see Discrepancy 3.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  Return a point, plotted.
+
+The pin is 'placed at' of 3.
+Print 1.

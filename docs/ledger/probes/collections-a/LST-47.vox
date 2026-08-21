@@ -1,0 +1,27 @@
+(LST-47 — `keys` and `values` each yield a FRESH list in insertion order:
+ appending to the returned list does not touch the map, a replace keeps the
+ key in its original position, and an insert lands at the end.
+ Also covers: LST-48 (the worked iteration of LANGUAGE.md:2354-2355).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-47.vox -o p && ./p
+ expected output:
+   ["name", "age", "intruder"]
+   ["name", "age"]
+   2
+   name
+   age
+   Ada
+   37
+   ["name", "age", "zebra"]
+)
+a map called person is {"name": "Ada", "age": 36}.
+a list called labels is person's keys.
+append "intruder" to labels.
+print labels.
+print person's keys.
+print person's length.
+set person's "age" to 37.
+for each key in person's keys, print key.
+for each entry in person's values, print entry.
+set person's "zebra" to 1.
+set person's "name" to "Ada".
+print person's keys.

@@ -1,0 +1,19 @@
+(TIM-16 - every Wait and Sleep spelling the manual lists parses and runs:
+ singular and plural, seconds and milliseconds, `Wait` and `Sleep for`.
+ The last two lines are not in the manual: `for` turns out to be optional
+ after either verb (TIM-49), so `Sleep 4 milliseconds.` and
+ `Wait for 5 milliseconds.` both compile.
+ Also covers: TIM-17, TIM-18, TIM-19, TIM-49.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-16.vox -o p && ./p
+ expected output:
+   every documented spelling ran
+)
+Wait 1 second.
+Wait 1 seconds.
+Wait 2 milliseconds.
+Wait 3 millisecond.
+Sleep for 1 second.
+Sleep for 6 milliseconds.
+Sleep 4 milliseconds.
+Wait for 5 milliseconds.
+print "every documented spelling ran".

@@ -1,0 +1,26 @@
+(D3 — Discrepancy 3 repro: reading `'s elapsed` off a `timer` PARAMETER is
+ a compile error — "Property 'elapsed' requires a timer: clock" — with the
+ caret on the parameter's own declaration, which says `a timer called
+ clock` two words to its left. The identical read on a top-level timer
+ compiles and runs (see FUN-21/FUN-22, and the commented control below).
+ LANGUAGE.md:722-725 lists `timer` among the eleven legal parameter types
+ and says a typed parameter supports the same properties as a top-level
+ variable of that type.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: Property 'elapsed' requires a timer: clock
+   (no binary produced; compile error)
+)
+To 'show timer' with a timer called clock.
+  a number called waited is clock's elapsed in milliseconds.
+  If waited is less than 100000 then,
+    Print "timer parameter readable".
+
+(Control, and it compiles on its own: the same read on a top-level timer.
+ a timer called wallclock.
+ Start the wallclock.
+ a number called 'top level waited' is wallclock's elapsed in milliseconds.)
+
+a timer called wallclock.
+Start the wallclock.
+'show timer' of wallclock.

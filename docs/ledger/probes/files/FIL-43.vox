@@ -1,0 +1,12 @@
+(FIL-43: the top of the documented file-descriptor literal range, 2147483647, is accepted by the compiler and opens without a runtime crash.
+ The rejected halves of this claim are compile failures and cannot be one
+ runnable program; their exact diagnostics are recorded in the ledger row.
+ -1 and 2147483648 both fail with: File descriptor out of range after 'at'.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-43.vox -o p && ./p
+ actual output:
+   2147483647
+)
+open a file for reading called 'the top descriptor' at 2147483647.
+print 'the top descriptor's descriptor.

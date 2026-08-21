@@ -1,0 +1,27 @@
+(PRC-06 — `Remove the directory called '<path>'.` performs rmdir(2).
+ Also covers: PRC-07 (`Delete` works as well as `Remove`) and PRC-08
+ (`the` and `called` are both optional — all four combinations parse).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-06.vox -o p && ./p
+ expected output:
+   Remove directory removed it
+   Remove the directory removed it
+   Delete directory called removed it
+   Delete the directory called removed it
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_one".
+Create a directory called "vf_scratch/process-control/scratch_two".
+Create a directory called "vf_scratch/process-control/scratch_three".
+Create a directory called "vf_scratch/process-control/scratch_four".
+Remove directory "vf_scratch/process-control/scratch_one".
+Remove the directory "vf_scratch/process-control/scratch_two".
+Delete directory called "vf_scratch/process-control/scratch_three".
+Delete the directory called "vf_scratch/process-control/scratch_four".
+If "vf_scratch/process-control/scratch_one" is not available then, print "Remove directory removed it".
+If "vf_scratch/process-control/scratch_two" is not available then, print "Remove the directory removed it".
+If "vf_scratch/process-control/scratch_three" is not available then, print "Delete directory called removed it".
+If "vf_scratch/process-control/scratch_four" is not available then, print "Delete the directory called removed it".

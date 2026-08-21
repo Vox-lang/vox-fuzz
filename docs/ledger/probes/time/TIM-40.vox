@@ -1,0 +1,42 @@
+(TIM-40 - the Complete Timer Example, verbatim from LANGUAGE.md:4251-4273.
+ Clock-dependent (unix timestamps), so recorded as an exit-code probe with
+ one real run kept underneath. Note the same one-line-per-Print behaviour
+ as TIM-12, and that `duration in seconds` reads 1 for a 1.5-second job:
+ the cast truncates.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-40.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   Starting job...
+   Seconds elapsed so far: 
+   1
+   Finished the job in: 
+   1
+    seconds
+   Started at unix time: 
+   1787285621
+   Stopped at unix time: 
+   1787285622
+)
+(Measure job duration)
+Print "Starting job...".
+Create a timer called 'job timer'.
+Start the 'job timer'.
+
+(... do work ...)
+Wait 1 second.
+Print "Seconds elapsed so far: ".
+Print the 'job timer''s elapsed in seconds.
+
+Wait 500 milliseconds.
+Stop the 'job timer'.
+
+Print "Finished the job in: ".
+Print the 'job timer''s duration in seconds.
+Print " seconds".
+
+(Access raw timestamps)
+Print "Started at unix time: ".
+Print the 'job timer''s start time.
+Print "Stopped at unix time: ".
+Print the 'job timer''s end time.
+```

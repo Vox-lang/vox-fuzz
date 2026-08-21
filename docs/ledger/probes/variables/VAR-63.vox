@@ -1,0 +1,14 @@
+(VAR-63: file paths are claimed to be data that stays double-quoted. `see`
+ takes a single-quoted path too, and really includes the file — the fixture
+ prints. So the "stay double-quoted" rule is not enforced here, and a single
+ quoted token means an identifier in most positions and a data string in
+ `see` position, which is the context-sensitivity LANGUAGE.md:612-613 says
+ does not exist. See Discrepancy 5. `./` in a `see` resolves against the
+ directory of the file that writes it, so this probe runs from anywhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-63.vox -o p && ./p
+ expected output:
+   helper included
+   the single-quoted path was accepted
+)
+see './fixtures/helper.vox'.
+Print "the single-quoted path was accepted".

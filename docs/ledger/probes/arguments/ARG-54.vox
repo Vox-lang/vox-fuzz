@@ -1,0 +1,14 @@
+(ARG-54 — *(not a manual claim — a gap in the manual)* `Parse flags.`
+ with no schema at all is legal. Nothing is recognized, so nothing is
+ filtered and the leading dash is just another positional.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-54.vox -o p && ./p -x pos
+ Args: -x pos
+ expected output:
+   count is 3
+   -x
+   pos
+)
+Parse flags.
+
+Print "count is {arguments's count}".
+Print each item from arguments's all.

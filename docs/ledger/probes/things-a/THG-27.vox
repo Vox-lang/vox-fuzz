@@ -1,0 +1,25 @@
+(THG-27: LANGUAGE.md's field-access example (880-894) verbatim - a field is
+ an ordinary expression and an ordinary lvalue.
+ Also covers: THG-28 (`Print origin's x.` reads a field), THG-29
+ (`origin's y is origin's y add 1.` - bare assignment to a field), THG-30
+ (`increment origin's x.`), THG-31 (a field interpolated into a format
+ string), THG-32 (a field compared in an If condition).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-27.vox -o p && ./p
+ expected output:
+   3
+   origin sits at 4, 5
+   the origin moved right
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+Set origin's x to 3.
+Set origin's y to 4.
+Print origin's x.
+origin's y is origin's y add 1.
+increment origin's x.
+Print "origin sits at {origin's x}, {origin's y}".
+If origin's x is greater than 3 then,
+    Print "the origin moved right".

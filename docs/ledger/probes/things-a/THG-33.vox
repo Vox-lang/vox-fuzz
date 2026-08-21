@@ -1,0 +1,17 @@
+(THG-33: the prose at LANGUAGE.md:896-898 lists `decrement` among the
+ positions a field works in, but no example in the section shows it.
+ Hand-verified here: it steps the field down by one, like increment.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-33.vox -o p && ./p
+ expected output:
+   8
+   10
+)
+A thing called point has
+  a number called x is 10,
+  a number called y is 10.
+
+a point called origin.
+decrement origin's x.
+decrement origin's x.
+Print origin's x.
+Print origin's y.

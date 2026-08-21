@@ -1,0 +1,20 @@
+(LST-35 — the EXPRESSION form of `{...}` interpolation has no runtime-tag
+ dispatch, so a nested list does not render there (LANGUAGE.md:2311-2314).
+ What it renders instead is a live heap address that CHANGES BETWEEN RUNS,
+ so the probe compares against the documented rendering and prints a stable
+ verdict rather than the address itself — a generated program must never
+ print one (its output would wander and the runner would call it
+ nondeterminism).
+ The manual's recommended fix, the variable form, works only in PRINT
+ position; assigned to a text it fails the same way — see Discrepancy 7.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-35.vox -o p && ./p
+ expected output:
+   expression form did NOT render the child list
+   var form in print position: [1, [2, 3], "four"]
+   [2, 3]
+)
+a list called nested is [1, [2, 3], "four"].
+a text called rendered is "{element 2 of nested}".
+If rendered is equal to "[2, 3]" then, print "expression form rendered the child list". Otherwise, print "expression form did NOT render the child list".
+print "var form in print position: {nested}".
+print element 2 of nested.

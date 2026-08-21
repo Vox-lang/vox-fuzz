@@ -1,0 +1,19 @@
+(FLW-39: "All resources are automatically cleaned up before exit"
+ (LANGUAGE.md:2191). Not assertable from inside the exiting program -
+ there is no observation point after Exit - so this probe records the
+ half that IS observable, out of band: it writes to a file handle it
+ never closes, then exits 3, and the bytes are on disk afterwards.
+ Hand-checked when the probe was written:
+   $ rm -f /tmp/vox-flw-cleanup.txt; ./p; echo $?
+   3
+   $ cat /tmp/vox-flw-cleanup.txt
+   flushed on exit
+ check-probes.sh can only verify the exit status here; the file half has
+ to be looked at by hand.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-39.vox -o p && ./p
+ expected output:
+   exit 3
+)
+open a file for writing called sink at "/tmp/vox-flw-cleanup.txt".
+Write "flushed on exit" to sink.
+Exit 3.

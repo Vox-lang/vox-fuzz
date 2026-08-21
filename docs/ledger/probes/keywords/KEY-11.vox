@@ -1,0 +1,9 @@
+(KEY-11 — `Decrement` subtracts 1 from a variable.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-11.vox -o p && ./p
+ expected output:
+   8
+)
+a number called tally is 10.
+Decrement tally.
+Decrement the tally.
+Print tally.

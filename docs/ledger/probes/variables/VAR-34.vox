@@ -1,0 +1,24 @@
+(VAR-34: reusing an already-declared name as a `For each ... in <list>` loop
+ variable is claimed to reject a conflicting type. It does not. `counted` is
+ declared a number, the loop rebinds it to the text elements of a list
+ literal whose elements are uniformly text, and the program compiles. After
+ the loop `counted` still reports Number (static) while holding a text
+ pointer, so arithmetic on it yields a raw address — 4198543 on the build
+ that recorded this. That exact number is not stable across builds, so the
+ probe asserts the shape instead of the value. This is the defect class
+ LANGUAGE.md:603-606 says the rule closes — see Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-34.vox -o p && ./p
+ expected output:
+   alpha
+   beta
+   Number (static)
+   counted holds an address, not a number
+)
+a number called counted is 5.
+a list called words is ["alpha", "beta"].
+For each counted in words,
+  Print counted.
+
+Print counted's type.
+a number called total is counted add 1.
+If total is greater than 1000000 then, Print "counted holds an address, not a number".

@@ -1,0 +1,17 @@
+(VAR-37: the target of `Allocate ... for` is claimed to reject a type that
+ conflicts with the name's existing declaration. `Allocate N for X` binds X
+ as a number holding a raw address, so a text or list target IS rejected —
+ but a number target is not a conflict under that rule, and a buffer target
+ is let through as well, silently zeroing its capacity. The rejected half is
+ recorded here; the two that get through are Discrepancy 3.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-37.vox -o p && ./p
+ expected output:
+   error: cannot bind 'label' to a number in this Allocate statement; 'label' is already declared as text
+   note: 'label' was declared as text
+   help: use a different name here, or declare 'label' as a number instead
+   (no binary produced; compile error)
+)
+a text called label is "hi".
+Allocate 64 for label.
+Print label.

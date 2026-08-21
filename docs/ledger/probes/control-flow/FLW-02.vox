@@ -1,0 +1,11 @@
+(FLW-02: `Otherwise,` supplies the else branch, and it is taken exactly
+ when the condition is false.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-02.vox -o p && ./p
+ expected output:
+   no
+   loud yes
+)
+a boolean called ready is false.
+If ready then, print "yes". Otherwise, print "no".
+a boolean called loud is true.
+If loud then, print "loud yes". Otherwise, print "loud no".

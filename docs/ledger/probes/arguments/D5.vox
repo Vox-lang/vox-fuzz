@@ -1,0 +1,15 @@
+(D5 — Discrepancy 5 repro, first half: a one-alias schema is refused
+ with a diagnostic demanding a LONG alias. The second half is in
+ ARG-52.vox, which compiles and runs `"-a" or "-b"` — two short aliases,
+ no long one — with both spellings working. The rule the compiler
+ enforces is "exactly two alias strings"; the rule its diagnostic states
+ is "one of them must be long", and those are different rules.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   error: Expected long flag alias string like '--number'
+   (no binary produced; compile error)
+)
+a flag called solo is "-s", it is a boolean.
+Parse flags.
+
+Print "unreachable".

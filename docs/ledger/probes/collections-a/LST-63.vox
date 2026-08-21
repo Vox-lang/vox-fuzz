@@ -1,0 +1,27 @@
+(LST-63 — the declaration synonyms work as predicate nouns too:
+ integer -> number, string -> text, float/real -> decimal, bool -> boolean,
+ dictionary -> map. The article inflects (`is an integer`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-63.vox -o p && ./p
+ expected output:
+   integer
+   string
+   float
+   bool
+   dictionary
+   not real
+   not real
+   real
+   not real
+   not real
+)
+a list called mixedbag is [1, "two", 3.5, yes, {"k": 8}].
+For each item in mixedbag,
+  if item is an integer, print "integer",
+  otherwise if item is a string, print "string",
+  otherwise if item is a float, print "float",
+  otherwise if item is a bool, print "bool",
+  otherwise if item is a dictionary, print "dictionary",
+  otherwise print "unknown".
+
+For each item in mixedbag,
+  if item is a real, print "real". otherwise print "not real".

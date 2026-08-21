@@ -1,0 +1,13 @@
+(EXP-89: the documented way to turn a plain number of milliseconds into
+ seconds is to divide by 1000, since EXP-88 rules `in` out.
+ The second line records that the division truncates rather than rounding,
+ which is the same rule as EXP-60 and matters to anyone writing the assertion.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-89.vox -o p && ./p
+ expected output:
+   5
+   5
+)
+a number called millis is 5000.
+Print the millis divide 1000.
+a number called awkward is 5999.
+Print the awkward divide 1000.

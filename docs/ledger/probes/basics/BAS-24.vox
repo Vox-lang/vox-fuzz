@@ -1,0 +1,26 @@
+(BAS-24 - undocumented precision on BAS-16/BAS-19: the manual says "blank
+ line", and a line of nothing but SPACES counts as one - it closes the
+ definition of `greet`, so the call and the statement after it are
+ top-level. A COMMENT-only line does not: `chatter` is never closed, so
+ `chatter.` and `Print "unreachable"` are absorbed into its own body and
+ nothing after the signature ever runs. Only the first half produces
+ output.
+ The compiler warns about the second half at compile time - the same
+ still-open-at-end-of-file warning as BAS-21 - so the difference between
+ the two halves is diagnosed, just not at runtime.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-24.vox -o p && ./p
+ expected output:
+   hi
+   after the spaces-only line
+)
+To greet.
+    Print "hi".
+   
+greet.
+Print "after the spaces-only line".
+
+To chatter.
+    Print "chat".
+(a comment where the paragraph break would go)
+chatter.
+Print "unreachable".

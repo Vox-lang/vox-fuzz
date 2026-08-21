@@ -1,0 +1,20 @@
+(FUN-26 — buffer parameters support `'s size`, `'s empty`, `'s full` and
+ byte access. The caller passes a 3-byte string-initialised buffer, so
+ size is 3, empty is false (0), full is false (0), and byte 1 is 65.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-26.vox -o p && ./p
+ expected output:
+   3
+   0
+   0
+   65
+   67
+)
+To 'read buffer' with a buffer called payload.
+  Print payload's size.
+  Print payload's empty.
+  Print payload's full.
+  Print byte 1 of payload.
+  Print byte 3 of payload.
+
+a buffer called blob is "ABC".
+'read buffer' of blob.

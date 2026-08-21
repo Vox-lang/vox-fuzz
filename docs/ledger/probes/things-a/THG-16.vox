@@ -1,0 +1,18 @@
+(THG-16: a field's thing type must be PREVIOUSLY defined - naming a thing
+ defined below the line is refused.
+ Also covers: THG-50 (within one file the defined-earlier ordering rule is
+ what makes a cycle unconstructible - the diagnostic is "unknown field
+ type", not a cycle report).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-16.vox -o p && ./p
+ expected output:
+   error: Unknown field type 'inner' in thing 'outer'
+       A field's type is a builtin type noun or a thing defined earlier in the program.
+   (no binary produced; compile error)
+)
+A thing called outer has
+  an inner called core.
+
+A thing called inner has
+  a number called x is 1.
+
+Print "made".

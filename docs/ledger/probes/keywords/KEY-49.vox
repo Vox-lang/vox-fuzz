@@ -1,0 +1,13 @@
+(KEY-49 — `message` is the reserved alias of the type name `text`: a
+ variable declared with it is a text, reports Text as its type, and takes
+ text operations.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-49.vox -o p && ./p
+ expected output:
+   hello
+   Text (static)
+   hello there
+)
+a message called greeting is "hello".
+Print greeting.
+Print greeting's type.
+Print "{greeting} there".

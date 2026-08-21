@@ -1,0 +1,14 @@
+(LST-53 — `_map_print` shares the same 64-deep `_print_depth` budget as
+ `_list_print`, so a tree that alternates map and list is cycle-safe too:
+ it prints to the cap, then `...`, sets the error flag, and unwinds.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-53.vox -o p && ./p
+ expected output:
+   {"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [...]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}
+   mixed cycle caught
+)
+a list called branch is [].
+a map called root is {"kids": 0}.
+set root's "kids" to branch.
+append root to branch.
+print root.
+on error print "mixed cycle caught".

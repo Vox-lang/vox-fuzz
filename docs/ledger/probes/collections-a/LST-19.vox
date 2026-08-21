@@ -1,0 +1,19 @@
+(LST-19 — the worked widening example of LANGUAGE.md:2238-2243, with the
+ one repair it needs: the manual writes `append hello to items.`, which does
+ not compile because a bare word is an identifier, not a text literal
+ (LANGUAGE.md:645-668). Quoted, the example behaves exactly as documented.
+ The manual's verbatim text is Discrepancy 1, repro `D1.vox`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-19.vox -o p && ./p
+ expected output:
+   hello
+   5
+   ["hello", 5]
+)
+To five with a number called x. Return x add 1.
+
+a list called items is [].
+append "hello" to items.
+append five of 4 to items.
+print element 1 of items.
+print element 2 of items.
+print items.

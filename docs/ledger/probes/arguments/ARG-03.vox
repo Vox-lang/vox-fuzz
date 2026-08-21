@@ -1,0 +1,23 @@
+(ARG-03 — `arguments's name` is the program name, argv[0].
+ The raw value is the path the binary was invoked by, so printing it
+ would make this probe unre-runnable; it printed `./p` when run by hand
+ with the command below. What IS deterministic is that it is the same
+ string as argument 0, so the probe asserts that identity instead.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-03.vox -o p && ./p alpha
+ Args: alpha
+ expected output:
+   the name is argument zero
+   the name is present
+)
+a text called 'the program name' is arguments's name.
+a number called nothingth is 0.
+a text called 'argument zero' is the argument at the nothingth.
+If 'the program name' is 'argument zero' then,
+    Print "the name is argument zero".
+Otherwise,
+    Print "the name differs from argument zero".
+
+If 'the program name' is empty then,
+    Print "the name is empty".
+Otherwise,
+    Print "the name is present".

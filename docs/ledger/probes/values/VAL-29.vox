@@ -1,0 +1,12 @@
+(VAL-29: when a value only turns out to be `nothing` at run time (read out
+ of a map), arithmetic on it sets the error flag — the compiler cannot catch
+ it, so `On error` catches it instead.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-29.vox -o p && ./p
+ expected output:
+   cannot do arithmetic on nothing
+   1
+)
+a map called m is {"absent": nothing}.
+a number called bad is m's "absent" add 1.
+on error print "cannot do arithmetic on nothing".
+print bad.

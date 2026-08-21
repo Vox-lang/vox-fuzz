@@ -1,0 +1,14 @@
+(TIM-55 - the time and timer property words are reserved variable names,
+ which the manual's Reserved Aliases section (LANGUAGE.md:4684-4696) never
+ says. `duration` is shown here; hand-run, the same rejection covers
+ `elapsed`, `running`, `timer`, `stopwatch`, `time`, `unix`, `hour`,
+ `minute`, `day`, `month`, `year`, `wait`, `sleep`, `milliseconds`, `ms`
+ and `current`, while `second`, `start`, `begin`, `stop`, `finish` and
+ `end` are all accepted as names.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-55.vox -o p && ./p
+ expected output:
+   error: Cannot use 'duration' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called duration is 1.
+print duration.

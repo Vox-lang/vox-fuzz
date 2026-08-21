@@ -1,0 +1,37 @@
+(THG-55: the three spellings of assignment - a declaration with an
+ initialiser, a bare `is`, and `Set ... to` - are all assignment, so all
+ three copy. The `the` reference form (LANGUAGE.md:523) copies too.
+ Each copy is mutated after the fact and the original is printed back
+ unchanged: 5, 9, 5, 11, 5, 13.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-55.vox -o p && ./p
+ expected output:
+   5
+   9
+   5
+   11
+   5
+   13
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+Set origin's x to 5.
+
+a point called declared is origin.
+Set declared's x to 9.
+Print origin's x.
+Print declared's x.
+
+a point called bare.
+bare is origin.
+Set bare's x to 11.
+Print origin's x.
+Print bare's x.
+
+a point called written.
+Set written to origin.
+Set written's x to 13.
+Print origin's x.
+Print written's x.

@@ -1,0 +1,10 @@
+(KEY-03 — `Print` is the output statement starter; it prints a literal or
+ an expression, one line per statement.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-03.vox -o p && ./p
+ expected output:
+   printed line
+   42
+)
+Print "printed line".
+a number called total is 40 add 2.
+Print total.

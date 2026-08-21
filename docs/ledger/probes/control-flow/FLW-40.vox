@@ -1,0 +1,11 @@
+(FLW-40: `quit` and `terminate` are alternative keywords for `Exit`, and
+ both take a code. Only the `quit` half is observable in one process, so
+ this probe carries `quit 5`; the `terminate 6` half was hand-run
+ separately and exited 6.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-40.vox -o p && ./p
+ expected output:
+   before
+   exit 5
+)
+print "before".
+quit 5.

@@ -1,0 +1,34 @@
+(Discrepancy 2 - minimal repro. LANGUAGE.md:2026 says text to number "fails if
+ text is not a valid number and sets the error flag"; :2027-2029 says a
+ NON-default-base cast stops at the first invalid character and "does not set
+ the error flag". Neither bullet describes what happens.
+ One rule covers every base: parsing stops at the first invalid character, and
+ the error flag is set only when ZERO characters parsed. So a base-10 partial
+ parse does not fail, and a non-default-base total failure does set the flag -
+ both bullets are wrong in opposite directions.
+ The four casts below are the two bases crossed with the two outcomes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   12
+   base 10 total failure: flag SET
+   0
+   18
+   hex total failure: flag SET
+   0
+)
+a text called partial is "12xy".
+a number called 'base ten partial' is partial as a number.
+On error Print "base 10 partial: flag SET".
+Print 'base ten partial'.
+a text called rubbish is "abc".
+a number called 'base ten total' is rubbish as a number.
+On error Print "base 10 total failure: flag SET".
+Print 'base ten total'.
+a text called mixed is "12g5".
+a number called 'hex partial' is mixed as a hex number.
+On error Print "hex partial: flag SET".
+Print 'hex partial'.
+a text called letters is "zzz".
+a number called 'hex total' is letters as a hex number.
+On error Print "hex total failure: flag SET".
+Print 'hex total'.

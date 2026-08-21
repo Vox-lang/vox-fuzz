@@ -1,0 +1,10 @@
+(BAS-18 - the Paragraph Breaks example (LANGUAGE.md:82-86) compiles and
+ prints both sections in order.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-18.vox -o p && ./p
+ expected output:
+   Section 1
+   Section 2
+)
+print "Section 1".
+
+print "Section 2".

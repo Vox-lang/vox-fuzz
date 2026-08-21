@@ -1,0 +1,41 @@
+(EXP-60: `3.14 as a number` truncates to 3.
+ Also covers: EXP-61 `42 as a float`, EXP-62 `25 as text`, EXP-63
+ `"123" as a number`, EXP-64 `3.14 as text`, EXP-65 `"3.14" as a float`,
+ EXP-66 `true as a number`, EXP-67 `false as a number`, EXP-68
+ `0 as a boolean`, EXP-69 `42 as a boolean`, EXP-70 `true as text`, EXP-71
+ `"true" as a boolean` - every row of the Basic Conversions table except the
+ buffer one, which is EXP-72.
+ EXP-68 and EXP-71 are recorded through `as text` rather than bare: booleans
+ print as 1/0 per LANGUAGE.md:2238, so a bare Print cannot tell the manual's
+ documented `false` result from a number 0. Rendering the boolean back to text
+ shows the cast really produced a boolean, and the `'s type` line confirms it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-60.vox -o p && ./p
+ expected output:
+   3
+   42.0
+   25
+   123
+   3.14
+   3.14
+   1
+   0
+   false
+   true
+   true
+   true
+   Boolean (static)
+)
+Print 3.14 as a number.
+Print 42 as a float.
+Print 25 as text.
+Print "123" as a number.
+Print 3.14 as text.
+Print "3.14" as a float.
+Print true as a number.
+Print false as a number.
+Print 0 as a boolean as text.
+Print 42 as a boolean as text.
+Print true as text.
+Print "true" as a boolean as text.
+a boolean called flagged is 42 as a boolean.
+Print flagged's type.

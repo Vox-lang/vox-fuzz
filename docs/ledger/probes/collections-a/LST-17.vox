@@ -1,0 +1,17 @@
+(LST-17 — booleans print as 1/0 inside a mixed list, matching how a
+ homogeneous boolean list prints. `yes`/`true` and `no`/`false` are the
+ same two values.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-17.vox -o p && ./p
+ expected output:
+   [1, 0, 1, 0]
+   1
+   0
+   1
+   0
+   ["tag", 1, 0]
+)
+a list called flags is [yes, no, true, false].
+print flags.
+For each marker in flags, print marker.
+a list called mixedflags is ["tag", yes, no].
+print mixedflags.

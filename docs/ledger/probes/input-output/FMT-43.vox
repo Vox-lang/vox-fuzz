@@ -1,0 +1,12 @@
+(FMT-43 — a name declared in only SOME branches stays scoped to its
+ condition; using it afterwards is a compile error. The diagnostic even
+ names the rule.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   compile error: Unknown variable: label
+)
+a number called mode is 1.
+if mode is 1 then,
+  a text called label is "one".
+
+Print label.

@@ -1,0 +1,22 @@
+(THG2-56: ordinary compilation is unaffected by the .lib restriction - the same
+ source that --shared refuses (shared/THG2-57.vox) compiles and runs as an
+ ordinary program, Library declaration and all. Here it is with a statement
+ stream added so there is something to see.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-56.vox -o p && ./p
+ expected output:
+   12
+)
+Library geometrykit version "1.0".
+
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'nudged east' with a point called start.
+  Set start's x to start's x add 1.
+  Return a point, start.
+
+a point called origin.
+Set origin's x to 11.
+The moved is origin's 'nudged east'.
+Print moved's x.

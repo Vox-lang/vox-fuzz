@@ -1,0 +1,21 @@
+(THG-01: a thing is a composite value of named fields, and `'s` reads one.
+ Two instances of the same type keep their own bytes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-01.vox -o p && ./p
+ expected output:
+   3
+   0
+   0
+   7
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+a point called corner.
+Set origin's x to 3.
+Set corner's y to 7.
+Print origin's x.
+Print origin's y.
+Print corner's x.
+Print corner's y.

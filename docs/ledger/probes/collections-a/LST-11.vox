@@ -1,0 +1,29 @@
+(LST-11 — append onto a mixed list respects the appended element's own
+ type.
+ Also covers: LST-12 (`set element N of` retypes a slot in place),
+ LST-13 (`element N of` reads each slot back as its own type),
+ LST-14 (`'s first` / `'s last` respect the slot type),
+ LST-16 (the VARIABLE form of `{...}` interpolation, in PRINT position,
+ renders the whole list with each element as its own type).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-11.vox -o p && ./p
+ expected output:
+   appended
+   retyped
+   two
+   3.5
+   retyped
+   appended
+   interp: ["retyped", "two", 3.5, 1, "appended"]
+   ["retyped", "two", 3.5, 1, "appended"]
+)
+a list called mixedbag is [1, "two", 3.5, yes].
+append "appended" to mixedbag.
+print element 5 of mixedbag.
+set element 1 of mixedbag to "retyped".
+print element 1 of mixedbag.
+print element 2 of mixedbag.
+print element 3 of mixedbag.
+print mixedbag's first.
+print mixedbag's last.
+print "interp: {mixedbag}".
+print mixedbag.

@@ -1,0 +1,10 @@
+(KEY-37 — `but` chains a further condition onto a statement (`but if`),
+ selecting the first arm whose condition holds.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-37.vox -o p && ./p
+ expected output:
+   ["two"]
+)
+a list called picked is [].
+a number called dial is 2.
+append "one" to picked, but if dial is 2 append "two", but if dial is 3 append "three", otherwise append "other".
+Print picked.

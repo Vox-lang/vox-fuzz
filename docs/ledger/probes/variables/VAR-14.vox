@@ -1,0 +1,16 @@
+(VAR-14: a bare `Create a buffer called NAME.` is empty — size 0 — with a
+ dynamic capacity. The capacity reads 4096, not 0; that contradiction is
+ already Discrepancy 1 of the buffers ledger (BUF-02) and is recorded here
+ only so the number in this section's default table is not read as 0.
+ Note also that this spelling emits no declaration warning, while the
+ equivalent `a buffer called NAME.` does — see Discrepancy 7.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-14.vox -o p && ./p
+ expected output:
+   0
+   4096
+   1
+)
+Create a buffer called room.
+Print room's size.
+Print room's capacity.
+Print room's empty.

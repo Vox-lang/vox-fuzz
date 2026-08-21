@@ -1,0 +1,15 @@
+(VAL-05: a function returning `a value` carries its tag back out, so the
+ echo round-trip leaves `out` as [1, "two", 3.5] with the original tags
+ intact (the value return brought each tag back out, the append forwarded
+ it).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-05.vox -o p && ./p
+ expected output:
+   [1, "two", 3.5]
+)
+To echo with a value called v. Return a value, v.
+
+a list called data is [1, "two", 3.5].
+a list called out is [].
+For each item in data,
+  append echo of item to out.
+print out.

@@ -1,0 +1,30 @@
+(LST-18 — appending an OPAQUE value (a function with no declared return
+ type) widens the list to mixed. LANGUAGE.md:2232-2235 says the element is
+ then "always read back as what it is rather than silently reinterpreted".
+ It is not: an opaque function returning a TEXT lands in the slot tagged as
+ a number and prints as a raw address (4210906, deterministic).
+ Also covers: LST-21 (the residual TAG_INTEGER guess of
+ LANGUAGE.md:2250-2254 — this probe is what that hedge looks like in
+ practice). See Discrepancy 5; minimal repro `D5.vox`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-18.vox -o p && ./p
+ expected output:
+   ["anchor", 5, 4210906]
+   5
+   4210906
+   text
+   number
+   number
+)
+To 'opaque label'. Return "hi".
+
+To 'opaque count' with a number called seed. Return seed add 1.
+
+a list called items is [].
+append "anchor" to items.
+append 'opaque count' of 4 to items.
+append 'opaque label' to items.
+print items.
+print element 2 of items.
+print element 3 of items.
+For each item in items,
+  if item is a text, print "text". otherwise if item is a number, print "number". otherwise print "other".

@@ -1,0 +1,8 @@
+(OPR-05: `multiply` is the multiplication operator (LANGUAGE.md:4554).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-05.vox -o p && ./p
+ expected output:
+   120
+)
+a number called lhs is 20.
+a number called rhs is 6.
+Print lhs multiply rhs.

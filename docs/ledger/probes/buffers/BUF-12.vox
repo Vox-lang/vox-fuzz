@@ -1,0 +1,9 @@
+(BUF-12: `empty` is true iff size = 0.)
+(expected output:
+1
+0
+)
+a buffer called b is 16 bytes in size.
+print b's empty.
+append "x" to b.
+print b's empty.

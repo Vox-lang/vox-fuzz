@@ -1,0 +1,25 @@
+(LST2-81 — the `otherwise` catch-all: it supplies a final alternative that
+ runs when no `but if` matched, replacing the base action. The spelling
+ the manual gives (bare `otherwise`) works after an `append` base but is a
+ parse error after a `print` base; `but otherwise` works after both. See
+ Discrepancy 2. This probe uses the spelling that works everywhere.
+ Also covers: LST2-85 (`otherwise` as a catch-all alternative).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-81.vox -o p && ./p
+ expected output:
+   plain
+   plain
+   third
+   plain
+   plain
+   third
+   [8, 0, 8, 0]
+)
+print each step from 1 to 6,
+    but if the step modulo 3 is equal to 0 print "third",
+    but otherwise print "plain".
+
+a list called kept is [].
+append each step from 1 to 4 to kept,
+    but if the step modulo 2 is equal to 0 append 0,
+    otherwise append 8.
+print kept.

@@ -1,0 +1,20 @@
+(ARG-11 — the Accessing User Arguments example (LANGUAGE.md:4332-4339),
+ verbatim: a count guard, `arguments's first` declared inside the
+ comma-continued branch, and an Otherwise arm. Run WITH an argument, so
+ the greeting arm is the one taken.
+ Print writes a line each, so "Hello, " and the name land on separate
+ lines — that is the I/O section's rule, not this section's, and the
+ example makes no claim about it either way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-11.vox -o p && ./p Ada
+ Args: Ada
+ expected output:
+   Hello, 
+   Ada
+)
+(Get the first argument passed by the user)
+If arguments's count is greater than 1 then,
+    a text called username is arguments's first,
+    Print "Hello, ",
+    Print the username.
+Otherwise,
+    Print "Hello, World!".

@@ -1,0 +1,26 @@
+(PRC-42 — `fork the process` and the reap forms are EXPRESSIONS, not
+ statements: they work anywhere an expression is valid, not only after
+ `Set`. Here one reap is the subject of an `If` condition and one fork is
+ the argument of a function call.
+ SAFETY: every child this probe makes is its own and is reaped. A leaf
+ must do the same (plan 323 Tier CONFINE: the child must be the program's
+ own, and the count bounded).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-42.vox -o p && ./p
+ expected output:
+   a reap read directly in a condition
+   a fork read as a call argument gave parent
+   the child was reaped
+)
+To 'describe pid' with a number called pid.
+    If pid is 0 then, Return a text, "child".
+    Return a text, "parent".
+
+If reap process 999999 is less than 0 then, print "a reap read directly in a condition".
+a text called role is 'describe pid' of fork the process.
+If role is "child" then, Exit 0.
+print "a fork read as a call argument gave {role}".
+a number called reaped is reap any child process.
+If reaped is greater than 0 then, print "the child was reaped".

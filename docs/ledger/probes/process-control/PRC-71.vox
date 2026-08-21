@@ -1,0 +1,43 @@
+(PRC-71 — `Send signal <N> to process <pid>.` performs kill(2).
+ Also covers: PRC-72 (`child` is an accepted alias for `process`), PRC-73
+ (on success it CLEARS the error flag — the existence check after a
+ deliberately failed reap does not re-trigger `On error`), PRC-74 (ESRCH,
+ EINVAL and EPERM all set the flag and are catchable) and PRC-75 (signal 0
+ delivers nothing and is the standard existence check).
+ SAFETY: signal 9 goes only to the child this program forked. The two
+ probes of the failure paths use signal 0, which the kernel never
+ delivers: 999999 is an invalid pid (ESRCH), and pid 1 belongs to another
+ user (EPERM) but receives nothing whatsoever. A generated program must
+ not do even this much — see the ledger's leaf-safety column.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-71.vox -o p && ./p
+ expected output:
+   no such process set the error flag
+   the child alias was accepted
+   an invalid signal number set the error flag
+   signalling a process of another user set the error flag
+   a failed reap set the error flag
+   a successful signal cleared the flag
+   the child was killed and reaped
+)
+Send signal 0 to process 999999.
+On error print "no such process set the error flag".
+a number called 'the child' is fork the process.
+If 'the child' is 0 then, Wait 2 seconds, Exit 0.
+Send signal 0 to child 'the child'.
+On error print "the child alias set the error flag".
+print "the child alias was accepted".
+Send signal 999 to process 'the child'.
+On error print "an invalid signal number set the error flag".
+Send signal 0 to process 1.
+On error print "signalling a process of another user set the error flag".
+a number called 'the foreign reap' is reap process 999998.
+On error print "a failed reap set the error flag".
+Send signal 0 to child 'the child'.
+On error print "the existence check errored while the flag was already set".
+print "a successful signal cleared the flag".
+Send signal 9 to child 'the child'.
+a number called reaped is reap child 'the child'.
+If reaped is 'the child' then, print "the child was killed and reaped".

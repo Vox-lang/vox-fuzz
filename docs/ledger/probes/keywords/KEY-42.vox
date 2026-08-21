@@ -1,0 +1,10 @@
+(KEY-42 — `and` between parameter declarations separates them, and the
+ arguments land in the declared order.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-42.vox -o p && ./p
+ expected output:
+   first-second
+)
+To 'label of' with a text called head and a text called tail.
+    Print "{head}-{tail}".
+
+'label of' of "first" and "second".

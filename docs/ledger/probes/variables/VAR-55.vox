@@ -1,0 +1,12 @@
+(VAR-55: a name that collides with a reserved word is written quoted, and
+ then it works — the manual gives 'number' and 'version' as the examples, in
+ flag position; both work as ordinary variable names too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-55.vox -o p && ./p
+ expected output:
+   5
+   7
+)
+a number called 'number' is 5.
+a number called 'version' is 7.
+Print 'number'.
+Print 'version'.

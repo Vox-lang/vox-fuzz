@@ -1,0 +1,11 @@
+(OPR-15: `is greater than` is a strict greater-than (LANGUAGE.md:4564).
+ The equal case is included to prove it is strict.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-15.vox -o p && ./p
+ expected output:
+   greater than fired
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is greater than other then, Print "greater than fired".
+If lhs is greater than rhs then, Print "greater than MISFIRED on equal".

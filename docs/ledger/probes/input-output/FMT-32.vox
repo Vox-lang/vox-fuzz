@@ -1,0 +1,18 @@
+(FMT-32 — the `write` sink accepts a format string. Written, then read
+ back through a buffer so the bytes on disk are what is checked, not the
+ statement merely compiling.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   hello world x3
+)
+a text called who is "world".
+a number called count is 3.
+Open a file for writing called report at "/tmp/vox-FMT-32.txt".
+write "hello {who} x{count}\n" to report.
+close report.
+
+Open a file for reading called back at "/tmp/vox-FMT-32.txt".
+a buffer called got is 64 bytes in size.
+read from back into got.
+close back.
+Print got without newline.

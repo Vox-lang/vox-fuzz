@@ -1,0 +1,15 @@
+(TIM-51 - a negative duration in SECONDS returns immediately: the value
+ lands in a timespec's tv_sec, the kernel rejects it, and the program
+ carries on. The millisecond spelling of the same nonsense does not -
+ see Discrepancy 3 and D3.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-51.vox -o p && ./p
+ expected output:
+   negative second waits returned at once
+)
+a timer called clock.
+Start the clock.
+Wait -1 seconds.
+Sleep for -2 seconds.
+Stop the clock.
+If the clock's duration in milliseconds is less than 500 then, print "negative second waits returned at once".
+Otherwise, print "negative second waits took {the clock's duration in milliseconds} milliseconds".

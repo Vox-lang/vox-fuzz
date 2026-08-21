@@ -1,0 +1,15 @@
+(FMT-54 — a chain mixes `and if` with `but if` and both mean the same
+ thing: first match wins. Hand-verified limit the manual's "Chain with
+ `but if` or `and if`" (LANGUAGE.md:3211) does not state — the FIRST
+ clause must be `but if`; opening with `and if` is a parse error
+ ("Expected a statement, got Comma"). See Discrepancy 4.
+ 4 matches the second clause only; 6 matches the first.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   two
+   six
+)
+a number called score is 4.
+Print the score, but if the score modulo 6 is equal to 0 print "six" and if the score modulo 2 is equal to 0 print "two".
+a number called other is 6.
+Print the other, but if the other modulo 6 is equal to 0 print "six" and if the other modulo 2 is equal to 0 print "two".

@@ -1,0 +1,11 @@
+(D1 — Discrepancy 1 repro: the manual's "Append strings" example
+ (LANGUAGE.md:2764-2767) does not compile. Bare words are not text
+ literals in Vox; `append "hello" to words.` is what compiles.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   error: Unknown variable: hello
+   (no binary produced; compile error — the same error follows for `world`)
+)
+a list called words is [].
+append hello to words.
+append world to words.

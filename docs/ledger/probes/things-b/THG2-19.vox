@@ -1,0 +1,26 @@
+(THG2-19: function members take no storage, so layout, copy, printing and
+ equality see only the data fields. `point` declares a member; the copy still
+ equals its original, still prints as two fields, and mutating the copy leaves
+ the original alone.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-19.vox -o p && ./p
+ expected output:
+   {x: 4, y: 0}
+   the copy equals its original
+   mutating the copy leaves the original alone
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  Return a point, plotted.
+
+The pin is a point's 'placed at' with 4.
+a point called copied is pin.
+Print copied.
+If copied is pin then, Print "the copy equals its original".
+Set copied's y to 1.
+If copied is not pin then, Print "mutating the copy leaves the original alone".

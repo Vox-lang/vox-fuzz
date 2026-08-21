@@ -1,0 +1,33 @@
+(TIM-52 - spellings the compiler accepts that the manual never lists:
+ `retrieve` for `get`, `stopwatch` for `timer`, `pause` for `wait`,
+ `delay` for `sleep`, `timestamp` and `unixtime` for `unix`, and plural
+ `hours`/`minutes`/`days`/`months`/`years` for the property names. Each is
+ a reserved word a generated program can collide with, and each is a
+ spelling the generator could be varying. See Discrepancy 4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-52.vox -o p && ./p
+ expected output:
+   timestamp is unix
+   unixtime is unix
+   hours is hour
+   minutes is minute
+   days, months and years are the singular properties
+   the stopwatch spelling made a working timer
+)
+Retrieve current time into now.
+a stopwatch called lap.
+Start the lap.
+Pause 2 milliseconds.
+Delay for 3 milliseconds.
+Stop the lap.
+If now's timestamp is now's unix then, print "timestamp is unix".
+Otherwise, print "timestamp is {now's timestamp} against unix {now's unix}".
+If now's unixtime is now's unix then, print "unixtime is unix".
+Otherwise, print "unixtime is {now's unixtime} against unix {now's unix}".
+If now's hours is now's hour then, print "hours is hour".
+Otherwise, print "hours is {now's hours} against hour {now's hour}".
+If now's minutes is now's minute then, print "minutes is minute".
+Otherwise, print "minutes is {now's minutes} against minute {now's minute}".
+If now's days is now's day and now's months is now's month and now's years is now's year then, print "days, months and years are the singular properties".
+Otherwise, print "the plural date properties disagree with the singular ones".
+If lap's end time is greater than 0 then, print "the stopwatch spelling made a working timer".
+Otherwise, print "the stopwatch spelling made a timer that never ran".

@@ -1,0 +1,18 @@
+(FUN-02 — no-parameter functions are valid, in both name forms: a
+ single-quoted multi-word name and a bare single word, each with its body
+ on the following indented lines.
+ Also covers: FUN-05 (bare vs quoted function names), FUN-37 (a
+ no-argument call written directly as a statement).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-02.vox -o p && ./p
+ expected output:
+   1.0.0
+   pong
+)
+To 'show version'.
+  Print "1.0.0".
+
+To ping.
+  Print "pong".
+
+'show version'.
+ping.

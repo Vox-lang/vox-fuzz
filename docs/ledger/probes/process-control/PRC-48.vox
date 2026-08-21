@@ -1,0 +1,22 @@
+(PRC-48 — `reap process <pid>` and `reap child <pid>` both wait4(2) for a
+ specific PID.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-48.vox -o p && ./p
+ expected output:
+   reap process reaped it
+   exit code 5
+   reap child reaped it
+   exit code 6
+)
+a number called 'the first child' is fork the process.
+If 'the first child' is 0 then, Exit 5.
+a number called 'reaped by process' is reap process 'the first child'.
+If 'reaped by process' is 'the first child' then, print "reap process reaped it".
+print "exit code {the reaped status divide 256 modulo 256}".
+a number called 'the second child' is fork the process.
+If 'the second child' is 0 then, Exit 6.
+a number called 'reaped by child' is reap child 'the second child'.
+If 'reaped by child' is 'the second child' then, print "reap child reaped it".
+print "exit code {the reaped status divide 256 modulo 256}".

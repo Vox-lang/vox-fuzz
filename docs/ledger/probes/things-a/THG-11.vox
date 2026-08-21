@@ -1,0 +1,27 @@
+(THG-11: a definition's second kind of entry is a function member -
+ `a function called <name>` - the manifest.
+ Also covers: THG-21 (`To do the point's 'placed at'` - `the` for a known
+ member), THG-22 (`a point's 'placed at' with 1 and 0` - `a` for a maker
+ bringing a new point into being), THG-23 (the same word under two articles
+ means two different things).
+ The manifest itself is mapped by the Things part B ledger; this probe only
+ puts the article rule stated at LANGUAGE.md:865-872 on trial.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-11.vox -o p && ./p
+ expected output:
+   1
+   0
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+The corner is a point's 'placed at' with 1 and 0.
+Print corner's x.
+Print corner's y.

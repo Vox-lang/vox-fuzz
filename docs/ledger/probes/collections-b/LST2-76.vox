@@ -1,0 +1,18 @@
+(LST2-76 — the conditional-append example: in an `append` branch the
+ `to <list>` target is omitted and inherited from the base statement.
+ The manual's own example, plus the retargeting case: naming a DIFFERENT
+ list in the branch is refused by name, exactly as LANGUAGE.md:2969 says.
+ Also covers: LST2-88 (target inheritance and the retargeting ban).
+ The refusal, hand-run as its own program (D-free, just not compilable in
+ the same file as a running probe):
+   error: 'but if' append branch targets 'other', but the base statement
+   targets 'kept' — a conditional append branch cannot retarget to a
+   different list/buffer
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-76.vox -o p && ./p
+ expected output:
+   [1, 0, 3, 0, 5]
+)
+a list called out is [].
+append each number from 1 to 5 to out,
+    but if the number modulo 2 is equal to 0 append 0.
+print out.

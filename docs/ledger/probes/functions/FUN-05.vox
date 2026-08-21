@@ -1,0 +1,31 @@
+(FUN-05 — a function name is a bare single word or a single-quoted
+ multi-word name (LANGUAGE.md:697, restated for the call site at :768).
+ Both forms define and both forms call. The manual's wording pairs "bare"
+ with "single word" and "single-quoted" with "multi-word", but the
+ compiler also accepts a single-word name written SINGLE-QUOTED, at the
+ definition and at the call — so the manual is narrower than the
+ language. Nothing here is wrong; the rule to take from it is that a leaf
+ must not treat "single-word names are never quoted" as a rule, because
+ no rule says it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-05.vox -o p && ./p
+ expected output:
+   pong
+   pong
+   1.0.0
+   la
+   la
+)
+To ping.
+  Print "pong".
+
+To 'show version'.
+  Print "1.0.0".
+
+To 'sing'.
+  Print "la".
+
+ping.
+'ping'.
+'show version'.
+sing.
+'sing'.

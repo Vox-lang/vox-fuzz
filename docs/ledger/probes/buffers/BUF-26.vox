@@ -1,0 +1,9 @@
+(BUF-26: out-of-bounds access sets an error flag AND returns 0. Also covers BUF-27: `On error` catches OOB buffer access - same minimal probe demonstrates both halves of the claim together, as originally hand-run.)
+(expected output:
+oob read caught
+0
+)
+a buffer called data is "AAAA".
+a number called bad is byte 100 of data.
+On error print "oob read caught".
+print bad.

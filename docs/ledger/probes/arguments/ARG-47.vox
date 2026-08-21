@@ -1,0 +1,17 @@
+(ARG-47 — *(not a manual claim — a gap in the manual)* a number flag
+ value beyond i64 both sets the error flag AND yields the value wrapped
+ modulo 2^64: 99999999999999999999 - 5 * 2^64 = 7766279631452241919.
+ An error flag and a plausible-looking wrong number at the same time is
+ the worst of both; see Discrepancy 4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-47.vox -o p && ./p -r 99999999999999999999
+ Args: -r 99999999999999999999
+ expected output:
+   reading the flag errored
+   retries is 7766279631452241919
+)
+a flag called retries is "-r" or "--retries", it is a number.
+Parse flags.
+
+a number called seen is retries.
+On error print "reading the flag errored".
+Print "retries is {seen}".

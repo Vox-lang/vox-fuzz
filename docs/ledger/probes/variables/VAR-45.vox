@@ -1,0 +1,18 @@
+(VAR-44, VAR-45: what the check does not catch. A value arriving from a
+ function call cannot be classified at compile time, so a text return
+ assigned to a number name passes through unchecked and the number holds a
+ raw address. A map read whose value types are uniform IS classified and
+ rejected (that half of VAR-44 is on D1b.vox); a list read
+ is not. The address is not stable across builds, so the probe asserts the
+ shape; this build printed 4198488.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-45.vox -o p && ./p
+ expected output:
+   Number (static)
+   the number holds an address
+)
+To 'the label'. Return text, "abc".
+
+a number called counted is 5.
+counted is 'the label'.
+Print counted's type.
+If counted is greater than 1000000 then, Print "the number holds an address".

@@ -1,0 +1,15 @@
+(KEY-68 — `all` is contextual: the filtered-arguments property after a
+ possessive, and an ordinary identifier elsewhere. The manual also names an
+ `all the numbers from/between …` range phrase; that phrase compiles but
+ misbehaves — see Discrepancies 4 and 5.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-68.vox -o p && ./p
+ expected output:
+   argument view follows
+   argument view ended
+   4
+)
+a number called all is 4.
+Print "argument view follows".
+Print each item from arguments's all.
+Print "argument view ended".
+Print all.

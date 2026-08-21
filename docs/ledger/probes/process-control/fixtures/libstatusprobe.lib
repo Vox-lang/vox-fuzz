@@ -1,0 +1,5 @@
+Library statusprobe version "0.1".
+Location "./libstatusprobe.so".
+
+Table of Contents:
+    To 'the status a library sees', returning a number.

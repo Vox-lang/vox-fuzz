@@ -1,0 +1,16 @@
+(Discrepancy 2: LANGUAGE.md:564-566 says reusing an already-declared name as
+ a `For each` loop variable rejects a conflicting type. The `in <collection>`
+ form does not — only the for-range form does. `counted` is declared a number
+ and comes out of the loop holding text while still reporting Number (static).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   beta
+   Number (static)
+)
+a number called counted is 5.
+a list called words is ["alpha", "beta"].
+For each counted in words,
+  a number called ignored is 0.
+
+Print counted.
+Print counted's type.

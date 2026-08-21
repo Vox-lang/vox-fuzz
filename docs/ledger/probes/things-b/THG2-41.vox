@@ -1,0 +1,20 @@
+(THG2-41: type names, variable names and function names share a single global
+ identifier namespace. Distinct names in all three roles coexist; the collision
+ case is THG2-42.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-41.vox -o p && ./p
+ expected output:
+   3
+   {x: 0}
+   9
+)
+A thing called point has
+  a number called x is 0.
+
+To reckon with a number called scale.
+  Return a number, scale multiply 3.
+
+a number called tally is 3.
+a point called origin.
+Print tally.
+Print origin.
+Print reckon of tally.

@@ -1,0 +1,24 @@
+(THG2-70: the type nouns `is a <type>` recognises are the six builtins -
+ number, text, decimal, boolean, list, map. Four of them are dispatched here on
+ a value parameter; the list and map arms are unreachable from these arguments
+ but must still parse, which is what this probe proves about them.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-70.vox -o p && ./p
+ expected output:
+   number
+   text
+   decimal
+   boolean
+)
+To describe with a value called item.
+  If item is a number, Print "number".
+  Otherwise if item is a text, Print "text".
+  Otherwise if item is a decimal, Print "decimal".
+  Otherwise if item is a boolean, Print "boolean".
+  Otherwise if item is a list, Print "list".
+  Otherwise if item is a map, Print "map".
+  Otherwise Print "other".
+
+describe of 1.
+describe of "two".
+describe of 3.5.
+describe of true.

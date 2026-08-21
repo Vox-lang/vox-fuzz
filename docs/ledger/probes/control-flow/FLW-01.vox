@@ -1,0 +1,12 @@
+(FLW-01: `If <condition> then, <statement>.` runs the statement only when
+ the condition is true, and the program continues either way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-01.vox -o p && ./p
+ expected output:
+   fired
+   done
+)
+a boolean called ready is true.
+a boolean called quiet is false.
+If ready then, print "fired".
+If quiet then, print "should not appear".
+print "done".

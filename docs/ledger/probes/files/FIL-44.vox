@@ -1,0 +1,13 @@
+(FIL-44: a non-integer, non-text `at` value is rejected at COMPILE time.
+ This probe must FAIL TO COMPILE. It has no run output; the recorded
+ output is the compiler's diagnostic. `at true` fails identically.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-44.vox -o p && ./p
+ actual output:
+   error: Open path must be either a text path like "/path/to/file" or a file
+   descriptor number (0 = stdin, 1 = stdout, 2 = stderr).
+   (compile failed; no binary produced)
+)
+open a file for reading called handle at 1.5.
+print handle's descriptor.

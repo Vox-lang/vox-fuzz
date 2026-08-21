@@ -1,0 +1,21 @@
+(Discrepancy 4 - minimal repro. LANGUAGE.md:1855 gives `the list is empty` as a
+ Property Checks example. It cannot be written: `list` is a reserved word and
+ no variable may be called that. The other five lines of the same block use
+ `x`, `y`, `z`, `n` and `value`, all of which ARE legal names - `value` is the
+ one type name the compiler lets through - so the block otherwise reads as
+ literal code.
+ The first two lines below are the legal shape; the commented line is the
+ manual's own, and it is rejected with "Cannot use 'list' as a variable name".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   a renamed list works
+   value is a legal variable name
+)
+a list called roster is [].
+If the roster is empty then, Print "a renamed list works".
+a number called value is 0.
+If the value is zero then, Print "value is a legal variable name".
+
+(Rejected: Cannot use 'list' as a variable name - it's a reserved keyword.)
+(a list called list is [].)
+

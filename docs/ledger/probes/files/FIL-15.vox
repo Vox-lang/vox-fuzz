@@ -1,0 +1,13 @@
+(FIL-15: the List Properties worked example compiles; a Boolean property reads directly as an If condition.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-15.vox -o p && ./p
+ actual output:
+   3
+   names is not empty, so the guard did not fire
+)
+a list called names is ["Alice", "Bob", "Charlie"].
+print names's length.
+If names's empty then,
+    print "No names in list".
+print "names is not empty, so the guard did not fire".

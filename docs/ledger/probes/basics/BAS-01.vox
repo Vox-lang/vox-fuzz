@@ -1,0 +1,13 @@
+(BAS-01 - every statement ends with a period. The canonical form: each of
+ these three statements is terminated by its own period and each runs
+ exactly once, at the top level.
+ See Discrepancy 1: the compiler does NOT require the period.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-01.vox -o p && ./p
+ expected output:
+   first
+   second
+   third
+)
+Print "first".
+Print "second".
+Print "third".

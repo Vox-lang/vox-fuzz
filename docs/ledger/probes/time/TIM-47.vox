@@ -1,0 +1,21 @@
+(TIM-47 - starting a timer that has already run restarts it: the second
+ duration measures only the second job, not both. Undocumented; the manual
+ says nothing about a second Start.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-47.vox -o p && ./p
+ expected output:
+   the first run measured its 1200 milliseconds
+   the restart reset the clock rather than accumulating
+)
+a timer called lap.
+Start the lap.
+Wait 1200 milliseconds.
+Stop the lap.
+a number called 'the first run' is lap's duration in milliseconds.
+Start the lap.
+Wait 300 milliseconds.
+Stop the lap.
+a number called 'the second run' is lap's duration in milliseconds.
+If 'the first run' is greater than 1199 then, print "the first run measured its 1200 milliseconds".
+Otherwise, print "the first run measured {'the first run'} milliseconds".
+If 'the second run' is less than 'the first run' then, print "the restart reset the clock rather than accumulating".
+Otherwise, print "the second run measured {'the second run'} milliseconds, so the timer accumulated".

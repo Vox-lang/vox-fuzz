@@ -1,0 +1,12 @@
+(FMT-45, FMT-46 — `{{` renders one literal `{` and `}}` renders one
+ literal `}`. Probed apart from each other as well as together, so a
+ doubled-brace pair being swallowed as one unit would still show.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   open {
+   close }
+   Use {braces} for literal braces.
+)
+Print "open {{".
+Print "close }}".
+Print "Use {{braces}} for literal braces.".

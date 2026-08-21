@@ -1,0 +1,14 @@
+(VAR-46: the rule is claimed to close the class where the compiler-tracked
+ type disagrees with the runtime value — "a wrong number on screen at best
+ and a segfault at worst". The segfault survives. `label` is declared text,
+ a number element from a uniform list literal is assigned to it unchecked,
+ and printing it dereferences the integer 1 as a string pointer. Deterministic
+ across runs. See Discrepancy 1; the same program is retained as D1.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-46.vox -o p && ./p
+ expected output:
+   (no output; exit 139 — SIGSEGV)
+)
+a list called counts is [1, 2].
+a text called label is "x".
+label is element 1 of counts.
+Print label.

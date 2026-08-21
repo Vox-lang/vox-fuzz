@@ -1,0 +1,20 @@
+(KEY-18 — `Change directory to "<path>".` is `chdir(2)`, and it really
+ moves the process: a relative open after it resolves against the new
+ directory.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-18.vox -o p && ./p
+ expected output:
+   wrote a relative file after chdir
+   cleaned up
+)
+Create a directory called "/tmp/voxfuzz-key-18".
+Change directory to "/tmp/voxfuzz-key-18".
+On error print "chdir failed".
+open a file for writing called note at "marker.txt".
+On error print "relative create failed".
+Write "here" to note.
+Close note.
+Print "wrote a relative file after chdir".
+Delete the file "marker.txt".
+Change directory to "/tmp".
+Remove the directory called "/tmp/voxfuzz-key-18".
+Print "cleaned up".

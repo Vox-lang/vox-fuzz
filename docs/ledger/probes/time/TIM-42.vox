@@ -1,0 +1,12 @@
+(TIM-42 - the Formatted Time Output example, verbatim from
+ LANGUAGE.md:4282-4284: three time properties read straight out of format
+ slots with the `:02` zero-pad specifier. Clock-dependent, so recorded as
+ an exit-code probe; TIM-41.vox checks the shape deterministically.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-42.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   04:13:42
+)
+Get current time into now.
+Print "{now's hour:02}:{now's minute:02}:{now's second:02}".
+(Prints: 09:05:03)

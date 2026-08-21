@@ -1,0 +1,32 @@
+(TIM-46 - a timer that was never started answers every property with
+ zero and reports itself not running, and stopping it before it has ever
+ been started is not an error. What it is instead is nonsense: with no
+ start recorded, the stop leaves a duration equal to the whole reading of
+ the clock the timer measures with - about 22 hours on the machine this
+ was run on, which is that machine's uptime, not any interval the program
+ asked for. Printed as a verdict rather than a number because the number
+ is different on every machine and every boot.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-46.vox -o p && ./p
+ expected output:
+   0
+   0
+   0
+   0
+   0
+   an unstarted timer is not running
+   stopping an unstarted timer is harmless
+   and leaves a duration far longer than the program ran
+)
+a timer called 'never started'.
+print 'never started''s start time.
+print 'never started''s end time.
+print 'never started''s duration in seconds.
+print 'never started''s duration in milliseconds.
+print 'never started''s elapsed in milliseconds.
+If 'never started''s running then, print "an unstarted timer says it is running".
+Otherwise, print "an unstarted timer is not running".
+Stop the 'never started'.
+If 'never started''s running then, print "stopping an unstarted timer left it running".
+Otherwise, print "stopping an unstarted timer is harmless".
+If 'never started''s duration in milliseconds is greater than 1000 then, print "and leaves a duration far longer than the program ran".
+Otherwise, print "and leaves a duration of {'never started''s duration in milliseconds} milliseconds".

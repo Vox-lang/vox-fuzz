@@ -1,0 +1,17 @@
+(KEY-44 — `and` before the final subject of a comma-separated subject list
+ terminates the list; the predicate after `are` applies to every subject.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-44.vox -o p && ./p
+ expected output:
+   all three subjects were true
+   are not negates for every subject
+)
+a boolean called warm is true.
+a boolean called dry is true.
+a boolean called calm is true.
+a boolean called windy is false.
+If warm, dry, and calm are true then,
+    Print "all three subjects were true".
+If warm, windy, and calm are true then,
+    Print "should not fire - one subject is false".
+If warm, dry, and calm are not false then,
+    Print "are not negates for every subject".

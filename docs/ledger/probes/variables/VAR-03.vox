@@ -1,0 +1,25 @@
+(VAR-03, VAR-04, VAR-06: `Set a TYPE called NAME to VALUE.` and `Create a
+ TYPE called NAME to VALUE.` both declare and initialize, and are the same
+ form as `a TYPE called NAME is VALUE.` with a different lead-in word. The
+ lead-in and the connector vary independently: all five spellings below
+ compile and produce the same kind of variable. `to` after a bare `a`
+ lead-in (`a number called n to 9.`) is the one combination that is
+ rejected — see Discrepancy 7.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-03.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   4
+   5
+)
+Set a number called one is 1.
+Create a number called two is 2.
+Set a number called three to 3.
+Create a number called four to 4.
+a number called five is 5.
+Print one.
+Print two.
+Print three.
+Print four.
+Print five.

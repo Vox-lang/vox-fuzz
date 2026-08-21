@@ -1,0 +1,11 @@
+(BUF-38: the source buffer is never modified by append or copy.)
+(expected output:
+World
+World
+)
+a buffer called src is "World".
+a buffer called dst is "Hello ".
+copy src to dst.
+print src.
+append src to dst.
+print src.

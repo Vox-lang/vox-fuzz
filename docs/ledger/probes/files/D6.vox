@@ -1,0 +1,26 @@
+(D6: Discrepancy 6 - `Write <scalar variable> to <file>` SEGFAULTED. This
+ is vox bug #40, which was recorded as fixed in 0.4.7 but still reproduced
+ against the 0.4.7 binary: a Number, a Float and a Boolean variable all
+ crashed, while a Text variable and a buffer were fine and a scalar LITERAL
+ (Write 42 to output.) was already a parse error.
+ **RESOLVED - fixed by vox #40 (0.4.8).** The variable form is now caught
+ at compile time by the same class of guard that caught the literal, with
+ a diagnostic naming the rewrite. No binary is produced and nothing
+ crashes. (The caret points at the DECLARATION of the offending variable
+ rather than at the Write statement.)
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/D6.vox -o p && ./p
+ actual output:
+   error: Cannot write number count to a file; Write takes text, a buffer, or a format string. Render it as text: Write "{count}" to output.
+   (no binary produced; compile error)
+)
+   (exit status 139)
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a number called count is 42.
+open a file for writing called output at "vf_scratch/files/scalar.txt".
+Write count to output.
+Close output.
+print "survived writing a Number to a file".

@@ -1,0 +1,16 @@
+(OPR-36 (undocumented precision): `modulo` by zero yields 0 and does
+ not crash, and a negative dividend gives a negative remainder (the
+ result takes the dividend's sign, C-style, not the divisor's).
+ LANGUAGE.md:4556 says only "Modulo".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-36.vox -o p && ./p
+ expected output:
+   0
+   survived the modulo by zero
+   -1
+)
+a number called dividend is 20.
+a number called 'zero divisor' is 0.
+Print dividend modulo 'zero divisor'.
+Print "survived the modulo by zero".
+a number called 'negative dividend' is 0 subtract 7.
+Print 'negative dividend' modulo 3.

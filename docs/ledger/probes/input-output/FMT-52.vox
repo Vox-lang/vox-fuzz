@@ -1,0 +1,11 @@
+(FMT-52 — clauses chain: three `but if`s after one `Print`, and — the
+ shape the manual's line 3206 actually shows — with no comma between the
+ clauses after the first. Reserved word note: the manual writes the loop
+ variable as `number`, which the compiler rejects as a keyword
+ ("Cannot use 'number' as a variable name"), so this probe uses `tally`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   fizz buzz
+)
+a number called tally is 6.
+Print the tally, but if the tally modulo 6 is equal to 0 print "fizz buzz" but if the tally modulo 2 is equal to 0 print "fizz" but if the tally modulo 3 is equal to 0 print "buzz".

@@ -1,0 +1,9 @@
+(FMT-05 — `Print progress without newline.` — the same suffix on a bare
+ variable reference, not a literal.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   75done
+)
+a number called progress is 75.
+Print progress without newline.
+Print "done".

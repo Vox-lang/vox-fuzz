@@ -1,0 +1,40 @@
+(D4 — Discrepancy 4 repro: a `file` parameter's `readable` and `writable`
+ properties are always false. A handle opened for reading reports
+ readable 1 at top level and 0 through a parameter; a handle opened for
+ writing reports writable 1 at top level and 0 through a parameter.
+ `size` and `descriptor` are correct through the same parameter, so it is
+ these two boolean properties specifically. LANGUAGE.md:745 says "file
+ parameters support file properties".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   top level, opened for reading:
+   1
+   0
+   top level, opened for writing:
+   0
+   1
+   through a parameter, opened for reading:
+   0
+   0
+   through a parameter, opened for writing:
+   0
+   0
+)
+To 'read flags of' with a file called handle.
+  Print handle's readable.
+  Print handle's writable.
+
+open a file for reading called src at "docs/ledger/probes/functions/fixtures/data.txt".
+open a file for writing called sink at "/tmp/vox-fun-d4.txt".
+
+Print "top level, opened for reading:".
+Print src's readable.
+Print src's writable.
+Print "top level, opened for writing:".
+Print sink's readable.
+Print sink's writable.
+Print "through a parameter, opened for reading:".
+'read flags of' of src.
+Print "through a parameter, opened for writing:".
+'read flags of' of sink.
+close sink.

@@ -1,0 +1,10 @@
+(KEY-51 — a reserved alias cannot be used as a variable name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-51.vox -o p && ./p
+ expected output:
+   error: Cannot use 'ms' as a variable name - it's a reserved keyword.
+     'ms' is an alternate spelling of the reserved keyword 'milliseconds'.
+     Tip: Try a more descriptive name like 'ms_value' or 'my_ms'
+   (no binary produced; compile error)
+)
+a number called ms is 1.
+Print ms.
