@@ -1,4 +1,5 @@
 see "../src/rng.vox".
+see "../src/gen_literals.vox".
 see "../src/gen_core.vox".
 see "../src/gen_buffers.vox".
 see "../src/gen_files.vox".
