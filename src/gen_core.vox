@@ -579,7 +579,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 21 then,
         'gen leaf butif append' of indent and nested.
     If kind is 22 then,
-        'gen leaf environment inrange' of indent and nested.
+        'gen leaf environment' of indent and nested.
     If kind is 23 then,
         'gen leaf arguments inrange' of indent and nested.
     If kind is 24 then,
@@ -589,7 +589,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 26 then,
         'gen leaf treating grid' of indent and nested.
     If kind is 27 then,
-        'gen leaf environment oob' of indent and nested.
+        'gen leaf environment with a loop or handler' of indent and nested.
     If kind is 28 then,
         'gen leaf rich condition' of indent and nested.
     If kind is 29 then,
@@ -1225,6 +1225,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_whiles to 0.
     Set gen_repeats to 0.
     Set gen_envs to 0.
+    'gen environment names reset'.
     Set gen_flags to 0.
     'rng seed' of seed.
     (The value leaves spend names out of a vocabulary on a per-program
@@ -1327,7 +1328,7 @@ To 'gen program' with a number called seed and a number called budget.
     a number called code is 'the raw code'.
     If 'the raw code' is greater than 89 then,
         Set code to 'the raw code' add 10.
-    a text called tail is "Exit {code}.\n".
+    a text called tail is 'gen program ending' of code.
     'gen emit' of tail.
     (Last, after every content decision, so the RNG draws it makes cannot
      shift the program's CONTENT for a seed - only its whitespace.)
@@ -1337,6 +1338,66 @@ To 'gen program' with a number called seed and a number called budget.
  ones a shell-reported status would have misclassified as signal deaths -
  the native harness must prove it tells them apart, so the generator must
  produce them.)
+
+(How a program stops. Three samenesses lived in the one line that used to
+ write this, and not one of them had a citation.
+
+ - The keyword. LANGUAGE.md:2230 ends the Program Termination section
+   with "Alternative keywords: `quit`, `terminate`", and the compiler
+   takes each of them in either capitalisation. Six spellings, all six
+   compiled and run against 0.4.9 before this was written.
+ - Whether a code is written at all. LANGUAGE.md:2228: "Exit code
+   defaults to 0 if not specified" - so `quit.` is a whole statement and
+   the program exits 0. Verified.
+ - Whether the program says anything at all. Nothing in the manual
+   requires a program to terminate explicitly; one that runs off its end
+   exits 0, verified the same way. So sometimes it does not.
+
+ What this fixes. `scripts/invariants` reported
+ `template "Exit #." slot 1: never above 254` at 100% presence, and the
+ row is not about the bound - the code is drawn flat over 246 values and
+ 255 is reachable (`Exit 255.` exits 255, verified) - it is about the
+ template being in every single program. Only a corpus that stops
+ writing the same template everywhere removes it, which is CLAUDE.md's
+ rule rather than a tuning of the detector.
+
+ Every modulus here is odd. This LCG's low bits are correlated - the
+ trap that left 'gen leaf thing' drawing nested things 0 times in 150
+ programs - so a draw over 2 or 6 would not be a draw.)
+
+To 'gen program ending' with a number called code.
+    a number called 'the ending draw' is 'rng below' of 23.
+    If 'the ending draw' is less than 3 then,
+        Return a text, "".
+    a number called 'the keyword draw' is 'rng below' of 3.
+    a text called 'the keyword' is "Exit".
+    If 'the keyword draw' is 1 then,
+        Set 'the keyword' to "Quit".
+    If 'the keyword draw' is 2 then,
+        Set 'the keyword' to "Terminate".
+    a number called 'the case draw' is 'rng below' of 7.
+    If 'the case draw' is less than 3 then,
+        Set 'the keyword' to 'gen in lower case' of 'the keyword'.
+    a number called 'the code draw' is 'rng below' of 11.
+    If 'the code draw' is less than 3 then,
+        Return a text, "{'the keyword'}.\n".
+    Return a text, "{'the keyword'} {code}.\n".
+
+(An ASCII word in lower case. Only the first byte can differ for the
+ three words above, but the whole text is walked so the helper is not
+ quietly specific to them.)
+
+To 'gen in lower case' with a text called 'the word'.
+    a buffer called 'the word bytes' is "{'the word'}".
+    a number called 'the byte count' is 'the word bytes's size.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the byte count',
+        a number called 'the byte here' is byte 'the position' of 'the word bytes',
+        If 'the byte here' is greater than 64 and 'the byte here' is less than 91 then,
+            Set byte 'the position' of 'the word bytes' to 'the byte here' add 32.
+        Set 'the position' to 'the position' add 1.
+    a text called 'the lower case word' is 'the word bytes' as text.
+    Return a text, 'the lower case word'.
 
 (The layout randomiser: the last pass over a finished program.
 

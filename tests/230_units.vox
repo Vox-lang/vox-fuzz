@@ -97,15 +97,36 @@ Print "classify -1: {'classify compile exit' of neg}".
  every other pool that declares a TOP-LEVEL name. Type names, function
  names, flag names, the buffer names 'gen buffer name' hands out and the
  value names 'gen fresh noun' hands out all land in Vox's one identifier
- space (LANGUAGE.md:1569), so one word in two pools is a program that
+ space (LANGUAGE.md:1571), so one word in two pools is a program that
  does not compile - and it would surface as a rare, seed-dependent
  compile failure rather than as anything obviously wrong with the lists.
  Counted here so a word added to one list cannot silently collide.
 
- The buffer-versus-value row is NOT zero: "the parcel" is in both, which
- predates this test and is recorded in the prelude report rather than
- quietly fixed here. It is printed rather than asserted so it stays
- visible until someone adjudicates it.
+ Every row below must read 0. The buffer-versus-value row used to read
+ 1 - "the parcel" was in both pools - and was fixed on 2026-08-21 by
+ taking the word out of gen_buffer_words; the reasoning for which pool
+ lost it is written where the pool is.
+
+ The pools counted here are every pool in the repo that hands out a
+ TOP-LEVEL name: the manifest's types, functions and flags
+ (gen_manifest.vox), gen_buffer_words (gen_buffers.vox), the value nouns
+ and verbs (gen_collections.vox) and gen_environment_words
+ (gen_misc.vox). The pools deliberately NOT counted against these are
+ the ones that do not spend into that space - gen_field_words,
+ gen_maker_words and gen_receiver_words live in a type's member space
+ and gen_parameter_words in a function's locals (LANGUAGE.md:1586, "A
+ thing's own fields and members live in a separate per-type member
+ space") - and the lists that are payload rather than names:
+ gen_environment_variable_names holds the names of host environment
+ variables, gen_environment_spoken_words holds words a program prints,
+ 'the value nonsense' holds sentences that will not parse as numbers,
+ 'the distinguishing words' are suffixes, and gen_alias_letters holds
+ flag aliases, which LANGUAGE.md:636 lists among the things that "are
+ data, not names". gen_environment_loop_words IS counted, because
+ LANGUAGE.md:1585 says the collision error "names a function, a
+ parameter, a loop variable, an inferred variable, or another thing" -
+ so a For-each variable shares the space even though the compiler was
+ measured to accept the same loop variable twice.
 
  The lengths are printed too, because 'gen cycled word' takes a drawn
  stride and only visits every word before repeating when the length is
@@ -136,6 +157,7 @@ To 'words in common' with a list called 'the first pool' and a list called 'the 
     Return a number, 'the overlap'.
 
 Print "pool lengths: types={gen_type_words's length} functions={gen_function_words's length} flags={gen_flag_words's length} fields={gen_field_words's length} makers={gen_maker_words's length} receivers={gen_receiver_words's length} parameters={gen_parameter_words's length}".
+Print "other pool lengths: buffers={gen_buffer_words's length} value nouns={'the value nouns's length} value verbs={'the value verbs's length} environment={gen_environment_words's length} loop words={gen_environment_loop_words's length}".
 Print "types vs functions: {'words in common' of gen_type_words and gen_function_words}".
 Print "types vs flags: {'words in common' of gen_type_words and gen_flag_words}".
 Print "functions vs flags: {'words in common' of gen_function_words and gen_flag_words}".
@@ -148,7 +170,22 @@ Print "flags vs value nouns: {'words in common' of gen_flag_words and 'the value
 Print "types vs value verbs: {'words in common' of gen_type_words and 'the value verbs'}".
 Print "functions vs value verbs: {'words in common' of gen_function_words and 'the value verbs'}".
 Print "flags vs value verbs: {'words in common' of gen_flag_words and 'the value verbs'}".
-Print "buffers vs value nouns (pre-existing, not mine): {'words in common' of gen_buffer_words and 'the value nouns'}".
+Print "buffers vs value nouns: {'words in common' of gen_buffer_words and 'the value nouns'}".
+Print "buffers vs value verbs: {'words in common' of gen_buffer_words and 'the value verbs'}".
+Print "value nouns vs value verbs: {'words in common' of 'the value nouns' and 'the value verbs'}".
+Print "environment vs types: {'words in common' of gen_environment_words and gen_type_words}".
+Print "environment vs functions: {'words in common' of gen_environment_words and gen_function_words}".
+Print "environment vs flags: {'words in common' of gen_environment_words and gen_flag_words}".
+Print "environment vs buffers: {'words in common' of gen_environment_words and gen_buffer_words}".
+Print "environment vs value nouns: {'words in common' of gen_environment_words and 'the value nouns'}".
+Print "environment vs value verbs: {'words in common' of gen_environment_words and 'the value verbs'}".
+Print "loop words vs types: {'words in common' of gen_environment_loop_words and gen_type_words}".
+Print "loop words vs functions: {'words in common' of gen_environment_loop_words and gen_function_words}".
+Print "loop words vs flags: {'words in common' of gen_environment_loop_words and gen_flag_words}".
+Print "loop words vs buffers: {'words in common' of gen_environment_loop_words and gen_buffer_words}".
+Print "loop words vs value nouns: {'words in common' of gen_environment_loop_words and 'the value nouns'}".
+Print "loop words vs value verbs: {'words in common' of gen_environment_loop_words and 'the value verbs'}".
+Print "loop words vs environment: {'words in common' of gen_environment_loop_words and gen_environment_words}".
 
 (No prelude word may CONTAIN one of tests/200_never_emitted.vox's banned
  needles. That guard scans generated source for the substring, so a name
@@ -218,3 +255,9 @@ Print "banned needles in receivers: {'banned needles in' of gen_receiver_words}"
 Print "banned needles in functions: {'banned needles in' of gen_function_words}".
 Print "banned needles in parameters: {'banned needles in' of gen_parameter_words}".
 Print "banned needles in flags: {'banned needles in' of gen_flag_words}".
+Print "banned needles in buffers: {'banned needles in' of gen_buffer_words}".
+Print "banned needles in value nouns: {'banned needles in' of 'the value nouns'}".
+Print "banned needles in value verbs: {'banned needles in' of 'the value verbs'}".
+Print "banned needles in environment: {'banned needles in' of gen_environment_words}".
+Print "banned needles in loop words: {'banned needles in' of gen_environment_loop_words}".
+Print "banned needles in spoken words: {'banned needles in' of gen_environment_spoken_words}".

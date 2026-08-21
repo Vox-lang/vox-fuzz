@@ -52,69 +52,435 @@ a boolean called gen_asserts_argv is false.
 
 a number called gen_reader_calls is 0.
 
-(`environment's`: bug #24 (an unset variable segfaulted, uncatchable by
- On error) and bug #26 (out-of-range positional properties - first/last
- on an empty environment) - both fixed in 0.4.3/0.4.4 per CHANGELOG, so
- both are now defined-behaviour-under-test, the same standing the
- buffer/list/map oob leaves already have.
+(--- The ledger's environment leaves, batch A ---------------------------
 
- The inrange leaf reads real environment state - count, a named lookup
- of PATH - but two fixed regressions mean it must never print the raw
- result, and must never reuse a fixed local name. An earlier version
- printed environment's count and environment's "PATH" directly, and
- one landed in a checked-in test fixture verbatim: home directory, tool
- versions, every installed plugin, on a public repo. Reading is exactly
- the coverage bugs #24 and #26 are about; printing what was read is not
- required to exercise that and is the part that leaked. So every read
- here is immediately collapsed to a boolean before it is printed -
- `as a boolean` (0 is false, nonzero is true) for the count, and a
- buffer's own `empty` property (declaring the buffer directly from
- environment's "PATH", the same construction 'needle buf' elsewhere in
- this file uses to turn a text expression into a buffer) for the named
- lookup, never the text itself. `environment's empty` is already a
- boolean and was never the problem.
+ docs/ledger/environment.md maps LANGUAGE.md:4471-4545 into numbered
+ claims; everything below puts one of those claims on trial and ASSERTS
+ its documented result, the same way the buffer leaves in gen_buffers.vox
+ do: a failing assertion prints
 
- The second regression a fixed local name caused: this leaf is reachable
- both as a nested block's mandatory closer (inside a conditionally-taken
- If branch) and as an ordinary top-level statement, in the same program,
- and a fixed name (`envpathbuf`) collided with itself across the two.
- Hand-reduced to a compiler defect with nothing environment-specific
- left in it: `If false-condition then, a buffer called b is "x".` /
- `a buffer called b is "y".` segfaults even though the first
- declaration's branch never runs - a text/buffer declared on an untaken
- If path corrupts a later, same-named declaration elsewhere. This reads
- like bug #25's family (a declaration on a conditional path leaving bad
- storage behind) but #25's own fix, read literally, only names On
- error/While/for-each/Repeat bodies - not If. Reported separately as a
- finding, not tuned around; the generator-side fix is what every other
- leaf in this file already does and this one alone was not doing -
- counter-suffixed names (env{gen_envs}count, env{gen_envs}pathbuf), so
- two calls can never collide regardless of which one lands inside a
- branch that turns out not to run.
+     ASSERT ENV-06: expected 32 got -1
 
- All five lines are plain reads/declarations with no error path, so this
- stays a safe closer.)
+ and exits 95, which loop_gen.vox classifies as a wrong-value finding
+ carrying that line. Every shape below was run against the real compiler
+ before it was encoded - the probes are in vf_scratch/probes/ of the
+ batch's own worktree and its report lists what each one printed.
 
-To 'gen leaf environment inrange' with a text called indent and a boolean called nested.
+ Rows covered here: ENV-02, ENV-03, ENV-04, ENV-05, ENV-06 (with ENV-07
+ and ENV-09 folded into it), ENV-10, ENV-11.
+
+ What the section gives a generator to assert with, and what it does
+ not. The generator does not choose the child's environment - there is
+ an argv oracle ('gen build argv', below) but no environment companion -
+ so no leaf here asserts WHAT a variable holds. What it can assert is
+ agreement: LANGUAGE.md:4477-4483 documents count, empty, first, last and
+ the named lookup as properties of ONE environment, so two readings of
+ the same property cannot disagree, and `count` cannot say "none" while
+ `empty` says "some". A text value read into a `text` and the same value
+ read into a `buffer` (LANGUAGE.md's buffer declaration takes any
+ text-valued expression - the Variables and File I/O sections' worked
+ examples, `a buffer called b is "hello"` and `a buffer called b is
+ <text name>`) are two readings of one value, and the buffer's `size`
+ and `empty` (LANGUAGE.md:3216-3217) are how a program measures them -
+ a `text` has no size property of its own. The one thing the generator
+ DOES control is absence: a name it invents under VOXFUZZ_UNSET_ is set
+ by nobody, so `exists` (LANGUAGE.md:4512-4517) on it is asserted false.
+
+ Privacy, inherited from the leaf this block replaces: a generated
+ program never prints a raw environment value - the first version of
+ that leaf put a host's PATH into a checked-in fixture. Every read below
+ is printed as a size, an `empty`, or `as a boolean`.)
+
+(Names. A habit of `env1`, `env2` puts the same identifier in every
+ program; CLAUDE.md wants a citation for that and there is none. These
+ are the words a generated program's environment readings are actually
+ called - things you would read off a wall or a door. A word is claimed
+ at most once per program; a numeric suffix appears only if a program
+ asks for more names than there are words.
+
+ Every word here is a TOP-LEVEL declaration in the generated program, so
+ this pool must stay disjoint from every other pool that spends into
+ Vox's one global identifier space (LANGUAGE.md:1571, under the heading
+ "One identifier space": "Type names, variable names, and function names
+ share a single global identifier namespace") - the manifest's type,
+ function and flag pools (gen_manifest.vox), gen_buffer_words
+ (gen_buffers.vox) and the value nouns and verbs (gen_collections.vox).
+ Three words here collided when
+ the environment batch met the prelude manifest on this branch and each
+ would have been a rare, seed-dependent compile failure: `the waypoint`
+ was also a type word, `the closing entry` also a function word, and
+ `the label` also a value noun. They are now `the gatepost`, `the
+ parting entry` and `the door tag`, and tests/230_units.vox counts every
+ pairing so the next one cannot land silently.)
+
+a list called gen_environment_words is ["the nameplate", "the doormat", "the noticeboard", "the roll call", "the headcount", "the signpost", "the gatepost", "the placard", "the lantern", "the compass", "the opening entry", "the parting entry", "the second reading", "the first reading", "the door tag", "the badge", "the locale", "the surroundings", "the lodging", "the workshop", "the porch light", "the letterbox", "the doorbell", "the welcome mat", "the hallway", "the coat hook", "the key rack", "the visitor book", "the house number", "the street sign"].
+
+a list called gen_environment_word_taken is [].
+
+a number called gen_environment_names is 0.
+
+a text called gen_environment_last_word is "".
+
+(Called once per program from 'gen program', beside 'gen buffer names
+ reset': the claimed-word marks are per program, not per campaign.)
+
+To 'gen environment names reset'.
+    Set gen_environment_names to 0.
+    Set gen_environment_word_taken to [].
+    a number called 'how many words' is gen_environment_words's length.
+    a number called 'the word position' is 0.
+    While 'the word position' is less than 'how many words',
+        append 0 to gen_environment_word_taken,
+        Set 'the word position' to 'the word position' add 1.
+
+(The stem of a fresh name - `'the doormat` - quoted because every word
+ here has a space in it. 'gen buffer reference' closes the quote and
+ 'gen buffer property' hangs a property off it; both are plain text
+ helpers that know nothing about buffers despite their names.)
+
+To 'gen environment name'.
+    Set gen_environment_names to gen_environment_names add 1.
+    a number called 'how many words' is gen_environment_words's length.
+    a number called 'the draw' is 'rng below' of 'how many words'.
+    a number called 'the chosen word number' is 0.
+    a number called 'the steps taken' is 0.
+    While 'the steps taken' is less than 'how many words',
+        a number called 'the offset sum' is 'the draw' add 'the steps taken',
+        a number called 'the wrapped' is 'the offset sum' modulo 'how many words',
+        a number called 'the candidate' is 'the wrapped' add 1,
+        a number called 'the candidate is taken' is element 'the candidate' of gen_environment_word_taken,
+        If 'the candidate is taken' is 0 and 'the chosen word number' is 0 then,
+            Set 'the chosen word number' to 'the candidate'.
+        Set 'the steps taken' to 'the steps taken' add 1.
+    If 'the chosen word number' is 0 then,
+        a number called 'the fallback draw' is 'rng below' of 'how many words',
+        a number called 'the fallback number' is 'the fallback draw' add 1,
+        a text called 'the fallback word' is element 'the fallback number' of gen_environment_words,
+        Set gen_environment_last_word to "{'the fallback word'} {gen_environment_names}",
+        Return a text, "'{gen_environment_last_word}".
+    Set element 'the chosen word number' of gen_environment_word_taken to 1.
+    a text called 'the word' is element 'the chosen word number' of gen_environment_words.
+    Set gen_environment_last_word to 'the word'.
+    Return a text, "'{'the word'}".
+
+(A companion name for the reading just named - a flag, a tally - built
+ from the same word so the program still reads aloud.)
+
+To 'gen environment companion' with a text called role.
+    a text called 'the companion' is "'{gen_environment_last_word} {role}'".
+    Return a text, 'the companion'.
+
+(Which variable a named lookup asks for. LANGUAGE.md:4483-4494 reads
+ HOME, USER and SHELL by name; a generated program asks for those and for
+ other names a process usually has, chosen at random - the leaf never
+ assumes any of them is set. A VOXFUZZ_UNSET_ name is the other case:
+ invented here, set by nobody, so its absence IS known.)
+
+a list called gen_environment_variable_names is ["HOME", "USER", "SHELL", "PATH", "PWD", "LANG", "TERM", "LOGNAME", "TMPDIR", "EDITOR", "HOSTNAME", "DISPLAY", "XDG_RUNTIME_DIR", "LC_ALL", "TZ", "MAIL"].
+
+a boolean called gen_environment_last_name_is_unset is false.
+
+To 'gen environment variable name'.
+    a number called 'the unset draw' is 'rng below' of 5.
+    If 'the unset draw' is 0 then,
+        a number called 'the probe id' is 'rng below' of 1000000,
+        Set gen_environment_last_name_is_unset to true,
+        Return a text, "VOXFUZZ_UNSET_{'the probe id'}".
+    Set gen_environment_last_name_is_unset to false.
+    a number called 'how many names' is gen_environment_variable_names's length.
+    a number called 'the pick' is 'rng below' of 'how many names' add 1.
+    a text called 'the name' is element 'the pick' of gen_environment_variable_names.
+    Return a text, 'the name'.
+
+(The source expression a reading comes from - one of the four text-valued
+ properties LANGUAGE.md:4477-4483 gives, and which row that is.)
+
+a text called gen_environment_last_row is "ENV-06".
+
+To 'gen environment source'.
+    (13, not 6. Six is even, and this LCG's low bit alternates, so
+     `first` and `last` - which differed only in that bit - could not be
+     drawn independently of each other. Two shares in thirteen each is
+     the same split it was reaching for.)
+    a number called 'the source draw' is 'rng below' of 13.
+    If 'the source draw' is less than 2 then,
+        Set gen_environment_last_row to "ENV-03",
+        Set gen_environment_last_name_is_unset to false,
+        Return a text, "environment's first".
+    If 'the source draw' is less than 4 then,
+        Set gen_environment_last_row to "ENV-04",
+        Set gen_environment_last_name_is_unset to false,
+        Return a text, "environment's last".
+    Set gen_environment_last_row to "ENV-06".
+    a text called 'the variable' is 'gen environment variable name'.
+    Return a text, "environment's \"{'the variable'}\"".
+
+(An assertion between two readings of one value, as one renderable line:
+ `If <a> is not <b> then, Print "ASSERT ROW: expected {b} got {a}", Exit
+ 95. Print <a>` - the internal period closes the If, the trailing Print
+ takes whatever punctuation 'gen join lines' adds (the same shape as
+ gen_buffers.vox's 'gen assert number', which this reuses).)
+
+(ENV-02, ENV-05: `count` is the number of variables (LANGUAGE.md:4479)
+ and `empty` is true iff there are none (4482) - so count is 0 exactly
+ when empty is true, whatever the host's environment holds. Each property
+ is read into a named variable or used inline, at random, and the two
+ directions of the agreement are two lines in either order.)
+
+To 'gen leaf environment agreement' with a text called indent and a boolean called nested.
     Set gen_envs to gen_envs add 1.
-    a text called 'count decl' is "a number called env{gen_envs}count is environment's count".
-    a text called 'count check' is "Print env{gen_envs}count as a boolean".
-    a text called 'empty line' is "Print environment's empty".
-    a text called 'path decl' is "a buffer called env{gen_envs}pathbuf is environment's \"PATH\"".
-    a text called 'path check' is "Print env{gen_envs}pathbuf's empty".
-    a list called 'the lines' is ['count decl', 'count check', 'empty line', 'path decl', 'path check'].
+    a list called 'the lines' is [].
+    a text called 'the count' is "environment's count".
+    a number called 'the count draw' is 'rng below' of 13.
+    If 'the count draw' is less than 6 then,
+        a text called 'the count stem' is 'gen environment name',
+        Set 'the count' to 'gen buffer reference' of 'the count stem',
+        append "a number called {'the count'} is environment's count" to 'the lines'.
+    a text called 'the emptiness' is "environment's empty".
+    a number called 'the emptiness draw' is 'rng below' of 13.
+    If 'the emptiness draw' is less than 7 then,
+        a text called 'the emptiness stem' is 'gen environment name',
+        Set 'the emptiness' to 'gen buffer reference' of 'the emptiness stem',
+        append "a boolean called {'the emptiness'} is environment's empty" to 'the lines'.
+    a text called 'the emptiness shown' is 'gen buffer slot of' of 'the emptiness'.
+    a text called 'the count shown' is 'gen buffer slot of' of 'the count'.
+    a text called 'none but not empty' is "If {'the count'} is 0 and {'the emptiness'} is false then, Print \"ASSERT ENV-02: expected 1 got {'the emptiness shown'}\", Exit 95. Print {'the emptiness'}".
+    a text called 'some but empty' is "If {'the count'} is not 0 and {'the emptiness'} then, Print \"ASSERT ENV-05: expected 0 got {'the emptiness shown'}\", Exit 95. Print {'the count'} as a boolean".
+    a number called 'the order draw' is 'rng below' of 13.
+    If 'the order draw' is less than 6 then,
+        append 'none but not empty' to 'the lines',
+        append 'some but empty' to 'the lines'.
+    If 'the order draw' is greater than 5 then,
+        append 'some but empty' to 'the lines',
+        append 'none but not empty' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(The oob leaf's own local, 'the missing value', is a fixed quoted name
- rather than a counter-suffixed one - safe unlike the inrange leaf's
- former envpathbuf, because this leaf is unsafe-closer/remap-only (see
- below), which this file's own avoid-onerror machinery guarantees means
- its real body only ever renders at the true top level, never inside a
- conditionally-taken branch - there is no second scope for the same
- name to collide with. Counter-suffixing it anyway would cost nothing
- and remove the need to reason about that guarantee holding forever, so
- it is done here too, purely as defensive consistency with the fix
- above rather than because this leaf reproduces the defect.)
+(ENV-06 (ENV-07, ENV-09 folded), ENV-03, ENV-04: a text-valued property -
+ the named lookup, `first`, or `last` - read into a `text` the manual's
+ own way (LANGUAGE.md:4485-4494), and then again into whichever of the
+ other receivers the manual allows for a text value: a `buffer` declared
+ straight from the property, a second such buffer, a `value`. The text is
+ copied into a buffer of its own so it can be measured, and every pair of
+ readings is asserted to agree - same `size`, same `empty`, and a `value`
+ is equal to the text. How many extra readings, which kinds, and their
+ order are drawn. When the name is one the generator invented, `exists`
+ on it is asserted false as well (ENV-10).)
+
+To 'gen leaf environment lookup' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a text called 'the source' is 'gen environment source'.
+    a text called 'the row' is gen_environment_last_row.
+    a boolean called 'the name is unset' is gen_environment_last_name_is_unset.
+    a list called 'the lines' is [].
+    a text called 'the text stem' is 'gen environment name'.
+    a text called 'the text' is 'gen buffer reference' of 'the text stem'.
+    append "a text called {'the text'} is {'the source'}" to 'the lines'.
+    a text called 'the measure' is 'gen environment companion' of "in bytes".
+    a text called 'the measure size' is 'gen buffer property' of 'the measure' and "size".
+    a text called 'the measure emptiness' is 'gen buffer property' of 'the measure' and "empty".
+    append "a buffer called {'the measure'} is {'the text'}" to 'the lines'.
+    a text called 'the closing read' is "Print {'the measure size'}".
+    (One to three further readings, each a receiver the manual allows
+     for a text value, each asserted against the measuring copy.)
+    a number called 'the extra readings' is 'rng below' of 3 add 1.
+    a number called 'the reading' is 0.
+    While 'the reading' is less than 'the extra readings',
+        a number called 'the receiver draw' is 'rng below' of 3,
+        a text called 'the stem' is 'gen environment name',
+        a text called 'the name' is 'gen buffer reference' of 'the stem',
+        If 'the receiver draw' is less than 2 then,
+            a text called 'the direct size' is 'gen buffer property' of 'the stem' and "size",
+            a text called 'the direct emptiness' is 'gen buffer property' of 'the stem' and "empty",
+            append "a buffer called {'the name'} is {'the source'}" to 'the lines',
+            a text called 'the size agreement' is 'gen assert number matches' of 'the row' and 'the direct size' and 'the measure size',
+            append 'the size agreement' to 'the lines',
+            a text called 'the emptiness shown' is 'gen buffer slot of' of 'the measure emptiness',
+            a text called 'the direct shown' is 'gen buffer slot of' of 'the direct emptiness',
+            append "If {'the direct emptiness'} is not {'the measure emptiness'} then, Print \"ASSERT {'the row'}: expected {'the emptiness shown'} got {'the direct shown'}\", Exit 95. Print {'the direct emptiness'}" to 'the lines',
+            Set 'the closing read' to "Print {'the direct size'}".
+        If 'the receiver draw' is 2 then,
+            append "a value called {'the name'} is {'the source'}" to 'the lines',
+            append "If {'the name'} is not {'the text'} then, Print \"ASSERT {'the row'}: expected the text got a different value\", Exit 95. Print {'the measure emptiness'}" to 'the lines'.
+        Set 'the reading' to 'the reading' add 1.
+    If 'the name is unset' then,
+        a text called 'the unset name' is 'gen environment variable name unset from' of 'the source',
+        append "If the environment variable \"{'the unset name'}\" exists then, Print \"ASSERT ENV-10: expected 0 got 1\", Exit 95. Print {'the measure emptiness'}" to 'the lines'.
+    append 'the closing read' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The bare variable name back out of a source expression the lookup leaf
+ built - `environment's "VOXFUZZ_UNSET_123"` gives VOXFUZZ_UNSET_123.
+ Byte arithmetic on a text the generator wrote itself a moment ago.)
+
+To 'gen environment variable name unset from' with a text called 'the source'.
+    a buffer called 'the source bytes' is "{'the source'}".
+    a number called 'the byte count' is 'the source bytes's size.
+    a text called 'the name so far' is "".
+    a number called 'the position' is 1.
+    a boolean called 'inside the quotes' is false.
+    While 'the position' is less than or equal to 'the byte count',
+        a number called 'the byte here' is byte 'the position' of 'the source bytes',
+        (Three flat Ifs, not one nested pair: a nested If closed by a
+         single period leaves its parent open, and the increment below
+         would fall inside it - the loop then never advances. Found by
+         this very function hanging the unit test.)
+        If 'the byte here' is 34 and 'inside the quotes' then,
+            Set 'the position' to 'the byte count'.
+        If 'the byte here' is 34 and 'inside the quotes' is false then,
+            Set 'inside the quotes' to true.
+        If 'the byte here' is not 34 and 'inside the quotes' then,
+            a buffer called 'the one byte' is 1 bytes in size,
+            Set byte 1 of 'the one byte' to 'the byte here',
+            Set 'the name so far' to "{'the name so far'}{'the one byte'}".
+        Set 'the position' to 'the position' add 1.
+    Return a text, 'the name so far'.
+
+(ENV-10, ENV-11: `If the environment variable "NAME" exists then,` is a
+ predicate (LANGUAGE.md:4512-4517). Two readings of it on one name must
+ agree; on a name the generator invented it must be false. Each line
+ keeps its If closed and ends on a plain statement, and the manual's
+ Otherwise branch and its Complete Example's `If ... But if ... exists`
+ fallback (4519-4540) are each emitted sometimes - the fallback with an
+ invented name, so what the program prints is the flag value the harness
+ passed and never a host value.)
+
+To 'gen leaf environment exists' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a list called 'the lines' is [].
+    a text called 'the variable' is 'gen environment variable name'.
+    a boolean called 'the name is unset' is gen_environment_last_name_is_unset.
+    a text called 'the seen stem' is 'gen environment name'.
+    a text called 'the seen' is 'gen buffer reference' of 'the seen stem'.
+    a text called 'the seen again' is 'gen environment companion' of "seen again".
+    append "a boolean called {'the seen'} is false" to 'the lines'.
+    append "If the environment variable \"{'the variable'}\" exists then, Set {'the seen'} to true. Print {'the seen'}" to 'the lines'.
+    a number called 'the shape draw' is 'rng below' of 3.
+    If 'the shape draw' is 0 then,
+        append "a boolean called {'the seen again'} is false" to 'the lines',
+        append "If the environment variable \"{'the variable'}\" exists then, Set {'the seen again'} to true. Print {'the seen again'}" to 'the lines',
+        a text called 'the seen shown' is 'gen buffer slot of' of 'the seen',
+        a text called 'the again shown' is 'gen buffer slot of' of 'the seen again',
+        append "If {'the seen again'} is not {'the seen'} then, Print \"ASSERT ENV-10: expected {'the seen shown'} got {'the again shown'}\", Exit 95. Print {'the seen again'}" to 'the lines'.
+    If 'the shape draw' is 1 then,
+        a text called 'the present word' is 'gen environment spoken word',
+        a text called 'the absent word' is 'gen environment spoken word',
+        append "If the environment variable \"{'the variable'}\" exists then, Print \"{'the present word'}\". Otherwise, Print \"{'the absent word'}\". Print {'the seen'}" to 'the lines'.
+    If 'the shape draw' is 2 then,
+        a text called 'the greeting stem' is 'gen environment name',
+        a text called 'the greeting' is 'gen buffer reference' of 'the greeting stem',
+        a text called 'the default word' is 'gen environment spoken word',
+        a number called 'the fallback id' is 'rng below' of 1000000,
+        append "a text called {'the greeting'} is \"{'the default word'}\"" to 'the lines',
+        append "If arguments's count is greater than 1 then, Set {'the greeting'} to arguments's first. But if the environment variable \"VOXFUZZ_UNSET_{'the fallback id'}\" exists then, Set {'the greeting'} to environment's \"VOXFUZZ_UNSET_{'the fallback id'}\". Print {'the greeting'}" to 'the lines'.
+    If 'the name is unset' then,
+        append "If {'the seen'} then, Print \"ASSERT ENV-10: expected 0 got 1\", Exit 95. Print {'the seen'}" to 'the lines'.
+    If 'the name is unset' is false then,
+        append "Print {'the seen'}" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(A word a generated program may print - literal, harmless, varied.)
+
+a list called gen_environment_spoken_words is ["present", "absent", "found", "missing", "set", "unset", "here", "elsewhere", "known", "unknown", "at home", "away", "yes", "no", "seen", "unseen"].
+
+To 'gen environment spoken word'.
+    a number called 'how many' is gen_environment_spoken_words's length.
+    a number called 'the pick' is 'rng below' of 'how many' add 1.
+    a text called 'the word' is element 'the pick' of gen_environment_spoken_words.
+    Return a text, 'the word'.
+
+(ENV-03, ENV-04: `first` and `last` are the full "NAME=value" string
+ (LANGUAGE.md:4480-4481), so a non-empty entry contains an `=`. The entry
+ is read into a text, copied into a buffer, and its bytes scanned for 61
+ in one For each line - one line, because a loop split across lines would
+ take a period from 'gen join lines' on its first line and close with an
+ empty body. Loop-bearing, so top level only, like 'gen leaf while'. The
+ entry is sometimes also read straight into a second buffer and the two
+ sizes asserted to agree.)
+
+To 'gen leaf environment entry scan' with a text called indent and a boolean called nested.
+    Set gen_envs to gen_envs add 1.
+    a list called 'the lines' is [].
+    a text called 'the row' is "ENV-03".
+    a text called 'the source' is "environment's first".
+    a number called 'the end draw' is 'rng below' of 13.
+    If 'the end draw' is less than 6 then,
+        Set 'the row' to "ENV-04",
+        Set 'the source' to "environment's last".
+    a text called 'the entry stem' is 'gen environment name'.
+    a text called 'the entry' is 'gen buffer reference' of 'the entry stem'.
+    a text called 'the scan' is 'gen environment companion' of "in bytes".
+    a text called 'the scan size' is 'gen buffer property' of 'the scan' and "size".
+    a text called 'the tally' is 'gen environment companion' of "equals signs".
+    a text called 'the place' is 'gen environment loop word'.
+    append "a text called {'the entry'} is {'the source'}" to 'the lines'.
+    append "a buffer called {'the scan'} is {'the entry'}" to 'the lines'.
+    append "a number called {'the tally'} is 0" to 'the lines'.
+    append "For each {'the place'} from 1 to {'the scan size'}, If byte {'the place'} of {'the scan'} is 61 then, Set {'the tally'} to {'the tally'} add 1." to 'the lines'.
+    a text called 'the tally shown' is 'gen buffer slot of' of 'the tally'.
+    append "If {'the scan size'} is not 0 and {'the tally'} is 0 then, Print \"ASSERT {'the row'}: expected 1 got {'the tally shown'}\", Exit 95. Print {'the tally'} as a boolean" to 'the lines'.
+    a number called 'the second reading draw' is 'rng below' of 13.
+    If 'the second reading draw' is less than 7 then,
+        a text called 'the direct stem' is 'gen environment name',
+        a text called 'the direct' is 'gen buffer reference' of 'the direct stem',
+        a text called 'the direct size' is 'gen buffer property' of 'the direct stem' and "size",
+        append "a buffer called {'the direct'} is {'the source'}" to 'the lines',
+        a text called 'the size agreement' is 'gen assert number matches' of 'the row' and 'the direct size' and 'the scan size',
+        append 'the size agreement' to 'the lines'.
+    append "Print {'the scan size'} as a boolean" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The counter a scan loop walks with - a word, never `i`.)
+
+a list called gen_environment_loop_words is ["place", "spot", "step", "slot", "mark", "notch", "column", "offset"].
+
+To 'gen environment loop word'.
+    a number called 'how many' is gen_environment_loop_words's length.
+    a number called 'the pick' is 'rng below' of 'how many' add 1.
+    a text called 'the word' is element 'the pick' of gen_environment_loop_words.
+    Return a text, 'the word'.
+
+(The two entry points the dispatch in gen_core.vox calls. Kind 22 is a
+ safe closer - no loop, no On error, every line closes its own If - and
+ draws one of the three closer-safe leaves above. Kind 27 is top-level
+ only and draws either the unset-lookup-under-On-error leaf below or the
+ entry scan.
+
+ Every two-way choice in the environment leaves above goes through a
+ PRIME modulus, not `'rng below' of 2`. rng.vox is an LCG modulo 2^31
+ with an odd multiplier, so its low bit simply alternates, and a leaf
+ that spends a fixed number of draws before flipping locks onto that
+ alternation. This is documented twice already - above
+ 'literal draw below' (gen_literals.vox) and above the file-I/O choice
+ in 'gen program' (gen_core.vox) - and it caught this file anyway.
+ Measured on the acceptance corpus, seeds 5000-5149, plain layout,
+ before the fix: the entry scan ran in 0 of 150 programs, the agreement
+ leaf named its count in 13 of 13 and its emptiness in 13 of 13, and
+ wrote its two assertions in the ENV-02-first order 13 times out of 13.
+ Four coin flips, four constants, no citation for any of them.
+ `r modulo 13` depends on the whole of r rather than its bottom bit, so
+ consecutive draws are independent; thresholds of 6 and 7 give roughly
+ 46% and 54%.)
+
+To 'gen leaf environment' with a text called indent and a boolean called nested.
+    a number called 'the leaf draw' is 'rng below' of 3.
+    If 'the leaf draw' is 0 then,
+        'gen leaf environment agreement' of indent and nested.
+    If 'the leaf draw' is 1 then,
+        'gen leaf environment lookup' of indent and nested.
+    If 'the leaf draw' is 2 then,
+        'gen leaf environment exists' of indent and nested.
+
+To 'gen leaf environment with a loop or handler' with a text called indent and a boolean called nested.
+    a number called 'the leaf draw' is 'rng below' of 13.
+    If 'the leaf draw' is less than 6 then,
+        'gen leaf environment oob' of indent and nested.
+    If 'the leaf draw' is greater than 5 then,
+        'gen leaf environment entry scan' of indent and nested.
+
+(The unset lookup under On error - bug #24 (an unset variable segfaulted,
+ uncatchable by On error) was fixed in 0.4.3, so the read is defined
+ behaviour under test. Top level only: it carries an On error.)
+
 
 To 'gen leaf environment oob' with a text called indent and a boolean called nested.
     Set gen_envs to gen_envs add 1.

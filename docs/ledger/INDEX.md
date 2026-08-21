@@ -32,7 +32,7 @@ against the section). Progress is `verified / rows` going up and
 | PRC | `process-control.md` | 3658–3999 | Directories, mounting, device nodes, symlinks, pivot_root, executing programs, process control, system control | **yes** | 87 | — | 0 | 6 (doc-precision + Send-signal kill-safety note) |  |
 | TIM | `time-and-timers.md` | 4000–4172 | Time and timers | **yes** | 60 | — | 0 |  |  |
 | ARG | `arguments.md` | 4173–4342 | Command-line arguments, flag parsing | **yes** | 54 | — | 0 |  |  |
-| ENV | `environment.md` | 4471–4545 | Environment variables | **yes** | 12 | — | 0 | 1 (D1: a buffer declared directly from an `environment's <property>` expression never receives the string's bytes — `'s size` is -1, `'s empty` reports false) | |
+| ENV | `environment.md` | 4471–4545 | Environment variables | **yes** | 12 | 1 (ENV-11) | 6 (ENV-02/03/04/05/06/10 — batch A leaves, 2026-08-21) | 1 (D1: a buffer declared directly from an `environment's <property>` expression never receives the string's bytes — `'s size` is -1, `'s empty` reports false) | |
 | OPR | `operators.md` | 4418–4482 | Operators: arithmetic, comparison, logical, bitwise | **yes** | 42 | — | 0 |  |  |
 | KEY | `keywords.md` | 4483–4621 | Keywords: articles, starters, flag schema, connectors, `and`, reserved aliases, two classes of special word, contextual keywords | **yes** | 86 | — | 0 |  |  |
 | EXA | `examples.md` | 4750–4790 | Examples chapter — each example is a composite claim | **yes** | 5 | — | 0 | 0 |  |

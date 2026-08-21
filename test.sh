@@ -40,11 +40,13 @@ for f in "${FILES[@]}"; do
     exp="$(dirname "$f")/$name.expected"
     [[ -f "$exp" ]] || continue
     bin="$WORK/$name"
+    COMPILE_START=$SECONDS
     if ! "$VOX" "$f" -o "$bin" > "$WORK/$name.cerr" 2>&1; then
         echo -e "${RED}COMPILE FAIL${NC} $name"
         [[ $VERBOSE == 1 ]] && cat "$WORK/$name.cerr"
         FAILED=$((FAILED+1)); continue
     fi
+    COMPILE_ELAPSED=$((SECONDS-COMPILE_START))
     # Run from the REPO ROOT: tests reach fixtures (tests/fixtures/...)
     # and the compiler (../vox/...) by repo-relative paths, and their
     # ./vf_* scratch files land here, gitignored and swept after each
@@ -53,18 +55,26 @@ for f in "${FILES[@]}"; do
     # longest deadline any test passes to 'run shell' (070's 120s) and
     # the longest sweep any test does. 200_never_emitted generates 2000
     # programs at budgets up to 300 and took 2m12 before the prelude was
-    # randomised and about 3m40 after -- generated names went from `i1's
-    # x1` to `'the survey marker's 'the north offset'`, so every program
-    # is several times the bytes and the layout pass walks every one of
-    # them. 150s had it failing intermittently; 420s does not, and still
-    # catches a hang inside one suite run.
+    # randomised; on this machine it now runs in about 2m25, and it ran
+    # long enough on a loaded one to be killed by the old 150s cap
+    # intermittently. 420s is not killing it and still catches a hang
+    # inside one suite run.
+    #
+    # A cap that generous no longer catches a SLOWDOWN, only a hang, so
+    # every result line carries its own seconds -- compile and run kept
+    # apart, because they lengthen for different reasons: a bigger
+    # GENERATOR lengthens the compile, a wordier GENERATED PROGRAM
+    # lengthens the run. A test that has doubled since the times in the
+    # branch report says so on its own line, with no stopwatch.
+    START=$SECONDS
     timeout 420 "$bin" > "$WORK/$name.out" 2>&1
+    ELAPSED=$((SECONDS-START))
     rm -rf ./vf_*
     if diff -q "$exp" "$WORK/$name.out" > /dev/null; then
-        echo -e "${GREEN}PASS${NC} $name"
+        echo -e "${GREEN}PASS${NC} $name (compile ${COMPILE_ELAPSED}s, run ${ELAPSED}s)"
         PASSED=$((PASSED+1))
     else
-        echo -e "${RED}FAIL${NC} $name"
+        echo -e "${RED}FAIL${NC} $name (compile ${COMPILE_ELAPSED}s, run ${ELAPSED}s)"
         [[ $VERBOSE == 1 ]] && diff -u "$exp" "$WORK/$name.out"
         FAILED=$((FAILED+1))
     fi

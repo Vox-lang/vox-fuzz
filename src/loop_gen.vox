@@ -221,19 +221,34 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
     (The program is told its own scratch directory on the command line,
      which is what lets it do real file I/O without an allowlist: it can
      only write where it was told, and this directory is pid-and-seed
-     keyed and swept when the run ends. Appended to the argv the
-     generator built, so BOTH of the oracle's runs get the same value —
-     a different scratch path per run would make the program's own
-     output differ and every program a false nondeterminism finding.)
+     keyed and swept when the run ends. Set into the argv the generator
+     built, so BOTH of the oracle's runs get the same value — a
+     different scratch path per run would make the program's own output
+     differ and every program a false nondeterminism finding.)
     (Only when this program declared a scratch flag - it does exactly
      when it chose file I/O, and a program that did not is invoked with
-     no scratch argument at all. Verified against 0.4.7 that an
+     no scratch argument at all. Verified against 0.4.9 that an
      undeclared flag on argv is neither a compile nor a runtime error,
      so passing one anyway would have been harmless; there is simply no
      reason to hand a program an argument it cannot read.)
+    (FIRST, not appended last. 'gen build argv' shape 8 (gen_misc.vox)
+     deliberately ends the command line with a LONE alias, to exercise
+     the flag whose value is missing because argv ran out - so anything
+     put after it becomes that flag's value. Appending the scratch pair
+     there handed the scratch ALIAS to the hostile flag and left the
+     scratch flag empty: the program then built its file paths from ""
+     and wrote to /buffer4, which it cannot, so its own BUF-07 assertion
+     failed on a truncated read that never happened and the run came
+     back as a wrong-value finding. Found at seed 5018 of the acceptance
+     campaign, reproduced by hand as `./prog -y -n <dir>` against the
+     same binary. The scratch pair is the harness's plumbing, not part
+     of the shape under test, so it goes in front where no drawn shape
+     can reach it - and the hostile shapes still end the line exactly as
+     they intend.)
     If gen_scratch_argv is not "" then,
-        append gen_scratch_argv to gen_argv,
-        append 'the scratch path' to gen_argv.
+        a list called 'the argv with the scratch directory' is [gen_scratch_argv, 'the scratch path'],
+        For each 'the drawn argument' in gen_argv, append 'the drawn argument' to 'the argv with the scratch directory'.
+        Set gen_argv to 'the argv with the scratch directory'.
     'gen write' of 'the source path'.
     a number called 'the kept' is 'keep source' of 'the source path' and seed.
     a text called 'the binary path' is "{'the scratch path'}/vf_gen_bin".

@@ -81,16 +81,16 @@ Set v2 to v2.
 a list called l1 is [49, 30].
 append 39 to l1.
 Print element 1 of l1.
-a buffer called 'the postbag' is 88605 bytes in size.
-If 'the postbag's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the postbag's empty}", Exit 95. Print 'the postbag's empty.
+a buffer called 'the manifest' is 88605 bytes in size.
+If 'the manifest's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
 Print v3 add v1.
-append "i7g1mfshazc5mb45mvwd23sxmrghmj4ter4167" to 'the postbag'.
-If 'the postbag's size is not 38 then, Print "ASSERT BUF-10: expected 38 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
-If 'the postbag's capacity is not 88605 then, Print "ASSERT BUF-10: expected 88605 got {'the postbag's capacity}", Exit 95. Print 'the postbag's capacity.
-If 'the postbag's length is not 38 then, Print "ASSERT BUF-11: expected 38 got {'the postbag's length}", Exit 95. Print 'the postbag's length.
-If 'the postbag's length is not 'the postbag's size then, Print "ASSERT BUF-11: expected {'the postbag's size} got {'the postbag's length}", Exit 95. Print 'the postbag's length.
-If 'the postbag's empty then, Print "ASSERT BUF-12: expected 0 got {'the postbag's empty}", Exit 95. Print 'the postbag's empty.
-Print 'the postbag's length.
+append "i7g1mfshazc5mb45mvwd23sxmrghmj4ter4167" to 'the manifest'.
+If 'the manifest's size is not 38 then, Print "ASSERT BUF-10: expected 38 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
+If 'the manifest's capacity is not 88605 then, Print "ASSERT BUF-10: expected 88605 got {'the manifest's capacity}", Exit 95. Print 'the manifest's capacity.
+If 'the manifest's length is not 38 then, Print "ASSERT BUF-11: expected 38 got {'the manifest's length}", Exit 95. Print 'the manifest's length.
+If 'the manifest's length is not 'the manifest's size then, Print "ASSERT BUF-11: expected {'the manifest's size} got {'the manifest's length}", Exit 95. Print 'the manifest's length.
+If 'the manifest's empty then, Print "ASSERT BUF-12: expected 0 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
+Print 'the manifest's length.
 a map called m1 is {"label": "tag1", "count": 126}.
 Print m1's "label".
 Set m1's "count" to 31.
@@ -125,6 +125,6 @@ Read from fr4 into fb4.
 Print fb4's size.
 Print fr4's readable.
 Close fr4.
-Exit 251.
+Quit 251.
 
 reproducible: 1

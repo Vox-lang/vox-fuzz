@@ -79,7 +79,7 @@
    "Expected long flag alias string like '--number'". So the
    `"-x" or "--long"` shape is the language's, not ours.
  - Type names, function names and flag names share ONE global identifier
-   space (LANGUAGE.md:1569), so every name this file hands out at top
+   space (LANGUAGE.md:1571), so every name this file hands out at top
    level must be unique. Field, method and parameter names live in a
    per-type member space or in a function's locals and are free to
    repeat across owners.

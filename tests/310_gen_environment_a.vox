@@ -1,0 +1,92 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's environment leaves, batch A - docs/ledger/environment.md
+ rows ENV-02, ENV-03, ENV-04, ENV-05, ENV-06, ENV-10, ENV-11.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself - the
+ same shape as tests/300_gen_buffers_a.vox, and for the same reason:
+ these leaves exist to emit assertions, and an assertion whose text
+ drifts is an assertion nobody is reading.
+
+ Each leaf is emitted at the true top level (nested false) and, for the
+ closer-safe ones, inside a block (nested true) - the two renderings of
+ 'gen join lines'. The entry scan is top level only and is emitted once.
+ The name allocator is exercised on its own at the end: thirty words,
+ never twice in one program, a suffix only once they run out.)
+
+Set gen_flags to 1.
+
+Print "--- ENV-02, ENV-05: count and empty agree ---".
+'rng seed' of 11.
+'gen environment names reset'.
+clear gen_out.
+'gen leaf environment agreement' of "" and false.
+Print 'gen text'.
+clear gen_out.
+'gen leaf environment agreement' of "    " and true.
+Print 'gen text'.
+
+Print "--- ENV-06 (ENV-03, ENV-04): a lookup read several ways agrees with itself ---".
+'rng seed' of 23.
+'gen environment names reset'.
+clear gen_out.
+'gen leaf environment lookup' of "" and false.
+Print 'gen text'.
+clear gen_out.
+'gen leaf environment lookup' of "    " and true.
+Print 'gen text'.
+'rng seed' of 24.
+clear gen_out.
+'gen leaf environment lookup' of "" and false.
+Print 'gen text'.
+
+Print "--- ENV-10, ENV-11: the exists predicate ---".
+'rng seed' of 37.
+'gen environment names reset'.
+clear gen_out.
+'gen leaf environment exists' of "" and false.
+Print 'gen text'.
+clear gen_out.
+'gen leaf environment exists' of "    " and true.
+Print 'gen text'.
+'rng seed' of 38.
+clear gen_out.
+'gen leaf environment exists' of "" and false.
+Print 'gen text'.
+
+Print "--- ENV-03, ENV-04: an entry contains an equals sign ---".
+'rng seed' of 41.
+'gen environment names reset'.
+clear gen_out.
+'gen leaf environment entry scan' of "" and false.
+Print 'gen text'.
+
+Print "--- the dispatchers ---".
+'rng seed' of 53.
+'gen environment names reset'.
+clear gen_out.
+'gen leaf environment' of "" and false.
+Print 'gen text'.
+clear gen_out.
+'gen leaf environment with a loop or handler' of "" and false.
+Print 'gen text'.
+
+Print "--- names: thirty words, no repeats, then a suffix ---".
+'rng seed' of 5.
+'gen environment names reset'.
+a number called 'names drawn' is 0.
+While 'names drawn' is less than 32,
+    a text called 'the stem' is 'gen environment name',
+    Print 'gen buffer reference' of 'the stem',
+    Set 'names drawn' to 'names drawn' add 1.

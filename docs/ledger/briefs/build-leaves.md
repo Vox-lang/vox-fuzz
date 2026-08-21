@@ -18,6 +18,19 @@ leaf that is never drawn covers nothing. Add a `tests/NNN_*.vox` +
 `.expected` unit for every leaf (see existing `tests/040_gen.vox` for the
 shape), and keep `./test.sh` green (`VOX=… VOX_CORE_PATH=… ./test.sh`).
 
+## Rule one — Josj's standing order, 2026-08-21, verbatim
+> Make everything random unless there is a rule to say otherwise. When in
+> doubt, just make it random. We can spot and fix errors later — rather
+> that than have a useless fuzzer.
+
+Read `PROCEDURE.md` §6a before the first line of generator code: it is
+the list of places this work has already bitten a builder (a `text` has
+no size property; one period closes one level; assert agreement when the
+generator does not control the input; reuse the assert helpers and the
+name allocator; register through the surface's existing kind; measure
+sameness on `--layout plain`; never print a raw host value; probe the
+rendered line, not the idea).
+
 ## The rules that make a leaf worth having
 
 1. **Every assertable row asserts.** The generator chose the inputs, so
