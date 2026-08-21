@@ -1,0 +1,14 @@
+reproducible: 1
+VAL-03 asserts: 1
+VAL-05 asserts: 1
+VAL-06 asserts: 1
+VAL-07 asserts: 1
+VAL-09 asserts: 1
+VAL-10 asserts: 1
+VAL-11 asserts: 1
+VAL-13 asserts: 1
+value parameter emitted: 1
+value return emitted: 1
+value used as a name: 1
+the value leaves compile: 1
+every value assertion holds: 1
