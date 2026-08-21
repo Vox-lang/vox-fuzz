@@ -1,0 +1,128 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/findings.vox".
+see "../src/loop_gen.vox".
+
+(The ledger's assertion channel - docs/ledger/PROCEDURE.md §6. A
+ generated program that finds a documented result wrong prints one
+ `ASSERT <row>: expected <x> got <y>` line and exits 95, and the gen
+ loop turns that into a wrong-value finding whose detail IS that line.
+
+ Two halves, tested the way tests/260 tests the oracle - against the
+ real capability, not through the seed-based generator, which by
+ construction cannot emit this fixture (it only exits 95 when the
+ compiler is actually wrong):
+
+  1. 'the assert line in' picks the LAST ASSERT line out of a captured
+     stdout, ignores lines that merely contain the marker rather than
+     starting with it, copes with no trailing newline, and says so
+     plainly when there is no such line at all. This is the part that
+     decides whether a triage-able finding or a shrug reaches the human.
+  2. A real program compiled, run under capture, exiting 95, and saved
+     through the same 'finding save' call the loop makes - with the
+     ASSERT line surviving all the way into classification.txt.
+
+ The capture is read as BYTES, and there is a test for that below. A
+ generated program's stdout can carry NUL bytes; a Vox text stops at the
+ first one, so the text route silently dropped every finding whose
+ program had printed one - three of seven, when a BUF-05 assertion was
+ broken on purpose to check this whole path end to end.)
+
+Print "--- the line scan ---".
+
+a text called 'one assertion' is "the inbox size 11\nASSERT BUF-05: expected 4097 got 4096\n".
+Print 'the assert line in' of 'one assertion'.
+
+(Two assertions: the earlier one HELD and the program kept going, so the
+ last is the one that killed it.)
+a text called 'two assertions' is "ASSERT BUF-12: expected 1 got 0\nnoise\nASSERT BUF-13: expected 0 got 1\n".
+Print 'the assert line in' of 'two assertions'.
+
+(No trailing newline - a program killed mid-Print would otherwise lose
+ the one line worth keeping.)
+a text called 'unterminated assertion' is "noise\nASSERT BUF-03: expected 5066 got 4096".
+Print 'the assert line in' of 'unterminated assertion'.
+
+(The marker must START the line. A program that merely PRINTS the word
+ must not be mistaken for one that failed an assertion.)
+a text called 'mentions the marker' is "printing the text ASSERT BUF-01: expected 0 got 4\n".
+Print 'the assert line in' of 'mentions the marker'.
+
+a text called 'no assertion at all' is "the inbox size 11\nthe inbox capacity 64\n".
+Print 'the assert line in' of 'no assertion at all'.
+
+a text called 'nothing at all' is "".
+Print 'the assert line in' of 'nothing at all'.
+
+Print "--- a real program exiting 95 ---".
+
+Set findings_dir to "./vf_ledger_findings".
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul" and 5000.
+
+a number called 'the compile result' is 'compile vox' of "." and "tests/fixtures/ledger_assertion.vox" and "./vf_ledger_bin" and "./vf_ledger_cerr".
+Print "compiled: {'the compile result' is 0}".
+
+a text called 'the verdict' is 'run program capturing' of "./vf_ledger_bin" and 5000 and "./vf_ledger_out".
+Print "verdict: {'the verdict'}".
+a number called 'the exit code' is 'exit code of' of 'the last status'.
+Print "exit code: {'the exit code'}".
+
+(Exactly the two lines 'fuzz gen once' runs on the exit-95 path.)
+a text called 'the captured output' is 'read whole file' of "./vf_ledger_out".
+a text called 'the ledger detail' is 'the assert line in' of 'the captured output'.
+Print "detail: {'the ledger detail'}".
+
+a number called 'the finding tally' is 'finding save' of "wrong-value" and 900095 and "tests/fixtures/ledger_assertion.vox" and 'the ledger detail'.
+Print "finding saved: {'the finding tally' is greater than 0}".
+
+a number called 'the category check' is 'run shell' of "test -d ./vf_ledger_findings/wrong-value/900095" and 5000.
+Print "saved under wrong-value: {'the category check' is 0}".
+a number called 'the detail check' is 'run shell' of "grep -q 'detail: ASSERT BUF-05: expected 4097 got 4096' ./vf_ledger_findings/wrong-value/900095/classification.txt" and 5000.
+Print "classification carries the assert line: {'the detail check' is 0}".
+
+Print "--- a capture with NUL bytes in it ---".
+
+(printf, not Vox: a NUL cannot be spelled inside a text literal, which
+ is the same reason it cannot survive one.)
+a number called 'the nul capture' is 'run shell' of "printf 'noise\\n' > ./vf_ledger_nul; head -c 3000 /dev/zero >> ./vf_ledger_nul; printf '\\nASSERT BUF-13: expected 1 got 0\\n' >> ./vf_ledger_nul" and 5000.
+Print "detail through the byte scan: {'the assert line in file' of \"./vf_ledger_nul\"}".
+
+(The text route on the same bytes, to show what the byte scan is for:
+ 'read whole file' hands back everything up to the first NUL, so the
+ line the finding needs is not in it.)
+a text called 'the truncated capture' is 'read whole file' of "./vf_ledger_nul".
+Print "detail through a text: {'the assert line in' of 'the truncated capture'}".
+
+a text called 'the missing capture detail' is 'the assert line in file' of "./vf_ledger_absent".
+Print "detail from a capture that is not there: {'the missing capture detail'}".
+
+Print "--- the reserved exit band ---".
+
+(90-99 must be unreachable as an ordinary exit code, or a program that
+ passed every assertion could exit 95 by chance and be reported as
+ having failed one. Checked over the whole draw rather than by reading
+ it: 4000 programs' worth of tails.)
+'rng seed' of 4242.
+a number called 'the draws made' is 0.
+a number called 'the codes in the band' is 0.
+While 'the draws made' is less than 4000,
+    a number called 'the raw code' is 'rng below' of 246,
+    a number called 'the code' is 'the raw code',
+    If 'the raw code' is greater than 89 then,
+        Set 'the code' to 'the raw code' add 10.
+    If 'the code' is greater than 89 and 'the code' is less than 100 then,
+        Set 'the codes in the band' to 'the codes in the band' add 1.
+    Set 'the draws made' to 'the draws made' add 1.
+Print "exit codes drawn inside 90-99: {'the codes in the band'}".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_ledger_findings ./vf_ledger_out ./vf_ledger_bin ./vf_ledger_cerr ./vf_ledger_nul" and 5000.

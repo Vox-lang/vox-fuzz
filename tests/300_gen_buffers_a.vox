@@ -1,0 +1,119 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's buffer leaves, batch A - docs/ledger/buffers.md rows
+ BUF-01, BUF-03, BUF-05, BUF-07, BUF-10, BUF-11, BUF-12, BUF-13.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself. That
+ is the point: these leaves exist to emit assertions, and an assertion
+ whose text drifts is an assertion nobody is reading. A diff here is
+ either a deliberate change to what a claim is put on trial with, or a
+ bug in the rendering - and the second kind is what caught the first
+ version of the assertion line, whose trailing `Otherwise` silently
+ swallowed every statement that followed it.
+
+ Each leaf is emitted twice, at the true top level (nested false, every
+ line closed by its own period) and inside a block (nested true, every
+ line but the last continued by a comma). Those are the two ways 'gen
+ join lines' can render a line and they are not interchangeable - the
+ nested rendering is the one the bug above only showed up in.
+
+ The name allocator is exercised on its own at the end: thirty words,
+ never twice in one program, and a suffix only once they run out.)
+
+Set gen_flags to 1.
+Set gen_does_file_io to true.
+
+Print "--- BUF-01, BUF-05: declaration forms and exact capacity ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer declaration' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer declaration' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-10, BUF-11, BUF-12: size, length, capacity, empty ---".
+'rng seed' of 23.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer properties' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 23.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer properties' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-13: full, filled to capacity exactly ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer fullness' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-13 again, a different split and a dynamic buffer ---".
+'rng seed' of 91.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer fullness' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-03: dynamic growth past the reserve ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer growth' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-07: a read that truncates, detected by size ---".
+'rng seed' of 47.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer truncation' of "" and false.
+Print 'gen text'.
+
+(A program that never committed to file I/O was never given a path, so
+ the truncation leaf must not invent one - it stands aside for a leaf
+ that needs nothing but memory.)
+Print "--- BUF-07 with no file I/O committed ---".
+Set gen_does_file_io to false.
+'rng seed' of 47.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer truncation' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+Print "emits a property assertion instead: {'gen text contains' of \"ASSERT BUF-1\"}".
+Set gen_does_file_io to true.
+
+Print "--- names: thirty words, no repeats, suffix only after that ---".
+'rng seed' of 8.
+'gen buffer names reset'.
+a number called 'the names taken' is 0.
+a text called 'the roll call' is "".
+While 'the names taken' is less than 33,
+    a text called 'the stem' is 'gen buffer name',
+    a text called 'the name' is 'gen buffer reference' of 'the stem',
+    Set 'the roll call' to "{'the roll call'}{'the name'} ",
+    Set 'the names taken' to 'the names taken' add 1.
+Print 'the roll call'.
+Print "a fresh program starts the vocabulary over: ".
+'gen buffer names reset'.
+a text called 'the fresh stem' is 'gen buffer name'.
+Print 'gen buffer property' of 'the fresh stem' and "capacity".

@@ -58,100 +58,89 @@ To f3 with a number called p1 and a number called p2.
 To f4 with a text called p1.
     Print "f4 {p1}".
 
-a number called zn1 is 9223372036854775807.
-a number called zk1 is 73.
-a float called zd1 is 2630783478.181.
-a text called zs1 is "word1".
-a boolean called zb1 is true.
-a t1 called zi1.
-Set zi1's x1 to 8098.
-Print "{zn1}".
-Print "{zn1:11}".
-Print "{zn1:020}".
-Print "{zn1:x}".
-Print "{zn1:X}".
-Print "{zk1:b}".
-Print "{zk1:o}".
-Print "{zn1:08x}".
-Print "{zd1:.5}".
-Print "{zd1:11.5}".
-Print "{zs1:1}".
-Print "{zb1:020}".
-Print "{zi1's x1:08x}".
-For each number from 1 to 6, Print number, If number is equal to 9 then, Break. Print "x".
-a buffer called b1 is 52 bytes in size.
-Print byte 182 of b1.
-On error print "buffer read out of range".
-a t3 called i1.
-Set i1's g1's x1 to 176.
-Print i1's g1's x1.
-Print i1.
-a number called hn2 is 1303.
-a float called hd2 is 2476703438.12323436501.
-a text called hs2 is "word2".
-a buffer called hw2 is 64 bytes in size.
-copy "buf2" to hw2.
-a boolean called hb2 is true.
-a list called hl2 is [27985, 705].
-a map called hm2 is {"label": "tag2", "count": 705}.
-a value called hv2 is 358.
-a t1 called hi2.
-Set hi2's x1 to 27985.
-Print "number {hn2:010x}".
-Print "float {hd2:.3}".
-Print "text {hs2}".
-Print "buffer {hw2}".
-Print "boolean {hb2}".
-Print "list {hl2}".
-Print "map {hm2}".
-Print "value {hv2:010x}".
-Print "field {hi2's x1:010x}".
-Print "all {hn2:010x}|{hd2:.3}|{hs2}|{hw2}|{hb2}|{hl2}|{hm2}|{hv2:010x}|{hi2's x1:010x}".
-Print "braces {{lit}} tab\there {hn2:010x}".
-Get current time into hq2.
-a text called ht2 is "{hq2's hour:02}".
-a buffer called hc2 is "{ht2}".
-If hc2's length is equal to 2 then, Print "ht2 ok". Otherwise, Print "ht2 BAD".
-a number called u1 is 0.
-While u1 is less than 1, Increment u1.
-Print u1.
-Print {v1 add v1} multiply v1 modulo 6.
-a number called xn3 is 700.
-a number called xy3 is 54.
-Print "sum {xn3 add xy3}".
-Print "product {xn3 multiply xy3}".
-Print "chain {xn3 multiply xy3 modulo 3}".
-Print "deep {4 divide 3 divide v1 multiply v1:x}".
-Print "arguments {arguments's count}".
-a text called xt3 is "held {xn3 add xy3} {xn3 multiply xy3 modulo 3}".
-Print xt3.
-f3 of each e1 from [26, 95] treating 86 as 19 and each e2 from 3 to 4 treating 1 as 5.
-a buffer called b2 is 23 bytes in size.
-Set byte 12 of b2 to 165.
-Print byte 12 of b2.
-a text called s4 is "word4".
-a text called s5 is "{s4}-{s4}".
-Print s5.
-a number called xn6 is 489.
-a number called xy6 is 95.
-Print "sum {xn6 add xy6}".
-Print "product {xn6 multiply xy6}".
-Print "chain {xn6 multiply xy6 modulo 3}".
-Print "deep {v1 times v1 times v1 multiply v1:04}".
-Print "arguments {arguments's count}".
-a text called xt6 is "held {xn6 add xy6} {xn6 multiply xy6 modulo 3}".
-Print xt6.
-a text called fp7 is "{fl1scratch}/out7".
-open a file for writing called fw7 at fp7.
-Write "payload 32369\n" to fw7.
-Close fw7.
-open a file for reading called fr7 at fp7.
-a buffer called fb7 is 42 bytes in size.
-Read from fr7 into fb7.
-Print fb7's size.
-Print fr7's readable.
-Close fr7.
+a float called d1 is 9223372036854775807.5.
+a float called d2 is 5.1.
+a float called d3 is d1 multiply d2.
+Print d3.
+a float called d4 is d1 divide d2.
+Print d4.
+a float called d5 is d1 add v1.
+Print d5.
+a text called 'the dispatch note path' is "{fl1scratch}/buffer1".
+open a file for writing called 'the dispatch note being written' at 'the dispatch note path'.
+Write "4xe3s9ercxq70lizohqjk16rctq3052vc96jw1ir4hars967g96341encdurwtyzwxe301af8h2b4lajgt2jw5674dy7khm70lu3gtmrodyvwlmjklirkpqj4t" to 'the dispatch note being written'.
+Close 'the dispatch note being written'.
+open a file for reading called 'the dispatch note being read' at 'the dispatch note path'.
+a buffer called 'the dispatch note' is 54 bytes.
+a boolean called 'the dispatch note was truncated' is false.
+Read from 'the dispatch note being read' into 'the dispatch note'.
+On error Set 'the dispatch note was truncated' to true.
+Close 'the dispatch note being read'.
+If 'the dispatch note's size is not 54 then, Print "ASSERT BUF-07: expected 54 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+If 'the dispatch note's size is not 'the dispatch note's capacity then, Print "ASSERT BUF-07: expected {'the dispatch note's capacity} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+Print 'the dispatch note's size.
+Set v1 to v1.
+a number called env1count is environment's count.
+Print env1count as a boolean.
+Print environment's empty.
+a buffer called env1pathbuf is environment's "PATH".
+Print env1pathbuf's empty.
+Set v1 to v1.
+a buffer called 'the pigeonhole' is 2 bytes in size.
+If 'the pigeonhole's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the pigeonhole's empty}", Exit 95. Print 'the pigeonhole's empty.
+append "3s" to 'the pigeonhole'.
+If 'the pigeonhole's size is not 2 then, Print "ASSERT BUF-10: expected 2 got {'the pigeonhole's size}", Exit 95. Print 'the pigeonhole's size.
+If 'the pigeonhole's capacity is not 2 then, Print "ASSERT BUF-10: expected 2 got {'the pigeonhole's capacity}", Exit 95. Print 'the pigeonhole's capacity.
+If 'the pigeonhole's length is not 2 then, Print "ASSERT BUF-11: expected 2 got {'the pigeonhole's length}", Exit 95. Print 'the pigeonhole's length.
+If 'the pigeonhole's length is not 'the pigeonhole's size then, Print "ASSERT BUF-11: expected {'the pigeonhole's size} got {'the pigeonhole's length}", Exit 95. Print 'the pigeonhole's length.
+If 'the pigeonhole's empty then, Print "ASSERT BUF-12: expected 0 got {'the pigeonhole's empty}", Exit 95. Print 'the pigeonhole's empty.
+Print 'the pigeonhole's length.
+For each number from 1 to 2, Print number, If number is equal to 5 then, Continue. Print "x".
+If v1 is greater than v1 then,
+  Set v1 to v1 minus v1.
+Set v1 to v1 multiply v1.
+a text called fp1 is "{fl1scratch}/out1".
+open a file for writing called fw1 at fp1.
+Write "payload 1417\n" to fw1.
+Close fw1.
+open a file for reading called fr1 at fp1.
+a buffer called fb1 is 50 bytes in size.
+Read from fr1 into fb1.
+Print fb1's size.
+Print fr1's readable.
+Close fr1.
+a number called gn2 is 2147483648.
+a buffer called gw2 is 192 bytes in size.
+copy "hello2" to gw2.
+a text called gt2 is "{gw2}".
+a text called gu2 is "/bin/{gt2}-{gn2:020}".
+Print gt2.
+Print gu2.
+a buffer called gb2 is "{gt2}|{gn2}".
+Print gb2.
+a buffer called gc2 is 192 bytes in size.
+set gc2 to "set {gn2:020}".
+append " {gt2}" to gc2.
+Print gc2.
+f4 of "{gt2}/{gn2}".
+a list called gl2 is [].
+append "{gn2:020}" to gl2.
+Print element 1 of gl2.
+a map called gm2 is {"label": "tag2"}.
+Set gm2's "label" to "{gt2}-{gn2}".
+Print gm2's "label".
+a value called gv2 is "{gn2:020}".
+Print gv2.
+open a file for writing called gh2 at "/dev/stdout".
+Write "fmt2 {gt2} {gn2}\n" to gh2.
+Close gh2.
+a map called m1 is {"label": "tag1", "count": 606}.
+Print m1's "label".
+Set m1's "count" to 903.
+Print m1's "count".
+Print m1's length.
+For each k1 in m1's keys, Print k1.
 'read flags 1'.
-Exit 147.
+Exit 70.
 
 reproducible: 1

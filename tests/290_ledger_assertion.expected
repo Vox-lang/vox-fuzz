@@ -1,0 +1,21 @@
+--- the line scan ---
+ASSERT BUF-05: expected 4097 got 4096
+ASSERT BUF-13: expected 0 got 1
+ASSERT BUF-03: expected 5066 got 4096
+ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+--- a real program exiting 95 ---
+compiled: 1
+verdict: exit
+exit code: 95
+detail: ASSERT BUF-05: expected 4097 got 4096
+finding saved: 1
+saved under wrong-value: 1
+classification carries the assert line: 1
+--- a capture with NUL bytes in it ---
+detail through the byte scan: ASSERT BUF-13: expected 1 got 0
+detail through a text: ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+detail from a capture that is not there: ledger assertion failed (exit 95) but no ASSERT line was found on stdout
+--- the reserved exit band ---
+exit codes drawn inside 90-99: 0
