@@ -1,0 +1,16 @@
+(TYP-01: a `number` declared with a fractional literal (LANGUAGE.md:432
+ claims `number` holds "whole numbers") is not rejected or truncated,
+ and the `is a` predicate then disagrees with `'s type` about what it
+ holds. Also covers Discrepancy 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TYP-01.vox -o p && ./p
+ expected output:
+   3.5
+   Number (static)
+   is a number: no
+   is a decimal: yes
+)
+a number called n is 3.5.
+print n.
+print n's type.
+if n is a number, print "is a number: yes". otherwise print "is a number: no".
+if n is a decimal, print "is a decimal: yes". otherwise print "is a decimal: no".

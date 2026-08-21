@@ -1,0 +1,20 @@
+(D3 -- minimal repro. LANGUAGE.md:4931-4938's own worked example of a
+ .lib file's format shows a zero-parameter, no-return-type entry as bare
+ `greet.` in the Table of Contents. The actual compiler always prefixes
+ `To` for every entry, parameter-taking or not.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/D3.vox --shared -o d4.so
+   cat d4.lib
+ expected output: exit 0, and d4.lib's Table of Contents reads
+   Table of Contents:
+       To greet.
+ not the manual's
+   Table of Contents:
+       greet.
+)
+Library mathkit version "1.0".
+
+To greet.
+  Print "hello from mathkit".

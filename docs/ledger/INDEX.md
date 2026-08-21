@@ -15,9 +15,9 @@ against the section). Progress is `verified / rows` going up and
 |---|---|---|---|---|---|---|---|---|---|
 | BAS | `basics-sentences.md` | 35–259 | Basics: statements, case, comments, paragraph breaks, sentence consumption, the termination rule, closing more than one level | **yes** | 65 | — | 0 |  |  |
 | BAS2 | `basics-expansion.md` | 260–427 | Basics: ranges, loop expansion, `but if`, `treating` | **yes** | 59 | — | 0 |  |  |
-| TYP | `types.md` | 428–445 | Types | no | | | | | |
+| TYP | `types.md` | 428–445 | Types | **yes** | 11 | — | 0 | 1 (D1: `number` silently holds fractional values; `is a` predicate disagrees with `'s type`) | |
 | VAR | `variables.md` | 446–644 | Variables: declaration forms, set/create, canonical forms, assignment, type immutability, naming rules | **yes** | 66 | — | 0 | 9 (D1=#54 segfault fix in flight; reserved-word-as-loopvar; canonical-forms; Allocate-on-buffer) |  |
-| NAM | `names-and-strings.md` | 645–670 | Names and strings | no | | | | | |
+| NAM | `names-and-strings.md` | 645–670 | Names and strings | **yes** | 7 | — | 0 | 1 (D1: the initial-declaration form does not type-check a mismatched string literal — `a number called n is "get five".` prints a garbage pointer, not a compile error) | |
 | FUN | `functions.md` | 671–786 | Functions: definition, scope, parameter/local types, calls, calling as statement | **yes** | 43 | — | 0 | 9 (D8=#53 segfault fix in flight; D1/D5 pointer-render dup #45; scope) |  |
 | THG | `things-a.md` | 787–1167 | Things: defining, declarations and field access, nesting, value copy semantics | **yes** | 75 | — | 0 | 5 (things-a discrepancies; time field/var init, diagnostics) |  |
 | THG2 | `things-b.md` | 1168–1788 | Things: printing, equality, manifest, the three call forms, one identifier space, top-level only, cross-file, `.lib`, sentence consumption, diagnostics, predicates | **yes** | 77 | — | 0 | 5 (things-b) |  |
@@ -32,13 +32,13 @@ against the section). Progress is `verified / rows` going up and
 | PRC | `process-control.md` | 3658–3999 | Directories, mounting, device nodes, symlinks, pivot_root, executing programs, process control, system control | **yes** | 87 | — | 0 | 6 (doc-precision + Send-signal kill-safety note) |  |
 | TIM | `time-and-timers.md` | 4000–4172 | Time and timers | **yes** | 60 | — | 0 |  |  |
 | ARG | `arguments.md` | 4173–4342 | Command-line arguments, flag parsing | **yes** | 54 | — | 0 |  |  |
-| ENV | `environment.md` | 4343–4417 | Environment variables | no | | | | | |
+| ENV | `environment.md` | 4471–4545 | Environment variables | **yes** | 12 | — | 0 | 1 (D1: a buffer declared directly from an `environment's <property>` expression never receives the string's bytes — `'s size` is -1, `'s empty` reports false) | |
 | OPR | `operators.md` | 4418–4482 | Operators: arithmetic, comparison, logical, bitwise | **yes** | 42 | — | 0 |  |  |
 | KEY | `keywords.md` | 4483–4621 | Keywords: articles, starters, flag schema, connectors, `and`, reserved aliases, two classes of special word, contextual keywords | **yes** | 86 | — | 0 |  |  |
-| EXA | `examples.md` | 4622–4662 | Examples chapter — each example is a composite claim | no | | | | | |
-| LIB | `libraries.md` | 4663–5009 | Libraries and imports: `see`, shared libraries | no | | | | | |
-| CLI | `compiler-usage.md` | 5010–5047 | Compiler usage — claims about the CLI, tested by the harness rather than by leaves | no | | | | | |
-| GRM | `grammar-summary.md` | 5048–5112 | Grammar summary — each production is a claim that the forms it lists parse | no | | | | | |
+| EXA | `examples.md` | 4750–4790 | Examples chapter — each example is a composite claim | **yes** | 5 | — | 0 | 0 |  |
+| LIB | `libraries.md` | 4791–5136 | Libraries and imports: `see`, shared libraries, `.lib` interface, mangling, `--link` | **yes** | 64 | — | 0 | 4 (D1 manual/unimplemented overwrite-protection; D2 manual bad example; D3 manual bad example; D4 consumer-side type-check gap) |  |
+| CLI | `compiler-usage.md` | 5138–5175 | Compiler usage — claims about the CLI, tested by the harness rather than by leaves | **yes** | 8 | — | 0 | 1 (D1: `--link` hand-verified as a no-op in every case tried, awaiting Josj) |  |
+| GRM | `grammar-summary.md` | 5176–5240 | Grammar summary — each production is a claim that the forms it lists parse | **yes** | 23 | — | 0 | 3 (D1/D2 already adjudicated via expressions.md D3/D5; D3 append_stmt `treating` new, awaiting Josj) |  |
 
 **Refresh, 2026-08-21 (vox 0.4.8 + #40/#43/#47/#48/#49/#50/#52).** Seven
 discrepancies across four ledgers were fixed in the compiler and their

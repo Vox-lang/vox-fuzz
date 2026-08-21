@@ -1,0 +1,11 @@
+(LIB-43, 6a of 6 -- arity mismatch at the call site: the .lib says
+ 'add two numbers' takes two arguments; this call gives one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43f.vox -o p && ./p
+ expected output:
+   error: Function 'add two numbers' expects 2 arguments but was called with 1.
+   (compile error)
+)
+see mathkit version "1.0" from "fixtures/libmathkit.lib".
+
+a number called sum is 'add two numbers' of 3.
+Print sum.

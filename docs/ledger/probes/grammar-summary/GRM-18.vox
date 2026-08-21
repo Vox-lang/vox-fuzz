@@ -1,0 +1,16 @@
+(GRM-18: multiplicative's operator alternatives - "multiply", "times",
+ "divide", "modulo" - `times` is a full synonym for `multiply`, not a
+ different operator. Cross-ref OPR-06 (operators.md), which already
+ established this; OPR-41 there also records a real, separate gap
+ (`times` is rejected specifically in `append <value> to <collection>`'s
+ value slot) that is out of this row's scope (append_stmt's own value
+ slot is GRM-05).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-18.vox -o p && ./p
+ expected output:
+   42
+   42
+)
+a number called n is 6 times 7.
+Print n.
+a number called m is 6 multiply 7.
+Print m.

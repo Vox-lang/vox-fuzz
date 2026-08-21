@@ -1,0 +1,28 @@
+(EXA-05: the manual's "FizzBuzz" example, verbatim. Note this FizzBuzz uses
+ divisors 6/2/3, not the classic 15/3/5 - 'check divisibility' of the
+ number and 6 tests number modulo 6, etc. - so the but-if order (div-6,
+ div-2, div-3) is what the manual actually wrote, and the compiler's
+ output matches that reading exactly. A `but if` branch that fires
+ REPLACES the base `Print the number`, it does not print alongside it
+ (also true of EXA-04's sibling row and every `but if` chain elsewhere).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXA-05.vox -o p && ./p
+ expected output:
+   1
+   fizz
+   buzz
+   fizz
+   5
+   fizz buzz
+   7
+   fizz
+   buzz
+   fizz
+   11
+   fizz buzz
+   13
+   fizz
+   buzz
+)
+To 'check divisibility' with a number called divisor and a number called dividend. Return a boolean, the divisor modulo the dividend is 0.
+
+For each number from 1 to 15, print the number, but if 'check divisibility' of the number and 6 is true print "fizz buzz" but if 'check divisibility' of the number and 2 is true print "fizz" but if 'check divisibility' of the number and 3 is true print "buzz".

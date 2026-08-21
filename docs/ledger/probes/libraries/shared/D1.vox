@@ -1,0 +1,17 @@
+(D1 -- minimal repro. LANGUAGE.md:4926-4929: "It will not overwrite a
+ .lib that already exists -- a repeat --shared build errors and asks you
+ to remove the .lib first". It does not error; it silently rewrites the
+ .lib, clobbering any hand edit. Needs --shared, so not auto-run; see
+ shared/LIB-overwrite.vox for the fuller version and the ledger's
+ Discrepancies section for the reading.
+ Ran, from the repo root, in a scratch directory:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   V=/home/josj/scr/english/vox/target/release/vox
+   $V docs/ledger/probes/libraries/D1.vox --shared -o d1.so
+   $V docs/ledger/probes/libraries/D1.vox --shared -o d1.so
+ expected output: both builds exit 0, no diagnostic either time.
+)
+Library d1kit version "1.0".
+
+To greet.
+  Print "hi".

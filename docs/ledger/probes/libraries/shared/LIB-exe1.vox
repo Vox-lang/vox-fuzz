@@ -1,0 +1,18 @@
+(LIB-49 -- multi-input is --shared only; it is rejected for executable
+ builds, where the semantics would be ambiguous. Companion: LIB-exe2.vox.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-exe1.vox
+   docs/ledger/probes/libraries/shared/LIB-exe2.vox -o multiexe
+ expected output:
+   error: Multiple source files (docs/ledger/probes/libraries/shared/LIB-exe1.vox,
+   docs/ledger/probes/libraries/shared/LIB-exe2.vox) are only valid with
+   --shared, which links them into one library in a single link step. An
+   executable build takes a single source -- pass --shared, or compile
+   each source separately.
+ (exit 1; filenames shown exactly as given on the command line)
+)
+
+To greet.
+  Print "hi1".

@@ -1,0 +1,11 @@
+(Discrepancy 1 (NAM): isolate NAM-03's worked example down to only the
+ half LANGUAGE.md:664-665 actually credits ("is "get five"" in value
+ position) by fixing the name-position violation. No error, no
+ warning: a garbage number, printed as if it were data. Compare
+ D1b.vox for the content-independence and reassignment-form checks.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   4198488
+)
+a number called n is "get five".
+print n.

@@ -1,0 +1,23 @@
+(LIB-59 through LIB-61 -- --link takes a library's soname stem, adds the
+ loader and an -rpath per --lib-path only when a library is actually
+ linked, and a plain build with no --link stays a flat static binary.
+ Ran, from the repo root, in a scratch directory holding libmath.so
+ (built from any Library-declared source, e.g. shared/LIB-writing.vox,
+ renamed to libmath.so):
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   V=/home/josj/scr/english/vox/target/release/vox
+   $V docs/ledger/probes/libraries/shared/LIB-link.vox -o hello_plain
+   readelf -d hello_plain | grep -E 'NEEDED|RUNPATH'
+   file hello_plain
+   $V docs/ledger/probes/libraries/shared/LIB-link.vox --link math --lib-path ./libs -o hello_linked
+   readelf -d hello_linked | grep -E 'NEEDED|RUNPATH'
+ expected output:
+   hello_plain: no NEEDED/RUNPATH lines; `file` reports "statically linked"
+   hello_linked:
+     0x0000000000000001 (NEEDED)             Shared library: [libmath.so]
+     0x000000000000001d (RUNPATH)            Library runpath: [./libs]
+   (both builds exit 0; matches LANGUAGE.md:5117-5121 verbatim, with libs/
+    substituted for the manual's own directory name)
+)
+
+Print "hello".

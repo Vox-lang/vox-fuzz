@@ -1,0 +1,6 @@
+Library mathkit version "1.0".
+Location "./libmathkit.so".
+
+Table of Contents:
+    To 'add two numbers' with a number called x and a number called y, returning a number.
+    To greet.

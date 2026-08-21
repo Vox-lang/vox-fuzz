@@ -1,0 +1,26 @@
+(CLI-08: `-v`, `--verbose` - verbose output. Both spellings hand-verified
+ to print the identical five-line pipeline log to stdout during
+ compilation; that log is a compile-time side effect, not something the
+ RUN of the resulting binary shows, so check-probes.sh's standard
+ compile-then-run below can only confirm the flag doesn't change runtime
+ behavior - the verbose transcript itself is hand-verified separately.
+ Hand-run separately (both spellings, byte-identical output):
+   $ vox hello.vox -v -o hello_v
+   Compiling hello.vox...
+   Generated hello.asm
+   Assembling...
+   Linking...
+   Created executable: hello_v
+   Removed assembly file: hello.asm
+   $ vox hello.vox --verbose -o hello_verbose
+   Compiling hello.vox...
+   Generated hello.asm
+   Assembling...
+   Linking...
+   Created executable: hello_verbose
+   Removed assembly file: hello.asm
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-08.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

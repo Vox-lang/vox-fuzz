@@ -1,0 +1,22 @@
+(LIB-48 -- two sources in one --shared build that declare the same
+ Library name and version are rejected, naming both files. Companion:
+ LIB-dupb.vox, an identical declaration.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-dupa.vox
+   docs/ledger/probes/libraries/shared/LIB-dupb.vox --shared -o dup.so
+ expected output:
+   error: Duplicate library identity: 'docs/ledger/probes/libraries/shared/LIB-dupa.vox'
+   and 'docs/ledger/probes/libraries/shared/LIB-dupb.vox' both declare
+   Library alib version "1.0". Two sources linked into one .so must each
+   name a distinct library and version, or the second's signatures
+   silently overwrite the first's. Rename one.
+ (exit 1; the filenames shown are exactly as given on the command line --
+  running from inside shared/ with bare filenames would show bare names
+  instead)
+)
+
+Library alib version "1.0".
+To greet.
+  Print "hi from a".

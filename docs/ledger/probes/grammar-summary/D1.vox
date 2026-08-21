@@ -1,0 +1,15 @@
+(GRM Discrepancy 1 - minimal repro. var_decl's "is expr" claims a full
+ `expr` (which includes `comparison`) per :5184-5185/5225-5228, but a
+ comparison cannot be a var_decl (or assignment, or print_stmt) initializer
+ - only inside an If/While/but-if condition. Cross-ref EXP-D3
+ (expressions.md), which found this first for `expr`'s use inside those
+ same productions generally; this file is GRM's own minimal case against
+ var_decl specifically.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Is
+   (no binary produced; compile error)
+)
+a number called total is 5.
+a boolean called ok is total is 5.
+Print ok.

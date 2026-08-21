@@ -1,0 +1,5 @@
+(Other half of the LIB-15 circular-include fixture.)
+see "./circ_a.vox".
+
+To 'from b'.
+  Print "b".

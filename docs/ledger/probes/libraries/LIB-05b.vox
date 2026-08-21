@@ -1,0 +1,17 @@
+(LIB-05, half 2 of 3 -- retired form 2: `see <lib> version "<v>" from
+ "<path>.so".` also pointed a library-style see at a .so directly, and
+ gets the identical diagnostic to LIB-05. NOTE: LANGUAGE.md:4810 spells
+ this form with the library name in double quotes -- `see "lib" version
+ "1.0" from "./path.so".` -- but a double-quoted name is not valid Vox
+ syntax in this position at all (names are bare or 'single-quoted', never
+ a string literal); see Discrepancy 2 for that. This probe uses the
+ correctly-shaped bare name to isolate the .so-retirement diagnostic from
+ the separate quoting issue.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-05b.vox -o p && ./p
+ expected output:
+   error: see of a .so is not supported. A .so is a binary; consume it through its .lib interface file.
+   (compile error, identical diagnostic to LIB-05)
+)
+see mathkit version "1.0" from "fixtures/libmathkit.so".
+
+Print 1.

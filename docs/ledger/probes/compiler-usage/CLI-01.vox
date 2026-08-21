@@ -1,0 +1,19 @@
+(CLI-01: Basic Usage - `vox <source.vox> [options]` - the compiler takes
+ exactly one source file and zero or more options. This is the minimal
+ case: no options at all, output defaults to the source stem with no
+ extension (`hello.vox` -> `hello`). check-probes.sh's own harness (`vox
+ probe.vox -o work/name`) exercises this same basic form on every probe
+ in every ledger; this file is the CLI-specific record of the no-options
+ default-name case, hand-run separately since check-probes.sh always
+ supplies its own -o.
+ Hand-run separately:
+   $ vox hello.vox
+   $ ls hello
+   -rwxr-xr-x ... hello
+   $ ./hello
+   Hello, World!
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-01.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

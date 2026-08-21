@@ -1,0 +1,35 @@
+(LIB-19 through LIB-24 -- writing a library. The mathkit worked example,
+ LANGUAGE.md:4862-4869, compiles with --shared to a self-contained .so
+ exporting exactly its two functions, mangled, with zero relocations, plus
+ a beside-it .lib naming an identity. Needs --shared and nm/readelf, so it
+ is not auto-run by check-probes.sh; this file and its recorded output are
+ the hand-verification record. LIB-20 is this same invocation. LIB-21 is
+ the nm/readelf facts below -- exactly the library's own two functions
+ exported, nothing else, zero relocations. LIB-22/LIB-23 restate those as
+ the manual's own prose. LIB-24 is the Library declaration visible in the
+ .lib output below, which LIB-noidentity.vox shows is mandatory.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-writing.vox --shared -o libmathkit.so
+ expected: exit 0, and:
+   nm -D --defined-only libmathkit.so
+     000000000000072c T mathkit_1_0_add_two_numbers
+     000000000000076c T mathkit_1_0_greet
+   readelf -r libmathkit.so
+     There are no relocations in this file.
+   cat libmathkit.lib
+     Library mathkit version "1.0".
+     Location "./libmathkit.so".
+
+     Table of Contents:
+         To 'add two numbers' with a number called x and a number called y, returning a number.
+         To greet.
+)
+
+Library mathkit version "1.0".
+
+To 'add two numbers' with a number called x and a number called y. Return a number, x add y.
+
+To greet.
+  Print "hello from mathkit".

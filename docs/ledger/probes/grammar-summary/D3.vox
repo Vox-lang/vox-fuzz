@@ -1,0 +1,23 @@
+(GRM Discrepancy 3 - minimal repro. append_stmt's second form (:5189-5190)
+ is `"append" "each" name "from" expr "to" name ("treating" expr "as"
+ expr)? "."` - treating placed AFTER "to name". That literal placement is
+ a compile error ("Expected a statement, got Treating" - tried and
+ confirmed separately, not re-recorded as its own file). Placing
+ `treating` where loop_expansion actually allows it - right after "from
+ expr", BEFORE "to name", matching print_stmt's placement (GRM-15) and
+ loop_expansion's own production (:5223) - parses cleanly, but the
+ substitution is a silent no-op: dst ends up [1, 2, 3], not [1, 20, 3],
+ even though the identical treating clause DOES substitute under `Print
+ each` (GRM-16). No existing leaf or ledger row (`grep -rn "append.*
+ treating"` across collections-b.md/basics-expansion.md) already covers
+ this combination - genuinely new.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+a list called src is [1, 2, 3].
+a list called dst is [].
+append each item from src treating 2 as 20 to dst.
+Print each x from dst.

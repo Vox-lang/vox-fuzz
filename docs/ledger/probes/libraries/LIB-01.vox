@@ -1,0 +1,12 @@
+(LIB-01 -- `see "<path>.vox".` includes another Vox source file: the file
+ is parsed as part of the program and its functions become callable with
+ no linking step. Also covers LIB-09: the `./` path is resolved against
+ the directory of THIS file (docs/ledger/probes/libraries/), not the
+ caller's working directory -- fixtures/helper.vox sits right beside it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-01.vox -o p && ./p
+ expected output:
+   helper
+)
+see "./fixtures/helper.vox".
+
+'helper says'.

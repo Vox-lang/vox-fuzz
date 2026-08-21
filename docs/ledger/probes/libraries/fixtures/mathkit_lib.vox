@@ -1,0 +1,12 @@
+(Source for the reference mathkit library, verbatim from LANGUAGE.md:4863-4869.
+ Built with: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox mathkit_lib.vox --shared -o libmathkit.so
+ The resulting libmathkit.so and libmathkit.lib are checked in beside this
+ file and consumed by the auto-run probes in the parent directory.)
+
+Library mathkit version "1.0".
+
+To 'add two numbers' with a number called x and a number called y. Return a number, x add y.
+
+To greet.
+  Print "hello from mathkit".

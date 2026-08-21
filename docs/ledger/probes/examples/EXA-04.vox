@@ -1,0 +1,19 @@
+(EXA-04: the manual's "Counting Loop" example, verbatim. `Set the number
+ called counter to 1.` both declares and initialises counter (no prior
+ declaration exists) - see GRM-03/D1 for the general "Set ... to" as a
+ var_decl form. The loop prints 1..9 (the while stops once counter=10 and
+ never prints 10).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXA-04.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   4
+   5
+   6
+   7
+   8
+   9
+)
+Set the number called counter to 1.
+While the counter is less than 10, print the counter, increment the counter.

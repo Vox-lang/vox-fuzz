@@ -1,0 +1,18 @@
+(D4 -- minimal repro. LANGUAGE.md:4964-4966: "No returning clause means
+ the function returns nothing", and step 5 of consuming a library
+ (LANGUAGE.md:4990) says calls "type-check like any other function". Here
+ `greet` genuinely returns nothing -- its .lib entry is bare `To greet.`,
+ no returning clause -- yet assigning its call to a typed variable
+ compiles with no diagnostic at all.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/D4.vox -o p && ./p
+ expected output:
+   hello from mathkit
+   1
+ (exit 0, no diagnostic; `n` prints 1, not a genuine return value -- greet
+  returns nothing, so this is leftover register state being treated as a
+  number with no complaint from the type checker)
+)
+see mathkit version "1.0" from "fixtures/libmathkit.lib".
+
+a number called n is greet.
+Print n.

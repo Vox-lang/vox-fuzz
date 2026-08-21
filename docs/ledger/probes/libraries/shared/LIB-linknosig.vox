@@ -1,0 +1,15 @@
+(LIB-62 -- --link alone does not teach the compiler a library's function
+ signatures, so Vox source still cannot call the library's functions
+ without a `see` of its .lib. Needs libmath.so present via --lib-path, as
+ in LIB-link.vox's header.
+ Ran, from the repo root, in the same scratch directory as LIB-link.vox:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-linknosig.vox --link math --lib-path ./libs -o x
+ expected output:
+   error: Unknown function: add two numbers
+ (exit 1)
+)
+
+a number called sum is 'add two numbers' of 3 and 4.
+Print sum.

@@ -1,0 +1,21 @@
+(LIB-25 -- a shared library has no entry point, so a top-level executable
+ statement is rejected instead of silently dropped. Also covers LIB-26:
+ only function definitions, Library, and see may appear at the top level
+ of a --shared compile.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-toplevel.vox --shared -o x.so
+ expected output:
+   error: Top-level print statement is not allowed in a shared library:
+   only function definitions, 'Library', and 'see' may appear at the top
+   level.
+ (exit 1, and this is the diagnostic's text verbatim, matching LANGUAGE.md:4907-4909)
+)
+
+Library topkit version "1.0".
+
+Print "hello".
+
+To greet.
+  Print "hi".

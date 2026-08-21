@@ -1,0 +1,10 @@
+(LIB-43, 1 of 6 -- missing .lib: `see` of a .lib path that does not exist
+ gets its own diagnostic naming the file and the search paths tried.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-43a.vox -o p && ./p
+ expected output:
+   error: could not find the library interface file 'fixtures/nope.lib'.
+   (compile error; also lists "Paths tried:" and suggests --lib-path)
+)
+see mathkit version "1.0" from "fixtures/nope.lib".
+
+Print 1.

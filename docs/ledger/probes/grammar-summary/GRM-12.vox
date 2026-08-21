@@ -1,0 +1,34 @@
+(GRM-12: if_stmt ::= ("If"|"When") condition "then" "," block ("but if"
+ condition "then" "," block)* ("otherwise"|"else")? ","? block? "." - all
+ five alternation points hand-verified. The one non-obvious bit the
+ EBNF's flat comma doesn't show: chaining a "but if"/"otherwise" arm onto
+ a PRIOR arm needs a PERIOD before it, not a comma - "If X then, A, but
+ if Y then, B." is a compile error ("Expected a statement, got Then");
+ "If X then, A. But if Y then, B." compiles and works, because a period
+ before "But if"/"Otherwise" does not end the statement (cross-ref
+ FLW-03/FLW-07, control-flow.md, already hand-verified there - not a new
+ finding, just re-confirmed against this section's own EBNF, which reads
+ as if a comma would do). Do not confuse this if_stmt-level "but if...
+ then," with print_stmt's OWN, differently-shaped "but if <cond> print
+ <expr>" (no "then", GRM-15) - EXA-05's FizzBuzz uses the print form, not
+ this one, and mixing them (this file does not) silently produces no
+ output at all because the print's but-if tail gets absorbed into
+ whichever block it sits inside.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-12.vox -o p && ./p
+ expected output:
+   four
+   not four
+   also not four
+   is two
+)
+a number called first is 4.
+When first is 4 then, print "four".
+
+a number called second is 9.
+If second is 4 then, print "four", else, print "not four".
+
+a number called fourth is 9.
+If fourth is 4 then, print "four", otherwise, print "also not four".
+
+a number called third is 2.
+If third is 4 then, print "four". But if third is 2 then, print "is two". Otherwise, print "neither".
