@@ -26,6 +26,7 @@ see "./rng.vox".
 see "./gen_literals.vox".
 see "./harness.vox".
 see "./runner.vox".
+see "./gen_manifest.vox".
 see "./gen_core.vox".
 see "./gen_buffers.vox".
 see "./gen_files.vox".

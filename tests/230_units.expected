@@ -15,3 +15,46 @@ classify 101: ice
 classify 128: check-asm
 classify 129: ice
 classify -1: hang
+pool lengths: types=31 functions=37 flags=29 fields=31 makers=19 receivers=19 parameters=101
+other pool lengths: buffers=29 value nouns=41 value verbs=29 environment=30 loop words=8
+types vs functions: 0
+types vs flags: 0
+functions vs flags: 0
+types vs buffers: 0
+functions vs buffers: 0
+flags vs buffers: 0
+types vs value nouns: 0
+functions vs value nouns: 0
+flags vs value nouns: 0
+types vs value verbs: 0
+functions vs value verbs: 0
+flags vs value verbs: 0
+buffers vs value nouns: 0
+buffers vs value verbs: 0
+value nouns vs value verbs: 0
+environment vs types: 0
+environment vs functions: 0
+environment vs flags: 0
+environment vs buffers: 0
+environment vs value nouns: 0
+environment vs value verbs: 0
+loop words vs types: 0
+loop words vs functions: 0
+loop words vs flags: 0
+loop words vs buffers: 0
+loop words vs value nouns: 0
+loop words vs value verbs: 0
+loop words vs environment: 0
+banned needles in types: 0
+banned needles in fields: 0
+banned needles in makers: 0
+banned needles in receivers: 0
+banned needles in functions: 0
+banned needles in parameters: 0
+banned needles in flags: 0
+banned needles in buffers: 0
+banned needles in value nouns: 0
+banned needles in value verbs: 0
+banned needles in environment: 0
+banned needles in loop words: 0
+banned needles in spoken words: 0

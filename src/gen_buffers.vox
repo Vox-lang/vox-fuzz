@@ -49,14 +49,28 @@ To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
  needs a citation from the manual, and `b1`, `b2` have none - they are a
  habit, and a habit that puts the same identifier in 100% of the corpus.
  These are the words the generated programs' buffers are actually called.
- Thirty of them, mostly things you would really put bytes into, so a
- program reads as English and the invariant report has nothing to flag.
+ Twenty-nine of them, mostly things you would really put bytes into, so
+ a program reads as English and the invariant report has nothing to flag.
 
  A word is claimed at most once per program - a redeclaration would not
- compile - and only when a program declares more than thirty buffers
- does a numeric suffix appear at all.)
+ compile - and only when a program runs the list out does a numeric
+ suffix appear at all.
 
-a list called gen_buffer_words is ["the inbox", "scratch", "the greeting", "ledger", "outgoing post", "the pigeonhole", "satchel", "the mailbag", "the parcel", "workbench", "the sketchpad", "the postbag", "notebook", "the envelope", "the tray", "cupboard", "the dispatch note", "the register", "pantry", "the manifest", "the shipping label", "toolbox", "the drawer", "the waybill", "the message slip", "loading bay", "the pallet", "the crate", "storeroom", "the tally sheet"].
+ There were thirty. `the parcel` was removed on 2026-08-21: it was also
+ in 'the value nouns' (gen_collections.vox), and both pools declare
+ TOP-LEVEL names, which share one global identifier space
+ (LANGUAGE.md:1571, "Type names, variable names, and function names
+ share a single global identifier namespace"). A seed that drew it for a
+ buffer and for a `value` in the same program wrote the name twice and
+ did not compile - a rare, seed-dependent failure that looked like
+ nothing in particular. It came out of THIS pool rather than out of the
+ value nouns because the value nouns are spent on a cycle whose stride
+ must be coprime with the list's length, so that list has to stay a
+ prime number of words long (41) and this one does not: 'gen buffer
+ name' walks claimed-word marks, so twenty-nine is as good as thirty.
+ tests/230_units.vox counts the overlap and it must read 0.)
+
+a list called gen_buffer_words is ["the inbox", "scratch", "the greeting", "ledger", "outgoing post", "the pigeonhole", "satchel", "the mailbag", "workbench", "the sketchpad", "the postbag", "notebook", "the envelope", "the tray", "cupboard", "the dispatch note", "the register", "pantry", "the manifest", "the shipping label", "toolbox", "the drawer", "the waybill", "the message slip", "loading bay", "the pallet", "the crate", "storeroom", "the tally sheet"].
 
 a list called gen_buffer_word_taken is [].
 
@@ -621,8 +635,7 @@ To 'gen leaf buffer truncation' with a text called indent and a boolean called n
     a number called 'the surplus' is 'the surplus draw' add 1.
     a number called 'the payload length' is 'the capacity' add 'the surplus'.
     a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
-    a number called f is gen_flags.
-    a text called 'the path line' is "a text called {'the path name'} is \"{{fl{f}scratch}}/buffer{gen_buffer_names}\"".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/buffer{gen_buffer_names}\"".
     a text called 'the open write' is "open a file for writing called {'the handle in'} at {'the path name'}".
     a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle in'}".
     a text called 'the close write' is "Close {'the handle in'}".

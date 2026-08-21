@@ -33,26 +33,48 @@ a number called gen_grid_calls is 0.
 
 (Chained expansion, the grid: 0.4.5's Cartesian-product call form, joined
  by 'and' across two 'each ... from ...' clauses - a list clause and a
- range clause, over f3's two number parameters. The loop variables get
+ range clause, over a two-number-parameter callee. The loop variables get
  their own e{N} names from a dedicated counter so two grid calls in the
  same program never bind the same identifier twice, which the one
  identifier space rule would otherwise make a shadowing question rather
- than a clean fresh name. f3 has no side effect worth printing, so this
- is a bare call statement - language note 3's "plain call statement"
- form, the same one the grid section itself uses when a fixed argument
- needs to come first.)
+ than a clean fresh name. The callee has no side effect worth printing,
+ so this is a bare call statement - language note 3's "plain call
+ statement" form, the same one the grid section itself uses when a fixed
+ argument needs to come first.
+
+ A grid clause yields NUMBERS and fills one parameter each, so the callee
+ must take exactly two numbers. The prelude used to guarantee that with
+ f3; nothing in the language does, so this asks the manifest and falls
+ back to an ordinary call when this program drew no such function.)
 
 To 'gen call grid' with a text called indent and a boolean called nested.
+    a boolean called 'a callee is available' is 'gen manifest pick a numeric function from' of 2.
+    If 'a callee is available' is false then,
+        'gen call any function' of indent and nested,
+        Return a boolean, false.
+    a text called 'the callee' is 'gen function written' of gen_pick_function.
+    (As many clauses as the callee has parameters, never fewer than two.
+     The old leaf wrote exactly two because the prelude's f3 had exactly
+     two; with the callee drawn, the clause count follows its arity the
+     same way an ordinary call's argument count does. Written as a list
+     clause and then range clauses, so the two clause forms the leaf
+     exists to chain are both present whatever the arity.)
+    a number called 'the arity' is element gen_pick_function of gen_function_arity.
     Set gen_grid to gen_grid add 1.
     a number called 'first loop name' is gen_grid.
-    Set gen_grid to gen_grid add 1.
-    a number called 'second loop name' is gen_grid.
     a number called 'list element one' is 'rng below' of 100.
     a number called 'list element two' is 'rng below' of 100.
-    a number called 'range start' is 'rng below' of 5 add 1.
-    a number called 'range spread' is 'rng below' of 4.
-    a number called 'range end' is 'range start' add 'range spread'.
-    a text called 'call line' is "f3 of each e{'first loop name'} from [{'list element one'}, {'list element two'}] and each e{'second loop name'} from {'range start'} to {'range end'}".
+    a text called clauses is "each e{'first loop name'} from [{'list element one'}, {'list element two'}]".
+    a number called 'the clause' is 1.
+    While 'the clause' is less than 'the arity',
+        Set gen_grid to gen_grid add 1,
+        a number called 'the loop name' is gen_grid,
+        a number called 'range start' is 'rng below' of 5 add 1,
+        a number called 'range spread' is 'rng below' of 4,
+        a number called 'range end' is 'range start' add 'range spread',
+        Set clauses to "{clauses} and each e{'the loop name'} from {'range start'} to {'range end'}",
+        Set 'the clause' to 'the clause' add 1.
+    a text called 'call line' is "{'the callee'} of {clauses}".
     a list called 'the lines' is ['call line'].
     'gen join lines' of indent and nested and 'the lines'.
 
@@ -81,7 +103,7 @@ To 'gen leaf deep grid' with a text called indent and a boolean called nested.
      decision is made once per program in 'gen program', which is what
      keeps definition and call site in step.)
     If gen_uses_grid is false then,
-        'gen call two' of indent and nested,
+        'gen call any function' of indent and nested,
         Return a boolean, false.
     Set gen_grid to gen_grid add 1.
     a number called 'the run' is gen_grid.
@@ -102,7 +124,7 @@ To 'gen leaf deep grid' with a text called indent and a boolean called nested.
             Set clauses to "{clauses} and each q{'the run'}s{i} from {low} to {high}".
         Set i to i add 1.
     Set gen_grid_calls to gen_grid_calls add 1.
-    a text called 'call line' is "'grid sink {depth}' of {clauses}".
+    a text called 'call line' is "{gen_grid_sink_name} of {clauses}".
     a list called 'the lines' is ['call line'].
     'gen join lines' of indent and nested and 'the lines'.
 
@@ -202,20 +224,31 @@ To 'gen leaf treating print' with a text called indent and a boolean called nest
     'gen join lines' of indent and nested and 'the lines'.
 
 To 'gen leaf treating grid' with a text called indent and a boolean called nested.
+    a boolean called 'a callee is available' is 'gen manifest pick a numeric function from' of 2.
+    If 'a callee is available' is false then,
+        'gen leaf treating print' of indent and nested,
+        Return a boolean, false.
+    a text called 'the callee' is 'gen function written' of gen_pick_function.
+    a number called 'the arity' is element gen_pick_function of gen_function_arity.
     a number called 'first match' is 'rng below' of 100.
     a number called 'first replacement' is 'rng below' of 100.
-    a number called 'second match' is 'rng below' of 5 add 1.
-    a number called 'second replacement' is 'rng below' of 100.
     a number called 'elem one' is 'rng below' of 100.
     a number called 'elem two' is 'rng below' of 100.
-    a number called 'range start' is 'rng below' of 5 add 1.
-    a number called 'range spread' is 'rng below' of 4.
-    a number called 'range end' is 'range start' add 'range spread'.
     Set gen_grid to gen_grid add 1.
     a number called 'first loop name' is gen_grid.
-    Set gen_grid to gen_grid add 1.
-    a number called 'second loop name' is gen_grid.
-    a text called line is "f3 of each e{'first loop name'} from [{'elem one'}, {'elem two'}] treating {'first match'} as {'first replacement'} and each e{'second loop name'} from {'range start'} to {'range end'} treating {'second match'} as {'second replacement'}".
+    a text called clauses is "each e{'first loop name'} from [{'elem one'}, {'elem two'}] treating {'first match'} as {'first replacement'}".
+    a number called 'the clause' is 1.
+    While 'the clause' is less than 'the arity',
+        Set gen_grid to gen_grid add 1,
+        a number called 'the loop name' is gen_grid,
+        a number called 'range start' is 'rng below' of 5 add 1,
+        a number called 'range spread' is 'rng below' of 4,
+        a number called 'range end' is 'range start' add 'range spread',
+        a number called 'the match' is 'rng below' of 5 add 1,
+        a number called 'the replacement' is 'rng below' of 100,
+        Set clauses to "{clauses} and each e{'the loop name'} from {'range start'} to {'range end'} treating {'the match'} as {'the replacement'}",
+        Set 'the clause' to 'the clause' add 1.
+    a text called line is "{'the callee'} of {clauses}".
     a list called 'the lines' is [line].
     'gen join lines' of indent and nested and 'the lines'.
 
@@ -512,12 +545,19 @@ To 'gen emit prelude grid sinks'.
      definition is top-level and legal by construction and the deep-grid
      leaf calls a sink that exists. Depth variety now lives ACROSS seeds
      instead of inside one program's dead code.)
-    a text called 'the parameter list' is "a number called p1".
-    a text called sum is "p1".
+    (Name and parameter names come off the manifest like any other
+     function's, so `'grid sink 12'`, `p1..pN` and `gtotal` - which the
+     invariant report found in 70% of programs - are gone with the rest
+     of the template.)
+    a text called 'the first parameter' is element 1 of gen_grid_sink_params.
+    a text called 'the parameter list' is "a number called {'the first parameter'}".
+    a text called sum is 'the first parameter'.
     a number called i is 2.
     While i is less than gen_grid_depth add 1,
-        Set 'the parameter list' to "{'the parameter list'} and a number called p{i}",
-        Set sum to "{sum} add p{i}",
+        a text called 'the parameter' is element i of gen_grid_sink_params,
+        Set 'the parameter list' to "{'the parameter list'} and a number called {'the parameter'}",
+        Set sum to "{sum} add {'the parameter'}",
         Set i to i add 1.
-    a text called 'the definition' is "To 'grid sink {gen_grid_depth}' with {'the parameter list'}.\n    a number called gtotal is {sum}.\n    Print gtotal.\n\n".
+    a text called 'the introducer' is 'gen parameter introducer'.
+    a text called 'the definition' is "To {gen_grid_sink_name} {'the introducer'} {'the parameter list'}.\n    a number called {gen_grid_sink_local} is {sum}.\n    Print {gen_grid_sink_local}.\n\n".
     'gen emit' of 'the definition'.

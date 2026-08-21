@@ -1,5 +1,6 @@
 see "../src/rng.vox".
 see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
 see "../src/gen_core.vox".
 see "../src/gen_buffers.vox".
 see "../src/gen_files.vox".
@@ -27,10 +28,15 @@ see "../src/gen_misc.vox".
  join lines' can render a line and they are not interchangeable - the
  nested rendering is the one the bug above only showed up in.
 
- The name allocator is exercised on its own at the end: thirty words,
- never twice in one program, and a suffix only once they run out.)
+ The name allocator is exercised on its own at the end: the whole
+ vocabulary, never twice in one program, and a suffix only once the
+ words run out.)
 
-Set gen_flags to 1.
+(The buffer leaves that write a file interpolate the scratch flag's
+ name, which a live program gets from its manifest. This test drives the
+ leaves directly rather than through 'gen program', so it names one
+ itself.)
+Set gen_scratch_flag to "'the workspace'".
 Set gen_does_file_io to true.
 
 Print "--- BUF-01, BUF-05: declaration forms and exact capacity ---".
@@ -102,7 +108,7 @@ Print "emits a file open: {'gen text contains' of \"open a file\"}".
 Print "emits a property assertion instead: {'gen text contains' of \"ASSERT BUF-1\"}".
 Set gen_does_file_io to true.
 
-Print "--- names: thirty words, no repeats, suffix only after that ---".
+Print "--- names: the whole vocabulary, no repeats, suffix only after that ---".
 'rng seed' of 8.
 'gen buffer names reset'.
 a number called 'the names taken' is 0.

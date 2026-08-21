@@ -1,150 +1,130 @@
 --- seed 42 ---
-To 'read flags 1'.
-    a text called fl1local is fl1label.
-    a number called fl1bumped is fl1count add 1.
-    Print fl1local.
-    Print fl1bumped.
-    Print fl1on.
+a number called v1 is 0.
+A thing called bearing has
+    a function called 'staked out',
+    a function called 'walked home',
+    a float called 'the paces walked' is 50961896.827292947010705,
+    a number called 'the arc' is 000043,
+    a number called 'the spread' is -00165,
+    a time called reach.
 
-a flag called fl1label is "-a" or "--alpha1", it is a text.
-a flag called fl1count is "-b" or "--beta1", it is a number.
-a flag called fl1on is "-c" or "--gamma1", it is a boolean.
-a flag called fl1scratch is "-s" or "--scratch1", it is a text.
+A thing called 'the measurement' has
+    a number called fall is 90.
+
+A thing called measurement has
+    a time called 'the bearing in degrees',
+    a number called 'the sweep',
+    a time called 'the delta',
+    a boolean called span is false,
+    a function called reversed,
+    a function called 'placed at'.
+
+To do the bearing's 'staked out', with a number called stretch.
+    a bearing called 'the quick dollop'.
+    Set 'the quick dollop's 'the arc' to stretch.
+    Return a bearing, 'the quick dollop'.
+
+To do the bearing's 'walked home', with a bearing called residue.
+    a bearing called 'the brief trimming'.
+    Set 'the brief trimming's 'the spread' to 0 subtract residue's 'the spread'.
+    Return a bearing, 'the brief trimming'.
+
+To do the measurement's reversed, with a measurement called snippet.
+    a measurement called 'the running estimate'.
+    Set 'the running estimate's 'the sweep' to 0 subtract snippet's 'the sweep'.
+    Return a measurement, 'the running estimate'.
+
+To do the measurement's 'placed at', with a number called gulp.
+    a measurement called 'the bare speck'.
+    Set 'the bare speck's 'the sweep' to gulp.
+    Return a measurement, 'the bare speck'.
+
+a flag called layby is "-h" or "--layby", it is a text with default "milestone".
+a number called v2 is 623.
+a flag called 'the caption' is "-s" or "--the-caption", it is a boolean.
+a flag called legend is "-d" or "--legend", it is a number with default 4652983.
+a number called v3 is 956745618323212169.
 Parse flags.
 
-If fl1label is not "v36333" then, Exit 91.
-If fl1count is not 1266 then, Exit 92.
-If fl1on then, Exit 94.
+If legend is not 48185078967 then, Exit 92.
+If 'the caption' is false then, Exit 93.
 
-a number called v1 is 69414907254369.
-A thing called t1 has
-    a number called x1 is 0,
-    a number called x2 is 0.
+To 'the joint holding' of a text called 'the last gain' and a number called offcut.
+    Print " {'the last gain'}".
 
-A thing called t2 has
-    a number called x1 is 0,
-    a number called x2 is 0.
+To 'the closing entry'.
+    a number called 'the first share' is 000001.
+    Return a number, 'the first share'.
 
-A thing called t3 has
-    a t1 called g1,
-    a t2 called g2.
+To 'run the numbers' with a text called morsel and a number called 'the upper ration'.
+    Print " {morsel}".
+    a number called dose is 'the upper ration'.
+    Return a number, dose.
 
-A thing called t4 has
-    a function called 'made at',
-    a function called 'reflected across',
-    a number called x1 is 0.
+To 'the net weight' with a number called 'the trailing load' and a number called splash.
+    a number called 'the outgoing spell' is 'the trailing load' add splash.
+    Return a number, 'the outgoing spell'.
 
-To do the t4's 'made at', with a number called x1.
-    a t4 called plotted.
-    Set plotted's x1 to x1.
-    Return a t4, plotted.
+To 'the standing order'.
+    a number called haul is -3.
+    Return a number, haul.
 
-To do the t4's 'reflected across', with a t4 called original.
-    a t4 called mirrored.
-    Set mirrored's x1 to 0 subtract original's x1.
-    Return a t4, mirrored.
+To 'square away' with a number called smidgen and a number called 'the neat handful' and a number called crumb and a number called 'the tidy nugget' and a number called 'the third allowance' and a number called quota and a number called 'the inner wedge' and a number called lot and a number called 'the closing pinch' and a number called stint and a number called 'the full stretch' and a number called crop and a number called 'the short residue'.
+    a number called scrap is smidgen add 'the neat handful' add crumb add 'the tidy nugget' add 'the third allowance' add quota add 'the inner wedge' add lot add 'the closing pinch' add stint add 'the full stretch' add crop add 'the short residue'.
+    Print scrap.
 
-To f1.
-    Return a number, 000009179.
-
-To f2 with a number called p1.
-    a number called r is p1 add -07.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To f4 with a text called p1.
-    Print "f4 {p1}".
-
-a float called d1 is 9223372036854775807.5.
-a float called d2 is 5.1.
-a float called d3 is d1 multiply d2.
-Print d3.
-a float called d4 is d1 divide d2.
-Print d4.
-a float called d5 is d1 add v1.
-Print d5.
-a text called 'the dispatch note path' is "{fl1scratch}/buffer1".
-open a file for writing called 'the dispatch note being written' at 'the dispatch note path'.
-Write "4xe3s9ercxq70lizohqjk16rctq3052vc96jw1ir4hars967g96341encdurwtyzwxe301af8h2b4lajgt2jw5674dy7khm70lu3gtmrodyvwlmjklirkpqj4t" to 'the dispatch note being written'.
-Close 'the dispatch note being written'.
-open a file for reading called 'the dispatch note being read' at 'the dispatch note path'.
-a buffer called 'the dispatch note' is 54 bytes.
-a boolean called 'the dispatch note was truncated' is false.
-Read from 'the dispatch note being read' into 'the dispatch note'.
-On error Set 'the dispatch note was truncated' to true.
-Close 'the dispatch note being read'.
-If 'the dispatch note's size is not 54 then, Print "ASSERT BUF-07: expected 54 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
-If 'the dispatch note's size is not 'the dispatch note's capacity then, Print "ASSERT BUF-07: expected {'the dispatch note's capacity} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
-Print 'the dispatch note's size.
-Set v1 to v1.
-a text called 'the workshop' is environment's "XDG_RUNTIME_DIR".
-a buffer called 'the workshop in bytes' is 'the workshop'.
-a value called 'the headcount' is environment's "XDG_RUNTIME_DIR".
-If 'the headcount' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
-a value called 'the lodging' is environment's "XDG_RUNTIME_DIR".
-If 'the lodging' is not 'the workshop' then, Print "ASSERT ENV-06: expected the text got a different value", Exit 95. Print 'the workshop in bytes''s empty.
-Print 'the workshop in bytes''s size.
-a number called u1 is 0.
-While u1 is less than 6, Print u1, If u1 is equal to 2 then, Break. Increment u1.
-Print u1.
-For each number from 1 to 2, Print number, If number is equal to 5 then, Continue. Print "x".
-If v1 is greater than v1 then,
-  Set v1 to v1 minus v1.
-Set v1 to v1 multiply v1.
-a text called fp1 is "{fl1scratch}/out1".
-open a file for writing called fw1 at fp1.
-Write "payload 1417\n" to fw1.
-Close fw1.
-open a file for reading called fr1 at fp1.
-a buffer called fb1 is 50 bytes in size.
-Read from fr1 into fb1.
-Print fb1's size.
-Print fr1's readable.
-Close fr1.
-a number called gn2 is 2147483648.
-a buffer called gw2 is 192 bytes in size.
-copy "hello2" to gw2.
-a text called gt2 is "{gw2}".
-a text called gu2 is "/bin/{gt2}-{gn2:020}".
-Print gt2.
-Print gu2.
-a buffer called gb2 is "{gt2}|{gn2}".
-Print gb2.
-a buffer called gc2 is 192 bytes in size.
-set gc2 to "set {gn2:020}".
-append " {gt2}" to gc2.
-Print gc2.
-f4 of "{gt2}/{gn2}".
-a list called gl2 is [].
-append "{gn2:020}" to gl2.
-Print element 1 of gl2.
-a map called gm2 is {"label": "tag2"}.
-Set gm2's "label" to "{gt2}-{gn2}".
-Print gm2's "label".
-a value called gv2 is "{gn2:020}".
-Print gv2.
-open a file for writing called gh2 at "/dev/stdout".
-Write "fmt2 {gt2} {gn2}\n" to gh2.
-Close gh2.
-a map called m1 is {"label": "tag1", "count": 606}.
+Print layby.
+Print 'the caption'.
+Print legend.
+'square away' of each q1s1 from 8 to 8 and each q1s2 from 0 to 1 and each q1s3 from 7 to 7 and each q1s4 from 0 to 1 and each q1s5 from 4 to 4 and each q1s6 from 1 to 2 and each q1s7 from 7 to 7 and each q1s8 from 5 to 5 and each q1s9 from 3 to 3 and each q1s10 from 7 to 7 and each q1s11 from 8 to 8 and each q1s12 from 2 to 2 and each q1s13 from 7 to 7.
+Set v2 to v2.
+a list called l1 is [49, 30].
+append 39 to l1.
+Print element 1 of l1.
+a buffer called 'the manifest' is 88605 bytes in size.
+If 'the manifest's empty is false then, Print "ASSERT BUF-12: expected 1 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
+Print v3 add v1.
+append "i7g1mfshazc5mb45mvwd23sxmrghmj4ter4167" to 'the manifest'.
+If 'the manifest's size is not 38 then, Print "ASSERT BUF-10: expected 38 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
+If 'the manifest's capacity is not 88605 then, Print "ASSERT BUF-10: expected 88605 got {'the manifest's capacity}", Exit 95. Print 'the manifest's capacity.
+If 'the manifest's length is not 38 then, Print "ASSERT BUF-11: expected 38 got {'the manifest's length}", Exit 95. Print 'the manifest's length.
+If 'the manifest's length is not 'the manifest's size then, Print "ASSERT BUF-11: expected {'the manifest's size} got {'the manifest's length}", Exit 95. Print 'the manifest's length.
+If 'the manifest's empty then, Print "ASSERT BUF-12: expected 0 got {'the manifest's empty}", Exit 95. Print 'the manifest's empty.
+Print 'the manifest's length.
+a map called m1 is {"label": "tag1", "count": 126}.
 Print m1's "label".
-Set m1's "count" to 903.
+Set m1's "count" to 31.
 Print m1's "count".
 Print m1's length.
 For each k1 in m1's keys, Print k1.
-a buffer called 'loading bay'.
-a number called 'loading bay appends made' is 0.
-a boolean called 'loading bay overflowed' is false.
-a boolean called 'loading bay found an error already pending' is false.
-On error Set 'loading bay found an error already pending' to true.
-While 'loading bay appends made' is less than 145, append "45ynolizw1uzg1qvwdavghyfgh6f0duj85e7wtu3g1ezs56bs9q" to 'loading bay', On error Set 'loading bay overflowed' to true. Set 'loading bay appends made' to 'loading bay appends made' add 1.
-If 'loading bay's size is not 7395 then, Print "ASSERT BUF-03: expected 7395 got {'loading bay's size}", Exit 95. Print 'loading bay's size.
-If 'loading bay overflowed' then, Print "ASSERT BUF-03: expected 0 got {'loading bay overflowed'}", Exit 95. Print 'loading bay overflowed'.
-Print 'loading bay's size.
-'read flags 1'.
-Exit 33.
+Set v3 to v3 multiply v2.
+Set v2 to v2 add v2.
+Set v3 to v3 times v3.
+a text called s1 is "word1".
+a text called s2 is "{s1}-{s1}".
+Print s2.
+a number called xn3 is 182.
+a number called xy3 is 22.
+Print "sum {xn3 add xy3}".
+Print "product {xn3 multiply xy3}".
+Print "chain {xn3 multiply xy3 modulo 3:02x}".
+Print "deep {v2 minus v3 times v1 add v3 multiply v1 add v1:3}".
+Print "arguments {arguments's count}".
+a text called xt3 is "held {xn3 add xy3} {xn3 multiply xy3 modulo 3:02x}".
+Print xt3.
+a measurement called i1.
+Set i1's 'the sweep' to 0007.
+Print i1.
+a text called fp4 is "{layby}/out4".
+open a file for writing called fw4 at fp4.
+Write "payload 70667\n" to fw4.
+Close fw4.
+open a file for reading called fr4 at fp4.
+a buffer called fb4 is 12 bytes in size.
+Read from fr4 into fb4.
+Print fb4's size.
+Print fr4's readable.
+Close fr4.
+Quit 251.
 
 reproducible: 1
