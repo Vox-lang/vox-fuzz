@@ -58,95 +58,63 @@ To f3 with a number called p1 and a number called p2.
 To f4 with a text called p1.
     Print "f4 {p1}".
 
-a buffer called b1 is 45 bytes in size.
-Print byte 224 of b1.
-On error print "buffer read out of range".
-a number called env1count is environment's count.
-Print env1count as a boolean.
-Print environment's empty.
-a buffer called env1pathbuf is environment's "PATH".
-Print env1pathbuf's empty.
-f3 of each e1 from [69, 38] treating 45 as 70 and each e2 from 5 to 5 treating 3 as 56.
-a value called y1 is 926.
-Print y1.
-Set y1 to "reassigned1".
-Print y1.
-a map called m1 is {"label": "tag1", "count": 988}.
-Print m1's "missing".
-On error print "map key missing".
-a number called env2count is environment's count.
-Print env2count as a boolean.
-Print environment's empty.
-a buffer called env2pathbuf is environment's "PATH".
-Print env2pathbuf's empty.
-a number called zn1 is 9223372036854775807.
-a number called zk1 is 73.
-a float called zd1 is 2630783478.181.
-a text called zs1 is "word1".
-a boolean called zb1 is true.
-a t1 called zi1.
-Set zi1's x1 to 8098.
-Print "{zn1}".
-Print "{zn1:11}".
-Print "{zn1:020}".
-Print "{zn1:x}".
-Print "{zn1:X}".
-Print "{zk1:b}".
-Print "{zk1:o}".
-Print "{zn1:08x}".
-Print "{zd1:.5}".
-Print "{zd1:11.5}".
-Print "{zs1:1}".
-Print "{zb1:020}".
-Print "{zi1's x1:08x}".
-For each number from 1 to 6, Print number, If number is equal to 9 then, Break. Print "x".
-a buffer called b2 is 52 bytes in size.
-Print byte 182 of b2.
-On error print "buffer read out of range".
-a t3 called i1.
-Set i1's g1's x1 to 176.
-Print i1's g1's x1.
-Print i1.
-a number called hn2 is 1303.
-a float called hd2 is 2476703438.12323436501.
-a text called hs2 is "word2".
-a buffer called hw2 is 64 bytes in size.
-copy "buf2" to hw2.
-a boolean called hb2 is true.
-a list called hl2 is [27985, 705].
-a map called hm2 is {"label": "tag2", "count": 705}.
-a value called hv2 is 358.
-a t1 called hi2.
-Set hi2's x1 to 27985.
-Print "number {hn2:010x}".
-Print "float {hd2:.3}".
-Print "text {hs2}".
-Print "buffer {hw2}".
-Print "boolean {hb2}".
-Print "list {hl2}".
-Print "map {hm2}".
-Print "value {hv2:010x}".
-Print "field {hi2's x1:010x}".
-Print "all {hn2:010x}|{hd2:.3}|{hs2}|{hw2}|{hb2}|{hl2}|{hm2}|{hv2:010x}|{hi2's x1:010x}".
-Print "braces {{lit}} tab\there {hn2:010x}".
-Get current time into hq2.
-a text called ht2 is "{hq2's hour:02}".
-a buffer called hc2 is "{ht2}".
-If hc2's length is equal to 2 then, Print "ht2 ok". Otherwise, Print "ht2 BAD".
-a number called u1 is 0.
-While u1 is less than 1, Increment u1.
-Print u1.
-a text called fp3 is "{fl1scratch}/out3".
-open a file for writing called fw3 at fp3.
-Write "payload 46153\n" to fw3.
-Close fw3.
-open a file for reading called fr3 at fp3.
-a buffer called fb3 is 58 bytes in size.
-Read from fr3 into fb3.
-Print fb3's size.
-Print fr3's readable.
-Close fr3.
+Set v1 to v1 times v1.
+Print fl1label.
+Print fl1count.
+Print fl1on.
 'read flags 1'.
-Exit 3.
+a number called xn1 is 408.
+a number called xy1 is 16.
+Print "sum {xn1 add xy1}".
+Print "product {xn1 multiply xy1}".
+Print "chain {xn1 multiply xy1 modulo 6:06x}".
+Print "deep {v1 minus 4 divide 3 divide v1 add v1 multiply v1:15}".
+Print "arguments {arguments's count}".
+a text called xt1 is "held {xn1 add xy1} {xn1 multiply xy1 modulo 6:06x}".
+Print xt1.
+a number called u1 is 0.
+While u1 is less than 3, Increment u1.
+Print u1.
+a text called s2 is "word2".
+a text called s3 is "{s2}-{s2}".
+Print s3.
+a number called c1 is 30.
+Print f2 of c1.
+Set v1 to v1 times v1.
+Print {v1 add v1} multiply v1 modulo 2.
+Set v1 to v1 minus v1.
+a text called fp4 is "{fl1scratch}/out4".
+open a file for writing called fw4 at fp4.
+Write "payload 78135\n" to fw4.
+Close fw4.
+open a file for reading called fr4 at fp4.
+a buffer called fb4 is 20 bytes in size.
+Read from fr4 into fb4.
+Print fb4's size.
+Print fr4's readable.
+Close fr4.
+a number called zn5 is 0.
+a number called zk5 is 108.
+a float called zd5 is 7147670343872.82.
+a text called zs5 is "word5".
+a boolean called zb5 is true.
+a t1 called zi5.
+Set zi5's x1 to 50875.
+Print "{zn5}".
+Print "{zn5:4}".
+Print "{zn5:017}".
+Print "{zn5:x}".
+Print "{zn5:X}".
+Print "{zk5:b}".
+Print "{zk5:o}".
+Print "{zn5:013x}".
+Print "{zd5:.0}".
+Print "{zd5:4.0}".
+Print "{zs5:2}".
+Print "{zb5:017}".
+Print "{zi5's x1:013x}".
+a number called c2 is 58.
+Print f2 of c2.
+Exit 247.
 
 reproducible: 1

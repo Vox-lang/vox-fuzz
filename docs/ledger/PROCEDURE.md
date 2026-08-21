@@ -231,6 +231,64 @@ in a brief generated from `briefs/build-leaves.md`. The worker:
 - does not commit when the signing key is away; reports what it could
   **not** do rather than narrowing the scope silently.
 
+### 6a. Lessons from building a batch by hand (master, environment batch A, 2026-08-21)
+
+The master built one batch under its own brief, as a worker, to feel
+where the procedure bites. These are the places it bit; each is now a
+rule, so the next worker does not pay for it twice.
+
+- **When the generator does not control the input, assert agreement.**
+  A program cannot know what `environment's "HOME"` holds, but it can
+  know that two readings of one value agree: the same property read
+  into a `text` and into a `buffer` must have the same size and
+  emptiness, `count` cannot say "none" while `empty` says "some", a
+  predicate read twice cannot flip. Agreement between the receiving
+  types the manual allows is a real oracle, and it is exactly the one
+  that finds a copy path that lies (environment D1 was found by this
+  assertion from the manual alone, before the discrepancy was read).
+- **A `text` has no size property.** `'s size`/`'s length` are for
+  buffers, lists, maps and files. To measure a text, declare a buffer
+  from it (`a buffer called 'the copy' is 'the text'`) and read the
+  buffer's `size`. Budget for the extra declaration in every assertion
+  that compares text values.
+- **One period closes one level — never nest an `If` inside an `If` on a
+  single leaf line.** `If a then, If b then, X.` leaves the outer `If`
+  open and swallows everything after it; in a generator function it
+  turns a loop into a hang (it did). Write flat conditions with `and`,
+  one `If` per line, each closed by its own period and followed by a
+  plain statement that takes the join's punctuation — the shape
+  `gen_buffers.vox`'s `gen assert number` uses.
+- **A boolean cannot be declared from a comparison.** `a boolean called
+  x is n is 0.` does not parse. Declare it `false` and set it in an
+  `If`, or put the comparison in the `If` that uses it.
+- **Assertion helpers and name allocators are generic — reuse, do not
+  copy.** `gen assert number` / `… matches` / `… true` / `… false` and
+  the word-vocabulary allocator in `gen_buffers.vox` are plain text
+  helpers despite their names; call them from any surface. (Moving them
+  into `gen_core.vox` under surface-neutral names is owed.)
+- **Register through the surface's existing kind where one exists.** If
+  the surface already has a drawn kind (environment had 22 and 27), make
+  that kind a dispatcher over the new leaves instead of touching the
+  band/remap machinery in `gen statement` — the closer-safe leaves
+  behind the closer-safe kind, the loop/handler-bearing ones behind the
+  top-level-only kind. New kinds are for new surfaces.
+- **Loops inside a leaf are one line, top level only.** A `For each`/
+  `While` split across lines takes a period from `gen join lines` on its
+  first line and closes with an empty body. One line, internal period
+  closing only the inner clause, and the leaf goes behind a
+  top-level-only kind.
+- **Measure sameness on `--layout plain`.** `scripts/invariants` compares
+  raw lines and the layout randomiser hides sameness from it; a campaign
+  run for the invariant report uses `--layout plain`.
+- **Never print a raw host value.** Environment contents, paths, argv
+  beyond what the generator chose: print sizes, `empty`, `as a boolean`.
+  A raw value printed once landed in a checked-in fixture.
+- **Probe the exact line shape you will render, not the idea of it.**
+  The probe that pays is the one-line rendering with its comma/period
+  punctuation, run under both `gen join lines` modes — the hang above
+  and the period-count slip (`add 1..` rendered as `add 1...`) both
+  passed the "idea" probe and failed the rendered one.
+
 ## 7. Campaign, invariant report, and ticking rows
 
 After a batch lands on a branch, the master (not the worker):

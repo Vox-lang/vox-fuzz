@@ -542,7 +542,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 21 then,
         'gen leaf butif append' of indent and nested.
     If kind is 22 then,
-        'gen leaf environment inrange' of indent and nested.
+        'gen leaf environment' of indent and nested.
     If kind is 23 then,
         'gen leaf arguments inrange' of indent and nested.
     If kind is 24 then,
@@ -552,7 +552,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     If kind is 26 then,
         'gen leaf treating grid' of indent and nested.
     If kind is 27 then,
-        'gen leaf environment oob' of indent and nested.
+        'gen leaf environment with a loop or handler' of indent and nested.
     If kind is 28 then,
         'gen leaf rich condition' of indent and nested.
     If kind is 29 then,
@@ -592,6 +592,22 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf stdin read' of indent and nested.
     If kind is 44 then,
         'gen leaf file round trip' of indent and nested.
+    (The ledger's buffer leaves, in the 100-119 span the reservation
+     above set aside for this surface. They sit outside the contiguous
+     draw on purpose - see 'gen statement', which widens each depth's
+     draw and maps its tail onto this span - so a worker extending a
+     different surface can claim its own span without renumbering
+     anything here.)
+    If kind is 100 then,
+        'gen leaf buffer declaration' of indent and nested.
+    If kind is 101 then,
+        'gen leaf buffer properties' of indent and nested.
+    If kind is 102 then,
+        'gen leaf buffer fullness' of indent and nested.
+    If kind is 103 then,
+        'gen leaf buffer growth' of indent and nested.
+    If kind is 104 then,
+        'gen leaf buffer truncation' of indent and nested.
     (The values band, 140-147, reserved above for the collections
      surface. They are drawn only at depth 3 - see the section header in
      src/gen_collections.vox for why a leaf that both defines a function
@@ -650,7 +666,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
  once, so it is held out of this pool too - see its own comment.)
 
 To 'gen any leaf' with a text called indent and a boolean called nested.
-    a number called pick is 'rng below' of 16.
+    a number called pick is 'rng below' of 19.
     a number called kind is 0.
     If pick is 0 then,
         Set kind to 0.
@@ -684,6 +700,19 @@ To 'gen any leaf' with a text called indent and a boolean called nested.
         Set kind to 23.
     If pick is 15 then,
         Set kind to 24.
+    (The three ledger buffer leaves that are safe here. Each ends on a
+     plain `Print`, which is what note 6b requires of a block's closer;
+     their assertion lines close their own If and then end on a plain
+     Print for the same reason (see 'gen assert number' for what goes
+     wrong when they do not). 103 and 104 are absent for a different
+     reason: one carries a While and both carry an On error, neither of
+     which can close a block.)
+    If pick is 16 then,
+        Set kind to 100.
+    If pick is 17 then,
+        Set kind to 101.
+    If pick is 18 then,
+        Set kind to 102.
     'gen dispatch leaf' of kind and indent and nested.
 
 (A block's body always ends with a plain leaf statement (note 6b): the
@@ -730,7 +759,11 @@ To 'gen body' with a number called depth and a text called indent.
  self-closing top-level sentence, which nested positions are not); depth
  0 drops loop/if and every T3 addition too, leaves 0-15 only (nesting
  budget exhausted - kept to the pre-T3 range rather than widened, since
- the deepest level is the lowest-value place to add more surface).
+ the deepest level is the lowest-value place to add more surface). The
+ ledger's buffer leaves 100-102 are the one later addition every depth
+ reaches, including 0: they are plain declarations, appends and reads,
+ so the argument for holding them out of the deepest level would have to
+ be about nesting budget, and nothing about them consumes any.
 
  31-38 and 39-42 join 29-30 in the top-level-only band, since depth 2/1
  stop at 28 and depth 0 at 15. 39-42 are the format-string leaves
@@ -747,26 +780,50 @@ To 'gen body' with a number called depth and a text called indent.
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
     If depth is equal to 3 then,
-        (0..42: the four format leaves are 39-42. The file-write leaf
+        (0..44: the four format leaves are 39-42. The file-write leaf
          is parked at 99, outside the draw, so no number in this range
-         dispatches to nothing.
-         45..52 are drawn as one contiguous span with the rest and then
+         dispatches to nothing. 45..49 are the five reserved-span
+         buffer leaves, remapped to 100..104 just below.
+         50..57 are drawn as one contiguous span with the rest and then
          shifted into the collections surface's reserved 140-147 band -
          the eight `value` leaves. The shift keeps a single flat draw
-         (so the existing kinds' odds move by exactly the eight new
-         ones' share, and no seed's leaf choice depends on where the
-         band happens to sit) while leaving the band numbers themselves
+         (so the existing kinds' odds move by exactly the new ones'
+         share, and no seed's leaf choice depends on where a band
+         happens to sit) while leaving the band numbers themselves
          where the reservation table put them, out of the way of the
          other surfaces' parallel work.)
-        Set kind to 'rng below' of 53.
-        If kind is greater than 44 then,
-            Set kind to kind add 95.
+        Set kind to 'rng below' of 58.
+        If kind is greater than 49 then,
+            Set kind to kind add 90.
     If depth is equal to 2 then,
-        Set kind to 'rng below' of 29.
+        Set kind to 'rng below' of 32.
     If depth is equal to 1 then,
-        Set kind to 'rng below' of 29.
+        Set kind to 'rng below' of 32.
     If depth is equal to 0 then,
-        Set kind to 'rng below' of 16.
+        Set kind to 'rng below' of 19.
+    (The reserved-span remap. A leaf numbered in its surface's own span
+     (the reservation note above 'gen dispatch leaf') cannot be drawn
+     directly, because the draw has to stay one contiguous 'rng below'
+     per depth. So each depth's draw is widened by exactly the number of
+     span leaves reachable there and its tail is folded onto the span -
+     which keeps the reservation's promise (no renumbering, ever) without
+     giving up the flat, single-draw distribution.
+
+     Deeper positions get fewer of them, on the same rule the pre-existing
+     bands follow: 103 (a While) and 104 (an On error, plus real file I/O)
+     are top-level-only, exactly like 'gen leaf while' and 'gen leaf file
+     round trip', so only depth 3 reaches past 102. The upper bound below
+     (kind less than 50) keeps this remap off the value band, which has
+     already been shifted to 140-147 by the time this runs - without it
+     a value kind would be greater than 44 twice over and land past 147.)
+    If depth is equal to 3 and kind is greater than 44 and kind is less than 50 then,
+        Set kind to kind add 55.
+    If depth is equal to 2 and kind is greater than 28 then,
+        Set kind to kind add 71.
+    If depth is equal to 1 and kind is greater than 28 then,
+        Set kind to kind add 71.
+    If depth is equal to 0 and kind is greater than 15 then,
+        Set kind to kind add 84.
     (kind 18 (new-var) is only in the depth-2/1 range's span because 29
      needs a single contiguous rng_below upper bound to cover 20-28 too;
      depth 3's own draw is what makes 18 meaningful, so a depth-2/1 hit
@@ -867,6 +924,16 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          carried over from the format-coverage branch's own remap.)
         If kind is 42 then,
             Set 'safe kind' to 1.
+        (103 carries a While and 104 an On error, so neither may be the
+         statement that closes a block. Defensive rather than
+         load-bearing, like the entries above 42: avoid_onerror is only
+         true below 'gen body', which recurses at depth 2 or lower, and
+         neither kind is drawable there. Written anyway so the guarantee
+         does not have to hold forever for this remap to stay correct.)
+        If kind is 103 then,
+            Set 'safe kind' to 100.
+        If kind is 104 then,
+            Set 'safe kind' to 101..
         (140-147, the `value` leaves. Defensive in the same sense as the
          entries above: avoid_onerror is only ever true below 'gen body',
          which recurses at depth 2 or lower, and the band is drawn at
@@ -1026,6 +1093,7 @@ To 'gen program' with a number called seed and a number called budget.
     clear gen_out.
     Set gen_vars to 0.
     Set gen_bufs to 0.
+    'gen buffer names reset'.
     Set gen_lists to 0.
     Set gen_instances to 0.
     Set gen_args to 0.
@@ -1037,6 +1105,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_whiles to 0.
     Set gen_repeats to 0.
     Set gen_envs to 0.
+    'gen environment names reset'.
     Set gen_flags to 0.
     'rng seed' of seed.
     (The value leaves spend names out of a vocabulary on a per-program
@@ -1106,17 +1175,27 @@ To 'gen program' with a number called seed and a number called budget.
     If gen_uses_flag_reader and gen_reader_calls is 0 then,
         a text called 'the forced reader call' is "'read flags {gen_flags}'.\n",
         'gen emit' of 'the forced reader call'.
-    (91-94 are RESERVED for the argv assertions and must never be drawn
-     as an ordinary exit code, or a program that passed its assertions
-     could exit 92 by chance and be reported as having failed one. The
-     draw skips the reserved band rather than rejecting and redrawing,
-     so the distribution stays flat and deterministic.
-     256 - 4 = 252 possible codes, and anything at or above 91 is
-     shifted up by four.)
-    a number called 'the raw code' is 'rng below' of 252.
+    (90-99 is RESERVED, whole, for assertions and must never be drawn as
+     an ordinary exit code, or a program that passed every assertion
+     could exit 92 by chance and be reported as having failed one. 91-94
+     are the argv assertions; 95 is the ledger's leaf assertions
+     (docs/ledger/PROCEDURE.md §6, loop_gen.vox's 'the assert line in').
+     The rest of the band is held back with them, which is the rule the
+     procedure states and one fewer edge to get wrong the next time an
+     assertion channel is added.
+
+     The band used to be 91-94 only, so 95 was drawable - which would
+     have made the ledger channel report a passing program as a failed
+     assertion roughly once every 250 programs, indistinguishable from a
+     real compiler wrong-answer finding.
+
+     The draw skips the band rather than rejecting and redrawing, so the
+     distribution stays flat and deterministic: 256 - 10 = 246 possible
+     codes, and anything at or above 90 is shifted up by ten.)
+    a number called 'the raw code' is 'rng below' of 246.
     a number called code is 'the raw code'.
-    If 'the raw code' is greater than 90 then,
-        Set code to 'the raw code' add 4.
+    If 'the raw code' is greater than 89 then,
+        Set code to 'the raw code' add 10.
     a text called tail is "Exit {code}.\n".
     'gen emit' of tail.
     (Last, after every content decision, so the RNG draws it makes cannot
