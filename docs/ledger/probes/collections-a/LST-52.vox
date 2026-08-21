@@ -1,0 +1,16 @@
+(LST-52 — a map value may be a list, another map, a boolean or a decimal,
+ and printing renders the whole tree recursively.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-52.vox -o p && ./p
+ expected output:
+   {"leaf": [1, 2], "branch": {"depth": 2}, "flagged": 1, "ratio": 1.5}
+   [1, 2]
+   {"depth": 2}
+   1
+   1.5
+)
+a map called tree is {"leaf": [1, 2], "branch": {"depth": 2}, "flagged": yes, "ratio": 1.5}.
+print tree.
+print tree's "leaf".
+print tree's "branch".
+print tree's "flagged".
+print tree's "ratio".

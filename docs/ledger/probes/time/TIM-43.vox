@@ -1,0 +1,17 @@
+(TIM-43 - the named-parts variant of the same example, verbatim from
+ LANGUAGE.md:4290-4296: each zero-padded property is stored in a text
+ first, then the three texts are combined in one more format string.
+ Note the blank line at LANGUAGE.md:4294 is inside the example and closes
+ nothing here, since all four statements are at top level.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-43.vox -o p && ./p
+ expected output:
+   (clock-dependent output; recorded as an exit-code probe. exit 0. One real run:)
+   04:13:42
+)
+Get current time into now.
+a text called h is "{now's hour:02}".
+a text called m is "{now's minute:02}".
+a text called s is "{now's second:02}".
+
+Print "{h}:{m}:{s}".
+(Prints: 09:05:03)

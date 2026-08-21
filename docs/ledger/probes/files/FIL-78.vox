@@ -1,0 +1,33 @@
+(FIL-78: all three documented catchable error classes are catchable: out-of-bounds list access, out-of-bounds buffer access, fixed buffer overflow, and file operation failure.
+ Also covers: FIL-77, FIL-79, FIL-80.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-78.vox -o p && ./p
+ actual output:
+   out-of-bounds list access is catchable
+   out-of-bounds buffer access is catchable
+   fixed buffer overflow is catchable
+   a file operation failure is catchable
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+(1. out-of-bounds list access)
+a list called items is [1, 2, 3].
+a number called 'the out of range item' is element 100 of items.
+On error print "out-of-bounds list access is catchable".
+(2. out-of-bounds buffer access)
+a buffer called small is 8 bytes in size.
+append "ABCD" to small.
+a number called 'the out of range byte' is byte 100 of small.
+On error print "out-of-bounds buffer access is catchable".
+(3. fixed buffer overflow)
+open a file for reading called source at "vf_scratch/files/lines.txt".
+Read from source into small.
+On error print "fixed buffer overflow is catchable".
+Close source.
+(4. file operation failure)
+open a file for reading called missing at "vf_scratch/files/absent.txt".
+On error print "a file operation failure is catchable".

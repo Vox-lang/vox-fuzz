@@ -1,0 +1,25 @@
+(PRC-63 — the two decoder functions the manual gives compile and return
+ the exit code and the terminating signal.
+ Also covers: PRC-62 (the compiler knows nothing about the wait-status
+ encoding; this decodes the raw word with divide, modulo and bit-and, with
+ nothing installed — no `see`, no library).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-63.vox -o p && ./p
+ expected output:
+   exit code 9
+   signal 0
+)
+To 'exit code of' with a number called status.
+  Return a number, status divide 256 modulo 256.
+
+To 'signal of' with a number called status.
+  Return a number, status bit-and 127.
+
+a number called 'the child' is fork the process.
+If 'the child' is 0 then, Exit 9.
+a number called reaped is reap child 'the child'.
+a number called status is the reaped status.
+print "exit code {'exit code of' of status}".
+print "signal {'signal of' of status}".

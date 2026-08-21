@@ -1,0 +1,33 @@
+(THG-09: a data field is `a <type> called <name>` with an optional
+ `is <literal>` default; a field without one takes its type's zero value.
+ Also covers: THG-12 (zero values), THG-15 (number, float, boolean and time
+ are all legal field types).
+ Note the `time` field: it takes 0 with no initialiser, though a `time`
+ VARIABLE must be initialised (LANGUAGE.md:501, 513-516) - see Discrepancy 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-09.vox -o p && ./p
+ expected output:
+   7
+   0
+   1.5
+   0.0
+   1
+   0
+   0
+)
+A thing called gauge has
+  a number called count is 7,
+  a number called 'never set',
+  a float called depth is 1.5,
+  a float called 'no depth',
+  a boolean called ready is true,
+  a boolean called 'not ready',
+  a time called taken.
+
+a gauge called sample.
+Print sample's count.
+Print sample's 'never set'.
+Print sample's depth.
+Print sample's 'no depth'.
+Print sample's ready.
+Print sample's 'not ready'.
+Print sample's taken.

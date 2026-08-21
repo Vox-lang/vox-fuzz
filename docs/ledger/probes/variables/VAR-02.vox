@@ -1,0 +1,23 @@
+(VAR-02: the Declaration-with-Type worked example — all five declarations
+ compile and each name holds the literal it was given. A boolean prints as
+ 1, not as `true`; that is the Input/Output section's business, not this
+ one, and is recorded here only so the next reader does not mistake it for
+ a defect.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-02.vox -o p && ./p
+ expected output:
+   5
+   Alice
+   1
+   [1, 2, 3]
+   {"name": "Alice", "age": 30}
+)
+a number called x is 5.
+a text called name is "Alice".
+a boolean called done is true.
+a list called nums is [1, 2, 3].
+a map called person is {"name": "Alice", "age": 30}.
+Print x.
+Print name.
+Print done.
+Print nums.
+Print person.

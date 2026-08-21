@@ -1,0 +1,12 @@
+(KEY-23 — `Execute` is `execve(2)`: it replaces the process image, so the
+ statement after it never runs and the program's output ends up being the
+ executed program's.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-23.vox -o p && ./p
+ expected output:
+   before execute
+   replaced
+)
+Print "before execute".
+Execute "/bin/echo" with arguments ["replaced"].
+On error print "execve failed".
+Print "after execute".

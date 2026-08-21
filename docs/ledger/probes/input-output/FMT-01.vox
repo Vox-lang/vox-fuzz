@@ -1,0 +1,6 @@
+(FMT-01 — `Print "literal".` writes the literal and a trailing newline.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Hello, World!
+)
+Print "Hello, World!".

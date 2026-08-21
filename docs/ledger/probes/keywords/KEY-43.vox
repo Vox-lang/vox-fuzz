@@ -1,0 +1,11 @@
+(KEY-43 — `and` between argument values at a call site separates them.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-43.vox -o p && ./p
+ expected output:
+   5
+   -5
+)
+To 'difference of' with a number called left and a number called right.
+    Return a number, left subtract right.
+
+Print 'difference of' of 9 and 4.
+Print 'difference of' of 4 and 9.

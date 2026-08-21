@@ -1,0 +1,15 @@
+(KEY-61 — `send` is contextual: a signal verb in `Send signal N to ...`
+ and an ordinary identifier everywhere else, in the same program.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-61.vox -o p && ./p
+ expected output:
+   11
+)
+a number called send is 11.
+Set pid to fork the process.
+If pid is 0 then,
+    Wait 5000 milliseconds,
+    Exit 0.
+Send signal 9 to process pid.
+On error print "signal failed".
+Set reaped to reap child pid.
+Print send.

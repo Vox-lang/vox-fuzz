@@ -1,0 +1,8 @@
+(OPR-03: `subtract` is the subtraction operator (LANGUAGE.md:4553).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-03.vox -o p && ./p
+ expected output:
+   14
+)
+a number called lhs is 20.
+a number called rhs is 6.
+Print lhs subtract rhs.

@@ -1,0 +1,20 @@
+(THG2-06: a whole thing interpolates into a format string under `Print`,
+ because `Print` is the sink that renders the fields. The rendering is the
+ same one `Print p.` produces, so the two lines below agree.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-06.vox -o p && ./p
+ expected output:
+   {start: {x: 0, y: 0}, end: {x: 0, y: 2}}
+   the span runs {start: {x: 0, y: 0}, end: {x: 0, y: 2}} and stops
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+a segment called span.
+Set span's end's y to 2.
+Print span.
+Print "the span runs {span} and stops".

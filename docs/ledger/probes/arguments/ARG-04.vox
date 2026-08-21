@@ -1,0 +1,10 @@
+(ARG-04 — `arguments's first` is the first user argument, argv[1].
+ Also covers: ARG-05 (`second` is argv[2]).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-04.vox -o p && ./p alpha beta gamma
+ Args: alpha beta gamma
+ expected output:
+   alpha
+   beta
+)
+Print arguments's first.
+Print arguments's second.

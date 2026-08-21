@@ -1,0 +1,15 @@
+(TIM-29 - a program may define and call its own zero-argument `start.`
+ function, and `finish.` alongside it, with no timer in the program at all.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-29.vox -o p && ./p
+ expected output:
+   the program's own start ran
+   the program's own finish ran
+)
+To start.
+  print "the program's own start ran".
+
+To finish.
+  print "the program's own finish ran".
+
+start.
+finish.

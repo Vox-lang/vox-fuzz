@@ -1,0 +1,25 @@
+(EXP-96: LANGUAGE.md:2026 - text to number "fails if text is not a valid number
+ and sets the error flag". True only when NOTHING parses. A string with a valid
+ prefix parses that prefix and leaves the flag clear. See Discrepancy 2.
+ `On error` binds to the statement before it, so each handler here sits
+ directly under the cast it is judging.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-96.vox -o p && ./p
+ expected output:
+   fully invalid base 10 set the flag
+   0
+   12
+   empty string set the flag
+   0
+)
+a text called rubbish is "abc".
+a number called 'from rubbish' is rubbish as a number.
+On error Print "fully invalid base 10 set the flag".
+Print 'from rubbish'.
+a text called partial is "12xy".
+a number called 'from partial' is partial as a number.
+On error Print "partial base 10 set the flag".
+Print 'from partial'.
+a text called blank is "".
+a number called 'from blank' is blank as a number.
+On error Print "empty string set the flag".
+Print 'from blank'.

@@ -1,0 +1,15 @@
+(BAS2-02: a range is not allocated as a list - a 1..1,000,000,000 range starts iterating instantly and Break leaves it at 3, which 8 GB of allocated list could not do.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-02.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   the range was never allocated
+)
+(A billion-element range would be 8 GB if it were allocated as a list.
+ It is not: the loop starts immediately and Break leaves it at 3.)
+For each number from 1 to 1000000000,
+  print the number,
+  If number is equal to 3 then, Break.
+
+print "the range was never allocated".

@@ -1,0 +1,20 @@
+(KEY-21 — `Mount` and `Unmount`/`Umount` start the mount statements. Run
+ unprivileged this records the refusal path (the error flag is set and the
+ program continues); the success path needs root. All three spellings
+ compile.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-21.vox -o p && ./p
+ expected output:
+   mount refused
+   unmount refused
+   lazy umount refused
+   still running
+)
+Create a directory called "/tmp/voxfuzz-key-21".
+Mount "tmpfs" at "/tmp/voxfuzz-key-21" with type "tmpfs" with options "size=1m".
+On error print "mount refused".
+Unmount "/tmp/voxfuzz-key-21".
+On error print "unmount refused".
+Umount "/tmp/voxfuzz-key-21" lazily.
+On error print "lazy umount refused".
+Remove the directory called "/tmp/voxfuzz-key-21".
+Print "still running".

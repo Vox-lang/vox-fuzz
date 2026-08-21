@@ -1,0 +1,21 @@
+(Discrepancy 2 repro — `fork` is in the Statement Starters table (4642) and
+ so is claimed to be reserved (4696), but a variable may be declared with
+ that name. Reading it does not read the variable: the fork EXPRESSION wins,
+ so the program silently forks and the value 42 is unreachable. The child
+ exits immediately here; without that Exit the rest of the program would run
+ twice.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   a child process appeared that the program never asked for
+   reading the variable named fork forked instead of reading 42
+)
+a number called fork is 42.
+Set observed to fork.
+If observed is 0 then,
+    Print "a child process appeared that the program never asked for",
+    Exit 0.
+Set reaped to reap any child process.
+If observed is 42 then,
+    Print "the variable was read".
+If observed is not 42 then,
+    Print "reading the variable named fork forked instead of reading 42".

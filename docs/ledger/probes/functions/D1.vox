@@ -1,0 +1,50 @@
+(D1 — Discrepancy 1 repro: a global declared BELOW a function is read
+ inside that function as a raw machine word unless it is a `number`.
+ LANGUAGE.md:705 says top-level variables "are global and can be used
+ inside functions" and puts no ordering condition on that. The same five
+ globals, read at top level, all print correctly; read from a function
+ defined above them, only the number survives. The text and buffer
+ addresses are static rodata/heap addresses and the float is its IEEE-754
+ bit pattern, so every wrong answer looks like data. The list and buffer
+ addresses vary per run, so this probe is compared on its EXIT CODE:
+ it exits 3 because the in-function read of `label` did not equal the
+ top-level one.
+  Ran (values seen on 2026-08-21): in-function reads printed
+    42 / 4210888 / 4612811918334230528 / 140547700088832 / 140547700080640
+  against top-level 42 / hello / 2.5 / [1, 2, 3] / ABC.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   42
+   4210888
+   4612811918334230528
+   139733748330496
+   139733748322304
+   --- the same globals, read at top level ---
+   42
+   hello
+   2.5
+   [1, 2, 3]
+   ABC
+   exit 3
+)
+To 'show all'.
+  Print counter.
+  Print label.
+  Print ratio.
+  Print items.
+  Print payload.
+
+a number called counter is 42.
+a text called label is "hello".
+a float called ratio is 2.5.
+a list called items is [1, 2, 3].
+a buffer called payload is "ABC".
+
+'show all'.
+Print "--- the same globals, read at top level ---".
+Print counter.
+Print label.
+Print ratio.
+Print items.
+Print payload.
+Exit 3.

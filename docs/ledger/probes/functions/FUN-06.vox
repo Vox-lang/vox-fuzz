@@ -1,0 +1,18 @@
+(FUN-06 — `with` and `of` introduce parameters identically, and all four
+ call connectors (`of`, `to`, `with`, `on`) reach either definition. Both
+ functions add their two arguments, so every line must print 5.
+ Also covers: FUN-32 and FUN-35 (the four call connectors).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-06.vox -o p && ./p
+ expected output:
+   5
+   5
+   5
+   5
+)
+To 'joined with' with a number called x and a number called y. Return a number, x add y.
+To 'joined of' of a number called x and a number called y. Return a number, x add y.
+
+Print 'joined with' of 2 and 3.
+Print 'joined of' with 2 and 3.
+Print 'joined with' on 2 and 3.
+Print 'joined of' to 2 and 3.

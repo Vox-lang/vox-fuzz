@@ -1,0 +1,11 @@
+(LST-54 — a self-referential map prints 64 levels deep, then `...`, sets the
+ error flag, and unwinds safely.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-54.vox -o p && ./p
+ expected output:
+   {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": ...}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+   cyclic map
+)
+a map called loopy is {"tag": 1}.
+set loopy's "self" to loopy.
+print loopy.
+on error print "cyclic map".

@@ -1,0 +1,32 @@
+(PRC-50 — any reap form takes a `without waiting` suffix (WNOHANG).
+ Also covers: PRC-51 (a finished child -> its PID, flag cleared), PRC-52
+ (children exist but none finished -> 0, flag cleared, NOT an error),
+ PRC-53 (genuine error -> negative, flag set) and PRC-54 (a poll that
+ returns 0 reaps nothing, so it does not disturb `the reaped status`,
+ which is still the -1 sentinel here).
+ SAFETY: signal 9 goes only to the pid this program forked.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-50.vox -o p && ./p
+ expected output:
+   polling a running child returned 0
+   the reaped status is still -1
+   the killed child was reaped
+   its terminating signal was 9
+   polling with no children left set the error flag
+   it returned -10
+)
+a number called 'the slow child' is fork the process.
+If 'the slow child' is 0 then, Wait 2 seconds, Exit 0.
+a number called 'the poll while running' is reap any child process without waiting.
+On error print "polling a running child set the error flag".
+print "polling a running child returned {'the poll while running'}".
+print "the reaped status is still {the reaped status}".
+Send signal 9 to process 'the slow child'.
+a number called 'the blocking reap' is reap child 'the slow child'.
+If 'the blocking reap' is 'the slow child' then, print "the killed child was reaped".
+print "its terminating signal was {the reaped status bit-and 127}".
+a number called 'the poll with no children' is reap any child process without waiting.
+On error print "polling with no children left set the error flag".
+print "it returned {'the poll with no children'}".

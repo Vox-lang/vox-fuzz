@@ -1,0 +1,11 @@
+(KEY-31 — `default` supplies the value a flag holds when it is not passed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-31.vox -o p && ./p
+ expected output:
+   out.txt
+   3
+)
+a flag called output is "-o" or "--output", it is a text with default "out.txt".
+a flag called retries is "-r" or "--retries", it is a number with default 3.
+Parse flags.
+Print output.
+Print retries.

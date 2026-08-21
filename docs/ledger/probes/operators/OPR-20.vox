@@ -1,0 +1,14 @@
+(OPR-20: `or` is logical disjunction (LANGUAGE.md:4574).
+ Only the false-false row must not fire.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-20.vox -o p && ./p
+ expected output:
+   or fired on true-true
+   or fired on true-false
+   or fired on false-true
+)
+a boolean called affirmed is true.
+a boolean called denied is false.
+If affirmed or affirmed then, Print "or fired on true-true".
+If affirmed or denied then, Print "or fired on true-false".
+If denied or affirmed then, Print "or fired on false-true".
+If denied or denied then, Print "or MISFIRED on false-false".

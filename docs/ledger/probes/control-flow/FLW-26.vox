@@ -1,0 +1,13 @@
+(FLW-26: a period ends the Repeat body and closes the construct; the
+ statement after it belongs to the surrounding scope, so it runs ONCE
+ (LANGUAGE.md:2141-2150). This is the regression guard for compiler bug
+ #27 ("a period never closes a Repeat body"), fixed in v0.4.6 - before the
+ fix this printed `r after r after`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-26.vox -o p && ./p
+ expected output:
+   r
+   r
+   after
+)
+Repeat 2 times, print "r".
+Print "after".

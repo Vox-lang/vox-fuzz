@@ -1,0 +1,15 @@
+(OPR-40 (undocumented precision): the comparison operators of
+ LANGUAGE.md:4558-4567 are not first-class expressions. A comparison
+ parses only in a condition position (an If/but-if/while condition);
+ printing one, or binding one to a boolean, is a compile error. The
+ arithmetic and bitwise operators have no such restriction. Nothing in
+ the Operators section says the two tables differ this way.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-40.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Is
+   (no binary produced; compile error)
+)
+a number called lhs is 5.
+a number called rhs is 3.
+Print lhs is greater than rhs.

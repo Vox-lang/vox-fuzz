@@ -1,0 +1,15 @@
+(D3 - Discrepancy 3 repro: a float operand makes every bitwise
+ operator return 0.0 silently. 3.5 truncated to 3 would give 3 bit-and
+ 1 = 1; 6.0 truncated to 6 would give 6 bit-and 4 = 4. Both give 0.0,
+ and the result keeps float type. A text or list operand in the same
+ position is a clean compile error (OPR-42), so the float case is the
+ one operand type that is neither converted nor refused.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   0.0
+   4
+)
+a float called whole is 6.0.
+Print whole bit-and 4.
+a number called 'same value as an integer' is 6.
+Print 'same value as an integer' bit-and 4.

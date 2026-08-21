@@ -1,0 +1,20 @@
+(EXP-26: LANGUAGE.md:1827 offers
+ `{fibonacci of n subtract 1} add {fibonacci of n subtract 2}` as an example of
+ a braced arithmetic subexpression. It parses, but NOT as the fibonacci
+ recurrence: `of` binds only the next primary, so the braces contain
+ `{fibonacci of n} subtract 1`, the argument never shrinks, and the call
+ recurses until the runtime stops it. See Discrepancy 1.
+ What this probe records is that the runtime catches it: the depth guard
+ fires and the program exits 1 with a diagnostic, rather than smashing the
+ stack. That is the memory-safety half of the row and it holds.
+ The working spelling is `{fibonacci of {n subtract 1}}` - see D1.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-26.vox -o p && ./p
+ expected output:
+   Error: stack overflow (recursion depth exceeded)
+   exit 1
+)
+To fibonacci with a number called n.
+  If n is less than 2 then, Return a number, n.
+  Return a number, {fibonacci of n subtract 1} add {fibonacci of n subtract 2}.
+
+Print fibonacci of 10.

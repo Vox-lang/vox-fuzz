@@ -1,0 +1,22 @@
+(KEY-54 — `x's length` still means the same as `x's size`, in the same
+ program where `length` is also a plain variable. Note what the compiler
+ says when the property is refused: it reports the CANONICAL spelling
+ 'size' even when 'length' is what was written — see the ledger note on
+ KEY-54.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-54.vox -o p && ./p
+ expected output:
+   4
+   4
+   3
+   3
+   7
+)
+a number called length is 7.
+a buffer called payload is 16 bytes in size.
+append "ABCD" to payload.
+Print payload's length.
+Print payload's size.
+a list called stops is ["a", "b", "c"].
+Print stops's length.
+Print stops's size.
+Print length.

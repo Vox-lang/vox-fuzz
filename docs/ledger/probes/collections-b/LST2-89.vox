@@ -1,0 +1,29 @@
+(LST2-89 — `treating <match> as <replacement>` substitutes the loop
+ variable for that iteration when it equals the match. Works with text
+ matches and with number matches, over a list variable, a list literal
+ and a range. The manual's own "print with default value" example is the
+ first block.
+ Also covers: LST2-91 (the print-with-default example), LST2-93 (the
+ syntax), LST2-94 (equality with the match drives the substitution).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-89.vox -o p && ./p
+ expected output:
+   ann
+   Anonymous
+   bob
+   ---
+   1
+   99
+   2
+   ---
+   1
+   2
+   300
+   4
+)
+a list called names is ["ann", "", "bob"].
+print each name from names treating "" as "Anonymous".
+print "---".
+a list called codes is [1, 0, 2].
+print each code from codes treating 0 as 99.
+print "---".
+print each step from 1 to 4 treating 3 as 300.

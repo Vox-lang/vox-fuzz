@@ -1,0 +1,14 @@
+(FIL-96: an open inside a conditional branch whose Close is forgotten is handled safely.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-96.vox -o p && ./p
+ actual output:
+   survived a conditional open whose Close was forgotten
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a boolean called condition is true.
+If condition is true then,
+    open a file for writing called log at "vf_scratch/files/conditional.txt",
+    Write "Debug info" to log.
+print "survived a conditional open whose Close was forgotten".

@@ -1,0 +1,24 @@
+(BAS2-37: the FizzBuzz example: clauses are checked in order and the first match wins, so 6 and 12 print fizzbuzz rather than fizz.
+ Also covers: BAS2-43, BAS2-46
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-37.vox -o p && ./p
+ expected output:
+   1
+   fizz
+   buzz
+   fizz
+   5
+   fizzbuzz
+   7
+   fizz
+   buzz
+   fizz
+   11
+   fizzbuzz
+   13
+   fizz
+   buzz
+)
+print each number from 1 to 15,
+    but if the number modulo 6 is equal to 0 print "fizzbuzz",
+    but if the number modulo 2 is equal to 0 print "fizz",
+    but if the number modulo 3 is equal to 0 print "buzz".

@@ -1,0 +1,11 @@
+(TIM-59 - a time property read from a text is a compile error: the
+ operand has to be numeric. The diagnostic's parenthetical - "requires a
+ time value (number)" - is the clearest statement anywhere that a `time`
+ is a number. Note the span again points at the declaration, not the use.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-59.vox -o p && ./p
+ expected output:
+   error: Property 'year' requires a time value (number): label
+   (no binary produced; compile error)
+)
+a text called label is "not a time".
+print label's year.

@@ -1,0 +1,21 @@
+(TIM-32 - `elapsed` is readable while the timer is still running, and
+ grows as the program waits. Read twice, half a second apart, without
+ stopping the timer.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-32.vox -o p && ./p
+ expected output:
+   elapsed was read without stopping the timer
+   the first read covers the first wait
+   elapsed grew while the timer ran
+)
+a timer called 'job timer'.
+Start the 'job timer'.
+Wait 200 milliseconds.
+a number called 'the early read' is the 'job timer''s elapsed in milliseconds.
+Wait 500 milliseconds.
+a number called 'the later read' is the 'job timer''s elapsed in milliseconds.
+If the 'job timer''s running then, print "elapsed was read without stopping the timer".
+Otherwise, print "the timer stopped itself".
+If 'the early read' is greater than 199 then, print "the first read covers the first wait".
+Otherwise, print "the first read is only {'the early read'} milliseconds".
+If 'the later read' is greater than 'the early read' then, print "elapsed grew while the timer ran".
+Otherwise, print "elapsed stood still at {'the later read'} milliseconds".

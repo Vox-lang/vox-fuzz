@@ -1,0 +1,15 @@
+(EXP-09: floats and integers can be mixed in one arithmetic expression, in
+ either operand order, and the result carries the float.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-09.vox -o p && ./p
+ expected output:
+   5.5
+   5.5
+   7.5
+   0.5
+)
+a float called ratio is 2.5.
+a number called three is 3.
+Print ratio add three.
+Print three add ratio.
+Print ratio multiply three.
+Print three subtract ratio.

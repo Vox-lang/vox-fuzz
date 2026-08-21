@@ -1,0 +1,18 @@
+(KEY-16 — `Create` also starts a directory creation (`mkdir(2)`); the
+ article is optional, `called` is required.
+ Also covers: KEY-17 (`Remove`/`Delete` a directory).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-16.vox -o p && ./p
+ expected output:
+   directories made
+   directories gone
+)
+Create a directory called "/tmp/voxfuzz-key-16".
+On error print "mkdir failed".
+Create directory called "/tmp/voxfuzz-key-16-second".
+On error print "mkdir without the article failed".
+Print "directories made".
+Remove the directory called "/tmp/voxfuzz-key-16".
+On error print "rmdir failed".
+Delete the directory "/tmp/voxfuzz-key-16-second".
+On error print "delete failed".
+Print "directories gone".

@@ -1,0 +1,8 @@
+(VAL-06: `value` is not a reserved word — recognized only where a type is
+ expected, so `a value is 5.` declares a variable named `value`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-06.vox -o p && ./p
+ expected output:
+   5
+)
+a value is 5.
+print value.

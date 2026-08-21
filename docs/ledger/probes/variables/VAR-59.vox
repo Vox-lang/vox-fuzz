@@ -1,0 +1,12 @@
+(VAR-59: a single-word quoted identifier is legal but non-canonical, and
+ lexes identically to the bare form — the same variable, reachable under
+ either spelling and through `the`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-59.vox -o p && ./p
+ expected output:
+   5
+   7
+)
+a number called 'total' is 5.
+Print total.
+the total is 7.
+Print 'total'.

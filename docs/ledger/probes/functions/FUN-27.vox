@@ -1,0 +1,22 @@
+(FUN-27 — list parameters support `'s length` and element access, and the
+ rest of the list property table reads correctly through a parameter too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-27.vox -o p && ./p
+ expected output:
+   3
+   3
+   0
+   10
+   30
+   10
+   30
+)
+To 'read list' with a list called items.
+  Print items's length.
+  Print items's size.
+  Print items's empty.
+  Print items's first.
+  Print items's last.
+  Print element 1 of items.
+  Print element 3 of items.
+
+'read list' of [10, 20, 30].

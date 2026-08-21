@@ -1,0 +1,16 @@
+(BAS-46 - the one exception: a blank line placed AFTER A COMMA is still
+ just visual spacing, because the sentence is explicitly still open. The
+ While below survives the blank line in its middle and terminates.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-46.vox -o p && ./p
+ expected output:
+   attempt 0
+   attempt 1
+   attempt 2
+   after
+)
+a number called retries is 0.
+While retries is less than 3,
+    print "attempt {retries}",
+
+    increment retries.
+Print "after".

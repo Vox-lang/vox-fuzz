@@ -1,0 +1,21 @@
+(TIM-15 - Wait and Sleep really do pause: a timer wrapped round them
+ reports at least the requested duration. One second requested, so at
+ least 1000 milliseconds measured, and the 250-millisecond sleep on top
+ of it takes the total past 1250.
+ Also covers: TIM-21 in part (a timer measures a real interval).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-15.vox -o p && ./p
+ expected output:
+   waiting one second took at least a second
+   the extra 250 millisecond sleep was taken too
+)
+a timer called clock.
+Start the clock.
+Wait 1 second.
+a number called 'after the wait' is the clock's elapsed in milliseconds.
+Sleep for 250 milliseconds.
+Stop the clock.
+a number called 'after the sleep' is the clock's duration in milliseconds.
+If 'after the wait' is greater than 999 then, print "waiting one second took at least a second".
+Otherwise, print "waiting one second took only {'after the wait'} milliseconds".
+If 'after the sleep' is greater than 1249 then, print "the extra 250 millisecond sleep was taken too".
+Otherwise, print "the whole job took only {'after the sleep'} milliseconds".

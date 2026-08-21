@@ -1,0 +1,25 @@
+(ARG-23 — a flag with no `with default` that is not passed holds its
+ type's empty value: "" for a text, 0 for a number, false for a boolean
+ (LANGUAGE.md:4389-4390).
+ Also covers: ARG-24 — an unsupplied text flag is safe to READ (this is
+ compiler bug #31's crash site before 0.4.6) and answers `is empty`
+ correctly, which is compiler bug #33's shape.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-23.vox -o p && ./p
+ expected output:
+   output is []
+   retries is 0
+   verbose is 0
+   the unsupplied text flag is empty
+)
+a flag called output is "-o" or "--output", it is a text.
+a flag called retries is "-r" or "--retries", it is a number.
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+Parse flags.
+
+Print "output is [{output}]".
+Print "retries is {retries}".
+Print "verbose is {verbose}".
+If output is empty then,
+    Print "the unsupplied text flag is empty".
+Otherwise,
+    Print "the unsupplied text flag is not empty".

@@ -1,0 +1,31 @@
+(THG2-38: a member whose first parameter IS the thing gets both the type
+ possessive and the instance possessive. LANGUAGE.md:1480-1503, verbatim -
+  the receiver form and the type-possessive form both reach the same member.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-38.vox -o p && ./p
+ expected output:
+   -1
+   1
+)
+A thing called point has
+  a function called 'placed at',
+  a function called 'reflected through the origin',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+To do the point's 'reflected through the origin', with a point called original.
+  a point called reflection.
+  Set reflection's x to 0 subtract original's x.
+  Set reflection's y to 0 subtract original's y.
+  Return a point, reflection.
+
+The pin is a point's 'placed at' with 1 and 0.
+The opposite is pin's 'reflected through the origin'.
+The 'opposite of the opposite' is a point's 'reflected through the origin' of opposite.
+Print opposite's x.
+Print 'opposite of the opposite''s x.

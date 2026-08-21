@@ -1,0 +1,20 @@
+(LST-20 — a function whose return type IS declared (`Return a text, "hi".`)
+ is statically known, so its result is tagged with that type at the write
+ and widens the list only because it differs from the other elements. The
+ text reads back as a text, unlike the opaque case in LST-18.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-20.vox -o p && ./p
+ expected output:
+   [1, "hi"]
+   hi
+   number
+   text
+)
+To greeting. Return a text, "hi".
+
+a list called declared is [].
+append 1 to declared.
+append greeting to declared.
+print declared.
+print element 2 of declared.
+For each item in declared,
+  if item is a text, print "text". otherwise if item is a number, print "number". otherwise print "other".

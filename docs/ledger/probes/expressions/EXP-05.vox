@@ -1,0 +1,34 @@
+(EXP-05: hexadecimal literals with the `0x` prefix.
+ Also covers: EXP-06 binary literals with the `0b` prefix, EXP-07 character
+ literals in single quotes, EXP-14 `0xFF` equals 255, EXP-15 `0b1010` equals
+ 10, EXP-16 `'A'` equals 65.
+ The last two lines put hex and character literals in operand position rather
+ than initializer position, since that is the position a leaf would emit.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-05.vox -o p && ./p
+ expected output:
+   255
+   3735928559
+   180
+   15
+   10
+   65
+   33
+   0
+   66
+)
+a number called 'byte mask' is 0xFF.
+a number called sentinel is 0xDEADBEEF.
+a number called pattern is 0b10110100.
+a number called nybble is 0b1111.
+a number called ten is 0b1010.
+a number called letter is 'A'.
+a number called bang is '!'.
+Print 'byte mask'.
+Print sentinel.
+Print pattern.
+Print nybble.
+Print ten.
+Print letter.
+Print bang.
+Print 0xF0 modulo 0x10.
+Print 'A' add 1.

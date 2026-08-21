@@ -1,0 +1,25 @@
+(EXP-97: LANGUAGE.md:2027-2029 - a non-default-base cast "stops parsing at the
+ first character invalid for that base ... it does not set the error flag".
+ The stopping half holds. The flag half does not: a string invalid from its
+ first character sets the flag in base 5 and in base 16 exactly as it does in
+ base 10. See Discrepancy 2.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-97.vox -o p && ./p
+ expected output:
+   18
+   base 5 fully invalid set the flag
+   0
+   hex fully invalid set the flag
+   0
+)
+a text called mixed is "12g5".
+a number called 'from mixed' is mixed as a hex number.
+On error Print "hex partial set the flag".
+Print 'from mixed'.
+a text called impossible is "abc".
+a number called 'from impossible' is impossible as a base5 number.
+On error Print "base 5 fully invalid set the flag".
+Print 'from impossible'.
+a text called letters is "zzz".
+a number called 'from letters' is letters as a hex number.
+On error Print "hex fully invalid set the flag".
+Print 'from letters'.

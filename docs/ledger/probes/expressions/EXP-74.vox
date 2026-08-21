@@ -1,0 +1,27 @@
+(EXP-74: a radix word may be inserted right before `number` to parse text in a
+ base other than 10.
+ Also covers: EXP-75 plain `as a number` is base 10, EXP-76 `as a hex number`
+ and `as a hexadecimal number` are base 16, EXP-77 `as an octal number` is
+ base 8, EXP-78 `as a binary number` is base 2, EXP-79 the spaced
+ `as a base N number` form, EXP-80 the fused `as a baseN number` form.
+ Every example value is the manual's own, so a mismatch here is a mismatch
+ with the table rather than with my arithmetic.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-74.vox -o p && ./p
+ expected output:
+   42
+   255
+   255
+   15
+   10
+   45694
+   2334
+   2334
+)
+Print "42" as a number.
+Print "ff" as a hex number.
+Print "ff" as a hexadecimal number.
+Print "17" as an octal number.
+Print "1010" as a binary number.
+Print "z9a" as a base 36 number.
+Print "6543" as a base7 number.
+Print "6543" as a base 7 number.

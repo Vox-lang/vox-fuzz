@@ -1,0 +1,12 @@
+(OPR-18: `is less than or equal to` admits the equal case (LANGUAGE.md:4567).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-18.vox -o p && ./p
+ expected output:
+   le fired on equal
+   le fired on less
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is less than or equal to rhs then, Print "le fired on equal".
+If other is less than or equal to lhs then, Print "le fired on less".
+If lhs is less than or equal to other then, Print "le MISFIRED on greater".

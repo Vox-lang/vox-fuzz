@@ -1,0 +1,10 @@
+(VAR-54: a bare identifier may not be a reserved keyword — `number` is one
+ of the type keywords, and using it bare as a variable name is rejected.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-54.vox -o p && ./p
+ expected output:
+   error: Cannot use 'number' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called number is 5.
+Print 1.

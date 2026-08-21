@@ -1,0 +1,21 @@
+(LST-57 — a map may be an element of a list: the slot carries the map tag,
+ the list prints the map recursively, and an element extracted into a
+ declared `map` variable reads its keys normally.
+ What does NOT work is the rest of the same sentence at
+ LANGUAGE.md:2381-2383 — "a `For each` over such a list types the loop
+ variable as a map". The loop variable carries the TAG (LST-55 proves
+ `is a map` fires) but is not statically a map, so `entry's "tag"` inside the
+ loop is a compile error. See Discrepancy 2, repro `D2.vox`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-57.vox -o p && ./p
+ expected output:
+   [{"tag": 1}, {"tag": 2}]
+   {"tag": 1}
+   {"tag": 1}
+   1
+)
+a list called holder is [{"tag": 1}, {"tag": 2}].
+print holder.
+print element 1 of holder.
+a map called picked is element 1 of holder.
+print picked.
+print picked's "tag".

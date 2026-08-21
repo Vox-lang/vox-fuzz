@@ -1,0 +1,14 @@
+(TIM-26 - `Finish` is a second spelling of `Stop`, and stops the timer
+ the same way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-26.vox -o p && ./p
+ expected output:
+   Finish stopped the timer
+   Finish recorded an end time
+)
+a timer called lap.
+Start the lap.
+Finish the lap.
+If lap's running then, print "Finish left the timer running".
+Otherwise, print "Finish stopped the timer".
+If lap's end time is greater than 0 then, print "Finish recorded an end time".
+Otherwise, print "Finish recorded no end time".

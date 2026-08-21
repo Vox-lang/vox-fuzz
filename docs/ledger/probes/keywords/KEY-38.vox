@@ -1,0 +1,17 @@
+(KEY-38 — `then` follows the condition of an `If`/`When` and opens its
+ body. It is also OPTIONAL: the same conditional without it compiles and
+ behaves identically. That matters for the invariant report — all 718 `If`
+ statements in a 120-program corpus carry `then`, and no rule requires it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-38.vox -o p && ./p
+ expected output:
+   then opened the body
+   the body opened without then
+   and When takes the same shortcut
+)
+a boolean called ready is true.
+If ready then,
+    Print "then opened the body".
+If ready,
+    Print "the body opened without then".
+When ready,
+    Print "and When takes the same shortcut".

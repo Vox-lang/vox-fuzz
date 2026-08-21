@@ -1,0 +1,14 @@
+(ARG-12 — the Checking if Arguments Were Provided example
+ (LANGUAGE.md:4344-4347), verbatim: `arguments's empty` used directly as
+ an If condition, with no comparison. Run with no arguments, so the
+ branch is taken. The Otherwise arm is this probe's own addition, so
+ that the recorded block proves which arm ran rather than proving only
+ that nothing was printed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-12.vox -o p && ./p
+ expected output:
+   No arguments provided.
+)
+If arguments's empty then,
+    Print "No arguments provided.".
+Otherwise,
+    Print "Arguments were provided.".

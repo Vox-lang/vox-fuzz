@@ -1,0 +1,53 @@
+(Discrepancy 1 — LANGUAGE.md:3158-3161 says all sinks share one name
+ resolver and that special names like {arguments's first} "render
+ identically whether the result is printed, written to a file, or built
+ into a buffer". Under 0.4.7 printing and writing worked and building into
+ a buffer SEGFAULTED: all three buffer sinks (set / copy / append) crashed
+ on all three argument TEXT properties (first / last / all), with or
+ without arguments passed, while the numeric ones ({arguments's count})
+ and {current time's hour} were fine.
+ **RESOLVED — fixed by vox #52 (0.4.8+).** The buffer sinks no longer
+ crash; they copy the text, and the buffer prints what Print and write
+ print. This probe was rewritten on 2026-08-21 to record the fixed
+ behaviour across all three buffer verbs.
+ One residue, and it is NOT this discrepancy: {arguments's all} is a LIST,
+ and building it into a buffer now renders a raw pointer instead of
+ crashing -- which is exactly the behaviour Discrepancy 2 already records
+ for every non-Print sink. It is D2's finding, not a survival of D1, and
+ D2 is still open.
+ {arguments's last} is deliberately not in the assertions below: with no
+ arguments it resolves to argv[0], which is the checker's temp path.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ (check-probes runs the binary with NO arguments, which is what the block
+ below records: {arguments's first} is empty and the count is 1.)
+ Run by hand as `./p hello there` and it prints instead:
+   copy first: / hello / set first: / hello / append first: / hello /
+   count into a buffer: / 3 / no crash.
+ expected output:
+   copy first:
+
+   set first:
+
+   append first:
+
+   count into a buffer:
+   1
+   no crash.
+)
+print "copy first:".
+a buffer called b1 is 64 bytes in size.
+copy "{arguments's first}" to b1.
+Print b1.
+print "set first:".
+a buffer called b2 is 64 bytes in size.
+set b2 to "{arguments's first}".
+Print b2.
+print "append first:".
+a buffer called b3 is 64 bytes in size.
+append "{arguments's first}" to b3.
+Print b3.
+print "count into a buffer:".
+a buffer called b4 is 64 bytes in size.
+copy "{arguments's count}" to b4.
+Print b4.
+print "no crash.".

@@ -1,0 +1,15 @@
+(KEY-41 — `and` between two conditions is the boolean AND, and it really
+ requires both arms (the second arm alone does not make it fire).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-41.vox -o p && ./p
+ expected output:
+   both arms held
+   done
+)
+a boolean called warm is true.
+a boolean called dry is true.
+a boolean called windy is false.
+If warm and dry then,
+    Print "both arms held".
+If windy and dry then,
+    Print "and should not have fired".
+Print "done".

@@ -1,0 +1,15 @@
+(BUF-33: `clear destination` sets destination length to 0 and preserves destination capacity, on a user buffer (not the generator's own accumulator).)
+(expected output:
+5
+4096
+0
+4096
+1
+)
+a buffer called b is "Hello".
+print b's size.
+print b's capacity.
+clear b.
+print b's size.
+print b's capacity.
+print b's empty.

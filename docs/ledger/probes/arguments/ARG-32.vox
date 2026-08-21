@@ -1,0 +1,32 @@
+(ARG-32 — after parsing, `arguments's all` is the filtered positional
+ view: recognized flags and their consumed values are gone
+ (LANGUAGE.md:4417).
+ Also covers: ARG-33 (`arguments's raw` keeps the original user-provided
+ sequence unchanged, flags and all) and ARG-34 (the manual's
+ all-vs-raw worked example at 4422-4434, including a flag read from
+ inside a format slot).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-32.vox -o p && ./p -v pos1 -o mine.txt pos2
+ Args: -v pos1 -o mine.txt pos2
+ expected output:
+   output:mine.txt
+   ALL
+   pos1
+   pos2
+   RAW
+   -v
+   pos1
+   -o
+   mine.txt
+   pos2
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+a flag called output is "-o" or "--output", it is a text with default "out.txt".
+Parse flags.
+
+Print "output:{output}".
+
+Print "ALL".
+Print each item from arguments's all.
+
+Print "RAW".
+Print each item from arguments's raw.

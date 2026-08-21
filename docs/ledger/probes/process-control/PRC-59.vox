@@ -1,0 +1,18 @@
+(PRC-59 — the -1 sentinel is loader-initialized .data, not .bss, so a
+ --shared library reads -1 before any reap rather than 0.
+ A library sees .bss zeroed only by `_start`, which the compiler emits for
+ executables and not for libraries; had the sentinel lived in .bss this
+ would print 0 and a library would silently report "exited cleanly" with
+ no child ever reaped. fixtures/statusprobe.vox is the library's source
+ and records the command that built fixtures/libstatusprobe.so.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-59.vox -o p && ./p
+ expected output:
+   a shared library reads -1 before any reap
+)
+see statusprobe version "0.1" from "fixtures/libstatusprobe.lib".
+
+a number called 'what the library sees' is 'the status a library sees'.
+print "a shared library reads {'what the library sees'} before any reap".

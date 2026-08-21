@@ -1,0 +1,12 @@
+(Discrepancy 3 repro — `reap` is in the same table row as `fork` (4642).
+ It is refused as a variable name, but not with the documented
+ "reserved keyword" diagnostic (4696): the parser has already committed to a
+ reap expression, so the error is a bare parse failure that names neither
+ the word nor the keyword it collides with.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Period
+   (no binary produced; compile error)
+)
+a number called reap is 1.
+Print reap.

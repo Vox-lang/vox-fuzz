@@ -1,0 +1,21 @@
+(BAS-35 - a nested construct owns its own trailing period.
+ Also covers: BAS-36 (the enclosing While does not steal it), BAS-37
+ (after the inner If ends, the outer sentence continues with two more
+ comma-separated actions). If the While had taken the inner If's period,
+ `print "tick ..."` and `increment tick` would be top-level and the loop
+ would never terminate.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-35.vox -o p && ./p
+ expected output:
+   tick 0
+   marked
+   tick 1
+   tick 2
+   end
+)
+a number called tick is 0.
+While tick is less than 3,
+    if tick is equal to 1 then,
+        print "marked".
+    print "tick {tick}",
+    increment tick.
+Print "end".

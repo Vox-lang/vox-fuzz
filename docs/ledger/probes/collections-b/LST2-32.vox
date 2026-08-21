@@ -1,0 +1,19 @@
+(LST2-32 — `append` is overloaded by DESTINATION type: the same keyword in
+ one program appends an element to a list and appends bytes to a buffer.
+ The buffer half's own contract is buffers.md BUF-31; this probe only
+ establishes that one program can use both spellings and get both
+ behaviours.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-32.vox -o p && ./p
+ expected output:
+   [1, 2]
+   abc
+   3
+)
+a list called roster is [1].
+a buffer called sink is 32 bytes in size.
+a buffer called origin is "abc".
+append 2 to roster.
+append origin to sink.
+print roster.
+print sink.
+print sink's size.

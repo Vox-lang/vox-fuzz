@@ -1,0 +1,10 @@
+(EXP-12: a buffer used directly in arithmetic is a compile error, with its own
+ diagnostic distinct from the text one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-12.vox -o p && ./p
+ expected output:
+   error: Cannot use buffer data in arithmetic; cast it with 'as a number' to read its content.
+   no binary produced; compile error
+)
+a buffer called data is "12".
+a number called total is data add 1.
+Print total.

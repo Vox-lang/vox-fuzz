@@ -1,0 +1,14 @@
+(FLW-09: `When` can replace `If`.
+ Also covers FLW-10: `Else` can replace `Otherwise` - after a `When` head
+ and, in the last sentence, after a plain `If` head too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-09.vox -o p && ./p
+ expected output:
+   when fired
+   when yes
+   if yes
+)
+a boolean called ready is true.
+When ready then, print "when fired".
+When ready then, print "when yes". Else, print "when no".
+a number called score is 1.
+If score is 1 then, print "if yes". Else, print "if no".

@@ -1,0 +1,14 @@
+(LST-49 — a missing key does not crash: the lookup yields 0 and sets the
+ error flag, so an `on error` handler reacts. The map is left untouched — a
+ failed read does not insert.
+ Also covers: LST-51 (the worked example of LANGUAGE.md:2364-2365).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-49.vox -o p && ./p
+ expected output:
+   0
+   missing
+   2
+)
+a map called person is {"name": "Ada", "age": 36}.
+print person's "nope".
+on error print "missing".
+print person's length.

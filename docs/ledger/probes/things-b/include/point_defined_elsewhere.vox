@@ -1,0 +1,7 @@
+(A second definition of `point`, for THG2-53: a type name is one identifier
+ across the whole compilation, so a program that both sees this file and
+ defines its own `point` is refused. Fragment; included by `see`.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.

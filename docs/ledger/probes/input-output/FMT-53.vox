@@ -1,0 +1,13 @@
+(FMT-53 — first matching condition wins, and only that one runs. 4 matches
+ both the "divisible by 2" clause and the "less than 10" clause; only the
+ earlier one prints. The reverse order proves it is position, not
+ specificity, that decides.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   even
+   small
+)
+a number called score is 4.
+Print the score, but if the score modulo 2 is equal to 0 print "even" but if the score is less than 10 print "small".
+a number called other is 4.
+Print the other, but if the other is less than 10 print "small" but if the other modulo 2 is equal to 0 print "even".

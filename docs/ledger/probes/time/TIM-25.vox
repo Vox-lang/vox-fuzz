@@ -1,0 +1,11 @@
+(TIM-25 - `Begin` is a second spelling of `Start`, and starts the timer
+ the same way.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-25.vox -o p && ./p
+ expected output:
+   Begin started the timer
+)
+a timer called lap.
+Begin the lap.
+If lap's running then, print "Begin started the timer".
+Otherwise, print "Begin did not start the timer".
+Stop the lap.

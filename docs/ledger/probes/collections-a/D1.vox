@@ -1,0 +1,18 @@
+(D1 — Discrepancy 1 repro: the worked mixed-list example at
+ LANGUAGE.md:2238-2243 does not compile as printed. Line 2240 is
+ `append hello to items.` — an unquoted bare word, which
+ LANGUAGE.md:645-668 defines as an IDENTIFIER, not a text literal. The
+ example's own comment says it prints `hello`, so a text was meant.
+ Quoted, the example behaves exactly as documented (`LST-19.vox`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   error: Unknown variable: hello
+   (compile error - no binary is produced)
+)
+To five with a number called x. Return x add 1.
+
+a list called items is [].
+append hello to items.
+append five of 4 to items.
+print element 1 of items.
+print element 2 of items.

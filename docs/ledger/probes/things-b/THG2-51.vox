@@ -1,0 +1,13 @@
+(THG2-51: the seen file arrives where the `see` is written, so the same
+ defined-earlier rule that orders one file orders the pair. Here the `see` is
+ written BELOW the declaration that needs the type, and the type is unknown at
+ that point - the include did not arrive early.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-51.vox -o p && ./p
+ expected output:
+   error: Unknown type 'point'
+   No binary is produced; this is a compile error.
+)
+a point called origin.
+see "./include/geometry.vox".
+
+Print origin's x.

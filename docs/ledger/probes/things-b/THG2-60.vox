@@ -1,0 +1,13 @@
+(THG2-60: a blank line force-closes the entry list along with anything else
+ still open. The last entry here carries no period at all; the blank line
+ closes the definition.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-60.vox -o p && ./p
+ expected output:
+   {x: 0, y: 0}
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0
+
+a point called origin.
+Print origin.

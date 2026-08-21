@@ -1,0 +1,15 @@
+(D1 - Discrepancy 1 repro: LANGUAGE.md:4575 lists `isn't` and `aren't` as
+ accepted spellings of `not`. Neither lexes. src/lexer/scan.rs:360 does
+ map "isn't" | "aren't" | "doesn't" | "don't" to Token::Not, so the
+ intent is in the compiler - but the scanner splits the apostrophe off
+ first (it is the possessive marker and the quoted-name delimiter,
+ scan.rs:118 and :587), so the contraction never reaches that keyword
+ table. `doesn't` and `don't` fail identically and are not documented.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Apostrophe
+   (no binary produced; compile error)
+)
+a number called lhs is 7.
+a number called rhs is 3.
+If lhs isn't rhs then, Print "isnt fired".

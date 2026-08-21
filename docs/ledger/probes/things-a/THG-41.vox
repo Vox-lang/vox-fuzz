@@ -1,0 +1,17 @@
+(THG-41: LANGUAGE.md:932-943 verbatim - a thing declared inside a function,
+ written and incremented and interpolated there.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-41.vox -o p && ./p
+ expected output:
+   the cursor sits at 9, 1
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'plot a point'.
+  a point called cursor.
+  Set cursor's x to 9.
+  increment cursor's y.
+  Print "the cursor sits at {cursor's x}, {cursor's y}".
+
+'plot a point'.

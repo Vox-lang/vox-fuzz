@@ -1,0 +1,13 @@
+(LST-39 — read a value by key with `map's "key"`, the key written as a text
+ literal.
+ Also covers: LST-41 (the value carries its runtime tag, so a text prints as
+ text and a number as a number), LST-42 (the worked example of
+ LANGUAGE.md:2335-2336).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-39.vox -o p && ./p
+ expected output:
+   Ada
+   36
+)
+a map called person is {"name": "Ada", "age": 36}.
+print person's "name".
+print person's "age".

@@ -1,0 +1,14 @@
+(FMT-47, FMT-48, FMT-49 — the three backslash escapes: \n is a newline
+ (so "Line1\nLine2" prints as two lines), \t is a tab, \\ is one literal
+ backslash. Recorded with the raw bytes, so the tab below is a real tab
+ and the last line carries exactly one backslash.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Line1
+   Line2
+   Tab:	here
+   Back\slash
+)
+Print "Line1\nLine2".
+Print "Tab:\there".
+Print "Back\\slash".

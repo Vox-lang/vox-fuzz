@@ -1,0 +1,21 @@
+(THG2-77: things are acyclic by the within-file defined-earlier ordering rule -
+ a field's type must be defined above the line. Two shapes were run: a field
+ naming a thing defined BELOW it reports "Unknown field type", and a direct
+ self-reference reports "A thing cannot contain itself". The self-reference is
+ below because it is the one that names the acyclicity rule outright. The
+ cross-file half - the analyzer's registry DFS - is discussed in the ledger:
+ a mutual `see` cycle is refused, but by the ordering rule, so which of the two
+ mechanisms caught it is not observable from inside Vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-77.vox -o p && ./p
+ expected output:
+   error: A thing cannot contain itself: node contains node
+   followed by "A thing's fields are stored inline, so this definition has no
+   finite size." and "A field may name any thing defined before this one."
+   No binary is produced; this is a compile error.
+)
+A thing called node has
+  a node called next,
+  a number called weight is 0.
+
+a node called head.
+Print head.

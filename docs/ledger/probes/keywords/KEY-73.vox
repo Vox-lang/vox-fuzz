@@ -1,0 +1,13 @@
+(KEY-73 — `version` is contextual: claimed in the `Library <name> version
+ "…"` and `see <lib> version "…"` headers, an ordinary identifier
+ everywhere else. This probe carries the ordinary-identifier half only,
+ because the header half needs a companion .lib/.so pair and a fixed
+ compile-time working directory, which the probe runner does not guarantee.
+ The header half is hand-verified in fixtures/kwlib.vox + fixtures/user.vox
+ — see the ledger's Probes section for the exact commands and output.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-73.vox -o p && ./p
+ expected output:
+   0.4.8
+)
+a text called version is "0.4.8".
+Print version.

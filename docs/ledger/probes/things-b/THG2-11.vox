@@ -1,0 +1,28 @@
+(THG2-11: the Equality worked example, LANGUAGE.md:1236-1257, verbatim -
+ a manifest member declared and defined alongside the two comparisons, so
+ the example also shows that a function member takes no part in equality.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-11.vox -o p && ./p
+ expected output:
+   the marker is where the origin is
+   the marker has moved off the origin
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+a point called origin.
+Set origin's x to 5.
+a point called marker.
+Set marker's x to 5.
+If origin is marker then,
+    Print "the marker is where the origin is".
+Set marker's y to 9.
+If origin is not marker then,
+    Print "the marker has moved off the origin".

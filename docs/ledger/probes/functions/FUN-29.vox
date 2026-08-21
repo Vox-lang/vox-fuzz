@@ -1,0 +1,20 @@
+(FUN-29 — buffers declared INSIDE a function body work with every
+ initializer form: a byte count, a string literal, and a format string
+ that interpolates a parameter.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-29.vox -o p && ./p
+ expected output:
+   0
+   16
+   ABC
+   5
+)
+To 'build buffers' with a text called devname.
+  a buffer called sized is 16 bytes in size.
+  a buffer called seeded is "ABC".
+  a buffer called formatted is " {devname}\n".
+  Print sized's size.
+  Print sized's capacity.
+  Print seeded.
+  Print formatted's size.
+
+'build buffers' of "sda".

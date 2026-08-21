@@ -1,0 +1,17 @@
+(PRC-61 — the manual cites tests/102_fork_reap.vox as still passing with
+ `Set reaped to reap any child process.`; this is that test's body,
+ verbatim from /home/josj/scr/english/vox/tests/102_fork_reap.vox.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-61.vox -o p && ./p
+ expected output:
+   reaped pid matches forked child pid
+)
+Set pid to fork the process.
+If pid is 0 then,
+    Exit 0.
+If pid is greater than 0 then,
+    Set reaped to reap any child process,
+    If reaped is pid then,
+        Print "reaped pid matches forked child pid".

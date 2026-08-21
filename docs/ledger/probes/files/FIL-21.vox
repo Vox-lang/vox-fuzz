@@ -1,0 +1,18 @@
+(FIL-21: an out-of-bounds list read sets the error flag and yields 0, and On error catches it; index 0 is out of bounds too, which is the 1-indexing claim from the other side.
+ Also covers: FIL-22, FIL-23.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-21.vox -o p && ./p
+ actual output:
+   Cannot access element 100 - out of bounds!
+   0
+   element 0 is out of bounds too
+   0
+)
+a list called items is [1, 2, 3].
+a number called 'the out of range item' is element 100 of items.
+On error print "Cannot access element 100 - out of bounds!".
+print 'the out of range item'.
+a number called 'the zeroth item' is element 0 of items.
+On error print "element 0 is out of bounds too".
+print 'the zeroth item'.

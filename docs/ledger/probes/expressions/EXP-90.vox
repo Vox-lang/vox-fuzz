@@ -1,0 +1,17 @@
+(EXP-90: the zero-pad format specifier converts a number to padded text -
+ the manual's `{h:02}` on 9 gives "09".
+ The extra lines record that the width is a minimum rather than a truncation:
+ a number already wider than the field is not cut down.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-90.vox -o p && ./p
+ expected output:
+   09
+   005
+   2026
+)
+a number called h is 9.
+a text called hpadded is "{h:02}".
+Print the hpadded.
+a number called tick is 5.
+Print "{tick:03}".
+a number called census is 2026.
+Print "{census:02}".

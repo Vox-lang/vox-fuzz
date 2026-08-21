@@ -1,0 +1,17 @@
+(Discrepancy 3: undocumented asymmetry - byte WRITE bounds are checked against capacity, and a write past current size but within capacity silently EXTENDS the length. Byte READ bounds are checked against current size, so a read at that same now-valid-by-write index still errors if size has not caught up. This single probe shows both halves together, as originally hand-run.)
+(expected output:
+6
+0
+read at capacity edge errored
+0
+)
+a buffer called fx is 8 bytes in size.
+append "ABCD" to fx.
+Set byte 6 of fx to 88.
+print fx's size.
+a number called g is byte 5 of fx.
+On error print "gap read errored".
+print g.
+a number called atcap is byte 8 of fx.
+On error print "read at capacity edge errored".
+print atcap.

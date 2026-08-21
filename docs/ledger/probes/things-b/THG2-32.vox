@@ -1,0 +1,23 @@
+(THG2-32: a receiver is anything that names a whole thing, so a FIELD holding
+ one reads the same way - `'the line''s end's 'magnitude squared'` calls the
+ function on the point stored in the segment's end field.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-32.vox -o p && ./p
+ expected output:
+   144
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+To 'magnitude squared' with a point called corner.
+  a number called 'x squared' is corner's x multiply corner's x.
+  a number called 'y squared' is corner's y multiply corner's y.
+  Return a number, 'x squared' add 'y squared'.
+
+a segment called 'the line'.
+Set 'the line''s end's y to 12.
+Print 'the line''s end's 'magnitude squared'.

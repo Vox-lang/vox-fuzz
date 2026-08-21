@@ -1,0 +1,20 @@
+(BAS-45 - the hang example, LANGUAGE.md:169-178: the blank line ejects
+ `increment counter` from the While body, so the condition never changes
+ and the loop never terminates - no error, no warning, and `Print "end"`
+ never runs.
+ The manual's copy prints `inner 1` / `inner 2` forever; this retained
+ copy replaces that print with a silent assignment so the hang can be
+ recorded as a bounded timeout instead of unbounded output. The manual's
+ verbatim version was run separately and does print `inner 1` / `inner 2`
+ on repeat until killed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-45.vox -o p && timeout 10 ./p
+ expected output:
+   (exit 124)
+)
+a number called counter is 1.
+While counter is less than or equal to 2,
+    For each k from 1 to 2,
+        a number called seen is k.
+
+    increment counter.
+Print "end".

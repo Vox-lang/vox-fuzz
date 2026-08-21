@@ -1,0 +1,7 @@
+(BUF-22: writing a byte with a decimal literal value (0-255) works.)
+(expected output:
+88
+)
+a buffer called data is "AAAA".
+Set byte 2 of data to 88.
+print byte 2 of data.

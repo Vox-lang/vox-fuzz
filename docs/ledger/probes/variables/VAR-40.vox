@@ -1,0 +1,23 @@
+(VAR-40: the buffer exemption. Writing into a buffer formats the value's
+ text representation into the buffer's content rather than retyping the
+ variable, so a buffer accepts a number, a text, a boolean and a float on
+ successive writes, through both the bare `is` and the `Set ... to` forms.
+ A boolean writes as 1, matching how a boolean prints elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-40.vox -o p && ./p
+ expected output:
+   42
+   text
+   1
+   3.5
+   Buffer (static)
+)
+a buffer called room is 32 bytes in size.
+room is 42.
+Print room.
+Set room to "text".
+Print room.
+room is true.
+Print room.
+room is 3.5.
+Print room.
+Print room's type.

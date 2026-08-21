@@ -1,0 +1,24 @@
+(D1 - Discrepancy 1 repro: a `time` FIELD takes zero with no initialiser,
+ but a `time` VARIABLE must be initialised.
+ LANGUAGE.md:826 "A field without a default takes its type's zero value" and
+ :851 "A field may be number, float, boolean, time" together say a time
+ field has a zero. LANGUAGE.md:501 lists `time` as "not supported" on a bare
+ `Create`, and :513-516 says "A time variable must be initialized" because
+ "no timestamp to hold" would be meaningless.
+ This program shows both halves: the field prints 0; the variable is
+ refused. (The refused half is line 8; comment it out to see line 5 print 0.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   error: A time variable must be initialized
+       Example: a time called now is current time.
+   (no binary produced; compile error)
+)
+A thing called gauge has
+  a time called taken.
+
+a gauge called sample.
+Print sample's taken.
+
+(and the same absent timestamp, one line down, is a compile error)
+Create a time called clock.
+Print clock.

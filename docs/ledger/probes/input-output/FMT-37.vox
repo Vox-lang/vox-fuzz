@@ -1,0 +1,21 @@
+(FMT-37 — "all sinks share one name resolver, so special names like
+ {arguments's first} and {current time's hour} render identically whether
+ printed, written to a file, or built into a buffer" (LANGUAGE.md:3158).
+ It holds for {current time's hour}, which is what this probe carries. It
+ does NOT hold for the argument text properties: {arguments's first} into
+ a buffer SEGFAULTS — see Discrepancy 1 and D1.vox.
+ The hour is asserted, not printed, so the recorded output is stable
+ across runs: an hour zero-padded to 2 is two characters at any time of
+ day, and the two sinks must agree with each other whatever it is. (Same
+ trick 'gen leaf format types' already uses for clock-dependent output.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   the buffer sink rendered two characters
+   the buffer sink and the text sink agree
+)
+Get current time into now.
+a text called 'via a text' is "{now's hour:02}".
+a buffer called 'via a buffer' is 32 bytes in size.
+copy "{now's hour:02}" to 'via a buffer'.
+If 'via a buffer's length is equal to 2 then, Print "the buffer sink rendered two characters". Otherwise, Print "the buffer sink rendered the WRONG width".
+If 'via a buffer' is equal to 'via a text' then, Print "the buffer sink and the text sink agree". Otherwise, Print "the buffer sink and the text sink DISAGREE".

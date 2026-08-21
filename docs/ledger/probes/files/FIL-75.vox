@@ -1,0 +1,22 @@
+(FIL-75: Delete the file "<path>" removes the file; deleting a file that is not there sets the error flag.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-75.vox -o p && ./p
+ actual output:
+   doomed.txt exists before the delete
+   doomed.txt is gone after the delete
+   deleting a missing file set the error flag
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/doomed.txt".
+Write "temporary" to seedfile.
+Close seedfile.
+If "vf_scratch/files/doomed.txt" is available then,
+    print "doomed.txt exists before the delete".
+Delete the file "vf_scratch/files/doomed.txt".
+On error print "the delete set the error flag".
+If "vf_scratch/files/doomed.txt" is not available then,
+    print "doomed.txt is gone after the delete".
+Delete the file "vf_scratch/files/doomed.txt".
+On error print "deleting a missing file set the error flag".

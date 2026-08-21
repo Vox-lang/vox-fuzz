@@ -1,0 +1,13 @@
+(Discrepancy 1, the other half: the same read against a MAP whose value types
+ are uniformly text is caught at compile time. This is the probe that shows
+ the "provably uniform" machinery exists and simply is not applied to lists.
+ (Compile-error claim.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p
+ expected output:
+   error: cannot assign text to 'counted', which is a number
+   (no binary produced; compile error)
+)
+a map called names is {"a": "one", "b": "two"}.
+a number called counted is 5.
+counted is names's "a".
+Print counted.

@@ -1,0 +1,16 @@
+(THG2-47: the same rule inside an `If`. The loop case was run by hand from the
+ same shape - `For each sample in samples,` with the definition indented under
+ it - and gives the identical diagnostic, so the manual's three named contexts
+ all behave alike.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-47.vox -o p && ./p
+ expected output:
+   error: A thing is defined at the top level, like a function
+   followed by "a thing's layout is fixed for the whole program, so a
+   definition inside an 'If', a loop, or a function body has no scope to
+   belong to." No binary is produced; this is a compile error.
+)
+a number called degrees is 1.
+If degrees is 1 then,
+  A thing called measurement has
+    a number called depth is 0.
+  Print "taken".

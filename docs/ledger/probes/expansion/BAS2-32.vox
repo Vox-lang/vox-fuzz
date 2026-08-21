@@ -1,0 +1,12 @@
+(BAS2-32: a range bound in an `each` clause takes a primary, not an
+ expression — `each col from row add 1 to 4` is a parse error, exactly as
+ LANGUAGE.md:354-355 says. The braced form that fixes it is BAS2-33.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-32.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Add
+   (no binary produced; compile error)
+)
+To 'pair' with a number called left and a number called right.
+  print "{left},{right}".
+
+'pair' of each row from [1, 2] and each col from row add 1 to 4.

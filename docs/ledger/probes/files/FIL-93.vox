@@ -1,0 +1,22 @@
+(FIL-93: the file-descriptor tracking table holds up to at least 100000 simultaneously open handles without crashing or reusing a descriptor.
+ Also covers: FIL-87, FIL-94.
+ The last descriptor is 100002, so none of the 100000 was recycled: every
+ one was still open and tracked when the program exited.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-93.vox -o p && ./p
+ actual output:
+   100002
+   100000 opens, none closed, no descriptor reused and nothing crashed
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+a number called 'the last descriptor' is 0.
+For each attempt from 1 to 100000,
+    open a file for reading called handle at "vf_scratch/files/lines.txt",
+    Set 'the last descriptor' to handle's descriptor.
+print 'the last descriptor'.
+print "100000 opens, none closed, no descriptor reused and nothing crashed".

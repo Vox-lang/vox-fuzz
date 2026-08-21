@@ -1,0 +1,18 @@
+(TIM-01 - `Get current time into <name>.` obtains the current date/time
+ as a `time` value and brings the name into being; `a time called <name>
+ is current time.` is the same thing said the other way round.
+ Also covers: TIM-02, TIM-03.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-01.vox -o p && ./p
+ expected output:
+   the get form makes a time
+   the declaration form makes a time
+   the second reading is not older than the first
+)
+Get current time into now.
+a time called later is current time.
+If now's type is "Time (static)" then, print "the get form makes a time".
+Otherwise, print "the get form makes a {now's type}".
+If later's type is "Time (static)" then, print "the declaration form makes a time".
+Otherwise, print "the declaration form makes a {later's type}".
+If later's unix is greater than or equal to now's unix then, print "the second reading is not older than the first".
+Otherwise, print "the second reading went backwards".

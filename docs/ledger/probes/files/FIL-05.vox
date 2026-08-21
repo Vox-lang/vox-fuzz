@@ -1,0 +1,24 @@
+(FIL-05: a file handle's modified and accessed properties return Unix timestamps.
+ Also covers: FIL-06.
+ Asserted as a range rather than a value, because the generator cannot
+ predict a wall-clock stamp; 1700000000 is 2023-11-14, comfortably in the past.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-05.vox -o p && ./p
+ actual output:
+   modified is a plausible unix timestamp
+   accessed is a plausible unix timestamp
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/stamps.txt".
+Write "when" to seedfile.
+Close seedfile.
+open a file for reading called src at "vf_scratch/files/stamps.txt".
+a number called 'the modification time' is src's modified.
+a number called 'the access time' is src's accessed.
+If 'the modification time' is greater than 1700000000 then,
+    print "modified is a plausible unix timestamp".
+If 'the access time' is greater than 1700000000 then,
+    print "accessed is a plausible unix timestamp".
+Close src.

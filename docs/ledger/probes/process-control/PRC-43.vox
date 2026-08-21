@@ -1,0 +1,31 @@
+(PRC-43 — `fork the process` performs fork(2); the trailing `the process`
+ is optional and bare `fork` works too.
+ Also covers: PRC-44 (0 in the child, the child's PID in the parent),
+ PRC-46 (`reap any child process` returns the reaped child's PID) and
+ PRC-56 (`the reaped status` yields the raw wait4 status word, undecoded —
+ exit code 7 encodes as 1792, which is 7 * 256).
+ The probe never PRINTS a pid, only compares them, so the output is
+ reproducible.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-43.vox -o p && ./p
+ expected output:
+   the parent got a positive pid
+   the reaped pid matched the forked pid
+   the raw status word is 1792
+   bare fork forked too
+   its exit code decodes to 3
+)
+a number called 'the long form child' is fork the process.
+If 'the long form child' is 0 then, Exit 7.
+If 'the long form child' is greater than 0 then, print "the parent got a positive pid".
+a number called 'the long form reaped' is reap any child process.
+If 'the long form reaped' is 'the long form child' then, print "the reaped pid matched the forked pid".
+a number called status is the reaped status.
+print "the raw status word is {status}".
+a number called 'the bare form child' is fork.
+If 'the bare form child' is 0 then, Exit 3.
+a number called 'the bare form reaped' is reap any child process.
+If 'the bare form reaped' is 'the bare form child' then, print "bare fork forked too".
+print "its exit code decodes to {the reaped status divide 256 modulo 256}".

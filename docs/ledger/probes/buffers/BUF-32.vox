@@ -1,0 +1,10 @@
+(BUF-32: `copy source to destination` replaces destination contents with source bytes.)
+(expected output:
+World
+5
+)
+a buffer called src is "World".
+a buffer called dst is "Hello ".
+copy src to dst.
+print dst.
+print dst's size.

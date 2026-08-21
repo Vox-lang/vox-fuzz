@@ -1,0 +1,16 @@
+(BAS2-29: a fixed (non-`each`) argument may sit before or after the `each` clauses and is evaluated once per call.
+ Also covers: BAS2-30
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-29.vox -o p && ./p
+ expected output:
+   5,10
+   5,20
+   ---
+   1,99
+   2,99
+)
+To 'pair' with a number called left and a number called right.
+  print "{left},{right}".
+
+'pair' of 5 and each y from [10, 20].
+print "---".
+'pair' of each x from [1, 2] and 99.

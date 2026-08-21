@@ -1,0 +1,13 @@
+(FLW-29 (undocumented precision): a Repeat count of 0, or a negative count,
+ runs the body zero times. It is not an error and it does not loop
+ forever.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-29.vox -o p && ./p
+ expected output:
+   after zero
+   after neg
+)
+Repeat 0 times, print "zero".
+print "after zero".
+a number called 'backward count' is 0 minus 3.
+Repeat 'backward count' times, print "neg".
+print "after neg".

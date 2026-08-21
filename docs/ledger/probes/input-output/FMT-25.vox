@@ -1,0 +1,14 @@
+(FMT-25 — a text built from a format string survives being appended to a
+ list and carried into an `Execute` argument list: /bin/echo receives it
+ as a real NUL-terminated argv entry and echoes it back. This is the
+ observable consequence of the "materializes into a fresh NUL-terminated
+ string" claim (FMT-23) — before v0.1.17 this path passed a NULL pointer.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   echo-arg
+)
+a text called stem is "echo".
+a text called tok is "{stem}-arg".
+a list called cmdargs is [].
+append tok to cmdargs.
+Execute "/bin/echo" with arguments cmdargs.

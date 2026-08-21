@@ -1,0 +1,31 @@
+(THG2-57: an exported library function whose signature takes or returns a thing
+ is refused when compiled with --shared, and the diagnostic names each crossing
+ and the workaround. THG2-56 is the other half: the SAME source compiles fine
+ as an ordinary program, so the refusal fires only at the library interface.
+ This probe lives in shared/ because it needs a second flag; docs/check-probes.sh
+ compiles every *.vox beside it without --shared and would see this one compile.
+ The exported function's name is deliberately not written anywhere in this
+ header: the caret searches the source text for it, so a mention up here would
+ drag the caret into the comment. That is Discrepancy 5, repro in shared/D5.vox.
+ Ran, ordinary:  VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox shared/THG2-57.vox -o p
+   exit 0, no diagnostics, no output when the binary is run.
+ Ran, --shared:  VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox shared/THG2-57.vox --shared -o libgeometrykit.so
+ expected output:
+   error: Exported function takes a point, which a library interface cannot
+   describe yet, naming the crossing parameter, with the caret on line 28, the
+   definition line; then a second error, that the same function returns a
+   point, which a library interface cannot describe yet - this one carries no
+   caret at all. Both carry the line "A thing is a layout private to one
+   compilation" and a workaround - pass its fields across the boundary instead,
+   return one of its fields instead.
+   No library is produced; this is a compile error.
+)
+Library geometrykit version "1.0".
+
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'nudged east' with a point called start.
+  Set start's x to start's x add 1.
+  Return a point, start.

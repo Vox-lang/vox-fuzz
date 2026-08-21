@@ -1,0 +1,22 @@
+(Discrepancy 5: LANGUAGE.md:636-638 lists versions among the things that are
+ "data, not names" and "stay double-quoted", and 612-613 says the three name
+ forms have no overlap and no context-sensitivity. A single-quoted version
+ string is accepted and really is matched against the library — asking for
+ '9.9' fails with the library's own version list, so the token was consumed
+ as data, not as an identifier. The same holds for `see` paths (VAR-63).
+ NOT runnable as a single file: it needs a built .so/.lib pair. Transcript:
+
+   kit.vox:   Library kit version "1.0".
+              To 'label of' with a number called x. Return text, "value".
+   built:     vox kit.vox --shared -o libkit.so
+   consumer:  see kit version '1.0' from "./libkit.lib".  Print 1.
+   result:    compiles clean, prints 1.
+   consumer:  see kit version '9.9' from "./libkit.lib".  Print 1.
+   result:    Error: 'libkit.lib' has library "kit" but not version "9.9".
+              The available versions are: "1.0".
+
+ The single-file half of the same discrepancy is VAR-63.vox, which does run.
+ Ran: (not runnable as a single file; see transcript above)
+)
+
+Print "D6 is a transcript row; the runnable half is VAR-63.vox".

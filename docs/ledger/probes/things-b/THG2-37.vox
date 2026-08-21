@@ -1,0 +1,21 @@
+(THG2-37: a maker cannot be reached by the instance possessive - a receiver
+ has nothing to fill - and the message says so rather than reporting the
+ member as missing, because the manifest does declare it.
+ LANGUAGE.md:1460-1474, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-37.vox -o p && ./p
+ expected output:
+   error: point declares 'placed at', but a receiver cannot reach it here
+   followed by "Name the type instead". No binary is produced; this is a
+   compile error.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  Return a point, plotted.
+
+a point called origin.
+Print origin's 'placed at'.

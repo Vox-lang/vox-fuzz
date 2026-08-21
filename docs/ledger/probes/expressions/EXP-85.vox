@@ -1,0 +1,39 @@
+(EXP-85: the casting Examples block at LANGUAGE.md:1970-1988 compiles verbatim
+ and gives the documented results.
+ Also covers: EXP-86, the inline cast `Print 3.14159 as a number`, which is the
+ block's last line and the one form that casts in argument position rather
+ than in an initializer.
+ The manual's own names are kept, quoted names included: `pi` is a legal
+ variable name and `'pi truncated'` and `'done num'` are legal quoted ones.
+ Only the four Print lines are added.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-85.vox -o p && ./p
+ expected output:
+   3
+   25
+   123
+   1
+   3
+)
+(Float to number - truncates)
+a float called pi is 3.14159.
+a number called 'pi truncated' is pi as a number.
+
+(Number to text)
+a number called age is 25.
+a text called agestr is the age as text.
+
+(Text to number - parsing)
+a text called userinput is "123".
+a number called parsed is the userinput as a number.
+
+(Boolean to number)
+a boolean called done is true.
+a number called 'done num' is the done as a number.
+
+Print the 'pi truncated'.
+Print agestr.
+Print parsed.
+Print the 'done num'.
+
+(Inline casting)
+Print 3.14159 as a number.

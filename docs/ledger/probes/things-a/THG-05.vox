@@ -1,0 +1,18 @@
+(THG-05: a definition declares a type - it allocates nothing and emits no
+ code, so the only output around it comes from the ordinary statements.
+ Two definitions and one Print produce exactly one line.
+ Also covers: THG-07 (the manual's minimal example), THG-08 (keyword
+ `thing`, verb `has`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-05.vox -o p && ./p
+ expected output:
+   defined
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called 'bounding box' has
+  a number called width is 1,
+  a number called height is 1.
+
+Print "defined".

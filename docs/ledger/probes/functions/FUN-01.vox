@@ -1,0 +1,12 @@
+(FUN-01 — the definition template: a whole function on one line, two
+ number parameters joined with `and`, and `Return a <type>, <expression>`
+ closing the same sentence.
+ Also covers: FUN-03 (the `'add numbers'` worked example verbatim),
+ FUN-08 (parameters joined with `and`), FUN-09 (`Return a <type>,`).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-01.vox -o p && ./p
+ expected output:
+   8
+)
+To 'add numbers' with a number called x and a number called y. Return a number, the x add y.
+
+Print 'add numbers' of 3 and 5.

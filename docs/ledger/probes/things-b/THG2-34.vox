@@ -1,0 +1,23 @@
+(THG2-34: the type possessive `a <type>'s 'member'` calls a member declared in
+ the manifest, and the article is `a` because a new thing comes into being.
+ The definite article in that position is not a call at all - the second half
+ of this probe is the same line written with `the`, which is refused.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-34.vox -o p && ./p
+ expected output:
+   error: Expected property name, got Identifier
+   The FIRST call, with `a`, compiles and yields 1; the second, with `the`,
+   is a compile error, so no binary is produced.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  Return a point, plotted.
+
+The pin is a point's 'placed at' with 1.
+Print pin's x.
+The peg is the point's 'placed at' with 1.
+Print peg's x.

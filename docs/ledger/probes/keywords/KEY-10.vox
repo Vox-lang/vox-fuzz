@@ -1,0 +1,9 @@
+(KEY-10 — `Increment` adds 1 to a variable.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-10.vox -o p && ./p
+ expected output:
+   12
+)
+a number called tally is 10.
+Increment tally.
+Increment the tally.
+Print tally.

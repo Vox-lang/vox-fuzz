@@ -1,0 +1,41 @@
+(EXP-47: comma-separated subjects test several variables against one value with
+ `are`.
+ Also covers: EXP-48 the `x, y, and z are true` shape, EXP-49 `are not false`,
+ EXP-50 a single-quoted multi-word subject, EXP-52 subjects separated by
+ commas, EXP-53 the `and` before the last subject being optional, EXP-54 the
+ predicate applying to ALL subjects, EXP-55 `are not` negating for all of them.
+ EXP-54 is the load-bearing one: the third block flips one subject and the
+ clause must stop firing. EXP-55 likewise - with one subject still true the
+ `are not true` clause must not fire, which is what tells a conjunction of
+ negations apart from a negated conjunction.
+ The last two lines record that the subject count is free: two and five both
+ parse.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-47.vox -o p && ./p
+ expected output:
+   all true
+   none false
+   and omitted, all true
+   one flipped, no longer all true
+   one of the three is true
+   now all three not true
+   two subjects parse
+   five subjects parse
+)
+a boolean called armed is true.
+a boolean called latched is true.
+a boolean called sealed is true.
+If armed, latched, and sealed are true then, Print "all true". Otherwise, Print "not all true".
+If armed, latched, and sealed are not false then, Print "none false". Otherwise, Print "some false".
+If armed, latched, sealed are true then, Print "and omitted, all true". Otherwise, Print "and omitted, not all true".
+Set sealed to false.
+If armed, latched, and sealed are true then, Print "still all true". Otherwise, Print "one flipped, no longer all true".
+a boolean called 'door open' is false.
+a boolean called lift_moving is false.
+a boolean called lift_full is true.
+If 'door open', lift_moving, and lift_full are not true then, Print "all three not true". Otherwise, Print "one of the three is true".
+Set lift_full to false.
+If 'door open', lift_moving, and lift_full are not true then, Print "now all three not true". Otherwise, Print "still one true".
+If armed, and latched are true then, Print "two subjects parse". Otherwise, Print "two subjects false".
+a boolean called warm is true.
+a boolean called lit is true.
+If armed, latched, warm, lit, and warm are true then, Print "five subjects parse". Otherwise, Print "five subjects false".

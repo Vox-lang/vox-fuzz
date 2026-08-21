@@ -1,0 +1,15 @@
+(VAR-21: the first canonical form is how a `file` and a `time` are given a
+ value — `a file called source is "input.txt".` and `a time called now is
+ current time.` both compile, and both variables report their declared type.
+ The file is never opened, so no fixture on disk is needed.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-21.vox -o p && ./p
+ expected output:
+   File (static)
+   Time (static)
+   the clock is live
+)
+a file called source is "input.txt".
+a time called now is current time.
+Print source's type.
+Print now's type.
+If now's year is greater than 2000 then, Print "the clock is live".

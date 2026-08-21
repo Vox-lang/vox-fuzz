@@ -1,0 +1,30 @@
+(THG-24: a thing name is a type noun everywhere the builtin ones are, so
+ every declaration form works - the bare `a T called N.`, `Create a T called
+ N.`, and `Set a T called N to <a whole T>.`
+ Also covers: THG-25 (each declaration form gives every field its declared
+ default - `first` and `second` both come up 1/2), THG-26 (the bare
+ declaration form).
+ LANGUAGE.md:877 says "All three lines below declare a `point`" above a
+ block containing one declaration - see Discrepancy 4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-24.vox -o p && ./p
+ expected output:
+   1
+   2
+   1
+   2
+   1
+   2
+)
+A thing called point has
+  a number called x is 1,
+  a number called y is 2.
+
+a point called first.
+Create a point called second.
+Set a point called third to first.
+Print first's x.
+Print first's y.
+Print second's x.
+Print second's y.
+Print third's x.
+Print third's y.

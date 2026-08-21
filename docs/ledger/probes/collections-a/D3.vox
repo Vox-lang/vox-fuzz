@@ -1,0 +1,13 @@
+(D3 — Discrepancy 3 repro: LANGUAGE.md:2419-2421 prescribes the guard idiom
+ "guard it yourself before operating - `if item is a number, ... item add 1
+ ...`". That exact sentence does not compile: arithmetic on a mixed-list
+ element is rejected whether or not it sits inside an `is a number` guard.
+ The same statement over a homogeneous list compiles and runs (LST-08).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: Cannot use a value item in arithmetic
+   (compile error - no binary is produced)
+)
+a list called mixedbag is [1, "two", 3.5].
+For each item in mixedbag,
+  if item is a number, print item add 1. otherwise print "guarded away".

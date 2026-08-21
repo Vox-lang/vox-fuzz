@@ -1,5 +1,4 @@
 --- seed 42 ---
-a number called v1 is 2147483648.
 To 'read flags 1'.
     a text called fl1local is fl1label.
     a number called fl1bumped is fl1count add 1.
@@ -7,30 +6,17 @@ To 'read flags 1'.
     Print fl1bumped.
     Print fl1on.
 
-To f1.
-    Return a number, 743.
-
-To f2 with a number called p1.
-    a number called r is p1 add 33.
-    Return a number, r.
-
-To f3 with a number called p1 and a number called p2.
-    a number called r is p1 add p2.
-    Return a number, r.
-
-To f4 with a text called p1.
-    Print "f4 {p1}".
-
 a flag called fl1label is "-a" or "--alpha1", it is a text.
 a flag called fl1count is "-b" or "--beta1", it is a number.
 a flag called fl1on is "-c" or "--gamma1", it is a boolean.
 a flag called fl1scratch is "-s" or "--scratch1", it is a text.
 Parse flags.
 
-If fl1label is not "v76753" then, Exit 91.
-If fl1count is not 4806 then, Exit 92.
-If fl1on is false then, Exit 93.
+If fl1label is not "v36333" then, Exit 91.
+If fl1count is not 1266 then, Exit 92.
+If fl1on then, Exit 94.
 
+a number called v1 is 69414907254369.
 A thing called t1 has
     a number called x1 is 0,
     a number called x2 is 0.
@@ -58,74 +44,109 @@ To do the t4's 'reflected across', with a t4 called original.
     Set mirrored's x1 to 0 subtract original's x1.
     Return a t4, mirrored.
 
-If v1 is greater than v1 then,
-  Set v1 to v1.
-a text called bs1 is "41".
-a number called bn1 is bs1 as a base 10 number.
-Print bn1.
-Print "{bn1:o}".
-a text called bx1 is "71434123696529832545".
-a number called bg1 is bx1 as a number.
-Print bg1.
-If v1 is less than v1 and v1 modulo 5 is equal to 0 then, Print v1 times v1. Otherwise, Print v1 multiply v1.
-a buffer called b1 is 67 bytes in size.
-Print byte 456 of b1.
-On error print "buffer read out of range".
-Print fl1label.
-Print fl1count.
-Print fl1on.
-'read flags 1'.
-a number called u1 is 0.
-While u1 is less than 8, Increment u1.
-Print u1.
-a text called 'the missing value 1' is environment's "VOXFUZZ_UNSET_509229".
-On error print "environment variable not set".
-Print 'the missing value 1'.
-a buffer called b2 is 59 bytes in size.
-Print byte 328 of b2.
-On error print "buffer read out of range".
-a list called l1 is [].
-append v1 add v1 to l1, but if v1 is greater than or equal to v1 append v1 minus v1, but if v1 is greater than v1 or v1 modulo 5 is equal to 0 append v1 minus v1, otherwise append v1 add v1.
-a number called r1 is 0.
-Repeat 7 times, Increment r1.
+To f1.
+    Return a number, 806.
 
-Print r1.
-a t2 called i1.
-Set i1's x1 to 50.
+To f2 with a number called p1.
+    a number called r is p1 add 22.
+    Return a number, r.
+
+To f3 with a number called p1 and a number called p2.
+    a number called r is p1 add p2.
+    Return a number, r.
+
+To f4 with a text called p1.
+    Print "f4 {p1}".
+
+a buffer called b1 is 45 bytes in size.
+Print byte 224 of b1.
+On error print "buffer read out of range".
+a number called env1count is environment's count.
+Print env1count as a boolean.
+Print environment's empty.
+a buffer called env1pathbuf is environment's "PATH".
+Print env1pathbuf's empty.
+f3 of each e1 from [69, 38] treating 45 as 70 and each e2 from 5 to 5 treating 3 as 56.
+a value called y1 is 926.
+Print y1.
+Set y1 to "reassigned1".
+Print y1.
+a map called m1 is {"label": "tag1", "count": 988}.
+Print m1's "missing".
+On error print "map key missing".
+a number called env2count is environment's count.
+Print env2count as a boolean.
+Print environment's empty.
+a buffer called env2pathbuf is environment's "PATH".
+Print env2pathbuf's empty.
+a number called zn1 is 9223372036854775807.
+a number called zk1 is 73.
+a float called zd1 is 2630783478.181.
+a text called zs1 is "word1".
+a boolean called zb1 is true.
+a t1 called zi1.
+Set zi1's x1 to 8098.
+Print "{zn1}".
+Print "{zn1:11}".
+Print "{zn1:020}".
+Print "{zn1:x}".
+Print "{zn1:X}".
+Print "{zk1:b}".
+Print "{zk1:o}".
+Print "{zn1:08x}".
+Print "{zd1:.5}".
+Print "{zd1:11.5}".
+Print "{zs1:1}".
+Print "{zb1:020}".
+Print "{zi1's x1:08x}".
+For each number from 1 to 6, Print number, If number is equal to 9 then, Break. Print "x".
+a buffer called b2 is 52 bytes in size.
+Print byte 182 of b2.
+On error print "buffer read out of range".
+a t3 called i1.
+Set i1's g1's x1 to 176.
+Print i1's g1's x1.
 Print i1.
-a timer called tk2.
-Start tk2.
-a number called ta2 is 0.
-For each te2 from 1 to 10,
-    Set ta2 to ta2 add te2.
-Stop tk2.
-Print ta2.
-a number called tl2 is the tk2's elapsed in milliseconds.
-If tl2 is negative then, Print "tl2 NEGATIVE". Otherwise, Print "tl2 ok".
-Get current time into tn2.
-a number called tu2 is the tn2's unix.
-If tu2 is positive then, Print "tu2 ok". Otherwise, Print "tu2 BAD".
-a number called ty2 is the tn2's year.
-If ty2 is greater than 2000 then, Print "ty2 ok". Otherwise, Print "ty2 BAD".
-open a file for reading called sin3 at "/dev/stdin".
-a buffer called sb3 is 49 bytes.
-Read from sin3 into sb3.
-Print sb3's size.
-If sb3 is empty then, Print "sb3 empty". Otherwise, Print "sb3 filled".
-a buffer called sc3 is 8 bytes.
-Read from sin3 into sc3.
-Print sc3's size.
-Close sin3.
-a text called fp4 is "{fl1scratch}/out4".
-open a file for writing called fw4 at fp4.
-Write "payload 75631\n" to fw4.
-Close fw4.
-open a file for reading called fr4 at fp4.
-a buffer called fb4 is 8 bytes in size.
-Read from fr4 into fb4.
-Print fb4's size.
-Print fr4's readable.
-Close fr4.
-Exit 217.
+a number called hn2 is 1303.
+a float called hd2 is 2476703438.12323436501.
+a text called hs2 is "word2".
+a buffer called hw2 is 64 bytes in size.
+copy "buf2" to hw2.
+a boolean called hb2 is true.
+a list called hl2 is [27985, 705].
+a map called hm2 is {"label": "tag2", "count": 705}.
+a value called hv2 is 358.
+a t1 called hi2.
+Set hi2's x1 to 27985.
+Print "number {hn2:010x}".
+Print "float {hd2:.3}".
+Print "text {hs2}".
+Print "buffer {hw2}".
+Print "boolean {hb2}".
+Print "list {hl2}".
+Print "map {hm2}".
+Print "value {hv2:010x}".
+Print "field {hi2's x1:010x}".
+Print "all {hn2:010x}|{hd2:.3}|{hs2}|{hw2}|{hb2}|{hl2}|{hm2}|{hv2:010x}|{hi2's x1:010x}".
+Print "braces {{lit}} tab\there {hn2:010x}".
+Get current time into hq2.
+a text called ht2 is "{hq2's hour:02}".
+a buffer called hc2 is "{ht2}".
+If hc2's length is equal to 2 then, Print "ht2 ok". Otherwise, Print "ht2 BAD".
+a number called u1 is 0.
+While u1 is less than 1, Increment u1.
+Print u1.
+a text called fp3 is "{fl1scratch}/out3".
+open a file for writing called fw3 at fp3.
+Write "payload 46153\n" to fw3.
+Close fw3.
+open a file for reading called fr3 at fp3.
+a buffer called fb3 is 58 bytes in size.
+Read from fr3 into fb3.
+Print fb3's size.
+Print fr3's readable.
+Close fr3.
+'read flags 1'.
+Exit 3.
 
 reproducible: 1

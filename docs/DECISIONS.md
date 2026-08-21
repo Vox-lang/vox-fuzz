@@ -279,3 +279,14 @@ cost the most time when forgotten.
    relative to the including file.
 10. `arguments's count` includes argv[0]; `arguments's all` yields
     argv[1..].
+
+- **No chaos mode — randomness is the default (Josj, 2026-08-20).** Plan
+  326's per-run `chaos` knob is retired before it was built. The generator
+  is the noise-plus-rules model at all times; a compiler rejection is a
+  `parser-reject` finding to triage (missing rule or compiler bug), and a
+  deliberately-broken program must carry `expected: reject` in its
+  metadata so a rejection is the happy path and a crash the finding. No
+  pretty-printed "beautiful" layout is planned — `--layout plain` is the
+  reading aid. Layout itself (indentation, line breaks, tabs) is noise
+  and is randomised by the layout pass; only periods, commas and
+  paragraph breaks are syntax (LANGUAGE.md:207, :78-80).

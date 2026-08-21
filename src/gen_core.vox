@@ -592,6 +592,26 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf stdin read' of indent and nested.
     If kind is 44 then,
         'gen leaf file round trip' of indent and nested.
+    (The values band, 140-147, reserved above for the collections
+     surface. They are drawn only at depth 3 - see the section header in
+     src/gen_collections.vox for why a leaf that both defines a function
+     and closes on an If assertion cannot sit in a nested body.)
+    If kind is 140 then,
+        'gen leaf value dispatch' of indent and nested.
+    If kind is 141 then,
+        'gen leaf value return' of indent and nested.
+    If kind is 142 then,
+        'gen leaf value name' of indent and nested.
+    If kind is 143 then,
+        'gen leaf value retag' of indent and nested.
+    If kind is 144 then,
+        'gen leaf value retype' of indent and nested.
+    If kind is 145 then,
+        'gen leaf value retype sum' of indent and nested.
+    If kind is 146 then,
+        'gen leaf value predicate' of indent and nested.
+    If kind is 147 then,
+        'gen leaf value bad retype' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -729,8 +749,18 @@ To 'gen statement' with a number called depth and a text called indent and a boo
     If depth is equal to 3 then,
         (0..42: the four format leaves are 39-42. The file-write leaf
          is parked at 99, outside the draw, so no number in this range
-         dispatches to nothing.)
-        Set kind to 'rng below' of 45.
+         dispatches to nothing.
+         45..52 are drawn as one contiguous span with the rest and then
+         shifted into the collections surface's reserved 140-147 band -
+         the eight `value` leaves. The shift keeps a single flat draw
+         (so the existing kinds' odds move by exactly the eight new
+         ones' share, and no seed's leaf choice depends on where the
+         band happens to sit) while leaving the band numbers themselves
+         where the reservation table put them, out of the way of the
+         other surfaces' parallel work.)
+        Set kind to 'rng below' of 53.
+        If kind is greater than 44 then,
+            Set kind to kind add 95.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 29.
     If depth is equal to 1 then,
@@ -836,6 +866,15 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         (42 is 'gen leaf format types', which opens a clause of its own —
          carried over from the format-coverage branch's own remap.)
         If kind is 42 then,
+            Set 'safe kind' to 1.
+        (140-147, the `value` leaves. Defensive in the same sense as the
+         entries above: avoid_onerror is only ever true below 'gen body',
+         which recurses at depth 2 or lower, and the band is drawn at
+         depth 3 alone - so these can never be reached here. Written
+         anyway, because every one of them either defines a function or
+         ends on an `If ... Exit 95.` assertion, and both would leave an
+         enclosing block open if the guarantee ever moved.)
+        If kind is greater than 139 then,
             Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
@@ -1000,6 +1039,13 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_envs to 0.
     Set gen_flags to 0.
     'rng seed' of seed.
+    (The value leaves spend names out of a vocabulary on a per-program
+     cycle whose start and stride are DRAWN, so the reset has to sit
+     after the reseed, not with the plain counters above it: drawn from
+     the previous program's leftover stream, two programs generated in
+     one process stop being byte-identical for the same seed - which is
+     exactly what 040_gen's `reproducible` line caught.)
+    'gen reset value names'.
     Set gen_grid_depth to 'rng below' of 15 add 3.
     Set gen_flags to 1.
     'gen build argv'.

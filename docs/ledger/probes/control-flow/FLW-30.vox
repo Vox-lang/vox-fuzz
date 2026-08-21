@@ -1,0 +1,14 @@
+(FLW-30: `Break.` leaves the loop immediately - the rest of the body is
+ skipped on the breaking iteration and no further iterations run, even
+ though the range had two left to go.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-30.vox -o p && ./p
+ expected output:
+   1
+   tail
+   2
+   tail
+   3
+   after
+)
+For each number from 1 to 5, print the number, If number is equal to 3 then, Break. print "tail".
+print "after".

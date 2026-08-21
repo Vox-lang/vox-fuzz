@@ -1,0 +1,15 @@
+(ARG-22 — `and is required` requires the flag to be present at runtime
+ (LANGUAGE.md:4384, 4388): with the flag absent the program does not
+ reach its first Print.
+ Also covers: ARG-51 — the abort is completely silent. Exit status 1,
+ nothing on stdout, nothing on stderr, no mention of which flag was
+ missing. The manual says the flag is "required" and says nothing about
+ what a missing one does; see Discrepancy 3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-22.vox -o p && ./p
+ expected output:
+   (exit 1)
+)
+a flag called retries is "-r" or "--retries", it is a number and is required.
+Parse flags.
+
+Print "this line is never reached".

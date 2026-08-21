@@ -1,0 +1,10 @@
+(KEY-59 — a RESERVED keyword is banned as a bare name everywhere. The
+ manual's own example of the operator class is `times`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-59.vox -o p && ./p
+ expected output:
+   error: Cannot use 'times' as a variable name - it's a reserved keyword.
+     Tip: Try a more descriptive name like 'times_value' or 'my_times'
+   (no binary produced; compile error)
+)
+a number called times is 1.
+Print times.

@@ -1,0 +1,10 @@
+(BUF-19: byte positions are 1-indexed - byte 1 must be the FIRST byte, not the zeroth.)
+(expected output:
+65
+69
+)
+a buffer called buf is "ABCDE".
+a number called first is byte 1 of buf.
+a number called fifth is byte 5 of buf.
+print first.
+print fifth.

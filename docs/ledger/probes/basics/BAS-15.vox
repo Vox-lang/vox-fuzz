@@ -1,0 +1,13 @@
+(BAS-15 - undocumented precision on BAS-07/BAS-12: an UNTERMINATED comment
+ silently swallows the rest of the file. No error, no warning, exit 0 -
+ only the statements before the stray open-paren run. Contrast the
+ unclosed-function case (BAS-23), which the compiler does warn about.
+ See Discrepancy 3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-15.vox -o p && ./p
+ expected output:
+   a
+)
+print "a".
+(unterminated comment starts here
+print "b".
+print "c".

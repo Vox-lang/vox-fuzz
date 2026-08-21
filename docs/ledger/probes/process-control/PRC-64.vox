@@ -1,0 +1,35 @@
+(PRC-64 — the `process` library is installable as an ordinary shared
+ library and consumed with `see process version "0.1" from "...".`.
+ Also covers: PRC-65 (it provides 'exit code of' over bits 8-15, 'signal
+ of' over the low 7 bits, crashed, and 'exited normally') and PRC-66 (the
+ call-site forms `crashed of status` / `'signal of' of status` read as
+ English and work).
+ fixtures/libprocess.lib and fixtures/libprocess.so were copied verbatim
+ from the local build of Vox-lang/vox-libs at
+ /home/josj/scr/english/vox-libs/build/. The `from` path is resolved
+ relative to THIS source file, and the .so relative to the .lib, so the
+ probe works from any working directory.
+ SAFETY: signal 9 goes only to the pid this program forked.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-64.vox -o p && ./p
+ expected output:
+   the tidy child left exit code 0
+   the stuck child died by signal 9
+)
+see process version "0.1" from "fixtures/libprocess.lib".
+
+a number called 'the tidy child' is fork the process.
+If 'the tidy child' is 0 then, Exit 0.
+a number called 'the tidy reaped' is reap child 'the tidy child'.
+a number called 'the tidy status' is the reaped status.
+If crashed of 'the tidy status' then, print "the tidy child died by signal {'signal of' of 'the tidy status'}".
+If 'exited normally' of 'the tidy status' then, print "the tidy child left exit code {'exit code of' of 'the tidy status'}".
+a number called 'the stuck child' is fork the process.
+If 'the stuck child' is 0 then, Wait 5 seconds, Exit 0.
+Send signal 9 to process 'the stuck child'.
+a number called 'the stuck reaped' is reap child 'the stuck child'.
+a number called 'the stuck status' is the reaped status.
+If crashed of 'the stuck status' then, print "the stuck child died by signal {'signal of' of 'the stuck status'}".
+If 'exited normally' of 'the stuck status' then, print "the stuck child left exit code {'exit code of' of 'the stuck status'}".

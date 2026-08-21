@@ -1,0 +1,6 @@
+(BUF-02: manual claims a dynamic buffer starts with zero capacity.)
+(expected output:
+4096
+)
+a buffer called d.
+print d's capacity.

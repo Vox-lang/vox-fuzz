@@ -1,0 +1,20 @@
+(D3 — Discrepancy 3 repro: a loop-expansion clause whose collection is a
+ SCALAR used to be accepted with no diagnostic and segfaulted at runtime
+ (exit 139, deterministic 60/60). The manual's "Supported collections"
+ list (LANGUAGE.md:2803-2806) is lists, ranges and `arguments's all`; a
+ number is none of those.
+ **RESOLVED — fixed by vox #49 (0.4.8+).** The analyzer now refuses a
+ non-list collection at compile time, so this two-token program no longer
+ builds and no longer crashes. A named number gives the same refusal with
+ the variable's name and a tailored hint; a text variable and a text
+ literal are refused too ("Loop collection must be a list: text").
+ Note: the caret this diagnostic prints can land in a comment rather than
+ on the offending statement -- see Discrepancy 10 (`D10.vox`); the message
+ itself is correct.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+ expected output:
+   error: Loop collection must be a list: a number
+   (no binary produced; compile error)
+   hint: `each ... from` walks a list, a range, or `arguments's all`
+)
+print each part from 4.

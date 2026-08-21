@@ -1,0 +1,16 @@
+(FIL-74: `is not available` negates the check and is usable as a While condition.
+ The loop guard is a path that IS available, so the body never runs and the
+ probe cannot hang.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-74.vox -o p && ./p
+ actual output:
+   a missing path is not available
+   the wait loop exited without sleeping
+)
+If "vf_scratch/files/absent.txt" is not available then,
+    print "a missing path is not available".
+a text called 'the root device' is "/dev/null".
+While 'the root device' is not available,
+    Sleep for 100 milliseconds.
+print "the wait loop exited without sleeping".

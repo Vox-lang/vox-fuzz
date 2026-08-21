@@ -1,0 +1,32 @@
+(FUN-19 — the shadowing rule applies to `value` too, and its runtime type
+ tag travels with its payload. `retag slot` stores a TEXT into a global
+ declared holding a NUMBER; `report slot` (a different function) then
+ prints `seven`, so both halves of the pair were written to the global.
+ `shadow slot` declares a local `slot`, prints 42, and leaves the global
+ alone — the final `report slot` still prints `seven`.
+ Also covers: FUN-20 (a mutation inside one function is visible to another
+ only when it is genuinely the same global).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-19.vox -o p && ./p
+ expected output:
+   7
+   seven
+   42
+   seven
+)
+a value called slot is 7.
+
+To 'retag slot'.
+  Set slot to "seven".
+
+To 'report slot'.
+  Print slot.
+
+To 'shadow slot'.
+  a value called slot is 42.
+  Print slot.
+
+'report slot'.
+'retag slot'.
+'report slot'.
+'shadow slot'.
+'report slot'.

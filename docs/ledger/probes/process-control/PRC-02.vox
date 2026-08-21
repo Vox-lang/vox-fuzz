@@ -1,0 +1,20 @@
+(PRC-02 — `Create a directory called '<path>'.` performs mkdir(2).
+ Also covers: PRC-04 (the article `a` is optional).
+ Run from the repo root; the probe creates and removes its own scratch
+ directories under this probe directory and leaves nothing behind.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-02.vox -o p && ./p
+ expected output:
+   the article form created the directory
+   the article is optional
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_with_article".
+If "vf_scratch/process-control/scratch_with_article" is available then, print "the article form created the directory".
+Create directory called "vf_scratch/process-control/scratch_no_article".
+If "vf_scratch/process-control/scratch_no_article" is available then, print "the article is optional".
+Remove the directory called "vf_scratch/process-control/scratch_with_article".
+Remove the directory called "vf_scratch/process-control/scratch_no_article".

@@ -1,0 +1,16 @@
+(BAS2-05: a range is a legal loop-expansion collection: `print each number from 1 to 10.`
+ Also covers: BAS2-11, BAS2-17
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-05.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   4
+   5
+   6
+   7
+   8
+   9
+   10
+)
+print each number from 1 to 10.

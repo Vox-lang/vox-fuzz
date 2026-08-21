@@ -1,0 +1,18 @@
+(TIM-57 - a time property read from a plain number is accepted: a `time`
+ IS a number - its unix second count - so the only check is that the
+ operand is numeric, and the number is decomposed as if it were an epoch
+ second count. 3 reads back as unix 3, hour 0, year 1970. A text is
+ rejected at compile time (TIM-59). Undocumented, and relevant to the
+ fuzzer: nothing here crashes.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-57.vox -o p && ./p
+ expected output:
+   0
+   3
+   1970
+   reading time properties off a plain number did not crash
+)
+a number called counter is 3.
+print counter's hour.
+print counter's unix.
+print counter's year.
+print "reading time properties off a plain number did not crash".

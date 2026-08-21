@@ -1,0 +1,15 @@
+(FLW-33 (undocumented precision): outside any loop, `Break.` and
+ `Continue.` are rejected at compile time, not a runtime no-op. The
+ manual's Loop Control section (LANGUAGE.md:2164-2169) says nothing about
+ where they are legal.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-33.vox -o p && ./p
+ expected output:
+   Break is only valid inside a loop
+   (a compile error - vox refuses the program, and reports
+    "Continue is only valid inside a loop" in the same run)
+)
+print "start".
+Break.
+print "after break".
+Continue.
+print "after continue".

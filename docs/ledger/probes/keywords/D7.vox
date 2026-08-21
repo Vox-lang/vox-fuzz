@@ -1,0 +1,12 @@
+(Discrepancy 7 repro — SEGFAULT. Initialising a list from the
+ `all the numbers from …` range phrase compiles and the declaration itself
+ survives; printing the list dies with SIGSEGV after emitting the opening
+ bracket. The manual says ranges are "not allocated as lists"
+ (LANGUAGE.md:262), so this form arguably should not compile at all — but
+ refusing it is a diagnostic, not a signal death.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
+ expected output:
+   (exit 139 - SIGSEGV after printing "[")
+)
+a list called steps is all the numbers from 1 to 3.
+Print steps.

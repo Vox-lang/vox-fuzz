@@ -1,0 +1,12 @@
+(D2 - Discrepancy 2 repro: `Increment` on a `float` is a silent no-op. No
+ diagnostic, no change - 2.25 goes in and 2.25 comes out. The same
+ statement on a `text` is refused at compile time with "Increment requires
+ a number variable", so the compiler does have an opinion about the
+ operand type; `float` falls through it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   2.25
+)
+a float called rate is 2.25.
+Increment rate.
+print rate.

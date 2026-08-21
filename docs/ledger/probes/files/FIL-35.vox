@@ -1,0 +1,27 @@
+(FIL-35: opening at a numeric literal borrows that file descriptor rather than treating the number as a path.
+ Also covers: FIL-36, FIL-42.
+ The final guard proves the negative: no file named "2" was created, so
+ at 2 was not read as a path. fd 1 is deliberately NOT borrowed here -
+ Close on a borrowed fd 1 is a real close(2) and would take the
+ program's own stdout with it.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-35.vox -o p && ./p
+ actual output:
+   2
+   1
+   0
+   0
+   1
+   no file named 2 was created, so at 2 was a borrowed descriptor
+)
+open a file for writing called 'the standard error' at 2.
+print 'the standard error's descriptor.
+print 'the standard error's writable.
+print 'the standard error's readable.
+open a file for reading called 'the standard input' at 0.
+print 'the standard input's descriptor.
+print 'the standard input's readable.
+print "no file named 2 was created, so at 2 was a borrowed descriptor".
+If "2" is available then,
+    print "a file called 2 exists - at 2 was treated as a path".

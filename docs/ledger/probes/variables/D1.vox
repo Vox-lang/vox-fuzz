@@ -1,0 +1,14 @@
+(Discrepancy 1: LANGUAGE.md:597-599 says the check rejects a mismatch it can
+ prove from the value's own shape, naming "a read from a list/map whose
+ element type is provably uniform". A map read IS checked. A list read is
+ not, and assigning a number element to a text name compiles and then
+ SEGFAULTS on the first use, which is the outcome LANGUAGE.md:603-606 claims
+ the rule closes. Deterministic: three runs, three SIGSEGVs.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   (no output; exit 139 — SIGSEGV)
+)
+a list called counts is [1, 2].
+a text called label is "x".
+label is element 1 of counts.
+Print label.

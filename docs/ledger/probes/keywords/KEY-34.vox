@@ -1,0 +1,14 @@
+(KEY-34 — `of`, `to` and `on` all introduce function arguments, and are
+ interchangeable with `with` (KEY-32).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-34.vox -o p && ./p
+ expected output:
+   8
+   8
+   8
+)
+To 'sum of' with a number called left and a number called right.
+    Return a number, left add right.
+
+Print 'sum of' of 3 and 5.
+Print 'sum of' to 3 and 5.
+Print 'sum of' on 3 and 5.

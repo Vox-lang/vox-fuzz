@@ -1,0 +1,10 @@
+(FMT-04 — `Print "..." without newline.` suppresses the trailing newline
+ on a literal. Two suppressed prints land on one line; the third Print
+ (with its newline) ends it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   abc
+)
+Print "a" without newline.
+Print "b" without newline.
+Print "c".

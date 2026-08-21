@@ -1,0 +1,46 @@
+(LST2-42 — `<action> each <variable> from <collection>` runs the action
+ once per item, over a list literal, a range, and a list variable.
+ The manual's own "Loop Expansion with Collections" examples.
+ Also covers: LST2-43 (a list literal source), LST2-44 (a range source,
+ inclusive at both ends), LST2-45 (a function call per item), LST2-46
+ (`append each X from Y to Z`), LST2-47 (the `<action> each <var> from
+ <collection>` syntax), LST2-48 (any list variable is a legal source),
+ LST2-51 (print each), LST2-52 (function of each), LST2-53 (append each),
+ LST2-55 (`print <func> of each ...` prints the returned values),
+ LST2-56 (an empty collection does nothing).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-42.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   1
+   2
+   3
+   4
+   5
+   10
+   20
+   30
+   [10, 20, 30]
+   [1, 2, 3, 4, 5]
+   2
+   4
+   6
+   empty collection ran zero times
+)
+To double of a number called x.
+  Return a number, x multiply 2.
+
+print each number from [1, 2, 3].
+print each step from 1 to 5.
+a list called source is [10, 20, 30].
+print each member from source.
+a list called dest is [].
+append each x from source to dest.
+print dest.
+a list called ranged is [].
+append each step from 1 to 5 to ranged.
+print ranged.
+print double of each n from [1, 2, 3].
+print each nobody from [].
+print "empty collection ran zero times".

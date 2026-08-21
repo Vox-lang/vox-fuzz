@@ -1,0 +1,11 @@
+(KEY-05 — `If` and `When` are interchangeable conditional starters.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-05.vox -o p && ./p
+ expected output:
+   if fired
+   when fired
+)
+a number called height is 7.
+If height is greater than 5 then,
+    Print "if fired".
+When height is greater than 5 then,
+    Print "when fired".

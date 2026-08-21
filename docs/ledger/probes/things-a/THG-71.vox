@@ -1,0 +1,18 @@
+(THG-71: a thing cannot be compared with a single value.
+ LANGUAGE.md:1130-1131 (cross-referring to the Equality section, which the
+ Things part B ledger maps). Recorded here because this section makes the
+ claim; the caret lands on the declaration again (Discrepancy 3).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-71.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, so it cannot be compared with a single value
+       `is` between two things compares them field by field (plan 310 §8); a whole point and one value have no fields in common.
+       Compare a field instead - point's fields are: x, y
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+If origin is 5 then,
+    Print "five".

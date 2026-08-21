@@ -1,0 +1,16 @@
+(THG2-03: LANGUAGE.md:1173 says "A quoted field name prints in the quotes it
+ is written with." The compiler quotes a field name in its printed output only
+ when the name contains a space; a single-word name written IN quotes prints
+ without them. All three fields below are written quoted; only the multi-word
+ one comes back quoted. See Discrepancy 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-03.vox -o p && ./p
+ expected output:
+   {'day sent': 25, depth: 2, altitude: 1}
+)
+A thing called stamp has
+  a number called 'day sent' is 25,
+  a number called 'depth' is 2,
+  a number called 'altitude' is 1.
+
+a stamp called posted.
+Print posted.

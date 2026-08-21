@@ -1,0 +1,7 @@
+(FMT-07 — `{}` interpolates a variable's value into a string literal.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Hello, Alice!
+)
+a text called name is "Alice".
+Print "Hello, {name}!".

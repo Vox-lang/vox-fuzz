@@ -1,0 +1,17 @@
+(THG2-72: a list or map of user things, or a value holding one, is deferred.
+ The list case is below; the value case was run by hand from the same shape
+ (`a value called held is origin.`) and gives the identical diagnostic, as does
+ a map literal with a thing for a value.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-72.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, not a value
+   followed by "A whole thing is copied, passed, and returned whole, printed as
+   its fields, and compared field by field; no other position reads it as one
+   value." No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0.
+
+a point called origin.
+a list called corners is [origin].
+Print corners.

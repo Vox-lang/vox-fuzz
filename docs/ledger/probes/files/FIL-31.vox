@@ -1,0 +1,12 @@
+(FIL-31: the Number Properties worked example compiles and behaves as shown.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-31.vox -o p && ./p
+ actual output:
+   x is negative
+   42
+)
+a number called 'the reading' is -42.
+If 'the reading's negative then,
+    print "x is negative".
+print 'the reading's absolute.

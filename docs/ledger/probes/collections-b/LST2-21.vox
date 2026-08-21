@@ -1,0 +1,24 @@
+(LST2-21 — list elements are reached by `element N of <list>` and are
+ 1-indexed: element 1 is the first item. The manual's own "List Element
+ Access" block, verbatim.
+ Also covers: LST2-22 (a literal index), LST2-23 (`'s first`/`'s last` in
+ Print position agree with element 1 and element N), LST2-24 (a variable
+ index works and reads the same slot a literal would).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-21.vox -o p && ./p
+ expected output:
+   10
+   20
+   10
+   30
+   20
+)
+a list called nums is [10, 20, 30].
+
+Print element 1 of nums.
+Print element 2 of nums.
+Print nums's first.
+Print nums's last.
+
+(Using variable index)
+a number called i is 2.
+Print element i of nums.

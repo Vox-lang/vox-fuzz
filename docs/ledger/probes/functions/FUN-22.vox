@@ -1,0 +1,58 @@
+(FUN-22 — "a typed parameter supports the same properties and operations
+ as a top-level variable of that type" (LANGUAGE.md:724-725). Each pair of
+ lines below reads one property twice: once from the top-level variable,
+ once from the parameter it was passed to. Every pair matches here.
+ It does NOT hold for three of the eleven types, each with its own repro:
+ a `map` parameter (Discrepancy 2, D2.vox), a `timer` parameter
+ (Discrepancy 3, D3.vox), and the `readable`/`writable` properties of a
+ `file` parameter (Discrepancy 4, D4.vox).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-22.vox -o p && ./p
+ expected output:
+   3
+   65
+   3
+   20
+   2026
+   12
+   3
+   --- through parameters ---
+   3
+   65
+   3
+   20
+   2026
+   12
+   3
+)
+To 'read buffer' with a buffer called payload.
+  Print payload's size.
+  Print byte 1 of payload.
+
+To 'read list' with a list called items.
+  Print items's length.
+  Print element 2 of items.
+
+To 'read time' with a time called moment.
+  Print moment's year.
+
+To 'read file' with a file called handle.
+  Print handle's size.
+  Print handle's descriptor.
+
+a buffer called blob is "ABC".
+a list called tallies is [10, 20, 30].
+a time called now is current time.
+open a file for reading called src at "docs/ledger/probes/functions/fixtures/data.txt".
+
+Print blob's size.
+Print byte 1 of blob.
+Print tallies's length.
+Print element 2 of tallies.
+Print now's year.
+Print src's size.
+Print src's descriptor.
+Print "--- through parameters ---".
+'read buffer' of blob.
+'read list' of tallies.
+'read time' of now.
+'read file' of src.

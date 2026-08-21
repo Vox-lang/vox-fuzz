@@ -1,0 +1,11 @@
+(KEY-70 — `last` is contextual: the last-item property after a possessive,
+ and an ordinary identifier elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-70.vox -o p && ./p
+ expected output:
+   30
+   6
+)
+a number called last is 6.
+a list called stops is [10, 20, 30].
+Print stops's last.
+Print last.

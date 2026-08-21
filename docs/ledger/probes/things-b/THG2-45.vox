@@ -1,0 +1,16 @@
+(THG2-45: the member-space collision rule is first-come-first-served for a
+ DECLARED MEMBER as well as for a field: declaring `a function called x` after
+ a field `x` errors at the manifest entry. The field-versus-global-function
+ case is THG2-31; the declared-member-versus-global-function case was run by
+ hand and reports "point already has a declared function member called
+ 'placed at'".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-45.vox -o p && ./p
+ expected output:
+   error: Thing 'point' already has a field called 'x'
+   followed by "Each thing owns one member space: its fields and its declared
+   function members cannot share a name." No binary is produced; this is a
+   compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a function called x.

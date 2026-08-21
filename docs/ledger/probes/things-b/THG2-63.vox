@@ -1,0 +1,9 @@
+(THG2-63: `Create a thing called point.` - a thing is defined, not created as a
+ variable, and the error names the canonical form.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-63.vox -o p && ./p
+ expected output:
+   error: A thing is defined, not created as a variable
+   followed by "Canonical form: A thing called point has <fields>."
+   No binary is produced; this is a compile error.
+)
+Create a thing called point.

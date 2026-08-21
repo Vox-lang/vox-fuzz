@@ -574,3 +574,41 @@ generation time — a program can assert `label` equals what was supplied
 and `Exit` with a distinct code if not. That makes it one of the few
 places the deferred output-oracle problem is already solved, and it is
 worth exploiting rather than merely printing the values and hoping.
+
+### 11. A compile failure that is not an ICE and not a toolchain rejection vanishes — counted as "not compiled", never a finding
+
+**Status:** **open**, found 2026-08-20 by the master while gating the
+values batch A leaves. A 200-seed campaign on a loaded machine reported
+`compiled: 186` with `findings: 0`; every one of the 200 kept programs
+compiled cleanly by hand, and the same seeds re-run on a quieter machine
+gave `compiled: 200`. The 14 were compile **timeouts** under load, and
+the run reported a clean sweep over them.
+
+Two defects in one:
+
+1. **A compile that times out is dropped silently.** `'classify compile
+   exit'` (`src/loop_gen.vox`) maps a negative code to `"hang"`, but the
+   compile path only escalates `ice` and the nasm/ld `check-asm` cases;
+   a compile that did not finish is neither, so it falls to "not
+   compiled, no finding" and only the aggregate `unexplained > half`
+   warning could ever notice. A campaign's `compiled:` number is
+   therefore not trustworthy as a generator-quality signal.
+2. **A compiler *rejection* is not a finding class at all.** With
+   randomness as the default (no chaos mode — `docs/DECISIONS.md`), a
+   program the compiler refuses is a `parser-reject` finding to triage: a
+   rule the generator has not learned, or a compiler bug. Today it is the
+   same silent "not compiled".
+
+**How it was proven:** the 200 kept programs, compiled by hand with the
+same binary and `VOX_CORE_PATH`, 0 failures; the identical campaign
+re-run, `compiled: 200`; main's generator on the same seeds, 200/200.
+
+**Fix direction:** a compile exit of "hang" (timeout) becomes a
+`compile-timeout` finding (or at minimum a loud per-program line and a
+non-zero exit when any occur); a compile exit with a diagnostic becomes a
+`parser-reject` finding carrying the diagnostic, so the rule-layer gap
+is triaged instead of averaged away. Until then, acceptance campaigns
+for leaf batches are run twice or on a quiet machine, and `compiled:`
+below the program count is investigated by hand.
+
+---

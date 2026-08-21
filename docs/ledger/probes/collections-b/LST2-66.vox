@@ -1,0 +1,16 @@
+(LST2-66 — an empty collection ANYWHERE in a grid produces zero calls,
+ whatever position it holds. The manual's own two examples: empty in the
+ leading clause, and empty in the middle of three.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-66.vox -o p && ./p
+ expected output:
+   zero calls from both grids above
+)
+To pair of a number called left and a number called right.
+  print "{left}-{right}".
+
+To triple of a number called one and a number called two and a number called three.
+  print "{one}/{two}/{three}".
+
+'pair' of each left from [] and each right from [10, 20].
+'triple' of each first from [1, 2] and each second from [] and each third from [5].
+print "zero calls from both grids above".

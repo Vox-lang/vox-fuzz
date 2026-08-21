@@ -1,0 +1,29 @@
+(FUN-14 — assigning to a top-level variable inside a function mutates the
+ global itself, and the new value is visible after the call returns.
+ Also covers: FUN-15 (the `the g is ...` spelling of the same assignment),
+ FUN-16 (the mutation is visible to every other function, not only the
+ caller — `report g` is a third function and sees 111).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-14.vox -o p && ./p
+ expected output:
+   1
+   11
+   111
+   111
+)
+a number called g is 1.
+
+To 'bump with set'.
+  Set g to g add 10.
+
+To 'bump with the'.
+  the g is g add 100.
+
+To 'report g'.
+  Print g.
+
+Print g.
+'bump with set'.
+Print g.
+'bump with the'.
+Print g.
+'report g'.

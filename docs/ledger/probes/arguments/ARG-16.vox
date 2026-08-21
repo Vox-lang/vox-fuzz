@@ -1,0 +1,15 @@
+(ARG-16 — the supported flag value types are exactly boolean, number and
+ text (LANGUAGE.md:4372-4376). The list is exhaustive, and the compiler
+ says so in its own words: any other type name is refused, and the
+ diagnostic names the same three.
+ (Compile-error claim: not assertable from a generated leaf, for the
+ same reason as ARG-30.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-16.vox -o p && ./p
+ expected output:
+   error: Expected flag value type: boolean, number, or text
+   (no binary produced; compile error)
+)
+a flag called listy is "-y" or "--listy", it is a list.
+Parse flags.
+
+Print "unreachable".

@@ -1,0 +1,8 @@
+(BAS-10 - a comment can appear at the end of a statement, after the period.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-10.vox -o p && ./p
+ expected output:
+   first
+   second
+)
+print "first". (a trailing remark)
+print "second". (and another)

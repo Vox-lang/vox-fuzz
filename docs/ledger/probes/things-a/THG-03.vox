@@ -1,0 +1,16 @@
+(THG-03: a thing is defined once, at the TOP LEVEL - a definition written
+ inside a function body is refused.
+ (Compile-error claim: not assertable from a runtime leaf, since emitting it
+  produces a non-compiling program, outside the generator's contract.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-03.vox -o p && ./p
+ expected output:
+   error: A thing is defined at the top level, like a function
+       Canonical form: A thing called point has <fields>.
+       Move the definition above the block it is written in: a thing's layout is fixed for the whole program, so a definition inside an 'If', a loop, or a function body has no scope to belong to.
+   (no binary produced; compile error)
+)
+To 'set up'.
+  A thing called point has
+    a number called x is 0.
+
+'set up'.

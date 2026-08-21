@@ -1,0 +1,18 @@
+(ARG-21 — `with default <value>` initializes the flag when it is not
+ passed (LANGUAGE.md:4383, 4387). Run with no arguments, so every
+ default is the value observed. The manual shows a text default only;
+ number and boolean defaults are accepted too and are included here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-21.vox -o p && ./p
+ expected output:
+   output is out.txt
+   retries is 7
+   loud is 1
+)
+a flag called output is "-o" or "--output", it is a text with default "out.txt".
+a flag called retries is "-r" or "--retries", it is a number with default 7.
+a flag called loud is "-l" or "--loud", it is a boolean with default true.
+Parse flags.
+
+Print "output is {output}".
+Print "retries is {retries}".
+Print "loud is {loud}".

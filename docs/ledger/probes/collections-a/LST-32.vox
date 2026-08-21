@@ -1,0 +1,16 @@
+(LST-32 — printing a list is recursive and cycle-safe: a list that contains
+ itself is capped at a depth of 64, the over-deep subtree prints as `...`,
+ the error flag is set, and printing unwinds safely instead of overflowing
+ the stack. Hand-counted: exactly 64 opening brackets and 64 closing ones.
+ Also covers: LST-33 (the worked example of LANGUAGE.md:2300-2303 — note
+ that its inline comment "(prints: [[...]] then cyclic)" is an abbreviation,
+ not a transcript; see Discrepancy 6).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-32.vox -o p && ./p
+ expected output:
+   [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+   cyclic
+)
+a list called ring is [].
+append ring to ring.
+print ring.
+on error print "cyclic".

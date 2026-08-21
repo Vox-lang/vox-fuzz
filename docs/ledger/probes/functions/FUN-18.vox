@@ -1,0 +1,18 @@
+(FUN-18 — recursion gets a fresh set of locals per call. Each frame
+ declares its own `mine`, recurses, and then prints; the frames unwind
+ 0, 1, 2, 3, which is only possible if each `mine` survived the nested
+ call untouched.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-18.vox -o p && ./p
+ expected output:
+   0
+   1
+   2
+   3
+)
+To 'countdown from' with a number called start.
+  a number called mine is start.
+  If mine is greater than 0 then,
+    'countdown from' of mine subtract 1.
+  Print mine.
+
+'countdown from' of 3.

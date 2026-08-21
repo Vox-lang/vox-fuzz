@@ -1,0 +1,8 @@
+(OPR-28: `bit-shift-right` shifts right (LANGUAGE.md:4585).
+ 240 shifted right by 4 is 15.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-28.vox -o p && ./p
+ expected output:
+   15
+)
+a number called lhs is 0b11110000.
+Print lhs bit-shift-right 4.

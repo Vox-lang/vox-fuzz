@@ -1,0 +1,18 @@
+(ARG-42 — *(not a manual claim — a gap in the manual)* reading `first`
+ or `second` when there is no such argument sets the error flag, which
+ `On error` catches, and yields the empty text. The properties table
+ (4311-4312) defines them only for the case where the argument exists.
+ Run with no arguments, so both are out of range.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-42.vox -o p && ./p
+ expected output:
+   first errored
+   first is []
+   second errored
+   second is []
+)
+a text called one is arguments's first.
+On error print "first errored".
+Print "first is [{one}]".
+a text called two is arguments's second.
+On error print "second errored".
+Print "second is [{two}]".

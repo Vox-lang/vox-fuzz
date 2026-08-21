@@ -1,0 +1,9 @@
+(KEY-56 — the flag-schema keyword `flag` is reserved as a variable name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-56.vox -o p && ./p
+ expected output:
+   error: Cannot use 'flag' as a variable name - it's a reserved keyword.
+     Tip: Try a more descriptive name like 'flag_value' or 'my_flag'
+   (no binary produced; compile error)
+)
+a number called flag is 1.
+Print flag.

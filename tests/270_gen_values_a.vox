@@ -1,0 +1,97 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/rng.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(Ledger batch VAL-A: the eight `value` leaves (docs/ledger/values.md rows
+ VAL-03, 05, 06, 07, 09, 10, 11, 13).
+
+ Each leaf is emitted on its own into one program, which is then COMPILED
+ AND RUN by the real compiler. Checking the emitted text alone would miss
+ the only thing these leaves exist for - that their assertions hold - so
+ the program ends `Exit 0.` and any other status is either a ledger
+ assertion that fired (95) or a crash.
+
+ Emitted twice from the same seed and compared, because the leaves spend
+ names out of a shared vocabulary: if that record ever outlives a program,
+ two programs from one seed stop being identical and every campaign's
+ reproducibility goes with it.)
+
+To 'emit the value leaves'.
+    clear gen_out.
+    'gen reset value names'.
+    'gen leaf value dispatch' of "" and false.
+    'gen leaf value return' of "" and false.
+    'gen leaf value name' of "" and false.
+    'gen leaf value retag' of "" and false.
+    'gen leaf value retype' of "" and false.
+    'gen leaf value retype sum' of "" and false.
+    'gen leaf value predicate' of "" and false.
+    'gen leaf value bad retype' of "" and false.
+    'gen emit' of "Exit 0.\n".
+
+'rng seed' of 7.
+'emit the value leaves'.
+a text called 'the first emission' is 'gen text'.
+'gen write' of "./vf_values_a.vox".
+
+'rng seed' of 7.
+'emit the value leaves'.
+a text called 'the second emission' is 'gen text'.
+Print "reproducible: {'the first emission' is equal to 'the second emission'}".
+
+a boolean called 'the dispatch row is covered' is 'gen text contains' of "ASSERT VAL-03".
+Print "VAL-03 asserts: {'the dispatch row is covered'}".
+a boolean called 'the return row is covered' is 'gen text contains' of "ASSERT VAL-05".
+Print "VAL-05 asserts: {'the return row is covered'}".
+a boolean called 'the name row is covered' is 'gen text contains' of "ASSERT VAL-06".
+Print "VAL-06 asserts: {'the name row is covered'}".
+a boolean called 'the retag row is covered' is 'gen text contains' of "ASSERT VAL-07".
+Print "VAL-07 asserts: {'the retag row is covered'}".
+a boolean called 'the retype row is covered' is 'gen text contains' of "ASSERT VAL-09".
+Print "VAL-09 asserts: {'the retype row is covered'}".
+a boolean called 'the worked example row is covered' is 'gen text contains' of "ASSERT VAL-10".
+Print "VAL-10 asserts: {'the worked example row is covered'}".
+a boolean called 'the predicate row is covered' is 'gen text contains' of "ASSERT VAL-11".
+Print "VAL-11 asserts: {'the predicate row is covered'}".
+a boolean called 'the failed conversion row is covered' is 'gen text contains' of "ASSERT VAL-13".
+Print "VAL-13 asserts: {'the failed conversion row is covered'}".
+
+(The three constructs the section's own rules turn on, checked by needle
+ rather than by leaf name: a value parameter, a value return, and the
+ variable named `value` that LANGUAGE.md:2479 says must stay legal.)
+a boolean called 'a value parameter appears' is 'gen text contains' of "with a value called".
+Print "value parameter emitted: {'a value parameter appears'}".
+a boolean called 'a value return appears' is 'gen text contains' of "Return a value,".
+Print "value return emitted: {'a value return appears'}".
+a boolean called 'the word value is a name' is 'gen text contains' of "a value is ".
+Print "value used as a name: {'the word value is a name'}".
+
+(The compiler comes from 'vox path', which honours $VOX the way test.sh
+ sets it - a literal ../vox/... would only be right in a plain checkout
+ and would silently skip the check in a worktree.)
+a text called 'the compile command' is "{'shell quote' of 'vox path'} ./vf_values_a.vox -o ./vf_values_a > ./vf_values_a.cerr 2>&1".
+a number called 'the compile status' is 'run shell' of 'the compile command' and 60000.
+Print "the value leaves compile: {'the compile status' is 0}".
+a number called 'the run status' is 'run shell' of "./vf_values_a > ./vf_values_a.out 2>&1" and 60000.
+Print "every value assertion holds: {'the run status' is 0}".
+
+(Only on failure, so the expected file is unchanged when this passes. A
+ bare `0` on either line above is unreadable in a log from someone
+ else's machine - which compiler it used and what the program actually
+ said are the two facts needed to tell a real assertion failure from a
+ mis-resolved path.)
+If 'the compile status' is not 0 then,
+    a text called 'the compiler complaint' is 'read whole file' of "./vf_values_a.cerr",
+    Print "the compiler was {'vox path'}",
+    Print 'the compiler complaint'.
+If 'the run status' is not 0 then,
+    a text called 'what the program printed' is 'read whole file' of "./vf_values_a.out",
+    Print 'what the program printed'.

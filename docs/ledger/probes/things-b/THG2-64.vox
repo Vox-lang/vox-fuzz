@@ -1,0 +1,9 @@
+(THG2-64: `A thing called point is 5.` - `is` declares a variable; a thing
+ definition uses `has`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-64.vox -o p && ./p
+ expected output:
+   error: 'is' declares a variable; a thing definition uses 'has'
+   followed by "Canonical form: A thing called point has <fields>."
+   No binary is produced; this is a compile error.
+)
+A thing called point is 5.

@@ -1,0 +1,18 @@
+(BAS-39 - rule 1: a period closes the MOST RECENTLY OPENED clause, and
+ only that one. Three clauses are open when the innermost `if` ends; its
+ single period closes the innermost `if` alone, so `print "still inside"`
+ is still inside the middle `if` (true) and the outer `if` (true) and runs.
+ Also covers: BAS-40 (one period closes one level) - the two extra periods
+ on the last statement are what finally get back to the top level.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-39.vox -o p && ./p
+ expected output:
+   innermost
+   still inside
+   back at the top
+)
+a number called n is 1.
+If n is equal to 1 then,
+    If n is equal to 1 then,
+        If n is equal to 1 then, print "innermost".
+        print "still inside"...
+print "back at the top".

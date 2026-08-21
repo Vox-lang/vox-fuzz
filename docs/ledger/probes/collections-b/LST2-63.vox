@@ -1,0 +1,14 @@
+(LST2-63 — the single-value specialized forms `print`, `append` and `open`
+ take ONE clause only; a second `each` is the arity error, which is what
+ stops `print each x from A and each y from B` being misread as printing
+ both on one line. All three refuse with the same shape of message.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-63.vox -o p && ./p
+ expected output:
+   error: `print` takes one value but this sentence supplies more than one argument clause.
+   (no binary produced; compile error)
+   `append` and `open` refuse identically:
+   "`append` takes one value but this sentence supplies more than one argument clause."
+   "`open` takes one value but this sentence supplies more than one argument clause."
+)
+print each x from [1, 2] and each y from [3, 4].

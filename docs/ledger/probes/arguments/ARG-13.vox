@@ -1,0 +1,39 @@
+(ARG-13 — `the argument at the <number variable>` reads an argument by a
+ computed index (LANGUAGE.md:4351-4356). The manual's own example uses
+ index 2 and calls the result the second user argument, which is what
+ index 2 returns here.
+ Also covers: ARG-44 — the indexing is over argv, not over the user
+ arguments: index 0 is the program name (no error), index 1 is the first
+ user argument, a negative index sets the error flag and yields "", and
+ both a bare literal index and a computed expression are accepted where
+ the manual shows only a variable.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-13.vox -o p && ./p alpha beta gamma
+ Args: alpha beta gamma
+ expected output:
+   at two is beta
+   index 0 is the program name
+   at one is alpha
+   a negative index errored
+   at backwards is []
+   at literal is gamma
+   at expression is beta
+)
+a number called secondth is 2.
+a text called 'at two' is the argument at the secondth.
+Print "at two is {'at two'}".
+a number called nothingth is 0.
+a text called 'at nothing' is the argument at the nothingth.
+On error print "index 0 errored".
+If 'at nothing' is arguments's name then,
+    Print "index 0 is the program name".
+a number called firstth is 1.
+a text called 'at one' is the argument at the firstth.
+Print "at one is {'at one'}".
+a number called backwards is 0 subtract 1.
+a text called 'at backwards' is the argument at the backwards.
+On error print "a negative index errored".
+Print "at backwards is [{'at backwards'}]".
+a text called 'at literal' is the argument at 3.
+Print "at literal is {'at literal'}".
+a text called 'at expression' is the argument at the firstth add 1.
+Print "at expression is {'at expression'}".

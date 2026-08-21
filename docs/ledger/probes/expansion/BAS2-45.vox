@@ -1,0 +1,18 @@
+(BAS2-45: a trailing `otherwise` is accepted after both an append chain and a print chain, and it DISPLACES the base action - with an otherwise present the base statement never runs. See Discrepancy 2.
+ Also covers: BAS2-41
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-45.vox -o p && ./p
+ expected output:
+   [99, 0, 99, 0, 99]
+   odd
+   even
+   odd
+   even
+)
+a list called out is [].
+append each number from 1 to 5 to out,
+    but if the number modulo 2 is equal to 0 append 0,
+    otherwise append 99.
+print out.
+print each number from 1 to 4,
+    but if the number modulo 2 is equal to 0 print "even",
+    otherwise print "odd".

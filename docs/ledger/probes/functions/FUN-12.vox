@@ -1,0 +1,18 @@
+(FUN-12 — a variable declared inside a function is local and is not
+ available at top level: the program is rejected at compile time. The
+ diagnostic is misplaced — it points at the use INSIDE the function
+ (line 3) rather than at the offending top-level read (line 6), and its
+ hint invents an `if`/`otherwise` that the program does not contain. See
+ Discrepancy 8 and D8.vox. (Compile-error claim: not assertable from a
+ runtime leaf, since emitting it produces a non-compiling program.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-12.vox -o p && ./p
+ expected output:
+   error: Unknown variable: localsum
+   (no binary produced; compile error)
+)
+To 'make local'.
+  a number called localsum is 7.
+  Print localsum.
+
+'make local'.
+Print localsum.
