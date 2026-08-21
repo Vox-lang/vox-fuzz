@@ -1,0 +1,13 @@
+(THG-18: `a`/`an` pairs with types and with values coming into being.
+ Also covers: THG-19 (`A thing called <name> has` - a type comes into
+ being), THG-20 (`an anchor called mooring.` - a value of that type comes
+ into being; the vowel form of the article works on a thing name too).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-18.vox -o p && ./p
+ expected output:
+   5
+)
+A thing called anchor has
+  a number called weight is 5.
+
+an anchor called mooring.
+Print mooring's weight.

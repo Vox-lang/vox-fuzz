@@ -1,0 +1,14 @@
+(BAS2-53: the manual's open-with-treating example: the sentinel filename is substituted before the file is opened. Run from the REPO ROOT (fixture paths are repo-relative); "-" stands in for the manual's /dev/stdin so the probe does not depend on stdin.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-53.vox -o p && ./p
+ expected output:
+   alpha
+   beta
+)
+a buffer called content is 64 bytes in size.
+open a file for writing called output at 1.
+open a file for reading called source at each filename from ["-", "docs/ledger/probes/expansion/fixtures/beta.txt"] treating "-" as "docs/ledger/probes/expansion/fixtures/alpha.txt",
+  read from source into content,
+  write content to output,
+  write "\n" to output,
+  close source.
+close output.

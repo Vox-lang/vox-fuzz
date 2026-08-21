@@ -1,0 +1,12 @@
+(FLW-07: a period before `otherwise` is part of the same if-chain when the
+ chain continues - here the `Otherwise` is on its own line, a full
+ newline after the closing period, and still binds to the If above it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-07.vox -o p && ./p
+ expected output:
+   not one
+   outside
+)
+a number called score is 3.
+If score is 1 then, print "one".
+Otherwise, print "not one".
+print "outside".

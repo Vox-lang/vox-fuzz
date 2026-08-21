@@ -1,0 +1,10 @@
+(KEY-14 — `Exit` terminates the program with the given exit code, and the
+ statements after it do not run.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-14.vox -o p && ./p
+ expected output:
+   before exit
+   (exit 71)
+)
+Print "before exit".
+Exit 71.
+Print "after exit".

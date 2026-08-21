@@ -1,0 +1,13 @@
+(D4 - Discrepancy 4 repro: the field-default type check reports a mismatch that
+ is not one. The field is written `a text called label is "post"` - a text field
+ with a text default - and the first diagnostic says the default is the wrong
+ type for the field while naming the SAME type twice. The second diagnostic is
+ the real one: a thing cannot hold a text field yet.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   error: Field 'label' of thing 'stamp' is a text, but its default is a text
+   then a second error, "Field 'label' of thing 'stamp' is a text, which a thing
+   cannot hold yet". No binary is produced; this is a compile error.
+)
+A thing called stamp has
+  a text called label is "post".

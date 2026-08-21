@@ -1,0 +1,15 @@
+(VAR-48, VAR-49, VAR-50, VAR-51: the three name forms, side by side and not
+ overlapping. A double-quoted token is a string literal (printed as data), a
+ bare word is a single-word identifier, and a single-quoted token of two or
+ more characters is an identifier that may contain spaces.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-48.vox -o p && ./p
+ expected output:
+   hello
+   5
+   7
+)
+a number called total is 5.
+a number called 'total items' is 7.
+Print "hello".
+Print total.
+Print 'total items'.

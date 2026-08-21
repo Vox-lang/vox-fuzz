@@ -1,0 +1,27 @@
+(PRC-77 — undocumented precision, and a hazard: the pid expression reaches
+ kill(2) unfiltered, so the two broadcast pids are reachable from a Vox
+ program. pid 0 signals the caller's whole PROCESS GROUP; pid -1 signals
+ every process the uid is allowed to signal. LANGUAGE.md:4067-4068
+ documents exactly this lowering ("<pid-expr> is the target PID (loaded
+ into rdi)") without noting that two ordinary-looking integers are
+ broadcasts.
+ SAFETY: this probe sends signal 0 and ONLY signal 0. The kernel delivers
+ nothing for signal 0; it performs the permission check and returns. Both
+ calls returning cleanly is the finding — with any real signal number
+ those same two lines would have hit every process this user owns,
+ including the fuzzer and this session.
+ Minimal repro at D5.vox.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-77.vox -o p && ./p
+ expected output:
+   pid 0 reached kill(2) and returned success
+   pid -1 reached kill(2) and returned success
+)
+Send signal 0 to process 0.
+On error print "pid 0 was rejected".
+print "pid 0 reached kill(2) and returned success".
+Send signal 0 to process -1.
+On error print "pid -1 was rejected".
+print "pid -1 reached kill(2) and returned success".

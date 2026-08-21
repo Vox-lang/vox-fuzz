@@ -1,0 +1,30 @@
+(EXP-32: `is greater than`.
+ Also covers: EXP-33 `is less than`, EXP-34 `is equal to`, EXP-35 the bare
+ `x is 0` value comparison, EXP-36 `the` being optional before a variable name
+ in a comparison.
+ Each comparison is run in both polarities so a leaf writing an assertion on
+ one of them knows the false branch is reached too.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-32.vox -o p && ./p
+ expected output:
+   x over 5
+   y not over 5
+   y under 10
+   x not under 3
+   lhs equals rhs
+   lhs differs from x
+   origin is 0
+   x is not 0
+)
+a number called x is 7.
+a number called y is 3.
+a number called lhs is 4.
+a number called rhs is 4.
+a number called origin is 0.
+If the x is greater than 5 then, Print "x over 5". Otherwise, Print "x not over 5".
+If the y is greater than 5 then, Print "y over 5". Otherwise, Print "y not over 5".
+If y is less than 10 then, Print "y under 10". Otherwise, Print "y not under 10".
+If x is less than 3 then, Print "x under 3". Otherwise, Print "x not under 3".
+If lhs is equal to rhs then, Print "lhs equals rhs". Otherwise, Print "lhs differs".
+If lhs is equal to x then, Print "lhs equals x". Otherwise, Print "lhs differs from x".
+If origin is 0 then, Print "origin is 0". Otherwise, Print "origin is not 0".
+If x is 0 then, Print "x is 0". Otherwise, Print "x is not 0".

@@ -1,0 +1,28 @@
+(THG2-04: a function member takes no part in printing - it is the type's API,
+ not its state. `point` declares two members and two data fields; only the two
+ data fields appear in the output.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-04.vox -o p && ./p
+ expected output:
+   {x: 5, y: 0}
+)
+A thing called point has
+  a function called 'placed at',
+  a function called 'reflected through the origin',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+To do the point's 'reflected through the origin', with a point called original.
+  a point called reflection.
+  Set reflection's x to 0 subtract original's x.
+  Set reflection's y to 0 subtract original's y.
+  Return a point, reflection.
+
+a point called origin.
+Set origin's x to 5.
+Print origin.

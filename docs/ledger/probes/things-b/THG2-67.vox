@@ -1,0 +1,14 @@
+(THG2-67: a field default must be a literal of the field's own type. A float
+ literal on a number field is refused, and the message names both types. The
+ documented exception - a whole number is accepted for a float - was run by
+ hand: `a float called weight is 2.` compiles and prints {weight: 2.0}. The
+ mismatch check misfires on an unsupported field type; see Discrepancy 4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-67.vox -o p && ./p
+ expected output:
+   error: Field 'x' of thing 'point' is a number, but its default is a float
+   followed by "A field's default must be a literal of the field's own type; a
+   whole number is accepted for a float." No binary is produced; this is a
+   compile error.
+)
+A thing called point has
+  a number called x is 1.5.

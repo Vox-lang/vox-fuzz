@@ -1,0 +1,9 @@
+(FLW-36: `Exit 1.` - the manual's "General error" example
+ (LANGUAGE.md:2182).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-36.vox -o p && ./p
+ expected output:
+   exiting with the general error code
+   exit 1
+)
+print "exiting with the general error code".
+Exit 1.

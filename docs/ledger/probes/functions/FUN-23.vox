@@ -1,0 +1,75 @@
+(FUN-23 — all eleven expressible types are legal as a declared
+ `Return a <type>,` return type. Every definition below is accepted and
+ every function is called. Two of the eleven cannot be RECEIVED by the
+ `a <type> called X is <call>.` declaration form — `file` and `timer` —
+ so those two are received with `Set` instead; see Discrepancy 6 and
+ D6.vox for why. `Return a buffer, "ABC".` (a text literal in the return
+ expression) yields an EMPTY buffer, so this probe returns a buffer
+ variable instead — see Discrepancy 7 and D7.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-23.vox -o p && ./p
+ expected output:
+   7
+   2.5
+   seven
+   1
+   3
+   30
+   ABC
+   12
+   2026
+   text payload
+   timer return received
+)
+To 'give number'. Return a number, 7.
+To 'give float'. Return a float, 2.5.
+To 'give text'. Return a text, "seven".
+To 'give boolean'. Return a boolean, true.
+To 'give list'. Return a list, [1, 2, 3].
+To 'give map'. Return a map, {"ann": 30}.
+
+To 'give buffer'.
+  a buffer called made is "ABC".
+  Return a buffer, made.
+
+To 'give file'.
+  open a file for reading called inner at "docs/ledger/probes/functions/fixtures/data.txt".
+  Return a file, inner.
+
+To 'give time'.
+  a time called moment is current time.
+  Return a time, moment.
+
+To 'give timer'.
+  a timer called inner.
+  Start the inner.
+  Return a timer, inner.
+
+To 'give value'.
+  a value called payload is "text payload".
+  Return a value, payload.
+
+a number called gotnumber is 'give number'.
+a float called gotfloat is 'give float'.
+a text called gottext is 'give text'.
+a boolean called gotboolean is 'give boolean'.
+a list called gotlist is 'give list'.
+a map called gotmap is 'give map'.
+a buffer called gotbuffer is 'give buffer'.
+a time called gottime is 'give time'.
+a value called gotvalue is 'give value'.
+open a file for reading called gotfile at "docs/ledger/probes/functions/fixtures/data.txt".
+Set gotfile to 'give file'.
+a timer called gottimer.
+Set gottimer to 'give timer'.
+
+Print gotnumber.
+Print gotfloat.
+Print gottext.
+Print gotboolean.
+Print gotlist's length.
+Print gotmap's "ann".
+Print gotbuffer.
+Print gotfile's size.
+Print gottime's year.
+Print gotvalue.
+Print "timer return received".

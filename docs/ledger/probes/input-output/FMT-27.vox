@@ -1,0 +1,12 @@
+(FMT-27 — `a text called path is "/bin/{tok}".` builds a text from another
+ TEXT that itself came from a format string, so the chaining works.
+ The manual's own worked example line, LANGUAGE.md:3140.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   /bin/echo
+)
+a buffer called word is 64 bytes in size.
+copy "echo" to word.
+a text called tok is "{word}".
+a text called path is "/bin/{tok}".
+Print path.

@@ -1,0 +1,39 @@
+(PRC-87 — undocumented precision: every path-taking statement in this
+ section accepts an empty path and fails cleanly through the error flag.
+ Not a manual claim — the manual says nothing about degenerate paths — but
+ it is the memory-safety floor for the whole section and the first thing a
+ leaf will emit by accident, so it is on the record.
+ `Create a device node` is absent from the list because an empty TYPE is
+ rejected at compile time, not at run time; see D2.vox.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-87.vox -o p && ./p
+ expected output:
+   an empty path to create errored
+   an empty path to remove errored
+   an empty path to change directory errored
+   an empty path to symbolic link errored
+   an empty path to mount errored
+   an empty path to unmount errored
+   an empty path to pivot root errored
+   an empty path to execute errored
+   nothing crashed
+)
+Create a directory called "".
+On error print "an empty path to create errored".
+Remove the directory called "".
+On error print "an empty path to remove errored".
+Change directory to "".
+On error print "an empty path to change directory errored".
+Create symbolic link from "" to "".
+On error print "an empty path to symbolic link errored".
+Mount "" at "" with type "".
+On error print "an empty path to mount errored".
+Unmount "".
+On error print "an empty path to unmount errored".
+Pivot root to "" with old root "".
+On error print "an empty path to pivot root errored".
+Execute "".
+On error print "an empty path to execute errored".
+print "nothing crashed".

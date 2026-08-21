@@ -1,0 +1,11 @@
+(VAR-64: flag aliases are data and stay double-quoted — a single-quoted
+ alias is rejected, and the diagnostic asks for a string.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-64.vox -o p && ./p
+ expected output:
+   error: Expected short flag alias string like '-n'
+   (no binary produced; compile error)
+)
+a flag called verbose is '-v', it is a boolean.
+Parse flags.
+Print "done".

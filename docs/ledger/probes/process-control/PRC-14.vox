@@ -1,0 +1,26 @@
+(PRC-14 — source, target, fstype and options each accept a string literal,
+ a text variable, or a buffer, including a format-string-built buffer.
+ The mount itself fails with EPERM (unprivileged, see PRC-12), which is
+ what this probe wants: it proves the four operands COMPILE and are
+ evaluated in every form, and it prints the format-built buffer so the
+ interpolation is visible rather than assumed.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-14.vox -o p && ./p
+ expected output:
+   the variable-and-buffer mount set the error flag
+   size=8m
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a text called 'the source' is "tmpfs".
+a text called 'the target' is "vf_scratch/process-control/scratch_operands".
+a buffer called 'the filesystem type' is "tmpfs".
+a number called megabytes is 8.
+a buffer called 'the mount options' is "size={megabytes}m".
+Create a directory called "vf_scratch/process-control/scratch_operands".
+Mount 'the source' at 'the target' with type 'the filesystem type' with options 'the mount options'.
+On error print "the variable-and-buffer mount set the error flag".
+print 'the mount options'.
+Remove the directory called "vf_scratch/process-control/scratch_operands".

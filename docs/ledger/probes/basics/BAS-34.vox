@@ -1,0 +1,14 @@
+(BAS-34 - only function definitions can span multiple sentences. A loop
+ cannot: the period ends the While, and the next sentence is top-level,
+ so it runs once after the loop rather than three times inside it.
+ Contrast BAS-19, where a function body made of three separate sentences
+ stays one construct until the blank line.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-34.vox -o p && ./p
+ expected output:
+   a new sentence, not the loop body
+   3
+)
+a number called x is 0.
+While x is less than 3, increment x.
+print "a new sentence, not the loop body".
+print x.

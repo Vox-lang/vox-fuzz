@@ -1,0 +1,16 @@
+(D6 — Discrepancy 6 repro: the manual's "Call function with substitution"
+ example (LANGUAGE.md:2986) does not compile, because it binds a loop
+ variable called `file` and `file` is a reserved keyword. Renaming the
+ loop variable is the whole fix.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
+ expected output:
+   error: Cannot use 'file' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+   With the loop variable renamed to `entry` the same sentence runs:
+     processing one.txt / processing /dev/stdin / processing two.txt
+)
+To process of a text called path.
+  print "processing {path}".
+
+a list called files is ["one.txt", "-", "two.txt"].
+process of each file from files treating "-" as "/dev/stdin".

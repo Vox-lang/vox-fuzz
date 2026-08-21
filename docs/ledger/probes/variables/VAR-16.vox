@@ -1,0 +1,11 @@
+(VAR-16: a bare `Create a timer called NAME.` leaves the timer ready to
+ Start — the only observable form of "ready" is that Start/Stop then work
+ and elapsed reads back. A run this short elapses 0 milliseconds.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-16.vox -o p && ./p
+ expected output:
+   0
+)
+Create a timer called 'lap clock'.
+Start 'lap clock'.
+Stop 'lap clock'.
+Print 'lap clock''s elapsed.

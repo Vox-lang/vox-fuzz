@@ -1,0 +1,12 @@
+(BAS2-34: the primary-only bound restriction LANGUAGE.md:354 states for
+ `each` clauses is not specific to `each` clauses, nor to the start bound:
+ a plain `For each` range rejects an arithmetic END bound with the same
+ diagnostic. `print each number from 1 to 2 add 1.` is rejected identically.
+ Undocumented breadth, not a contradiction — see the ledger row.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-34.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Add
+   (no binary produced; compile error)
+)
+Set base to 2.
+For each number from 1 to base add 2, print the number.

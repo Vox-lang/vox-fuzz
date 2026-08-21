@@ -1,0 +1,26 @@
+(EXP-73: a text made from a buffer is an independent copy, not a window - it
+ keeps its own bytes when the buffer is cleared, refilled, or resized.
+ The resize half is the one the manual gives the reason for: growing frees the
+ old allocation, so a window would be reading freed memory. This probe grows
+ from 16 bytes to 8192, which is a real reallocation rather than an in-place
+ extension, and the copy is still intact afterwards.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-73.vox -o p && ./p
+ expected output:
+   hello
+   goodbye world and then some more bytes
+   seed
+   seed and more
+)
+a buffer called scratch is "hello".
+a text called kept is scratch as text.
+clear scratch.
+append "goodbye world and then some more bytes" to scratch.
+Print kept.
+Print scratch as text.
+a buffer called small is 16 bytes in size.
+append "seed" to small.
+a text called snapshot is small as text.
+grow small to 8192 bytes.
+append " and more" to small.
+Print snapshot.
+Print small as text.

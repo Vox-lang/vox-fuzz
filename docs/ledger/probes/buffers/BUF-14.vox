@@ -1,6 +1,6 @@
-(BUF-14: universal `type` property should report `Buffer (static)` for a buffer variable, per LANGUAGE.md:3202-3208.)
+(BUF-14 (updated after vox #42 fixed the property — see buffers.md D2): universal `type` property should report `Buffer (static)` for a buffer variable, per LANGUAGE.md:3202-3208.)
 (expected output:
-Text (dynamic)
+Buffer (static)
 Buffer (static)
 )
 a buffer called buf1 is 16 bytes in size.

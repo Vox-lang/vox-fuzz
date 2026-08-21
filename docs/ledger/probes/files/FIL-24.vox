@@ -1,0 +1,37 @@
+(FIL-24: the seven Number properties (even, odd, positive, negative, zero, absolute, sign) return the documented values.
+ Also covers: FIL-25, FIL-26, FIL-27, FIL-28, FIL-29, FIL-30.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-24.vox -o p && ./p
+ actual output:
+   1
+   0
+   0
+   1
+   1
+   0
+   1
+   1
+   0
+   42
+   -1
+   1
+   0
+)
+a number called four is 4.
+a number called seven is 7.
+a number called 'below zero' is -42.
+a number called nought is 0.
+print four's even.
+print four's odd.
+print seven's even.
+print seven's odd.
+print seven's positive.
+print 'below zero's positive.
+print 'below zero's negative.
+print nought's zero.
+print four's zero.
+print 'below zero's absolute.
+print 'below zero's sign.
+print four's sign.
+print nought's sign.

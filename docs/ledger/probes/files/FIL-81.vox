@@ -1,0 +1,15 @@
+(FIL-81: an On error handler takes a comma-joined list of actions, and `exit N` inside one exits with that code.
+ The trailing print is not reached, which is the second half of the claim.
+ Exit status is 3, chosen distinct from vox-fuzz's reserved 90-99.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-81.vox -o p && ./p
+ actual output:
+   Read failed!
+   (exit status 3)
+)
+a buffer called sink is 16 bytes in size.
+open a file for reading called source at "vf_scratch/files/absent.txt".
+Read from source into sink.
+On error print "Read failed!", exit 3.
+print "this line is not reached when the handler fires".

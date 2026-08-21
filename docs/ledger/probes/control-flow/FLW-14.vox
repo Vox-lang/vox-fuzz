@@ -1,0 +1,17 @@
+(FLW-14: the manual's "loops inside functions" worked example
+ (LANGUAGE.md:2086-2090) verbatim, plus a call site. Composite: a While
+ inside a function body, `is less than or equal to`, bare `total is total
+ add i` assignment as a loop action, and `Return a number, total.` closing
+ the function after the loop's own period. sum of 4 is 1+2+3+4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-14.vox -o p && ./p
+ expected output:
+   10
+)
+To sum of a number called n.
+  a number called total is 0.
+  a number called i is 1.
+  While i is less than or equal to n, total is total add i, i is i add 1.
+  Return a number, total.
+
+a number called answer is sum of 4.
+print answer.

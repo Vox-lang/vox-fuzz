@@ -1,0 +1,12 @@
+(FUN-38 — a call with arguments used inside a `Print` statement
+ (LANGUAGE.md:782), which is the whole of the "Calling as Statement"
+ section's example.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-38.vox -o p && ./p
+ expected output:
+   8
+)
+To 'add numbers' with a number called x and a number called y. Return a number, the x add y.
+
+a number called x is 3.
+a number called y is 5.
+Print 'add numbers' of x and y.

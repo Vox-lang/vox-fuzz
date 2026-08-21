@@ -1,0 +1,24 @@
+(ARG-26 — with `Parse flags.` omitted, parsing is inserted automatically
+ immediately after the LAST flag schema declaration
+ (LANGUAGE.md:4402). Reading a flag after the last schema works with no
+ parse statement anywhere in the file.
+ Also covers: ARG-27 (a schema is valid as long as it precedes parsing)
+ and ARG-28 (ordinary code before and between schema declarations is
+ allowed — both Prints below sit inside the schema block and run).
+ The "immediately after the LAST one" half of the claim is what
+ ARG-31.vox proves from the other side: a flag read placed BETWEEN two
+ schema declarations is rejected as a use before the parse point.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-26.vox -o p && ./p -v -o mine
+ Args: -v -o mine
+ expected output:
+   code before the schema
+   code between the schemas
+   verbose is 1
+   output is mine
+)
+Print "code before the schema".
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+Print "code between the schemas".
+a flag called output is "-o" or "--output", it is a text with default "auto".
+Print "verbose is {verbose}".
+Print "output is {output}".

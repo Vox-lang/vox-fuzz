@@ -1,0 +1,23 @@
+(Discrepancy 5 — the "bare literal in a slot" diagnostic (FMT-18,
+ LANGUAGE.md:3113-3116) is anchored at the first TEXTUAL occurrence of the
+ slot in the file, comments included, not at the code that caused it. Here
+ the only real slot is on line 2, but the caret lands on line 1, inside a
+ comment. Comments are otherwise inert: this same comment WITHOUT line 2
+ compiles clean, so the comment is not what is being compiled — only what
+ is being pointed at.
+ Pro-compiler reading: the diagnostic carries the slot's identity rather
+ than its position, and the renderer recovers a position by searching the
+ source for the slot text; on a file where the slot appears once, which is
+ every file the compiler's own tests would have, the recovered position is
+ right. It is a source-span recovery weakness in the error renderer, not a
+ wrong verdict — the program really is invalid and really is refused.
+ Cosmetic, but it will mislead anyone debugging a generated program, and
+ generated programs carry ledger IDs and claim text in their comments.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   error: Unknown variable: 255
+   (a compile error, but reported at line 1 — inside the comment — rather
+    than at line 2, which is the statement that is actually invalid)
+)
+(this comment mentions {255:x} and is where the caret lands)
+Print "{255:x}".

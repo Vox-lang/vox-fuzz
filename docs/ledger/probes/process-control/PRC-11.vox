@@ -1,0 +1,26 @@
+(PRC-11 — all three directory statements set the error flag on failure
+ and `On error` catches it; the program keeps running.
+ The create failure is a path under /proc, which no unprivileged process
+ may write to; the other two name a directory that does not exist.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-11.vox -o p && ./p
+ expected output:
+   create set the error flag
+   remove set the error flag
+   delete set the error flag
+   change directory set the error flag
+   execution continued past all four
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "/proc/not_allowed".
+On error print "create set the error flag".
+Remove the directory called "vf_scratch/process-control/scratch_absent".
+On error print "remove set the error flag".
+Delete the directory "vf_scratch/process-control/scratch_absent".
+On error print "delete set the error flag".
+Change directory to "vf_scratch/process-control/scratch_absent".
+On error print "change directory set the error flag".
+print "execution continued past all four".

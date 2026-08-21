@@ -1,0 +1,16 @@
+(EXP-27: `the` is optional before a variable name in an expression - both
+ spellings reach the same variable and give the same answer in every operand
+ position.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-27.vox -o p && ./p
+ expected output:
+   42
+   42
+   42
+   42
+)
+a number called first is 6.
+a number called second is 7.
+Print first multiply second.
+Print the first multiply second.
+Print first multiply the second.
+Print the first multiply the second.

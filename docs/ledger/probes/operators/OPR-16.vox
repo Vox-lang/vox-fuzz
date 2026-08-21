@@ -1,0 +1,10 @@
+(OPR-16: `is less than` is a strict less-than (LANGUAGE.md:4565).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-16.vox -o p && ./p
+ expected output:
+   less than fired
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If other is less than lhs then, Print "less than fired".
+If lhs is less than rhs then, Print "less than MISFIRED on equal".

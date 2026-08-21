@@ -1,0 +1,23 @@
+(VAR-01: `a` or `an` before a type keyword declares a new variable. Both
+ articles are accepted, and neither is checked against the word that
+ follows: `an number` and `a apple` both compile. No builtin type keyword
+ begins with a vowel, so `an` is only reachable at all on a user thing
+ type or on a mismatched article.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-01.vox -o p && ./p
+ expected output:
+   5
+   7
+   3
+   3
+)
+A thing called apple has
+  a number called weight is 3.
+
+a number called plain is 5.
+an number called mismatched is 7.
+an apple called snack.
+a apple called lunch.
+Print plain.
+Print mismatched.
+Print snack's weight.
+Print lunch's weight.

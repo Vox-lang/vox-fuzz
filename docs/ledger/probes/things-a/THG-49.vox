@@ -1,0 +1,18 @@
+(THG-49: a thing containing itself THROUGH other things is refused too - but
+ by the defined-earlier ordering rule, which fires first, so the diagnostic
+ is "unknown field type", not the cycle report of THG-48. The manual
+ (LANGUAGE.md:1005-1008) says exactly this: within one file the ordering
+ rule makes a cycle unconstructible.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-49.vox -o p && ./p
+ expected output:
+   error: Unknown field type 'beta' in thing 'alpha'
+       A field's type is a builtin type noun or a thing defined earlier in the program.
+   (no binary produced; compile error)
+)
+A thing called alpha has
+  a beta called partner.
+
+A thing called beta has
+  an alpha called partner.
+
+Print "made".

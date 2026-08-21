@@ -1,0 +1,23 @@
+(THG2-21: a function computing some other type from a point is an ordinary
+ global function with no manifest entry, reached by the instance possessive.
+ `point`'s manifest is empty of 'magnitude squared', yet the receiver form
+ works, and the free-call form gives the same answer.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-21.vox -o p && ./p
+ expected output:
+   25
+   25
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To 'magnitude squared' with a point called corner.
+  a number called 'x squared' is corner's x multiply corner's x.
+  a number called 'y squared' is corner's y multiply corner's y.
+  Return a number, 'x squared' add 'y squared'.
+
+a point called origin.
+Set origin's x to 3.
+Set origin's y to 4.
+Print 'magnitude squared' of origin.
+Print origin's 'magnitude squared'.

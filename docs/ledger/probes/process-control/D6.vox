@@ -1,0 +1,34 @@
+(D6 — Discrepancy 6 repro: LANGUAGE.md:3786-3788 introduces the whole
+ section with "see examples/initramfs.vox for a complete, working
+ early-userspace init sequence exercising all of them together". The
+ example exercises the directory, mount, device-node, symlink, pivot_root
+ and Execute constructs. It exercises none of the rest of the section.
+ Confirmed by grep over the example:
+   $ grep -ci -E 'fork|reap|Send signal|Shutdown|Reboot|Halt' \
+       /home/josj/scr/english/vox/examples/initramfs.vox   ->  0
+ This repro is a program built only from the constructs of this same
+ section that the example never uses, so "all of them together" is short
+ by at least these six. It also shows they compose fine — the gap is in
+ the sentence, not in the language.
+ SAFETY: the fork'd child is this program's own and is reaped; Halt is
+ EPERM-safe unprivileged (see PRC-78's header before running).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/D6.vox -o p && ./p
+ expected output:
+   the poll of a running child returned 0
+   the child was reaped
+   the reaped status says signal 9
+   Halt set the error flag, as it must for an unprivileged process
+)
+a number called 'the child' is fork the process.
+If 'the child' is 0 then, Wait 2 seconds, Exit 0.
+a number called 'the poll' is reap child 'the child' without waiting.
+print "the poll of a running child returned {'the poll'}".
+Send signal 9 to process 'the child'.
+a number called reaped is reap any child process.
+If reaped is 'the child' then, print "the child was reaped".
+print "the reaped status says signal {the reaped status bit-and 127}".
+Halt.
+On error print "Halt set the error flag, as it must for an unprivileged process".

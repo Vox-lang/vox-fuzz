@@ -1,0 +1,12 @@
+(FLW-08: the manual's worked example (LANGUAGE.md:2060) verbatim -
+ `If ready then, print "a", print "b", print "c".`
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-08.vox -o p && ./p
+ expected output:
+   a
+   b
+   c
+   after
+)
+a boolean called ready is true.
+If ready then, print "a", print "b", print "c".
+print "after".

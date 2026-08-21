@@ -1,0 +1,18 @@
+(LST2-01 — printing a list variable renders its contents, not its heap
+ address. The manual's own "Printing a List" block, verbatim.
+ Also covers: LST2-02 (a number list renders [1, 2, 3]), LST2-03 (a mixed
+ list renders each element by its own tag and a boolean as 1), LST2-04
+ (the same rendering appears inside {...} interpolation in Print
+ position), LST2-05 (", " between elements, wrapped in [ ]), LST2-07
+ (booleans render 1/0).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-01.vox -o p && ./p
+ expected output:
+   [1, 2, 3]
+   [1, "two", 3.5, 1]
+   list: [1, 2, 3]
+)
+a list called nums is [1, 2, 3].
+a list called m is [1, "two", 3.5, yes].
+print nums.
+print m.
+print "list: {nums}".

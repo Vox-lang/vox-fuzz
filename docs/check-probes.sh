@@ -27,7 +27,7 @@ for d in "${dirs[@]}"; do
     #   crash/exit probe   - the block contains "exit NNN": PASS iff the binary exits NNN
     #     (a documented segfault repro records "exit 139");
     #   ordinary probe     - stdout+stderr must equal the block exactly.
-    if grep -qi "compile error" <<<"$expected"; then
+    if grep -qiE "compile error|compile failed" <<<"$expected"; then
       want="$(head -1 <<<"$expected" | sed 's/^ *error: *//')"
       if "$VOX" "$probe" -o "$work/$name" >"$work/$name.cerr" 2>&1; then
         fail=$((fail+1)); echo "FAIL  $probe (expected a compile error, but it compiled)"
@@ -38,12 +38,24 @@ for d in "${dirs[@]}"; do
     if ! "$VOX" "$probe" -o "$work/$name" >"$work/$name.cerr" 2>&1; then
       fail=$((fail+1)); echo "FAIL  $probe (did not compile)"; sed 's/^/      /' "$work/$name.cerr" | head -5; continue
     fi
-    wantexit="$(grep -o 'exit [0-9]\+' <<<"$expected" | head -1 | awk '{print $2}')"
+    wantexit="$(grep -oE 'exit (status )?[0-9]+' <<<"$expected" | head -1 | grep -oE '[0-9]+$')"
+    # annotation lines like "(exit status 3)" / "(deterministic, 6/6 runs)" are notes, not output
+    expected="$(grep -vE '^\(exit( status)? [0-9]+\)' <<<"$expected" | grep -vE '^\(compile failed' | sed 's/[[:space:]]*$//')"
+    # stdin: a "Ran:" header line of the form "... && printf '...' | ./p" feeds the probe
+    feed="$(grep -m1 '^ *Ran:' "$probe" | sed -n "s/.*&& *\(printf [^|]*\)| *\.\/p.*/\1/p")"
+    # argv: anything after "./p" (or "| ./p") on the Ran: line — e.g. "&& ./p alpha beta" -> "alpha beta"
+    pargv="$(grep -m1 '^ *Ran:' "$probe" | sed -n 's#.*\./p##p' | sed 's/^ *//; s/ *$//')"
     # probes run from the REPO ROOT (fixture paths like docs/ledger/probes/<slug>/fixtures/... are relative to it)
-    actual="$(cd "$root" && timeout 10 "$work/$name" 2>&1)"; status=$?
+    if [ -n "$feed" ]; then actual="$(cd "$root" && eval "$feed" | timeout 10 "$work/$name" $pargv 2>&1)"; status=${PIPESTATUS[1]:-$?}
+    else actual="$(cd "$root" && timeout 10 "$work/$name" $pargv 2>&1)"; status=$?; fi
+    actual="$(sed 's/[[:space:]]*$//' <<<"$actual")"
     if [ -n "$wantexit" ]; then
+      # A crash/exit/error probe ASSERTS on its exit code. Its stdout is often
+      # non-deterministic (a run-varying heap pointer, a core-dump/timeout line),
+      # so exit-match alone is the pass condition here; ordinary probes (no exit
+      # annotation) still require a literal stdout match below.
       if [ "$status" = "$wantexit" ]; then pass=$((pass+1)); echo "PASS  $probe (exit $status as recorded)"
-      else fail=$((fail+1)); echo "FAIL  $probe (expected exit $wantexit, got $status)"; fi
+      else fail=$((fail+1)); echo "FAIL  $probe (expected exit $wantexit, got $status)"; diff <(echo "$expected") <(echo "$actual") | sed 's/^/      /' | head -6; fi
     elif [ "$actual" = "$expected" ]; then pass=$((pass+1)); echo "PASS  $probe"
     else fail=$((fail+1)); echo "FAIL  $probe"; diff <(echo "$expected") <(echo "$actual") | sed 's/^/      /' | head -10; fi
   done

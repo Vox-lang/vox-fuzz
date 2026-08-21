@@ -1,0 +1,27 @@
+(FIL-76: failing operations set an error flag, and a later SUCCESSFUL operation clears a flag no handler consumed.
+ The clearing half is undocumented and matters to any leaf that places an
+ On error: a handler reports the state left by the statement before it,
+ which may be a flag an earlier statement set and nobody consumed.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-76.vox -o p && ./p
+ actual output:
+   the failed open set the error flag
+   1
+   a successful operation cleared the flag left by the failed one
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/lines.txt".
+Write "alpha\nbeta\ngamma\n" to seedfile.
+Close seedfile.
+(A failed open sets the flag.)
+open a file for reading called missing at "vf_scratch/files/absent.txt".
+On error print "the failed open set the error flag".
+(A successful operation CLEARS a flag nobody consumed.)
+a list called items is [1, 2, 3].
+a number called 'the out of range item' is element 100 of items.
+a number called 'the first item' is element 1 of items.
+On error print "the handler after a successful operation fired".
+print 'the first item'.
+print "a successful operation cleared the flag left by the failed one".

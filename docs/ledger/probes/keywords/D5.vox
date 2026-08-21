@@ -1,0 +1,25 @@
+(Discrepancy 5 repro — LANGUAGE.md:277 says ranges are inclusive
+ ("1 to 5 includes 1, 2, 3, 4, and 5"), and 4715-4716 names
+ `all the numbers from/between …` as a range phrase. `all the numbers from
+ 1 to 3` yields 1,2 — the end bound is dropped — while the plain range and
+ the `between` spelling of the same phrase both yield 1,2,3.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   plain from-to
+   1
+   2
+   3
+   all the numbers from-to
+   1
+   2
+   all the numbers between-and
+   1
+   2
+   3
+)
+Print "plain from-to".
+Print each step from 1 to 3.
+Print "all the numbers from-to".
+Print each step from all the numbers from 1 to 3.
+Print "all the numbers between-and".
+Print each step from all the numbers between 1 and 3.

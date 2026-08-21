@@ -1,0 +1,12 @@
+(FMT-06 — the worked example at LANGUAGE.md:3084-3086 verbatim: two
+ without-newline prints then a plain one produce a single line
+ `Loading: 75%`. Also settles that `%` in a literal is just a character,
+ not a format directive.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Loading: 75%
+)
+a number called progress is 75.
+Print "Loading: " without newline.
+Print progress without newline.
+Print "%".

@@ -1,0 +1,11 @@
+(KEY-08 — `To` starts a function definition; `Return` yields a value from
+ it. The body ends at a blank line.
+ Also covers: KEY-09.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-08.vox -o p && ./p
+ expected output:
+   42
+)
+To 'twice' with a number called factor.
+    Return a number, factor multiply 2.
+
+Print 'twice' of 21.

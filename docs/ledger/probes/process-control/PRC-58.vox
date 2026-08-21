@@ -1,0 +1,22 @@
+(PRC-58 — before any successful reap, `the reaped status` is -1, a sentinel
+ no real wait4 status word can take.
+ Also covers: PRC-57 (it reflects the most recent SUCCESSFUL reap — a reap
+ that fails leaves it alone, so it is still -1 after the failed one).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-58.vox -o p && ./p
+ expected output:
+   before any reap it is -1
+   the failed reap set the error flag
+   after a FAILED reap it is still -1
+   after a successful reap it decodes to 8
+)
+print "before any reap it is {the reaped status}".
+a number called 'the foreign reap' is reap process 999999.
+On error print "the failed reap set the error flag".
+print "after a FAILED reap it is still {the reaped status}".
+a number called 'the child' is fork the process.
+If 'the child' is 0 then, Exit 8.
+a number called reaped is reap child 'the child'.
+print "after a successful reap it decodes to {the reaped status divide 256 modulo 256}".

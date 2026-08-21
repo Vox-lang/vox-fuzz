@@ -1,0 +1,33 @@
+(FIL-64: Write accepts a string literal, a buffer and the special value `a newline`, and the file handle's size property tracks the bytes written live.
+ Also covers: FIL-65, FIL-66, FIL-67.
+ 13 + 1 + 3 + 1 = 18. size reads 0 before the first write and 18 after the
+ last, so a generator that knows what it wrote can assert the size.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-64.vox -o p && ./p
+ actual output:
+   0
+   18
+   18
+   Hello, World!
+   BUF
+  
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a buffer called payload is 16 bytes in size.
+append "BUF" to payload.
+open a file for writing called output at "vf_scratch/files/written.txt".
+print output's size.
+Write "Hello, World!" to output.
+Write a newline to output.
+Write payload to output.
+Write a newline to output.
+print output's size.
+Close output.
+open a file for reading called back at "vf_scratch/files/written.txt".
+print back's size.
+a buffer called contents is 64 bytes in size.
+Read from back into contents.
+print contents.
+Close back.

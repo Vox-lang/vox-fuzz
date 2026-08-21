@@ -1,0 +1,19 @@
+(LST2-35 — lists grow dynamically: 2000 appends into a list declared empty
+ all land, and both ends and the middle read back correctly afterwards.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-35.vox -o p && ./p
+ expected output:
+   2000
+   1
+   2000
+   1000
+)
+a list called grown is [].
+a number called counter is 1.
+While counter is less than or equal to 2000,
+  append counter to grown,
+  increment counter.
+
+print grown's length.
+print grown's first.
+print grown's last.
+print element 1000 of grown.

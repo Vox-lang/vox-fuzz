@@ -1,0 +1,18 @@
+(BAS-31 - the if/else example, LANGUAGE.md:108:
+ `If x is greater than 10 then, print "big", set y to 1. Otherwise,
+  print "small", set y to 0.`
+ Each branch owns two comma-separated actions.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-31.vox -o p && ./p
+ expected output:
+   big
+   1
+   small
+   0
+)
+a number called x is 20.
+a number called y is 0.
+If x is greater than 10 then, print "big", set y to 1. Otherwise, print "small", set y to 0.
+Print y.
+Set x to 2.
+If x is greater than 10 then, print "big", set y to 1. Otherwise, print "small", set y to 0.
+Print y.

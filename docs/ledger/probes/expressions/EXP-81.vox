@@ -1,0 +1,24 @@
+(EXP-81: any base from 2 through 36 is supported; digits above 9 use the
+ letters a-z, case-insensitively.
+ Both ends of the range are recorded, the case-insensitivity is recorded as
+ `ZZ` and `zz` giving the same number, and a middle base is recorded in both
+ the fused and the spaced spelling so the two are known to agree on a base
+ nobody aliased.
+ EXP-100 records what happens outside the range.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-81.vox -o p && ./p
+ expected output:
+   3
+   1295
+   1295
+   1295
+   14167554
+   14167554
+   7
+)
+Print "11" as a base 2 number.
+Print "ZZ" as a base 36 number.
+Print "zz" as a base 36 number.
+Print "zz" as a base36 number.
+Print "hello" as a base 30 number.
+Print "HELLO" as a base 30 number.
+Print "7" as a base 8 number.

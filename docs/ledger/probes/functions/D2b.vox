@@ -1,0 +1,18 @@
+(D2b — Discrepancy 2 repro (assembly-failure half): the same map-parameter
+ property read, in a program with no float in it, does not assemble —
+ `symbol '_file_size' not defined`. That symbol name is the evidence for
+ what D2 is: a map parameter's size/length is being compiled into the
+ FILE size routine. A float elsewhere in the program links the file
+ runtime in, at which point the call resolves and silently returns -1
+ (the file-size error value) instead of failing to build.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2b.vox -o p && ./p
+ expected output:
+   D2b.asm:72: error: symbol `_file_size' not defined
+   (no binary produced; compile error)
+)
+a map called ages is {"ann": 30, "bob": 40}.
+
+To 'read map' with a map called lookup.
+  Print lookup's length.
+
+'read map' of ages.

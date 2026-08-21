@@ -1,0 +1,30 @@
+(FUN-42 — (gap) LANGUAGE.md never says WHERE a function definition may
+ stand. The compiler accepts one nested inside an `If` body and inside a
+ `While` body, and HOISTS it: the body does not run when the block runs,
+ and the name is callable from the top level afterwards. The generator
+ currently forbids this to itself (src/gen_flow.vox:495-501 says "a
+ function definition is only legal at the top level"), which is safe but
+ stricter than the language — and being stricter than the language is
+ exactly the kind of undeclared rule CLAUDE.md is about. Note the output:
+ "nested in an If" and "nested in a While" appear only where they are
+ CALLED, not where the blocks execute.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-42.vox -o p && ./p
+ expected output:
+   blocks have run
+   nested in an If
+   nested in a While
+)
+a number called g is 1.
+If g is 1 then,
+  To 'from an if'.
+    Print "nested in an If".
+
+a number called rounds is 0.
+While rounds is less than 1,
+  Set rounds to rounds add 1,
+  To 'from a while'.
+    Print "nested in a While".
+
+Print "blocks have run".
+'from an if'.
+'from a while'.

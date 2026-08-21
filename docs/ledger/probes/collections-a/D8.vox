@@ -1,0 +1,28 @@
+(D8 — Discrepancy 8 repro: `is equal to` on two collections compiles and
+ always answers "not equal", with no diagnostic — including two lists built
+ from the identical literal, and a list compared against its own documented
+ rendering as a text.
+ LANGUAGE.md:1836-1842 and 4441-4443 present `is equal to` with no type
+ restriction, and things ARE documented as compared field by field, so a
+ reader has no warning that collections are the exception.
+ This is what makes every whole-collection assertion in this ledger
+ unavailable: `If xs is not equal to "[1, 2, 3]" then, Exit 95.` compiles
+ and fires on EVERY run. The only oracle for a collection is per-element /
+ per-key reads plus `length` / `empty`.
+ Found while checking the `assertable?` column for LST-01; the claim lines
+ are in the EXP ledger's range (1789-2025), not this one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p && ./p
+ expected output:
+   identical lists: NOT equal
+   identical maps: NOT equal
+   list against its own rendering: NOT equal
+   element-wise: ok
+)
+a list called lhs is [1, 2, 3].
+a list called rhs is [1, 2, 3].
+If lhs is equal to rhs then, print "identical lists: equal". Otherwise, print "identical lists: NOT equal".
+a map called mapone is {"k": 1}.
+a map called maptwo is {"k": 1}.
+If mapone is equal to maptwo then, print "identical maps: equal". Otherwise, print "identical maps: NOT equal".
+If lhs is equal to "[1, 2, 3]" then, print "list against its own rendering: equal". Otherwise, print "list against its own rendering: NOT equal".
+If element 1 of lhs is equal to 1 and lhs's length is equal to 3 then, print "element-wise: ok". Otherwise, print "element-wise: BAD".

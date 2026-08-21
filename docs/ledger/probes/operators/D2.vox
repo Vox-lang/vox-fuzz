@@ -1,0 +1,30 @@
+(D2 - Discrepancy 2 repro: the Operators section's only worked example
+ (LANGUAGE.md:4588-4607) does not compile. Its last line,
+ `Set result to value bit-shift-right 8 bit-and 0xFF.`, reads from
+ `value`, which the block never declares - the block declares `lhs`,
+ `rhs` and `result` and nothing else. This file is that block copied
+ verbatim from the manual.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   error: Unknown identifier 'value'
+     help: did you mean `false`?
+   (no binary produced; compile error)
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+
+(Bitwise AND)
+a number called result is lhs bit-and rhs.
+
+(Bitwise OR)
+Set result to lhs bit-or rhs.
+
+(Bitwise XOR)
+Set result to lhs bit-xor rhs.
+
+(Bit shifting)
+Set result to lhs bit-shift-left 2.
+Set result to lhs bit-shift-right 4.
+
+(Chained operations)
+Set result to value bit-shift-right 8 bit-and 0xFF.

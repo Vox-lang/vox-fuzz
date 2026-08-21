@@ -1,0 +1,11 @@
+(KEY-69 — `first` is contextual: the first-item property after a
+ possessive, and an ordinary identifier elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-69.vox -o p && ./p
+ expected output:
+   10
+   5
+)
+a number called first is 5.
+a list called stops is [10, 20, 30].
+Print stops's first.
+Print first.

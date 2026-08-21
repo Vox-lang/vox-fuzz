@@ -1,0 +1,12 @@
+(VAR-57: a quoted identifier contains no newline — a single quote followed
+ by a line break does not open an identifier at all, and the parser reports
+ the bare apostrophe. (Compile-error claim: not assertable from a runtime
+ leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-57.vox -o p && ./p
+ expected output:
+   error: Expected a name, got Apostrophe
+   (no binary produced; compile error)
+)
+a number called 'two
+lines' is 5.
+Print 1.

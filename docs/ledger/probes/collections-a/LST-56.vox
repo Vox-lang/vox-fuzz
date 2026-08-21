@@ -1,0 +1,16 @@
+(LST-56 — a map rides the `value` ABI: passed to a `value` parameter and
+ returned from a `value` function it carries its tag (5) alongside the
+ payload, so it round-trips through the call intact.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-56.vox -o p && ./p
+ expected output:
+   {"name": "Ada", "age": 36}
+   Map (dynamic)
+   still a map
+)
+To echo with a value called carried. Return a value, carried.
+
+a map called person is {"name": "Ada", "age": 36}.
+a value called sent is echo of person.
+print sent.
+print sent's type.
+if sent is a map then, print "still a map". otherwise print "tag lost".

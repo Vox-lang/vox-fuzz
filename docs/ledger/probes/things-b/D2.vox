@@ -1,0 +1,15 @@
+(D2 - Discrepancy 2 repro: LANGUAGE.md:1558-1559 says the identifier-space error
+ "names a function, a parameter, a loop variable, an inferred variable, or
+ another thing, whichever came first." A parameter is what came first here, and
+ the error calls it a variable. A loop variable and an inferred variable were
+ run by hand from the same shape and are also called variables; only the
+ function case and the thing case are named by their own kind.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   error: 'point' is already defined as a variable on line 1
+   No binary is produced; this is a compile error.
+)
+To measure with a number called point. Print point.
+
+A thing called point has
+  a number called x is 0.

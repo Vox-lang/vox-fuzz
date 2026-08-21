@@ -1,0 +1,28 @@
+(PRC-51 — a non-blocking reap of a child that has already finished returns
+ that child's PID with the error flag clear, in both the `reap child` and
+ `reap process` spellings.
+ The 300-millisecond wait is a margin for the child to exit, not a claim
+ about scheduling; PRC-50 covers the still-running case.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-51.vox -o p && ./p
+ expected output:
+   reap child without waiting returned the pid
+   exit code 4
+   reap process without waiting returned the pid
+   exit code 6
+)
+a number called 'the first child' is fork the process.
+If 'the first child' is 0 then, Exit 4.
+Wait 300 milliseconds.
+a number called 'polled by child' is reap child 'the first child' without waiting.
+On error print "the non-blocking reap set the error flag".
+If 'polled by child' is 'the first child' then, print "reap child without waiting returned the pid".
+print "exit code {the reaped status divide 256 modulo 256}".
+a number called 'the second child' is fork the process.
+If 'the second child' is 0 then, Exit 6.
+Wait 300 milliseconds.
+a number called 'polled by process' is reap process 'the second child' without waiting.
+If 'polled by process' is 'the second child' then, print "reap process without waiting returned the pid".
+print "exit code {the reaped status divide 256 modulo 256}".

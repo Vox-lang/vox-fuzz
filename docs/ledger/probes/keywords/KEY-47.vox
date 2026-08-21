@@ -1,0 +1,14 @@
+(KEY-47 — disambiguation rule 3: an `and` after `with`/`of`/`to`/`on`
+ separates ARGUMENTS. Proof: handing `warm and dry` to a one-parameter
+ function is an arity error, not a boolean AND folded into one argument.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-47.vox -o p && ./p
+ expected output:
+   error: Function 'report' expects 1 argument but was called with 2.
+   (no binary produced; compile error)
+)
+To report with a boolean called flagged.
+    Print flagged.
+
+a boolean called warm is true.
+a boolean called dry is false.
+report of warm and dry.

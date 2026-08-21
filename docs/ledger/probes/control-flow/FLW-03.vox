@@ -1,0 +1,13 @@
+(FLW-03: `But if <condition> then,` is an else-if arm; arms are tested in
+ order, the first match wins, and `Otherwise` catches the rest.
+ Also covers FLW-07: the periods before `But if` and `Otherwise` do NOT
+ end the sentence - if they did, the score-2 run would also print "many".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-03.vox -o p && ./p
+ expected output:
+   two
+   many
+)
+a number called score is 2.
+If score is 1 then, print "one". But if score is 2 then, print "two". Otherwise, print "many".
+a number called other is 9.
+If other is 1 then, print "one". But if other is 2 then, print "two". Otherwise, print "many".

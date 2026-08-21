@@ -1,0 +1,17 @@
+(ARG-08 — `arguments's all` is the user arguments as a collection: it
+ binds to a list, has a length, and drives loop expansion.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-08.vox -o p && ./p alpha beta
+ Args: alpha beta
+ expected output:
+   2
+   token alpha
+   token beta
+   alpha
+   beta
+)
+a list called given is arguments's all.
+Print the given's length.
+For each token from arguments's all,
+    Print "token {token}".
+
+Print each item from arguments's all.

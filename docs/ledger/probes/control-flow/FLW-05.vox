@@ -1,0 +1,12 @@
+(FLW-05: several actions in ONE branch, comma-separated - here in the
+ `Otherwise` arm, which is the arm the manual's bullet does not
+ illustrate.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-05.vox -o p && ./p
+ expected output:
+   not nine
+   second action
+   outside
+)
+a number called score is 1.
+If score is 9 then, print "nine". Otherwise, print "not nine", print "second action".
+print "outside".

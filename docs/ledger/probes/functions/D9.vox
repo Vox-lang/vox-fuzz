@@ -1,0 +1,28 @@
+(D9 — Discrepancy 9 repro: the rule at LANGUAGE.md:706 is enforced — a
+ local read at top level IS a compile-time error — but the diagnostic
+ points at the wrong place and gives a hint about a construct the program
+ does not contain. The offending statement is the top-level
+ `Print localsum.` on the LAST line; the caret lands on `Print localsum.`
+ INSIDE the function (line 3), where the read is perfectly legal, and the
+ hint says `localsum` "is declared only in some branches of an
+ `if`/`otherwise`" — there is no `if` in the program.
+ Deleting the last line compiles and prints 7, which is what identifies
+ the last line as the real offender.
+ The strongest pro-compiler reading: :706 promises only that this is a
+ compile-time error, and it is. Nothing in the manual promises where the
+ caret lands, so on the letter of the claim the compiler is correct and
+ this is a diagnostic-quality defect rather than a wrong answer. It still
+ sent this mapper looking for a scope bug inside the function body that
+ was not there. Compare vox bug #46, "the diagnostic caret can land
+ inside a comment".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D9.vox -o p && ./p
+ expected output:
+   error: Unknown variable: localsum
+   (no binary produced; compile error)
+)
+To 'make local'.
+  a number called localsum is 7.
+  Print localsum.
+
+'make local'.
+Print localsum.

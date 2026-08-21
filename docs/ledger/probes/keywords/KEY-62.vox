@@ -1,0 +1,18 @@
+(KEY-62 — `waiting` is contextual: it is claimed only in the
+ `without waiting` reap suffix, and is an ordinary identifier elsewhere.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-62.vox -o p && ./p
+ expected output:
+   non-blocking reap found the child still running
+   5
+)
+a number called waiting is 5.
+Set pid to fork the process.
+If pid is 0 then,
+    Wait 3000 milliseconds,
+    Exit 0.
+Set 'first look' to reap child pid without waiting.
+If 'first look' is 0 then,
+    Print "non-blocking reap found the child still running".
+Send signal 9 to process pid.
+Set reaped to reap child pid.
+Print waiting.

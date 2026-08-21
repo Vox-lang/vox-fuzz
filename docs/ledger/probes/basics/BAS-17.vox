@@ -1,0 +1,23 @@
+(BAS-17 - inside an OPEN clause a blank line is not cosmetic: it
+ force-closes every clause still open, including an enclosing function
+ definition. Here one blank line closes the nested If, the While, and the
+ function `report` all at once, so `Print "top"` is a top-level statement
+ and runs once rather than three times inside the loop.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-17.vox -o p && ./p
+ expected output:
+   tick 0
+   marked
+   tick 1
+   tick 2
+   top
+)
+To report.
+    a number called tick is 0.
+    While tick is less than 3,
+        if tick is equal to 1 then,
+            print "marked".
+        print "tick {tick}",
+        increment tick.
+
+report.
+Print "top".

@@ -1,0 +1,15 @@
+(TIM-31 - `duration` is the whole measured interval, start to stop. Two
+ waits totalling 1200 milliseconds are made and the duration is checked
+ against the sum, not against either half.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-31.vox -o p && ./p
+ expected output:
+   the duration covers both waits
+)
+a timer called 'job timer'.
+Start the 'job timer'.
+Wait 900 milliseconds.
+Wait 300 milliseconds.
+Stop the 'job timer'.
+a number called 'the whole job' is the 'job timer''s duration in milliseconds.
+If 'the whole job' is greater than 1199 and 'the whole job' is less than 2200 then, print "the duration covers both waits".
+Otherwise, print "the duration is {'the whole job'} milliseconds, not the 1200 that were waited".

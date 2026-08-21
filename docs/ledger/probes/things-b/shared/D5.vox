@@ -1,0 +1,25 @@
+(D5 - Discrepancy 5 repro: the --shared thing-crossing diagnostics locate their
+ caret by scanning the SOURCE TEXT for the exported function's name and taking
+ successive occurrences of it, rather than by the definition's own position. The
+ comment below mentions the name once, so the first error - the parameter
+ crossing - points at that comment, and the second error - the return crossing -
+ takes the next occurrence and lands on the definition. Neither error is about
+ the comment. This header deliberately does not spell the name, or the carets
+ would move again.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox shared/D5.vox --shared -o libd5.so
+ expected output:
+   error: Exported function takes a point, which a library interface cannot
+   describe yet - caret at D5.vox:19:27, inside the comment - then
+   error: Exported function returns a point, which a library interface cannot
+   describe yet - caret at D5.vox:24:5, the definition.
+   No library is produced; this is a compile error.
+)
+Library geometrykit version "1.0".
+
+(A comment that mentions 'nudged east'.)
+
+A thing called point has
+  a number called x is 0.
+
+To 'nudged east' with a point called start.
+  Return a point, start.

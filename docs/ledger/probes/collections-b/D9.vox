@@ -1,0 +1,15 @@
+(D9 — Discrepancy 9 repro: LANGUAGE.md:2919-2920 calls `respectively`
+ "reserved as a possible future marker for a zip mode; it is not parsed
+ today". It is genuinely not parsed — this sentence is a compile error —
+ but it is NOT reserved as an identifier: `a number called respectively is
+ 4.` compiles and prints 4 (see LST2-71.vox). A program that uses the name
+ today would break when the zip marker lands.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D9.vox -o p && ./p
+ expected output:
+   error: Unknown function: respectively
+   (no binary produced; compile error)
+)
+To pair of a number called left and a number called right.
+  print "{left}-{right}".
+
+'pair' of each x from [1, 2] and each y from [10, 20] respectively.

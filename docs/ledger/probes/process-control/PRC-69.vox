@@ -1,0 +1,21 @@
+(PRC-69 — `the clock's elapsed in milliseconds` reports TRUE milliseconds,
+ which is what makes the supervisor's 5000-millisecond deadline fire at
+ the five-second mark rather than at some scaled multiple of it.
+ A 1200-millisecond wait is checked against a band rather than an exact
+ value: scheduling jitter is real, a wrong UNIT would be off by a factor
+ of a thousand, and the band separates those two cases without pretending
+ the clock is exact.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-69.vox -o p && ./p
+ expected output:
+   elapsed reports true milliseconds
+)
+a timer called clock.
+Start the clock.
+Wait 1200 milliseconds.
+a number called 'milliseconds waited' is the clock's elapsed in milliseconds.
+If 'milliseconds waited' is greater than or equal to 1150 and 'milliseconds waited' is less than or equal to 1500 then, print "elapsed reports true milliseconds".
+If 'milliseconds waited' is less than 1150 then, print "elapsed was too small: {'milliseconds waited'}".
+If 'milliseconds waited' is greater than 1500 then, print "elapsed was too large: {'milliseconds waited'}".

@@ -1,0 +1,26 @@
+(D4 - Discrepancy 4 repro: LANGUAGE.md:877-878 says "All three lines below
+ declare a `point` and give every field its declared default", and the block
+ that follows (880-894) contains ONE declaration.
+ This probe is the three lines the sentence describes, written out. All
+ three do work and all three do take the declared defaults - so the claim is
+ true, and only the example is missing two of its three lines.
+ (A reading in which the manual is right is in the ledger entry: "below" may
+ mean the whole subsection, whose three code blocks open with `a point
+ called origin.`, `Create a point called 'the far corner'.`, and
+ `a 'water tank' called cistern.`)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   1 2
+   1 2
+   1 2
+)
+A thing called point has
+  a number called x is 1,
+  a number called y is 2.
+
+a point called first.
+Create a point called second.
+Set a point called third to first.
+Print "{first's x} {first's y}".
+Print "{second's x} {second's y}".
+Print "{third's x} {third's y}".

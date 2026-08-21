@@ -1,0 +1,30 @@
+(D5 — Discrepancy 5 repro: a DECLARED `float` or `map` return type is lost
+ when the call result is printed directly rather than routed through a
+ declared variable. The float prints as its IEEE-754 bit pattern
+ (4612811918334230528 = 0x4004000000000000 = 2.5) and the map as a raw
+ heap address; the same two values print correctly one line earlier, out
+ of variables of the declared type. text, boolean and list are unaffected
+ (FUN-40). This is the shape of vox bug #45, except that #45 says
+ declaring the return type is the cure — here it is declared and the
+ result is still wrong. The map address varies per run, so this probe is
+ compared on its EXIT CODE: it exits 3 unconditionally after printing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+ expected output:
+   2.5
+   {"ann": 30}
+   --- the same two calls, printed directly ---
+   4612811918334230528
+   140201717768192
+   exit 3
+)
+To 'give float'. Return a float, 2.5.
+To 'give map'. Return a map, {"ann": 30}.
+
+a float called 'routed float' is 'give float'.
+a map called 'routed map' is 'give map'.
+Print 'routed float'.
+Print 'routed map'.
+Print "--- the same two calls, printed directly ---".
+Print 'give float'.
+Print 'give map'.
+Exit 3.

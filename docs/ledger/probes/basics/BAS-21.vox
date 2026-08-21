@@ -1,0 +1,19 @@
+(BAS-21 - without a blank line after the body, every following statement
+ is absorbed into the function body, so the program silently does nothing:
+ exit 0, no output. `greet.` here becomes a recursive call inside greet's
+ own body, and nothing ever calls greet from the top level.
+ Also covers: BAS-20 (the period ending `Print "hi".` closes only the
+ innermost clause, so it does NOT close the function) and BAS-23 (the
+ compiler warns at compile time - it is not silent about the cause, only
+ the runtime is). The warning, which is compiler stderr and so not part of
+ the recorded runtime output, reads:
+   warning: Function 'greet' is still open at end of file: its body reached
+   EOF with no closing blank line. ...
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-21.vox -o p && ./p
+ expected output:
+   (exit 0)
+)
+To greet.
+    Print "hi".
+greet.
+Print "top".

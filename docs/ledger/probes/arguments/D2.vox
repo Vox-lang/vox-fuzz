@@ -1,0 +1,21 @@
+(D2 — Discrepancy 2 repro: with no user arguments, `arguments's first`
+ sets the error flag and yields "", while `arguments's last` quietly
+ returns the program name — so `last` reaches a place `first` refuses to
+ go, and `empty` is true the whole time.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   empty is 1
+   first errored
+   first is []
+   last is the program name
+)
+Print "empty is {arguments's empty}".
+a text called one is arguments's first.
+On error print "first errored".
+Print "first is [{one}]".
+a text called ending is arguments's last.
+On error print "last errored".
+If ending is arguments's name then,
+    Print "last is the program name".
+Otherwise,
+    Print "last is not the program name".

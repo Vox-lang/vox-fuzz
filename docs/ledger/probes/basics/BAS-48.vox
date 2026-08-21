@@ -1,0 +1,14 @@
+(BAS-48 - the three-nested-ifs example, LANGUAGE.md:196-202, verbatim.
+ Three periods close the innermost `if`, then the middle one, then the
+ outer one, so the last statement runs at the top level even though every
+ condition is false.
+ Also covers: BAS-47 (periods stack - one period per level to close).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-48.vox -o p && ./p
+ expected output:
+   back at the top
+)
+a number called n is 0.
+If n is equal to 1 then,
+    If n is equal to 1 then,
+        If n is equal to 1 then, print "innermost"...
+print "back at the top".

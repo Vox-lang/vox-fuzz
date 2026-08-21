@@ -1,0 +1,19 @@
+(BAS2-36: `but if` attaches to both loop expansion and a `For each` loop body, and works over a collection as well as a range.
+ Also covers: BAS2-48, BAS2-49
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-36.vox -o p && ./p
+ expected output:
+   ant
+   buzz
+   cow
+   ---
+   1
+   2
+   three
+   4
+)
+print each word from ["ant", "bee", "cow"],
+    but if word is equal to "bee" print "buzz".
+print "---".
+For each number from 1 to 4,
+  print the number,
+    but if the number is equal to 3 print "three".

@@ -1,0 +1,14 @@
+(KEY-77 — `has` is claimed only as the verb of a thing definition; it is an
+ ordinary identifier everywhere else, in the same program.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-77.vox -o p && ./p
+ expected output:
+   0
+   4
+)
+A thing called point has
+    a number called x is 0.
+
+a number called has is 4.
+a point called origin.
+Print origin's x.
+Print has.

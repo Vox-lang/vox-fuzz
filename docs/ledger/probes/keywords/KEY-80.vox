@@ -1,0 +1,26 @@
+(KEY-80 — `the` gains a second reading in a member definition: `the point's`
+ pairs with a KNOWN identifier (the type) in `To do the point's ...`, while
+ `a point's ...` calls the maker that brings a new point into being. Both
+ readings appear here, over the same member name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-80.vox -o p && ./p
+ expected output:
+   1
+   0
+   0
+)
+A thing called point has
+    a function called 'placed at',
+    a number called x is 0,
+    a number called y is 0.
+
+To do the point's 'placed at', with a number called across and a number called along.
+    a point called plotted.
+    Set plotted's x to across.
+    Set plotted's y to along.
+    Return a point, plotted.
+
+The pin is a point's 'placed at' with 1 and 0.
+Print pin's x.
+Print pin's y.
+a point called origin.
+Print origin's x.

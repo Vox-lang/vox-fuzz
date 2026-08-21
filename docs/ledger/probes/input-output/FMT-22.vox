@@ -1,0 +1,17 @@
+(FMT-22 — a format string is an expression, not only a Print argument: the
+ same string used as an initializer produces the value Print would show.
+ Covers FMT-24 (text initializer and assignment) in its second half.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   sum 13
+   sum 13
+   sum 26
+)
+a number called x is 10.
+a number called y is 3.
+a text called held is "sum {x add y}".
+Print "sum {x add y}".
+Print held.
+Set y to 16.
+Set held to "sum {x add y}".
+Print held.

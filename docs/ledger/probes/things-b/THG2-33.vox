@@ -1,0 +1,39 @@
+(THG2-33: the instance-possessive worked example, LANGUAGE.md:1403-1432,
+ verbatim - the receiver form on a bare variable, the receiver form carrying
+ a further argument after `on`, and the receiver form on a field holding a
+ whole thing.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-33.vox -o p && ./p
+ expected output:
+   25
+   9
+   144
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+To 'magnitude squared' with a point called corner.
+  a number called 'x squared' is corner's x multiply corner's x.
+  a number called 'y squared' is corner's y multiply corner's y.
+  Return a number, 'x squared' add 'y squared'.
+
+To 'scaled by' with a point called corner and a number called factor.
+  a point called scaled.
+  Set scaled's x to corner's x multiply factor.
+  Set scaled's y to corner's y multiply factor.
+  Return a point, scaled.
+
+a point called origin.
+Set origin's x to 3.
+Set origin's y to 4.
+Print origin's 'magnitude squared'.
+The 'tripled corner' is origin's 'scaled by' on 3.
+Print 'tripled corner''s x.
+
+a segment called 'the line'.
+Set 'the line''s end's y to 12.
+Print 'the line''s end's 'magnitude squared'.

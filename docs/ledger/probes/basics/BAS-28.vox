@@ -1,0 +1,10 @@
+(BAS-28 - the multiple-comma-separated-actions example, LANGUAGE.md:99:
+ `While x is less than 10, print x, increment x.`
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-28.vox -o p && ./p
+ expected output:
+   7
+   8
+   9
+)
+a number called x is 7.
+While x is less than 10, print x, increment x.

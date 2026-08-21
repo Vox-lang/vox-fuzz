@@ -1,0 +1,9 @@
+(KEY-50 — `string` is the reserved alias of the type name `text`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-50.vox -o p && ./p
+ expected output:
+   hello
+   Text (static)
+)
+a string called greeting is "hello".
+Print greeting.
+Print greeting's type.

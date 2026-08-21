@@ -1,0 +1,21 @@
+(A thing definition and the functions that travel with it, for the cross-file
+ probes THG2-49 and THG2-52. LANGUAGE.md:1606-1623, verbatim. This file is a
+ fragment: a `see` includes it, and it is never compiled on its own, which
+ is why it sits in include/ rather than beside the probes.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+(An ordinary global function taking a point first, so the including file
+ can reach it through the instance possessive as well as by name.)
+To 'shifted east' with a point called start.
+  Set start's x to start's x add 1.
+  Return a point, start.

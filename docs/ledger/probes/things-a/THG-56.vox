@@ -1,0 +1,23 @@
+(THG-56: a copy is DEEP by construction - a nested thing is just more bytes,
+ so copying a letter carries its point along and neither half is shared.
+ Also covers: THG-57 (the letter/reply example, LANGUAGE.md:1038-1053,
+ verbatim - 3 then 7).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-56.vox -o p && ./p
+ expected output:
+   3
+   7
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called letter has
+  a point called postbox,
+  a number called 'weight in grams' is 2.
+
+a letter called invitation.
+Set invitation's postbox's x to 3.
+a letter called reply is invitation.
+Set reply's postbox's x to 7.
+Print invitation's postbox's x.
+Print reply's postbox's x.

@@ -1,0 +1,18 @@
+(BAS-16 - blank lines are optional and have no effect between two
+ fully-terminated top-level constructs: none, one and three blank lines
+ all behave identically.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-16.vox -o p && ./p
+ expected output:
+   no blank line
+   one blank line
+   three blank lines
+   done
+)
+print "no blank line".
+print "one blank line".
+
+print "three blank lines".
+
+
+
+print "done".

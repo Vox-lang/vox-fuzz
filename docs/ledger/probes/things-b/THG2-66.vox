@@ -1,0 +1,11 @@
+(THG2-66: a definition listing only manifest entries describes a zero-byte
+ thing, so v1 requires at least one data field. The same diagnostic as THG2-65,
+ with one extra line naming the reason.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-66.vox -o p && ./p
+ expected output:
+   error: A thing needs at least one field
+   followed by the canonical form and by "`a function called <name>` declares
+   callable API, not storage." No binary is produced; this is a compile error.
+)
+A thing called point has
+  a function called 'from polar'.

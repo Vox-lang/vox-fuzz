@@ -1,0 +1,17 @@
+(THG2-13: there is no ordering on a whole thing - `origin is greater than
+ marker` is rejected, and the message names the field to compare instead.
+ LANGUAGE.md:1264-1276, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-13.vox -o p && ./p
+ expected output:
+   error: 'origin' holds a whole point, which nothing puts in order
+   followed by "Compare a field instead - point's fields are: x, y".
+   No binary is produced; this is a compile error.
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+a point called origin.
+a point called marker.
+If origin is greater than marker then,
+    Print "further along".

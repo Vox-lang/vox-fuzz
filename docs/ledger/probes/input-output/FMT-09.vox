@@ -1,0 +1,11 @@
+(FMT-09 — `{var}` with no specifier is default formatting: the value as
+ `Print` alone would render it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Alice
+   255
+)
+a text called name is "Alice".
+a number called n is 255.
+Print "{name}".
+Print "{n}".

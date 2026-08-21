@@ -1,0 +1,16 @@
+(D1 - Discrepancy 1 repro: LANGUAGE.md:1173 says "A quoted field name prints in
+ the quotes it is written with." All three fields below are written in quotes.
+ Only the multi-word one comes back quoted; the two single-word names print
+ bare. The rule the compiler follows is "quote a name that needs quoting",
+ not "print the quotes it was written with".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   {'day sent': 25, depth: 2, altitude: 1}
+)
+A thing called stamp has
+  a number called 'day sent' is 25,
+  a number called 'depth' is 2,
+  a number called 'altitude' is 1.
+
+a stamp called posted.
+Print posted.

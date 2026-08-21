@@ -1,0 +1,11 @@
+(VAR-60, VAR-61: the possessive marker after a closing identifier quote.
+ Both spellings are accepted and mean the same thing: an `s` directly after
+ the closing quote, and the doubled `''s` form.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-60.vox -o p && ./p
+ expected output:
+   3
+   3
+)
+a list called 'word list' is ["a", "bb", "ccc"].
+Print 'word list's length.
+Print 'word list''s length.

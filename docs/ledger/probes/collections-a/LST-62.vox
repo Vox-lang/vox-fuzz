@@ -1,0 +1,23 @@
+(LST-62 — all six type nouns work as predicates and each matches exactly
+ one slot: number, text, decimal, boolean, list, map.
+ Also covers: LST-65 (`is a boolean` and `is a number` are distinct even
+ though both print as numbers — the boolean slot falls through the
+ `is a number` arm and lands on the boolean one).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-62.vox -o p && ./p
+ expected output:
+   number
+   text
+   decimal
+   boolean
+   list
+   map
+)
+a list called mixedbag is [1, "two", 3.5, yes, [7], {"k": 8}].
+For each item in mixedbag,
+  if item is a number, print "number",
+  otherwise if item is a text, print "text",
+  otherwise if item is a decimal, print "decimal",
+  otherwise if item is a boolean, print "boolean",
+  otherwise if item is a list, print "list",
+  otherwise if item is a map, print "map",
+  otherwise print "unknown".

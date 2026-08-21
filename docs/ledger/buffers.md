@@ -59,7 +59,7 @@ clean, 0 mismatches, 0 compile failures.
 | BUF-11 | 3215 | `length` is a synonym for `size` (same value). | assert `X's length is X's size` after a mutation | yes | none use the `'s length` **property** on a buffer (only the `is empty` **predicate**, a different construct, at `gen leaf stdin read` line 2041); `'s length` is used on maps and clock-check buffers elsewhere but not paired against `'s size` on the same buffer | todo | |
 | BUF-12 | 3217 | `empty` is true iff size = 0. | assert before/after append | yes | `gen leaf stdin read` uses the `is empty` **predicate**, not the `'s empty` **property** the manual documents in this table | todo (property form specifically) | |
 | BUF-13 | 3218 | `full` is true iff size = capacity — manual scopes this "for fixed buffers" only. | assert on a fixed buffer at/under capacity; also probe a dynamic buffer for the same equality (docs don't say it holds there) | yes | none | todo — also see Discrepancy-adjacent note: property works fine on dynamic buffers too (hand-verified), so the manual's "for fixed buffers" scoping is narrower than reality; not wrong, just imprecise | |
-| BUF-14 | 3202–3208 | `type` universal property reports declared type + `(static)`/`(dynamic)`; a buffer variable should report `Buffer (static)`. | declare a buffer, assert `X's type is "Buffer (static)"` | yes | none | todo — and see **Discrepancy 2**, a real bug: it does not | |
+| BUF-14 | 3202–3208 | `type` universal property reports declared type + `(static)`/`(dynamic)`; a buffer variable should report `Buffer (static)`. | declare a buffer, assert `X's type is "Buffer (static)"` | yes | none | todo — was **Discrepancy 2**, fixed in vox #42 (PR #189); now assertable as `Buffer (static)` | |
 | BUF-15 | 3242 | `resize`, `reallocate`, `grow`, `shrink` are all accepted spellings of the same resize operation. | emit all four keywords across probes, assert new capacity each time | yes | none | todo | |
 | BUF-16 | 3245 | Resize preserves data up to `min(old_length, new_capacity)`. | grow: assert old data intact; shrink-above-length: assert old data intact | yes | none | todo | |
 | BUF-17 | 3246 | Shrinking below current data length truncates the data. | shrink capacity below current size, assert size == new capacity and content == prefix | yes | none | todo | |
@@ -98,6 +98,8 @@ doesn't independently trip over the same false alarm.
 
 ### 1. Dynamic buffers do not start at zero capacity — and the compiler's own warning says they do
 
+**Resolution (lawyer): MANUAL BUG + misleading diagnostic, high** — `INITIAL_BUF_CAP 4096` (coreasm/x86_64/resource.asm) is real and eager; LANGUAGE.md:3153 and `warn_uninitialized_buffer` both say "zero capacity", and the warning disparages the manual's own canonical form. **Awaiting Josj:** keep eager 4096 and fix manual + warning, or make allocation lazy.
+
 LANGUAGE.md:3153: "Start with zero capacity and grow automatically as
 needed." Repro:
 
@@ -127,6 +129,8 @@ Either way this is worth a human decision, not a fix from me. Not filed.
 
 ### 2. A fixed-size (or `Create ... with size N`) buffer's `type` property reports `Text (dynamic)`, not `Buffer (static)`
 
+**Resolution (lawyer → fixed): COMPILER BUG — vox bug #42, fixed in vox PR #189 (2026-08-20).** `BufferDecl` never registered `declared_types`; now it does, and every spelling prints `Buffer (static)`. Probe `D2.vox` and `BUF-14.vox` updated to the corrected output. Still open for Josj: `is a buffer` does not parse, so the manual's recommended predicate cannot be used for buffers.
+
 LANGUAGE.md:3206 says statically-typed variables including `buffer`
 report `(static)`. Repro:
 
@@ -154,6 +158,8 @@ string-initializer path and falls through to a default/wrong case for
 the capacity-only path. Not filed; minimal repro above.
 
 ### 3. Byte read/write bounds checking: reads are checked against `size`, writes are checked against `capacity` — undocumented, and the two disagree with each other
+
+**Resolution (lawyer): MANUAL BUG (doc gap), medium-high; behaviour must NOT change** — it is required by the manual's own worked example at :3312–3319. **Fixed in the manual by vox PR #189**: the Bounds Checking paragraph now defines bounds (writes 1..capacity extend size, reads 1..size, 0 out of bounds) and :3166 no longer says "silently".
 
 LANGUAGE.md's Bounds Checking section (3280–3283) just says "out-of-bounds
 access sets an error flag and returns 0," with no definition of what

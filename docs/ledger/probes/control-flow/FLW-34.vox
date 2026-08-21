@@ -1,0 +1,10 @@
+(FLW-34: `Exit <code>.` exits immediately with that code - the statement
+ after it never runs, and the process status is the code given.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-34.vox -o p && ./p
+ expected output:
+   before
+   exit 42
+)
+print "before".
+Exit 42.
+print "unreachable".

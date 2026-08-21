@@ -1,0 +1,20 @@
+(PRC-55 — `waiting` remains an ordinary identifier everywhere it is not
+ the `without waiting` suffix.
+ Also covers: PRC-60 (`reaped` stays an ordinary identifier; only the exact
+ phrase `the reaped status` is consumed, and `the reaped` followed by
+ anything else is an ordinary variable reference).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-55.vox -o p && ./p
+ expected output:
+   waiting holds 11
+   reaped holds 22
+   the reaped holds an ordinary variable
+)
+a number called waiting is 11.
+a number called reaped is 22.
+a text called 'the reaped' is "an ordinary variable".
+print "waiting holds {waiting}".
+print "reaped holds {reaped}".
+print "the reaped holds {'the reaped'}".

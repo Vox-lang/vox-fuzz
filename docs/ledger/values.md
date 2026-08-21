@@ -22,8 +22,10 @@ rows are `todo`.
 Every row below was hand-run against the real compiler
 (`/home/josj/scr/english/vox/target/release/vox`, `VOX_CORE_PATH` pinned to
 the sibling `coreasm`) before being written. The Discrepancies section
-gives minimal repros for the two that matter — one of them a deterministic
-segfault on a valid, compiling program.
+gives minimal repros for the two that matter — one of them was a
+deterministic segfault on a valid, compiling program. **Discrepancy 1 has
+since been fixed in vox (#43, 0.4.8) and both its probes were re-recorded
+to the fixed behaviour on 2026-08-21.**
 
 ## Probes
 
@@ -48,8 +50,14 @@ the two discrepancies — 26 files total. All 24 runnable probes were
 recompiled and re-run in one final pass after being written; every one
 reproduced its recorded `expected output:` exactly (24 clean, 0 mismatches,
 0 compile failures). The four compile-error probes reproduce their recorded
-compiler errors. `D1.vox` reproduces its segfault deterministically (exit
-139, 6/6 runs).
+compiler errors.
+
+**Refreshed 2026-08-21 against vox 0.4.8 + #43.** `D1.vox` used to record a
+deterministic segfault (exit 139, 6/6 runs); vox #43 fixed it, so `D1.vox`
+now records `99` and `VAL-19.vox` now records `fallback` /
+`Text (dynamic)` where it recorded `4210906` / `Number (dynamic)`. Nothing
+in this directory crashes any more. All 26 re-run clean with
+`docs/check-probes.sh docs/ledger/probes/values`.
 
 ## The table
 
@@ -73,7 +81,7 @@ compiler errors. `D1.vox` reproduces its segfault deterministically (exit
 | VAL-16 | 2558 | `type` is a display helper for debugging/logging; type tests belong in the `is a <type>` predicate. | — | not a behavior — a usage recommendation | n/a | folded into VAL-14 (the property) and VAL-11 (the predicate) | |
 | VAL-17 | 2560–2563 | Retyping a statically-typed variable is a compile error; the compiler reports the declared type and points at the explicit cast (`a text called t is n as text.`) as the correct rewrite. | emit `n is a text.` for a `number` var → expect the compile error; the rewrite itself is valid | **no, from a runtime leaf** for the compile-error half (same reason as VAL-08); the rewrite half is assertable and hand-verified to produce `Text (static)` | none | not assertable (compile-error claim) — hand-verified (`VAL-17.vox`; rewrite verified separately) | |
 | VAL-18 | 2565–2568 | Recursion with `value` works: a `value` parameter threads its tag through every frame, so a walker over mixed data classifies correctly at any depth; `value` parameters compose (a value passed straight to another value function round-trips its tag). | a recursive/by-tag classifier over mixed data; two value functions composing | yes | none | todo — hand-verified (`VAL-18.vox`) | |
-| VAL-19 | 2570–2578 | **Limitation:** a *conditional* `value` return (the factorial pattern, `If … return a value, <expr>. Otherwise …`, in a function whose `To` line has no `Return`) does not track the return type, so the value would print as a number; use the single-expression `Return a value, <expr>.` form. Conditional `value` *parameters* (the factorial pattern with a void return) work fine. | emit the conditional-return factorial pattern returning a non-number; emit the void-return conditional-parameter pattern | yes — but the *observed* behavior is the discrepancy: the manual says "prints as a number" and the compiler segfaults in one direction — see **Discrepancy 1** | none | todo, **blocked on D1** — hand-verified the param half works and the return half mis-behaves (`VAL-19.vox`) | |
+| VAL-19 | 2570–2578 (0.4.7); **now 2626–2650** | **Limitation:** a *conditional* `value` return (the factorial pattern, `If … return a value, <expr>. Otherwise …`, in a function whose `To` line has no `Return`) does not track the return type, so the value would print as a number; use the single-expression `Return a value, <expr>.` form. Conditional `value` *parameters* (the factorial pattern with a void return) work fine. | emit the conditional-return factorial pattern returning a non-number; emit the void-return conditional-parameter pattern | yes — and as of 0.4.8 the assertion to emit is the *working* one: `If lost's type is not "Text (dynamic)" then, Exit 95.` after a text-returning branch | none | **todo — unblocked.** D1 is resolved by vox #43 (0.4.8): the segfault and the mis-tag are both gone and the manual now documents the construct as working. The row stays `todo` because no leaf emits it — re-run `VAL-19.vox` for the current behaviour. The *claim text* above is the 0.4.7 wording and is now stale; re-map against :2626–2650 before building. | |
 | VAL-20 | 2576–2578 | The internal ABI that carries the tag is documented in `docs/abi_value.md`; roadmap context in `docs/COLLECTIONS_ROADMAP.md` stage 1d. | — | not assertable — a documentation pointer, not a language behavior | n/a | not assertable | |
 | VAL-21 | 2582–2594 | `nothing` is the absent value (null equivalent); it can sit in a list slot, a map value, or a `value` parameter/return, and it prints as the word `nothing`. | put `nothing` in a list slot and a map value, print, assert the word `nothing` appears | yes | none — no leaf emits `nothing`/`null`/`nil` anywhere | todo — hand-verified (`VAL-21.vox`, also covers VAL-22) | |
 | VAL-22 | 2586–2594 | `nothing` prints inside aggregates as `[1, nothing, "x"]` and `{"found": 4, "absent": nothing}`. | reproduce both, assert the exact printed text | yes | none | folded into VAL-21 — hand-verified in `VAL-21.vox` | |
@@ -137,6 +145,29 @@ and this is a valid program. So even accepting the documented limitation,
 the crash is a memory-safety violation, not a cosmetic print issue. The
 manual's wording ("would print as a number") undersells a crash. Recorded
 and stopped — not filed; adjudication is the master's and the human's.
+
+**Resolution: fixed by vox #43 (0.4.8).** Both directions are fixed, and
+LANGUAGE.md was corrected in the same change. Re-run against current main:
+
+- `D1.vox` — number returned from a text-tagged frame — no longer
+  segfaults. It takes the `Otherwise` branch and prints `99`, exit 0.
+- `VAL-19.vox` — text returned from a number-tagged frame — no longer
+  prints garbage. It prints `fallback` / `Text (dynamic)`: each branch now
+  hands back its own runtime tag.
+
+The manual no longer calls this a limitation. Where 0.4.7 had the
+"does not track the return type" paragraph, 0.4.8 has **"Conditional
+`value` returns work"** (:2626–2639) with `D1.vox`'s program as its worked
+example; run verbatim it prints `7` then `99`. A narrower limitation
+remains documented at :2641–2650 — branches that declare *different*
+types (`Return a text` in one, `Return a number` in the other) have no
+single type for the `To` line to promise, so the caller reads the result
+as a number. That is a **new claim, not yet a row**: this ledger is pinned
+to manual 0.4.7 and the `value` section has moved, so its line numbers
+need re-pinning and the new paragraphs need mapping before anything is
+built on them.
+
+Both probes were re-recorded to the fixed behaviour on 2026-08-21.
 
 ### 2. The in-place retype analogy references a conversion the compiler does not implement for `value`
 
@@ -204,10 +235,18 @@ fills its `citation` column from these lines.)
 - bare arithmetic on a `value` is a compile error, so a generated program
   must never use a `value` directly in arithmetic without first retyping
   it (`v is a number.`) — LANGUAGE.md:2496, VAL-08 / VAL-09
-- the conditional `value` return (factorial pattern, no `Return` on the
+- ~~the conditional `value` return (factorial pattern, no `Return` on the
   `To` line) is a documented *don't*; generated `value`-returning
   functions must use the single-expression `Return a value, <expr>.` form
-  on the `To` line — LANGUAGE.md:2574, VAL-19 (blocked on D1)
+  on the `To` line — LANGUAGE.md:2574, VAL-19 (blocked on D1)~~
+  **Withdrawn 2026-08-21: this invariant is no longer justified.** vox #43
+  (0.4.8) made the conditional form work and LANGUAGE.md:2626–2639 now
+  documents it as working. A leaf that always picks the single-expression
+  form is now an *unjustified* invariant — both forms are legal and the
+  choice between them must vary. The one sameness that survives is
+  narrower: branches that declare *different* types still have no single
+  return type (LANGUAGE.md:2641–2650), so a leaf must declare the same
+  type in every branch of one function.
 
 No other sameness is required by this section. In particular the manual
 does **not** pin: how many `is a <type>` branches a dispatcher uses, which
@@ -246,7 +285,10 @@ asserts** — every existing emission stops at `Print`-and-eyeball. The next
 workers' job here is both "write leaves for the untouched majority" and
 "add assertions to what is already emitted."
 
-**Biggest finding — Discrepancy 1: a deterministic segfault.** The
+**Biggest finding — Discrepancy 1: a deterministic segfault.**
+*(Fixed in vox by #43, 0.4.8; the account below is the finding as it stood
+when this ledger was written — see the `Resolution:` line on Discrepancy 1.)*
+The
 conditional `value` return (factorial pattern, no `Return` on the `To`
 line) is documented as a cosmetic limitation ("the value would print as a
 number"). It is not cosmetic: returning a number literal from a frame
@@ -286,4 +328,5 @@ next one can skip:
    a garbage number. The segfault only appears in the *opposite* direction
    (number from text, `D1`). A mapper who probed only the manual's own
    example would record "prints as a number" and miss the crash. Always
-   test both directions of a tag-mismatch claim.
+   test both directions of a tag-mismatch claim. (Both directions were
+   fixed by vox #43; the lesson is what found the crash, not the crash.)

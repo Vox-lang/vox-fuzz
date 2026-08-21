@@ -1,0 +1,27 @@
+(FUN-24 — a parameter or return type may be `value`, and its runtime tag
+ travels with its payload across the call: `describe` dispatches on
+ `is a <type>` inside the callee and reaches a different branch for each
+ of a number, a text and a float passed through the same slot; `forward`
+ takes a value and returns it as a value, and the tag survives the round
+ trip (the text still prints as text on the far side).
+ (The `value` type itself is mapped in docs/ledger/values.md; this row is
+ only the claim that a value crosses a CALL boundary intact.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-24.vox -o p && ./p
+ expected output:
+   number
+   text
+   decimal
+   round trip
+)
+To describe with a value called item.
+  If item is a number, print "number".
+  Otherwise if item is a text, print "text".
+  Otherwise print "decimal".
+
+To forward with a value called item. Return a value, item.
+
+describe of 1.
+describe of "two".
+describe of 3.5.
+a value called 'came back' is forward of "round trip".
+Print 'came back'.

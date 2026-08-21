@@ -1,0 +1,30 @@
+(TIM-05 - the seven time properties are read with the `'s` possessive and
+ each lands inside the range the manual's table gives it. Clock-dependent
+ values are checked rather than printed, so this probe's output is the
+ same on every run (the rule 'gen leaf timer and clock' already follows).
+ Also covers: TIM-04, TIM-06, TIM-07, TIM-08, TIM-09, TIM-10, TIM-11.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-05.vox -o p && ./p
+ expected output:
+   hour is 0 to 23
+   minute is 0 to 59
+   second is 0 to 59
+   day is 1 to 31
+   month is 1 to 12
+   year is at least 2026
+   unix is seconds since the epoch
+)
+Get current time into now.
+If now's hour is greater than or equal to 0 and now's hour is less than 24 then, print "hour is 0 to 23".
+Otherwise, print "hour is out of range: {now's hour}".
+If now's minute is greater than or equal to 0 and now's minute is less than 60 then, print "minute is 0 to 59".
+Otherwise, print "minute is out of range: {now's minute}".
+If now's second is greater than or equal to 0 and now's second is less than 60 then, print "second is 0 to 59".
+Otherwise, print "second is out of range: {now's second}".
+If now's day is greater than 0 and now's day is less than 32 then, print "day is 1 to 31".
+Otherwise, print "day is out of range: {now's day}".
+If now's month is greater than 0 and now's month is less than 13 then, print "month is 1 to 12".
+Otherwise, print "month is out of range: {now's month}".
+If now's year is greater than 2025 then, print "year is at least 2026".
+Otherwise, print "year is out of range: {now's year}".
+If now's unix is greater than 1750000000 then, print "unix is seconds since the epoch".
+Otherwise, print "unix is too small to be an epoch second count: {now's unix}".

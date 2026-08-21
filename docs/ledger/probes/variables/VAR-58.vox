@@ -1,0 +1,13 @@
+(VAR-58: exactly one character between single quotes is a character literal,
+ not an identifier, which is why single-character quoted identifiers do not
+ exist. The declaration below fails because 'x' has already become the
+ integer 120 by the time a name is wanted — the parser's own message says
+ so: 120 is the ASCII code of x, so the single-quoted token was lexed as a
+ character literal. (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-58.vox -o p && ./p
+ expected output:
+   error: Expected a name, got IntegerLiteral(120)
+   (no binary produced; compile error)
+)
+a number called 'x' is 5.
+Print 'x'.

@@ -1,0 +1,14 @@
+(PRC-38 — the environment is inherited from the calling process.
+ HOME is set in any ordinary session; the exec'd shell sees it.
+ Also hand-verified with the argv-dumping helper of PRC-34, which read
+ environment's "PRC_MARKER" and printed the value the parent was started
+ with, in all three Execute forms.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-38.vox -o p && ./p
+ expected output:
+   the environment came through
+)
+Execute "/bin/sh" with arguments ["-c", "case $HOME in ?*) echo the environment came through;; esac"].
+On error print "the exec failed".

@@ -1,0 +1,13 @@
+(TIM-50 - the duration operand of Wait and Sleep is a literal or a bare
+ variable; an expression there is a compile error, and the diagnostic
+ names the four unit words it was looking for. Undocumented - the manual's
+ syntax list shows only `<N>`. A generated program must therefore compute
+ the duration into a name first.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-50.vox -o p && ./p
+ expected output:
+   error: Expected 'second', 'seconds', 'millisecond', or 'milliseconds' after duration
+   (no binary produced; compile error)
+)
+a number called nap is 1.
+Wait nap add 1 milliseconds.
+print "the expression was accepted".

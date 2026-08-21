@@ -1,0 +1,12 @@
+(OPR-17: `is greater than or equal to` admits the equal case (LANGUAGE.md:4566).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-17.vox -o p && ./p
+ expected output:
+   ge fired on equal
+   ge fired on greater
+)
+a number called lhs is 7.
+a number called rhs is 7.
+a number called other is 3.
+If lhs is greater than or equal to rhs then, Print "ge fired on equal".
+If lhs is greater than or equal to other then, Print "ge fired on greater".
+If other is greater than or equal to lhs then, Print "ge MISFIRED on less".

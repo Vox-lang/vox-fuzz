@@ -1,0 +1,21 @@
+(ARG-43 — *(not a manual claim — a gap in the manual)* `last` never
+ errors: with no user arguments it returns the program name, where
+ `first` errors instead (ARG-42). The table says "Last argument" for
+ `last` but "First user argument" for `first`, and that one word is the
+ whole difference. See Discrepancy 2.
+ The program name is the invocation path and cannot be diffed, so the
+ probe asserts the identity `last is name` rather than printing it; it
+ printed `./p` when run by hand with the command below.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-43.vox -o p && ./p
+ expected output:
+   with no user arguments, last is the program name
+   and empty is true at the same time
+)
+a text called ending is arguments's last.
+On error print "last errored".
+If ending is arguments's name then,
+    Print "with no user arguments, last is the program name".
+Otherwise,
+    Print "with no user arguments, last is something else".
+If arguments's empty then,
+    Print "and empty is true at the same time".

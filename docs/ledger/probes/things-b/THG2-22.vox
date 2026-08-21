@@ -1,0 +1,20 @@
+(THG2-22: the owner-return check reads the body's Return lines, not the
+ signature, so a member whose only Returns sit inside an If/Otherwise is not
+ wrongly rejected.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-22.vox -o p && ./p
+ expected output:
+   7
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x.
+  a point called plotted.
+  Set plotted's x to x.
+  If x is greater than 0 then, Return a point, plotted.
+  Otherwise, Return a point, plotted.
+
+The pin is a point's 'placed at' with 7.
+Print pin's x.

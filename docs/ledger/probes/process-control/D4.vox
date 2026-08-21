@@ -1,0 +1,53 @@
+(D4 — Discrepancy 4 repro: LANGUAGE.md:4016-4018 says
+ examples/supervisor.vox "is this loop as a runnable program". It is not
+ the same program. The manual's snippet opens with
+ `see process version "0.1" from "./libprocess.lib".` and calls `crashed`
+ and `'exited normally'` from that library; the example file carries its
+ own comment "Deliberately no `see`: `the reaped status` is a complete
+ compiler feature, and this test must pass with nothing installed at all",
+ defines its own decoders, and prints six lines about two jobs rather than
+ the snippet's one.
+ This repro is the manual's snippet with its `see` line removed — which is
+ what "the example is this loop" would have to mean, since the example has
+ no `see` line — and it does not compile.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/D4.vox -o p && ./p
+ expected output:
+   error: Unknown function: crashed
+   error: Unknown function: signal of
+   error: Unknown function: exited normally
+   (no binary produced; compile error)
+)
+
+Set pid to fork the process.
+If pid is 0 then,
+    Exit 0.
+
+a timer called clock.
+Start the clock.
+a boolean called 'child is still running' is true.
+a boolean called 'child was killed' is false.
+While 'child is still running',
+    Set 'reap result' to reap child pid without waiting,
+    If 'reap result' is pid then,
+        Set 'child is still running' to false.
+    If 'child is still running' then,
+        a number called 'milliseconds waited' is the clock's elapsed in milliseconds,
+        If 'milliseconds waited' is greater than 5000 then,
+            Send signal 9 to process pid,
+            Set 'reap result' to reap child pid,
+            Set 'child is still running' to false,
+            Set 'child was killed' to true.
+    If 'child is still running' then,
+        Wait 10 milliseconds.
+
+If 'child was killed' then,
+    Print "hang".
+If 'child was killed' is false then,
+    Set status to the reaped status,
+    If crashed of status then,
+        Print "died by signal {'signal of' of status}".
+    If 'exited normally' of status then,
+        Print "exit {'exit code of' of status}".

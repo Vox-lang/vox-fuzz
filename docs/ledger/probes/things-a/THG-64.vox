@@ -1,0 +1,26 @@
+(THG-64: a whole nested thing read out of a segment is copied the same way -
+ `nudged of span's start` passes a copy, and the segment is untouched.
+ Also covers: THG-65 (the span example, LANGUAGE.md:1079-1097, verbatim -
+ 41 then 40).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-64.vox -o p && ./p
+ expected output:
+   41
+   40
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+To nudged with a point called start.
+  Set start's x to start's x add 1.
+  Return a point, start.
+
+a segment called span.
+Set span's start's x to 40.
+a point called 'the far end' is nudged of span's start.
+Print 'the far end''s x.
+Print span's start's x.

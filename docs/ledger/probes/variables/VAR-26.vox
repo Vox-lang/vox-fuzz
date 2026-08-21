@@ -1,0 +1,25 @@
+(VAR-25, VAR-26, VAR-29, VAR-30, VAR-32: a declared variable's type is
+ fixed, so assigning text to a number is a compile error and not a silent
+ retype — and the diagnostic carries all five parts LANGUAGE.md:545-547
+ promises: the variable, its declared type, its declaration site, the type
+ of the offending value, and the exact cast that would fix it. The block at
+ LANGUAGE.md:549-558 is reproduced, column markers included.
+ Neither this comment nor the recorded output below may echo the offending
+ statement: the caret is placed by searching the source text, so any earlier
+ copy of it in the file steals the span — see Discrepancy 6. The help line
+ is therefore elided below; run the probe to see it in full.
+ (Compile-error claim: not assertable from a runtime leaf, since emitting it
+ produces a non-compiling program — outside the generator's "legal Vox that
+ should compile and run" contract.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-26.vox -o p && ./p
+ expected output:
+   error: cannot assign text to 'n', which is a number
+     --> VAR-26.vox:24:1
+     |  ^ this assigns text
+   note: 'n' was declared as a number at VAR-26.vox:23:17
+   help: convert it explicitly:  <the statement> as a number.
+   (no binary produced; compile error)
+)
+a number called n is 5.
+n is "abc".
+Print n.

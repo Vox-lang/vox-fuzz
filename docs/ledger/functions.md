@@ -1,0 +1,593 @@
+# Claim ledger: Functions
+
+Source: `../vox/LANGUAGE.md` lines **671–786** (manual version **0.4.8**):
+the whole `## Functions` chapter — Definition, Function Scope, Parameter
+and Local Types, Function Calls, Calling as Statement. Row prefix
+**`FUN`**.
+
+`INDEX.md` pins the manual at 0.4.7 and gives this section as 671–786.
+The manual has since moved to **0.4.8** (5238 lines, was 5112) and the
+section did **not** move: 671–786 is exactly `## Functions` at 0.4.8, from
+the `## Functions` heading to the `---` before `## Things`. The line range
+in `INDEX.md` is correct as written; only the version stamp needs
+re-pinning. Nothing else in this ledger is affected.
+
+This is a **gap analysis**, not a from-scratch map. `existing leaf` names
+the leaf that already emits the construct — checked by `grep` on the
+emitted text (`"To `, `Return a `, `called p`, the call-line strings),
+never by leaf name — or `none`. `status` follows PROCEDURE.md §3.
+
+**No leaf anywhere in the generator asserts anything about a function** —
+the same uniform gap the buffers and values ledgers found. The generator
+does emit functions: four in the shared prelude (`f1`–`f4`), one grid
+sink, one flag reader, and two thing methods. Every one of them either
+`Print`s for a human to eyeball or returns a number nobody checks. The
+only assertions in the whole generator are the four argv checks
+(`src/gen_misc.vox:316-321`, exits 91–94) and they run at top level, not
+through a call. So nothing here is marked `verified`. The `verified by`
+column is therefore empty except where PROCEDURE.md §5 puts something
+else in it: a row that depends on an open discrepancy carries
+`blocked on D<n>`.
+
+Every row below was hand-run against the real compiler
+(`/home/josj/scr/english/vox/target/release/vox`, `VOX_CORE_PATH` pinned
+to the sibling `coreasm`) before being written. **Nine discrepancies**
+came out of it, one of them a deterministic segfault on a six-line
+program that compiles clean.
+
+## Probes
+
+Every hand-verified row's probe is retained, runnable, in
+`docs/ledger/probes/functions/`, one file per row named `FUN-NN.vox`. A
+probe covering more than one row is named for the first and says so in
+its header (`FUN-01` also covers FUN-03/08/09; `FUN-02` also covers
+FUN-05/37; `FUN-06` also covers FUN-32/35; `FUN-07` also covers
+FUN-08/36; `FUN-14` also covers FUN-15/16; `FUN-19` also covers FUN-20).
+Each file opens with a `(...)` comment naming the claim, the `Ran:`
+command, and an `expected output:` block recording what the compiler
+actually printed. Two discrepancies have a second repro because they have
+two distinct symptoms: `D1b.vox` reaches Discrepancy 1 through the
+generator's own prelude shape rather than a hand-written example, and
+`D2b.vox` is Discrepancy 2's assembly-failure half.
+
+Rows with no probe file of their own: FUN-03, FUN-08, FUN-09, FUN-15,
+FUN-16, FUN-20, FUN-32, FUN-36, FUN-37 (each covered by a sibling's probe,
+named above), FUN-31 (a claim about compiler versions before v0.1.16 —
+nothing to run today), and FUN-34/FUN-35 (restatements folded into
+FUN-05/FUN-32). That is **31 `FUN-NN.vox` probe files**, plus **11
+discrepancy repros** — `D1`, `D1b`, `D2`, `D2b`, `D3`, `D4`, `D5`, `D6`,
+`D7`, `D8`, `D9` — for **42 files** in the directory, and
+`fixtures/data.txt`, a twelve-byte file the file-parameter probes read.
+
+`docs/check-probes.sh docs/ledger/probes/functions` re-runs the whole
+directory: **42 passed, 0 failed, 0 skipped**, in one final pass after
+every probe was written. Probes that read a file use the repo-root-relative
+path `docs/ledger/probes/functions/fixtures/data.txt`, because
+`check-probes.sh` runs the compiled binary from the repo root.
+
+Four probes are compared on their **exit code** rather than their stdout,
+because they print an address that changes from run to run: `D1`, `D1b`
+and `D5` end in a deliberate `Exit 3.`, and `D8` records `exit 139` — the
+segfault.
+
+## The table
+
+| id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
+|---|---|---|---|---|---|---|---|
+| FUN-01 | 675–677 | The definition template: `To <name> with a <type> called <p1> and a <type> called <p2>. Return a <type>, <expression>.` — signature, parameters and return all in one sentence. | emit a whole function on one line and call it | yes — the generator picks both operands, so `If 'add numbers' of 3 and 5 is not 8 then, Exit 95.` | `gen emit prelude functions` (`src/gen_core.vox:848,850`) emits f2/f3 as one-line signatures but puts the body and `Return` on following lines; the single-sentence form is never emitted | todo | |
+| FUN-02 | 679–687 | No-parameter functions are valid, in both name forms (`To 'show version'.`, `To ping.`), body on the following indented lines. | emit a no-parameter function and call it | yes — assert what the body printed | `gen emit prelude functions` (f1, `src/gen_core.vox:845`), `gen emit prelude flag reader` (`'read flags {n}'`, `src/gen_misc.vox:387`) | exercised | |
+| FUN-03 | 691 | Worked example: `To 'add numbers' with a number called x and a number called y. Return a number, the x add y.` compiles and adds. | reproduce the example | yes — `Exit 95` on a wrong sum | none emits the `the x add y` form; f3 (`src/gen_core.vox:850`) is the same shape with a body-local and a plain `p1 add p2` | todo | |
+| FUN-04 | 693 | Worked example: `To 'check divisibility' of a number called divisor and a number called dividend. Return a boolean, the divisor modulo the dividend is 0.` — parameters via `of`, `Return a boolean,` on a comparison. | emit an `of`-introduced parameter list and a boolean return | yes — generator picks both numbers, knows the remainder | none — every emitted definition uses `with` (see Invariants), and no emitted function returns a boolean | todo | |
+| FUN-05 | 697 | A function name is a bare single word or a single-quoted multi-word name. | emit both name forms | yes — assert what each prints | bare: f1–f4 (`src/gen_core.vox:845-859`); quoted: `'grid sink N'` (`src/gen_flow.vox:522`), `'read flags {n}'` (`src/gen_misc.vox:387`) | exercised | |
+| FUN-06 | 698 | Parameters are optional, and `with` and `of` introduce them identically. | emit the same parameter list both ways and call both | yes — both must return the same value | `with` only — f2/f3/f4 (`src/gen_core.vox:848-859`), `'grid sink N'` (`src/gen_flow.vox:522`), the thing methods (`src/gen_things.vox:124,129`). **`of` is never emitted in a definition.** | todo (the `of` form) — real gap, hand-verified to work | |
+| FUN-07 | 699 | Parameters use `a <type> called <name>`; the name is bare if single-word and single-quoted if it contains spaces. | emit a parameter whose name contains a space | yes — pass a known value, assert it comes back | every emitted parameter name is a bare single word (`p1`, `p2`, `x1`, `original`) — **no emitted parameter name is single-quoted** | todo (the quoted form) — real gap, hand-verified to work | |
+| FUN-08 | 700 | Multiple parameters are joined with `and`. | emit two or more parameters | yes | f3 (two, `src/gen_core.vox:850`), `'grid sink N'` (3–17, `src/gen_flow.vox:515-522`) | exercised | |
+| FUN-09 | 701 | A declared return type follows `Return a <type>,`. | emit a function with a declared return type and use the result | yes | f1/f2/f3 (`Return a number`, `src/gen_core.vox:845-850`), thing methods (`Return a t4`, `src/gen_things.vox:127,132`) | exercised (`number` and the thing type only — see FUN-23) | |
+| FUN-10 | 701 *(gap)* | *(not a manual claim — a gap in the manual)* `Return a <type>, <expr>.` is also a **statement inside the body**, not only a clause on the `To` line, and an early return from inside an `If` leaves the function at once. The manual says only that "return type follows `Return a <type>,`" and never says where the sentence may stand. | emit a body-position `Return`, and an early return under an `If` | yes — assert the value each branch returns | `gen emit prelude functions` f2/f3 (body-position `Return`); early return is emitted only in the generator's own source, never into a generated program | exercised (body position); todo (early return under an `If`) | |
+| FUN-11 | 705 | Variables declared at top level are global and can be read inside a function. | emit a function that reads a global of each type, from both sides of the definition, and asserts it | yes — the generator declared the global, so it knows the value | `'read flags {n}'` (`src/gen_misc.vox:388-392`) reads three flag globals, one of them a **text**, inside a function body — the only leaf that reads any global from inside a function, and it reads the text one through a declared local rather than directly | exercised (partially — flags only, never asserted, and only via a declared local); todo for a direct read and for a global declared below the function, which is where it breaks | blocked on D1 |
+| FUN-12 | 706 | Variables declared inside a function are local to it and are not available at top level. | — | **no** — the claim is that a program is REJECTED; emitting it produces a non-compiling program, outside the generator's "legal Vox that should compile and run" contract | n/a (no leaf should ever emit this) | not assertable — hand-verified: the program is rejected, but the diagnostic is misplaced, **see Discrepancy 9** | |
+| FUN-13 | 707 | Referencing an unknown variable inside a function is a compile-time error. | — | **no** — same reason as FUN-12 | n/a | not assertable — hand-verified: rejected, `Unknown variable: nowhere`, caret correct | |
+| FUN-14 | 708–710 | Assigning to a top-level variable inside a function (`Set g to ...`) mutates the global itself, and the new value is visible after the call returns. | emit a function that bumps a global by a known amount, call it a known number of times, assert the global | yes — `If g is not 111 then, Exit 95.` | **none** — no emitted function body assigns to a top-level global. The thing methods (`src/gen_things.vox:126,131`) `Set` fields of a **local**, which is a different construct. | todo — real gap | |
+| FUN-15 | 708–709 | The `the g is ...` spelling of that assignment does the same thing. | emit the `the g is ...` spelling inside a function | yes, same assertion as FUN-14 | none | todo | |
+| FUN-16 | 710 | The mutation is visible to **every other function**, not only to the caller. | emit a second function that reads the global and asserts it | yes | none — the generated program never has two functions that touch the same global | todo | |
+| FUN-17 | 711–713 | Declaring a variable inside a function **shadows** a top-level variable of the same name; the global is left untouched. | emit a function whose local reuses a global's name, assert the local inside and the global outside | yes — both values are the generator's own | **none** — every emitted local name is uniquely serialised (`fl{n}local`, `r`, `gtotal`, `c{n}`), so a shadowing collision is impossible by construction | todo — real gap, and the naming scheme is what makes it unreachable | |
+| FUN-18 | 713–714 | Recursion still gets a fresh set of locals per call. | emit a self-recursive function with a local, assert the unwind order | yes — the generator picks the depth | **none** — no emitted function calls itself or any other function | todo — real gap | |
+| FUN-19 | 714–717 | This applies to `value` too: payload and runtime type tag are stored as a pair, in whichever storage (function-local, or the global's own pair of locations) that `value` uses. | emit a `value` global retagged inside one function and a `value` local shadowing it in another | yes — assert the printed value after each step | none — `gen leaf value roundtrip` / `gen leaf text value` declare `value` **locals at top level** only (see `docs/ledger/values.md` VAL-02) | todo | |
+| FUN-20 | 717–718 | A `value` mutation inside one function is never visible to another unless it is genuinely the same global. | second function reads the same `value` global and asserts the tag survived | yes | none | todo | |
+| FUN-21 | 722–724 | All eleven expressible types are legal parameter types: `number`, `float`, `text`, `boolean`, `list`, `map`, `buffer`, `file`, `time`, `timer`, `value`. | emit a parameter of each type and pass a value of that type | yes — assert what the callee sees | `number` (f2/f3, grid sink) and `text` (f4) only; `t4`, a **thing** type, in the thing methods. **Nine of the eleven never appear in any emitted parameter list.** | exercised (2 of 11); todo (9 of 11) — the biggest single coverage gap in this section | |
+| FUN-22 | 724–725 | A typed parameter supports the same properties and operations as a top-level variable of that type. | read each type's properties off a parameter and off a top-level variable, assert they match | yes — assert equality of the two reads | **none** — no emitted function body reads a property off a parameter at all (`p1's ...` is never emitted); the thing methods read `original's x1`, a thing field, which is the Things section's construct | todo — and it is **false for three of the eleven types**: see **Discrepancies 2 (`map`), 3 (`timer`), 4 (`file`)** | blocked on D2, D3, D4 |
+| FUN-23 | 725–727 | The same eleven types are legal as a declared `Return a <type>,` return type — parameters and returns share one vocabulary. | emit a function returning each type and receive it into a variable of that type | yes | `number` only (f1/f2/f3); `t4` in the thing methods. **Ten of the eleven never appear as a return type.** | exercised (1 of 11); todo (10 of 11) — hand-verified: all eleven are accepted, but `file` and `timer` cannot be received by the `a <type> called X is <call>.` declaration form (**Discrepancy 6**) and `Return a buffer, "<literal>"` is broken (**Discrepancies 7 and 8**) | blocked on D6, D7, D8 |
+| FUN-24 | 727–731 | A parameter or return type may be `value`, the dynamic type whose runtime tag travels with its payload across the call. | emit a `value` parameter dispatched on `is a <type>`, and a `value` return, asserting the branch and the round trip | yes — the generator chose the argument, so it knows the branch | none — no emitted function takes or returns a `value` (`docs/ledger/values.md` VAL-02 says the same from the other side) | todo | |
+| FUN-25 | 733–739 | The `'contains token'` example fragment compiles and behaves: parameters via `of`, a `buffer` and a `text` parameter, a buffer declared **inside** the body from a format string interpolating the text parameter, `hay's size`, `byte 1 of hay`. | reproduce the fragment | yes — the caller's buffer is the generator's own, so size and byte 1 are both known | none (composite; its parts are FUN-06, FUN-21, FUN-26, FUN-29) | todo — hand-verified to reproduce exactly (`FUN-25.vox`) | |
+| FUN-26 | 743–744 | Buffer parameters support `'s size`, `'s empty`, `'s full` and byte access. | pass a known buffer, assert all four reads | yes — `If payload's size is not 3 then, Exit 95.` | none — no buffer is ever passed to a function | todo — hand-verified correct | |
+| FUN-27 | 744–745 | List parameters support `'s length` and element access. | pass a known list, assert length and elements | yes | none — no list is ever passed to a function | todo — hand-verified correct (`length`, `size`, `empty`, `first`, `last` and `element N of` all read correctly through a parameter) | |
+| FUN-28 | 745 | File parameters support file properties. | pass an open handle, assert `size` and `readable` | yes — the generator wrote the file, so it knows the size | none — no file handle is ever passed to a function | todo — **`readable` and `writable` are always false through a parameter**: see **Discrepancy 4**. `size` and `descriptor` are correct. | blocked on D4 |
+| FUN-29 | 746–747 | Buffers declared **inside** a function body work with every initializer form, including format strings. | emit a function body declaring a buffer three ways (byte count, string literal, format string) | yes — assert each buffer's size | none — no emitted function body declares a buffer at all; the only in-body declarations are `number` and `text` (`src/gen_core.vox:848`, `src/gen_misc.vox:388-389`, `src/gen_flow.vox:522`) | todo — hand-verified correct | |
+| FUN-30 | 748–750 | A function call's declared return type is tracked through assignment: reassigning an **existing** variable from a call (`the label is classify of n.`) preserves the correct type. | reassign an existing variable of each type from a call, assert the value and a property | yes | none — every emitted call's result goes straight into `Print`, never into an existing variable | todo — hand-verified correct for `text` and `buffer`, in both the `the X is` and `Set X to` spellings; **fails for `file` in the declaration form**, see **Discrepancy 6** | blocked on D6 |
+| FUN-31 | 752–755 | Historical note: buffer-typed parameters, function-local buffer declarations with initializers, and reassignment-from-a-call were all rejected or corrupted before v0.1.16. | — | **no** — a claim about compiler versions that are not the one under test; there is no way to put a previous release on trial from inside a generated program | n/a | not assertable | |
+| FUN-32 | 759 | In expressions, a call is the function name followed by `of`, `to`, `with`, or `on` and its arguments. | emit each of the four connectors | yes — every connector must produce the same result | **`of` only** — `Print f2 of c{n}` (`src/gen_core.vox:374`), `Print f3 of ... and ...` (`:387`), `f4 of "..."` (`src/gen_text.vox:408`), `'grid sink N' of ...` (`src/gen_flow.vox:105`), `f3 of each ... from ...` (`src/gen_flow.vox:55,218`). **`to`, `with` and `on` are never emitted.** | exercised (`of`); todo (the other three) — real gap, all four hand-verified identical | |
+| FUN-33 | 762–764 | The three example call fragments parse and evaluate: `'add numbers' of 3 and 5`, `'check divisibility' of the number and 6`, `calculate with x and y`. | reproduce all three | yes | partially — the first shape is `f3 of c1 and c2`; the `the <name>` argument form and the `with` connector are not emitted | todo | |
+| FUN-34 | 768 | (Call site) the function name is a bare single word or a single-quoted multi-word name. | — | — | — | folded into FUN-05 (the same rule, restated for the call site; both forms are exercised) | |
+| FUN-35 | 769 | For calls with arguments, use `of`, `to`, `with`, or `on`. | — | — | — | folded into FUN-32 | |
+| FUN-36 | 770 | Multiple arguments are separated by `and`. | emit a call with two or more arguments | yes | `Print f3 of c{a} and c{b}` (`src/gen_core.vox:387`), `'grid sink N' of ...` with 3–17 clauses (`src/gen_flow.vox:105`) | exercised | |
+| FUN-37 | 772–777 | Calls with no arguments can be written directly, as a bare sentence (`'show version'.`, `ping.`). | emit a bare no-argument call statement | yes — assert what the callee printed or changed | `'read flags {n}'` as its own line (`src/gen_misc.vox:415`); the expression-position variant of the same form, `Print f1` (`src/gen_core.vox:366`), is also emitted | exercised | |
+| FUN-38 | 779–783 | A call with arguments used inside a `Print` statement: `Print 'add numbers' of x and y.` — the whole of the "Calling as Statement" section. | emit it | yes — `Exit 95` if the printed sum is wrong (needs the value captured first, since `Print` discards it) | `Print f2 of c{n}`, `Print f3 of c{a} and c{b}` (`src/gen_core.vox:374,387`) | exercised | |
+| FUN-39 | 779–783 *(gap)* | *(gap)* A call **with arguments** is also legal as a bare statement, its result discarded. The section is headed "Calling as Statement" but its only example is a `Print`, and :772–777 promises the bare form only for calls with **no** arguments. | emit a bare call-with-arguments statement | yes — assert a side effect the callee had | `f4 of "..."` (`src/gen_text.vox:408`) is exactly this shape | exercised — the manual should say so | |
+| FUN-40 | 782 *(gap)* | *(gap)* Printing a call result **directly**, without routing it through a declared variable, is correct for `text`, `boolean` and `list` but renders a declared `float` return as its raw IEEE-754 bit pattern and a declared `map` return as a raw heap address. | route every return type through a declared variable before printing, until this is fixed | yes — but a leaf must **not** emit the direct-print form for `float` or `map` while it is broken | `Print f2 of ...` etc. print a `number` directly, which is safe | todo — **Discrepancy 5** | blocked on D5 |
+| FUN-41 | 759 *(gap)* | *(gap)* A function with **no** declared return type, used in expression position, yields an untyped machine word (`Print announce of 9.` prints `1`). | — | **no** — a leaf must not emit this shape at all while vox #45 is open | f4 (`src/gen_core.vox:859`) has no return type but is only ever called as a **statement** (`src/gen_text.vox:408`), never in expression position, so the generator does not currently hit it | not assertable — already filed as **vox bug #45** (`vox/docs/BUGS_FOUND.md:2931`); recorded here because this is the section that defines the shape | |
+| FUN-42 | 673 *(gap)* | *(gap)* The manual never says **where** a function definition may stand. The compiler accepts one nested inside an `If` or `While` body and **hoists** it: the body does not run when the block runs, and the name is callable from the top level afterwards. | emit a definition inside a block, call it outside, assert it ran once | yes | none, and the generator explicitly forbids it to itself (`src/gen_flow.vox:495-501`: "a function definition is only legal at the top level") — a rule nobody wrote, stricter than the language | todo — hand-verified (`FUN-42.vox`); the manual should say which reading is intended | |
+| FUN-43 | 673 *(gap)* | *(gap)* A function body written on indented lines is closed by a **blank line**, not by EOF and not by the body's last period. Without one, every following top-level statement is swallowed into the body; the compiler warns but the program still builds and runs, silently doing nothing. | keep emitting the blank line — this is the one sameness this section genuinely requires | yes — the negative form is a legal program that produces no output, which a leaf could assert against, but it is a trap not a feature | every emitted definition ends `\n\n` (`src/gen_core.vox:845-859`, `src/gen_flow.vox:522`, `src/gen_misc.vox:393`) | exercised — and this is what justifies the blank-line invariant, see below | |
+
+## Discrepancies
+
+Nine, in eleven runnable repros in `docs/ledger/probes/functions/`
+(Discrepancies 1 and 2 each have two, because each has two distinct
+symptoms). None filed, none adjudicated — PROCEDURE.md §5.
+
+Read in severity order rather than in numbered order: **8** is a
+segfault, **1** is a whole class of silent wrong answers and is one line
+away from being live in the generator, **2**, **3**, **4** and **5** are
+narrow silent wrong answers, **7** is a missing diagnostic, and **6** and
+**9** are most likely manual imprecision and diagnostic quality rather
+than compiler faults.
+
+### 1. A global declared *below* a function is read inside that function as a raw machine word, unless it is a `number` (`D1.vox`, `D1b.vox`)
+
+LANGUAGE.md:705: "Variables declared at top level are global and can be
+used inside functions." No ordering condition is attached — and none is
+needed for a `number`, which works in both directions. For every other
+type it is wrong:
+
+```
+To 'show all'.
+  Print counter.
+  Print label.
+  Print ratio.
+  Print items.
+  Print payload.
+
+a number called counter is 42.
+a text called label is "hello".
+a float called ratio is 2.5.
+a list called items is [1, 2, 3].
+a buffer called payload is "ABC".
+
+'show all'.
+```
+
+prints `42`, `4210888`, `4612811918334230528`, `139733748330496`,
+`139733748322304` — the number, then a rodata address, then 2.5's
+IEEE-754 bit pattern, then two heap addresses. The same five globals read
+at top level print `42 hello 2.5 [1, 2, 3] ABC`. Move the declarations
+**above** the function and all five are correct inside it too
+(`FUN-11.vox`).
+
+The failure is a **read**, not a store: `a text called echoed is label.`
+inside the same forward-referencing function, then `Print echoed`, prints
+`hello` — the bytes are there, the type is not. Writing works too: `Set
+label to "changed"` from inside such a function updates the global
+correctly. And a format string is no safer than `Print`: `Print "interp
+{label}"` prints `interp 4198496`.
+
+Strongest reading in which the compiler is correct: the analyzer walks
+the source in order, so at the point it types the function body the
+global has no declared type yet, and it falls back to the widest
+assumption it has — an integer slot. Everything downstream is then
+consistent with that assumption, and a *number* global genuinely is that
+slot, which is why the number case looks fine. On this reading the
+compiler is not wrong so much as under-informed, and the fix is either a
+declaration-gathering pre-pass or a diagnostic at the untyped read. What
+it must not keep doing is what LANGUAGE.md:649-660 says the 0.3.0
+identifier/literal split was written to end: *"a function pointer,
+printed as a number, silently. No error, no warning; the program runs and
+gives a wrong answer that looks like data."* The manual's own example of
+that disease prints `4198480`; this one prints `4198496`.
+
+Related but **not the same** as vox bug #45
+(`vox/docs/BUGS_FOUND.md:2931`), which is about a **call** with no
+declared return type. Here there is no call — the read site is a plain
+global reference, and there is no return type to declare. Same family
+(a read where nothing supplies a type), different site. Not filed.
+
+**This is already one line away from being live in the generator**
+(`D1b.vox`). `src/gen_misc.vox:383` emits a flag-reader function, and
+`src/gen_core.vox:963` (`gen emit ordered blocks`) rotates six prelude
+blocks so the reader can be emitted **before** the flag schema it reads —
+deliberately; the comment at `src/gen_misc.vox:369-375` records that
+shape as hand-verified legal. It is legal. What keeps it correct is an
+accident: the reader copies the text flag into a **declared** text local
+(`a text called fl1local is fl1label.`) and prints the local. Delete the
+copy and print the flag directly and the same function prints a stack
+address. So the "no campaign has ever caught this" answer is not that the
+shape is unreachable — it is that one line of one leaf happens to launder
+the type.
+
+### 2. A `map` parameter's `size`/`length` is compiled into the **file**-size routine (`D2.vox`, `D2b.vox`)
+
+LANGUAGE.md:724-725: a typed parameter "supports the same properties and
+operations as a top-level variable of that type." A `map` parameter does
+not:
+
+```
+a map called ages is {"ann": 30, "bob": 40}.
+
+To 'read map' with a map called lookup.
+  Print lookup's length.
+
+'read map' of ages.
+```
+
+does not assemble: ``D2b.asm:72: error: symbol `_file_size' not defined``.
+That symbol name is the evidence. Put a `float` anywhere in the program —
+which links the file runtime in for unrelated reasons — and the same code
+builds and prints **-1**, the file-size error value, where the top-level
+read of the same map prints **2** (`D2.vox`). `lookup's size` behaves
+identically. Element access through the same parameter (`lookup's "ann"`)
+is **correct**, so it is the size/length property specifically.
+
+Two symptoms, one cause: a map parameter's size/length dispatches to the
+file `size` implementation, which is absent unless something else drags
+it in and wrong when it is present.
+
+Strongest reading in which the compiler is correct: none that I can
+construct. `-1` is not a defensible answer for a two-entry map, and a
+program that fails to assemble is not a defensible outcome for legal Vox
+either. The most charitable framing is that `map` was added to the
+parameter-type list (LANGUAGE.md:722-724, "plan 296") ahead of the
+property plumbing, and the property dispatcher's fall-through happens to
+land on `file`. Not filed.
+
+### 3. A `timer` parameter's `'s elapsed` is a compile error (`D3.vox`)
+
+```
+To 'show timer' with a timer called clock.
+  a number called waited is clock's elapsed in milliseconds.
+```
+
+```
+error: Property 'elapsed' requires a timer: clock
+```
+
+with the caret on the parameter's own declaration, which says `a timer
+called clock` two words to its left. The identical read on a top-level
+timer compiles and runs (`FUN-22.vox`). The parameter **declaration** is
+accepted on its own — `To 'show timer' with a timer called clock.` with a
+body that never touches `clock` compiles and runs fine (`FUN-21.vox`) —
+so `timer` is a legal parameter type that cannot be used for the one
+thing a timer is for.
+
+Strongest reading in which the compiler is correct: the same one as
+Discrepancy 2 — `timer` is in the parameter-type vocabulary but the
+property dispatcher's "is this a timer?" test only recognises top-level
+timer storage, and a parameter slot is not that. On that reading the
+diagnostic is honest about what it checked, and the bug is the narrow
+test rather than the message. Not filed.
+
+### 4. A `file` parameter's `readable` and `writable` are always false (`D4.vox`)
+
+LANGUAGE.md:745: "file parameters support file properties." Two of the
+eight do not.
+
+```
+open a file for reading called src at "...".
+open a file for writing called sink at "...".
+```
+
+| property | `src` top level | `src` via parameter | `sink` top level | `sink` via parameter |
+|---|---|---|---|---|
+| `readable` | 1 | **0** | 0 | 0 |
+| `writable` | 0 | 0 | 1 | **0** |
+| `size` | 12 | 12 | — | — |
+| `descriptor` | 3 | 3 | — | — |
+
+`size` and `descriptor` survive the call; the two booleans do not. This is
+a silent wrong answer of exactly the shape a fuzzer exists to find: a
+guard written as `If handle's writable then, ...` inside a helper
+function never fires, and nothing says why.
+
+Strongest reading in which the compiler is correct: `readable`/`writable`
+are the only two file properties that are not read from the on-disk inode
+or the descriptor number but from the open-mode flags the compiler
+recorded at the `open` site. A parameter carries the handle, not the
+compile-time site, so the flag lookup finds nothing and answers `false`.
+That is a coherent implementation story, and it explains precisely which
+two properties break — but "the caller opened it for writing" is a fact
+about the value, not about the syntax, and the manual promises it travels.
+Not filed.
+
+### 5. A declared `float` or `map` return is mis-rendered when the call result is printed directly (`D5.vox`)
+
+```
+To 'give float'. Return a float, 2.5.
+To 'give map'. Return a map, {"ann": 30}.
+
+a float called 'routed float' is 'give float'.
+Print 'routed float'.        (2.5          — right)
+Print 'give float'.          (4612811918334230528 = 0x4004000000000000 — wrong)
+Print 'give map'.            (140201717768192 — a heap address, wrong)
+```
+
+`text`, `boolean` and `list` returns print correctly in the same position
+(`FUN-40.vox`). This is the shape of vox bug #45 — except that #45's
+stated cure is *declaring the return type*, and here it **is** declared
+and the result is still wrong. So either #45 is narrower than its fix
+description, or this is a second defect with the same signature.
+
+Strongest reading in which the compiler is correct: `Print` of a call
+result has no variable to carry a type, so it uses the call's declared
+return type — and for `float` and `map` the "declared return type" is
+recorded in a form the `Print` dispatcher does not consult, falling back
+to the integer formatter. That makes it the same root as #45 (a read
+where nothing supplies a type) reaching a case #45's fix does not cover.
+It is not a memory-safety fault: the pointer is handed to the wrong
+formatter, never dereferenced as an integer. Not filed.
+
+### 6. `Return a file,` works, but the returned handle cannot be received by the `a file called X is <call>.` form (`D6.vox`)
+
+LANGUAGE.md:725-727 lists `file` among the eleven legal return types;
+:748-750 says a call's declared return type "is tracked through
+assignment".
+
+```
+Set viaset to 'give file'.
+Print viaset's size.        (12 — right)
+
+a file called viadecl is 'give file'.
+Print viadecl's size.       (compile error, caret on the DECLARATION)
+```
+
+```
+error: Property 'size' requires a buffer, list, map, or file variable: viadecl
+```
+
+Strongest reading in which the compiler is correct, and I think it is the
+right one: **this is not about functions at all.** `a file called alias
+is src.` — aliasing one top-level file variable to another, no call in
+sight — is rejected identically. The `a file called X is <expr>` form
+simply does not exist in the language, and the call is an innocent
+bystander; the `Set` form proves the returned value itself is intact. On
+that reading LANGUAGE.md:748-750 is imprecise rather than false ("tracked
+through assignment" is true of the assignments that exist), and the
+sharper statement of the gap is that a `file` variable can only be
+brought into existence by `open`/`Create`. `timer` is the same: `a timer
+called got is 'give timer'.` is a parse error, and `Set got to 'give
+timer'.` works. Worth a manual sentence rather than a compiler change.
+Not filed.
+
+### 7. `Return a buffer, "<text literal>"` yields an empty buffer, silently (`D7.vox`)
+
+```
+a buffer called direct is "ABC".
+Print direct's size.                (3   — right)
+
+To 'give literal'. Return a buffer, "ABC".
+a buffer called 'from literal' is 'give literal'.
+Print 'from literal''s size.        (0   — wrong, and it prints nothing)
+```
+
+A function that builds `a buffer called made is "ABC".` and returns
+**that** yields size 3 (`FUN-23.vox`). So the text-to-buffer conversion
+the declaration form performs is not performed in the return expression,
+and no diagnostic mentions it.
+
+Strongest reading in which the compiler is correct: `Return a buffer,
+<text literal>` is a type mismatch — the manual never promises a text
+literal converts to a buffer anywhere except in a declaration's
+initializer — and the analyzer chose to accept it rather than reject it.
+On that reading this is a **missing diagnostic**, not a wrong answer, and
+the fix is to refuse the construct and name the way out, the way
+`push_whole_thing_not_interpolable` does (the precedent cited in vox
+#45's own fix direction). It is silent either way, and Discrepancy 8 is
+what silence costs here. Not filed.
+
+### 8. The same construct **segfaults** once a second string-initialised buffer exists (`D8.vox`)
+
+Six lines. Legal Vox. Compiles clean. Exits 139, deterministically
+(3/3 runs, and again under `check-probes.sh`):
+
+```
+To 'give literal'. Return a buffer, "ABC".
+
+a buffer called direct is "ABC".
+a buffer called second is "DEF".
+a buffer called 'from literal' is 'give literal'.
+Print 'from literal''s size.
+```
+
+It dies **before printing anything**, so the fault is in the declarations,
+not the property read. The boundary is sharp and was bisected:
+
+- one string-initialised buffer in the program → Discrepancy 7's silent
+  empty buffer, no crash;
+- two or more → segfault. The second one counts whether it is at top
+  level or **inside another function's body**;
+- replacing the literal return with a buffer-**variable** return
+  (`a buffer called made is "ABC". Return a buffer, made.`) is safe at any
+  buffer count.
+
+So the text literal in the return expression is the trigger; the buffer
+count only decides whether the damage is visible.
+
+Strongest reading in which the compiler is correct: there isn't one.
+CLAUDE.md's first line about what this generator is for — *"no program,
+however stupid, and no input, however hostile, should segfault"* — makes
+this the top-severity class, and the program here is not even
+particularly stupid. The most useful framing for whoever fixes it is that
+Discrepancy 7 and this are one defect at two doses: the return expression
+hands back something that is not a buffer, and the receiving declaration
+treats it as one. Not filed, per PROCEDURE.md §5 — but this is the row to
+carry to Josj first.
+
+### 9. The "locals are not available at top level" rule is enforced, but the diagnostic points inside the function (`D9.vox`)
+
+```
+To 'make local'.
+  a number called localsum is 7.
+  Print localsum.
+
+'make local'.
+Print localsum.          <- the offending line
+```
+
+The diagnostic, from the six lines above on their own:
+
+```
+error: Unknown variable: localsum
+  --> 3:9
+  3 |   Print localsum.
+    |         ^--- here
+  hint: `localsum` is declared only in some branches of an `if`/`otherwise`,
+        so it is not in scope after it - declare it in every branch, or
+        before the `if`
+```
+
+The caret lands on line 3, **inside** the function, where the read is
+perfectly legal; the hint describes an `if`/`otherwise` the program does
+not contain. (Running the retained `D9.vox`, which carries this ledger's
+standard comment header, gives the same message pointed at `D9.vox:5:9` —
+a line inside the comment. That second misdirection is vox bug #46, not
+this discrepancy.) Delete the last line and the program compiles and prints 7,
+which is what identifies the last line as the real offender. The name
+chosen changes the message but not the misdirection: with a name that
+collides with a reserved word the error becomes `Unknown identifier` or
+`reserved keyword`, still pointed at the function's own declaration.
+
+Strongest reading in which the compiler is correct, and it holds:
+LANGUAGE.md:706 promises only that this is a **compile-time error**, and
+it is one. Nothing in the manual promises where the caret lands, so on the
+letter of the claim the compiler is right and this is a diagnostic-quality
+defect. Recording it anyway because it cost this mapper twenty minutes
+hunting a scope bug inside a function body that was not there, and
+because it is the same family as vox bug #46, "the diagnostic caret can
+land inside a comment" (`vox/docs/BUGS_FOUND.md:2998`). Not filed.
+
+## Invariants this section justifies
+
+Every sameness below is one the manual actually requires; a generated
+program that varies it is producing illegal Vox. Everything else about a
+function must vary.
+
+- a blank line after every function definition — LANGUAGE.md:682–687 (the
+  manual's own two-definition example), and the compiler's own warning
+  quoted in `FUN-43.vox`; FUN-43
+- every function definition begins with `To ` — LANGUAGE.md:676, FUN-01
+- every parameter is written `a <type> called <name>` — LANGUAGE.md:699,
+  FUN-07
+- parameters in a definition are joined with `and`, and arguments at a
+  call site are separated with `and` — LANGUAGE.md:700 and :770, FUN-08,
+  FUN-36
+- a declared return type is always written `Return a <type>,` —
+  LANGUAGE.md:701, FUN-09
+- a function or parameter name containing a space is always
+  single-quoted — LANGUAGE.md:697 and :699, FUN-05, FUN-07. Note the
+  converse is **not** justified: a single-word name may be quoted too
+  (`To 'ping'.` and `'ping'.` both work, `FUN-05.vox`), so "single-word
+  names are never quoted" is a rule nobody wrote.
+
+Nothing else. In particular the following are **not** justified and are
+defects in the current corpus, all confirmed by `grep` over the emitted
+strings rather than by reading leaf names:
+
+- every emitted call uses the connector `of` — LANGUAGE.md:769 accepts
+  `of`, `to`, `with` and `on`, all four hand-verified identical (FUN-32)
+- every emitted definition introduces parameters with `with` — :698 says
+  `of` works identically (FUN-06)
+- every emitted parameter name is a bare single word (`p1`, `p2`, `x1`,
+  `original`) — :699 permits single-quoted multi-word names (FUN-07)
+- every emitted parameter is `number` or `text` (plus the thing type `t4`
+  on the two thing methods); nine of the eleven expressible types never
+  appear in any parameter list (FUN-21)
+- every emitted return type is `number` (plus `t4` on the thing methods);
+  ten of the eleven never appear (FUN-23)
+- no emitted function body reads a property off a parameter (FUN-22)
+- no emitted function assigns to a global, shadows one, or calls any
+  function including itself (FUN-14, FUN-17, FUN-18)
+- no emitted function-related construct asserts anything
+
+## Report
+
+**43 rows** (FUN-01 through FUN-43). Two (FUN-34, FUN-35) are
+restatements folded into a sibling, leaving **41 distinct claims**. Of
+those, **37 are assertable** — the generator picks the arguments, so it
+knows the answer and can emit an `Exit 95` check. Four are not: FUN-12
+and FUN-13 (the claim is that a program is *rejected*, which a leaf must
+never emit), FUN-31 (a claim about pre-v0.1.16 compilers), and FUN-41 (a
+shape no leaf may emit while vox #45 is open). FUN-40 counts as
+assertable but is **embargoed**: a leaf must not print a `float` or `map`
+call result directly while Discrepancy 5 is open, and must route it
+through a declared variable instead.
+
+**Existing coverage: 14 rows exercised, 0 verified.** The generator emits
+eight functions in total — `f1`–`f4` (`src/gen_core.vox:843`), one grid
+sink (`src/gen_flow.vox:503`), one flag reader (`src/gen_misc.vox:383`),
+two thing methods (`src/gen_things.vox:124,129`) — and between them they
+cover the skeleton of the section: definitions with and without
+parameters, both name forms, `and`-joined parameters and arguments, a
+declared return type, a bare no-argument call, a call in `Print`
+position, and a bare call with arguments. Not one of them checks a
+result.
+
+**The biggest finding is Discrepancy 8: a six-line program that compiles
+clean and segfaults.** `Return a buffer, "<literal>"` plus two
+string-initialised buffers, deterministic, exit 139. That is a broken
+memory-safety promise, which CLAUDE.md rates above everything else in
+this document. Discrepancy 7 is the same construct at a lower dose
+(silent empty buffer), and Discrepancy 1 is the widest: **every**
+non-number global declared below a function reads as a raw machine word
+inside it, with no warning — a whole class of silent wrong answers, and
+the disease LANGUAGE.md:645-667 says 0.3.0 was written to cure.
+
+**Why no campaign has ever found Discrepancy 1** is worth stating,
+because the answer is not the comfortable one. The generator already
+emits the bug's exact shape: the flag reader (`src/gen_misc.vox:383`) is
+the one emitted function that reads globals, and the six-block rotation
+(`src/gen_core.vox:963`) can place it **before** the flag schema, which
+was a deliberate choice with a hand-verification comment behind it
+(`src/gen_misc.vox:369-375`). The reader survives on an accident: it
+copies the text flag into a **declared** text local and prints the local.
+`D1b.vox` is that same function with the copy removed, and it prints a
+stack address. One line of laundering is all that stands between the
+current corpus and a silent wrong answer in every program that draws that
+rotation. **Advice to whoever builds these leaves: a leaf that reads a
+global from inside a function must vary both the side of the definition
+the global is declared on AND whether the read goes through a declared
+local — the second is what actually decides the answer.**
+
+**Advice for the next mapper**, beyond that:
+
+1. **Read properties off a parameter, not just a top-level variable.**
+   Three of the nine bugs in this document (Discrepancies 2, 3, 4) are
+   invisible unless you pass the value into a function first, and all
+   three are in the "same properties and operations" sentence at
+   LANGUAGE.md:724-725 that reads like boilerplate. That sentence is the
+   single highest-yield line in this section.
+2. **Print the result twice — once out of a variable, once straight from
+   the call.** Discrepancy 5 only appears in the second form, and only for
+   two of the eleven types. A probe that assigns first will report all
+   clear.
+3. **When a probe fails to *assemble*, read the missing symbol name.**
+   ``symbol `_file_size' not defined`` in a program with no files in it is
+   what identified Discrepancy 2's root; without it the `-1` would have
+   looked like an ordinary wrong answer.
+4. **Beware your own probe.** I lost time to two false alarms worth
+   flagging: `text's length` is not supported at all (it errors with
+   "Property 'size' requires a buffer, list, map, or file variable"),
+   which has nothing to do with functions and poisons any probe that uses
+   it; and `copy`, `bytes`, `numbers`, `reading` and `stopwatch` are all
+   reserved words that produce confusing errors when used as variable
+   names. Neither was a language bug.
+5. **The diagnostic caret can be lying about which line is at fault**
+   (Discrepancy 9, and vox #46). The probe headers in this directory are
+   comments, and the compiler's caret quotes *them* when reporting an
+   error at a program line number — so when reading a compile-error probe's
+   output, trust the message, not the source line it prints.
+
+**What I could not do:** nothing in this section needed root, a device,
+or a second process, so no row is blocked for want of privileges. No row
+is left unmapped. Per the brief I did not commit, did not push, and did
+not touch `src/`.
+
+**One note on the brief's own numbering:** it asks for probes named
+`probes/functions/THG-NN.vox`. `THG` is the Things prefix; `INDEX.md`
+fixes this section's prefix as `FUN`, and PROCEDURE.md §1 says row IDs
+carry the section's prefix, so the probes are named `FUN-NN.vox`.

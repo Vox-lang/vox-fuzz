@@ -1,0 +1,13 @@
+(Discrepancy 9: LANGUAGE.md:623 gives the bare-identifier set as
+ [A-Za-z_][A-Za-z0-9_]*, which admits a leading underscore. The compiler
+ rejects one, reserving it for the runtime. Underscores elsewhere in the name
+ are fine (VAR-53), so only the leading position disagrees.
+ (Compile-error claim. The caret in the output lands inside this comment
+ rather than on the declaration, which is Discrepancy 6, not this one.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D9.vox -o p && ./p
+ expected output:
+   error: Variable name '_start' starts with '_', which is reserved for the Vox runtime; choose a name without the leading underscore.
+   (no binary produced; compile error)
+)
+a number called _start is 1.
+Print _start.

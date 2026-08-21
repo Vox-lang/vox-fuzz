@@ -1,0 +1,15 @@
+(VAR-42: the v0.3.6 in-place retype statement. `<valuevar> is a <type>.`
+ reads the variable's runtime tag, converts the value and updates the tag in
+ place, so a value holding the text "42" becomes the number 42 under the
+ same name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-42.vox -o p && ./p
+ expected output:
+   Text (dynamic)
+   42
+   Number (dynamic)
+)
+a value called 'number as text' is "42".
+Print 'number as text''s type.
+'number as text' is a number.
+Print 'number as text'.
+Print 'number as text''s type.

@@ -1,0 +1,28 @@
+(FIL-50: Read line reads up to a newline or EOF and INCLUDES the trailing newline when one is present; the final line of a file with no trailing newline is returned whole.
+ Also covers: FIL-52, FIL-53.
+ "one\n" is 4 bytes - 3 characters plus the newline the manual says is kept.
+ "tail-without-newline" is 20 bytes with no newline to keep.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-50.vox -o p && ./p
+ actual output:
+   4
+   one
+  
+   20
+   tail-without-newline
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called seedfile at "vf_scratch/files/noeol.txt".
+Write "one\ntail-without-newline" to seedfile.
+Close seedfile.
+open a file for reading called source at "vf_scratch/files/noeol.txt".
+a buffer called linebuf is 64 bytes in size.
+Read line from source into linebuf.
+print linebuf's size.
+print linebuf.
+Read line from source into linebuf.
+print linebuf's size.
+print linebuf.
+Close source.

@@ -1,0 +1,14 @@
+(PRC-39 — execve only ever returns on failure, so `On error` after
+ `Execute` is the normal and only way to detect that it did not work; the
+ program carries on afterwards.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-39.vox -o p && ./p
+ expected output:
+   the failed exec set the error flag
+   the program is still running its own image
+)
+Execute "/no/such/binary".
+On error print "the failed exec set the error flag".
+print "the program is still running its own image".

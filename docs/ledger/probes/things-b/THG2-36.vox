@@ -1,0 +1,18 @@
+(THG2-36: the type-possessive worked example, LANGUAGE.md:1440-1453, verbatim.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-36.vox -o p && ./p
+ expected output:
+   1
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0,
+  a number called y is 0.
+
+To do the point's 'placed at', with a number called x and a number called y.
+  a point called plotted.
+  Set plotted's x to x.
+  Set plotted's y to y.
+  Return a point, plotted.
+
+The pin is a point's 'placed at' with 1 and 0.
+Print pin's x.

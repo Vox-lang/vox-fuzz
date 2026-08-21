@@ -1,0 +1,22 @@
+(Discrepancy 6: the type-immutability diagnostic at LANGUAGE.md:549-558 shows
+ the caret on the offending statement. The caret is instead placed by
+ searching the source text for that statement, so the FIRST textual copy
+ wins — including one inside a comment. This comment contains such a copy on
+ the next line, and the caret lands on it rather than on line 21.
+
+   n is "abc".
+
+ The note line still points at the real declaration, so the two halves of one
+ diagnostic disagree about where the program is. Not confined to this error:
+ D9's "reserved leading underscore" message does the same thing.
+ (Compile-error claim.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
+ expected output:
+   error: cannot assign text to 'n', which is a number
+     --> D6.vox:7:4      (inside this comment, not line 21)
+     note: 'n' was declared as a number at D6.vox:20:17
+   (no binary produced; compile error)
+)
+a number called n is 5.
+n is "abc".
+Print n.

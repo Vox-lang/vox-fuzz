@@ -1,0 +1,12 @@
+(KEY-01 — the articles `a` and `an` both declare a new variable and carry
+ its type; the type word follows the article.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-01.vox -o p && ./p
+ expected output:
+   7
+   fruit
+)
+a number called apples is 3.
+an number called oranges is 4.
+a text called basket is "fruit".
+Print apples add oranges.
+Print basket.

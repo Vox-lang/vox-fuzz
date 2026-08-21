@@ -1,0 +1,15 @@
+(D4 — Discrepancy 4 repro: LANGUAGE.md:2422-2424 says "To *convert* a value
+ rather than test it, use the cast expression `<value> as a <type>` - e.g.
+ `item as a number` or `item as a float`". Both are compile errors on the
+ mixed-list element the sentence is about, and the compiler's own message
+ calls it "a known gap, not yet resolvable from within the language".
+ Overlaps values.md D2, but that one is about a `value` variable; this is
+ the manual naming the mixed-list element by name.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
+ expected output:
+   error: Cannot cast item to a number
+   (compile error - no binary is produced)
+)
+a list called mixedbag is [1, "two", 3.5].
+For each item in mixedbag,
+  if item is a decimal, print item as a number. otherwise print "skip".

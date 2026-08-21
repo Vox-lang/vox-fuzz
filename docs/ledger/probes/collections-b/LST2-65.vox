@@ -1,0 +1,14 @@
+(LST2-65 — the deliberate asymmetry: in `print <func> of ...` the grid
+ form requires the FIRST clause to be an `each`, so a leading fixed
+ argument stays an error even though the same call as a plain statement
+ (LST2-61) is fine.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-65.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got Each
+   (no binary produced; compile error)
+)
+To pair of a number called left and a number called right.
+  Return a number, left add right.
+
+print pair of 5 and each y from [10, 20].

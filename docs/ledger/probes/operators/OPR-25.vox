@@ -1,0 +1,9 @@
+(OPR-25: `bit-or` is bitwise OR (LANGUAGE.md:4582).
+ 240 OR 170 is 250 (0b11111010).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-25.vox -o p && ./p
+ expected output:
+   250
+)
+a number called lhs is 0b11110000.
+a number called rhs is 0b10101010.
+Print lhs bit-or rhs.

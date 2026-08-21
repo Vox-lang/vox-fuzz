@@ -1,0 +1,14 @@
+(KEY-07 — `For` starts an iteration, over a range or over a collection.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-07.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+   red
+   blue
+)
+For each step from 1 to 3,
+    Print step.
+a list called colours is ["red", "blue"].
+For each colour in colours,
+    Print colour.

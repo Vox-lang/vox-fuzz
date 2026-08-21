@@ -1,0 +1,21 @@
+(PRC-10 — `Change directory to "<path>".` performs chdir(2), and later
+ relative paths resolve from the new working directory.
+ The probe changes into its scratch directory, creates a child there by a
+ BARE relative name, changes back with "..", and then finds that child at
+ the path it would only have if the chdir really took effect.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-10.vox -o p && ./p
+ expected output:
+   the working directory really moved
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_cd".
+Change directory to "vf_scratch/process-control/scratch_cd".
+Create a directory called "made_from_inside".
+Change directory to "../../..".
+If "vf_scratch/process-control/scratch_cd/made_from_inside" is available then, print "the working directory really moved".
+Remove the directory called "vf_scratch/process-control/scratch_cd/made_from_inside".
+Remove the directory called "vf_scratch/process-control/scratch_cd".

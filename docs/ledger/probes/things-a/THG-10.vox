@@ -1,0 +1,15 @@
+(THG-10: a field default is a LITERAL - anything computed is refused.
+ LANGUAGE.md:821-822 writes the default as `is <literal>`; the compiler
+ enforces exactly that.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-10.vox -o p && ./p
+ expected output:
+   error: A field default must be a literal
+       Field 'x' of thing 'point': write `is 0`, `is 1.5`, `is true`, or `is "text"`.
+       Anything computed belongs in a function that returns the thing.
+   (no binary produced; compile error)
+)
+A thing called point has
+  a number called x is 2 add 3.
+
+a point called origin.
+Print origin's x.

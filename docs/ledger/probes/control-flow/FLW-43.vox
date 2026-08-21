@@ -1,0 +1,13 @@
+(FLW-43: `Increment the counter.` adds one to a number.
+ Also covers FLW-44: `Decrement the value.` subtracts one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-43.vox -o p && ./p
+ expected output:
+   6
+   4
+)
+a number called counter is 5.
+a number called value is 5.
+Increment the counter.
+Decrement the value.
+print the counter.
+print the value.

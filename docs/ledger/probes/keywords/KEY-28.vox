@@ -1,0 +1,15 @@
+(KEY-28 — `Flag` declares a command-line flag schema (`a flag called ...`),
+ and KEY-29 — `Parse flags.` triggers parsing at that point. Run with no
+ arguments, an unsupplied text flag reads as "" and a boolean as false.
+ Also covers: KEY-29.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-28.vox -o p && ./p
+ expected output:
+   0
+   unsupplied text flag is empty
+)
+a flag called verbose is "-v" or "--verbose", it is a boolean.
+a flag called label is "-l" or "--label", it is a text.
+Parse flags.
+Print verbose.
+If label is empty then,
+    Print "unsupplied text flag is empty".

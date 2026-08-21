@@ -1,0 +1,26 @@
+(PRC-15 — fstype "none" with options "move" is recognised and translated
+ into MS_MOVE.
+ Also covers: PRC-16 (options "bind" -> MS_BIND).
+ SAFETY / LIMIT: unprivileged, so both calls return EPERM. That proves the
+ pattern PARSES and reaches mount(2); it does NOT prove the flag
+ translation, because the syscall never gets far enough to distinguish
+ MS_MOVE from a plain mount. Confirming MS_MOVE/MS_BIND needs either root
+ or a user namespace, neither of which this map had.
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
+   /home/josj/scr/english/vox/target/release/vox \
+   docs/ledger/probes/process-control/PRC-15.vox -o p && ./p
+ expected output:
+   the move pattern set the error flag
+   the bind pattern set the error flag
+   both patterns compiled and reached the syscall
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a directory called "vf_scratch/process-control/scratch_move".
+Mount "vf_scratch/process-control/scratch_move" at "vf_scratch/process-control/scratch_move" with type "none" with options "move".
+On error print "the move pattern set the error flag".
+Mount "vf_scratch/process-control/scratch_move" at "vf_scratch/process-control/scratch_move" with type "none" with options "bind".
+On error print "the bind pattern set the error flag".
+Remove the directory called "vf_scratch/process-control/scratch_move".
+print "both patterns compiled and reached the syscall".

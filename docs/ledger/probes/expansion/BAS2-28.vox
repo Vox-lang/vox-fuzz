@@ -1,0 +1,12 @@
+(BAS2-28: there is no limit on the number of chained `each` clauses - five clauses over a 2x1x1x1x2 product, still row-major. (The generator's own deep-grid leaf reaches 17.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-28.vox -o p && ./p
+ expected output:
+   13456
+   13457
+   23456
+   23457
+)
+To 'quintet' with a number called one and a number called two and a number called three and a number called four and a number called five.
+  print "{one}{two}{three}{four}{five}".
+
+'quintet' of each first from 1 to 2 and each second from 3 to 3 and each third from 4 to 4 and each fourth from 5 to 5 and each fifth from 6 to 7.

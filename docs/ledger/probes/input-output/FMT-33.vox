@@ -1,0 +1,17 @@
+(FMT-33 — the three buffer sinks `set`, `copy` and `append` each accept a
+ format string, in that order, on one buffer.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   set world
+   copy world
+   copy world plus 3
+)
+a text called who is "world".
+a number called count is 3.
+a buffer called sink is 64 bytes in size.
+set sink to "set {who}".
+Print sink.
+copy "copy {who}" to sink.
+Print sink.
+append " plus {count}" to sink.
+Print sink.

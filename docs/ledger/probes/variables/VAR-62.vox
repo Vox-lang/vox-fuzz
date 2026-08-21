@@ -1,0 +1,10 @@
+(VAR-62: map keys are data, not names, and stay double-quoted — a
+ single-quoted key is read as an identifier and rejected where a property
+ name is expected. (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-62.vox -o p && ./p
+ expected output:
+   error: Expected property name, got Identifier("name")
+   (no binary produced; compile error)
+)
+a map called person is {"name": "Alice"}.
+Print person's 'name'.

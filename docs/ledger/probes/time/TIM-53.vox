@@ -1,0 +1,10 @@
+(TIM-53 - the plural property spellings TIM-52 records stop short of
+ `seconds`: `now's second` reads, `now's seconds` does not, because
+ `seconds` is already the Wait unit word. Undocumented on both sides.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-53.vox -o p && ./p
+ expected output:
+   error: Expected property name, got Seconds
+   (no binary produced; compile error)
+)
+Get current time into now.
+print now's seconds.

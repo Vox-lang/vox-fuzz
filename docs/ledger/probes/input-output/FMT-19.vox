@@ -1,0 +1,9 @@
+(FMT-19 — an arithmetic expression is legal inside a slot: `{x add y}`.
+ The manual's own example, LANGUAGE.md:3123.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   Sum: 13
+)
+a number called x is 10.
+a number called y is 3.
+Print "Sum: {x add y}".

@@ -1,0 +1,10 @@
+(KEY-40 — `from` and `to` are the range bounds of an iteration.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox KEY-40.vox -o p && ./p
+ expected output:
+   2
+   3
+   4
+   5
+)
+For each step from 2 to 5,
+    Print step.

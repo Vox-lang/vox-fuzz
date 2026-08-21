@@ -1,0 +1,13 @@
+(D2 — Discrepancy 2 repro: LANGUAGE.md:2381-2383 says a `For each` over a
+ list of maps "types the loop variable as a map". It does not: the loop
+ variable carries the map TAG (so `is a map` fires on it — LST-55) but has
+ no static type, and map access is a static check, so `entry's "tag"`
+ inside the loop is a compile error. Extracting the element into a declared
+ `map` variable first works (LST-57).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
+ expected output:
+   error: Map access target must be a map: entry
+   (compile error - no binary is produced)
+)
+a list called holder is [{"tag": 1}, {"tag": 2}].
+For each entry in holder, print entry's "tag".

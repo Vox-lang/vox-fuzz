@@ -1,0 +1,10 @@
+(FMT-36 — a function argument accepts a format string; the callee receives
+ the rendered text.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   arg nested
+)
+To greet with a text called salutation. Return a text, the salutation.
+
+a text called leaf is "nested".
+Print greet of "arg {leaf}".

@@ -1,0 +1,35 @@
+(THG-75: a WHOLE thing may be copied into a nested field, and between two
+ fields of the same thing, and onto itself - all three are assignment
+ (LANGUAGE.md:1015, 1033-1034), and delivery.vox:50 relies on the first.
+ No example in this section shows any of them.
+ The self-copy cases (`Set span's start to span's start.`, `Set twin to
+ twin.`) are the memory-safety edge: an overlapping copy of a run of bytes
+ onto itself. Both are safe here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-75.vox -o p && ./p
+ expected output:
+   3
+   8
+   8
+   8
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+A thing called segment has
+  a point called start,
+  a point called end.
+
+a point called anchor.
+Set anchor's x to 3.
+a segment called span.
+Set span's start to anchor.
+Print span's start's x.
+Set span's end's y to 8.
+Set span's start to span's end.
+Print span's start's y.
+Set span's start to span's start.
+Print span's start's y.
+a segment called twin is span.
+Set twin to twin.
+Print twin's start's y.

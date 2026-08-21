@@ -1,0 +1,23 @@
+(TIM-11 - `unix` really is seconds since the epoch: the hour, minute and
+ second properties are exactly the ones you get by dividing it up, which
+ is the one oracle available here that needs no reference clock.
+ It also settles which timezone the components are in - they agree with
+ the UTC decomposition of `unix`, not with local time (TIM-44, D5).
+ Also covers: TIM-44.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-11.vox -o p && ./p
+ expected output:
+   hour agrees with the utc decomposition of unix
+   minute agrees with the utc decomposition of unix
+   second agrees with the utc decomposition of unix
+)
+Get current time into now.
+a number called 'seconds into the day' is now's unix modulo 86400.
+a number called 'the utc hour' is 'seconds into the day' divide 3600.
+a number called 'the utc minute' is 'seconds into the day' divide 60 modulo 60.
+a number called 'the utc second' is 'seconds into the day' modulo 60.
+If now's hour is 'the utc hour' then, print "hour agrees with the utc decomposition of unix".
+Otherwise, print "hour {now's hour} disagrees with utc hour {'the utc hour'}".
+If now's minute is 'the utc minute' then, print "minute agrees with the utc decomposition of unix".
+Otherwise, print "minute {now's minute} disagrees with utc minute {'the utc minute'}".
+If now's second is 'the utc second' then, print "second agrees with the utc decomposition of unix".
+Otherwise, print "second {now's second} disagrees with utc second {'the utc second'}".

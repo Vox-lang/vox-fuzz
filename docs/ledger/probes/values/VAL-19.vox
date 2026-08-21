@@ -1,17 +1,22 @@
-(VAL-19: the conditional-value-RETURN limitation — the factorial pattern
- (`If ... return a value, <expr>. Otherwise ...`) in a function whose `To`
- line has no `Return` does not track the return type. Returning a text
- literal from a frame whose parameter was a number prints a stable garbage
- number (4210906) mis-tagged as Number (dynamic). The reverse direction
- (returning a number from a text frame) segfaults — see Discrepancy 1,
- whose minimal repro is D1.vox. The conditional-value-PARAMETER half (void
- return) works fine — also shown here.
+(VAL-19: conditional `value` returns — the factorial pattern (`If ...
+ return a value, <expr>. Otherwise ...`) in a function whose `To` line has
+ no `Return`.
+ **This probe was refreshed on 2026-08-21: vox #43 (0.4.8) fixed both
+ halves of what it used to record.** Under 0.4.7 returning a text literal
+ from a frame whose parameter was a number printed stable garbage
+ (4210906) mis-tagged as `Number (dynamic)`, and the reverse direction
+ segfaulted (Discrepancy 1, `D1.vox`). Today each branch hands back its
+ own runtime tag: the `Otherwise` branch's text literal comes back as
+ `fallback` / `Text (dynamic)`, and nothing crashes. LANGUAGE.md agrees —
+ it now says "Conditional `value` returns work" (:2626-2639), where 0.4.7
+ called it a limitation. The conditional-value-PARAMETER half (void
+ return) worked before and still works — also shown here.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAL-19.vox -o p && ./p
  expected output:
    kept
    Text (dynamic)
-   4210906
-   Number (dynamic)
+   fallback
+   Text (dynamic)
    num
    not num
 )

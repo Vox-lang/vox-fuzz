@@ -1,0 +1,12 @@
+(FUN-07 — a parameter name that contains spaces is written single-quoted;
+ a single-word one is bare. Three parameters, joined with `and`.
+ Also covers: FUN-08 (more than two parameters joined with `and`),
+ FUN-36 (more than two arguments separated by `and` at the call site).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-07.vox -o p && ./p
+ expected output:
+   6
+)
+To 'sum three' with a number called 'first part' and a number called 'second part' and a number called third.
+  Return a number, 'first part' add 'second part' add third.
+
+Print 'sum three' of 1 and 2 and 3.

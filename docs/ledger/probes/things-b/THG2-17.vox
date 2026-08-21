@@ -1,0 +1,16 @@
+(THG2-17: the member definition uses `the <type>'s` - the article rule - and
+ the definite article is load-bearing. Writing `To do a point's ...` is not a
+ member definition and does not parse.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-17.vox -o p && ./p
+ expected output:
+   error: Expected a statement, got With
+   No binary is produced; this is a compile error. Note the diagnostic is the
+   parser's generic one, not a targeted message about the article.
+)
+A thing called point has
+  a function called 'placed at',
+  a number called x is 0.
+
+To do a point's 'placed at', with a number called x.
+  a point called plotted.
+  Return a point, plotted.

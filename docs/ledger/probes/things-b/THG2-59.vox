@@ -1,0 +1,11 @@
+(THG2-59: a thing definition's entries are comma-separated and the construct
+ closes on a PERIOD, the same termination rule every other construct follows.
+ A period closes the entry list wherever it falls, so the whole definition fits
+ on one line.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-59.vox -o p && ./p
+ expected output:
+   {x: 0, y: 0}
+)
+A thing called point has a number called x is 0, a number called y is 0.
+a point called origin.
+Print origin.

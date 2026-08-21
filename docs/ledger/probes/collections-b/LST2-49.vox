@@ -1,0 +1,23 @@
+(LST2-49 — a range clause `start to end` is INCLUSIVE at both ends, takes
+ variables as well as literals, yields exactly one iteration when start
+ equals end, and — undocumented — yields ZERO iterations when start is
+ greater than end rather than counting down or erroring.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-49.vox -o p && ./p
+ expected output:
+   3
+   4
+   5
+   6
+   --- variable bounds above, inclusive at both ends
+   5
+   --- start equals end: one iteration
+   --- start past end: zero iterations
+)
+a number called start is 3.
+a number called finish is 6.
+print each step from start to finish.
+print "--- variable bounds above, inclusive at both ends".
+print each step from 5 to 5.
+print "--- start equals end: one iteration".
+print each step from 5 to 2.
+print "--- start past end: zero iterations".

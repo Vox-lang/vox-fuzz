@@ -1,0 +1,11 @@
+(FLW-42 (undocumented precision): the exit code is the POSIX process
+ status, so it is taken modulo 256 - `Exit 300.` leaves status 44. The
+ code may also be a variable rather than a literal (hand-run separately:
+ `Exit code.` with code=7 exits 7).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-42.vox -o p && ./p
+ expected output:
+   before
+   exit 44
+)
+print "before".
+Exit 300.

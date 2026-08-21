@@ -1,0 +1,19 @@
+(THG-74: the workaround - declare a scratch slot from the call, then print
+ it. LANGUAGE.md:1154-1166 verbatim. A whole thing printed straight out
+ renders as its fields, map-style (the Printing section, part B, spells that
+ out; recorded here because this example is in this section's range).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-74.vox -o p && ./p
+ expected output:
+   {x: 1, y: 0}
+)
+A thing called point has
+  a number called x is 0,
+  a number called y is 0.
+
+To nudged with a point called start.
+  Set start's x to start's x add 1.
+  Return a point, start.
+
+a point called before.
+The after is nudged of before.
+Print after.

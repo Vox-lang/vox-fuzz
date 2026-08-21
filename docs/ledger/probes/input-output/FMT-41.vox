@@ -1,0 +1,19 @@
+(FMT-41 — a FILE HANDLE declared in every branch is equally in scope
+ afterwards. Also covers FMT-44: this IS the manual's worked example
+ (LANGUAGE.md:3171-3178), verbatim except for the flag declaration the
+ fragment omits, which is supplied here so it compiles. Run with no
+ arguments the flag is empty, so the first branch runs and output goes
+ to fd 1.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
+ expected output:
+   hello
+)
+a flag called 'output file' is "-o" or "--output", it is a text.
+Parse flags.
+
+if 'output file' is empty then,
+  Open a file for writing called output at 1.
+Otherwise,
+  Open a file for writing called output at 'output file'.
+
+write "hello\n" to output.
