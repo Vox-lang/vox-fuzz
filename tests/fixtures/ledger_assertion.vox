@@ -1,0 +1,16 @@
+(Fixture for tests/270: what a generated program looks like at the
+ moment one of the ledger's leaf assertions fails - a few ordinary lines
+ of output, then the one ASSERT line the failing check prints, then exit
+ 95. Planted by hand, because the generator can only produce this when
+ the compiler is actually wrong about a documented result, which is the
+ thing the whole channel exists to catch and cannot be arranged on
+ demand.
+
+ The second ASSERT line is deliberate: only the LAST one is followed by
+ the exit, so it is the one that killed the program and the only one
+ worth carrying as the finding's detail.)
+Print "the inbox size 11".
+Print "ASSERT BUF-12: expected 1 got 1 (this one held and kept going)".
+Print "the inbox capacity 64".
+If 1 is equal to 1 then, Print "ASSERT BUF-05: expected 4097 got 4096", Exit 95. Print "unreachable".
+Print "unreachable".
