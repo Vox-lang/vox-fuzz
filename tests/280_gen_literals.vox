@@ -1,0 +1,173 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+
+(Every helper in src/gen_literals.vox, put on trial three ways.
+
+ 1. LEGALITY, by the real compiler. Each helper is drawn 120 times and
+    each draw is dropped into the declaration its kind belongs in - an
+    integer into `a number called`, a float into `a float called`, a
+    character into `a number called` (LANGUAGE.md:1810 says 'A' equals
+    65), `nothing` into a list slot (:2661 is explicit that a list slot
+    is one of the three positions it may occupy). That program is then
+    compiled AND run by the compiler under test. Checking the emitted
+    text by shape would prove nothing here: the whole question is
+    whether the compiler accepts these tokens, so the compiler has to
+    answer it.
+
+    The format strings are the one exception, and the reason is
+    measured, not assumed. A format hole's width is a literal and
+    LANGUAGE.md bounds it nowhere, so 'literal format specifier' draws it
+    unbounded like every other literal - and `Print "{n:1000000000}"`
+    renders a billion spaces, which on this machine did not finish in
+    twenty seconds. So the format strings go into a function that is
+    never called: an uncalled body is still fully compile-checked
+    (verified - an unknown name inside one is still "Unknown variable"),
+    which is exactly the legality question, while nothing renders a
+    gigabyte at run time. What a wide pad DOES at run time is a
+    campaign's business, not this test's.
+
+ 2. LENGTH DISTRIBUTION, measured and printed. The numbers below are a
+    fingerprint of seed 4242 under the knob in gen_literals.vox, NOT a
+    bound: nothing here asserts a maximum, and nothing may. The two
+    assertions are the two rules - every literal is at least one byte
+    long, and lengths actually vary - plus the evidence the tail is real
+    (a draw longer than twelve bytes does occur).
+
+ 3. DETERMINISM. Same seed, same literals - the property every finding's
+    reproducibility rests on.)
+
+a buffer called 'the corpus' is "".
+a buffer called 'the sample tape' is "".
+
+a number called 'the shortest' is 0.
+a number called 'the longest' is 0.
+a number called 'the total length' is 0.
+a number called 'how many measured' is 0.
+a number called 'how many over twelve' is 0.
+
+To 'put' with a text called 'the line'.
+    a buffer called 'the piece' is "{'the line'}".
+    append 'the piece' to 'the corpus'.
+
+To 'length in bytes' with a text called 'the literal'.
+    a buffer called 'the bytes' is "{'the literal'}".
+    Return a number, 'the bytes's length.
+
+To measure with a text called 'the literal'.
+    a number called 'the length' is 'length in bytes' of 'the literal'.
+    If 'how many measured' is 0 then,
+        Set 'the shortest' to 'the length'.
+    If 'the length' is less than 'the shortest' then,
+        Set 'the shortest' to 'the length'.
+    If 'the length' is greater than 'the longest' then,
+        Set 'the longest' to 'the length'.
+    If 'the length' is greater than 12 then,
+        Set 'how many over twelve' to 'how many over twelve' add 1.
+    Set 'the total length' to 'the total length' add 'the length'.
+    Set 'how many measured' to 'how many measured' add 1.
+
+(Every draw also goes onto a tape, so the determinism check compares the
+ literals themselves and not merely the program built from them.)
+
+To 'draw and record' with a text called 'the literal'.
+    measure of 'the literal'.
+    a buffer called 'the piece' is "{'the literal'}\n".
+    append 'the piece' to 'the sample tape'.
+    Return a text, 'the literal'.
+
+To 'one round of every helper' with a number called 'the round'.
+    a text called 'the integer' is 'draw and record' of 'literal integer'.
+    'put' of "a number called n{'the round'} is {'the integer'}.\n".
+    a text called 'the whole number' is 'draw and record' of 'literal whole number'.
+    'put' of "a number called u{'the round'} is {'the whole number'}.\n".
+    a text called 'the float' is 'draw and record' of 'literal float'.
+    'put' of "a float called g{'the round'} is {'the float'}.\n".
+    a text called 'the hexadecimal' is 'draw and record' of 'literal hexadecimal'.
+    'put' of "a number called h{'the round'} is {'the hexadecimal'}.\n".
+    a text called 'the binary' is 'draw and record' of 'literal binary'.
+    'put' of "a number called b{'the round'} is {'the binary'}.\n".
+    a text called 'the character' is 'draw and record' of 'literal character'.
+    'put' of "a number called c{'the round'} is {'the character'}.\n".
+    a text called 'the boolean' is 'draw and record' of 'literal boolean'.
+    'put' of "a boolean called w{'the round'} is {'the boolean'}.\n".
+    a text called 'the text' is 'draw and record' of 'literal text'.
+    'put' of "a text called t{'the round'} is {'the text'}.\n".
+    a text called 'the absent value' is 'draw and record' of 'literal nothing'.
+    'put' of "a list called l{'the round'} is [{'the absent value'}].\n".
+    a text called 'the octal' is 'draw and record' of 'literal octal number'.
+    'put' of "a number called o{'the round'} is {'the octal'}.\n".
+    a text called 'the base conversion' is 'draw and record' of 'literal base conversion'.
+    'put' of "a number called k{'the round'} is {'the base conversion'}.\n".
+    a text called 'any number at all' is 'draw and record' of 'literal any number'.
+    'put' of "a number called a{'the round'} is {'any number at all'}.\n".
+
+(The format-string round. The holes name variables the program really
+ has - LANGUAGE.md:3115 is explicit that a bare literal inside a hole is
+ rejected, so the caller must supply names, which is why the helper takes
+ a list. An empty list is exercised too: it must degrade to a plain text
+ literal rather than error.)
+
+To 'one round of format strings' with a number called 'the round'.
+    a list called 'the names in scope' is ["n{'the round'}", "g{'the round'}", "t{'the round'}", "w{'the round'}"].
+    a text called 'the format string' is 'draw and record' of 'literal format string' of 'the names in scope'.
+    'put' of "    a text called f{'the round'} is {'the format string'}.\n".
+    a list called 'no names at all' is [].
+    a text called 'the plain one' is 'draw and record' of 'literal format string' of 'no names at all'.
+    'put' of "    a text called p{'the round'} is {'the plain one'}.\n".
+
+To 'build the corpus'.
+    a number called 'the round' is 1.
+    While 'the round' is less than or equal to 120,
+        'one round of every helper' of 'the round',
+        Set 'the round' to 'the round' add 1.
+    'put' of "\nTo 'the format strings are never rendered'.\n".
+    Set 'the round' to 1.
+    While 'the round' is less than or equal to 120,
+        'one round of format strings' of 'the round',
+        Set 'the round' to 'the round' add 1.
+    'put' of "\nExit 0.\n".
+
+'rng seed' of 4242.
+'build the corpus'.
+a text called 'the first tape' is "{'the sample tape'}".
+
+open a file for writing called 'the corpus file' at "./vf_literals.vox".
+Write 'the corpus' to 'the corpus file'.
+Close 'the corpus file'.
+
+Print "min length: {'the shortest'} bytes".
+Print "max length: {'the longest'} bytes".
+a number called 'the mean length' is 'the total length' divide 'how many measured'.
+Print "mean length: {'the mean length'} bytes over {'how many measured'} literals".
+Print "longer than 12 bytes: {'how many over twelve'}".
+Print "every literal is at least one byte: {'the shortest' is greater than 0}".
+Print "lengths vary: {'the longest' is greater than 'the shortest'}".
+Print "the tail is reachable: {'how many over twelve' is greater than 0}".
+
+(Same seed, same literals.)
+clear 'the corpus'.
+clear 'the sample tape'.
+'rng seed' of 4242.
+'build the corpus'.
+a text called 'the second tape' is "{'the sample tape'}".
+Print "reproducible: {'the first tape' is equal to 'the second tape'}".
+
+(The compiler comes from 'vox path', which honours $VOX the way test.sh
+ sets it - a literal ../vox/... would only be right in a plain checkout
+ and would silently skip the check in a worktree.)
+a text called 'the compile command' is "{'shell quote' of 'vox path'} ./vf_literals.vox -o ./vf_literals > ./vf_literals.cerr 2>&1".
+a number called 'the compile status' is 'run shell' of 'the compile command' and 120000.
+Print "every literal compiles: {'the compile status' is 0}".
+a number called 'the run status' is 'run shell' of "./vf_literals > ./vf_literals.out 2>&1" and 60000.
+Print "the program runs: {'the run status' is 0}".
+
+(Only on failure, so the expected file is unchanged when this passes.)
+If 'the compile status' is not 0 then,
+    a text called 'the compiler complaint' is 'read whole file' of "./vf_literals.cerr",
+    Print "the compiler was {'vox path'}",
+    Print 'the compiler complaint'.
+If 'the run status' is not 0 then,
+    a text called 'what the program printed' is 'read whole file' of "./vf_literals.out",
+    Print 'what the program printed'.
