@@ -1,0 +1,17 @@
+(GRM-16: loop_expansion ::= "each" name "from" expr ("treating" expr "as"
+ expr)? - the shared expansion clause used by print_stmt (GRM-15), args
+ (GRM-09), append_stmt's second form, and for_stmt's "in" form. Its
+ "treating" substitution is confirmed working when the expansion sits
+ under Print (GRM-15) or bare `each x from list` (below). It is a
+ confirmed NO-OP under append_stmt specifically - see Discrepancy 3 -
+ which is that production's own bug, not this one's; this row is clean.
+ Cross-ref BAS2 (basics-expansion.md), which maps this production's full
+ claim set including grid/nested expansion.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-16.vox -o p && ./p
+ expected output:
+   1
+   20
+   3
+)
+a list called src is [1, 2, 3].
+Print each item from src treating 2 as 20.

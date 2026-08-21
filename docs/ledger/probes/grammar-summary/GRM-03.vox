@@ -1,0 +1,18 @@
+(GRM-03: var_decl's two forms - ("a"|"an") type "called" name "is" expr "."
+ and ("Set"|"Create") "the"? type? "called"? name "to" expr "." - both
+ bring a NEW variable into being (not just reassign an existing one; see
+ GRM-04 for that). Four spellings exercised: "a" (declared), "an" (not
+ shown here - "a"/"an" are both accepted per the article rule elsewhere,
+ out of this section's scope), "Set the ... to" and "Create the ... to".
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-03.vox -o p && ./p
+ expected output:
+   1
+   2
+   3
+)
+a number called first is 1.
+Set the number called second to 2.
+Create the number called third to 3.
+Print first.
+Print second.
+Print third.

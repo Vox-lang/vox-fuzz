@@ -1,0 +1,14 @@
+(GRM-21: identifier ::= bare | quoted. "quoted" here means
+ single-quoted ('my count') - LANGUAGE.md's Names and Strings section
+ (645-670) is explicit that a name is "a bare or single-quoted
+ identifier", never a double-quoted one (GRM-23 covers that half). Both
+ forms shown: a bare name and a single-quoted one holding the same value.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-21.vox -o p && ./p
+ expected output:
+   5
+   5
+)
+a number called plain is 5.
+Print plain.
+a number called 'my count' is 5.
+Print 'my count'.

@@ -1,0 +1,20 @@
+(GRM-17: the expr precedence chain - expr ::= or_expr, or_expr ::=
+ and_expr ("or" and_expr)*, and_expr ::= comparison ("and" comparison)*,
+ comparison ::= additive (comp_op additive)*, additive ::= multiplicative
+ ((add|subtract) multiplicative)*, multiplicative ::= primary
+ ((multiply|times|divide|modulo) primary)*. All six levels exercised in
+ one expression: {2 add 3 multiply 4} is 14 (additive/multiplicative
+ nested inside a comparison) and {5 subtract 1} is 4 (a second
+ comparison) joined by "and", then "or false" at the top. multiply binds
+ tighter than add (2 add 3 multiply 4 = 14, not 20), matching the grammar.
+ IMPORTANT: this only parses inside a condition position (an `If`), NOT
+ as a var_decl/assignment/print initializer - see Discrepancy 1
+ (cross-ref EXP-D3, expressions.md) - the Grammar Summary's own `expr`
+ production is used, unqualified, by var_decl/assignment/print_stmt, but
+ the compiler only accepts a `comparison` there when nothing else in the
+ sentence has already claimed "is" as a copula/assignment verb.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-17.vox -o p && ./p
+ expected output:
+   chain holds
+)
+If 2 add 3 multiply 4 is 14 and 5 subtract 1 is 4 or false, print "chain holds".

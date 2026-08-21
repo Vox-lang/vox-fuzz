@@ -1,0 +1,11 @@
+(LIB-05, half 3 of 3 -- retired form 3: `see "<path>.so" for "<lib>"
+ version "<v>".` gets its own diagnostic, distinct from LIB-05/LIB-05b,
+ but which also names the canonical form (LIB-07).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-05c.vox -o p && ./p
+ expected output:
+   error: The `see ... for ...` form is no longer supported.
+   (compile error; also names "Canonical form: see '<lib>' version "<x.y>" from "<path>.lib".")
+)
+see "./fixtures/libmathkit.so" for "mathkit" version "1.0".
+
+Print 1.

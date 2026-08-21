@@ -1,0 +1,20 @@
+(ENV-06: the named lookup (LANGUAGE.md:4483, `environment's "NAME"`)
+ asserted against a value the tester controls, both unset and set.
+ `check-probes.sh` only special-cases a `Ran:` line for a STDIN feed,
+ not a leading `VAR=value` -- so the checked block below is the plain,
+ no-variable-set run (deterministic: the probe's variable name is
+ namespaced so no host environment sets it by accident), and the
+ `FOO=bar`-style run is recorded in the second, unchecked block
+ beneath it, hand-verified once.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-06.vox -o p && ./p
+ expected output:
+   value:
+)
+(Second run, hand-verified, NOT checked by check-probes.sh:
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-06.vox -o p && VF_PROBE_NAMED_LOOKUP=hello123 ./p
+ output:
+   matched expected value
+)
+a text called v is environment's "VF_PROBE_NAMED_LOOKUP".
+if v is "hello123", print "matched expected value".
+otherwise, print "value: {v}".

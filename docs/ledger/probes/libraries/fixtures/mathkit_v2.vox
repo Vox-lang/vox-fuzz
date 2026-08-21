@@ -1,0 +1,5 @@
+(v2 source for the multi-version .so fixture, LIB-48 — a different
+ implementation, so the probe can tell which mangled symbol actually ran.)
+Library mathkit version "2.0".
+
+To 'add two numbers' with a number called x and a number called y. Return a number, x add y add 1000.

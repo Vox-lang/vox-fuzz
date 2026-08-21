@@ -1,0 +1,10 @@
+(Source for the stale-.lib fixture (LIB-44). Built once, then libstalekit.lib
+ was hand-edited to promise a function the .so does not export, simulating a
+ .lib that has drifted from its library binary.
+ Built with: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox stalekit.vox --shared -o libstalekit.so)
+
+Library stalekit version "1.0".
+
+To greet.
+  Print "hi".

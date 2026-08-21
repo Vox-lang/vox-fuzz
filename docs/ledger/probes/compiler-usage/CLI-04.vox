@@ -1,0 +1,24 @@
+(CLI-04: `--shared` - build a shared library (.so) instead of an
+ executable. Also emits a companion `.lib` interface file next to the
+ `.so` (undocumented in this section, but needed by CLI-05/CLI-06's
+ `--link`/`--lib-path` and by the Libraries and Imports chapter's `see
+ ... from "....lib"` consumption path). This probe's source is also an
+ ordinary compilable program on its own (see the standard Ran: line
+ below) - `--shared` is a build mode, not a different dialect of Vox.
+ Hand-run separately:
+   $ vox tally_lib.vox --shared -o libtally.so
+   $ ls libtally.so libtally.lib
+   libtally.lib
+   libtally.so
+   $ file libtally.so
+   libtally.so: ELF 64-bit LSB shared object, x86-64, ...
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-04.vox -o p && ./p
+ expected output:
+   42
+)
+Library tally version "1.0".
+
+To 'double it' with a number called value. Return a number, value multiply 2.
+
+a number called result is 'double it' of 21.
+Print result.

@@ -1,0 +1,45 @@
+(LIB-34 -- the .lib Table of Contents uses the 11-type vocabulary in
+ either position (parameter or return), and nothing else. Also covers
+ LIB-36: a map's value type is never carried, even when every value
+ stored is provably the same type ("make map with values" below).
+ Ran, from the repo root:
+   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
+   /home/josj/scr/english/vox/target/release/vox
+   docs/ledger/probes/libraries/shared/LIB-types.vox --shared -o types.so
+   cat types.lib
+ expected output: exit 0, and types.lib reads:
+   Library typekit version "1.0".
+   Location "./types.so".
+
+   Table of Contents:
+       To 'take number' with a number called n, returning a number.
+       To 'take float' with a float called f, returning a float.
+       To 'take text' with a text called t, returning a text.
+       To 'take boolean' with a boolean called b, returning a boolean.
+       To 'take list' with a list called l, returning a list.
+       To 'take map' with a map called m, returning a map.
+       To 'take buffer' with a buffer called buf, returning a buffer.
+       To 'take file' with a file called f2, returning a file.
+       To 'take time' with a time called t2, returning a time.
+       To 'take timer' with a timer called t3, returning a timer.
+       To 'take value' with a value called v, returning a value.
+       To 'make map with values', returning a map.
+)
+
+Library typekit version "1.0".
+
+To 'take number' with a number called n. Return a number, n.
+To 'take float' with a float called f. Return a float, f.
+To 'take text' with a text called t. Return a text, t.
+To 'take boolean' with a boolean called b. Return a boolean, b.
+To 'take list' with a list called l. Return a list, l.
+To 'take map' with a map called m. Return a map, m.
+To 'take buffer' with a buffer called buf. Return a buffer, buf.
+To 'take file' with a file called f2. Return a file, f2.
+To 'take time' with a time called t2. Return a time, t2.
+To 'take timer' with a timer called t3. Return a timer, t3.
+To 'take value' with a value called v. Return a value, v.
+
+To 'make map with values'.
+  a map called m is {"x": 1, "y": 2}.
+  Return a map, m.

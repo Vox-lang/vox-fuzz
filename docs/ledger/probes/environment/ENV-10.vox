@@ -1,0 +1,20 @@
+(ENV-10: the "Checking if Variable Exists" predicate (LANGUAGE.md:4512-
+ 4517, `If the environment variable "NAME" exists then,`), both
+ branches. No leaf emits this predicate at all -- the existing `oob`
+ leaf (gen_misc.vox:103-110) tests the *lookup* form wrapped in `On
+ error`, a different construct. Checked block is the no-variable-set
+ run (namespaced name, deterministic); the set run is the second,
+ unchecked block, hand-verified once.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-10.vox -o p && ./p
+ expected output:
+   absent
+)
+(Second run, hand-verified, NOT checked by check-probes.sh:
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ENV-10.vox -o p && VF_PROBE_EXISTS_CHECK=1 ./p
+ output:
+   present
+)
+If the environment variable "VF_PROBE_EXISTS_CHECK" exists then,
+    Print "present".
+Otherwise,
+    Print "absent".

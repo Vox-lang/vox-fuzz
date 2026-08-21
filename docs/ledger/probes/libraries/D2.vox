@@ -1,0 +1,15 @@
+(D2 -- minimal repro. LANGUAGE.md:4810 writes the second retired form as
+ `see "lib" version "1.0" from "./path.so".` -- the library name in
+ double quotes. That is not valid Vox syntax in this position: names are
+ bare or 'single-quoted', never a string literal, so this hits a generic
+ parse error instead of the "see of a .so" diagnostic the surrounding
+ prose promises for all three retired forms (LIB-05b uses the correctly-
+ shaped bare name and gets that diagnostic).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/D2.vox -o p && ./p
+ expected output:
+   error: expected a name, found a string literal
+   (compile error; also suggests `write \`mathkit\``, pointing out that strings are data while names are bare or 'single-quoted')
+)
+see "mathkit" version "1.0" from "./fixtures/libmathkit.so".
+
+Print 1.

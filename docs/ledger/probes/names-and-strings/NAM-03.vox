@@ -1,0 +1,13 @@
+(NAM-03: LANGUAGE.md:651-652's worked example, reproduced verbatim,
+ claimed by LANGUAGE.md:664-665 to now be a compile error. It is
+ rejected — but on the "x" token (name position), never reaching the
+ "get five" clause the manual's prose credits. See NAM-04 and
+ Discrepancy 1.
+ (Compile-error claim: not assertable from a runtime leaf.)
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox NAM-03.vox -o p && ./p
+ expected output:
+   error: expected a name, found a string literal
+   (no binary produced; compile error)
+)
+a number called "x" is "get five".
+print x.

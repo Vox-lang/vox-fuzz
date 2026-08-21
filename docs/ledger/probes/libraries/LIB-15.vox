@@ -1,0 +1,13 @@
+(LIB-15 -- circular includes. fixtures/circ_a.vox sees circ_b.vox, which
+ sees circ_a.vox right back; the compiler tracks files already seen and
+ skips the re-entrant see instead of looping. Both functions end up
+ defined and callable from here.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/libraries/LIB-15.vox -o p && ./p
+ expected output:
+   a
+   b
+)
+see "./fixtures/circ_a.vox".
+
+'from a'.
+'from b'.

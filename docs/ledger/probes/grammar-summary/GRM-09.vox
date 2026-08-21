@@ -1,0 +1,17 @@
+(GRM-09: args ::= arg_clause ("and" arg_clause)*, arg_clause ::= loop_expansion
+ | expr - a call's arguments can each independently be either a plain
+ value or a loop_expansion (a grid call: one call per combination of the
+ expanded arguments). Cross-ref LST2-44 (collections-b.md), whose note on
+ "gen call grid" already establishes this pattern is generator-emitted
+ elsewhere; this is the Grammar Summary's own minimal two-argument grid
+ witness (bare statement call, so nothing is printed - the claim under
+ test is that it PARSES and RUNS to completion without error, not what
+ it prints).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox GRM-09.vox -o p && ./p
+ expected output:
+   done
+)
+To 'pair' with a number called first and a number called second. Return a number, first add second.
+
+'pair' of each x from [1, 2] and each y from [10, 20].
+Print "done".

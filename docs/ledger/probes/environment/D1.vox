@@ -1,0 +1,44 @@
+(Discrepancy 1 (ENV): declaring a buffer DIRECTLY from an
+ `environment's <property>` expression (`"NAME"`, `first`, or `last`
+ all reproduce) never copies the string's bytes in. Content prints
+ empty, `'s size` is -1 (never documented as a possible value --
+ BUF-10 says size is "current bytes stored", a count, never negative),
+ `'s capacity` is the usual dynamic-buffer initial reserve (4096, the
+ same value BUF Discrepancy 1 already flags), and worst: `'s empty`
+ reports FALSE despite the content being empty and the size being -1 --
+ the property disagrees with both the content and the size of the very
+ buffer it's a property of. Going through an intermediate `text`
+ variable first (`a text called t is environment's "PATH". a buffer
+ called b is t.`) works correctly (see ENV-03.vox) -- the bug is
+ specific to a buffer's initializer being a `'s` property-read
+ expression directly, not to `environment` data generally. D1b.vox
+ shows the identical failure on `arguments's first`, so this is not
+ environment-specific at the implementation level, even though it's
+ this section's own leaf (`gen leaf environment inrange`,
+ gen_misc.vox:82-90) that has been emitting the broken construct and
+ asserting nothing about it (only ever reading `'s empty`, which is
+ exactly the property that lies here).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+ expected output:
+   content:
+
+   size:
+   -1
+   capacity:
+   4096
+   type:
+   Buffer (static)
+   empty:
+   0
+)
+a buffer called pathbuf is environment's "PATH".
+print "content:".
+print pathbuf.
+print "size:".
+print pathbuf's size.
+print "capacity:".
+print pathbuf's capacity.
+print "type:".
+print pathbuf's type.
+print "empty:".
+print pathbuf's empty.

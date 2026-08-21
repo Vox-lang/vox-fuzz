@@ -1,0 +1,17 @@
+(TYP-04: `boolean` holds `true` or `false` (LANGUAGE.md:435). Both
+ literals declare, retain, print (as the tag `1`/`0`, not the words —
+ printing format is EXP's/FMT's claim, not this table's) and are
+ recognized by `is a boolean`.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TYP-04.vox -o p && ./p
+ expected output:
+   1
+   0
+   t is a boolean: yes
+   f is a boolean: yes
+)
+a boolean called t is true.
+a boolean called f is false.
+print t.
+print f.
+if t is a boolean, print "t is a boolean: yes". otherwise print "t is a boolean: no".
+if f is a boolean, print "f is a boolean: yes". otherwise print "f is a boolean: no".
