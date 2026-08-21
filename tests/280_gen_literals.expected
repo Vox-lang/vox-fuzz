@@ -1,0 +1,10 @@
+min length: 1 bytes
+max length: 105 bytes
+mean length: 8 bytes over 1680 literals
+longer than 12 bytes: 335
+every literal is at least one byte: 1
+lengths vary: 1
+the tail is reachable: 1
+reproducible: 1
+every literal compiles: 1
+the program runs: 1

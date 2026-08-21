@@ -23,6 +23,7 @@
 
 see "./version.vox".
 see "./rng.vox".
+see "./gen_literals.vox".
 see "./harness.vox".
 see "./runner.vox".
 see "./gen_core.vox".

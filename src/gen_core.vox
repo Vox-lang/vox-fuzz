@@ -879,11 +879,21 @@ To 'gen statement' with a number called depth and a text called indent and a boo
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
     Return a boolean, false.
 
+(f1's and f2's constants come from 'literal integer' (src/gen_literals.vox),
+ not from a bounded draw. They used to be `'rng below' of 1000` and
+ `'rng below' of 50 add 1`, and the invariant report said exactly what
+ that meant: two never-exceeded-bound rows present in 100% of programs,
+ "never above 999" and "never above 50". No line of LANGUAGE.md sets
+ either ceiling, so both were undeclared rules of the kind CLAUDE.md
+ calls the real enemy. The helper's only bound is the compiler's own
+ i64 literal range, which it applies to the VALUE - so the digits that
+ land here now have no maximum length and can carry a sign.)
+
 To 'gen emit prelude functions'.
-    a number called c1 is 'rng below' of 1000.
+    a text called c1 is 'literal integer'.
     a text called fn1 is "To f1.\n    Return a number, {c1}.\n\n".
     'gen emit' of fn1.
-    a number called c2 is 'rng below' of 50 add 1.
+    a text called c2 is 'literal integer'.
     a text called fn2 is "To f2 with a number called p1.\n    a number called r is p1 add {c2}.\n    Return a number, r.\n\n".
     'gen emit' of fn2.
     a text called fn3 is "To f3 with a number called p1 and a number called p2.\n    a number called r is p1 add p2.\n    Return a number, r.\n\n".

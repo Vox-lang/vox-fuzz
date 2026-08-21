@@ -45,10 +45,10 @@ To do the t4's 'reflected across', with a t4 called original.
     Return a t4, mirrored.
 
 To f1.
-    Return a number, 806.
+    Return a number, 000009179.
 
 To f2 with a number called p1.
-    a number called r is p1 add 22.
+    a number called r is p1 add -07.
     Return a number, r.
 
 To f3 with a number called p1 and a number called p2.
@@ -58,27 +58,6 @@ To f3 with a number called p1 and a number called p2.
 To f4 with a text called p1.
     Print "f4 {p1}".
 
-a buffer called b1 is 45 bytes in size.
-Print byte 224 of b1.
-On error print "buffer read out of range".
-a number called env1count is environment's count.
-Print env1count as a boolean.
-Print environment's empty.
-a buffer called env1pathbuf is environment's "PATH".
-Print env1pathbuf's empty.
-f3 of each e1 from [69, 38] treating 45 as 70 and each e2 from 5 to 5 treating 3 as 56.
-a value called y1 is 926.
-Print y1.
-Set y1 to "reassigned1".
-Print y1.
-a map called m1 is {"label": "tag1", "count": 988}.
-Print m1's "missing".
-On error print "map key missing".
-a number called env2count is environment's count.
-Print env2count as a boolean.
-Print environment's empty.
-a buffer called env2pathbuf is environment's "PATH".
-Print env2pathbuf's empty.
 a number called zn1 is 9223372036854775807.
 a number called zk1 is 73.
 a float called zd1 is 2630783478.181.
@@ -100,8 +79,8 @@ Print "{zs1:1}".
 Print "{zb1:020}".
 Print "{zi1's x1:08x}".
 For each number from 1 to 6, Print number, If number is equal to 9 then, Break. Print "x".
-a buffer called b2 is 52 bytes in size.
-Print byte 182 of b2.
+a buffer called b1 is 52 bytes in size.
+Print byte 182 of b1.
 On error print "buffer read out of range".
 a t3 called i1.
 Set i1's g1's x1 to 176.
@@ -136,17 +115,43 @@ If hc2's length is equal to 2 then, Print "ht2 ok". Otherwise, Print "ht2 BAD".
 a number called u1 is 0.
 While u1 is less than 1, Increment u1.
 Print u1.
-a text called fp3 is "{fl1scratch}/out3".
-open a file for writing called fw3 at fp3.
-Write "payload 46153\n" to fw3.
-Close fw3.
-open a file for reading called fr3 at fp3.
-a buffer called fb3 is 58 bytes in size.
-Read from fr3 into fb3.
-Print fb3's size.
-Print fr3's readable.
-Close fr3.
+Print {v1 add v1} multiply v1 modulo 6.
+a number called xn3 is 700.
+a number called xy3 is 54.
+Print "sum {xn3 add xy3}".
+Print "product {xn3 multiply xy3}".
+Print "chain {xn3 multiply xy3 modulo 3}".
+Print "deep {4 divide 3 divide v1 multiply v1:x}".
+Print "arguments {arguments's count}".
+a text called xt3 is "held {xn3 add xy3} {xn3 multiply xy3 modulo 3}".
+Print xt3.
+f3 of each e1 from [26, 95] treating 86 as 19 and each e2 from 3 to 4 treating 1 as 5.
+a buffer called b2 is 23 bytes in size.
+Set byte 12 of b2 to 165.
+Print byte 12 of b2.
+a text called s4 is "word4".
+a text called s5 is "{s4}-{s4}".
+Print s5.
+a number called xn6 is 489.
+a number called xy6 is 95.
+Print "sum {xn6 add xy6}".
+Print "product {xn6 multiply xy6}".
+Print "chain {xn6 multiply xy6 modulo 3}".
+Print "deep {v1 times v1 times v1 multiply v1:04}".
+Print "arguments {arguments's count}".
+a text called xt6 is "held {xn6 add xy6} {xn6 multiply xy6 modulo 3}".
+Print xt6.
+a text called fp7 is "{fl1scratch}/out7".
+open a file for writing called fw7 at fp7.
+Write "payload 32369\n" to fw7.
+Close fw7.
+open a file for reading called fr7 at fp7.
+a buffer called fb7 is 42 bytes in size.
+Read from fr7 into fb7.
+Print fb7's size.
+Print fr7's readable.
+Close fr7.
 'read flags 1'.
-Exit 3.
+Exit 147.
 
 reproducible: 1
