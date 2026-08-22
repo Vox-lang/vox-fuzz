@@ -129,6 +129,28 @@ capacity; `Set byte` works on a fresh buffer). Any of them written into a
 leaf would have been a false-finding factory at scale. The probe is the
 only thing that stops a misreading becoming an oracle.
 
+### Re-pinning the citations when the manual moves
+
+A probe's header, a row's `line` cell and a ledger's `Source:` range all
+name a LINE NUMBER, and every Vox release inserts sentences into
+LANGUAGE.md, so every citation below an insertion silently starts
+pointing at the wrong claim. `docs/ledger/PINNED-MANUAL` records the
+commit and line count the whole repo's citations are pinned to, with a
+byte-for-byte copy of that manual beside it in `docs/ledger/pinned/`.
+**After every Vox release — or any LANGUAGE.md change at all — run
+`scripts/repin-citations --to <new manual> --dry-run`, read the CHANGED
+rows, then `scripts/repin-citations --to <new manual> --apply --pin`.**
+`--to` takes a path or a commit in the vox repo, and defaults to that
+repo's working-tree LANGUAGE.md. Everything the arithmetic can move it
+moves silently; a claim whose text was edited becomes a literal `?` and
+is listed, and the run exits non-zero until a human has read that claim
+in the new manual and written the line it now lives on. A `REVIEW` row
+is a `line` cell holding digits the tool would not touch (`undocumented
+precision at 262/278`, a probe filename) — nothing was changed there,
+and a human decides whether it went stale. Re-pin BEFORE mapping a new
+section or refreshing probes: a ledger written against one manual and a
+pin naming another is the state this exists to end.
+
 ## 5. Discrepancies — record, do not adjudicate
 
 When the compiler disagrees with the row, or the manual is ambiguous,

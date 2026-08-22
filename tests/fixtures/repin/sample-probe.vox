@@ -1,0 +1,8 @@
+(FAK-01 — a retained probe header, the shape docs/ledger/probes/ uses.
+ The claim: LANGUAGE.md:3 says buffer positions are 1-indexed.
+ Also covers LANGUAGE.md:12-14 and LANGUAGE.md lines 20-21.
+ Ran: VOX_CORE_PATH=../vox/coreasm ../vox/target/release/vox FAK-01.vox -o p && ./p
+ expected output:
+   1
+)
+Print 1.
