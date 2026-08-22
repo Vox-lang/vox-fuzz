@@ -1,10 +1,13 @@
-(LIB-30 -- LANGUAGE.md:5013-5016 claims a repeat --shared build will not
- overwrite an existing .lib: it should error and ask you to remove the
- .lib first. It does not; this is Discrepancy 1, and D1.vox is its
+(LIB-30 -- LANGUAGE.md:5021-5024 documents that a repeat --shared build
+ overwrites an existing .lib in place. RESOLVED 2026-08-22: this used to
+ be Discrepancy 1 (the manual then claimed it would error and ask you to
+ remove the .lib first, which the compiler never did); the manual was
+ corrected in vox commit 70ca1c2 to match this behavior. D1.vox is the
  minimal repro. This file is the fuller version: it also shows a
  hand-edited .lib line surviving as far as the *first* rebuild's read,
- then getting silently overwritten by the *second*.
- Ran, from the repo root, in a scratch directory:
+ then getting silently overwritten by the *second* -- still the
+ documented behavior.
+ Re-ran 2026-08-22 against vox 0.4.9 (commit bb406de), from the repo root, in a scratch directory:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    V=/home/josj/scr/english/vox/target/release/vox
    $V docs/ledger/probes/libraries/shared/LIB-overwrite.vox --shared -o overwrite.so

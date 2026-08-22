@@ -307,7 +307,7 @@ The action executes once per item in the collection or range, with the loop vari
 
 **Works with:**
 - `print each X from Y` - print each item
-- `function of each X from Y` - call function for each item  
+- `function of each X from Y` - call function for each item
 - `open ... at each X from Y` - open file for each path
 - Any action that takes an argument
 
@@ -1688,8 +1688,8 @@ fields across the boundary instead. A library that exports a function
 `To 'nudged east' with a point called start.` — taking a point and, in the
 same case, returning one — is refused when compiled with `--shared`:
 
-> takes a point ('start'), which a library interface cannot describe yet
-> returns a point, which a library interface cannot describe yet
+> takes a point ('start'), which a library interface cannot describe yet  
+> returns a point, which a library interface cannot describe yet  
 > A thing is a layout private to one compilation
 
 The same source compiles fine as an ordinary program; the refusal fires
@@ -1779,30 +1779,29 @@ deferred. Things live in the compile-time type table, not the runtime tag.
 The four items below are judgement calls the implementation made on the
 way; they are marked here so they are visible without hunting.
 
-<!-- REVIEW: members-only definitions -->
 1. **Members-only definitions are rejected.** A thing listing only `a
    function called ...` entries and no data fields is a zero-byte thing,
    so v1 refuses it (see [Definition diagnostics](#definition-diagnostics)).
    Conservative and reversible: a later version could admit a member-only
    thing as a pure interface.
+   <!-- REVIEW: members-only definitions -->
 
-<!-- REVIEW: .lib export refused -->
 2. **`.lib` export of a thing is refused.** An exported library signature
    cannot take or return a thing yet; the diagnostic says to pass its
    fields across the boundary instead (see
    [`.lib` export of a thing is not yet supported](#lib-export-of-a-thing-is-not-yet-supported)).
    Ordinary compilation is unaffected. A cross-boundary type system that
    knows about user things would lift this.
+   <!-- REVIEW: .lib export refused -->
 
-<!-- REVIEW: origin naming -->
 3. **The `origin` naming question.** The tests (and STYLE.md's own model
    line `Print magnitude of origin.`) declare `a point called origin` then
    set it to `(3,4)`. The origin is `(0,0)`, so the name is arguably
    untruthful under the read-aloud guide. This is a guide-level question,
    not a things-feature one — flagged here for a STYLE pass, not a
    compiler change.
+   <!-- REVIEW: origin naming -->
 
-<!-- REVIEW: acyclicity correction -->
 4. **Acyclicity — corrected from the plan.** Plan 310 framed things as
    "acyclic by grammar"; that framing is wrong. Things are acyclic by two
    mechanisms: the within-file defined-earlier ordering rule (a field type
@@ -1810,6 +1809,7 @@ way; they are marked here so they are visible without hunting.
    files reached by `see`. The DFS is load-bearing across the merged
    registry, not redundant — it is what proves the multi-file registry
    acyclic.
+   <!-- REVIEW: acyclicity correction -->
 
 ---
 
@@ -2114,7 +2114,7 @@ While the counter is less than 10, print the counter, increment the counter.
 ```
 
 **Multi-action loops** are comma-separated actions within one sentence:
- 
+
 ```vox fragment
 While x is less than 5, print x, increment x, print "looping".
 ```
@@ -3065,7 +3065,7 @@ print each x from [1, 2, 3].  (prints 1, 2, 3)
 print the x.                  (prints 3 - last iteration value)
 ```
 
-### Conditional Branching with `but if`
+### Conditional Branching with `but if` (Lists and Collections)
 
 Use `but if` as a generic conditional branch over any base action, including inside loops and loop expansion:
 
@@ -3433,8 +3433,8 @@ example below depends on it. A **write** (`Set byte N of buf to ...`)
 accepts any position from 1 up to the buffer's *capacity*: writing past
 the current size extends `size` to that position, zero-filling any gap
 (a dynamic buffer grows its capacity as needed). A **read**
-(`byte N of buf`) accepts positions from 1 up to the current *size* only
-- a byte that has never been written or appended is out of bounds even
+(`byte N of buf`) accepts positions from 1 up to the current *size* only -
+a byte that has never been written or appended is out of bounds even
 when the capacity has room for it. Position 0 is out of bounds for both.
 
 #### Buffer Append and Copy
@@ -3524,7 +3524,7 @@ A path-level `exists` predicate — asked before opening, with no handle
 involved — is a planned future addition; today the `On error` idiom
 above is how a program finds out.
 
-#### List Properties
+#### List Properties (Object Properties)
 
 | Property | Description | Type |
 |----------|-------------|------|
@@ -3544,7 +3544,7 @@ If names's empty then,
     print "No names in list".
 ```
 
-#### List Element Access
+#### List Element Access (Object Properties)
 
 Access list elements by index. Indexes are **1-indexed** (like natural language: "the first element", "the second element").
 
@@ -3846,7 +3846,7 @@ Read from source into inputbuf. (Safe regardless of file size)
 Files are tracked at runtime for guaranteed cleanup:
 
 1. **On open**: FD registered in tracking table
-2. **On close**: FD unregistered from table  
+2. **On close**: FD unregistered from table
 3. **On exit**: All remaining FDs automatically closed
 
 This works correctly even with conditional file operations:
@@ -4362,7 +4362,7 @@ Print the 'job timer''s end time.
 #### Formatted Time Output
 
 Combine time properties with the zero-pad format specifier (see
-[Formatted Output](#formatted-output)) for formatted output. A time
+[Format Specifiers](#format-specifiers)) for formatted output. A time
 property can be read directly inside a format slot:
 
 ```
@@ -4653,7 +4653,7 @@ Print the user.
 | Greater or Equal | `is greater than or equal to` |
 | Less or Equal | `is less than or equal to` |
 
-### Logical Operators
+### Logical Operators (table)
 
 | Operator | Keyword |
 |----------|---------|
@@ -4913,9 +4913,12 @@ own diagnostic — both name the canonical form `see '<lib>' version "<x.y>" fro
   preference to the one sitting next to your source. Write `./utils.vox` when
   you mean the local one.
 
-`--lib-path` is not consulted by `see` of a `.vox` source; it only passes
-search paths to the linker (`-L`) for `--link`. It *is* consulted by `see` of
-a `.lib` — both to find the `.lib` and to resolve its `Location` `.so` — see
+Those three shapes describe a `.vox` source include. A `.lib` path resolves
+differently: relative or bare, it is tried against the containing file's
+directory first and then each `--lib-path` directory, and its `Location` `.so`
+against the `.lib`'s own directory first and then `--lib-path`; absolute paths
+are used as-is. `--lib-path` is not consulted for a `.vox` include at all; for
+`--link` it only passes search paths to the linker (`-L`). See
 [Consuming a library](#consuming-a-library).
 
 **Circular includes.** The compiler tracks files already seen and skips a
@@ -4937,7 +4940,7 @@ names a non-Vox caller needs.
 > produces a self-contained `.so` plus its `.lib` interface, `see` of a `.lib`
 > consumes it from Vox, export names are mangled, and multi-input `--shared`
 > links several libraries (and several versions of one library) into one `.so`.
-> Every output below is real, captured from this compiler (vox v0.2.0). A
+> Every output below is real, captured from this compiler (vox v0.4.9). A
 > foreign host can also call the `.so` directly — see
 > [Calling a library from a non-Vox host](#calling-a-library-from-a-non-vox-host).
 
@@ -4959,6 +4962,11 @@ To greet.
 vox mathkit_lib.vox --shared -o libmathkit.so
 ```
 
+That writes two files: `libmathkit.so`, and `libmathkit.lib` beside it — the
+typed interface a Vox consumer `see`s, described in
+[The `.lib` file](#the-lib-file) below. The `.lib` name comes from `-o`, so the
+pair always travels together.
+
 This compiles to a self-contained shared object. It carries its own copy of
 the Vox runtime, so it is loadable from C, Rust, or any other host — not only
 from Vox. The runtime is position-independent, so a library may use the full
@@ -4970,8 +4978,8 @@ Verify what you built:
 
 ```bash
 $ nm -D --defined-only libmathkit.so
-00000000000005c4 T mathkit_1_0_add_two_numbers
-00000000000005f9 T mathkit_1_0_greet
+000000000000072c T mathkit_1_0_add_two_numbers
+000000000000076c T mathkit_1_0_greet
 $ readelf -r libmathkit.so
 There are no relocations in this file.
 ```
@@ -5010,10 +5018,10 @@ its `.so` is, and a table of contents of every exported function's signature.
 It is what a consumer `see`s, and the only place Vox types live — ELF carries
 mangled names but no types, so the `.lib` is the type source. A `--shared`
 build writes `<output-stem>.lib` beside the `.so`, one `Library` block per
-input. It will not overwrite a `.lib` that already exists — a repeat
-`--shared` build errors and asks you to remove the `.lib` first, then
-regenerates the `.so` and `.lib` together, so a rebuild cannot silently
-clobber an interface you have pinned or edited. The format:
+input. The `.lib` is a declared output like the `.so`, derived from the same
+`-o`: a rebuild overwrites it in place, so an edit-build loop needs no manual
+cleanup and anything hand-edited into a `.lib` is lost. The pair is written
+together, so a fresh `.so` never lands beside a stale `.lib`. The format:
 
 ```
 Library mathkit version "1.0".
@@ -5021,7 +5029,7 @@ Location "./libmathkit.so".
 
 Table of Contents:
     To 'add two numbers' with a number called x and a number called y, returning a number.
-    greet.
+    To greet.
 ```
 
 - **`Library '<name>' version "<ver>".`** — the block's identity. Several
@@ -5036,7 +5044,9 @@ Table of Contents:
   `value`; anything else is an error naming the unsupported type. `void`
   isn't a spelling — a function returning nothing omits the `, returning`
   clause entirely — and neither is `unknown`, the compiler's own internal
-  placeholder for an untyped parameter.
+  placeholder for an untyped parameter. A user-defined thing has no noun
+  here either, so a `--shared` build refuses an export that takes or returns
+  one — see [`.lib` export of a thing is not yet supported](#lib-export-of-a-thing-is-not-yet-supported).
 - A `list` may optionally carry its element type: `a list of text called
   out`, `returning a list of text`. This is compiler-inferred, not author-
   declared — Vox source has no generic/typed-collection syntax, so a library
@@ -5066,6 +5076,15 @@ a number called sum is 'add two numbers' of 3 and 4.
 Print the sum.
 ```
 
+```bash
+$ vox mathkit_consumer.vox -o consumer
+$ ./consumer
+7
+```
+
+That is the whole consumer build — no `--link`, no `-l`, no `-L`. The `see`
+does the linking, because the `.lib` says where the `.so` is.
+
 `see` of a `.lib` is the consumption path. The compiler:
 
 1. Resolves the `.lib` (relative to the source, then `--lib-path`).
@@ -5078,11 +5097,29 @@ Print the sum.
 6. Emits `extern <mangled>` for each used function and adds the `.so` and an
    `-rpath` to the link line.
 
+The `-rpath` in step 6 is the directory the `.so` was found in, recorded as an
+absolute `RUNPATH`. So the program finds its library where it stood at build
+time; move the `.so` afterwards and the loader will not find it, unless
+`LD_LIBRARY_PATH` points at the new directory.
+
 Each failure is its own diagnostic naming the file and what was expected:
 missing `.lib`; no such library in it; **version mismatch, listing the
 versions the `.lib` does offer**; missing `.so` at `Location`; symbol absent
 from the `.so` (the stale-`.lib` case — it names the symbol); arity or type
-mismatch at the call site.
+mismatch at the call site; and reading the *result* of an entry that has no
+`, returning` clause, which returns nothing, so there is no value to read —
+call it as a statement instead.
+
+The stale-`.lib` case is the one you meet by hand-editing a `.lib` or by
+rebuilding a library with different exports:
+
+```text
+Error: the .lib entry 'To 'ghostgreet' ...' promises the symbol
+'mathkit_1_0_ghostgreet', but 'libmathkit.so' does not export it (not in
+.dynsym).
+The .lib is stale: it does not match the library binary. Rebuild the library
+with `vox --shared` to regenerate the pair.
+```
 
 The worked example set in [`examples/`](examples) shows the workflow:
 `mathkit_lib.vox` is the library and `mathkit_consumer.vox` is the Vox consumer
@@ -5149,8 +5186,8 @@ only — the tools Vox already requires). Run these from the `examples/` directo
 ```bash
 $ vox mathkit_lib.vox --shared -o libmathkit.so
 $ nm -D --defined-only libmathkit.so
-00000000000005c4 T mathkit_1_0_add_two_numbers
-00000000000005f9 T mathkit_1_0_greet
+000000000000072c T mathkit_1_0_add_two_numbers
+000000000000076c T mathkit_1_0_greet
 ```
 
 ```nasm
@@ -5196,6 +5233,11 @@ matching what `nm -D` showed above.
 
 #### Linking an executable against a `.so` directly
 
+If the library has a `.lib`, you do not need this: `see` it, which registers
+its signatures *and* links its `.so`. `--link` is for a `.so` with no `.lib` —
+foreign, or hand-built — where the compiler knows no Vox signatures and only
+the linker is involved.
+
 `--link` puts a built `.so` on the link line of an executable. It takes the
 library's soname *stem* — the part between `lib` and `.so` — so a file named
 `libmath.so` is linked as `--link math`:
@@ -5224,7 +5266,7 @@ driver above is exactly that, linked with `ld` rather than `--link`.
 
 ## Compiler Usage
 
-### Basic Usage
+### Basic Usage (Compiler Invocation)
 
 ```bash
 vox <source.vox> [options]
@@ -5237,7 +5279,7 @@ vox <source.vox> [options]
 | `--emit-asm` | Output assembly only (don't assemble/link) |
 | `--run` | Compile and run the program |
 | `--shared` | Build a shared library (.so) instead of executable |
-| `--link <libs>` | Link against shared libraries (comma-separated) |
+| `--link <libs>` | Link against shared libraries by soname stem (comma-separated). A Vox library with a `.lib` is linked by `see`ing it instead |
 | `--lib-path <paths>` | Additional library search paths (comma-separated) |
 | `-o <file>` | Output file name |
 | `-v`, `--verbose` | Verbose output |
@@ -5254,7 +5296,10 @@ vox hello.vox -o myprogram
 # Build shared library
 vox math.vox --shared -o libmath.so
 
-# Link an executable against a built .so (stem, not the lib prefix)
+# Consume a Vox library through its .lib (the `see` does the linking)
+vox mathkit_consumer.vox -o consumer
+
+# Link an executable against a .so that has no .lib (stem, not the lib prefix)
 vox main.vox --link math --lib-path ./libs
 ```
 
@@ -5264,7 +5309,7 @@ vox main.vox --link math --lib-path ./libs
 
 ```ebnf
 program     ::= statement*
-statement   ::= print_stmt | var_decl | assignment | if_stmt | while_stmt 
+statement   ::= print_stmt | var_decl | assignment | if_stmt | while_stmt
               | for_stmt | func_def | thing_def | member_def | increment | decrement
               | break | continue | append_stmt
 
@@ -5292,8 +5337,8 @@ member_decl ::= "a" "function" "called" name
 member_def  ::= "To" "do" "the" name "'s" name (("," ("with" | "of"))? params)? "."
                 body "Return" "a" name "," expr "."
 
-if_stmt     ::= ("If" | "When") condition "then" "," block 
-                ("but if" condition "then" "," block)* 
+if_stmt     ::= ("If" | "When") condition "then" "," block
+                ("but if" condition "then" "," block)*
                 ("otherwise" | "else")? ","? block? "."
 
 while_stmt  ::= "While" condition "," block "."
@@ -5302,7 +5347,7 @@ for_stmt    ::= "For each" name "from" expr "to" expr "," block "."
               | "For each" name "in" expr "," block "."
 
 print_stmt  ::= "Print" expr ("," "but if" condition "print" expr)* "."
-              | "Print" "each" name "from" expr ("treating" expr "as" expr)? 
+              | "Print" "each" name "from" expr ("treating" expr "as" expr)?
                 ("," "but if" condition "print" expr)* "."
               | "Print" identifier "of" "each" name "from" expr ("treating" expr "as" expr)?
                 ("," "but if" condition "print" expr)* "."

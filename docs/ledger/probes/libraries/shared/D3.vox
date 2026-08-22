@@ -1,8 +1,10 @@
-(D3 -- minimal repro. LANGUAGE.md:5019-5025's own worked example of a
- .lib file's format shows a zero-parameter, no-return-type entry as bare
- `greet.` in the Table of Contents. The actual compiler always prefixes
- `To` for every entry, parameter-taking or not.
- Ran, from the repo root:
+(D3 -- minimal repro. RESOLVED 2026-08-22: the manual's own worked
+ example of a .lib file's format (then at LANGUAGE.md:5027-5033) showed
+ a zero-parameter, no-return-type entry as bare `greet.` in the Table of
+ Contents. The actual compiler always prefixed `To` for every entry,
+ parameter-taking or not. The manual was corrected in vox commit
+ 70ca1c2 (now LANGUAGE.md:5027-5033) to show `To greet.`, matching.
+ Re-ran 2026-08-22 against vox 0.4.9 (commit bb406de), from the repo root:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    /home/josj/scr/english/vox/target/release/vox
    docs/ledger/probes/libraries/shared/D3.vox --shared -o d4.so

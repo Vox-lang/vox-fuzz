@@ -8,7 +8,7 @@ see "../src/gen_literals.vox".
  1. LEGALITY, by the real compiler. Each helper is drawn 120 times and
     each draw is dropped into the declaration its kind belongs in - an
     integer into `a number called`, a float into `a float called`, a
-    character into `a number called` (LANGUAGE.md:1810 says 'A' equals
+    character into `a number called` (LANGUAGE.md:1809 says 'A' equals
     65), `nothing` into a list slot (:2661 is explicit that a list slot
     is one of the three positions it may occupy). That program is then
     compiled AND run by the compiler under test. Checking the emitted
