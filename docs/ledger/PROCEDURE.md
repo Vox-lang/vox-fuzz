@@ -123,6 +123,19 @@ the installed runtime is silently tested instead
 directory and diffs against the recorded output; a ledger whose probes do
 not re-run clean is not accepted.
 
+`scripts/check-citations.sh [--show] [path...]` is the mechanical half of
+citation hygiene: it walks every `LANGUAGE.md:N` / `LANGUAGE.md:N-M`
+reference under `src/ tests/ docs/ scripts/ CLAUDE.md` and flags any whose
+target line is blank, a code fence, or a bare heading — i.e. obviously not
+the sentence being cited. It cannot tell you a citation is *right*, only
+that it isn't obviously wrong; landing on real prose is necessary, not
+sufficient, and the hand-verification rule above is what makes a citation
+actually correct. It runs in well under a second (one pass over
+`LANGUAGE.md`, not one `sed` per citation) and is wired into `./test.sh`,
+gated on `docs/` only — `src/` and `tests/` citations belong to the
+generator authors, not this ledger gate, and are checked on demand with
+`scripts/check-citations.sh src tests`.
+
 Why this is the rule: on 2026-08-20 the master made three confident
 wrong claims about buffers in an hour (0-indexed; fixed `size` equals
 capacity; `Set byte` works on a fresh buffer). Any of them written into a
@@ -322,8 +335,8 @@ section justifies**: one line per sameness the report shows that the
 manual actually requires, with the LANGUAGE.md line and the row ID:
 
 ```
-- blank line after every function definition — LANGUAGE.md:76, FUN-03
-- buffer byte index never 0 — LANGUAGE.md:3251, BUF-19
+- blank line after every function definition — LANGUAGE.md:682–687, FUN-43
+- buffer byte index never 0 — LANGUAGE.md:3397, BUF-19
 ```
 
 The report's `citation` column is filled from these lines. An invariant

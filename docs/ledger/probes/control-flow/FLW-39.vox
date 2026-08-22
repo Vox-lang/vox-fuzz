@@ -1,5 +1,5 @@
 (FLW-39: "All resources are automatically cleaned up before exit"
- (LANGUAGE.md:2191). Not assertable from inside the exiting program -
+ (LANGUAGE.md:2229). Not assertable from inside the exiting program -
  there is no observation point after Exit - so this probe records the
  half that IS observable, out of band: it writes to a file handle it
  never closes, then exits 3, and the bytes are on disk afterwards.

@@ -2,9 +2,15 @@
  exit status 1 and no diagnostic at all: nothing on stdout, nothing on
  stderr. The manual says only that the flag is "required ... at runtime"
  and never says what a violation looks like.
+ STILL OPEN on vox 0.4.9, re-verified 2026-08-22, byte-identical (still
+ exit 1, no output). This is the brief's "keywords D8": adjudicated as a
+ design question, not a bug (REPORT-CANDIDATES-0.4.10.md candidate D),
+ and `vox-notes/candidates-round-4.md` (written today) still lists it
+ open: "Round-1 D: missing required flag -> silent exit 1 - design
+ question." No register number exists; none fabricated.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p && ./p
  expected output:
-   (exit 1 - no output at all)
+   exit 1
 )
 a flag called retries is "-r" or "--retries", it is a number and is required.
 Parse flags.

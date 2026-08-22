@@ -1,4 +1,4 @@
-(OPR-22: LANGUAGE.md:4575 lists `isn't` as an accepted spelling of `not`.
+(OPR-22: LANGUAGE.md:4662 lists `isn't` as an accepted spelling of `not`.
  It is not: the apostrophe is a structural token (the possessive marker
  and the quoted-name delimiter), so the word never reaches the keyword
  table. See Discrepancy 1 and probes/operators/D1.vox.

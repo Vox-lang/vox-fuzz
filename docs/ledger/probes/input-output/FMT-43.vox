@@ -3,7 +3,8 @@
  names the rule.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
-   compile error: Unknown variable: label
+   error: Unknown variable: label
+   (compile error - no binary is produced)
 )
 a number called mode is 1.
 if mode is 1 then,

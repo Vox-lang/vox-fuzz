@@ -1,24 +1,13 @@
-(D7 — Discrepancy 7 repro: `Return a buffer, "ABC".` — a text literal in
- the return expression of a buffer-returning function — yields an EMPTY
- buffer at the call site, size 0, printing nothing. The identical text in
- a buffer DECLARATION (`a buffer called direct is "ABC".`, the first two
- lines of output) yields size 3, and a function that builds a buffer
- variable that way and returns THAT also yields size 3 (FUN-23). So the
- text-to-buffer conversion the declaration form performs is not performed
- in the return expression, and no diagnostic says so.
- The strongest pro-compiler reading: `Return a buffer, <text literal>` is
- a type mismatch the analyzer chose to accept rather than reject, and the
- manual never promises a text literal converts to a buffer anywhere
- except in a declaration's initializer. On that reading this is a missing
- diagnostic rather than a wrong answer — but it is silent either way.
- Add ONE more string-initialised buffer anywhere in the program — top
- level or inside a function body — and it stops being silent and starts
- segfaulting. See Discrepancy 8 and D8.vox.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
+(D7 — RESOLVED (vox #53), re-recorded 2026-08-22 against vox 0.4.9. Used
+ to be: `Return a buffer, "ABC".` — a text literal in the return
+ expression of a buffer-returning function — yielded an EMPTY buffer at
+ the call site, size 0, printing nothing, where the identical text in a
+ buffer DECLARATION worked. Now the construct is refused at compile
+ time, naming the exact working rewrite.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p
  expected output:
-   3
-   ABC
-   0
+   error: Cannot return text "ABC" as a buffer; the caller reads what Return hands back as a buffer, and text is not one. Build the buffer first: 'a buffer called made is "ABC". Return a buffer, made.'
+   (compile error - no binary is produced)
 )
 To 'give literal'. Return a buffer, "ABC".
 

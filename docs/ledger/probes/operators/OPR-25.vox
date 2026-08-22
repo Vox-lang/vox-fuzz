@@ -1,4 +1,4 @@
-(OPR-25: `bit-or` is bitwise OR (LANGUAGE.md:4582).
+(OPR-25: `bit-or` is bitwise OR (LANGUAGE.md:4669).
  240 OR 170 is 250 (0b11111010).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-25.vox -o p && ./p
  expected output:

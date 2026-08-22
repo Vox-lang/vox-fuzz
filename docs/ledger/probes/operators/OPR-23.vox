@@ -1,4 +1,4 @@
-(OPR-23: LANGUAGE.md:4575 lists `aren't` as an accepted spelling of `not`.
+(OPR-23: LANGUAGE.md:4662 lists `aren't` as an accepted spelling of `not`.
  It fails for the same lexical reason as OPR-22. See Discrepancy 1.
  (Compile-error claim: not assertable from a runtime leaf.)
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-23.vox -o p && ./p

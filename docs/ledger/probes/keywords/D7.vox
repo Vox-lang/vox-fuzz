@@ -1,12 +1,15 @@
-(Discrepancy 7 repro — SEGFAULT. Initialising a list from the
- `all the numbers from …` range phrase compiles and the declaration itself
- survives; printing the list dies with SIGSEGV after emitting the opening
- bracket. The manual says ranges are "not allocated as lists"
- (LANGUAGE.md:262), so this form arguably should not compile at all — but
- refusing it is a diagnostic, not a signal death.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
+(Discrepancy 7 — RESOLVED (vox #56, reject-it path), re-recorded
+ 2026-08-22 against vox 0.4.9. Used to be: SEGFAULT. Initialising a list
+ from the `all the numbers from …` range phrase compiled and the
+ declaration itself survived; printing the list died with SIGSEGV after
+ emitting the opening bracket. The manual says ranges are "not allocated
+ as lists" (LANGUAGE.md:262) — that reading won here (unlike D6, where
+ the range was instead made to work): the construct is now refused
+ outright at compile time.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p
  expected output:
-   (exit 139 - SIGSEGV after printing "[")
+   error: A range is not a value: `all the numbers from/between ...`
+   (compile error - no binary is produced)
 )
 a list called steps is all the numbers from 1 to 3.
 Print steps.

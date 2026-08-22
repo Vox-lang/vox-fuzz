@@ -39,8 +39,10 @@ for d in "${dirs[@]}"; do
       fail=$((fail+1)); echo "FAIL  $probe (did not compile)"; sed 's/^/      /' "$work/$name.cerr" | head -5; continue
     fi
     wantexit="$(grep -oE 'exit (status )?[0-9]+' <<<"$expected" | head -1 | grep -oE '[0-9]+$')"
-    # annotation lines like "(exit status 3)" / "(deterministic, 6/6 runs)" are notes, not output
-    expected="$(grep -vE '^\(exit( status)? [0-9]+\)' <<<"$expected" | grep -vE '^\(compile failed' | sed 's/[[:space:]]*$//')"
+    # annotation lines like "(exit status 3)", bare "exit 3", or
+    # "(deterministic, 6/6 runs)" are notes, not output — strip both the
+    # parenthesized and the bare-line spelling of the exit annotation
+    expected="$(grep -vE '^\(exit( status)? [0-9]+\)' <<<"$expected" | grep -vE '^ *exit( status)? [0-9]+ *$' | grep -vE '^\(compile failed' | sed 's/[[:space:]]*$//')"
     # stdin: a "Ran:" header line of the form "... && printf '...' | ./p" feeds the probe
     feed="$(grep -m1 '^ *Ran:' "$probe" | sed -n "s/.*&& *\(printf [^|]*\)| *\.\/p.*/\1/p")"
     # argv: anything after "./p" (or "| ./p") on the Ran: line — e.g. "&& ./p alpha beta" -> "alpha beta"
@@ -51,10 +53,12 @@ for d in "${dirs[@]}"; do
     actual="$(sed 's/[[:space:]]*$//' <<<"$actual")"
     if [ -n "$wantexit" ]; then
       # A crash/exit/error probe ASSERTS on its exit code. Its stdout is often
-      # non-deterministic (a run-varying heap pointer, a core-dump/timeout line),
-      # so exit-match alone is the pass condition here; ordinary probes (no exit
-      # annotation) still require a literal stdout match below.
-      if [ "$status" = "$wantexit" ]; then pass=$((pass+1)); echo "PASS  $probe (exit $status as recorded)"
+      # non-deterministic (a run-varying heap pointer, a core-dump/timeout
+      # line, or genuinely clock-dependent output like a wall-clock read),
+      # so an empty recorded block, a "Segmentation" line, or a block that
+      # says its own output is clock-dependent is exit-only; any other
+      # recorded block must still match stdout literally.
+      if [ "$status" = "$wantexit" ] && { [ -z "$expected" ] || [ "$actual" = "$expected" ] || grep -qi "Segmentation\|clock-dependent" <<<"$expected"; }; then pass=$((pass+1)); echo "PASS  $probe (exit $status as recorded)"
       else fail=$((fail+1)); echo "FAIL  $probe (expected exit $wantexit, got $status)"; diff <(echo "$expected") <(echo "$actual") | sed 's/^/      /' | head -6; fi
     elif [ "$actual" = "$expected" ]; then pass=$((pass+1)); echo "PASS  $probe"
     else fail=$((fail+1)); echo "FAIL  $probe"; diff <(echo "$expected") <(echo "$actual") | sed 's/^/      /' | head -10; fi

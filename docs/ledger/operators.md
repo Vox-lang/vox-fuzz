@@ -1,19 +1,19 @@
 # Claim ledger: Operators
 
-Source: `../vox/LANGUAGE.md` lines **4546–4609** (Operators § Arithmetic
-Operators, Comparison Operators, Logical Operators, Bitwise Operators,
-and the worked **Examples** block), **manual version 0.4.8** (5240
-lines).
+Source: `../vox/LANGUAGE.md` lines **4633–4696**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), re-pinned 2026-08-22 (previously
+pinned to a 5240-line 0.4.8 manual) — Operators § Arithmetic Operators,
+Comparison Operators, Logical Operators, Bitwise Operators, and the
+worked **Examples** block.
 
-**The line range in the brief and in `INDEX.md` is stale.** Both say
-4418–4482, which is where Operators sat at manual version 0.4.7.
-`INDEX.md` pins itself to 0.4.7 and the manual is now 0.4.8, 128 lines
-longer; at 4418–4482 you land in the middle of *Command-Line Arguments*
-(flag defaults, the parse point, `arguments's all` vs `raw`) and
-*Environment Variables*, not Operators at all. This ledger maps what is
-really under the `## Operators` heading in 0.4.8. `INDEX.md` needs
-re-pinning for every section from `ARG` onward before the next mapper
-starts — the drift is roughly +128 lines at this point in the file.
+The 0.4.8→0.4.9 drift in this range is a uniform **+87 lines**, confirmed
+at multiple anchors. All 3 discrepancies (still unadjudicated — no prior
+lawyer verdict) re-verified unchanged via the full `docs/check-probes.sh`
+sweep: 46/46 pass, no manual or compiler drift found. (Discrepancy 1,
+`isn't`/`aren't` not lexing, matches `vox-notes/REPORT-CANDIDATES-
+ROUND-3.md` candidate N — `candidates-round-4.md` still lists it as an
+open design question today, "keep (document) or drop," not a numbered
+fix.)
 
 Compiler used for every probe: `vox v0.4.8`
 (`/home/josj/scr/english/vox/target/release/vox`, git
@@ -81,54 +81,54 @@ said in the row rather than invented as a new status, the way
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| OPR-01 | 4552 | `add` is the addition operator. | emit `x add y` and assert the sum | yes — `If lhs add rhs is not 26 then, Print "ASSERT OPR-01: expected 26", Exit 95.` | `gen expr` (choice 0), `gen deep expr`, `gen append expr`, `gen leaf float arithmetic`, `gen leaf deep arithmetic` — all `Print`, none assert | exercised | |
-| OPR-02 | 4552 | `plus` is an accepted spelling of addition. | emit `x plus y` and assert the sum | yes — same shape as OPR-01 | **none** — every `plus` in `src/gen_*.vox` is prose in a comment; the spelling is never emitted | todo — hand-verified to work | |
-| OPR-03 | 4553 | `subtract` is the subtraction operator. | emit `x subtract y` and assert the difference | yes — `If lhs subtract rhs is not 14 then, … Exit 95.` | `gen emit prelude thing methods` (`src/gen_things.vox:131`) emits exactly one hardcoded `0 subtract original's x1`, never asserted and never varied | exercised (one fixed instance) | |
-| OPR-04 | 4553 | `minus` is an accepted spelling of subtraction. | emit `x minus y` and assert the difference | yes — same shape | `gen expr` (choice 1), `gen deep expr`, `gen append expr` | exercised | |
-| OPR-05 | 4554 | `multiply` is the multiplication operator. | emit `x multiply y` and assert the product | yes — `If lhs multiply rhs is not 120 then, … Exit 95.` | `gen expr` (choice 2), `gen deep expr`, `gen append expr`, `gen leaf float arithmetic`, `gen leaf deep arithmetic` | exercised | |
-| OPR-06 | 4554 | `times` is an accepted spelling of multiplication. | emit `x times y` and assert the product | yes — same shape | `gen expr` (choice 3), `gen deep expr`; deliberately excluded from `gen append expr` — see OPR-41 | exercised | |
-| OPR-07 | 4555 | `divide` is the division operator. | emit `x divide y` with a nonzero divisor and assert the quotient | yes, but the generator must apply OPR-35's truncation rule to compute the expected value | `gen deep expr` (choice 4, safe divisor 2–10), `gen leaf float arithmetic` | exercised | |
-| OPR-08 | 4556 | `modulo` is the modulo operator. | emit `x modulo y` and assert the remainder | yes — `If lhs modulo rhs is not 2 then, … Exit 95.` | `gen deep expr` (choice 5), `gen condition` (the `… modulo m is equal to 0` check), `gen leaf deep arithmetic` | exercised | |
-| OPR-09 | 4556 | `mod` is an accepted spelling of modulo. | emit `x mod y` and assert the remainder | yes — same shape | **none** — never emitted | todo — hand-verified to work | |
-| OPR-10 | 4556 | `remainder` is an accepted spelling of modulo. | emit `x remainder y` and assert the remainder | yes — same shape | **none** — the string `remainder` does not occur anywhere in `src/gen_*.vox` | todo — hand-verified to work | |
-| OPR-11 | 4562 | `is equal to` tests equality. | emit the comparison in an `If` on operands known equal **and** on operands known unequal | yes, via the witness shape (OPR-40 forbids the direct one): `a number called witness is 0. If lhs is equal to rhs then, Set witness to 1. If witness is not 1 then, … Exit 95.` | `gen condition` (comparison choice 2) | exercised | |
-| OPR-12 | 4562 | bare `is` is an accepted spelling of equality. | emit `If x is y` on both a matching and a non-matching pair | yes — witness shape | `gen emit argv assertions` (`src/gen_misc.vox:319`, `If fl{n}on is false then, Exit 93.`) — and this one **does** assert, but only against a boolean literal, never against another variable or a number | exercised (boolean-literal operand only) | |
-| OPR-13 | 4563 | `is not equal to` tests inequality. | emit the comparison both ways round | yes — witness shape | `gen condition` (comparison choice 3) | exercised | |
-| OPR-14 | 4563 | bare `is not` is an accepted spelling of inequality. | emit `If x is not y` both ways round | yes — witness shape | `gen emit argv assertions` (`src/gen_misc.vox:316–317`) — asserts against a text literal and a number literal, exits 91/92 | exercised (literal operands only; never variable-vs-variable) | |
-| OPR-15 | 4564 | `is greater than` is a **strict** greater-than. | emit it on a greater pair, an equal pair and a lesser pair | yes — witness shape, one per case | `gen condition` (comparison choice 0) — never on an equal pair, so strictness is not pinned | exercised (strictness untested) | |
-| OPR-16 | 4565 | `is less than` is a **strict** less-than. | as OPR-15 | yes — witness shape | `gen condition` (comparison choice 1) — same gap | exercised (strictness untested) | |
-| OPR-17 | 4566 | `is greater than or equal to` admits the equal case. | emit it on greater, equal and lesser pairs | yes — witness shape; the equal case is the one that distinguishes it from OPR-15 | `gen condition` (comparison choice 4) — operands are two random variable references, so the equal case is hit only by coincidence and never checked | exercised (the equal case, which is the whole claim, is untested) | |
-| OPR-18 | 4567 | `is less than or equal to` admits the equal case. | as OPR-17 | yes — witness shape | `gen condition` (comparison choice 5) — same gap | exercised (equal case untested) | |
-| OPR-19 | 4573 | `and` is logical conjunction. | emit all four rows of the truth table and assert which fire | yes — witness shape per row | `gen condition` (joiner choice 1) joins a comparison with a modulo check; the operand truth values are whatever the random variables give, so no row of the table is ever pinned | exercised (truth table untested) | |
-| OPR-20 | 4574 | `or` is logical disjunction. | as OPR-19 | yes — witness shape per row | `gen condition` (joiner choice 2) — same gap | exercised (truth table untested) | |
-| OPR-21 | 4575 | `not` is logical negation. | emit `If not <condition>` on a true and on a false condition | yes — witness shape | **none** — prefix `not` is never emitted into a generated program (the only ` not ` in emitted text is the `is not` of OPR-14 and the word "not" inside an error message string) | todo — real gap, hand-verified to work | |
-| OPR-22 | 4575 | `isn't` is an accepted spelling of `not`. | — | **no** — it does not compile; the row's outcome is a compile error, so a runtime leaf cannot carry it. See **Discrepancy 1** | none | not assertable — the construct does not compile; **the manual's claim is contradicted**, blocked on D1 | |
-| OPR-23 | 4575 | `aren't` is an accepted spelling of `not`. | — | **no** — same as OPR-22. See **Discrepancy 1** | none | not assertable — the construct does not compile; **the manual's claim is contradicted**, blocked on D1 | |
-| OPR-24 | 4581 | `bit-and` is bitwise AND. | emit `x bit-and y` on known operands and assert the result | yes — `If lhs bit-and rhs is not 160 then, … Exit 95.` | **none** — `bit-and` does not occur anywhere in `src/gen_*.vox` | todo — real gap | |
-| OPR-25 | 4582 | `bit-or` is bitwise OR. | as OPR-24 | yes | **none** | todo — real gap | |
-| OPR-26 | 4583 | `bit-xor` is bitwise XOR. | as OPR-24 | yes | **none** | todo — real gap | |
-| OPR-27 | 4584 | `bit-shift-left` shifts left. | emit `x bit-shift-left n` and assert; keep `n` under 64 or apply OPR-37 | yes | **none** | todo — real gap | |
-| OPR-28 | 4585 | `bit-shift-right` shifts right. | as OPR-27 | yes | **none** | todo — real gap | |
-| OPR-29 | 4589–4590 | The example's binary literals are legal number initialisers carrying the values the section then relies on (`0b11110000` is 240, `0b10101010` is 170). | declare a number from a `0b` literal and assert its decimal value | yes — `If lhs is not 240 then, … Exit 95.` | **none** emits a `0b` literal; `gen leaf base convert` in `src/gen_text.vox` covers `as a binary number` **casting from text**, a different construct | todo — composite with the Expressions section (LANGUAGE.md:1800, 1809) | |
-| OPR-30 | 4593 | A bitwise expression is legal as a **declaration initialiser** (`a number called result is lhs bit-and rhs.`). | emit the declaration form, not just a `Print` | yes — assert `result` afterwards | **none** | todo | |
-| OPR-31 | 4596, 4599, 4602, 4603 | A bitwise expression is legal as a **`Set … to …` value**, and a variable may be reassigned through all five operators in turn. | emit the four `Set` lines of the example and assert after each | yes — four assertions | **none** | todo | |
-| OPR-32 | 4602–4603 | The shift count may be an integer literal. | emit a literal shift count; also emit a **variable** shift count, which the manual never shows | yes | **none** | todo — hand-verified that the variable form works too | |
-| OPR-33 | 4606 | Bitwise operations **chain without braces**, associating left to right (`value bit-shift-right 8 bit-and 0xFF`). | emit a two-operator chain with no `{...}` and assert; pick operands that distinguish left- from right-association | yes, and the probe already carries the discriminating case: `240 bit-shift-right 4 bit-and 3` is 3 left-to-right and would be 240 right-to-left | **none** — `gen deep expr` chains arithmetic but never bitwise, and always brackets with `{...}` when `grouped` is true | todo — the unbraced chain is the interesting half and nothing emits it | |
-| OPR-34 | 4588–4607 | The worked example, as a whole, compiles and does what the surrounding prose says. | reproduce verbatim | **no** — it does not compile. See **Discrepancy 2** | none | not assertable — the block does not compile; **the manual's claim is contradicted**, blocked on D2. Every individual line of it is covered by OPR-29/30/31/32/33 and all of those pass | |
-| OPR-35 | 4555 (undocumented precision) | *(gap in the manual)* Integer `divide` truncates **toward zero** (`-7 divide 2` is `-3`, not `-4`), and **dividing by zero yields 0** with no crash and no halt. | emit a division with a zero divisor and assert the result is 0 and the program continues; emit a negative dividend and assert the truncation direction | yes — the generator picks both operands | **none** — `gen deep expr` and `gen leaf float arithmetic` both deliberately force a nonzero divisor (see their own comments), and no leaf emits a negative dividend | todo — real gap, and the zero-divisor case is memory-safety-relevant | |
-| OPR-36 | 4556 (undocumented precision) | *(gap)* `modulo` **by zero yields 0** with no crash, and a negative dividend gives a **negative** remainder (`-7 modulo 3` is `-1`; the sign follows the dividend). | emit modulo by zero and assert 0; emit a negative dividend and assert the sign | yes | **none** — `gen condition`'s modulo check forces a modulus of 2–6 and a nonnegative left operand | todo — real gap | |
-| OPR-37 | 4584–4585 (undocumented precision) | *(gap)* **Shift counts are taken modulo 64.** `1 bit-shift-left 64` is 1; `1 bit-shift-left 100` is `1 bit-shift-left 36`; a negative count wraps the same way (`16 bit-shift-right -2` is `16 bit-shift-right 62`, i.e. 0). The manual states no bound on the count. | emit shift counts at, above and below 64 and assert against the mod-64 rule | yes — but **only if the generator applies the mod-64 rule when computing its expected value**. A leaf that draws a random shift count and asserts `x << n` naively will manufacture false findings the moment `n` reaches 64. | **none** | todo — this row is the trap in this section; write it before writing OPR-27/28's leaves, not after | |
-| OPR-38 | 4577–4585 (undocumented precision) | *(gap)* **Every bitwise operator applied to a float operand yields `0.0`**, whatever the operands — the float is neither truncated to an integer nor refused. `6.0 bit-and 4` is `0.0` where `6 bit-and 4` is `4`. | emit a bitwise operation with a float operand | yes — assert `0.0`, but see **Discrepancy 3**: encoding this as an oracle encodes a behaviour nobody has blessed | **none** — `gen leaf float arithmetic` never reaches a bitwise operator | todo — **blocked on D3**; do not build a leaf that asserts `0.0` until the discrepancy is adjudicated | |
-| OPR-39 | 4569–4575 (undocumented precision) | *(gap)* The logical operators carry conventional precedence: `not` binds tighter than `and`, and `and` binds tighter than `or`. The manual's table gives three operators and no precedence at all. | emit a three-term condition whose truth value differs under the two readings, and assert which branch fires | yes — witness shape; `affirmed or denied and denied` is the discriminator (true under `and`-tighter, false left-to-right) | `gen condition` emits exactly one join of exactly two conditions, so a three-term condition is never built and precedence is never exercised | todo | |
-| OPR-40 | 4558–4567 (undocumented precision) | *(gap)* The comparison operators are **not first-class expressions**: a comparison parses only in a condition position. `Print lhs is greater than rhs.` and `a boolean called ordered is lhs is greater than rhs.` are both compile errors, while the arithmetic and bitwise operators are legal anywhere a value is. The Operators section presents the four tables as peers and says nothing about this. | — | **no** — the outcome is a compile error. But this row governs the `assertable?` answer for OPR-11 through OPR-21 and for OPR-19/20/21, which is why it is here rather than in the Expressions ledger | the restriction is already known to the generator — `gen condition`'s own comment (`src/gen_core.vox:170–176`) records hand-verifying it against 0.4.5 — but it is nowhere in the manual | not assertable — a compile error is the outcome; **manual gap**, reproduces on 0.4.8 | |
-| OPR-41 | 4554 (undocumented precision) | *(gap)* A limit on OPR-06: `times` is **rejected in the value slot of `append <value> to <collection>`**, where `multiply` is accepted. The alias reaches every other position — `Print`, `Set`, declaration initialiser. | — | **no** — compile error | `gen append expr` (`src/gen_core.vox:139–164`) exists solely to route around this; its comment says the finding was "reported separately" before this ledger existed | not assertable — a compile error is the outcome; **known finding, still open on 0.4.8** | |
-| OPR-42 | 4550–4585 (undocumented precision) | *(gap)* A text, buffer or list operand in a **bitwise** expression is a clean compile error, the same as in arithmetic (`Cannot use text label in arithmetic; cast it first…`). LANGUAGE.md:1805 states this for arithmetic only, 2700 lines away; the Operators section says nothing about any operator's operand domain. | — | **no** — compile error, and that is the point: the compiler refuses the pointer-as-integer case rather than letting it through | none | not assertable — a compile error is the outcome, and that is the desired one; **manual gap**, the compiler is right and undocumented. Contrast OPR-38, where the float case is neither converted nor refused | |
+| OPR-01 | 4639 | `add` is the addition operator. | emit `x add y` and assert the sum | yes — `If lhs add rhs is not 26 then, Print "ASSERT OPR-01: expected 26", Exit 95.` | `gen expr` (choice 0), `gen deep expr`, `gen append expr`, `gen leaf float arithmetic`, `gen leaf deep arithmetic` — all `Print`, none assert | exercised | |
+| OPR-02 | 4639 | `plus` is an accepted spelling of addition. | emit `x plus y` and assert the sum | yes — same shape as OPR-01 | **none** — every `plus` in `src/gen_*.vox` is prose in a comment; the spelling is never emitted | todo — hand-verified to work | |
+| OPR-03 | 4640 | `subtract` is the subtraction operator. | emit `x subtract y` and assert the difference | yes — `If lhs subtract rhs is not 14 then, … Exit 95.` | `gen emit prelude thing methods` (`src/gen_things.vox:131`) emits exactly one hardcoded `0 subtract original's x1`, never asserted and never varied | exercised (one fixed instance) | |
+| OPR-04 | 4640 | `minus` is an accepted spelling of subtraction. | emit `x minus y` and assert the difference | yes — same shape | `gen expr` (choice 1), `gen deep expr`, `gen append expr` | exercised | |
+| OPR-05 | 4641 | `multiply` is the multiplication operator. | emit `x multiply y` and assert the product | yes — `If lhs multiply rhs is not 120 then, … Exit 95.` | `gen expr` (choice 2), `gen deep expr`, `gen append expr`, `gen leaf float arithmetic`, `gen leaf deep arithmetic` | exercised | |
+| OPR-06 | 4641 | `times` is an accepted spelling of multiplication. | emit `x times y` and assert the product | yes — same shape | `gen expr` (choice 3), `gen deep expr`; deliberately excluded from `gen append expr` — see OPR-41 | exercised | |
+| OPR-07 | 4642 | `divide` is the division operator. | emit `x divide y` with a nonzero divisor and assert the quotient | yes, but the generator must apply OPR-35's truncation rule to compute the expected value | `gen deep expr` (choice 4, safe divisor 2–10), `gen leaf float arithmetic` | exercised | |
+| OPR-08 | 4643 | `modulo` is the modulo operator. | emit `x modulo y` and assert the remainder | yes — `If lhs modulo rhs is not 2 then, … Exit 95.` | `gen deep expr` (choice 5), `gen condition` (the `… modulo m is equal to 0` check), `gen leaf deep arithmetic` | exercised | |
+| OPR-09 | 4643 | `mod` is an accepted spelling of modulo. | emit `x mod y` and assert the remainder | yes — same shape | **none** — never emitted | todo — hand-verified to work | |
+| OPR-10 | 4643 | `remainder` is an accepted spelling of modulo. | emit `x remainder y` and assert the remainder | yes — same shape | **none** — the string `remainder` does not occur anywhere in `src/gen_*.vox` | todo — hand-verified to work | |
+| OPR-11 | 4649 | `is equal to` tests equality. | emit the comparison in an `If` on operands known equal **and** on operands known unequal | yes, via the witness shape (OPR-40 forbids the direct one): `a number called witness is 0. If lhs is equal to rhs then, Set witness to 1. If witness is not 1 then, … Exit 95.` | `gen condition` (comparison choice 2) | exercised | |
+| OPR-12 | 4649 | bare `is` is an accepted spelling of equality. | emit `If x is y` on both a matching and a non-matching pair | yes — witness shape | `gen emit argv assertions` (`src/gen_misc.vox:319`, `If fl{n}on is false then, Exit 93.`) — and this one **does** assert, but only against a boolean literal, never against another variable or a number | exercised (boolean-literal operand only) | |
+| OPR-13 | 4650 | `is not equal to` tests inequality. | emit the comparison both ways round | yes — witness shape | `gen condition` (comparison choice 3) | exercised | |
+| OPR-14 | 4650 | bare `is not` is an accepted spelling of inequality. | emit `If x is not y` both ways round | yes — witness shape | `gen emit argv assertions` (`src/gen_misc.vox:316–317`) — asserts against a text literal and a number literal, exits 91/92 | exercised (literal operands only; never variable-vs-variable) | |
+| OPR-15 | 4651 | `is greater than` is a **strict** greater-than. | emit it on a greater pair, an equal pair and a lesser pair | yes — witness shape, one per case | `gen condition` (comparison choice 0) — never on an equal pair, so strictness is not pinned | exercised (strictness untested) | |
+| OPR-16 | 4652 | `is less than` is a **strict** less-than. | as OPR-15 | yes — witness shape | `gen condition` (comparison choice 1) — same gap | exercised (strictness untested) | |
+| OPR-17 | 4653 | `is greater than or equal to` admits the equal case. | emit it on greater, equal and lesser pairs | yes — witness shape; the equal case is the one that distinguishes it from OPR-15 | `gen condition` (comparison choice 4) — operands are two random variable references, so the equal case is hit only by coincidence and never checked | exercised (the equal case, which is the whole claim, is untested) | |
+| OPR-18 | 4654 | `is less than or equal to` admits the equal case. | as OPR-17 | yes — witness shape | `gen condition` (comparison choice 5) — same gap | exercised (equal case untested) | |
+| OPR-19 | 4660 | `and` is logical conjunction. | emit all four rows of the truth table and assert which fire | yes — witness shape per row | `gen condition` (joiner choice 1) joins a comparison with a modulo check; the operand truth values are whatever the random variables give, so no row of the table is ever pinned | exercised (truth table untested) | |
+| OPR-20 | 4661 | `or` is logical disjunction. | as OPR-19 | yes — witness shape per row | `gen condition` (joiner choice 2) — same gap | exercised (truth table untested) | |
+| OPR-21 | 4662 | `not` is logical negation. | emit `If not <condition>` on a true and on a false condition | yes — witness shape | **none** — prefix `not` is never emitted into a generated program (the only ` not ` in emitted text is the `is not` of OPR-14 and the word "not" inside an error message string) | todo — real gap, hand-verified to work | |
+| OPR-22 | 4662 | `isn't` is an accepted spelling of `not`. | — | **no** — it does not compile; the row's outcome is a compile error, so a runtime leaf cannot carry it. See **Discrepancy 1** | none | not assertable — the construct does not compile; **the manual's claim is contradicted**, blocked on D1 | |
+| OPR-23 | 4662 | `aren't` is an accepted spelling of `not`. | — | **no** — same as OPR-22. See **Discrepancy 1** | none | not assertable — the construct does not compile; **the manual's claim is contradicted**, blocked on D1 | |
+| OPR-24 | 4668 | `bit-and` is bitwise AND. | emit `x bit-and y` on known operands and assert the result | yes — `If lhs bit-and rhs is not 160 then, … Exit 95.` | **none** — `bit-and` does not occur anywhere in `src/gen_*.vox` | todo — real gap | |
+| OPR-25 | 4669 | `bit-or` is bitwise OR. | as OPR-24 | yes | **none** | todo — real gap | |
+| OPR-26 | 4670 | `bit-xor` is bitwise XOR. | as OPR-24 | yes | **none** | todo — real gap | |
+| OPR-27 | 4671 | `bit-shift-left` shifts left. | emit `x bit-shift-left n` and assert; keep `n` under 64 or apply OPR-37 | yes | **none** | todo — real gap | |
+| OPR-28 | 4672 | `bit-shift-right` shifts right. | as OPR-27 | yes | **none** | todo — real gap | |
+| OPR-29 | 4676–4677 | The example's binary literals are legal number initialisers carrying the values the section then relies on (`0b11110000` is 240, `0b10101010` is 170). | declare a number from a `0b` literal and assert its decimal value | yes — `If lhs is not 240 then, … Exit 95.` | **none** emits a `0b` literal; `gen leaf base convert` in `src/gen_text.vox` covers `as a binary number` **casting from text**, a different construct | todo — composite with the Expressions section (LANGUAGE.md:1827, 1836) | |
+| OPR-30 | 4680 | A bitwise expression is legal as a **declaration initialiser** (`a number called result is lhs bit-and rhs.`). | emit the declaration form, not just a `Print` | yes — assert `result` afterwards | **none** | todo | |
+| OPR-31 | 4683, 4686, 4689, 4690 | A bitwise expression is legal as a **`Set … to …` value**, and a variable may be reassigned through all five operators in turn. | emit the four `Set` lines of the example and assert after each | yes — four assertions | **none** | todo | |
+| OPR-32 | 4689–4690 | The shift count may be an integer literal. | emit a literal shift count; also emit a **variable** shift count, which the manual never shows | yes | **none** | todo — hand-verified that the variable form works too | |
+| OPR-33 | 4693 | Bitwise operations **chain without braces**, associating left to right (`value bit-shift-right 8 bit-and 0xFF`). | emit a two-operator chain with no `{...}` and assert; pick operands that distinguish left- from right-association | yes, and the probe already carries the discriminating case: `240 bit-shift-right 4 bit-and 3` is 3 left-to-right and would be 240 right-to-left | **none** — `gen deep expr` chains arithmetic but never bitwise, and always brackets with `{...}` when `grouped` is true | todo — the unbraced chain is the interesting half and nothing emits it | |
+| OPR-34 | 4675–4694 | The worked example, as a whole, compiles and does what the surrounding prose says. | reproduce verbatim | **no** — it does not compile. See **Discrepancy 2** | none | not assertable — the block does not compile; **the manual's claim is contradicted**, blocked on D2. Every individual line of it is covered by OPR-29/30/31/32/33 and all of those pass | |
+| OPR-35 | 4642 (undocumented precision) | *(gap in the manual)* Integer `divide` truncates **toward zero** (`-7 divide 2` is `-3`, not `-4`), and **dividing by zero yields 0** with no crash and no halt. | emit a division with a zero divisor and assert the result is 0 and the program continues; emit a negative dividend and assert the truncation direction | yes — the generator picks both operands | **none** — `gen deep expr` and `gen leaf float arithmetic` both deliberately force a nonzero divisor (see their own comments), and no leaf emits a negative dividend | todo — real gap, and the zero-divisor case is memory-safety-relevant | |
+| OPR-36 | 4643 (undocumented precision) | *(gap)* `modulo` **by zero yields 0** with no crash, and a negative dividend gives a **negative** remainder (`-7 modulo 3` is `-1`; the sign follows the dividend). | emit modulo by zero and assert 0; emit a negative dividend and assert the sign | yes | **none** — `gen condition`'s modulo check forces a modulus of 2–6 and a nonnegative left operand | todo — real gap | |
+| OPR-37 | 4671–4672 (undocumented precision) | *(gap)* **Shift counts are taken modulo 64.** `1 bit-shift-left 64` is 1; `1 bit-shift-left 100` is `1 bit-shift-left 36`; a negative count wraps the same way (`16 bit-shift-right -2` is `16 bit-shift-right 62`, i.e. 0). The manual states no bound on the count. | emit shift counts at, above and below 64 and assert against the mod-64 rule | yes — but **only if the generator applies the mod-64 rule when computing its expected value**. A leaf that draws a random shift count and asserts `x << n` naively will manufacture false findings the moment `n` reaches 64. | **none** | todo — this row is the trap in this section; write it before writing OPR-27/28's leaves, not after | |
+| OPR-38 | 4664–4672 (undocumented precision) | *(gap)* **Every bitwise operator applied to a float operand yields `0.0`**, whatever the operands — the float is neither truncated to an integer nor refused. `6.0 bit-and 4` is `0.0` where `6 bit-and 4` is `4`. | emit a bitwise operation with a float operand | yes — assert `0.0`, but see **Discrepancy 3**: encoding this as an oracle encodes a behaviour nobody has blessed | **none** — `gen leaf float arithmetic` never reaches a bitwise operator | todo — **blocked on D3**; do not build a leaf that asserts `0.0` until the discrepancy is adjudicated | |
+| OPR-39 | 4656–4662 (undocumented precision) | *(gap)* The logical operators carry conventional precedence: `not` binds tighter than `and`, and `and` binds tighter than `or`. The manual's table gives three operators and no precedence at all. | emit a three-term condition whose truth value differs under the two readings, and assert which branch fires | yes — witness shape; `affirmed or denied and denied` is the discriminator (true under `and`-tighter, false left-to-right) | `gen condition` emits exactly one join of exactly two conditions, so a three-term condition is never built and precedence is never exercised | todo | |
+| OPR-40 | 4645–4654 (undocumented precision) | *(gap)* The comparison operators are **not first-class expressions**: a comparison parses only in a condition position. `Print lhs is greater than rhs.` and `a boolean called ordered is lhs is greater than rhs.` are both compile errors, while the arithmetic and bitwise operators are legal anywhere a value is. The Operators section presents the four tables as peers and says nothing about this. | — | **no** — the outcome is a compile error. But this row governs the `assertable?` answer for OPR-11 through OPR-21 and for OPR-19/20/21, which is why it is here rather than in the Expressions ledger | the restriction is already known to the generator — `gen condition`'s own comment (`src/gen_core.vox:170–176`) records hand-verifying it against 0.4.5 — but it is nowhere in the manual | not assertable — a compile error is the outcome; **manual gap**, reproduces on 0.4.8 | |
+| OPR-41 | 4641 (undocumented precision) | *(gap)* A limit on OPR-06: `times` is **rejected in the value slot of `append <value> to <collection>`**, where `multiply` is accepted. The alias reaches every other position — `Print`, `Set`, declaration initialiser. | — | **no** — compile error | `gen append expr` (`src/gen_core.vox:139–164`) exists solely to route around this; its comment says the finding was "reported separately" before this ledger existed | not assertable — a compile error is the outcome; **known finding, still open on 0.4.8** | |
+| OPR-42 | 4637–4672 (undocumented precision) | *(gap)* A text, buffer or list operand in a **bitwise** expression is a clean compile error, the same as in arithmetic (`Cannot use text label in arithmetic; cast it first…`). LANGUAGE.md:1832 states this for arithmetic only, far away; the Operators section says nothing about any operator's operand domain. | — | **no** — compile error, and that is the point: the compiler refuses the pointer-as-integer case rather than letting it through | none | not assertable — a compile error is the outcome, and that is the desired one; **manual gap**, the compiler is right and undocumented. Contrast OPR-38, where the float case is neither converted nor refused | |
 
 ## Discrepancies
 
 ### 1. `isn't` and `aren't` are documented spellings of `not` and do not lex
 
-LANGUAGE.md:4575 — `| Not | \`not\`, \`isn't\`, \`aren't\` |`. Repro
+LANGUAGE.md:4662 — `| Not | \`not\`, \`isn't\`, \`aren't\` |`. Repro
 (`probes/operators/D1.vox`):
 
 ```
@@ -143,7 +143,7 @@ error: Expected a statement, got Apostrophe
 ```
 
 `aren't` fails identically (`OPR-23.vox`), in the plural-`are` position
-the Expressions section documents at LANGUAGE.md:1866–1889, and so do
+the Expressions section documents at LANGUAGE.md:1953–1976, and so do
 `doesn't` and `don't` — which the lexer also accepts and the manual does
 not mention.
 
@@ -181,7 +181,7 @@ with a located diagnostic.
 
 ### 2. The Operators section's only worked example does not compile
 
-LANGUAGE.md:4588–4607. The block declares `lhs`, `rhs` and `result`, and
+LANGUAGE.md:4676–4694. The block declares `lhs`, `rhs` and `result`, and
 its last line reads from `value`, which nothing declares. Repro is the
 block copied verbatim (`probes/operators/D2.vox`):
 
@@ -206,7 +206,7 @@ text even offers the nearest name it knows. The reading that saves the
 *manual* is that the fenced block is a set of illustrative fragments
 rather than one program, with `value` standing in for "any number
 variable" the way `<condition>` does in the Logical Operators fragment
-at LANGUAGE.md:1860–1864. That reading is weak here: the block is not
+at LANGUAGE.md:1947–1951. That reading is weak here: the block is not
 marked `vox fragment` (the manual has that marker and uses it at
 1820 and 1838), it opens with two real declarations and threads a
 single `result` variable through six statements, so it reads as a
@@ -219,7 +219,7 @@ and this one is in the manual the ledger is mapping *from*.
 ### 3. Bitwise operators silently return `0.0` for a float operand
 
 Nothing in LANGUAGE.md states the operand domain of the bitwise
-operators. LANGUAGE.md:1805 states it for **arithmetic** — "Arithmetic
+operators. LANGUAGE.md:1832 states it for **arithmetic** — "Arithmetic
 operates on numbers (booleans count as 0/1). Text, buffers, and lists
 must be cast with `as a number` or `as a float` … using them directly is
 a compile error" — and says nothing about floats there or about bitwise
@@ -275,13 +275,13 @@ positively, so the invariant report has something to cite:
 
 - an arithmetic operator is one of `add`, `plus`, `subtract`, `minus`,
   `multiply`, `times`, `divide`, `modulo`, `mod`, `remainder` — a closed
-  vocabulary of ten — LANGUAGE.md:4552–4556, OPR-01…OPR-10
+  vocabulary of ten — LANGUAGE.md:4639–4643, OPR-01…OPR-10
 - a comparison operator is one of `is equal to`, `is`, `is not equal
   to`, `is not`, `is greater than`, `is less than`, `is greater than or
-  equal to`, `is less than or equal to` — LANGUAGE.md:4562–4567,
+  equal to`, `is less than or equal to` — LANGUAGE.md:4649–4654,
   OPR-11…OPR-18
 - a bitwise operator is one of `bit-and`, `bit-or`, `bit-xor`,
-  `bit-shift-left`, `bit-shift-right` — LANGUAGE.md:4581–4585,
+  `bit-shift-left`, `bit-shift-right` — LANGUAGE.md:4668–4672,
   OPR-24…OPR-28
 - a comparison never appears outside a condition position —
   LANGUAGE.md gives no citation for this; it is the compiler's rule

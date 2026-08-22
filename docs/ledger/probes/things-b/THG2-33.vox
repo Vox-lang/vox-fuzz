@@ -1,4 +1,4 @@
-(THG2-33: the instance-possessive worked example, LANGUAGE.md:1403-1432,
+(THG2-33: the instance-possessive worked example, LANGUAGE.md:1431-1459,
  verbatim - the receiver form on a bare variable, the receiver form carrying
  a further argument after `on`, and the receiver form on a field holding a
  whole thing.

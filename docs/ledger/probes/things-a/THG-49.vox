@@ -1,7 +1,7 @@
 (THG-49: a thing containing itself THROUGH other things is refused too - but
  by the defined-earlier ordering rule, which fires first, so the diagnostic
  is "unknown field type", not the cycle report of THG-48. The manual
- (LANGUAGE.md:1005-1008) says exactly this: within one file the ordering
+ (old manual lines 1005-1008) says exactly this: within one file the ordering
  rule makes a cycle unconstructible.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-49.vox -o p && ./p
  expected output:

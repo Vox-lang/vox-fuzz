@@ -1,4 +1,4 @@
-(D1 -- minimal repro. LANGUAGE.md:4926-4929: "It will not overwrite a
+(D1 -- minimal repro. LANGUAGE.md:5013-5016: "It will not overwrite a
  .lib that already exists -- a repeat --shared build errors and asks you
  to remove the .lib first". It does not error; it silently rewrites the
  .lib, clobbering any hand edit. Needs --shared, so not auto-run; see

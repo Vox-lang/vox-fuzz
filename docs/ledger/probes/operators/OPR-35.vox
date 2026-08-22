@@ -1,6 +1,6 @@
 (OPR-35 (undocumented precision): integer `divide` truncates toward
  zero, and dividing by zero yields 0 and does not crash - the program
- runs on. LANGUAGE.md:4555 says only "Division". Nothing in the
+ runs on. LANGUAGE.md:4642 says only "Division". Nothing in the
  Operators section states either behaviour.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-35.vox -o p && ./p
  expected output:

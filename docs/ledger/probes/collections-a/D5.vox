@@ -1,17 +1,18 @@
-(D5 — Discrepancy 5 repro: LANGUAGE.md:2232-2235 says an opaque value
- "widens the list to mixed, so the element is always read back as what it is
- rather than silently reinterpreted". A function with no declared return
- type that returns a TEXT is silently reinterpreted as a number: the slot
- prints a raw address and `is a number` fires on it. The address is stable
- across runs (4210906, 5/5), so it looks like data, not like a crash.
- LANGUAGE.md:2250-2254 concedes the conservative TAG_INTEGER guess but only
- promises correctness "when it really is a number" - the two paragraphs
- disagree with each other.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
+(D5 — RESOLVED, re-recorded 2026-08-22 against vox 0.4.9. Old manual
+ lines 2232-2235 (pre-0.4.9) said an opaque value "widens the list to
+ mixed, so the element is always read back as what it is rather than
+ silently reinterpreted". A function with no declared return type that
+ returned a TEXT USED TO be silently reinterpreted as a number: the slot
+ printed a raw address (stable across runs, 4210906, 5/5) and `is a
+ number` fired on it. Old line 2250-2254 conceded a conservative
+ TAG_INTEGER guess, so the two paragraphs disagreed with each other.
+ vox #45 fixed the COMPILER, not just the docs: the write is now refused
+ outright. LANGUAGE.md:2298-2306 states the current (single, consistent)
+ rule.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p
  expected output:
-   4210906
-   text
-   number
+   error: 'opaque label' has no declared return type, so its result is read as a number here
+   (compile error - no binary is produced)
 )
 To 'opaque label'. Return "hi".
 

@@ -1,11 +1,10 @@
-(THG2-18: the manifest worked example, LANGUAGE.md:1287-1305, verbatim - a
- two-entry manifest whose members are both defined, one a maker (its first
- parameter is a number) and one a transformer (its first parameter is a
- point). It defines only; nothing is called, so nothing is printed.
+(THG2-18: the manifest worked example, LANGUAGE.md:1315-1332 (was
+ 1287-1305), verbatim - a two-entry manifest whose members are both
+ defined, one a maker (its first parameter is a number) and one a
+ transformer (its first parameter is a point). It defines only; nothing
+ is called, so the program compiles cleanly and exits 0 with no output.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-18.vox -o p && ./p
  expected output:
-   no output at all - the program defines a thing and its two members and
-   terminates with exit 0
 )
 A thing called point has
   a function called 'placed at',

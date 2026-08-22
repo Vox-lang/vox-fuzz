@@ -2,9 +2,22 @@
  executable. Also emits a companion `.lib` interface file next to the
  `.so` (undocumented in this section, but needed by CLI-05/CLI-06's
  `--link`/`--lib-path` and by the Libraries and Imports chapter's `see
- ... from "....lib"` consumption path). This probe's source is also an
- ordinary compilable program on its own (see the standard Ran: line
- below) - `--shared` is a build mode, not a different dialect of Vox.
+ ... from "....lib"` consumption path).
+ RE-VERIFIED 2026-08-22 against vox 0.4.9: this file used to also be an
+ ordinary compilable program on its own (calling 'double it' at the top
+ level and printing the result, so one source served both roles). That
+ dual-purpose design is now BROKEN -- the manual's Libraries and
+ Imports chapter now documents (LANGUAGE.md:4989-4996, libraries.md
+ LIB-25, already hand-verified there) that a `--shared` compile rejects
+ ANY top-level executable statement: "Top-level ... statement is not
+ allowed in a shared library: only function definitions, 'Library', and
+ 'see' may appear at the top level." The old two-statement tail below
+ made `--shared -o libtally.so` fail outright with that exact error as
+ of 0.4.9, even though the identical file still compiled and ran fine
+ (printing 42) as an ordinary program. Stripped the tail so this file
+ is --shared-clean; `--shared` really is a stricter dialect now, not
+ just "a build mode" as originally claimed here -- that framing is
+ retired, cross-ref LIB-25 for the rule itself.
  Hand-run separately:
    $ vox tally_lib.vox --shared -o libtally.so
    $ ls libtally.so libtally.lib
@@ -12,13 +25,9 @@
    libtally.so
    $ file libtally.so
    libtally.so: ELF 64-bit LSB shared object, x86-64, ...
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox CLI-04.vox -o p && ./p
- expected output:
-   42
+ Ran: (not runnable as a single ordinary-compile file any more -- see
+ the note above; --shared transcript above is the verification)
 )
 Library tally version "1.0".
 
 To 'double it' with a number called value. Return a number, value multiply 2.
-
-a number called result is 'double it' of 21.
-Print result.

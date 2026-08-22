@@ -1,6 +1,6 @@
 (THG2-39: a member name belongs to its owner, not to the program: two things
  may each declare a 'placed at', and the two definitions compile under
- distinct internal names. LANGUAGE.md:1511-1536, verbatim.
+ distinct internal names. LANGUAGE.md:1539-1563, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-39.vox -o p && ./p
  expected output:
    5

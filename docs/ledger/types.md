@@ -1,10 +1,14 @@
 # Claim ledger: Types
 
-Source: `../vox/LANGUAGE.md` lines 428–445 (version 0.4.8 + bugs #49–#54
-fixed, b26f66e), the `Types` table between `Basics` and `Variables`.
-Confirmed against the manual by `grep -n "^## "`: the section runs from
-the `## Types` heading at 428 to the blank line before `## Variables` at
-446 — the brief's pinned range (428–445) is exact, no drift.
+Source: `../vox/LANGUAGE.md` lines 428–445, Vox 0.4.9 (5327 lines, vox
+4b77934), confirmed 2026-08-22 — the `Types` table between `Basics` and
+`Variables`. Confirmed against the manual by `grep -n "^## "`: the
+section runs from the `## Types` heading at 428 to the blank line
+before `## Variables` at 446 — zero drift from the 0.4.8 pinned range.
+The table's eleven rows are byte-for-byte unchanged since 0.4.8; only
+one citation elsewhere in this file (Discrepancy 1's cross-reference to
+the `'s type` property's definition) had drifted and is re-pinned
+below.
 
 This is a **gap analysis**, not a from-scratch map. The Types table is
 eleven rows (`Type | Keyword | Description`), and every one of those
@@ -24,7 +28,7 @@ finding, in the Discrepancies section below.
 
 `docs/ledger/probes/types/`, one file per row that got a *fresh* hand-run
 (a row that only cites another ledger's existing probe does not get a
-second copy). `TYP-01.vox` and `D1.vox`/`D1-frac.vox` cover the number/
+second copy). `TYP-01.vox` and `D1-frac.vox` cover the number/
 decimal-tag mismatch; `TYP-02.vox` the float IEEE-754 double-rounding;
 `TYP-04.vox` the boolean literal pair; `TYP-06.vox` the map text-key
 compile error. Rows folded into another section's row (`TYP-03/05/07/08/
@@ -78,7 +82,7 @@ So: (a) the fractional value is not rejected, not truncated, and not
 silently converted — it is stored and printed exactly as written,
 directly contradicting "whole numbers"; (b) worse, the `'s type`
 property (which reflects the *static declared* type per
-`LANGUAGE.md:3202–3208`/`BUF` Discrepancy 2's sibling behavior) says
+`LANGUAGE.md:3336–3350`/`BUF-14`'s sibling behavior) says
 `Number (static)`, while the `is a <noun>` predicate (which
 `LANGUAGE.md:2403–2405`/`LST-62` establish reads a *runtime value tag*,
 not the declared type) says the opposite — `is a number` is **false**
@@ -108,6 +112,11 @@ lets a `number` hold a non-whole value at all — the Types table's
 enforces it, and *that* absence is what lets the predicate's runtime
 tag and the property's static tag diverge. Not filed; repro above and
 `TYP-01.vox`/`D1-frac.vox` retained.
+
+**Re-verified, 2026-08-22, against vox 0.4.9: unchanged.** `TYP-01.vox`
+and `D1-frac.vox` re-run byte-for-byte identically — the fractional
+value is still accepted, printed, and mis-classified exactly as
+recorded above. No fix has landed; still not filed.
 
 ## Report
 

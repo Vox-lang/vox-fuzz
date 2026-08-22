@@ -1,16 +1,14 @@
-(D1 — Discrepancy 1 repro: loop expansion does NOT work with "any action that
- takes an argument" (LANGUAGE.md:312, and "works with any action" at :284).
- `append "ab" to sink` is legal on a buffer, and `append each n from 1 to 5
- to out` is legal on a list — but the two together are rejected: the
- expansion form of append silently loses the text-into-buffer capability the
- plain form has.
- The other refuted arms: `write each word from [...] to output.` →
- "Expected value to write" (BAS2-20.vox); `Set total to each number from 1
- to 3.` → "Expected a statement, got Each".
+(D1 — RESOLVED for this arm, re-recorded 2026-08-22 against vox 0.4.9.
+ Used to be: loop expansion did NOT work with "any action that takes an
+ argument" (LANGUAGE.md:312, and "works with any action" at :284) for
+ this arm specifically. `append each word from [...] to sink` (sink a
+ buffer) now compiles and works, a side effect of vox #54/#55. The other
+ two refuted arms (`write each word from [...] to output.`, `Set total
+ to each number from 1 to 3.`) are unchanged — still refused identically,
+ re-verified separately.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:
-   error: Buffer append requires a buffer source: word
-   (no binary produced; compile error)
+   abcd
 )
 a buffer called sink is 64 bytes in size.
 append each word from ["ab", "cd"] to sink.

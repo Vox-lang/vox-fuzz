@@ -1,12 +1,15 @@
-(VAR-46: the rule is claimed to close the class where the compiler-tracked
- type disagrees with the runtime value — "a wrong number on screen at best
- and a segfault at worst". The segfault survives. `label` is declared text,
- a number element from a uniform list literal is assigned to it unchecked,
- and printing it dereferences the integer 1 as a string pointer. Deterministic
- across runs. See Discrepancy 1; the same program is retained as D1.vox.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-46.vox -o p && ./p
+(VAR-46 — RESOLVED (vox #54), re-recorded 2026-08-22 against vox 0.4.9.
+ The rule was claimed to close the class where the compiler-tracked type
+ disagrees with the runtime value — "a wrong number on screen at best and
+ a segfault at worst". Used to be: the segfault survived. `label` is
+ declared text, a number element from a uniform list literal was assigned
+ to it unchecked, and printing it dereferenced the integer 1 as a string
+ pointer. Now the assignment is refused at compile time. See Discrepancy
+ 1 (resolved); the same program is retained as D1.vox.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-46.vox -o p
  expected output:
-   (no output; exit 139 — SIGSEGV)
+   error: cannot assign number to 'label', which is a text
+   (compile error - no binary is produced)
 )
 a list called counts is [1, 2].
 a text called label is "x".

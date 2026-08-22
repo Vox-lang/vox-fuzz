@@ -1,26 +1,25 @@
-(Discrepancy 2 — a LIST in a format string used as a VALUE renders the
- list's raw pointer instead of the list. LANGUAGE.md:3130-3131 says a
+(Discrepancy 2 — RESOLVED (vox #44), re-recorded 2026-08-22 against vox
+ 0.4.9. Used to be: a LIST in a format string used as a VALUE rendered
+ the list's raw pointer instead of the list. LANGUAGE.md:3188 says a
  format string used as a value "materializes into a fresh NUL-terminated
  string"; 3158-3161 says one shared name resolver makes every sink render
- identically. The same slot in a Print renders correctly, so the two
- sinks disagree. Every value context is affected — initializer,
- assignment, and comparison operand alike.
+ identically. On 0.4.8 the same slot in a Print rendered correctly but
+ the value-context sink did not; now both agree.
  Lines 1 and 2 below are the list printed directly and through a print
- slot: both correct. Line 3 is the same slot held in a text first, and it
- is written as a comparison rather than a raw print because the address
- varies per run and this probe has to re-run clean.
- Second facet, not checkable in a fixed expected block for the same
- reason: `Print "{arguments's all}".` renders a pointer in the PRINT sink
- too, where an ordinary list in a print slot is correct. Run on its own:
-   Print "{arguments's all}".        ->  140642937016320
-   Print arguments's all.            ->  []
- The buffer sink cannot be probed for either facet: it segfaults on the
- argument text properties (Discrepancy 1).
+ slot: both correct, unchanged. Line 3 is the same slot held in a text
+ first, checked as a comparison rather than a raw print because on 0.4.8
+ the address varied per run; now that it's fixed this is moot but the
+ comparison form still re-runs clean either way.
+ Second facet, re-verified separately (not part of this probe's fixed
+ block): `Print "{arguments's all}".` now prints `[]`, matching
+ `Print arguments's all.` exactly - it used to print a raw pointer.
+ The buffer sink for both facets was unblocked by #52 (Discrepancy 1)
+ and not separately re-probed here; see D1.vox.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
    [1, 2, 3]
    [1, 2, 3]
-   a list in a format string held as a value is NOT the list form
+   a list in a format string held as a value is the list form
 )
 a list called ordinary is [1, 2, 3].
 a text called 'the held list' is "{ordinary}".

@@ -1,4 +1,4 @@
-(BAS-44 - the Caution example, LANGUAGE.md:154-163. `batch` is undeclared
+(BAS-44 - the Caution example, LANGUAGE.md:155-163. `batch` is undeclared
  in the manual's copy; declaring it as [1, 2] is what makes the documented
  output `1 2 1 2 batch done` reachable. The blank line closes the While
  right after the nested For each closes itself, so `print "batch done"`

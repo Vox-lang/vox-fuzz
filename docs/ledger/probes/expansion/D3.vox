@@ -1,14 +1,11 @@
-(D3 — Discrepancy 3 repro: a `treating` clause whose match and replacement are
- numbers, over a collection whose elements are text, compiles without a
- diagnostic and segfaults. The compiler DOES check match against replacement
- (BAS2-59.vox), so the check exists — it just never looks at the collection.
- Deterministic: 6/6 runs exited 139. The same one-liner over a list VARIABLE
- (`a list called words is ["a", "b"].`) crashes identically, and the
- function-call expansion form (`'display' of each item from ["a"] treating 98
- as 31.`) crashes identically, so this is the treating machinery and not
- `print`.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
+(D3 — RESOLVED (vox #55), re-recorded 2026-08-22 against vox 0.4.9. Used
+ to be: a `treating` clause whose match and replacement are numbers, over
+ a collection whose elements are text, compiled without a diagnostic and
+ segfaulted (deterministic, 6/6 runs, exit 139). Now it is a compile
+ error naming the mismatch.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p
  expected output:
-   Segmentation fault (core dumped)   exit 139   (deterministic, 6/6 runs)
+   error: Treating value and match must be the same type (got text vs number).
+   (no binary produced; compile error)
 )
 print each item from ["a"] treating 98 as 31.

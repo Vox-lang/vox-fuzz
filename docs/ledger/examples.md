@@ -1,12 +1,12 @@
 # Claim ledger: Examples
 
-Source: `../vox/LANGUAGE.md` lines 4750–4790 (Examples chapter: Hello
-World, Variables and Arithmetic, Function Definition and Call, Counting
-Loop, FizzBuzz), manual version 0.4.8 + bugs #49–#54 fixed, vox main
-b26f66e. `INDEX.md`'s pinned range for this section (4622–4662) is stale;
-the chapter has moved to 4750–4790 at this commit, confirmed by walking
-the heading list (`## Examples` at 4750, the next `##` — Libraries and
-Imports — at 4791).
+Source: `../vox/LANGUAGE.md` lines 4837–4877, Vox 0.4.9 (5327 lines, vox
+4b77934), confirmed 2026-08-22 (Examples chapter: Hello World, Variables
+and Arithmetic, Function Definition and Call, Counting Loop, FizzBuzz).
+Uniform +87 drift from the 0.4.8 pinned range (4750–4790), confirmed at
+all five example headings plus the section boundary (`## Examples` now
+at 4837, next `##` — Libraries and Imports — now at 4878). All five
+source blocks are byte-for-byte unchanged since 0.4.8.
 
 This is a **gap analysis**, not a from-scratch map — but this section had
 never been mapped at all (`INDEX.md` said `no`), so every row here is
@@ -36,11 +36,11 @@ to the sibling `coreasm` before being written.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| EXA-01 | 4752–4757 | "Hello World": `Print "Hello, World!".` compiles and prints `Hello, World!`. | reproduce verbatim | yes — the string is a literal, trivially self-predicting | none — no leaf in `src/gen_*.vox` reproduces this exact composite program; `Print` of a string literal alone is exercised constantly but never as a whole standalone program matching this example | todo — hand-verified to reproduce exactly (`EXA-01.vox`) | |
-| EXA-02 | 4758–4765 | "Variables and Arithmetic": two number declarations and `Print the x add the y.` compiles and prints `8`. | reproduce verbatim | yes — 3+5=8, generator-computable | none as a whole; `a number called X is N.` and `X add Y` are both individually exercised constantly by every arithmetic leaf, but never in this specific two-variable, one-`Print` shape | todo — hand-verified to reproduce exactly (`EXA-02.vox`) | |
-| EXA-03 | 4766–4772 | "Function Definition and Call": a two-parameter function definition (`'add numbers' with a number called x and a number called y`) called with `of`, compiles and prints `8`. | reproduce verbatim | yes — 3+5=8, generator-computable | none as a whole; `To '<name>' with ...` function definitions and `of`-form calls are both exercised constantly (cross-ref FUN, functions.md), but not this exact program | todo — hand-verified to reproduce exactly (`EXA-03.vox`) | |
-| EXA-04 | 4774–4779 | "Counting Loop": `Set the number called counter to 1.` (a var_decl, not a plain assignment — see GRM-03/D1 in grammar-summary.md for the general form) followed by a `While` loop, compiles and prints `1` through `9`. | reproduce verbatim | yes — the loop bound and increment are both literal, generator-computable | none as a whole; `Set the ... to ...` as a declaration form and `While ... increment ...` are both individually exercised (cross-ref VAR, FLW), but not composed this way | todo — hand-verified to reproduce exactly (`EXA-04.vox`) | |
-| EXA-05 | 4781–4790 | "FizzBuzz": a divisibility-checking function plus a `For each ... but if ... but if ... but if` chain over 1–15, using divisors 6/2/3 (not the classic 15/3/5), compiles and produces the expected 15-line FizzBuzz sequence for those divisors. | reproduce verbatim | yes — every divisor and every input 1–15 is a literal, generator-computable | none as a whole; `For each number from A to B`, `but if <cond> print <expr>` chains (print_stmt's own form, cross-ref GRM-15 in grammar-summary.md), and `modulo` are all individually exercised, but this exact composite program is not | todo — hand-verified to reproduce exactly (`EXA-05.vox`) | |
+| EXA-01 | 4839–4844 | "Hello World": `Print "Hello, World!".` compiles and prints `Hello, World!`. | reproduce verbatim | yes — the string is a literal, trivially self-predicting | none — no leaf in `src/gen_*.vox` reproduces this exact composite program; `Print` of a string literal alone is exercised constantly but never as a whole standalone program matching this example | todo — hand-verified to reproduce exactly (`EXA-01.vox`) | |
+| EXA-02 | 4845–4852 | "Variables and Arithmetic": two number declarations and `Print the x add the y.` compiles and prints `8`. | reproduce verbatim | yes — 3+5=8, generator-computable | none as a whole; `a number called X is N.` and `X add Y` are both individually exercised constantly by every arithmetic leaf, but never in this specific two-variable, one-`Print` shape | todo — hand-verified to reproduce exactly (`EXA-02.vox`) | |
+| EXA-03 | 4853–4859 | "Function Definition and Call": a two-parameter function definition (`'add numbers' with a number called x and a number called y`) called with `of`, compiles and prints `8`. | reproduce verbatim | yes — 3+5=8, generator-computable | none as a whole; `To '<name>' with ...` function definitions and `of`-form calls are both exercised constantly (cross-ref FUN, functions.md), but not this exact program | todo — hand-verified to reproduce exactly (`EXA-03.vox`) | |
+| EXA-04 | 4861–4866 | "Counting Loop": `Set the number called counter to 1.` (a var_decl, not a plain assignment — see GRM-03/D1 in grammar-summary.md for the general form) followed by a `While` loop, compiles and prints `1` through `9`. | reproduce verbatim | yes — the loop bound and increment are both literal, generator-computable | none as a whole; `Set the ... to ...` as a declaration form and `While ... increment ...` are both individually exercised (cross-ref VAR, FLW), but not composed this way | todo — hand-verified to reproduce exactly (`EXA-04.vox`) | |
+| EXA-05 | 4868–4877 | "FizzBuzz": a divisibility-checking function plus a `For each ... but if ... but if ... but if` chain over 1–15, using divisors 6/2/3 (not the classic 15/3/5), compiles and produces the expected 15-line FizzBuzz sequence for those divisors. | reproduce verbatim | yes — every divisor and every input 1–15 is a literal, generator-computable | none as a whole; `For each number from A to B`, `but if <cond> print <expr>` chains (print_stmt's own form, cross-ref GRM-15 in grammar-summary.md), and `modulo` are all individually exercised, but this exact composite program is not | todo — hand-verified to reproduce exactly (`EXA-05.vox`) | |
 
 ## Discrepancies
 
@@ -83,7 +83,7 @@ gap in the memory-safety sense.
 
 **For the next mapper (compiler-usage.md, then grammar-summary.md, in
 this same worker's batch):** the "manual shows no expected-output block"
-pattern recurs for the CLI's own worked examples (5158–5175) — same
+pattern recurs for the CLI's own worked examples (5245–5262) — same
 treatment applies: the compiler's actual run becomes the recorded
 ground truth. It does not recur for the Grammar Summary, whose "claim" is
 parsing, not printing — a different `assertable?` shape entirely (does

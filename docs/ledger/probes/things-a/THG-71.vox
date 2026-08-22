@@ -1,5 +1,5 @@
 (THG-71: a thing cannot be compared with a single value.
- LANGUAGE.md:1130-1131 (cross-referring to the Equality section, which the
+ old manual lines 1130-1131 (cross-referring to the Equality section, which the
  Things part B ledger maps). Recorded here because this section makes the
  claim; the caret lands on the declaration again (Discrepancy 3).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-71.vox -o p && ./p

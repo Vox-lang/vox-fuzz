@@ -1,7 +1,7 @@
 (THG-34: `Create` declares a thing with its declared defaults too.
  Also covers: THG-35 (a quoted variable name is read and written through
  the same possessive - `'the far corner''s x`).
- LANGUAGE.md:902-911 verbatim.
+ old manual lines 902-911 verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-34.vox -o p && ./p
  expected output:
    0

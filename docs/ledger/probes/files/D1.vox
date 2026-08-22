@@ -1,16 +1,12 @@
-(D1: Discrepancy 1 - the documented `exists` file property does not parse. LANGUAGE.md:3337 lists it in the File Properties table; the parser does not know it.
+(D1: Discrepancy 1 - the documented `exists` file property does not parse. Old manual line 3337 (pre-0.4.9) listed it in the File Properties table; the parser does not know it. RESOLVED — vox #38, closed 2026-08-21: the manual row was removed, not the parser fixed. Re-recorded 2026-08-22: the diagnostic ALSO changed (was a generic parser error, now a specific one naming the `On error` idiom), re-verified directly rather than described from memory.
  This probe must FAIL TO COMPILE. Depends on vf_scratch/files/lines.txt,
  which FIL-45 or FIL-54 creates - but the failure is at parse time, so the
  file need not exist for the diagnostic to reproduce.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/D1.vox -o p && ./p
- actual output:
-   error: Expected property name, got Exists
-     --> vf_scratch/probe.vox:2:13
-       |
-     2 | print src's exists.
-       |             ^--- here
+ expected output:
+   error: a file handle has no `exists` property - a handle you hold is already open; to test whether a path can be opened, open it inside an `On error` handler (see the File Properties section)
    (compile failed; no binary produced)
 )
 open a file for reading called src at "vf_scratch/files/lines.txt".

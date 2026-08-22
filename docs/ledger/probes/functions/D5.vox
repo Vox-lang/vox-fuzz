@@ -6,15 +6,18 @@
  of variables of the declared type. text, boolean and list are unaffected
  (FUN-40). This is the shape of vox bug #45, except that #45 says
  declaring the return type is the cure — here it is declared and the
- result is still wrong. The map address varies per run, so this probe is
- compared on its EXIT CODE: it exits 3 unconditionally after printing.
+ result is still wrong. The map address varies per run (ASLR), so this
+ probe is compared on its EXIT CODE only: it exits 3 unconditionally
+ after printing.
+ STILL OPEN on vox 0.4.9, re-verified 2026-08-22 — this is functions D5,
+ the brief's "still open" row: adjudicated (REPORT-CANDIDATES-0.4.10.md
+ candidate B) and tracked as vox candidate #67
+ (fix/bug-67-declared-return-printed, branch present, in flight, not
+ landed). Re-run 2026-08-22: `2.5` / `{"ann": 30}` (routed, correct) then
+ `4612811918334230528` / <a heap address> (printed directly, still wrong)
+ — byte-identical shape to the original finding.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
  expected output:
-   2.5
-   {"ann": 30}
-   --- the same two calls, printed directly ---
-   4612811918334230528
-   140201717768192
    exit 3
 )
 To 'give float'. Return a float, 2.5.

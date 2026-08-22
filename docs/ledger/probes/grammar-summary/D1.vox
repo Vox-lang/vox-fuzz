@@ -1,5 +1,5 @@
 (GRM Discrepancy 1 - minimal repro. var_decl's "is expr" claims a full
- `expr` (which includes `comparison`) per :5184-5185/5225-5228, but a
+ `expr` (which includes `comparison`) per :5271-5272/5312-5315, but a
  comparison cannot be a var_decl (or assignment, or print_stmt) initializer
  - only inside an If/While/but-if condition. Cross-ref EXP-D3
  (expressions.md), which found this first for `expr`'s use inside those
