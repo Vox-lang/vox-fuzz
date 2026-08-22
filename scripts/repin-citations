@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Build (if stale) and run scripts/repin-citations.vox.
+#
+# The tool resolves docs/ledger/... from the repo root, so this cds there
+# first -- and makes any relative --to/--from/--scan absolute BEFORE the
+# cd, so a path typed from somewhere else still means what it said. See
+# the header comment of scripts/repin-citations.vox for what it does.
+set -u
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+VOX="${VOX:-$root/../vox/target/release/vox}"
+# Same derivation as test.sh: pin the runtime to the compiler's own
+# coreasm, or an installed /usr/share/vox/coreasm silently shadows it.
+if [[ -z "${VOX_CORE_PATH:-}" ]]; then
+    VOX_CORE_PATH="$(cd "$(dirname "$VOX")/../.." 2>/dev/null && pwd)/coreasm"
+fi
+export VOX_CORE_PATH
+# The Vox side reads VOX_REPO for the sibling vox checkout it reads
+# LANGUAGE.md and git blobs out of; default it from $VOX so a caller who
+# already set VOX does not have to set both.
+if [[ -z "${VOX_REPO:-}" ]]; then
+    VOX_REPO="$(cd "$(dirname "$VOX")/../.." 2>/dev/null && pwd)"
+    [[ -n "$VOX_REPO" ]] && export VOX_REPO
+fi
+
+src="$root/scripts/repin-citations.vox"
+bin="$root/build/repin-citations"
+if [[ ! -x "$bin" || "$src" -nt "$bin" ]]; then
+    if [[ ! -x "$VOX" ]]; then
+        echo "repin-citations: vox binary not found at $VOX (set VOX=...)" >&2
+        exit 2
+    fi
+    mkdir -p "$root/build"
+    if ! "$VOX" "$src" -o "$bin" > "$root/build/repin-citations.cerr" 2>&1; then
+        echo "repin-citations: could not compile $src" >&2
+        cat "$root/build/repin-citations.cerr" >&2
+        exit 2
+    fi
+fi
+
+# Absolutise the value of any path-taking flag while the caller's cwd is
+# still current.
+args=()
+prev=""
+for a in "$@"; do
+    case "$prev" in
+        --to|--from|--scan)
+            case "$a" in
+                /*) ;;
+                *) [[ -e "$a" ]] && a="$(cd "$(dirname "$a")" && pwd)/$(basename "$a")" ;;
+            esac
+            ;;
+    esac
+    args+=("$a")
+    prev="$a"
+done
+
+cd "$root" || exit 2
+exec "$bin" ${args[@]+"${args[@]}"}

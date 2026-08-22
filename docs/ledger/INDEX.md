@@ -1,9 +1,12 @@
 # Ledger index — every section of LANGUAGE.md, and where its ledger stands
 
-Manual version pinned here: **Vox 0.4.9** (`../vox/LANGUAGE.md`, 5327
-lines, vox `4b77934`), confirmed 2026-08-22. When the manual moves,
-re-pin the line ranges in this table first and note the delta in each
-affected ledger's header; row IDs never move.
+Manual version pinned here: **Vox 0.4.9** (`../vox/LANGUAGE.md`, 5372
+lines, vox `bb406de`), re-pinned 2026-08-22 (previously `4b77934`,
+5327 lines — two docs-only commits, 3c6c484 and 70ca1c2, moved the
+manual that day). When the manual moves, re-pin the line ranges in
+this table first (`scripts/repin-citations --to <new manual> --apply
+--pin`) and note the delta in each affected ledger's header; row IDs
+never move.
 
 How to read the counts: `rows` is claims enumerated; `exercised` and
 `verified` are rows with a leaf **in main** (see PROCEDURE.md §3);
@@ -37,9 +40,32 @@ against the section). Progress is `verified / rows` going up and
 | OPR | `operators.md` | 4633–4696 | Operators: arithmetic, comparison, logical, bitwise | **yes** | 42 | 17 | 0 | 3 (D1 `isn't`/`aren't` are documented spellings of `not` and don't lex; D2 the Operators section's only worked example doesn't compile; D3 bitwise operators silently return `0.0` for a float operand) | |
 | KEY | `keywords.md` | 4698–4836 | Keywords: articles, starters, flag schema, connectors, `and`, reserved aliases, two classes of special word, contextual keywords | **yes** | 86 | 36 | 0 | 5 open, 3 resolved: D5/D6/D7 **RESOLVED, vox #56** (`all the numbers from A to B` bugs — dropped end bound, segfault, wrong-format print); D1 thirteen Statement-Starters words aren't reserved as names; D2 `fork` is declarable and reading it forks the process; D3 `reap` is refused, but not with the documented diagnostic; D4 the chapter's tables under-enumerate reserved words and aliases; D8 a missing required flag exits 1 silently — **STILL OPEN, design question for Josj**, no fix number exists | |
 | EXA | `examples.md` | 4837–4877 | Examples chapter — each example is a composite claim | **yes** | 5 | 0 | 0 | 0 |  |
-| LIB | `libraries.md` | 4878–5224 | Libraries and imports: `see`, shared libraries, `.lib` interface, mangling, `--link` | **yes** | 64 | 5 | 0 | 3 open, 1 resolved: D4 **RESOLVED, vox #62** (a `.lib` entry with no `, returning` clause is now type-checked as "returns nothing" at the call site); D1 a repeat `--shared` build silently overwrites an existing `.lib`; D2 the manual's second retired-syntax example doesn't parse; D3 the `.lib` worked example's zero-parameter entry omits `To` | |
-| CLI | `compiler-usage.md` | 5225–5262 | Compiler usage — claims about the CLI, tested by the harness rather than by leaves | **yes** | 8 | 2 | 0 | 1 (D1: `--link` hand-verified as a no-op in every case tried — re-verified against 0.4.9, still open, awaiting Josj) | |
-| GRM | `grammar-summary.md` | 5263–5327 | Grammar summary — each production is a claim that the forms it lists parse | **yes** | 23 | 10 | 0 | 3, none filed: D1/D2 already adjudicated (identical to expressions.md D3/D5, compiler-correct reading — recorded here because the line numbers fall inside this ledger's own range); D3 open (`append_stmt`'s `treating` clause: wrong position in the manual's own grammar, and a silent no-op once moved to where it parses) | |
+| LIB | `libraries.md` | 4878–5266 | Libraries and imports: `see`, shared libraries, `.lib` interface, mangling, `--link` | **yes** | 64 | 5 | 0 | 1 open, 3 resolved: D4 RESOLVED, vox #62 (return-type-checking); D1 RESOLVED 2026-08-22 (manual corrected to document the `.lib` overwrite); D3 RESOLVED 2026-08-22 (manual corrected to `To greet.`); D2 the manual's second retired-syntax example doesn't parse — **still open** | |
+| CLI | `compiler-usage.md` | 5267–5307 | Compiler usage — claims about the CLI, tested by the harness rather than by leaves | **yes** | 8 | 2 | 0 | 1 (D1: `--link` hand-verified as a no-op in every case tried — manual reworded 2026-08-22 to scope `--link` to `.lib`-free/foreign linking only, consistent with D1's own reading, but the section's own worked example still pairs it with a `see`-based consumer; still open, awaiting Josj) | |
+| GRM | `grammar-summary.md` | 5308–5372 | Grammar summary — each production is a claim that the forms it lists parse | **yes** | 23 | 10 | 0 | 3, none filed: D1/D2 already adjudicated (identical to expressions.md D3/D5, compiler-correct reading — recorded here because the line numbers fall inside this ledger's own range); D3 open (`append_stmt`'s `treating` clause: wrong position in the manual's own grammar, and a silent no-op once moved to where it parses) | |
+
+**Refresh, 2026-08-22 (vox 0.4.9, `bb406de`, same day as the pass
+below) — first real run of `scripts/repin-citations`.** Two docs-only
+vox commits (3c6c484 hygiene, 70ca1c2 the Libraries rewrite) moved the
+manual from 5327 to 5372 lines after the full hand re-pin below had
+already landed. `scripts/repin-citations --to <manual> --apply --pin`
+mechanically shifted 205 citations across every ledger and flagged 25
+as CHANGED (text under the citation actually edited) plus 5 REVIEW
+(non-citation digit cells worth a human glance); all 25 were hand-fixed
+by reading the claim and finding it in the new manual, and all 5 REVIEW
+cells were confirmed unaffected (identical text at those lines before
+and after). Two discrepancies in `libraries.md` were resolved as a
+byproduct: **D1** (a repeat `--shared` build silently overwriting a
+`.lib`) and **D3** (the `.lib`-format worked example's zero-parameter
+entry missing `To`) — the manual was corrected in place to document the
+compiler's actual behavior for both, so LIB-30/LIB-31 and both
+discrepancy entries were updated to match rather than left describing a
+now-fictional bug. `LIB-43` gained a note that the manual now documents
+a **seventh** stale-`.lib` diagnostic (reading a no-`, returning`
+entry's result) with no row yet. `check-citations.sh` reports `docs/ 0
+stale` (`src/ 33`, unchanged from before this pass) and
+`scripts/repin-citations --to <manual>` reports 0 CHANGED/REVIEW
+afterward. Full account: `vox-notes/REPORT-REPIN-APPLY-1.md`.
 
 **Refresh, 2026-08-22 (vox 0.4.9, `4b77934`) — full re-pin, all 26
 ledgers.** Every `LANGUAGE.md:N` citation across all 26 ledgers (1378

@@ -1,0 +1,19 @@
+(The LANGUAGE.md every line citation in this repo is pinned to.
+
+ A citation is a manual line NUMBER: the `LANGUAGE.md:N` form in a
+ probe header or a generator comment, the `line` column of a ledger
+ table, the "lines N-M" range in a ledger's Source: header. A line
+ number means nothing without a stated manual, because every Vox
+ release moves the lines under it. This file states the manual;
+ `pinned/LANGUAGE.md` beside it IS that manual, byte for byte, so the
+ tooling still works with no vox checkout present.
+
+ Machine-read by scripts/repin-citations: `commit`, `lines`, `version`
+ and `pinned` are key-then-value, one per line, after this comment.
+ Written by `scripts/repin-citations --apply --pin`. See
+ docs/ledger/PROCEDURE.md section 4.)
+
+commit bb406de
+lines 5372
+version 0.4.9
+pinned 2026-08-22

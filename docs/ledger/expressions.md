@@ -259,7 +259,7 @@ The Comparisons block (1836–1843) and the Property Checks block
 more explicit still:
 
 ```
-expr        ::= or_expr                              (LANGUAGE.md:5312)
+expr        ::= or_expr                              (LANGUAGE.md:5357)
 and_expr    ::= comparison ("and" comparison)*       (:5231)
 comparison  ::= additive (comp_op additive)?         (:5232)
 var_decl    ::= ("a"|"an") type "called" name "is" expr "."   (:5187)

@@ -1,0 +1,149 @@
+fixtures staged: 1
+tool compiled: 1
+--- 1. identity ---
+exit: 0
+repin-citations: tests/fixtures/repin/old-manual.md (30 lines) -> tests/fixtures/repin/old-manual.md (30 lines)
+hunks: 0
+the manual has not moved - every citation maps to itself, no change
+
+file:line  old -> new  status
+
+citations: 31 checked, 0 shifted, 0 moved, 0 CHANGED, 0 for review
+files: 2 scanned, 0 changed
+
+--- 2. drifted, dry run ---
+exit: 1
+repin-citations: tests/fixtures/repin/old-manual.md (30 lines) -> tests/fixtures/repin/new-manual.md (31 lines)
+hunks: 3
+
+file:line  old -> new  status
+./vf_repin_test/sample-ledger.md:9  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:10  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:10  14 -> 16  shifted
+./vf_repin_test/sample-ledger.md:11  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:11  14 -> 16  shifted
+./vf_repin_test/sample-ledger.md:12  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:13  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:13  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:13  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:14  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:15  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:16  25 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:17  28 -> 29  shifted
+./vf_repin_test/sample-ledger.md:19  (the line cell holds digits but does not open with a citation)  REVIEW
+./vf_repin_test/sample-ledger.md:28  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:28  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:28  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:28  28 -> 29  shifted
+./vf_repin_test/sample-ledger.md:29  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:29  28 -> 29  shifted
+./vf_repin_test/sample-probe.vox:3  12 -> 14  shifted
+./vf_repin_test/sample-probe.vox:3  14 -> 16  shifted
+./vf_repin_test/sample-probe.vox:3  20 -> ?  CHANGED
+./vf_repin_test/sample-probe.vox:3  21 -> 26  moved
+
+citations: 31 checked, 14 shifted, 4 moved, 5 CHANGED, 1 for review
+files: 2 scanned, 2 changed
+dry run - nothing written; re-run with --apply
+
+5 citation(s) name a line whose text CHANGED and could not be found again; each is now `?`. Read the manual and the row together, and write the line the claim actually lives on now.
+
+--- 3. dry run wrote nothing: ledger 1 probe 1 ---
+--- 4. apply ---
+exit: 1
+repin-citations: tests/fixtures/repin/old-manual.md (30 lines) -> tests/fixtures/repin/new-manual.md (31 lines)
+hunks: 3
+
+file:line  old -> new  status
+./vf_repin_test/sample-ledger.md:9  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:10  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:10  14 -> 16  shifted
+./vf_repin_test/sample-ledger.md:11  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:11  14 -> 16  shifted
+./vf_repin_test/sample-ledger.md:12  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:13  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:13  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:13  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:14  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:15  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:16  25 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:17  28 -> 29  shifted
+./vf_repin_test/sample-ledger.md:19  (the line cell holds digits but does not open with a citation)  REVIEW
+./vf_repin_test/sample-ledger.md:28  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:28  20 -> ?  CHANGED
+./vf_repin_test/sample-ledger.md:28  21 -> 26  moved
+./vf_repin_test/sample-ledger.md:28  28 -> 29  shifted
+./vf_repin_test/sample-ledger.md:29  12 -> 14  shifted
+./vf_repin_test/sample-ledger.md:29  28 -> 29  shifted
+./vf_repin_test/sample-probe.vox:3  12 -> 14  shifted
+./vf_repin_test/sample-probe.vox:3  14 -> 16  shifted
+./vf_repin_test/sample-probe.vox:3  20 -> ?  CHANGED
+./vf_repin_test/sample-probe.vox:3  21 -> 26  moved
+
+citations: 31 checked, 14 shifted, 4 moved, 5 CHANGED, 1 for review
+files: 2 scanned, 2 changed
+
+5 citation(s) name a line whose text CHANGED and could not be found again; each is now `?`. Read the manual and the row together, and write the line the claim actually lives on now.
+
+--- the rewritten ledger ---
+# Fake ledger — one row per citation shape the repin tool has to get right
+
+Source: `../vox/LANGUAGE.md` lines 3-9 (the ledger header form).
+And the other header spelling: LANGUAGE.md line 3.
+
+| id | line | claim | status |
+|---|---|---|---|
+| FAK-01 | 3 | above every hunk — must not move | todo |
+| FAK-02 | 14 | below the insertion — must gain 2 | todo |
+| FAK-03 | 14-16 | an ascii range — both ends map | todo |
+| FAK-04 | 14–16 | an en dash range — both ends map, dash kept | todo |
+| FAK-05 | 3, 14 | a comma pair — each item maps on its own | todo |
+| FAK-06 | 14, ?-26 | a comma pair whose second item is a range | todo |
+| FAK-07 | ? | the claim's text was rewritten — becomes ? | todo |
+| FAK-08 | 26 | the claim survives further down — recovered as moved | todo |
+| FAK-09 | ? | the claim was deleted outright — becomes ? | todo |
+| FAK-10 | 29 | below the deletion as well as the insertion | todo |
+| FAK-11 | 3 (undocumented precision) | only the leading run is a citation | todo |
+| FAK-12 | see `FAK-01.vox` | digits, but no citation — must be flagged, not rewritten | todo |
+| FAK-13 | — | no citation at all | todo |
+
+A table with no `line` column is left alone entirely:
+
+| who | says |
+|---|---|
+| 12 | this 12 is not a line number and must not move |
+
+Prose citations: LANGUAGE.md:14, and LANGUAGE.md:?-26, and LANGUAGE.md:3, 29.
+A citation that runs into a row ID: LANGUAGE.md:14, 29, FAK-02 — the ID keeps its digits.
+Bare numbers in prose (12, 20, 25) are not citations and must not move.
+Vox 0.4.9 is a version, not a line.
+
+--- the rewritten probe ---
+(FAK-01 — a retained probe header, the shape docs/ledger/probes/ uses.
+ The claim: LANGUAGE.md:3 says buffer positions are 1-indexed.
+ Also covers LANGUAGE.md:14-16 and LANGUAGE.md lines ?-26.
+ Ran: VOX_CORE_PATH=../vox/coreasm ../vox/target/release/vox FAK-01.vox -o p && ./p
+ expected output:
+   1
+)
+Print 1.
+
+--- 5. re-pinned, nothing left to do ---
+exit: 0
+repin-citations: tests/fixtures/repin/new-manual.md (31 lines) -> tests/fixtures/repin/new-manual.md (31 lines)
+hunks: 0
+the manual has not moved - every citation maps to itself, no change
+
+file:line  old -> new  status
+
+citations: 23 checked, 0 shifted, 0 moved, 0 CHANGED, 0 for review
+files: 2 scanned, 0 changed
+
+--- 6. --pin without --apply ---
+exit: 2
+repin-citations: --pin needs --apply (a pin recorded before the rewrite would double-shift the next run)
+
+--- 7. unknown argument ---
+exit: 2
+repin-citations: unknown argument --wat
+

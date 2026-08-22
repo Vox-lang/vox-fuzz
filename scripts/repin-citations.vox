@@ -1,0 +1,1063 @@
+(repin-citations.vox - keep every LANGUAGE.md line citation valid when
+ the manual changes.
+
+ The problem in one sentence: a citation names a LINE NUMBER, and every
+ Vox release inserts sentences into LANGUAGE.md, so every citation below
+ an insertion silently starts pointing at the wrong claim. There are
+ about 1400 of them in this repo - the 26 claim ledgers' `line` column,
+ the probes' header comments, the ledgers' `Source:` ranges, generator
+ comments in src/ and tests/ - and nobody is going to re-check them by
+ hand after each release. `scripts/check-citations.sh` catches only the
+ citations that land on a blank line, a code fence or a bare heading; a
+ shift onto adjacent prose is invisible to it, and adjacent prose is
+ where a shifted citation nearly always lands.
+
+ What this does instead: `diff -U0` the PINNED manual against the new
+ one, turn the hunks into a function old line -> new line, and rewrite
+ every citation through it. Lines above the first hunk keep their number;
+ lines below a hunk shift by the running (added minus removed); lines
+ INSIDE a hunk's removed range have no successor by arithmetic, so they
+ are looked for by their own text within 40 lines of where they should
+ be. A claim that merely moved is recovered and reported `moved`; only a
+ claim whose text really changed becomes `?`, and is listed for a human.
+ That is the whole design: arithmetic where arithmetic is sound, text
+ search where it is not, and a visible `?` where neither works, rather
+ than a plausible-looking wrong number.
+
+ Why `?` is written into the file rather than the old number left alone:
+ a citation whose claim was edited is not "probably still fine". Someone
+ has to read the manual and the row together, and the only reliable way
+ to make that happen is to make the file say so. The run exits non-zero
+ when any `?` was produced, so a master or a CI job notices.
+
+ Why in Vox: the same reason scripts/invariants.vox is (README, "Why
+ it's written in Vox") - a systems tool in a young language finds bugs
+ by existing. Nothing here needed a construct the language lacks. The
+ two things Vox cannot do alone are run `diff` and list a directory, and
+ both go through the same fork/Execute/reap `run shell` that
+ invariants.vox and src/harness.vox already use.
+
+ Usage:
+   scripts/repin-citations [--to <path|commit>] [--from <path|commit>]
+                           [--dry-run | --apply] [--pin]
+                           [--scan <dir>] [--vox-repo <dir>] [--verbose]
+
+   --to      the NEW manual: a path, or a commit in the vox repo.
+             Default: the vox repo's working-tree LANGUAGE.md.
+   --from    the OLD manual, overriding docs/ledger/PINNED-MANUAL.
+   --dry-run print the table, change nothing. The default.
+   --apply   rewrite the citations in place.
+   --pin     with --apply: re-point PINNED-MANUAL, refresh
+             docs/ledger/pinned/LANGUAGE.md, update INDEX.md's header.
+   --scan    scan this directory tree instead of the repo's normal set
+             (the self-test uses it; nothing else should need it).
+   --verbose list every citation, not only the ones that moved.
+
+ Paths are resolved from the repo root; the scripts/repin-citations
+ wrapper makes any relative --to/--from/--scan absolute and then cds
+ there, so both spellings work from anywhere.
+
+ Exit codes: 0 clean, 1 at least one citation could not be mapped, 2 a
+ usage or I/O error.)
+
+(---------------------------------------------------------------------
+ configuration and state
+
+ Every global lives here, above the functions that read it, because a
+ function may only reach a name already declared - and because a tool
+ whose whole job is rewriting other people's files should keep its state
+ in one readable place.
+ ---------------------------------------------------------------------)
+
+a text called 'the vox repo' is "../vox".
+a text called 'the pin path' is "docs/ledger/PINNED-MANUAL".
+a text called 'the pinned copy path' is "docs/ledger/pinned/LANGUAGE.md".
+a text called 'the index path' is "docs/ledger/INDEX.md".
+
+(How far either side of the arithmetic position a changed line's text is
+ looked for. 40 is generous enough to survive a whole section being
+ rewritten above the citation, and tight enough that a one-line claim
+ like "Positions are 1-indexed" cannot match some unrelated repetition of
+ itself elsewhere in a 5000-line manual.)
+a number called 'the recovery window' is 40.
+
+(command line)
+a text called 'the to argument' is "".
+a text called 'the from argument' is "".
+a text called 'the scan directory' is "".
+a boolean called 'applying changes' is false.
+a boolean called 'pinning' is false.
+a boolean called 'listing everything' is false.
+
+(the two manuals, as lists of lines)
+a list called 'the old lines' is [].
+a list called 'the new lines' is [].
+a text called 'the new manual path' is "".
+a text called 'the scratch directory' is "./vf_repin".
+a boolean called 'the vox repo is present' is false.
+
+(what PINNED-MANUAL currently says)
+a text called 'the pinned commit' is "".
+a number called 'the pinned line count' is 0.
+
+(one entry per diff hunk, in old-file order)
+a list called 'hunk old start' is [].
+a list called 'hunk old count' is [].
+a list called 'hunk new count' is [].
+a boolean called 'the map is identity' is true.
+
+(how the last 'map old line' call answered: 0 unmoved, 1 shifted by
+ arithmetic, 2 recovered by text search, 3 no answer)
+a number called 'the map verdict' is 0.
+
+(scratch shared by the scanners: 'the line bytes' is the line being read,
+ 'the rewritten line' the line being built, 'the file output' the whole
+ file being built.)
+a buffer called 'the line bytes'.
+a buffer called 'the rewritten line'.
+a buffer called 'the file output'.
+a buffer called 'one output byte' is " ".
+a boolean called 'the line changed' is false.
+a text called 'the current label' is "".
+a boolean called 'the file ended with a newline' is false.
+(A Vox text ends at the first NUL, so a file holding one would come back
+ from 'lines of' silently truncated - and a tool that then WROTE that
+ back would delete the rest of the file. Nothing in docs/, src/ or
+ tests/ holds a NUL today; this is here so that if one ever does, the
+ run stops instead of eating it.)
+a boolean called 'a nul byte was seen' is false.
+
+(the citation cell of the ledger table row being read; 0 when the row has
+ none)
+a number called 'the cell start' is 0.
+a number called 'the cell stop' is 0.
+
+(set by 'number at' to the position just past the digits it read, and by
+ 'rewrite run' to the position just past the citation it consumed. Vox
+ returns one value; these are the second.)
+a number called 'the digits end' is 0.
+a number called 'the run end' is 0.
+
+(the report)
+a number called 'citations checked' is 0.
+a number called 'citations shifted' is 0.
+a number called 'citations moved' is 0.
+a number called 'citations broken' is 0.
+a number called 'cells for review' is 0.
+a number called 'files scanned' is 0.
+a number called 'files rewritten' is 0.
+
+(---------------------------------------------------------------------
+ shell and file helpers - the same shape scripts/invariants.vox uses,
+ kept local so this tool depends on nothing in src/.
+ ---------------------------------------------------------------------)
+
+To 'run shell' with a text called 'the command'.
+    a list called 'the shell arguments' is [].
+    append "-c" to 'the shell arguments'.
+    append 'the command' to 'the shell arguments'.
+    a number called 'the child' is fork the process.
+    If 'the child' is 0 then, Execute "/bin/sh" with arguments 'the shell arguments', Exit 127.
+    a number called 'the reaped' is reap process 'the child'.
+    (`reap process` yields the PID; the wait status is a separate
+     expression - LANGUAGE.md, "The reaped status".)
+    a number called 'the status' is the reaped status.
+    a number called 'the terminating signal' is 'the status' bit-and 127.
+    If 'the terminating signal' is not 0 then, Return a number, 128 add 'the terminating signal'.
+    Return a number, 'the status' divide 256 modulo 256.
+
+(single-quote a value POSIX-style, so a path holding spaces or quotes
+ cannot break a command line)
+To 'shell quote' with a text called 'the value'.
+    a buffer called 'the source bytes' is 'the value'.
+    a buffer called 'the quoted bytes' is "'".
+    a number called 'the scan position' is 1.
+    a number called 'the byte count' is 'the source bytes's size.
+    a buffer called 'one byte' is " ".
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the source bytes',
+        If 'the current byte' is 39 then, append "'\\''" to 'the quoted bytes'.
+        If 'the current byte' is not 39 then, Set byte 1 of 'one byte' to 'the current byte', append 'one byte' to 'the quoted bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    append "'" to 'the quoted bytes'.
+    a text called 'the result' is 'the quoted bytes' as text.
+    Return a text, 'the result'.
+
+To 'path exists' with a text called 'the path'.
+    a number called 'the code' is 'run shell' of "test -e {'shell quote' of 'the path'}".
+    Return a boolean, 'the code' is 0.
+
+(A file to a list of its lines, newline stripped, leaving 'the file ended
+ with a newline' behind for a caller that will write the file back. Not a
+ `Read line` loop: that cannot tell a blank line from end of file without
+ a separate check, and LANGUAGE.md is a third blank lines. One Read fills
+ a dynamic buffer with the whole file and the split happens here, which
+ also makes the trailing-newline question answerable - and that one byte
+ is the difference between a rewritten file that is byte-identical
+ outside its citations and one that is not.)
+To 'lines of' with a text called 'the path'.
+    a list called 'the result' is [].
+    open a file for reading called 'the input file' at 'the path'.
+    On error Print "repin-citations: cannot read {'the path'}", Exit 2.
+    a buffer called 'the file bytes'.
+    Read from 'the input file' into 'the file bytes'.
+    Close 'the input file'.
+    a number called 'the byte count' is 'the file bytes's size.
+    Set 'the file ended with a newline' to false.
+    Set 'a nul byte was seen' to false.
+    a number called 'the final byte' is 0.
+    If 'the byte count' is greater than 0 then, Set 'the final byte' to byte 'the byte count' of 'the file bytes'.
+    If 'the final byte' is 10 then, Set 'the file ended with a newline' to true.
+    a buffer called 'the current line'.
+    a buffer called 'one byte' is " ".
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the file bytes',
+        If 'the current byte' is 10 then,
+            a buffer called 'the line copy' is 'the current line',
+            a text called 'the finished line' is 'the line copy' as text,
+            append 'the finished line' to 'the result',
+            clear 'the current line'.
+        If 'the current byte' is not 10 then,
+            Set byte 1 of 'one byte' to 'the current byte',
+            append 'one byte' to 'the current line'.
+        If 'the current byte' is 0 then, Set 'a nul byte was seen' to true.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'a nul byte was seen' then,
+        Print "repin-citations: {'the path'} holds a NUL byte, which a Vox text ends at - refusing to read it rather than truncating it",
+        Exit 2.
+    If 'the current line's size is greater than 0 then,
+        a buffer called 'the tail copy' is 'the current line',
+        a text called 'the tail line' is 'the tail copy' as text,
+        append 'the tail line' to 'the result'.
+    Return a list, 'the result'.
+
+(Write whatever 'the file output' holds to a path. A buffer, never a
+ format string: a rewritten ledger line is full of `{`, and a format
+ string would read those as interpolations.)
+To 'write the output to' with a text called 'the path'.
+    open a file for writing called 'the output file' at 'the path'.
+    On error Print "repin-citations: cannot write {'the path'}", Exit 2.
+    Write 'the file output' to 'the output file'.
+    On error Print "repin-citations: write failed on {'the path'}", Exit 2.
+    Close 'the output file'.
+
+(Vox's `append` wants a buffer on both sides, so a text goes through a
+ buffer declared from it. These two are where that happens, rather than
+ three copies of the same three lines.)
+To 'load the line' with a text called 'the value'.
+    clear 'the line bytes'.
+    a buffer called 'the value bytes' is 'the value'.
+    append 'the value bytes' to 'the line bytes'.
+
+To 'append text to the output' with a text called 'the value'.
+    a buffer called 'the value bytes' is 'the value'.
+    append 'the value bytes' to 'the file output'.
+
+(The first line of a file, or "" - how a one-line shell result (a hash, a
+ date) is read back, since Vox cannot capture a child's stdout directly.)
+To 'first line of' with a text called 'the path'.
+    a list called 'the read lines' is 'lines of' of 'the path'.
+    If 'the read lines's length is 0 then, Return a text, "".
+    a text called 'the first' is element 1 of 'the read lines'.
+    Return a text, 'the first'.
+
+(---------------------------------------------------------------------
+ byte-level scanning primitives. Everything under the diff works on a
+ buffer and a 1-based position, because that is the shape Vox gives for
+ looking inside text.
+ ---------------------------------------------------------------------)
+
+To 'matches at' with a buffer called 'the haystack' and a number called 'the position' and a text called 'the needle'.
+    a buffer called 'the needle bytes' is 'the needle'.
+    a number called 'the needle length' is 'the needle bytes's size.
+    a number called 'the haystack length' is 'the haystack's size.
+    If 'the position' is less than 1 then, Return a boolean, false.
+    a number called 'the last needed' is {'the position' add 'the needle length'} subtract 1.
+    If 'the last needed' is greater than 'the haystack length' then, Return a boolean, false.
+    a boolean called 'the answer' is true.
+    a number called 'the offset' is 0.
+    While 'the offset' is less than 'the needle length' and 'the answer',
+        a number called 'the haystack byte' is byte {'the position' add 'the offset'} of 'the haystack',
+        a number called 'the needle byte' is byte {'the offset' add 1} of 'the needle bytes',
+        If 'the haystack byte' is not 'the needle byte' then, Set 'the answer' to false.
+        Set 'the offset' to 'the offset' add 1.
+    Return a boolean, 'the answer'.
+
+To 'digit at' with a buffer called 'the haystack' and a number called 'the position'.
+    If 'the position' is less than 1 then, Return a boolean, false.
+    If 'the position' is greater than 'the haystack's size then, Return a boolean, false.
+    a number called 'the current byte' is byte 'the position' of 'the haystack'.
+    If 'the current byte' is less than 48 then, Return a boolean, false.
+    If 'the current byte' is greater than 57 then, Return a boolean, false.
+    Return a boolean, true.
+
+(A dash joining the two ends of a range. Three spellings are in the
+ corpus - the ASCII hyphen, and the en dash the ledgers mostly use, which
+ is three bytes of UTF-8 - and a rewritten range keeps whichever one it
+ found rather than normalising, because normalising would touch citations
+ the manual never moved.)
+To 'dash length at' with a buffer called 'the haystack' and a number called 'the position'.
+    a number called 'the length' is 0.
+    a boolean called 'an ascii hyphen' is 'matches at' of 'the haystack' and 'the position' and "-".
+    If 'an ascii hyphen' then, Set 'the length' to 1.
+    a boolean called 'an en dash' is 'matches at' of 'the haystack' and 'the position' and "–".
+    If 'an en dash' then, Set 'the length' to 3.
+    a boolean called 'an em dash' is 'matches at' of 'the haystack' and 'the position' and "—".
+    If 'an em dash' then, Set 'the length' to 3.
+    Return a number, 'the length'.
+
+To 'number at' with a buffer called 'the haystack' and a number called 'the position'.
+    a number called 'the value' is 0.
+    a number called 'the scan position' is 'the position'.
+    a number called 'the haystack length' is 'the haystack's size.
+    a boolean called 'still in digits' is true.
+    While 'the scan position' is less than or equal to 'the haystack length' and 'still in digits',
+        a number called 'the current byte' is byte 'the scan position' of 'the haystack',
+        If 'the current byte' is less than 48 then, Set 'still in digits' to false.
+        If 'the current byte' is greater than 57 then, Set 'still in digits' to false.
+        If 'still in digits' then,
+            Set 'the value' to {'the value' multiply 10} add {'the current byte' subtract 48},
+            Set 'the scan position' to 'the scan position' add 1..
+    Set 'the digits end' to 'the scan position'.
+    Return a number, 'the value'.
+
+(Does any byte in [start, stop] look like a digit? This is how a ledger
+ `line` cell holding a number this tool did not rewrite - a probe
+ filename, a version string, a line number buried in prose - reaches a
+ human instead of quietly going stale.)
+To 'any digit between' with a buffer called 'the haystack' and a number called 'the start' and a number called 'the stop'.
+    a number called 'the scan position' is 'the start'.
+    a boolean called 'the answer' is false.
+    While 'the scan position' is less than or equal to 'the stop',
+        a boolean called 'a digit here' is 'digit at' of 'the haystack' and 'the scan position',
+        If 'a digit here' then, Set 'the answer' to true.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a boolean, 'the answer'.
+
+(The rest of a line from a position, as text. PINNED-MANUAL's fields are
+ key, space, value, so the value is whatever follows the key.)
+To 'rest of line from' with a buffer called 'the haystack' and a number called 'the position'.
+    a buffer called 'the tail bytes'.
+    a buffer called 'one byte' is " ".
+    a number called 'the haystack length' is 'the haystack's size.
+    a number called 'the scan position' is 'the position'.
+    While 'the scan position' is less than or equal to 'the haystack length',
+        a number called 'the current byte' is byte 'the scan position' of 'the haystack',
+        Set byte 1 of 'one byte' to 'the current byte',
+        append 'one byte' to 'the tail bytes',
+        Set 'the scan position' to 'the scan position' add 1.
+    a buffer called 'the tail copy' is 'the tail bytes'.
+    a text called 'the tail text' is 'the tail copy' as text.
+    Return a text, 'the tail text'.
+
+(How many decimal digits a number is written with - needed to step over a
+ number that has just been replaced by one of a different width.)
+To 'digit width of' with a number called 'the value'.
+    a number called 'the width' is 1.
+    a number called 'the remainder' is 'the value' divide 10.
+    While 'the remainder' is greater than 0,
+        Set 'the width' to 'the width' add 1,
+        Set 'the remainder' to 'the remainder' divide 10.
+    Return a number, 'the width'.
+
+(---------------------------------------------------------------------
+ the line map
+ ---------------------------------------------------------------------)
+
+(`@@ -<start>[,<count>] +<start>[,<count>] @@`. A missing count means 1;
+ a count of 0 on the old side means the hunk inserts after that line and
+ removes nothing, which is the case the arithmetic below turns on.)
+To 'parse hunk header' with a text called 'the header line'.
+    a buffer called 'the header bytes' is 'the header line'.
+    a boolean called 'a hunk header' is 'matches at' of 'the header bytes' and 1 and "@@ -".
+    If 'a hunk header' is false then, Return a boolean, false.
+    a number called 'the old start' is 'number at' of 'the header bytes' and 5.
+    a number called 'the scan position' is 'the digits end'.
+    a number called 'the removed' is 1.
+    a boolean called 'a comma here' is 'matches at' of 'the header bytes' and 'the scan position' and ",".
+    If 'a comma here' then,
+        Set 'the removed' to 'number at' of 'the header bytes' and {'the scan position' add 1},
+        Set 'the scan position' to 'the digits end'.
+    a boolean called 'a plus here' is 'matches at' of 'the header bytes' and 'the scan position' and " +".
+    If 'a plus here' is false then, Return a boolean, false.
+    a number called 'the new start' is 'number at' of 'the header bytes' and {'the scan position' add 2}.
+    Set 'the scan position' to 'the digits end'.
+    a number called 'the added' is 1.
+    a boolean called 'a second comma' is 'matches at' of 'the header bytes' and 'the scan position' and ",".
+    If 'a second comma' then, Set 'the added' to 'number at' of 'the header bytes' and {'the scan position' add 1}.
+    append 'the old start' to 'hunk old start'.
+    append 'the removed' to 'hunk old count'.
+    append 'the added' to 'hunk new count'.
+    Return a boolean, true.
+
+To 'read hunks from' with a text called 'the diff path'.
+    Set 'hunk old start' to [].
+    Set 'hunk old count' to [].
+    Set 'hunk new count' to [].
+    a list called 'the diff lines' is 'lines of' of 'the diff path'.
+    a number called 'the diff line count' is 'the diff lines's length.
+    a number called 'the index' is 1.
+    While 'the index' is less than or equal to 'the diff line count',
+        a text called 'the diff line' is element 'the index' of 'the diff lines',
+        a boolean called 'was a header' is 'parse hunk header' of 'the diff line',
+        Set 'the index' to 'the index' add 1.
+
+(A line with its trailing blanks removed. Recovery compares lines this
+ way: a doc-hygiene pass that strips trailing whitespace rewrites hundreds
+ of manual lines without touching a single claim, and a citation into one
+ of them has not gone stale - it would be dishonest to mark it `?`.
+ Leading whitespace is NOT trimmed, because indentation inside a fenced
+ example is part of the claim.)
+To 'trailing trimmed' with a text called 'the value'.
+    a buffer called 'the value bytes' is 'the value'.
+    a number called 'the stop' is 'the value bytes's size.
+    a boolean called 'still trimming' is true.
+    While 'still trimming' and 'the stop' is greater than 0,
+        a number called 'the current byte' is byte 'the stop' of 'the value bytes',
+        a boolean called 'a blank byte' is false,
+        If 'the current byte' is 32 then, Set 'a blank byte' to true.
+        If 'the current byte' is 9 then, Set 'a blank byte' to true.
+        If 'the current byte' is 13 then, Set 'a blank byte' to true.
+        If 'a blank byte' then, Set 'the stop' to 'the stop' subtract 1.
+        If 'a blank byte' is false then, Set 'still trimming' to false..
+    a buffer called 'the trimmed bytes'.
+    a buffer called 'one byte' is " ".
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the stop',
+        a number called 'the copied byte' is byte 'the scan position' of 'the value bytes',
+        Set byte 1 of 'one byte' to 'the copied byte',
+        append 'one byte' to 'the trimmed bytes',
+        Set 'the scan position' to 'the scan position' add 1.
+    a buffer called 'the trimmed copy' is 'the trimmed bytes'.
+    a text called 'the trimmed text' is 'the trimmed copy' as text.
+    Return a text, 'the trimmed text'.
+
+(A line the diff calls removed or replaced has no successor by
+ arithmetic. Look for its exact text near where it ought to be: found
+ exactly once, that IS the claim, moved. Found never, or found more than
+ once, and the tool refuses to guess - which is what keeps this safe on a
+ blank line or a `---` rule, whose text matches so often it can never
+ match exactly once.)
+To 'recover line' with a number called 'the old line' and a number called 'the expected'.
+    a text called 'the raw wanted' is element 'the old line' of 'the old lines'.
+    a text called 'the wanted text' is 'trailing trimmed' of 'the raw wanted'.
+    a number called 'the new line count' is 'the new lines's length.
+    a number called 'the window start' is 'the expected' subtract 'the recovery window'.
+    If 'the window start' is less than 1 then, Set 'the window start' to 1.
+    a number called 'the window stop' is 'the expected' add 'the recovery window'.
+    If 'the window stop' is greater than 'the new line count' then, Set 'the window stop' to 'the new line count'.
+    a number called 'the hits' is 0.
+    a number called 'the hit line' is 0.
+    a number called 'the scan position' is 'the window start'.
+    While 'the scan position' is less than or equal to 'the window stop',
+        a text called 'the raw candidate' is element 'the scan position' of 'the new lines',
+        a text called 'the candidate' is 'trailing trimmed' of 'the raw candidate',
+        If 'the candidate' is 'the wanted text' then,
+            Set 'the hits' to 'the hits' add 1,
+            Set 'the hit line' to 'the scan position'.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'the hits' is 1 then, Return a number, 'the hit line'.
+    Return a number, 0.
+
+To 'map old line' with a number called 'the old line'.
+    Set 'the map verdict' to 3.
+    If 'the old line' is less than 1 then, Return a number, 0.
+    If 'the old line' is greater than 'the old lines's length then, Return a number, 0.
+    a number called 'the delta' is 0.
+    a boolean called 'inside a hunk' is false.
+    a boolean called 'still scanning' is true.
+    a number called 'the hunk count' is 'hunk old start's length.
+    a number called 'the index' is 1.
+    While 'the index' is less than or equal to 'the hunk count' and 'still scanning',
+        a number called 'the start' is element 'the index' of 'hunk old start',
+        a number called 'the removed' is element 'the index' of 'hunk old count',
+        a number called 'the added' is element 'the index' of 'hunk new count',
+        a number called 'the stop' is 0,
+        If 'the removed' is 0 then,
+            If 'the old line' is greater than 'the start' then, Set 'the delta' to 'the delta' add 'the added'.
+            If 'the old line' is less than or equal to 'the start' then, Set 'still scanning' to false..
+        If 'the removed' is greater than 0 then,
+            Set 'the stop' to {'the start' add 'the removed'} subtract 1,
+            If 'the old line' is greater than 'the stop' then, Set 'the delta' to 'the delta' add {'the added' subtract 'the removed'}.
+            If 'the old line' is less than 'the start' then, Set 'still scanning' to false.
+            If 'the old line' is greater than or equal to 'the start' and 'the old line' is less than or equal to 'the stop' then, Set 'inside a hunk' to true, Set 'still scanning' to false..
+        Set 'the index' to 'the index' add 1.
+    a number called 'the expected' is 'the old line' add 'the delta'.
+    If 'inside a hunk' is false then,
+        Set 'the map verdict' to 0,
+        If 'the delta' is not 0 then, Set 'the map verdict' to 1.
+        Return a number, 'the expected'.
+    a number called 'the recovered' is 'recover line' of 'the old line' and 'the expected'.
+    (A line recovered at the number it already had did not move; saying
+     `moved` there would rewrite nothing and report a change that is not
+     one, which is how a whitespace-only manual pass would otherwise show
+     up as hundreds of edits.)
+    If 'the recovered' is 'the old line' then,
+        Set 'the map verdict' to 0,
+        Return a number, 'the recovered'.
+    If 'the recovered' is greater than 0 then,
+        Set 'the map verdict' to 2,
+        Return a number, 'the recovered'.
+    Set 'the map verdict' to 3.
+    Return a number, 0.
+
+(---------------------------------------------------------------------
+ rewriting one citation
+ ---------------------------------------------------------------------)
+
+To 'copy slice' with a number called 'the start' and a number called 'the stop'.
+    a number called 'the scan position' is 'the start'.
+    While 'the scan position' is less than or equal to 'the stop',
+        a number called 'the current byte' is byte 'the scan position' of 'the line bytes',
+        Set byte 1 of 'one output byte' to 'the current byte',
+        append 'one output byte' to 'the rewritten line',
+        Set 'the scan position' to 'the scan position' add 1.
+
+To 'report citation' with a number called 'the old line' and a text called 'the new text' and a text called 'the verdict'.
+    Print "{'the current label'}  {'the old line'} -> {'the new text'}  {'the verdict'}".
+
+(One number of a citation: map it, append the replacement, count it, and
+ say so when it moved. An unmappable number becomes a literal `?`, which
+ is the point - it cannot be mistaken for a line number, so the next
+ reader and the next check-citations run both trip over it.)
+To 'emit citation' with a number called 'the old line'.
+    Set 'citations checked' to 'citations checked' add 1.
+    a number called 'the new line' is 'map old line' of 'the old line'.
+    a number called 'the verdict' is 'the map verdict'.
+    If 'the verdict' is 0 then,
+        append "{'the old line'}" to 'the rewritten line',
+        If 'listing everything' then, 'report citation' of 'the old line' and "{'the old line'}" and "same"..
+    If 'the verdict' is 1 then,
+        append "{'the new line'}" to 'the rewritten line',
+        Set 'the line changed' to true,
+        Set 'citations shifted' to 'citations shifted' add 1,
+        'report citation' of 'the old line' and "{'the new line'}" and "shifted".
+    If 'the verdict' is 2 then,
+        append "{'the new line'}" to 'the rewritten line',
+        Set 'the line changed' to true,
+        Set 'citations moved' to 'citations moved' add 1,
+        'report citation' of 'the old line' and "{'the new line'}" and "moved".
+    If 'the verdict' is 3 then,
+        append "?" to 'the rewritten line',
+        Set 'the line changed' to true,
+        Set 'citations broken' to 'citations broken' add 1,
+        'report citation' of 'the old line' and "?" and "CHANGED".
+
+(A citation RUN, beginning on a digit: `3143`, `3160-3162`, `3155, 3169`,
+ `4451, 4454-4456`. Separators and dashes are copied through byte for
+ byte and only the numbers are replaced. The run ends at the first thing
+ that is not another number, and the separator before it is left alone -
+ which is what keeps a citation followed by a row ID intact rather than
+ eating its way into the ID's digits.)
+To 'rewrite run' with a number called 'the run start'.
+    a number called 'the position' is 'the run start'.
+    a boolean called 'more items' is true.
+    While 'more items',
+        a number called 'the first number' is 'number at' of 'the line bytes' and 'the position',
+        Set 'the position' to 'the digits end',
+        'emit citation' of 'the first number',
+        a number called 'the dash length' is 'dash length at' of 'the line bytes' and 'the position',
+        a boolean called 'a digit follows the dash' is false,
+        If 'the dash length' is greater than 0 then, Set 'a digit follows the dash' to 'digit at' of 'the line bytes' and {'the position' add 'the dash length'}.
+        If 'a digit follows the dash' then,
+            'copy slice' of 'the position' and {'the position' add 'the dash length' subtract 1},
+            Set 'the position' to 'the position' add 'the dash length',
+            a number called 'the second number' is 'number at' of 'the line bytes' and 'the position',
+            Set 'the position' to 'the digits end',
+            'emit citation' of 'the second number'.
+        Set 'more items' to false,
+        a boolean called 'a comma here' is 'matches at' of 'the line bytes' and 'the position' and ",",
+        a number called 'the after comma' is 'the position' add 1,
+        a boolean called 'skipping spaces' is 'a comma here',
+        While 'skipping spaces',
+            a boolean called 'a space here' is 'matches at' of 'the line bytes' and 'the after comma' and " ",
+            If 'a space here' then, Set 'the after comma' to 'the after comma' add 1.
+            If 'a space here' is false then, Set 'skipping spaces' to false..
+        a boolean called 'a digit follows' is false,
+        If 'a comma here' then, Set 'a digit follows' to 'digit at' of 'the line bytes' and 'the after comma'.
+        If 'a digit follows' then,
+            'copy slice' of 'the position' and {'the after comma' subtract 1},
+            Set 'the position' to 'the after comma',
+            Set 'more items' to true..
+    Set 'the run end' to 'the position'.
+
+(Does an explicit citation of the manual begin at this position? Returns
+ the position of its first digit, or 0. Three spellings are in the
+ corpus: the colon form everywhere, and the ledgers' Source: headers,
+ which write the file name then the word line or lines.)
+To 'citation prefix at' with a number called 'the position'.
+    a boolean called 'the manual named here' is 'matches at' of 'the line bytes' and 'the position' and "LANGUAGE.md".
+    If 'the manual named here' is false then, Return a number, 0.
+    a number called 'the after name' is 'the position' add 11.
+    a boolean called 'a backtick here' is 'matches at' of 'the line bytes' and 'the after name' and "`".
+    If 'a backtick here' then, Set 'the after name' to 'the after name' add 1.
+    a number called 'the number start' is 0.
+    a boolean called 'a colon here' is 'matches at' of 'the line bytes' and 'the after name' and ":".
+    If 'a colon here' then, Set 'the number start' to 'the after name' add 1.
+    a boolean called 'a lines word' is 'matches at' of 'the line bytes' and 'the after name' and " lines ".
+    If 'a lines word' then, Set 'the number start' to 'the after name' add 7.
+    a boolean called 'a line word' is 'matches at' of 'the line bytes' and 'the after name' and " line ".
+    If 'a line word' and 'the number start' is 0 then, Set 'the number start' to 'the after name' add 6.
+    If 'the number start' is 0 then, Return a number, 0.
+    a boolean called 'a number follows' is 'digit at' of 'the line bytes' and 'the number start'.
+    If 'a number follows' is false then, Return a number, 0.
+    Return a number, 'the number start'.
+
+(---------------------------------------------------------------------
+ the ledger tables' `line` column
+
+ A ledger row cites the manual in a bare cell - `| BUF-19 | 3251 | ... |`
+ - with no file name in front of it, and those cells are 1378 of the
+ roughly 1400 citations in this repo. They are found by the table's own
+ HEADER rather than by position, so a table of some other shape (and
+ every non-ledger table in docs/) is left alone: the citation column is
+ the one whose header cell reads `line` or `LANGUAGE.md lines`, and there
+ is no other.
+ ---------------------------------------------------------------------)
+
+To 'citation column of' with a text called 'the header row'.
+    a buffer called 'the header bytes' is 'the header row'.
+    a number called 'the header length' is 'the header bytes's size.
+    a number called 'the pipes seen' is 0.
+    a number called 'the found column' is 0.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the header length',
+        a number called 'the current byte' is byte 'the scan position' of 'the header bytes',
+        If 'the current byte' is 124 then,
+            Set 'the pipes seen' to 'the pipes seen' add 1,
+            a boolean called 'a line header' is 'matches at' of 'the header bytes' and {'the scan position' add 1} and " line |",
+            a boolean called 'a range header' is 'matches at' of 'the header bytes' and {'the scan position' add 1} and " LANGUAGE.md lines |",
+            If 'a line header' and 'the found column' is 0 then, Set 'the found column' to 'the pipes seen'.
+            If 'a range header' and 'the found column' is 0 then, Set 'the found column' to 'the pipes seen'..
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a number, 'the found column'.
+
+(Locate the citation cell inside 'the line bytes' and trim its padding,
+ so 'the cell start' is the byte a number would begin on. Both bounds are
+ 0 when this row has no such cell.)
+To 'locate citation cell' with a number called 'the column'.
+    Set 'the cell start' to 0.
+    Set 'the cell stop' to 0.
+    a number called 'the row length' is 'the line bytes's size.
+    a number called 'the pipes seen' is 0.
+    a number called 'the content start' is 0.
+    a number called 'the content stop' is 0.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the row length',
+        a number called 'the current byte' is byte 'the scan position' of 'the line bytes',
+        If 'the current byte' is 124 then,
+            Set 'the pipes seen' to 'the pipes seen' add 1,
+            If 'the pipes seen' is 'the column' then, Set 'the content start' to 'the scan position' add 1.
+            If 'the pipes seen' is {'the column' add 1} and 'the content stop' is 0 then, Set 'the content stop' to 'the scan position' subtract 1..
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'the content start' is 0 then, Return a number, 0.
+    If 'the content stop' is 0 then, Return a number, 0.
+    a boolean called 'trimming the front' is true.
+    While 'trimming the front' and 'the content start' is less than or equal to 'the content stop',
+        a boolean called 'a leading space' is 'matches at' of 'the line bytes' and 'the content start' and " ",
+        If 'a leading space' then, Set 'the content start' to 'the content start' add 1.
+        If 'a leading space' is false then, Set 'trimming the front' to false..
+    a boolean called 'trimming the back' is true.
+    While 'trimming the back' and 'the content stop' is greater than or equal to 'the content start',
+        a boolean called 'a trailing space' is 'matches at' of 'the line bytes' and 'the content stop' and " ",
+        If 'a trailing space' then, Set 'the content stop' to 'the content stop' subtract 1.
+        If 'a trailing space' is false then, Set 'trimming the back' to false..
+    If 'the content start' is greater than 'the content stop' then, Return a number, 0.
+    Set 'the cell start' to 'the content start'.
+    Set 'the cell stop' to 'the content stop'.
+    Return a number, 'the content start'.
+
+(Is the line after this one a table rule? That is what makes the line
+ above it a header row, and the header is what names the citation column.)
+To 'a rule follows' with a list called 'the file lines' and a number called 'the index' and a number called 'the line count'.
+    a number called 'the next index' is 'the index' add 1.
+    If 'the next index' is greater than 'the line count' then, Return a boolean, false.
+    a text called 'the next line' is element 'the next index' of 'the file lines'.
+    a buffer called 'the next bytes' is 'the next line'.
+    a boolean called 'a rule' is 'matches at' of 'the next bytes' and 1 and "|---".
+    Return a boolean, 'a rule'.
+
+(A `line` cell this tool will not rewrite, but which holds digits, is a
+ citation it cannot see. Say so rather than leave it silently stale.
+ Pointless - and pure noise - when the manual did not move at all, so
+ both checks are off under an identity map.)
+To 'review the cell'.
+    If 'the map is identity' then, Return a boolean, false.
+    If 'the cell start' is 0 then, Return a boolean, false.
+    a boolean called 'starts on a digit' is 'digit at' of 'the line bytes' and 'the cell start'.
+    If 'starts on a digit' then, Return a boolean, false.
+    a boolean called 'digits in the cell' is 'any digit between' of 'the line bytes' and 'the cell start' and 'the cell stop'.
+    If 'digits in the cell' is false then, Return a boolean, false.
+    Set 'cells for review' to 'cells for review' add 1.
+    Print "{'the current label'}  (the line cell holds digits but does not open with a citation)  REVIEW".
+    Return a boolean, true.
+
+To 'review after the run' with a number called 'the after run'.
+    If 'the map is identity' then, Return a boolean, false.
+    If 'the cell start' is 0 then, Return a boolean, false.
+    If 'the after run' is greater than 'the cell stop' then, Return a boolean, false.
+    a boolean called 'more digits after' is 'any digit between' of 'the line bytes' and 'the after run' and 'the cell stop'.
+    If 'more digits after' is false then, Return a boolean, false.
+    Set 'cells for review' to 'cells for review' add 1.
+    Print "{'the current label'}  (digits follow the citation run in the line cell)  REVIEW".
+    Return a boolean, true.
+
+(---------------------------------------------------------------------
+ rewriting one line and one file
+ ---------------------------------------------------------------------)
+
+(Rewrites 'the line bytes' into 'the rewritten line'. 'the citation
+ column' is 0 unless this line is a row of a table that has one.)
+To 'rewrite the line' with a number called 'the citation column'.
+    clear 'the rewritten line'.
+    Set 'the cell start' to 0.
+    Set 'the cell stop' to 0.
+    a number called 'the line length' is 'the line bytes's size.
+    If 'the citation column' is greater than 0 then, 'locate citation cell' of 'the citation column'.
+    'review the cell'.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the line length',
+        a boolean called 'handled here' is false,
+        a boolean called 'at the cell' is false,
+        If 'the cell start' is greater than 0 and 'the position' is 'the cell start' then, Set 'at the cell' to 'digit at' of 'the line bytes' and 'the position'.
+        If 'at the cell' then,
+            'rewrite run' of 'the position',
+            'review after the run' of 'the run end',
+            Set 'the position' to 'the run end',
+            Set 'handled here' to true.
+        If 'handled here' is false then,
+            a number called 'the number start' is 'citation prefix at' of 'the position',
+            If 'the number start' is greater than 0 then,
+                'copy slice' of 'the position' and {'the number start' subtract 1},
+                'rewrite run' of 'the number start',
+                Set 'the position' to 'the run end',
+                Set 'handled here' to true..
+        If 'handled here' is false then,
+            'copy slice' of 'the position' and 'the position',
+            Set 'the position' to 'the position' add 1..
+
+To 'process file' with a text called 'the path'.
+    a list called 'the file lines' is 'lines of' of 'the path'.
+    a boolean called 'a trailing newline' is 'the file ended with a newline'.
+    a number called 'the line count' is 'the file lines's length.
+    Set 'files scanned' to 'files scanned' add 1.
+    a boolean called 'the file changed' is false.
+    clear 'the file output'.
+    a number called 'the citation column' is 0.
+    a number called 'the index' is 1.
+    While 'the index' is less than or equal to 'the line count',
+        a text called 'the source line' is element 'the index' of 'the file lines',
+        'load the line' of 'the source line',
+        a boolean called 'a table row' is 'matches at' of 'the line bytes' and 1 and "|",
+        If 'a table row' is false then, Set 'the citation column' to 0.
+        a boolean called 'a header row' is false,
+        If 'a table row' then, Set 'a header row' to 'a rule follows' of 'the file lines' and 'the index' and 'the line count'.
+        If 'a header row' then, Set 'the citation column' to 'citation column of' of 'the source line'.
+        Set 'the current label' to "{'the path'}:{'the index'}",
+        Set 'the line changed' to false,
+        'rewrite the line' of 'the citation column',
+        If 'the line changed' then, Set 'the file changed' to true.
+        (A dry run needs the report, not the file. Accumulating the whole
+         rewritten corpus - about 3MB - only to throw it away is most of
+         what the run costs, and a dry run is the mode people sit and
+         wait for.)
+        If 'applying changes' then, append 'the rewritten line' to 'the file output'.
+        If 'applying changes' and 'the index' is less than 'the line count' then, append "\n" to 'the file output'.
+        Set 'the index' to 'the index' add 1.
+    If 'applying changes' and 'a trailing newline' and 'the line count' is greater than 0 then, append "\n" to 'the file output'.
+    If 'the file changed' then, Set 'files rewritten' to 'files rewritten' add 1.
+    If 'the file changed' and 'applying changes' then, 'write the output to' of 'the path'.
+
+(---------------------------------------------------------------------
+ resolving the two manuals
+ ---------------------------------------------------------------------)
+
+(A manual reference - a path if it names one, otherwise a commit in the
+ vox repo - to a readable file. Returns the path to read, or "".)
+To 'manual file for' with a text called 'the reference' and a text called 'the destination'.
+    If 'the reference' is "" then, Return a text, "".
+    a boolean called 'a readable path' is 'path exists' of 'the reference'.
+    If 'a readable path' then, Return a text, 'the reference'.
+    If 'the vox repo is present' is false then, Return a text, "".
+    a text called 'the blob' is "{'the reference'}:LANGUAGE.md".
+    a text called 'the show command' is "git -C {'shell quote' of 'the vox repo'} show {'shell quote' of 'the blob'} > {'shell quote' of 'the destination'} 2>/dev/null".
+    a number called 'the show code' is 'run shell' of 'the show command'.
+    If 'the show code' is not 0 then, Return a text, "".
+    Return a text, 'the destination'.
+
+(Vox defect, found building this tool (2026-08-22): a global `list` or
+ `map` that a FUNCTION reads cannot also be reassigned by a top-level
+ `Set` - the compiler then reports "Unknown variable" against the
+ declaration itself and refuses the program. Minimal repro in
+ docs/ledger/probes/repin/vox-global-list-set.vox. `Set` from INSIDE a
+ function is fine, which is why the two manuals are loaded here rather
+ than in main.)
+To 'load the manuals' with a text called 'the old path' and a text called 'the new path'.
+    Set 'the old lines' to 'lines of' of 'the old path'.
+    Set 'the new lines' to 'lines of' of 'the new path'.
+
+To 'read the pin'.
+    a list called 'the pin lines' is 'lines of' of 'the pin path'.
+    a number called 'the pin line count' is 'the pin lines's length.
+    a number called 'the pin index' is 1.
+    While 'the pin index' is less than or equal to 'the pin line count',
+        a text called 'the pin line' is element 'the pin index' of 'the pin lines',
+        a buffer called 'the pin bytes' is 'the pin line',
+        a boolean called 'a commit line' is 'matches at' of 'the pin bytes' and 1 and "commit ",
+        a boolean called 'a lines line' is 'matches at' of 'the pin bytes' and 1 and "lines ",
+        If 'a commit line' then, Set 'the pinned commit' to 'rest of line from' of 'the pin bytes' and 8.
+        If 'a lines line' then, Set 'the pinned line count' to 'number at' of 'the pin bytes' and 7.
+        Set 'the pin index' to 'the pin index' add 1.
+
+(---------------------------------------------------------------------
+ --pin
+ ---------------------------------------------------------------------)
+
+(Replace the old pinned line count wherever it stands alone in one line
+ of INDEX.md's header paragraph, and nowhere else. Only the first ten
+ lines are eligible, so no claim text below can be touched by accident,
+ and a digit on either side disqualifies a match, so the same digits
+ inside a longer number survive.)
+To 'replace the count in the line' with a number called 'the old count' and a number called 'the new count' and a number called 'the width' and a number called 'the line number'.
+    a number called 'the replacements' is 0.
+    a number called 'the position' is 1.
+    a number called 'the line length' is 'the line bytes's size.
+    While 'the position' is less than or equal to 'the line length',
+        a boolean called 'the count here' is false,
+        If 'the line number' is less than or equal to 10 then, Set 'the count here' to 'matches at' of 'the line bytes' and 'the position' and "{'the old count'}".
+        a boolean called 'a digit before' is 'digit at' of 'the line bytes' and {'the position' subtract 1},
+        a boolean called 'a digit after' is 'digit at' of 'the line bytes' and {'the position' add 'the width'},
+        If 'a digit before' then, Set 'the count here' to false.
+        If 'a digit after' then, Set 'the count here' to false.
+        If 'the count here' then,
+            append "{'the new count'}" to 'the rewritten line',
+            Set 'the replacements' to 'the replacements' add 1,
+            Set 'the position' to 'the position' add 'the width'.
+        If 'the count here' is false then,
+            'copy slice' of 'the position' and 'the position',
+            Set 'the position' to 'the position' add 1..
+    Return a number, 'the replacements'.
+
+To 'repin the index header' with a number called 'the new line count'.
+    If 'the pinned line count' is 0 then, Return a boolean, false.
+    a list called 'the index lines' is 'lines of' of 'the index path'.
+    a boolean called 'the index ended with a newline' is 'the file ended with a newline'.
+    a number called 'the old count width' is 'digit width of' of 'the pinned line count'.
+    clear 'the file output'.
+    a number called 'the index line count' is 'the index lines's length.
+    a number called 'the replacements' is 0.
+    a number called 'the index position' is 1.
+    While 'the index position' is less than or equal to 'the index line count',
+        a text called 'the index line' is element 'the index position' of 'the index lines',
+        'load the line' of 'the index line',
+        clear 'the rewritten line',
+        a number called 'the made' is 'replace the count in the line' of 'the pinned line count' and 'the new line count' and 'the old count width' and 'the index position',
+        Set 'the replacements' to 'the replacements' add 'the made',
+        append 'the rewritten line' to 'the file output',
+        If 'the index position' is less than 'the index line count' then, append "\n" to 'the file output'.
+        Set 'the index position' to 'the index position' add 1.
+    If 'the index ended with a newline' then, append "\n" to 'the file output'.
+    If 'the replacements' is 0 then, Print "INDEX.md: no standalone {'the pinned line count'} in the first ten lines - update the pinned-manual sentence by hand".
+    If 'the replacements' is 0 then, Return a boolean, false.
+    'write the output to' of 'the index path'.
+    Print "INDEX.md: {'the replacements'} header line count(s) updated to {'the new line count'}".
+    Return a boolean, true.
+
+To 'rewrite the pin file' with a text called 'the new commit' and a number called 'the new line count' and a text called 'the pin date'.
+    a list called 'the pin lines' is 'lines of' of 'the pin path'.
+    clear 'the file output'.
+    a number called 'the pin line count' is 'the pin lines's length.
+    a number called 'the pin index' is 1.
+    While 'the pin index' is less than or equal to 'the pin line count',
+        a text called 'the pin line' is element 'the pin index' of 'the pin lines',
+        a buffer called 'the pin bytes' is 'the pin line',
+        a boolean called 'a commit line' is 'matches at' of 'the pin bytes' and 1 and "commit ",
+        a boolean called 'a lines line' is 'matches at' of 'the pin bytes' and 1 and "lines ",
+        a boolean called 'a pinned line' is 'matches at' of 'the pin bytes' and 1 and "pinned ",
+        If 'a commit line' then, append "commit {'the new commit'}" to 'the file output'.
+        If 'a lines line' then, append "lines {'the new line count'}" to 'the file output'.
+        If 'a pinned line' then, append "pinned {'the pin date'}" to 'the file output'.
+        If 'a commit line' is false and 'a lines line' is false and 'a pinned line' is false then, 'append text to the output' of 'the pin line'.
+        If 'the pin index' is less than 'the pin line count' then, append "\n" to 'the file output'.
+        Set 'the pin index' to 'the pin index' add 1.
+    append "\n" to 'the file output'.
+    'write the output to' of 'the pin path'.
+
+To 'do the pin'.
+    a text called 'the new commit' is "unknown".
+    a text called 'the scratch answer' is "{'the scratch directory'}/answer.txt".
+    a text called 'the reference' is 'the to argument'.
+    a boolean called 'the target is the working tree' is false.
+    If 'the reference' is "{'the vox repo'}/LANGUAGE.md" then, Set 'the target is the working tree' to true, Set 'the reference' to "HEAD".
+    (Pinning to HEAD while the working tree's LANGUAGE.md differs from it
+     would record a commit whose manual is NOT the one just mapped, and
+     every later run would then diff from the wrong base.)
+    a number called 'the dirty code' is 0.
+    If 'the vox repo is present' and 'the target is the working tree' then, Set 'the dirty code' to 'run shell' of "git -C {'shell quote' of 'the vox repo'} diff --quiet HEAD -- LANGUAGE.md".
+    If 'the dirty code' is not 0 then,
+        Print "repin-citations: {'the vox repo'}/LANGUAGE.md differs from HEAD - refusing to pin to a commit that is not what was mapped",
+        Exit 2.
+    a number called 'the rev code' is 1.
+    If 'the vox repo is present' then, Set 'the rev code' to 'run shell' of "git -C {'shell quote' of 'the vox repo'} rev-parse --short=7 {'shell quote' of 'the reference'} > {'shell quote' of 'the scratch answer'} 2>/dev/null".
+    If 'the rev code' is 0 then, Set 'the new commit' to 'first line of' of 'the scratch answer'.
+    If 'the new commit' is "" then, Set 'the new commit' to "unknown".
+    a number called 'the copy code' is 'run shell' of "cp {'shell quote' of 'the new manual path'} {'shell quote' of 'the pinned copy path'}".
+    If 'the copy code' is not 0 then,
+        Print "repin-citations: could not refresh {'the pinned copy path'}",
+        Exit 2.
+    a number called 'the date code' is 'run shell' of "date +%Y-%m-%d > {'shell quote' of 'the scratch answer'}".
+    a text called 'the pin date' is 'first line of' of 'the scratch answer'.
+    a number called 'the new line count' is 'the new lines's length.
+    'rewrite the pin file' of 'the new commit' and 'the new line count' and 'the pin date'.
+    Print "pinned: commit {'the new commit'}, {'the new line count'} lines, {'the pinned copy path'} refreshed".
+    a boolean called 'the header repinned' is 'repin the index header' of 'the new line count'.
+
+(Vox has no getpid, so the scratch directory's name is read the way
+ src/sandbox.vox reads it: the first field of /proc/self/stat. ./vf_* is
+ gitignored and already swept by test.sh, which is why every scratch path
+ in this repo lives there rather than in /tmp.)
+To 'self pid'.
+    open a file for reading called 'the stat file' at "/proc/self/stat".
+    On error Return a number, 0.
+    a buffer called 'the stat bytes'.
+    Read from 'the stat file' into 'the stat bytes'.
+    Close 'the stat file'.
+    a number called 'the pid value' is 'number at' of 'the stat bytes' and 1.
+    Return a number, 'the pid value'.
+
+(---------------------------------------------------------------------
+ main
+
+ Every multi-line block below is followed by a blank line on purpose: a
+ paragraph break force-closes every open clause (LANGUAGE.md, "The
+ termination rule", rule 2), which is what keeps the next statement at
+ the top level instead of quietly inside the previous `If`.
+ ---------------------------------------------------------------------)
+
+If the environment variable "VOX_REPO" exists then, Set 'the vox repo' to environment's "VOX_REPO".
+
+a list called 'the arguments' is arguments's all.
+a number called 'the argument count' is 'the arguments's length.
+a number called 'the argument index' is 1.
+While 'the argument index' is less than or equal to 'the argument count',
+    a text called 'the argument' is element 'the argument index' of 'the arguments',
+    a boolean called 'takes a value' is false,
+    If 'the argument' is "--to" then, Set 'takes a value' to true.
+    If 'the argument' is "--from" then, Set 'takes a value' to true.
+    If 'the argument' is "--scan" then, Set 'takes a value' to true.
+    If 'the argument' is "--vox-repo" then, Set 'takes a value' to true.
+    a boolean called 'a value is missing' is false,
+    If 'takes a value' and 'the argument index' is 'the argument count' then, Set 'a value is missing' to true.
+    If 'a value is missing' then, Print "repin-citations: {'the argument'} needs a value", Exit 2.
+    a text called 'the value' is "",
+    If 'takes a value' then, Set 'the value' to element {'the argument index' add 1} of 'the arguments', Set 'the argument index' to 'the argument index' add 1.
+    If 'the argument' is "--to" then, Set 'the to argument' to 'the value'.
+    If 'the argument' is "--from" then, Set 'the from argument' to 'the value'.
+    If 'the argument' is "--scan" then, Set 'the scan directory' to 'the value'.
+    If 'the argument' is "--vox-repo" then, Set 'the vox repo' to 'the value'.
+    If 'the argument' is "--apply" then, Set 'applying changes' to true, Set 'takes a value' to true.
+    If 'the argument' is "--dry-run" then, Set 'applying changes' to false, Set 'takes a value' to true.
+    If 'the argument' is "--pin" then, Set 'pinning' to true, Set 'takes a value' to true.
+    If 'the argument' is "--verbose" then, Set 'listing everything' to true, Set 'takes a value' to true.
+    If 'takes a value' is false then, Print "repin-citations: unknown argument {'the argument'}", Exit 2.
+    Set 'the argument index' to 'the argument index' add 1.
+
+If 'pinning' and 'applying changes' is false then,
+    Print "repin-citations: --pin needs --apply (a pin recorded before the rewrite would double-shift the next run)",
+    Exit 2.
+
+a number called 'the pid' is 'self pid'.
+Set 'the scratch directory' to "./vf_repin_{'the pid'}".
+a number called 'the scratch made' is 'run shell' of "mkdir -p {'shell quote' of 'the scratch directory'}".
+If 'the scratch made' is not 0 then,
+    Print "repin-citations: cannot create {'the scratch directory'}",
+    Exit 2.
+
+Set 'the vox repo is present' to 'path exists' of "{'the vox repo'}/.git".
+
+(the pinned side)
+a text called 'the old manual path' is "".
+a text called 'the old source' is "".
+If 'the from argument' is not "" then,
+    Set 'the old source' to 'the from argument',
+    Set 'the old manual path' to 'manual file for' of 'the from argument' and "{'the scratch directory'}/old-LANGUAGE.md".
+
+If 'the from argument' is "" then,
+    'read the pin',
+    Set 'the old source' to "pinned {'the pinned commit'}",
+    Set 'the old manual path' to 'manual file for' of 'the pinned commit' and "{'the scratch directory'}/old-LANGUAGE.md".
+
+If 'the from argument' is "" and 'the old manual path' is "" then,
+    Set 'the old manual path' to 'the pinned copy path',
+    Set 'the old source' to "pinned copy {'the pinned copy path'}".
+
+If 'the old manual path' is "" then,
+    Print "repin-citations: cannot read the pinned manual ({'the old source'})",
+    Exit 2.
+
+(the target side)
+If 'the to argument' is "" then, Set 'the to argument' to "{'the vox repo'}/LANGUAGE.md".
+a text called 'the new source' is 'the to argument'.
+Set 'the new manual path' to 'manual file for' of 'the to argument' and "{'the scratch directory'}/new-LANGUAGE.md".
+If 'the new manual path' is "" then,
+    Print "repin-citations: cannot read the target manual ({'the new source'})",
+    Exit 2.
+
+'load the manuals' of 'the old manual path' and 'the new manual path'.
+
+(A pin that does not describe the manual it names is a pin nobody can
+ trust, and mapping from the wrong base is worse than not mapping.)
+a boolean called 'the pin disagrees' is false.
+If 'the from argument' is "" and 'the pinned line count' is greater than 0 and 'the old lines's length is not 'the pinned line count' then, Set 'the pin disagrees' to true.
+If 'the pin disagrees' then,
+    Print "repin-citations: the pinned manual is {'the old lines's length} lines but PINNED-MANUAL says {'the pinned line count'} - refusing to map from it",
+    Exit 2.
+
+a text called 'the diff path' is "{'the scratch directory'}/manual.diff".
+a number called 'the diff code' is 'run shell' of "diff -U0 {'shell quote' of 'the old manual path'} {'shell quote' of 'the new manual path'} > {'shell quote' of 'the diff path'}".
+If 'the diff code' is greater than 1 then,
+    Print "repin-citations: diff failed ({'the diff code'})",
+    Exit 2.
+
+'read hunks from' of 'the diff path'.
+Set 'the map is identity' to false.
+If 'hunk old start's length is 0 then, Set 'the map is identity' to true.
+
+Print "repin-citations: {'the old source'} ({'the old lines's length} lines) -> {'the new source'} ({'the new lines's length} lines)".
+Print "hunks: {'hunk old start's length}".
+If 'the map is identity' then, Print "the manual has not moved - every citation maps to itself, no change".
+
+(File discovery. The pinned copy of the manual is deliberately excluded:
+ it is the reference, not a citer, and rewriting it would destroy the very
+ thing the next run measures from.)
+a text called 'the listing path' is "{'the scratch directory'}/files.txt".
+a text called 'the find command' is "find docs/ledger -type f \\( -name '*.md' -o -name '*.vox' \\) -not -path 'docs/ledger/pinned/*' > {'shell quote' of 'the listing path'}; find src scripts tests -maxdepth 1 -type f -name '*.vox' >> {'shell quote' of 'the listing path'}; test -f CLAUDE.md && echo CLAUDE.md >> {'shell quote' of 'the listing path'}; sort -o {'shell quote' of 'the listing path'} {'shell quote' of 'the listing path'}".
+If 'the scan directory' is not "" then, Set 'the find command' to "find {'shell quote' of 'the scan directory'} -type f \\( -name '*.md' -o -name '*.vox' \\) | sort > {'shell quote' of 'the listing path'}".
+a number called 'the find code' is 'run shell' of 'the find command'.
+a list called 'the files' is 'lines of' of 'the listing path'.
+a number called 'the file count' is 'the files's length.
+If 'the file count' is 0 then,
+    Print "repin-citations: no files to scan",
+    Exit 2.
+
+Print "".
+Print "file:line  old -> new  status".
+a number called 'the file index' is 1.
+While 'the file index' is less than or equal to 'the file count',
+    a text called 'one file' is element 'the file index' of 'the files',
+    'process file' of 'one file',
+    Set 'the file index' to 'the file index' add 1.
+
+Print "".
+Print "citations: {'citations checked'} checked, {'citations shifted'} shifted, {'citations moved'} moved, {'citations broken'} CHANGED, {'cells for review'} for review".
+Print "files: {'files scanned'} scanned, {'files rewritten'} changed".
+If 'applying changes' is false and 'files rewritten' is greater than 0 then, Print "dry run - nothing written; re-run with --apply".
+If 'pinning' then, 'do the pin'.
+
+a number called 'the sweep code' is 'run shell' of "rm -rf {'shell quote' of 'the scratch directory'}".
+
+If 'citations broken' is greater than 0 then,
+    Print "",
+    Print "{'citations broken'} citation(s) name a line whose text CHANGED and could not be found again; each is now `?`. Read the manual and the row together, and write the line the claim actually lives on now.",
+    Exit 1.

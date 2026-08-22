@@ -1,10 +1,13 @@
-(D1 -- minimal repro. LANGUAGE.md:5013-5016: "It will not overwrite a
- .lib that already exists -- a repeat --shared build errors and asks you
- to remove the .lib first". It does not error; it silently rewrites the
- .lib, clobbering any hand edit. Needs --shared, so not auto-run; see
- shared/LIB-overwrite.vox for the fuller version and the ledger's
- Discrepancies section for the reading.
- Ran, from the repo root, in a scratch directory:
+(D1 -- minimal repro. RESOLVED 2026-08-22: the manual previously said,
+ at what was then lines 5013 through 5016 (that text is gone from the
+ current manual, corrected in place), "It will not overwrite a .lib
+ that already exists -- a repeat --shared build errors and asks you to
+ remove the .lib first". It did not error; it silently rewrote the
+ .lib, clobbering any hand edit. The manual was corrected in vox commit
+ 70ca1c2 to document exactly this behavior (LANGUAGE.md:5021-5024) --
+ see the ledger's Discrepancies section, item 1. Needs --shared, so
+ not auto-run; see shared/LIB-overwrite.vox for the fuller version.
+ Re-ran 2026-08-22 against vox 0.4.9 (commit bb406de), from the repo root, in a scratch directory:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    V=/home/josj/scr/english/vox/target/release/vox
    $V docs/ledger/probes/libraries/D1.vox --shared -o d1.so

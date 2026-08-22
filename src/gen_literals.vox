@@ -17,9 +17,9 @@
  The rules that bound anything here, all hand-verified against vox 0.4.8
  before they were written down (the probe log is in the worker report):
 
-   - LANGUAGE.md:1789-1810   the Literals table: which forms exist at all
-   - LANGUAGE.md:1808-1810   0x / 0b prefixes, 'A' is one character
-   - LANGUAGE.md:1803        "Float literals are recognized by the
+   - LANGUAGE.md:1822-1837   the Literals table: which forms exist at all
+   - LANGUAGE.md:1807-1809   0x / 0b prefixes, 'A' is one character
+   - LANGUAGE.md:1802        "Float literals are recognized by the
                              presence of a decimal point"
    - LANGUAGE.md:3183-3191   the escape table: {{ }} \n \t \\
    - LANGUAGE.md:3103-3113   the format-specifier table
@@ -81,7 +81,7 @@ a list called literal_text_pieces is [" ", "!", "#", "$", "%", "&", "'", "(", ")
 a number called literal_text_piece_count is literal_text_pieces's length.
 
 (What may sit between the two apostrophes of a character literal.
- LANGUAGE.md:1801 gives `'A'` and `'!'`; :1810 says `'A'` equals 65. The
+ LANGUAGE.md:1800 gives `'A'` and `'!'`; :1810 says `'A'` equals 65. The
  length is ONE, and that is a rule, not a tuning choice: 'AB' is a compile error
  and '' is a parse error, both hand-verified. So this is the one helper in
  the file that does not grow.
@@ -149,7 +149,7 @@ To 'literal base digit' with a number called 'the digit value'.
         Return a text, element 'the letter index' of literal_upper_letters.
     Return a text, element 'the letter index' of literal_lower_letters.
 
-(A sign, where the manual allows one. LANGUAGE.md:1795 gives `-5` for
+(A sign, where the manual allows one. LANGUAGE.md:1794 gives `-5` for
  integer and :1796 gives `-2.5` for float. `-0xff` and `-0b101` are NOT in
  the manual; both compile and evaluate to -255 and -5, hand-verified, so
  the hex and binary helpers draw a sign too and the probe is recorded.)
@@ -186,7 +186,7 @@ To 'literal leading zeros'.
  fits exactly when value is at most {ceiling subtract digit} divide base.
 
  A first digit of zero ends the run at "0", which is how the literal `0`
- from LANGUAGE.md:1795 gets emitted.)
+ from LANGUAGE.md:1794 gets emitted.)
 
 To 'literal magnitude' with a number called 'the base'.
     a number called 'the first digit value' is 'literal draw below' of 'the base'.
@@ -222,14 +222,14 @@ To 'literal digit run' with a number called 'the base'.
         Set 'the digits' to "{'the digits'}{'the digit'}".
     Return a text, 'the digits'.
 
-(Decimal integer, unsigned. LANGUAGE.md:1795 - `42`, `0`.)
+(Decimal integer, unsigned. LANGUAGE.md:1794 - `42`, `0`.)
 
 To 'literal whole number'.
     a text called 'the zeros' is 'literal leading zeros'.
     a text called 'the magnitude' is 'literal magnitude' of 10.
     Return a text, "{'the zeros'}{'the magnitude'}".
 
-(Decimal integer, signed. LANGUAGE.md:1795 - `42`, `0`, `-5`.)
+(Decimal integer, signed. LANGUAGE.md:1794 - `42`, `0`, `-5`.)
 
 To 'literal integer'.
     a text called 'the sign' is 'literal sign'.
@@ -275,7 +275,7 @@ To 'literal float'.
         Set 'the digits' to "{'the digits'}.{'the tail digit'}".
     Return a text, "{'the sign'}{'the zeros'}{'the digits'}".
 
-(Hexadecimal. LANGUAGE.md:1799 and :1808 - `0xFF`, `0xDEADBEEF`, "use 0x
+(Hexadecimal. LANGUAGE.md:1798 and :1808 - `0xFF`, `0xDEADBEEF`, "use 0x
  prefix". The manual writes the prefix lowercase and the digits uppercase;
  the compiler accepts `0X` and accepts either case of digit, both
  hand-verified, and no line says it must not, so both vary.)
@@ -293,7 +293,7 @@ To 'literal hexadecimal'.
     a text called 'the magnitude' is 'literal magnitude' of 16.
     Return a text, "{'the sign'}{'the prefix'}{'the zeros'}{'the magnitude'}".
 
-(Binary. LANGUAGE.md:1800 and :1809 - `0b10110100`, `0b1111`, "use 0b
+(Binary. LANGUAGE.md:1799 and :1809 - `0b10110100`, `0b1111`, "use 0b
  prefix". `0B` also parses, hand-verified.)
 
 To 'literal binary prefix'.
@@ -328,7 +328,7 @@ To 'literal text body'.
         Set 'the body' to "{'the body'}{'the piece'}".
     Return a text, 'the body'.
 
-(Text literal. LANGUAGE.md:1797 - `"Hello, World!"`. A 5000-character one
+(Text literal. LANGUAGE.md:1824 - `"Hello, World!"`. A 5000-character one
  compiles and prints all 5000; no rule bounds the length, so this does
  not.)
 
@@ -406,7 +406,7 @@ To 'literal format string' with a list called 'the names'.
         Set 'the body' to "{'the body'}{'the piece'}".
     Return a text, "\"{'the body'}\"".
 
-(Character literal. LANGUAGE.md:1801 and :1810 - `'A'`, `'!'`, "'A' equals
+(Character literal. LANGUAGE.md:1800 and :1810 - `'A'`, `'!'`, "'A' equals
  65". Exactly one character between the apostrophes, and that IS the rule:
  'AB' does not compile and '' does not parse. The only fixed-length helper
  in the file, and the only one with a citation for being fixed.)
@@ -418,7 +418,7 @@ To 'literal character'.
     a text called 'the apostrophe' is "'".
     Return a text, "{'the apostrophe'}{'the piece'}{'the apostrophe'}".
 
-(Boolean. LANGUAGE.md:1798 - `true`, `false`. A two-word vocabulary with
+(Boolean. LANGUAGE.md:1797 - `true`, `false`. A two-word vocabulary with
  the citation the standard asks for.)
 
 To 'literal boolean'.

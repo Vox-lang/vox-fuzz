@@ -1,0 +1,100 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+
+(scripts/repin-citations, on a manual small enough to read.
+
+ The tool's whole value is that it rewrites 1400 line numbers nobody
+ will re-check by hand, which means a wrong map is invisible until a
+ ledger row starts citing the wrong claim. So the map is tested against
+ a 30-line manual whose every drift is stated here, not against
+ LANGUAGE.md, where "did 4451 really become 4454?" is unanswerable by
+ reading.
+
+ tests/fixtures/repin/old-manual.md is the pinned side. new-manual.md
+ differs from it in exactly three ways, one per case the map has to
+ distinguish:
+
+   1. two sentences INSERTED after claim 10 - everything below shifts
+      by 2, everything above keeps its number;
+   2. claim 20 REWRITTEN and claim 21 MOVED down past claims 22-24 -
+      one line whose text is gone (no successor: `?`) and one whose text
+      is intact somewhere else (recovered by search: `moved`), inside
+      the same hunk;
+   3. claim 25 DELETED - a second `?`, and a further -1 below it.
+
+ fixtures/repin/sample-ledger.md carries one row per citation SHAPE -
+ bare cell, ascii range, en dash range, comma pair, a cell whose digits
+ are a filename rather than a citation, a table with no `line` column at
+ all - and prose citations of the `LANGUAGE.md:N` kind underneath. The
+ expected output below records what each one becomes, so a change in the
+ scanner shows up as a diff on the row it broke rather than as a number
+ buried in a summary.
+
+ What is deliberately NOT asserted here: the real corpus. This test
+ proves the mechanism; `scripts/repin-citations --dry-run` against
+ docs/ledger/pinned/LANGUAGE.md proves the corpus, and lives in the
+ procedure, not in the gate, because it costs a five-second compile.)
+
+To 'run the tool' with a text called 'the arguments'.
+    a number called 'the code' is 'run shell' of "./vf_repin_tool {'the arguments'} > ./vf_repin_out 2>&1" and 30000.
+    Print "exit: {'the code'}".
+    a text called 'the output' is 'read whole file' of "./vf_repin_out".
+    Print 'the output'.
+
+a text called 'the fixtures' is "tests/fixtures/repin".
+a text called 'the old manual' is "{'the fixtures'}/old-manual.md".
+a text called 'the new manual' is "{'the fixtures'}/new-manual.md".
+
+a number called 'the cleanup before' is 'run shell' of "rm -rf ./vf_repin_test ./vf_repin_tool ./vf_repin_out ./vf_repin_cerr" and 5000.
+a number called 'the staging' is 'run shell' of "mkdir -p ./vf_repin_test && cp {'the fixtures'}/sample-ledger.md {'the fixtures'}/sample-probe.vox ./vf_repin_test/" and 5000.
+Print "fixtures staged: {'the staging' is 0}".
+
+a number called 'the compile result' is 'compile vox' of "." and "scripts/repin-citations.vox" and "./vf_repin_tool" and "./vf_repin_cerr".
+Print "tool compiled: {'the compile result' is 0}".
+
+(1. A manual that did not move maps every citation to itself. This is
+ the case a release with no LANGUAGE.md change lands in, and it has to
+ be silent - a tool that reports 3460 edits when nothing happened is a
+ tool people stop reading.)
+Print "--- 1. identity ---".
+'run the tool' of "--from {'the old manual'} --to {'the old manual'} --scan ./vf_repin_test".
+
+(2. The drifted manual, dry run: the whole table, every shape.)
+Print "--- 2. drifted, dry run ---".
+'run the tool' of "--from {'the old manual'} --to {'the new manual'} --scan ./vf_repin_test".
+
+(3. A dry run writes nothing. Checked against the fixtures themselves,
+ so "nothing" means byte for byte.)
+a number called 'the ledger untouched' is 'run shell' of "diff -q {'the fixtures'}/sample-ledger.md ./vf_repin_test/sample-ledger.md" and 5000.
+a number called 'the probe untouched' is 'run shell' of "diff -q {'the fixtures'}/sample-probe.vox ./vf_repin_test/sample-probe.vox" and 5000.
+Print "--- 3. dry run wrote nothing: ledger {'the ledger untouched' is 0} probe {'the probe untouched' is 0} ---".
+
+(4. --apply, and then the files themselves. Reading them back is the
+ real assertion: everything that is not a citation has to survive, down
+ to the en dash, the row IDs' digits and the version number.)
+Print "--- 4. apply ---".
+'run the tool' of "--from {'the old manual'} --to {'the new manual'} --scan ./vf_repin_test --apply".
+Print "--- the rewritten ledger ---".
+a text called 'the rewritten ledger' is 'read whole file' of "./vf_repin_test/sample-ledger.md".
+Print 'the rewritten ledger'.
+Print "--- the rewritten probe ---".
+a text called 'the rewritten probe' is 'read whole file' of "./vf_repin_test/sample-probe.vox".
+Print 'the rewritten probe'.
+
+(5. Once applied, the citations describe the NEW manual, so re-running
+ from the new pin has nothing left to do. A tool that shifted them twice
+ would show it here and only here.)
+Print "--- 5. re-pinned, nothing left to do ---".
+'run the tool' of "--from {'the new manual'} --to {'the new manual'} --scan ./vf_repin_test".
+
+(6. --pin without --apply is refused: a pin recorded while the files
+ still cite the old manual makes the next run diff from the wrong base
+ and shift everything a second time.)
+Print "--- 6. --pin without --apply ---".
+'run the tool' of "--from {'the old manual'} --to {'the new manual'} --scan ./vf_repin_test --pin".
+
+(7. An unknown flag is a usage error, not a silent no-op.)
+Print "--- 7. unknown argument ---".
+'run the tool' of "--wat".
+
+a number called 'the cleanup after' is 'run shell' of "rm -rf ./vf_repin_test ./vf_repin_tool ./vf_repin_out ./vf_repin_cerr" and 5000.
