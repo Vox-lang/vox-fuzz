@@ -1,15 +1,25 @@
 # Claim ledger: Variables
 
-Source: `../vox/LANGUAGE.md` lines **446–644** (manual version **0.4.8**):
-Declaration with Type, Declaration with Set/Create, Two Canonical Forms,
-Assignment, Type Immutability, Naming Rules. Row prefix **`VAR`**.
+Source: `../vox/LANGUAGE.md` lines **446–644**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), confirmed 2026-08-22 — Declaration
+with Type, Declaration with Set/Create, Two Canonical Forms, Assignment,
+Type Immutability, Naming Rules. Row prefix **`VAR`**.
 
-`INDEX.md` pins this range against manual **0.4.7**. The manual has since
-moved to **0.4.8** and grown from 5112 to 5240 lines, but the Variables
-section did not move: `## Variables` is still line 446 and `## Names and
-strings` still line 645, so the brief's range is correct as written and no
-re-pinning was needed for this ledger. Later sections have shifted and
-`INDEX.md` will need re-pinning before they are mapped.
+**Zero line drift across every version this ledger has been pinned
+against — 0.4.7 through 0.4.9.** `## Variables` is still line 446 and
+`## Names and strings` still line 645.
+
+**Discrepancy 1 is RESOLVED (vox #54)** — re-verified directly against
+0.4.9: the list-element type-check gap that let a memory-safety segfault
+through is closed; `D1.vox`/`D1b.vox`/`VAR-46.vox` now compile-error
+instead of crashing. **Discrepancy 2 remains genuinely open** — this is
+the brief's "variables D2" — but its downstream symptom changed as a
+side effect of the same #54 fix: the loop-header rebinding itself is
+still unchecked (`D2.vox` unchanged), but arithmetic on the resulting
+mistyped variable is now a compile error instead of a silent address
+leak (`VAR-34.vox` re-recorded). No register number was found for D2
+itself; recorded honestly rather than guessed — see the discrepancy
+entry for the full trail (`REPORT-CANDIDATES-0.4.10.md` candidate C).
 
 This is a **gap analysis**, not a from-scratch map. `existing leaf` names
 the leaf that already emits the construct — checked by `grep` on the
@@ -100,7 +110,7 @@ missing does exist on the map path.
 | VAR-31 | 542 | `n is "42" as a number.` is accepted and `n` becomes 42. | emit a cast-repaired reassignment of an existing name and assert the result | yes — `If n is not 42 then, Exit 95.` | partial: `gen leaf cast and break` emits `a number called cb{n} is ct{n} as a number` and `gen leaf base conversion` emits `a number called bg{n} is bx{n} as a number` — both **declare a new name**; the cast never lands on an already-declared one, which is the case this claim is about | todo | |
 | VAR-32 | 545–558 | The diagnostic names the variable, its declared type, its declaration site, the offending value's type, and the exact cast that would fix it. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-26.vox reproduces the block; but see **Discrepancy 6**, the caret is not where the manual shows it | |
 | VAR-33 | 560–562 | The repair uses the ordinary Type Casting mechanism (`as a number` / `as text`), not syntax invented for this rule. | emit both cast directions | yes | `as a number` and `as text` are both emitted (`gen leaf cast and break`, `gen leaf base conversion`), never asserted | exercised — probe VAR-31.vox | |
-| VAR-34 | 564–566 | Reusing an already-declared name as a `For each … in <collection>` loop variable rejects a conflicting type. | — | **no**, compile-error claim — but the *memory-safety* half is a real leaf need: emit the pattern and require the program not to produce a wrong answer | `For each w{n} in l{n}` and `For each k{n} in m{n}'s keys` are emitted (`gen leaf list mixed`, `gen leaf map inrange`), always with a fresh name, so the reuse case is never reached | todo — **and the claim does not hold**, see **Discrepancy 2** | blocked on D2 |
+| VAR-34 | 564–566 | Reusing an already-declared name as a `For each … in <collection>` loop variable rejects a conflicting type. | — | **no**, compile-error claim — but the *memory-safety* half is a real leaf need: emit the pattern and require the program not to produce a wrong answer | `For each w{n} in l{n}` and `For each k{n} in m{n}'s keys` are emitted (`gen leaf list mixed`, `gen leaf map inrange`), always with a fresh name, so the reuse case is never reached | todo — **the claim still does not hold for the loop header**, see **Discrepancy 2** (still open). Note the *downstream* symptom this row's own probe exercises changed: `counted add 1` after the loop used to silently print a raw address, and is now a compile error (vox #54's side effect) — the probe was re-recorded to that. | blocked on D2 |
 | VAR-35 | 564–566 | Reusing an already-declared name as a for-range loop variable rejects a conflicting type. | — | **no**, compile-error claim | for-range loops are emitted (`gen leaf timer and clock`, `gen leaf deep grid`, the loop-control leaves), always with a fresh name | not assertable — holds, probe VAR-35.vox | |
 | VAR-36 | 566 | Reusing an already-declared name as the target of `open … called` rejects a conflicting type. | — | **no**, compile-error claim | `open a file for reading called fr{n} at …` is emitted (`gen leaf file round trip`, `gen leaf stdin read`, `gen leaf file write`), always with a fresh name | not assertable — holds, probe VAR-36.vox | |
 | VAR-37 | 567 | Reusing an already-declared name as the target of `Allocate … for` rejects a conflicting type. | — | **no**, compile-error claim | **none** — `Allocate` is never emitted by any leaf, and appears nowhere else in LANGUAGE.md than this one line: the manual references a construct it does not define | not assertable — holds for text/list targets, does **not** hold for buffer targets, see **Discrepancy 3** | |
@@ -112,7 +122,7 @@ missing does exist on the map path.
 | VAR-43 | 592–595 | The same statement applied to a statically-typed name is rejected. | — | **no**, compile-error claim | n/a | not assertable — holds, probe VAR-43.vox | |
 | VAR-44 | 597–599 | The check only rejects a mismatch provable statically from the value's own shape — a literal, a cast, or a read from a list/map whose element type is provably uniform. | — | **no** — a claim about the boundary of a compile-time check; both sides of the boundary are compile errors or sanctioned garbage | n/a | not assertable — **and the list half does not hold**, see **Discrepancy 1**; probes VAR-45.vox and D1b.vox | |
 | VAR-45 | 599–603 | A value from a function call, or an unprovable list/map read, is allowed through unchecked. | emit the pattern and require no crash | **not as a correctness oracle** — the manual sanctions the resulting garbage, so there is no documented right answer to assert. As a **memory-safety** leaf it is worth emitting: the program must not crash. | **none** — no leaf assigns a function result or a collection read to an already-declared name of another type | todo (memory-safety leaf) | |
-| VAR-46 | 603–606 | The rule closes the class where the compiler-tracked type disagrees with what the variable holds — previously "a wrong number on screen at best and a segfault at worst". | emit the residual patterns and require the program not to crash | yes as a crash oracle | none | todo — **and the segfault survives**, see **Discrepancy 1**; probe VAR-46.vox exits 139 | blocked on D1 |
+| VAR-46 | 603–606 | The rule closes the class where the compiler-tracked type disagrees with what the variable holds — previously "a wrong number on screen at best and a segfault at worst". | emit the residual patterns and require the program not to crash | yes as a crash oracle | none | todo — **RESOLVED, vox #54**: the segfault no longer reproduces, the mismatch is now refused at compile time. See Discrepancy 1 (resolved); probe VAR-46.vox is now a compile-error probe. | unblocked |
 | VAR-47 | 606–608 | The rule says nothing about type agreement across a `.lib` import boundary; a library's declared signature is trusted, not verified against its `.so`. | — | **no** — needs a second compilation unit and a built `.so`/`.lib` pair, outside the generator's one-program contract | n/a | not assertable — hand-verified anyway; transcript below the table | |
 | VAR-48 | 611–613 | A name is an identifier, never a string literal: three forms, no overlap, no context-sensitivity. | emit all three forms in one program | yes | all three appear across the generator | exercised — **but the "no context-sensitivity" half does not hold**, see **Discrepancy 5** | |
 | VAR-49 | 617 | `"…"` is a string literal, always, everywhere. | — | yes, as data | emitted constantly as data (`Print "…"`, map keys, flag aliases, file paths) | exercised — probe VAR-48.vox | |
@@ -163,7 +173,7 @@ behaviour.
 Nine, all with a runnable repro in `docs/ledger/probes/variables/`, none
 filed, none adjudicated. Ordered by severity.
 
-### 1. A list-element read is not type-checked, and the mismatch it lets through segfaults
+### 1. A list-element read is not type-checked, and the mismatch it lets through segfaults — RESOLVED (vox #54)
 
 `D1.vox`, and the same program as `VAR-46.vox`. LANGUAGE.md:597–599 says
 the check rejects a mismatch it can prove "from the value's own shape (a
@@ -208,7 +218,15 @@ LANGUAGE.md:603–606, which says the segfault case is closed; it is not.
 This is a memory-safety violation on a program the compiler accepted, which
 by `CLAUDE.md` is top severity regardless of how the type rule is read.
 
-### 2. `For each NAME in <collection>` does not type-check the rebinding
+**Resolution confirmed, 2026-08-22: fixed by vox #54.** `vox/docs/
+BUGS_FOUND.md` #54 ("A list element read into a variable of another type
+segfaults") names this exact repro. Re-run `D1.vox`/`VAR-46.vox` against
+vox 0.4.9: `label is element 1 of counts.` is now refused at compile
+time — `error: cannot assign number to 'label', which is a text` — the
+list path now proves uniformity and rejects, matching the map path
+(`D1b.vox`) that already worked. The segfault is gone.
+
+### 2. `For each NAME in <collection>` does not type-check the rebinding — STILL OPEN, symptom changed by vox #54's side effect
 
 `D2.vox`, and `VAR-34.vox` for the consequence. LANGUAGE.md:564–567: "This
 isn't limited to reassignment. Any construct that binds a name to a new
@@ -239,6 +257,29 @@ is nothing to compare against, and the for-range case is checkable only
 because a range is a number by construction. If that is the intended
 reading then LANGUAGE.md:564–566 should say "for-range" and not "`For
 each`", because as written it promises a check that is not there.
+
+**Still open on vox 0.4.9, re-verified 2026-08-22 — but the *symptom*
+changed as a side effect of vox #54's fix to Discrepancy 1.** `D2.vox`
+itself (`Print counted.` / `Print counted's type.` after the loop) is
+byte-identical to the original finding: `beta` / `Number (static)`, no
+rejection. What changed is `VAR-34.vox`'s downstream consequence —
+`counted add 1` used to silently print a raw address; #54 made the
+analyzer track the element type through the loop *body* (not the
+*header*), so that same arithmetic is now a clean compile error,
+`Cannot use text counted in arithmetic; cast it first with 'as a number'
+or 'as a float'.` The "wrong number on screen" half of LANGUAGE.md:603–606's
+promise is closed; the loop-header rejection LANGUAGE.md:564–567 itself
+promises is not — this matches `vox-notes/REPORT-CANDIDATES-0.4.10.md`
+candidate C exactly ("`#54` closed the wrong-value consequence, not the
+rejection") and its own re-check: "On 0.4.9 the same program is `error:
+Cannot use text counted in arithmetic...`. So #54 removed the raw
+address. What it left is the acceptance of the loop header itself."
+**This is the brief's "variables D2," and I could not find a register
+number for it** — it is not among the `fix/bug-66-*`…`fix/bug-90-*`
+branches present in the vox repo, and it is a genuine bug (not a design
+question), so it is not in `candidates-round-4.md`'s open-questions list
+either (that list is design questions only). Recorded honestly as
+adjudicated-but-unassigned rather than guessing a number.
 
 ### 3. `Allocate N for X` is let through onto a buffer, and zeroes its capacity
 
@@ -333,7 +374,7 @@ stated as a property of the language and not as advice.
 
 ### 6. The type-mismatch diagnostic places its caret by searching the source text
 
-`D6.vox`. LANGUAGE.md:549–558 shows the caret under the offending
+`D6.vox`. LANGUAGE.md:550–558 shows the caret under the offending
 statement. It is instead placed at the **first textual occurrence** of that
 statement anywhere in the file — including inside a comment:
 
@@ -369,7 +410,7 @@ it misleads exactly when a program is long enough to need the caret.
 
 ### 7. There are more than "Two Canonical Forms", and one of them is undocumented
 
-`D7.vox`. LANGUAGE.md:467–476 is headed "Two Canonical Forms" and describes
+`D7.vox`. LANGUAGE.md:469–476 is headed "Two Canonical Forms" and describes
 the no-initializer form only under `Create`. Accepted in fact:
 
 | lead-in | `is V` | `to V` | no initializer |
@@ -447,7 +488,7 @@ Samenesses the manual actually requires, for the `citation` column of
 - no generated quoted name contains a newline — LANGUAGE.md:627, VAR-57
 - every generated `file` or `time` declaration carries an initializer — LANGUAGE.md:503–506, VAR-17, VAR-18
 - no generated `timer` declaration carries an initializer — LANGUAGE.md:499, VAR-16, D8
-- a generated name is never redeclared, or rebound by a loop / `open` / `Allocate`, at a conflicting type — LANGUAGE.md:530–537, 564–570, VAR-25, VAR-34–VAR-39
+- a generated name is never redeclared, or rebound by a loop / `open` / `Allocate`, at a conflicting type — LANGUAGE.md:532–537, 564–570, VAR-25, VAR-34–VAR-39
 - map keys and flag aliases in generated programs are always double-quoted — LANGUAGE.md:636–638, VAR-62, VAR-64
 
 One sameness the corpus will show that the **manual does not justify** but

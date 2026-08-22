@@ -1,24 +1,16 @@
-(D8 — Discrepancy 8 repro: SEGFAULT. Six lines of legal Vox. Two
+(D8 — RESOLVED (vox #53, same fix as D7), re-recorded 2026-08-22 against
+ vox 0.4.9. Used to be: SEGFAULT. Six lines of legal Vox. Two
  string-initialised buffers, plus one buffer received from a function
  whose return expression is a text literal (`Return a buffer, "ABC".`),
- and the program dies before printing anything. Deterministic: exit 139,
- 3/3 runs.
- Same construct as Discrepancy 7 (D7.vox), different outcome. With ONE
- string-initialised buffer in the program the call silently yields an
- empty buffer; with TWO or more it segfaults, and the second one counts
- whether it is at top level or inside a function body. Replacing the
- literal return with a buffer-VARIABLE return (`a buffer called made is
- "ABC". Return a buffer, made.`) is safe at any count, so the text
- literal in the return expression is the trigger and the buffer count is
- only what decides whether the damage is visible.
- This is a memory-safety fault on a program that compiles clean, which
- CLAUDE.md rates top severity: Vox promises that no program, however
- stupid, segfaults. Not filed — recorded with the repro, per
- PROCEDURE.md §5.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p && ./p
+ and the program died before printing anything. Deterministic: exit 139,
+ 3/3 runs, a top-severity memory-safety fault on a program that compiled
+ clean. Now the construct is refused at compile time regardless of how
+ many buffers exist, so the dose no longer matters — same diagnostic as
+ D7.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D8.vox -o p
  expected output:
-   timeout: the monitored command dumped core
-   exit 139
+   error: Cannot return text "ABC" as a buffer; the caller reads what Return hands back as a buffer, and text is not one. Build the buffer first: 'a buffer called made is "ABC". Return a buffer, made.'
+   (compile error - no binary is produced)
 )
 To 'give literal'. Return a buffer, "ABC".
 

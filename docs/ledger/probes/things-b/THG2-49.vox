@@ -2,7 +2,7 @@
  whole surface crosses the boundary: the type noun in a declaration, a field
  write and read, the manifest member reached by the type possessive, and a
  global function taking the thing reached by the instance possessive.
- LANGUAGE.md:1626-1639, verbatim, against include/geometry.vox.
+ LANGUAGE.md:1654-1666, verbatim, against include/geometry.vox.
  Also covers: THG2-50, THG2-52.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-49.vox -o p && ./p
  expected output:

@@ -1,6 +1,6 @@
 (THG2-46: a thing is defined at the top level, like a function; a definition
  inside a FUNCTION BODY is a compile error and the message says to move it
- above the block. LANGUAGE.md:1585-1592, verbatim.
+ above the block. LANGUAGE.md:1613-1619, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-46.vox -o p && ./p
  expected output:
    error: A thing is defined at the top level, like a function

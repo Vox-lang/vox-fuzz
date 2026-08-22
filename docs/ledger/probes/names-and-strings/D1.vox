@@ -1,11 +1,15 @@
-(Discrepancy 1 (NAM): isolate NAM-03's worked example down to only the
- half LANGUAGE.md:664-665 actually credits ("is "get five"" in value
- position) by fixing the name-position violation. No error, no
- warning: a garbage number, printed as if it were data. Compare
- D1b.vox for the content-independence and reassignment-form checks.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
+(Discrepancy 1 (NAM) -- RESOLVED (vox #65), re-recorded 2026-08-22
+ against vox 0.4.9. Used to isolate NAM-03's worked example down to
+ only the half LANGUAGE.md:664-665 actually credits ("is "get five""
+ in value position) by fixing the name-position violation, and used to
+ print a garbage number with no error or warning -- the initial-
+ declaration form's value wasn't type-checked at all. Now it is,
+ exactly like the reassignment form (VAR-26). Compare D1b.vox for the
+ content-independence and reassignment-form checks.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p
  expected output:
-   4198488
+   error: cannot initialise 'n', which is a number, with text
+   (compile error - no binary is produced)
 )
 a number called n is "get five".
 print n.

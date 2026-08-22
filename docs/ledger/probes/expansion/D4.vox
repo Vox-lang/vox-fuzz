@@ -1,12 +1,13 @@
-(D4 — Discrepancy 4 repro: the same unchecked type confusion as D3, but over a
- MIXED list, where it does not crash — it prints a raw pointer. The second
- element is the text "a"; the treating clause makes the loop read it as a
- number, and what comes out is the address of the string, printed as a
- decimal. Deterministic and independent of where the binary is built: three
- runs from two different output directories all printed 4198536.
+(D4 — RESOLVED, re-recorded 2026-08-22 against vox 0.4.9. Used to be:
+ the same unchecked type confusion as D3, but over a MIXED list, where it
+ did not crash — it printed a raw pointer. The second element is the
+ text "a"; a `treating` clause with a number match/replacement used to
+ make the loop misread it as a number, printing the string's address as
+ a decimal (4198536, deterministic). Now the text element renders
+ correctly.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D4.vox -o p && ./p
  expected output:
    1
-   4198536
+   a
 )
 print each item from [1, "a"] treating 98 as 31.

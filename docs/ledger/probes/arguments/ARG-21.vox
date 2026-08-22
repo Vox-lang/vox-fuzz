@@ -1,5 +1,5 @@
 (ARG-21 — `with default <value>` initializes the flag when it is not
- passed (LANGUAGE.md:4383, 4387). Run with no arguments, so every
+ passed (LANGUAGE.md:4470, 4474). Run with no arguments, so every
  default is the value observed. The manual shows a text default only;
  number and boolean defaults are accepted too and are included here.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-21.vox -o p && ./p

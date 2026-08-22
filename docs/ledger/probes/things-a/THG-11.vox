@@ -5,7 +5,7 @@
  bringing a new point into being), THG-23 (the same word under two articles
  means two different things).
  The manifest itself is mapped by the Things part B ledger; this probe only
- puts the article rule stated at LANGUAGE.md:865-872 on trial.
+ puts the article rule stated at old manual lines 865-872 on trial.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-11.vox -o p && ./p
  expected output:
    1

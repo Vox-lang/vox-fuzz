@@ -1,24 +1,38 @@
 # Claim ledger: Input/Output → Print, format strings, conditional print
 
-Source: `../vox/LANGUAGE.md` lines **3072–3215**, manual version **0.4.8**
-(Input/Output, from the `## Input/Output` heading to the `## File I/O`
-heading: Print, Format Strings, Format Specifiers, Expressions in Format
-Strings, Format Strings as Values, Format Strings Everywhere,
-Declarations in Branches, Escape Sequences, Conditional Print).
+Source: `../vox/LANGUAGE.md` lines **3128–3283**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), re-pinned 2026-08-22 (previously
+pinned to a 5238-line 0.4.8 manual) — Input/Output, from the `##
+Input/Output` heading to the `## File I/O` heading: Print, Format
+Strings, Format Specifiers, Expressions in Format Strings, Format
+Strings as Values, Format Strings Everywhere, Declarations in Branches,
+Escape Sequences, Conditional Print.
 
-**The brief's line range was 2995–3138. That range is correct for manual
-version 0.4.7 and stale for 0.4.8.** `INDEX.md` pins 0.4.7 (5112 lines);
-the manual is now 0.4.8 (5238 lines) and has grown by exactly 77 lines
-above this point, so 0.4.7's 2995–3138 is 0.4.8's 3072–3215 — which is
-precisely the `## Input/Output` chapter, heading to heading. Mapped
-against 0.4.8 line numbers throughout. Read literally at 0.4.8 numbering
-the brief's range would have started 77 lines early, inside the loop
-expansion chapter, and stopped 77 lines short — losing Format Strings
-Everywhere, Declarations in Branches, Escape Sequences, and Conditional
-Print, the last of which is named in the section's own title. The same
-+77 shift re-pins `buffers.md` (3139–3324 → 3216–3401); every ledger line
-range in `INDEX.md` below the collections chapter needs the same
-treatment.
+The 0.4.8→0.4.9 drift in this range is a uniform **+56 lines**, confirmed
+at multiple anchors before applying it mechanically.
+
+**Both discrepancies with an open compiler-side finding are now
+resolved, re-verified directly against vox 0.4.9:**
+- **D1** (`{arguments's first}` into a buffer segfaults) — already
+  marked fixed by vox #52 in an earlier pass; re-confirmed here.
+- **D2** (a list in a format string used as a *value* renders a raw
+  pointer) — **fixed by vox #44**, the same fix that closed
+  collections-a's and collections-b's own D7 (variable-form sub-case).
+  Both facets (a list held in a text, and `{arguments's all}` in a
+  `Print` slot) now render correctly; re-tested directly, not just
+  re-read. The narrower *expression*-form sub-case those two ledgers
+  found remains open elsewhere (vox candidate #68) but is untouched by
+  this section's own claims.
+
+**Also fixed a probe-formatting inconsistency, not a compiler-drift
+finding**: `FMT-43.vox` recorded its diagnostic as `compile error:
+<message>` (one line, non-standard prefix) where the convention every
+other compile-error probe in this repo uses is a bare `error: <message>`
+line plus a separate `(compile error - no binary is produced)` note —
+`check-probes.sh`'s message-matching logic only strips a leading `error:
+`, not `compile error:`, so this one probe was failing on a wording
+mismatch, not a behavioural one. Reformatted to the standard convention;
+the recorded diagnostic text itself is unchanged and still accurate.
 
 This is a **gap analysis**, not a from-scratch map. `existing leaf` names
 the leaf that already emits the construct, or `none`, and was established
@@ -86,61 +100,61 @@ over an existing directory exits 0 silently).
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FMT-01 | 3077 | `Print "literal".` writes the literal followed by a newline. | a Print of a string literal | yes — the generator wrote the literal, so `If out is not "…" then, Exit 95.` is only reachable through a file round-trip; in practice this is the floor row and asserting it buys nothing | `gen leaf format specifiers`, `gen leaf butif print`, and most leaves' `Print "…"` lines | exercised | |
-| FMT-02 | 3078 | `Print the x.` — a variable reference written with the article `the` prints the same value the bare form does. | a Print whose operand carries the article | yes — same value both ways, so the leaf can print both and assert equality | **none for a Print operand.** `gen var ref` returns a bare `v{N}` and every leaf interpolates that, so no `Print` in any generated program ever carries the article. The article is not entirely absent from emitted text — `gen leaf timer and clock` emits it before a possessive (`a number called tl{n} is the tk{n}'s elapsed in milliseconds`, and likewise for `'s unix` / `'s year`), and `gen emit prelude thing methods` emits it in a method header (`To do the t4's 'made at'`) — but never as a plain variable reference, which is the form this row claims | todo — real gap, hand-verified to work | |
-| FMT-03 | 3079 | `Print 'add numbers' of 3 and 5.` prints a function call's result. | a Print whose operand is a call | yes — the prelude's `f1`/`f2`/`f3` are fixed, so the generator can compute the expected result | `gen call zero` (`Print f1`), `gen call one` (`Print f2 of c{N}`), `gen call two` (`Print f3 of c{N} and c{M}`), all reached through `gen leaf call` / `gen leaf call safe` | exercised | |
-| FMT-04 | 3084 | `Print "…" without newline.` suppresses the trailing newline on a literal. | a Print with the `without newline` suffix, followed by another Print, so the joined line is observable | yes — two suppressed prints and a plain one make one known line; assert it after a file round-trip, or simply let the invariant report see a line the generator predicted | **none** — `without newline` appears **zero times** across all eight `src/gen_*.vox` files | todo — real gap | |
-| FMT-05 | 3085 | The same suffix works on a bare variable reference, not only a literal. | as FMT-04 with a variable operand | yes, same way | **none** (same grep) | todo — real gap | |
-| FMT-06 | 3084–3086 | The worked example: two suppressed prints then a plain one produce the single line `Loading: 75%`; `%` in a literal is a character, not a format directive. | the three-statement sequence verbatim | yes — the whole line is known at generation time | **none** | todo (composite of FMT-04/FMT-05) | |
-| FMT-07 | 3091 | `{}` interpolates a variable's value into a string literal. | any format slot naming a variable | yes — the generator chose the value | `gen leaf format specifiers` (`print default`), `gen leaf format types` (nine typed slots), `gen leaf format value` | exercised | |
-| FMT-08 | 3094–3096 | The worked example: a text slot and a number slot in one string with literal text between and after them. | one string carrying two slots of different types and interleaved literal text | yes | `gen leaf format types` `print all` puts nine slots of nine types in one string with separators — a superset of the example's shape, though not the example's text | exercised | |
-| FMT-09 | 3103 | `{var}` with no specifier is default formatting: what `Print` alone would render. | a bare slot | yes | `gen leaf format specifiers` (`print default`); `gen pick integer spec` returns `""` on pick 0 and `gen format slot` then emits `{inner}`, never `{inner:}` | exercised | |
-| FMT-10 | 3104 | `{var:.N}` renders a float to N decimal places (`{pi:.2}` → `3.14`). | a float slot with a `.N` specifier | yes — the generator picks both the float and N, so it can compute the rounded string | `gen leaf format specifiers` (`print precision`), `gen pick float spec` pick 1 | exercised | |
-| FMT-11 | 3105 | `{var:N}` pads to N characters. **Hand-verified precision the table omits: the pad is spaces on the LEFT — right-aligned in the field** (`{x:6}` → `    42`). | a numeric slot with a bare width | yes — `If padded is not "    42" then, Exit 95.` | `gen leaf format specifiers` (`print width`, `print text width`, `print boolean pad`), `gen pick integer spec` pick 1, `gen pick float spec` pick 2 | exercised | |
-| FMT-12 | 3106 | `{var:0N}` zero-pads to N characters (`{x:06}` → `000042`). | a numeric slot with a `0N` specifier | yes, same way | `gen leaf format specifiers` (`print zero pad`), `gen pick integer spec` pick 2 | exercised | |
-| FMT-13 | 3107 | `{var:x}` is lowercase hex **and includes a `0x` prefix** (`{n:x}` → `0xff`). | a numeric slot with `:x` | yes — the generator knows n | `gen leaf format specifiers` (`print hex`), `gen pick integer spec` pick 3 | exercised | |
-| FMT-14 | 3108 | `{var:X}` is uppercase hex, also prefixed, and the prefix's `x` stays lowercase (`{n:X}` → `0xFF`). | a numeric slot with `:X` | yes | `gen leaf format specifiers` (`print hex upper`), `gen pick integer spec` pick 4 | exercised | |
-| FMT-15 | 3109 | `{var:b}` is binary and, unlike x/X/o, carries **no** base prefix (`{n:b}` → `101`). | a numeric slot with `:b` | yes | `gen leaf format specifiers` (`print binary`, on the modest `zk` operand), `gen pick integer spec` pick 5 | exercised | |
-| FMT-16 | 3110 | `{var:o}` is octal and carries a `0o` prefix (`{n:o}` → `0o10`). | a numeric slot with `:o` | yes | `gen leaf format specifiers` (`print octal`), `gen pick integer spec` pick 6 | exercised | |
-| FMT-17 | 3111 | `{var:04x}` is width-4 zero-padded lowercase hex. **Hand-verified precision the table omits: the width counts the DIGITS, not the whole rendering — `0x00ff` is six characters, the prefix sits outside the padded field.** | a numeric slot with a padded-hex specifier | yes — and this is the one specifier row where a naive reading (width 4 → four characters total) would produce a false-finding factory | `gen leaf format specifiers` (`print padded hex`), `gen pick integer spec` pick 7 | exercised | |
-| FMT-18 | 3113–3116 | The value inside `{}` must be a variable or expression, never a bare literal: `{255:x}` is refused because `255` is read as a variable name. Hand-verified that the specifier is irrelevant — `{255}` is refused identically. | — | **no** — a leaf cannot emit this. `CLAUDE.md`'s invariant is that a generated program is legal Vox that should compile and run; a deliberate compile error would be classified as a generator defect by the runner, not a finding. Assertable by the *harness* (a negative-compile fixture), not by a leaf | n/a | not assertable (by a leaf) — probe retained; see also **Discrepancy 5** | |
-| FMT-19 | 3123 | An arithmetic expression is legal inside a slot: `{x add y}`. | a slot whose contents are an expression | yes — the generator built the expression | `gen leaf format expression` (`sum slot`, and `deep slot` from `gen deep expr` at depth 2–8) | exercised | |
-| FMT-20 | 3124 | `{x multiply y}` — a second operator in a slot, so the feature is the expression grammar and not one hardcoded verb. | as FMT-19 with another operator | yes | `gen leaf format expression` (`product slot`, `chain slot`) | exercised | |
-| FMT-21 | 3125 | A possessive special name resolves inside a slot: `{arguments's count}`. Hand-verified: with no arguments the count is 1, so the program name is counted. | a slot naming a possessive special | yes — `arguments's count` is 1 under the runner, which passes no arguments | `gen leaf format expression` (`count slot`) — the **only** argument property any leaf ever places in a slot | exercised | |
-| FMT-22 | 3130 | Format strings are expressions, not just Print arguments. | a format string in a non-Print position | yes | `gen leaf format value` (`token decl`, `path decl`, `held decl` in `gen leaf format expression`) | exercised | |
-| FMT-23 | 3131 | A format string used as a value materializes into a fresh **NUL-terminated** string. | — | **no** directly — NUL-termination is not observable from inside Vox. Its one observable consequence is that the string survives `execve`'s argv, which is FMT-25 | n/a | not assertable separately — observable half is FMT-25, freshness half is FMT-29 | |
-| FMT-24 | 3132 | A format string works as a text **initializer** and as an **assignment**. | both `a text called t is "{…}"` and `Set t to "{…}"` | yes — the generator knows both strings | `gen leaf format value` (`token decl`, `path decl`) covers the initializer. **The assignment form is absent**: `grep` for `Set <text> to "{` across all leaves finds nothing; `scratch set` is a *buffer* `set`, a different statement (FMT-33) | exercised (initializer only) — todo for assignment | |
-| FMT-25 | 3132–3133 | A format-string text survives being carried through a list into an `Execute` argument list. | append the text to a list, `Execute` with that list | yes — the child echoes the argument back, so the parent's expected string is checkable | **none for the Execute half** — `gen leaf format value` does `list append` + `print element`, which is bug #17's shape and worth keeping, but **`Execute` appears in no leaf at all** (`grep`: only a comment in `gen_files.vox`) | todo — real gap | |
-| FMT-26 | 3139 | `a text called tok is "{word}".` builds a text from a **buffer's** contents. | a text initialized from a slot naming a buffer | yes — the generator filled the buffer | `gen leaf format value` (`token decl`, over the `gw{n}` buffer filled by `buffer fill`) — the manual's own worked example, already emitted | exercised | |
-| FMT-27 | 3140 | `a text called path is "/bin/{tok}".` builds a text from **another text** that itself came from a format string. | the chained case | yes | `gen leaf format value` (`path decl`) | exercised | |
-| FMT-28 | 3135–3145 | The whole worked example compiles and runs. | the example end to end | yes | every line but the last: `Execute` is unreached (FMT-25) | todo (composite) — sub-claims FMT-24/26/27 exercised, FMT-25 todo | |
-| FMT-29 | 3147 | Each evaluation allocates a **new** string: the source buffer can be cleared and refilled without disturbing a text already made from it. | make a text from a buffer, `clear` and refill the buffer, make a second text, assert the first is unchanged | yes — both strings are known at generation time; this is a clean exit-95 assertion | **none** — no leaf clears or refills a buffer after making a text from it, and `clear` on a *user* buffer appears in no leaf at all (`gen_core.vox:987`'s `clear gen_out` is the generator's own accumulator, never part of a generated program — the same finding buffers.md records as BUF-33) | todo — real gap | |
-| FMT-30 | 3150–3151 | *(parenthetical)* Before v0.1.17 a format string outside `Print` compiled to a NULL pointer that printed empty and corrupted `execve` argv arrays. | — | **no** — a claim about a version of the compiler that no longer exists; not testable against the pinned binary. Its live content ("today it does not") is FMT-23/FMT-25 | n/a | withdrawn (historical note, manual 0.4.8) | |
-| FMT-31 | 3155 | The umbrella claim: **every** statement taking a string value accepts a format string. | one sink the manual does not name, so "every" is tested rather than the five listed | yes | the named sinks are FMT-32–FMT-36; the unnamed sink probed here (`Open a file … at "{…}"`) is emitted by `gen leaf format value` (`open line` uses a fixed `/dev/stdout`, **not** a format string) | todo for an unnamed sink; the named ones are covered per-row below | |
-| FMT-32 | 3156 | The `write` sink accepts a format string. | `write "{…}" to <handle>` | yes — read the file back and assert the bytes | `gen leaf format value` (`write line`), `gen leaf file write`, `gen leaf file round trip` | exercised | |
-| FMT-33 | 3156 | The buffer sinks `set`, `copy` and `append` accept format strings. | all three verbs on a buffer | yes — assert the buffer's contents after each | `gen leaf format value`: `buffer fill` (copy), `scratch set` (set), `scratch append` (append), `built decl` (the `is` initializer form). All four verbs present — the same finding buffers.md records as BUF-34 | exercised | |
-| FMT-34 | 3156–3157 | Filesystem paths accept format strings (`Create a directory called "{base}/{name}"`). | the manual's own shape | yes — the generator chose the path, so it can stat it back or simply re-create it; hand-verified idempotent | **none** — `Create a directory` appears only in `src/harness.vox`, the generator's own mkdir-p, never in a generated program | todo — real gap | |
-| FMT-35 | 3157 | `treating` clauses accept format strings. | `treating <match> as "{…}"` | yes — the substituted value is known | **none** — `gen leaf treating print` and `gen leaf treating grid` both use plain literals for match and replacement; no `{` ever reaches a treating clause | todo — real gap | |
-| FMT-36 | 3157 | Function arguments accept format strings. | `f4 of "{…}"` | yes — `f4` prints its parameter, so the expected line is known | `gen leaf format value` (`call line`, and `f4` was added to the prelude for exactly this, `gen_core.vox:859`) | exercised | |
-| FMT-37 | 3158–3159 | All sinks share one name resolver, so special names (`{arguments's first}`, `{current time's hour}`) render identically whether printed, written to a file, or built into a buffer. | the same special-name slot in all three sinks, compared against each other | yes — cross-sink equality is assertable without knowing the value, which is what makes the clock case checkable at all | partial: `gen leaf format expression` puts `arguments's count` in a **Print** slot only; `gen leaf format types` puts `hq{n}'s hour` in a text and a buffer. No leaf compares two sinks, and no leaf puts an argument **text** property in any sink | **todo — the claim now holds for the text properties.** It was FALSE as written until vox #52 (0.4.8+), when `{arguments's first/last}` into a buffer sink stopped segfaulting and started copying the text; **Discrepancy 1 is resolved** (`D1.vox`). It is still false for `{arguments's all}`, which is a *list* and renders a raw pointer in every non-`Print` sink — that is **Discrepancy 2**, which is still open. The row stays `todo` because no leaf puts an argument text property in any sink | |
-| FMT-38 | 3159–3160 | Format specifiers render identically in every sink. | one specifier-bearing slot printed, buffered, and written, compared | yes — cross-sink equality again | `gen leaf format value` puts `gen pick integer spec` output into the text, buffer, list, map, `value` and file sinks; its own comment names this claim as what it is on trial for. **No cross-sink comparison is asserted** — each sink is printed for a human to eyeball | exercised (verification missing: nothing compares the sinks) | |
-| FMT-39 | 3160–3161 | The `0x`/`0o` prefixes specifically survive every sink — the prefix is part of the rendering, not something `Print` adds. | the x/X/o specifiers across sinks | yes | same leaf; `gen pick integer spec` draws `x`, `X`, `o` with probability 3/8 per slot | exercised (same missing verification as FMT-38) | |
-| FMT-40 | 3165–3166 | A **variable** declared in every branch of an `if`/`otherwise` chain definitely exists afterwards and can be used after the branch. | declare the same name in both arms, use it after | yes — both arms' values are known, and which arm runs is known | **none** — no leaf declares anything inside a branch. `gen leaf assign`'s comment (`gen_core.vox:336`) records the generator deliberately steering *around* this family ("a name declared on a single conditional path is out of scope afterwards, bug #25's family"), which is the SOME-branch case (FMT-43) — the EVERY-branch case that makes it legal was never taken up | todo — real gap | |
-| FMT-41 | 3165–3166 | The same holds for a **file handle**. | open the same handle name in both arms, write to it after | yes — the written bytes are known | **none** | todo — real gap | |
-| FMT-42 | 3167 | Such a name is usable **from inside functions**, "exactly like a top-level declaration". | a function reading the branch-declared name | yes | **none** | todo — holds, with a caveat: it is exactly like a top-level declaration *including* a forward-reference defect a top-level text global has. See **Discrepancy 3** | |
-| FMT-43 | 3168–3169 | A name declared in only SOME branches stays scoped to its condition; cross-condition use is a **compile error**. | — | **no** — same reason as FMT-18: a leaf may not emit an illegal program. Harness-assertable, not leaf-assertable | n/a | not assertable (by a leaf) — probe retained; the diagnostic even names the rule and suggests the fix | |
-| FMT-44 | 3171–3178 | The worked example (a file handle opened in both arms of a flag test, written to afterwards) compiles and behaves as shown. | the example verbatim | yes | **none** | todo (composite of FMT-40/FMT-41) — hand-verified to work once the flag declaration the fragment omits is supplied; see FMT-41's probe | |
-| FMT-45 | 3185 | `{{` renders one literal `{`. | a doubled opening brace in a printed literal | yes | `gen leaf format types` (`print escapes`) emits `braces {{lit}}` next to a live slot | exercised | |
-| FMT-46 | 3186 | `}}` renders one literal `}`. | a doubled closing brace | yes | same line | exercised (covered by FMT-45's probe) | |
-| FMT-47 | 3187 | `\n` renders a newline. | a `\n` in a printed literal | yes | `gen leaf format value` (`write line`), `gen leaf file write`, `gen leaf file round trip` — all in **write** payloads. Never in a `Print` | exercised (write sink only) | |
-| FMT-48 | 3188 | `\t` renders a tab. | a `\t` in a printed literal | yes | `gen leaf format types` (`print escapes`, `tab\there`) | exercised (covered by FMT-47's probe) | |
-| FMT-49 | 3189 | `\\` renders one literal backslash. | a doubled backslash in a literal | yes | **none** — `grep` for an emitted `\\` across all eight `src/gen_*.vox` files finds nothing. The escape table's only uncovered row | todo — real gap, hand-verified to work (covered by FMT-47's probe) | |
-| FMT-50 | 3192–3196 | The escape example compiles and prints as shown. | the three statements verbatim | yes | `print escapes` covers `{{`/`}}`/`\t` in one line; `\n` in a **Print** is never emitted, `\\` never at all | todo (composite of FMT-45/46/47/48) | |
-| FMT-51 | 3201 | `Print <default>, but if <condition> print <value>.` — the alternative **replaces** the default, it is not printed in addition to it. | a one-clause conditional print | yes — the generator picks the condition and both values, so it knows which line comes out | `gen leaf butif print` (1–3 clauses drawn from `gen condition`/`gen expr`) | exercised | |
-| FMT-52 | 3206 | Clauses chain, and — the shape the manual's own line shows — **without a comma between them after the first**. | a chain whose second and later clauses have no leading comma | yes | `gen leaf butif print` chains 1–3 clauses but puts `", but if"` before **every** clause, so the comma-less continuation the manual actually documents is never emitted. Reserved-word note for whoever writes it: the manual's example names the loop variable `number`, which the compiler refuses as a keyword | exercised (comma'd form) — todo for the comma-less form | |
-| FMT-53 | 3210 | First matching condition wins, and only that clause runs. | a chain where two clauses both match, in both orders | yes — the generator chooses the operand and both conditions, so it knows which fires; the two-orders form is what proves it is position and not specificity | `gen leaf butif print` emits the construct, but its conditions come from `gen condition` and nothing asserts which fired | exercised (verification missing) | |
-| FMT-54 | 3211 | A chain may be chained with `but if` **or `and if`**. | a chain mixing both spellings | yes | **none** — `and if` appears **zero times** in emitted text across all eight `src/gen_*.vox` files | todo — real gap, and the claim is imprecise: `and if` is a valid **continuation** but not a valid **opener**. See **Discrepancy 4** | |
-| FMT-55 | 3212 | The default value prints when no condition matches. | a chain whose conditions all fail | yes — trivially, the generator chose the operand | `gen leaf butif print` reaches this probabilistically; nothing asserts it | exercised (verification missing) | |
+| FMT-01 | 3133 | `Print "literal".` writes the literal followed by a newline. | a Print of a string literal | yes — the generator wrote the literal, so `If out is not "…" then, Exit 95.` is only reachable through a file round-trip; in practice this is the floor row and asserting it buys nothing | `gen leaf format specifiers`, `gen leaf butif print`, and most leaves' `Print "…"` lines | exercised | |
+| FMT-02 | 3134 | `Print the x.` — a variable reference written with the article `the` prints the same value the bare form does. | a Print whose operand carries the article | yes — same value both ways, so the leaf can print both and assert equality | **none for a Print operand.** `gen var ref` returns a bare `v{N}` and every leaf interpolates that, so no `Print` in any generated program ever carries the article. The article is not entirely absent from emitted text — `gen leaf timer and clock` emits it before a possessive (`a number called tl{n} is the tk{n}'s elapsed in milliseconds`, and likewise for `'s unix` / `'s year`), and `gen emit prelude thing methods` emits it in a method header (`To do the t4's 'made at'`) — but never as a plain variable reference, which is the form this row claims | todo — real gap, hand-verified to work | |
+| FMT-03 | 3135 | `Print 'add numbers' of 3 and 5.` prints a function call's result. | a Print whose operand is a call | yes — the prelude's `f1`/`f2`/`f3` are fixed, so the generator can compute the expected result | `gen call zero` (`Print f1`), `gen call one` (`Print f2 of c{N}`), `gen call two` (`Print f3 of c{N} and c{M}`), all reached through `gen leaf call` / `gen leaf call safe` | exercised | |
+| FMT-04 | 3140 | `Print "…" without newline.` suppresses the trailing newline on a literal. | a Print with the `without newline` suffix, followed by another Print, so the joined line is observable | yes — two suppressed prints and a plain one make one known line; assert it after a file round-trip, or simply let the invariant report see a line the generator predicted | **none** — `without newline` appears **zero times** across all eight `src/gen_*.vox` files | todo — real gap | |
+| FMT-05 | 3141 | The same suffix works on a bare variable reference, not only a literal. | as FMT-04 with a variable operand | yes, same way | **none** (same grep) | todo — real gap | |
+| FMT-06 | 3140–3142 | The worked example: two suppressed prints then a plain one produce the single line `Loading: 75%`; `%` in a literal is a character, not a format directive. | the three-statement sequence verbatim | yes — the whole line is known at generation time | **none** | todo (composite of FMT-04/FMT-05) | |
+| FMT-07 | 3147 | `{}` interpolates a variable's value into a string literal. | any format slot naming a variable | yes — the generator chose the value | `gen leaf format specifiers` (`print default`), `gen leaf format types` (nine typed slots), `gen leaf format value` | exercised | |
+| FMT-08 | 3150–3152 | The worked example: a text slot and a number slot in one string with literal text between and after them. | one string carrying two slots of different types and interleaved literal text | yes | `gen leaf format types` `print all` puts nine slots of nine types in one string with separators — a superset of the example's shape, though not the example's text | exercised | |
+| FMT-09 | 3159 | `{var}` with no specifier is default formatting: what `Print` alone would render. | a bare slot | yes | `gen leaf format specifiers` (`print default`); `gen pick integer spec` returns `""` on pick 0 and `gen format slot` then emits `{inner}`, never `{inner:}` | exercised | |
+| FMT-10 | 3160 | `{var:.N}` renders a float to N decimal places (`{pi:.2}` → `3.14`). | a float slot with a `.N` specifier | yes — the generator picks both the float and N, so it can compute the rounded string | `gen leaf format specifiers` (`print precision`), `gen pick float spec` pick 1 | exercised | |
+| FMT-11 | 3161 | `{var:N}` pads to N characters. **Hand-verified precision the table omits: the pad is spaces on the LEFT — right-aligned in the field** (`{x:6}` → `    42`). | a numeric slot with a bare width | yes — `If padded is not "    42" then, Exit 95.` | `gen leaf format specifiers` (`print width`, `print text width`, `print boolean pad`), `gen pick integer spec` pick 1, `gen pick float spec` pick 2 | exercised | |
+| FMT-12 | 3162 | `{var:0N}` zero-pads to N characters (`{x:06}` → `000042`). | a numeric slot with a `0N` specifier | yes, same way | `gen leaf format specifiers` (`print zero pad`), `gen pick integer spec` pick 2 | exercised | |
+| FMT-13 | 3163 | `{var:x}` is lowercase hex **and includes a `0x` prefix** (`{n:x}` → `0xff`). | a numeric slot with `:x` | yes — the generator knows n | `gen leaf format specifiers` (`print hex`), `gen pick integer spec` pick 3 | exercised | |
+| FMT-14 | 3164 | `{var:X}` is uppercase hex, also prefixed, and the prefix's `x` stays lowercase (`{n:X}` → `0xFF`). | a numeric slot with `:X` | yes | `gen leaf format specifiers` (`print hex upper`), `gen pick integer spec` pick 4 | exercised | |
+| FMT-15 | 3165 | `{var:b}` is binary and, unlike x/X/o, carries **no** base prefix (`{n:b}` → `101`). | a numeric slot with `:b` | yes | `gen leaf format specifiers` (`print binary`, on the modest `zk` operand), `gen pick integer spec` pick 5 | exercised | |
+| FMT-16 | 3166 | `{var:o}` is octal and carries a `0o` prefix (`{n:o}` → `0o10`). | a numeric slot with `:o` | yes | `gen leaf format specifiers` (`print octal`), `gen pick integer spec` pick 6 | exercised | |
+| FMT-17 | 3167 | `{var:04x}` is width-4 zero-padded lowercase hex. **Hand-verified precision the table omits: the width counts the DIGITS, not the whole rendering — `0x00ff` is six characters, the prefix sits outside the padded field.** | a numeric slot with a padded-hex specifier | yes — and this is the one specifier row where a naive reading (width 4 → four characters total) would produce a false-finding factory | `gen leaf format specifiers` (`print padded hex`), `gen pick integer spec` pick 7 | exercised | |
+| FMT-18 | 3169–3172 | The value inside `{}` must be a variable or expression, never a bare literal: `{255:x}` is refused because `255` is read as a variable name. Hand-verified that the specifier is irrelevant — `{255}` is refused identically. | — | **no** — a leaf cannot emit this. `CLAUDE.md`'s invariant is that a generated program is legal Vox that should compile and run; a deliberate compile error would be classified as a generator defect by the runner, not a finding. Assertable by the *harness* (a negative-compile fixture), not by a leaf | n/a | not assertable (by a leaf) — probe retained; see also **Discrepancy 5** | |
+| FMT-19 | 3179 | An arithmetic expression is legal inside a slot: `{x add y}`. | a slot whose contents are an expression | yes — the generator built the expression | `gen leaf format expression` (`sum slot`, and `deep slot` from `gen deep expr` at depth 2–8) | exercised | |
+| FMT-20 | 3180 | `{x multiply y}` — a second operator in a slot, so the feature is the expression grammar and not one hardcoded verb. | as FMT-19 with another operator | yes | `gen leaf format expression` (`product slot`, `chain slot`) | exercised | |
+| FMT-21 | 3181 | A possessive special name resolves inside a slot: `{arguments's count}`. Hand-verified: with no arguments the count is 1, so the program name is counted. | a slot naming a possessive special | yes — `arguments's count` is 1 under the runner, which passes no arguments | `gen leaf format expression` (`count slot`) — the **only** argument property any leaf ever places in a slot | exercised | |
+| FMT-22 | 3186 | Format strings are expressions, not just Print arguments. | a format string in a non-Print position | yes | `gen leaf format value` (`token decl`, `path decl`, `held decl` in `gen leaf format expression`) | exercised | |
+| FMT-23 | 3187 | A format string used as a value materializes into a fresh **NUL-terminated** string. | — | **no** directly — NUL-termination is not observable from inside Vox. Its one observable consequence is that the string survives `execve`'s argv, which is FMT-25 | n/a | not assertable separately — observable half is FMT-25, freshness half is FMT-29 | |
+| FMT-24 | 3188 | A format string works as a text **initializer** and as an **assignment**. | both `a text called t is "{…}"` and `Set t to "{…}"` | yes — the generator knows both strings | `gen leaf format value` (`token decl`, `path decl`) covers the initializer. **The assignment form is absent**: `grep` for `Set <text> to "{` across all leaves finds nothing; `scratch set` is a *buffer* `set`, a different statement (FMT-33) | exercised (initializer only) — todo for assignment | |
+| FMT-25 | 3188–3189 | A format-string text survives being carried through a list into an `Execute` argument list. | append the text to a list, `Execute` with that list | yes — the child echoes the argument back, so the parent's expected string is checkable | **none for the Execute half** — `gen leaf format value` does `list append` + `print element`, which is bug #17's shape and worth keeping, but **`Execute` appears in no leaf at all** (`grep`: only a comment in `gen_files.vox`) | todo — real gap | |
+| FMT-26 | 3195 | `a text called tok is "{word}".` builds a text from a **buffer's** contents. | a text initialized from a slot naming a buffer | yes — the generator filled the buffer | `gen leaf format value` (`token decl`, over the `gw{n}` buffer filled by `buffer fill`) — the manual's own worked example, already emitted | exercised | |
+| FMT-27 | 3196 | `a text called path is "/bin/{tok}".` builds a text from **another text** that itself came from a format string. | the chained case | yes | `gen leaf format value` (`path decl`) | exercised | |
+| FMT-28 | 3191–3201 | The whole worked example compiles and runs. | the example end to end | yes | every line but the last: `Execute` is unreached (FMT-25) | todo (composite) — sub-claims FMT-24/26/27 exercised, FMT-25 todo | |
+| FMT-29 | 3203 | Each evaluation allocates a **new** string: the source buffer can be cleared and refilled without disturbing a text already made from it. | make a text from a buffer, `clear` and refill the buffer, make a second text, assert the first is unchanged | yes — both strings are known at generation time; this is a clean exit-95 assertion | **none** — no leaf clears or refills a buffer after making a text from it, and `clear` on a *user* buffer appears in no leaf at all (`gen_core.vox:987`'s `clear gen_out` is the generator's own accumulator, never part of a generated program — the same finding buffers.md records as BUF-33) | todo — real gap | |
+| FMT-30 | 3206–3207 | *(parenthetical)* Before v0.1.17 a format string outside `Print` compiled to a NULL pointer that printed empty and corrupted `execve` argv arrays. | — | **no** — a claim about a version of the compiler that no longer exists; not testable against the pinned binary. Its live content ("today it does not") is FMT-23/FMT-25 | n/a | withdrawn (historical note, manual 0.4.8) | |
+| FMT-31 | 3211 | The umbrella claim: **every** statement taking a string value accepts a format string. | one sink the manual does not name, so "every" is tested rather than the five listed | yes | the named sinks are FMT-32–FMT-36; the unnamed sink probed here (`Open a file … at "{…}"`) is emitted by `gen leaf format value` (`open line` uses a fixed `/dev/stdout`, **not** a format string) | todo for an unnamed sink; the named ones are covered per-row below | |
+| FMT-32 | 3212 | The `write` sink accepts a format string. | `write "{…}" to <handle>` | yes — read the file back and assert the bytes | `gen leaf format value` (`write line`), `gen leaf file write`, `gen leaf file round trip` | exercised | |
+| FMT-33 | 3212 | The buffer sinks `set`, `copy` and `append` accept format strings. | all three verbs on a buffer | yes — assert the buffer's contents after each | `gen leaf format value`: `buffer fill` (copy), `scratch set` (set), `scratch append` (append), `built decl` (the `is` initializer form). All four verbs present — the same finding buffers.md records as BUF-34 | exercised | |
+| FMT-34 | 3212–3213 | Filesystem paths accept format strings (`Create a directory called "{base}/{name}"`). | the manual's own shape | yes — the generator chose the path, so it can stat it back or simply re-create it; hand-verified idempotent | **none** — `Create a directory` appears only in `src/harness.vox`, the generator's own mkdir-p, never in a generated program | todo — real gap | |
+| FMT-35 | 3213 | `treating` clauses accept format strings. | `treating <match> as "{…}"` | yes — the substituted value is known | **none** — `gen leaf treating print` and `gen leaf treating grid` both use plain literals for match and replacement; no `{` ever reaches a treating clause | todo — real gap | |
+| FMT-36 | 3213 | Function arguments accept format strings. | `f4 of "{…}"` | yes — `f4` prints its parameter, so the expected line is known | `gen leaf format value` (`call line`, and `f4` was added to the prelude for exactly this, `gen_core.vox:859`) | exercised | |
+| FMT-37 | 3214–3215 | All sinks share one name resolver, so special names (`{arguments's first}`, `{current time's hour}`) render identically whether printed, written to a file, or built into a buffer. | the same special-name slot in all three sinks, compared against each other | yes — cross-sink equality is assertable without knowing the value, which is what makes the clock case checkable at all | partial: `gen leaf format expression` puts `arguments's count` in a **Print** slot only; `gen leaf format types` puts `hq{n}'s hour` in a text and a buffer. No leaf compares two sinks, and no leaf puts an argument **text** property in any sink | **todo — the claim now holds for the text properties.** It was FALSE as written until vox #52 (0.4.8+), when `{arguments's first/last}` into a buffer sink stopped segfaulting and started copying the text; **Discrepancy 1 is resolved** (`D1.vox`). It is still false for `{arguments's all}`, which is a *list* and renders a raw pointer in every non-`Print` sink — that is **Discrepancy 2**, which is still open. The row stays `todo` because no leaf puts an argument text property in any sink | |
+| FMT-38 | 3215–3216 | Format specifiers render identically in every sink. | one specifier-bearing slot printed, buffered, and written, compared | yes — cross-sink equality again | `gen leaf format value` puts `gen pick integer spec` output into the text, buffer, list, map, `value` and file sinks; its own comment names this claim as what it is on trial for. **No cross-sink comparison is asserted** — each sink is printed for a human to eyeball | exercised (verification missing: nothing compares the sinks) | |
+| FMT-39 | 3216–3217 | The `0x`/`0o` prefixes specifically survive every sink — the prefix is part of the rendering, not something `Print` adds. | the x/X/o specifiers across sinks | yes | same leaf; `gen pick integer spec` draws `x`, `X`, `o` with probability 3/8 per slot | exercised (same missing verification as FMT-38) | |
+| FMT-40 | 3221–3222 | A **variable** declared in every branch of an `if`/`otherwise` chain definitely exists afterwards and can be used after the branch. | declare the same name in both arms, use it after | yes — both arms' values are known, and which arm runs is known | **none** — no leaf declares anything inside a branch. `gen leaf assign`'s comment (`gen_core.vox:336`) records the generator deliberately steering *around* this family ("a name declared on a single conditional path is out of scope afterwards, bug #25's family"), which is the SOME-branch case (FMT-43) — the EVERY-branch case that makes it legal was never taken up | todo — real gap | |
+| FMT-41 | 3221–3222 | The same holds for a **file handle**. | open the same handle name in both arms, write to it after | yes — the written bytes are known | **none** | todo — real gap | |
+| FMT-42 | 3223 | Such a name is usable **from inside functions**, "exactly like a top-level declaration". | a function reading the branch-declared name | yes | **none** | todo — holds, with a caveat: it is exactly like a top-level declaration *including* a forward-reference defect a top-level text global has. See **Discrepancy 3** | |
+| FMT-43 | 3224–3225 | A name declared in only SOME branches stays scoped to its condition; cross-condition use is a **compile error**. | — | **no** — same reason as FMT-18: a leaf may not emit an illegal program. Harness-assertable, not leaf-assertable | n/a | not assertable (by a leaf) — probe retained; the diagnostic even names the rule and suggests the fix | |
+| FMT-44 | 3227–3234 | The worked example (a file handle opened in both arms of a flag test, written to afterwards) compiles and behaves as shown. | the example verbatim | yes | **none** | todo (composite of FMT-40/FMT-41) — hand-verified to work once the flag declaration the fragment omits is supplied; see FMT-41's probe | |
+| FMT-45 | 3241 | `{{` renders one literal `{`. | a doubled opening brace in a printed literal | yes | `gen leaf format types` (`print escapes`) emits `braces {{lit}}` next to a live slot | exercised | |
+| FMT-46 | 3242 | `}}` renders one literal `}`. | a doubled closing brace | yes | same line | exercised (covered by FMT-45's probe) | |
+| FMT-47 | 3243 | `\n` renders a newline. | a `\n` in a printed literal | yes | `gen leaf format value` (`write line`), `gen leaf file write`, `gen leaf file round trip` — all in **write** payloads. Never in a `Print` | exercised (write sink only) | |
+| FMT-48 | 3244 | `\t` renders a tab. | a `\t` in a printed literal | yes | `gen leaf format types` (`print escapes`, `tab\there`) | exercised (covered by FMT-47's probe) | |
+| FMT-49 | 3245 | `\\` renders one literal backslash. | a doubled backslash in a literal | yes | **none** — `grep` for an emitted `\\` across all eight `src/gen_*.vox` files finds nothing. The escape table's only uncovered row | todo — real gap, hand-verified to work (covered by FMT-47's probe) | |
+| FMT-50 | 3248–3252 | The escape example compiles and prints as shown. | the three statements verbatim | yes | `print escapes` covers `{{`/`}}`/`\t` in one line; `\n` in a **Print** is never emitted, `\\` never at all | todo (composite of FMT-45/46/47/48) | |
+| FMT-51 | 3257 | `Print <default>, but if <condition> print <value>.` — the alternative **replaces** the default, it is not printed in addition to it. | a one-clause conditional print | yes — the generator picks the condition and both values, so it knows which line comes out | `gen leaf butif print` (1–3 clauses drawn from `gen condition`/`gen expr`) | exercised | |
+| FMT-52 | 3262 | Clauses chain, and — the shape the manual's own line shows — **without a comma between them after the first**. | a chain whose second and later clauses have no leading comma | yes | `gen leaf butif print` chains 1–3 clauses but puts `", but if"` before **every** clause, so the comma-less continuation the manual actually documents is never emitted. Reserved-word note for whoever writes it: the manual's example names the loop variable `number`, which the compiler refuses as a keyword | exercised (comma'd form) — todo for the comma-less form | |
+| FMT-53 | 3266 | First matching condition wins, and only that clause runs. | a chain where two clauses both match, in both orders | yes — the generator chooses the operand and both conditions, so it knows which fires; the two-orders form is what proves it is position and not specificity | `gen leaf butif print` emits the construct, but its conditions come from `gen condition` and nothing asserts which fired | exercised (verification missing) | |
+| FMT-54 | 3267 | A chain may be chained with `but if` **or `and if`**. | a chain mixing both spellings | yes | **none** — `and if` appears **zero times** in emitted text across all eight `src/gen_*.vox` files | todo — real gap, and the claim is imprecise: `and if` is a valid **continuation** but not a valid **opener**. See **Discrepancy 4** | |
+| FMT-55 | 3268 | The default value prints when no condition matches. | a chain whose conditions all fail | yes — trivially, the generator chose the operand | `gen leaf butif print` reaches this probabilistically; nothing asserts it | exercised (verification missing) | |
 
 ## Discrepancies
 
@@ -148,7 +162,7 @@ Recorded, not adjudicated. Repros in `docs/ledger/probes/input-output/`.
 
 ### 1. `{arguments's first}` built into a buffer segfaults — a memory-safety violation, in the one place the manual promises the sinks are the same
 
-`D1.vox`. LANGUAGE.md:3158–3161: "All sinks share one name resolver, so
+`D1.vox`. LANGUAGE.md:3214–3217: "All sinks share one name resolver, so
 special names like `{arguments's first}` and `{current time's hour}` …
 render identically whether the result is printed, written to a file, or
 built into a buffer."
@@ -197,21 +211,21 @@ is unreachable by today's generator. **Not filed.**
 `D1.vox` no longer crashes: `copy`, `set` and `append` of
 `"{arguments's first}"` into a buffer all produce the argument text, and
 `Print` of the buffer prints what `Print` and `write` print — which is what
-LANGUAGE.md:3158–3161 promised. The probe was rewritten on 2026-08-21 to
+LANGUAGE.md:3214–3217 promised. The probe was rewritten on 2026-08-21 to
 record that; it now exercises all three buffer verbs and exits 0.
 
-Two things the fix does **not** cover, both already on the record:
+One thing the fix does **not** cover, already on the record:
 
-- `{arguments's all}` into a buffer no longer crashes but renders a raw
-  pointer. That is a *list* in a non-`Print` sink, which is **Discrepancy
-  2**'s finding, not a survival of this one. D2 stays open.
 - `{arguments's last}` is fine, but note for anyone writing a probe around
   it: with no arguments it resolves to `argv[0]`, so its output depends on
   where the binary was built. `D1.vox` uses `first` for that reason.
 
-### 2. A list in a format string used as a value renders its raw pointer
+(`{arguments's all}` into a buffer no longer crashes and no longer
+renders a raw pointer either — see Discrepancy 2 below, now resolved.)
 
-`D2.vox`. LANGUAGE.md:3130–3131 says a format string used as a value
+### 2. A list in a format string used as a value renders its raw pointer — RESOLVED (vox #44)
+
+`D2.vox`. LANGUAGE.md:3188 says a format string used as a value
 "materializes into a fresh NUL-terminated string"; 3158–3161 says one
 shared name resolver renders every sink identically.
 
@@ -220,29 +234,39 @@ a list called ordinary is [1, 2, 3].
 a text called held is "{ordinary}".
 Print ordinary.        ->  [1, 2, 3]
 Print "{ordinary}".    ->  [1, 2, 3]        (print slot: correct)
-Print held.            ->  140444409614336  (value context: a pointer)
+Print held.            ->  140444409614336  (value context: a pointer, on 0.4.8)
 ```
 
-Every value context is affected identically — initializer, assignment,
+Every value context was affected identically — initializer, assignment,
 and comparison operand. Second facet, same shape: `Print "{arguments's
-all}".` renders a pointer in the **Print** sink too, where an ordinary
-list in a print slot is correct (`Print arguments's all.` renders `[]`).
-The buffer sink cannot be probed for either facet — it segfaults on the
-argument properties (D1) — so the pointer surfaces in whichever sink the
-list-rendering path is not wired into.
+all}".` used to render a pointer in the **Print** sink too, where an
+ordinary list in a print slot was correct (`Print arguments's all.`
+renders `[]`). The buffer sink could not be probed for either facet on
+0.4.8 — it segfaulted on the argument properties (D1, itself fixed by
+#52) — so the pointer used to surface in whichever sink the
+list-rendering path was not wired into.
 
-Pro-compiler reading: `Print` of a collection has a dedicated renderer
-that walks the elements, and the format-slot resolver hands the sink a
-machine word; where the sink is `Print` and the name is an ordinary list,
-the two happen to meet and the walker runs. Everywhere else the word is
-formatted as a number, correctly, because the resolver's contract is a
-word and it never claimed to know the name was a collection. On that
-reading nothing is *wrong*, the manual is simply promising a uniformity
-across sinks that the implementation does not have for collection-typed
-names — LANGUAGE.md would need to say that collections render only in a
-Print slot. I do not find this reading comfortable (a pointer address in
-program output is an information leak whichever way it is spelled), but
-it is the strongest one available. **Not filed.**
+Pro-compiler reading (as it stood on 0.4.8): `Print` of a collection has
+a dedicated renderer that walks the elements, and the format-slot
+resolver hands the sink a machine word; where the sink is `Print` and
+the name is an ordinary list, the two happen to meet and the walker
+runs. Everywhere else the word is formatted as a number. On that reading
+the manual was promising a uniformity across sinks the implementation
+did not have for collection-typed names.
+
+**Resolution confirmed, 2026-08-22: fixed by vox #44.** Re-run `D2.vox`
+against vox 0.4.9: `'the held list' is equal to "[1, 2, 3]"` now holds —
+the value-context sink renders the list correctly, matching `Print` and
+the print-slot form. Re-tested the second facet directly too:
+`Print "{arguments's all}".` now prints `[]`, matching `Print
+arguments's all.` exactly, where it used to leak a pointer. Both facets
+of this discrepancy are closed by the same fix that closed collections-a
+and collections-b's own D7 (the *variable*-form sub-case). The narrower
+*expression*-form sub-case those two ledgers found (`"{element 2 of
+nested}"`) is untouched by #44 and remains open as vox candidate #68 —
+not re-tested here since it is outside this section's own claims, but
+worth knowing this section's `{...}` value-context sink shares the fix,
+not just the gap.
 
 ### 3. A text global printed from inside a function defined earlier in the file renders its pointer
 
@@ -265,7 +289,7 @@ true. Only the print/format path is wrong, and only for a text — a
 number global is unaffected.
 
 LANGUAGE.md:705 says top-level variables "can be used inside functions",
-with no ordering caveat. LANGUAGE.md:3167 leans on that same promise for
+with no ordering caveat. LANGUAGE.md:3223 leans on that same promise for
 branch-declared names ("exactly like a top-level declaration"), and it is
 — defect included, which is why FMT-42 is recorded as holding rather than
 failing.
@@ -281,7 +305,7 @@ garbage. **Not filed.**
 
 ### 4. `and if` cannot open a conditional-print chain, though the manual reads as though it can
 
-`D4.vox`. LANGUAGE.md:3211: "Chain with `but if` or `and if`."
+`D4.vox`. LANGUAGE.md:3268: "Chain with `but if` or `and if`."
 
 ```
 a number called score is 4.
@@ -295,9 +319,9 @@ runs, and both spellings then mean first-match-wins (FMT-54's probe). So
 
 Pro-compiler reading, and I think it is the right one, because the manual
 argues it elsewhere itself: the keyword chapter's Connectors table gives
-`but` the purpose "Conditional chaining" (LANGUAGE.md:4661) and gives
-`and` "Multiple uses (see below)" (LANGUAGE.md:4659), and the `and`
-disambiguation table that follows (LANGUAGE.md:4670–4680) lists exactly
+`but` the purpose "Conditional chaining" (LANGUAGE.md:4717) and gives
+`and` "Multiple uses (see below)" (LANGUAGE.md:4715), and the `and`
+disambiguation table that follows (LANGUAGE.md:4726–4736) lists exactly
 four contexts for it — logical operator, parameter separator, argument
 separator, list terminator — none of which is opening a conditional
 chain. So `but` is the chaining keyword and `and` is a separator that
@@ -345,16 +369,16 @@ false-alarm investigation while writing FMT-18. **Not filed.**
 
 Samenesses the corpus will show that the manual actually requires:
 
-- every `{n:x}` / `{n:X}` rendering begins `0x`, with a lowercase `x` in the prefix regardless of the specifier's case — LANGUAGE.md:3107–3108, FMT-13, FMT-14
-- every `{n:o}` rendering begins `0o` — LANGUAGE.md:3110, FMT-16
-- no `{n:b}` rendering carries a base prefix — LANGUAGE.md:3109, FMT-15
-- a padded-hex rendering is always the prefix plus exactly N digits, never N characters in total — LANGUAGE.md:3111, FMT-17
-- a bare width pads on the left with spaces, never on the right — LANGUAGE.md:3105, FMT-11
-- `{{` and `}}` always collapse to exactly one brace — LANGUAGE.md:3185–3186, FMT-45, FMT-46
-- no format slot ever contains a bare numeric literal — LANGUAGE.md:3113–3116, FMT-18
-- every conditional-print chain opens with `but if`, never with `and if` — LANGUAGE.md:3211 as the parser reads it, FMT-54, D4
-- no conditional-print chain carries an `otherwise` clause — the Conditional Print rules (LANGUAGE.md:3209–3212) list no `otherwise` arm and the compiler refuses one; the loop-expansion `but if` at LANGUAGE.md:3037/3043 does have one and is a different statement. `gen_flow.vox:111–120` already documents this distinction, and `gen leaf butif append` correctly emits `otherwise` where `gen leaf butif print` correctly does not
-- a conditional-print statement emits exactly one line — LANGUAGE.md:3210, 3212, FMT-51, FMT-53, FMT-55
+- every `{n:x}` / `{n:X}` rendering begins `0x`, with a lowercase `x` in the prefix regardless of the specifier's case — LANGUAGE.md:3163–3164, FMT-13, FMT-14
+- every `{n:o}` rendering begins `0o` — LANGUAGE.md:3166, FMT-16
+- no `{n:b}` rendering carries a base prefix — LANGUAGE.md:3165, FMT-15
+- a padded-hex rendering is always the prefix plus exactly N digits, never N characters in total — LANGUAGE.md:3167, FMT-17
+- a bare width pads on the left with spaces, never on the right — LANGUAGE.md:3161, FMT-11
+- `{{` and `}}` always collapse to exactly one brace — LANGUAGE.md:3241–3242, FMT-45, FMT-46
+- no format slot ever contains a bare numeric literal — LANGUAGE.md:3169–3172, FMT-18
+- every conditional-print chain opens with `but if`, never with `and if` — LANGUAGE.md:3268 as the parser reads it, FMT-54, D4
+- no conditional-print chain carries an `otherwise` clause — the Conditional Print rules (LANGUAGE.md:3268) list no `otherwise` arm and the compiler refuses one; the loop-expansion `but if` at LANGUAGE.md:3093/3043 does have one and is a different statement. `gen_flow.vox:111–120` already documents this distinction, and `gen leaf butif append` correctly emits `otherwise` where `gen leaf butif print` correctly does not
+- a conditional-print statement emits exactly one line — LANGUAGE.md:3268, FMT-51, FMT-53, FMT-55
 
 Samenesses this section's leaves contribute that **nothing justifies** —
 each one an undeclared rule, and each one a row above:

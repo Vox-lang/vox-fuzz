@@ -1,4 +1,4 @@
-(BAS-02 - the Statements example (LANGUAGE.md:41-43) compiles and prints
+(BAS-02 - the Statements example (LANGUAGE.md:42-43) compiles and prints
  what the section says it prints.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-02.vox -o p && ./p
  expected output:

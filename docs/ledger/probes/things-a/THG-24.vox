@@ -4,7 +4,7 @@
  Also covers: THG-25 (each declaration form gives every field its declared
  default - `first` and `second` both come up 1/2), THG-26 (the bare
  declaration form).
- LANGUAGE.md:877 says "All three lines below declare a `point`" above a
+ old manual line 877 says "All three lines below declare a `point`" above a
  block containing one declaration - see Discrepancy 4.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-24.vox -o p && ./p
  expected output:

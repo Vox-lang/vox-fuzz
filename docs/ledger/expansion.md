@@ -5,20 +5,29 @@ Expansion, Chained `each` clauses — a grid, Conditional Branching with
 `but if`, Inline Substitution with `treating`), through to the `## Types`
 heading at 428.
 
-Manual version: the `../vox` working tree at commit **34f9831**, which
-`vox --version` reports as **v0.4.8** but which is post-release and headed
-for 0.4.9 — LANGUAGE.md's most recent commit (`d974da0`) touched line 419
-of this very range (`each file` → `each filename`). The compiler binary
-every probe below was run against is `../vox/target/release/vox`, built
-from that same commit at 01:04 on 2026-08-21. This matters: `d974da0` also
-fixed compiler bug **#50** ("`otherwise` after any base action"), and that
-fix changes the answer to BAS2-45 relative to what the generator's own
-source still believes (see the Report).
+Manual version, re-confirmed 2026-08-22: **Vox 0.4.9** (5327 lines, vox
+`4b77934`). This section still has **zero line drift** all the way back
+to the pre-0.4.9 commit this ledger was originally mapped against —
+`### Ranges` is still line 260 and `## Types` is still line 428 in the
+5327-line manual, so no citation in this file needed a shift.
 
-Line range as pinned: `INDEX.md` gives BAS2 as 260–427 against manual
-0.4.7 (5112 lines). The manual is now 5240 lines, but this section did not
-move — `### Ranges` is still at 260 and `## Types` still at 428 — so the
-range is re-confirmed, not re-pinned.
+**Three of this ledger's four discrepancies are now resolved,
+re-verified directly against vox 0.4.9 (not just re-read):**
+- **D1** (loop expansion doesn't work with "any action") — the
+  buffer-append arm now compiles and works (vox #54/#55 side effect,
+  confirmed against `vox-notes/REPORT-CANDIDATES-0.4.10.md` candidate
+  F). The other two arms are unchanged.
+- **D3** (`treating` type mismatch segfaults) — now a clean compile
+  error. Vox #55.
+- **D4** (same confusion over a mixed list leaks an address) — now
+  renders correctly. Fixed, uncredited to a specific numbered entry.
+- **D2** (`otherwise` displaces the base action) — unadjudicated
+  manual-wording question, re-probed, unchanged.
+
+`d974da0` (the commit this ledger was originally mapped against, just
+before the 0.4.9 release) had already fixed compiler bug **#50**
+("`otherwise` after any base action"), which BAS2-45's row already
+accounts for below — nothing new there.
 
 This is a **gap analysis**, not a from-scratch map. `existing leaf` names
 the leaf that already emits the construct, or `none`, and was determined
@@ -147,7 +156,21 @@ that must compile; the diagnostic is recorded here instead.
 
 ## Discrepancies
 
-### 1. Loop expansion does not work with "any action that takes an argument"
+### 1. Loop expansion does not work with "any action that takes an argument" — the buffer-append arm RESOLVED (works now, vox #54/#55 side effect)
+
+**Resolution confirmed, 2026-08-22.** Re-run `D1.vox` against vox 0.4.9:
+`append each word from ["ab", "cd"] to sink.` (a buffer) now **compiles
+and appends correctly** — `print sink.` prints `abcd`, where it used to
+be refused with `Buffer append requires a buffer source: word`. This
+matches `vox-notes/REPORT-CANDIDATES-0.4.10.md` candidate F exactly
+("`append each word from [...] to <buffer>` was refuted, now compiles —
+misread, it works, no defect") and `ROUND-2.md`'s bisect crediting it to
+`#54` (named-list arm) and `#55` (inline-literal arm) landing as a side
+effect, not a dedicated fix. **This arm of the discrepancy is closed.**
+The other two refuted arms (`write each ... to output.`, `Set total to
+each ...`) are untouched — re-verified separately, still refused
+identically — and the manual-wording question ("any action" overshoots
+the enumeration) stands for those two.
 
 LANGUAGE.md:284 says the `each…from` syntax "works with **any** action",
 and :312 lists "Any action that takes an argument" as a supported form,
@@ -211,7 +234,15 @@ compiler is almost certainly right and rule 4 needs the qualifier "and no
 discrepancy in its own right, which is why this is recorded rather than
 waved through. Not filed.
 
-### 3. A `treating` clause whose types do not match the collection compiles cleanly and segfaults
+### 3. A `treating` clause whose types do not match the collection compiles cleanly and segfaults — RESOLVED (vox #55)
+
+**Resolution confirmed, 2026-08-22.** Re-run `D3.vox` against vox 0.4.9:
+`print each item from ["a"] treating 98 as 31.` no longer segfaults —
+it is now a compile error, `Treating value and match must be the same
+type (got text vs number).` This is `vox/docs/BUGS_FOUND.md` #55 ("A
+`treating` clause whose types do not match the collection segfaults"),
+fixed. The account below is the finding as it stood on the pre-release
+compiler this ledger was originally mapped against.
 
 LANGUAGE.md:424 says only "If the loop variable equals `<match>`, it's
 replaced with `<replacement>` for that iteration." Nothing constrains the
@@ -249,7 +280,17 @@ gen_flow.vox:181–188). Recorded with a minimal repro; **not filed, and not
 adjudicated here** — this is precisely the class of finding `CLAUDE.md`
 says a worker hands to a human.
 
-### 4. The same unchecked confusion over a mixed list prints a raw pointer instead of crashing
+### 4. The same unchecked confusion over a mixed list prints a raw pointer instead of crashing — RESOLVED
+
+**Resolution confirmed, 2026-08-22.** Re-run `D4.vox` against vox 0.4.9:
+`print each item from [1, "a"] treating 98 as 31.` now prints `1` then
+`a` — the text element renders correctly instead of leaking the string
+constant's address (`4198536`) as a decimal integer. Likely the same
+fix family as D3 (#55) or the mixed-list tag-dispatch work around it;
+no separate BUGS_FOUND entry was found naming this exact case, but the
+behaviour is unambiguously fixed, re-verified twice. The account below
+is the finding as it stood on the pre-release compiler this ledger was
+originally mapped against.
 
 `D4.vox`, also one line:
 

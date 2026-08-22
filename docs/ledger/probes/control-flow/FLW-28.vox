@@ -1,5 +1,5 @@
 (FLW-28: periods stack - a Repeat nested in a For each takes two periods to
- close both levels (LANGUAGE.md:2157-2162). 2 outer x 2 inner is four
+ close both levels (LANGUAGE.md:2196-2200). 2 outer x 2 inner is four
  `r`s, then `after` once.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-28.vox -o p && ./p
  expected output:

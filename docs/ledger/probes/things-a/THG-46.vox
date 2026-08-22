@@ -1,6 +1,6 @@
 (THG-46: defaults apply RECURSIVELY - a field whose type is a thing takes
  that thing's own defaults, written into the nested bytes at declaration.
- Also covers: THG-47 (the stamp/letter example, LANGUAGE.md:979-992,
+ Also covers: THG-47 (the stamp/letter example, old manual lines 979-992,
  verbatim).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-46.vox -o p && ./p
  expected output:

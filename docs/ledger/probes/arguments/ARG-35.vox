@@ -1,4 +1,4 @@
-(ARG-35 — `--` stops flag processing (LANGUAGE.md:4438). `--verbose`
+(ARG-35 — `--` stops flag processing (LANGUAGE.md:4525). `--verbose`
  before it is parsed as a flag; `-v` after it is not.
  Also covers: ARG-36 (tokens after `--` are treated as positional
  arguments — they appear in `all`) and ARG-37 (the manual's own example

@@ -1,4 +1,4 @@
-(OPR-07: `divide` is the division operator (LANGUAGE.md:4555).
+(OPR-07: `divide` is the division operator (LANGUAGE.md:4642).
  20 divide 6 is 3, not 3.333 - integer division truncates; see OPR-35.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-07.vox -o p && ./p
  expected output:

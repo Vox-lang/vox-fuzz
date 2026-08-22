@@ -1,5 +1,5 @@
 (LST2-36 — "the first append determines the list's element type for
- printing" (LANGUAGE.md:2753) is NOT what happens: every element renders
+ printing" (old manual line 2753) is NOT what happens: every element renders
  by its own runtime tag whatever the first append was, in both directions
  and whether the list started empty or from a literal. See Discrepancy 5.
  Also covers: LST2-37 (append works with integers, texts, booleans,

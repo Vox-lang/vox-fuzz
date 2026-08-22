@@ -1,5 +1,5 @@
 (THG-74: the workaround - declare a scratch slot from the call, then print
- it. LANGUAGE.md:1154-1166 verbatim. A whole thing printed straight out
+ it. old manual lines 1154-1166 verbatim. A whole thing printed straight out
  renders as its fields, map-style (the Printing section, part B, spells that
  out; recorded here because this example is in this section's range).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-74.vox -o p && ./p

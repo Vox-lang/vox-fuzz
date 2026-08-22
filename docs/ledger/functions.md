@@ -1,16 +1,52 @@
 # Claim ledger: Functions
 
-Source: `../vox/LANGUAGE.md` lines **671–786** (manual version **0.4.8**):
-the whole `## Functions` chapter — Definition, Function Scope, Parameter
-and Local Types, Function Calls, Calling as Statement. Row prefix
+Source: `../vox/LANGUAGE.md` lines **671–813**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), confirmed 2026-08-22 — the whole
+`## Functions` chapter — Definition, Function Scope, Parameter and Local
+Types, Function Calls, Calling as Statement, Reading a Result. Row prefix
 **`FUN`**.
 
-`INDEX.md` pins the manual at 0.4.7 and gives this section as 671–786.
-The manual has since moved to **0.4.8** (5238 lines, was 5112) and the
-section did **not** move: 671–786 is exactly `## Functions` at 0.4.8, from
-the `## Functions` heading to the `---` before `## Things`. The line range
-in `INDEX.md` is correct as written; only the version stamp needs
-re-pinning. Nothing else in this ledger is affected.
+**Correction, 2026-08-22: the previously-stated end boundary (786) was
+wrong, not just drifted.** `## Functions` opens at 671 as this ledger
+always said, but `## Things` opens at **814**, not immediately after
+786 — re-checked directly (`grep -n "^## Functions\|^## Things"`). The
+gap, lines 787–813, is the back half of the "Reading a result"
+subsection (the declared-vs-undeclared-return-type propagation rules,
+including the exact passage FUN-41 already tests). That content was
+never outside this ledger's *conceptual* scope — several rows already
+address it — but the header's own boundary number was simply incorrect
+before this pass, independent of any 0.4.8→0.4.9 drift. Several rows in
+this ledger (FUN-40 through FUN-43) carry `*(gap)*` line-citation
+placeholders rather than a precise number; those remain unresolved by
+this pass and are a real follow-up, not a drift artifact — re-deriving
+them precisely against 671–813 is the next mapper's first job here.
+
+**Discrepancies 7 and 8 (RESOLVED, vox #53) and row FUN-41 (RESOLVED,
+vox #45) are this ledger's headline finding this pass** — all three
+re-verified directly against 0.4.9, not just re-read:
+- **D7/D8**: `Return a buffer, "<text literal>"` used to silently yield
+  an empty buffer (one string-initialised buffer in the program) or
+  **segfault** (two or more) — a top-severity memory-safety fault on a
+  program that compiled clean. Both are now a clean compile-time
+  refusal naming the exact working rewrite, regardless of buffer count.
+- **FUN-41**: an undeclared-return-type function's result, used in
+  expression position, used to print an untyped machine word. Now a
+  compile error, matching the same #45 fix already confirmed from the
+  collections-a ledger.
+
+**Discrepancies 1 and 5 remain genuinely open** — re-probed directly,
+byte-identical to the original finding (only the inherently
+run-varying heap addresses differ, as their own probe headers already
+predicted). These are the brief's "still open" functions D1/D1b and
+D5 rows: adjudicated in `vox-notes/REPORT-CANDIDATES-0.4.10.md`
+(candidates A and B) and tracked as vox candidates **#66**
+(`fix/bug-66-forward-global-read`) and **#67**
+(`fix/bug-67-declared-return-printed`) respectively — both branches
+present in the vox repo, in flight, not yet landed. Probes re-recorded
+as exit-code-only checks (their own headers already said the addresses
+vary per run; the checker was comparing the literal address anyway,
+which is a probe-convention gap unrelated to this pass's other
+check-probes.sh fixes).
 
 This is a **gap analysis**, not a from-scratch map. `existing leaf` names
 the leaf that already emits the construct — checked by `grep` on the
@@ -114,7 +150,7 @@ segfault.
 | FUN-38 | 779–783 | A call with arguments used inside a `Print` statement: `Print 'add numbers' of x and y.` — the whole of the "Calling as Statement" section. | emit it | yes — `Exit 95` if the printed sum is wrong (needs the value captured first, since `Print` discards it) | `Print f2 of c{n}`, `Print f3 of c{a} and c{b}` (`src/gen_core.vox:374,387`) | exercised | |
 | FUN-39 | 779–783 *(gap)* | *(gap)* A call **with arguments** is also legal as a bare statement, its result discarded. The section is headed "Calling as Statement" but its only example is a `Print`, and :772–777 promises the bare form only for calls with **no** arguments. | emit a bare call-with-arguments statement | yes — assert a side effect the callee had | `f4 of "..."` (`src/gen_text.vox:408`) is exactly this shape | exercised — the manual should say so | |
 | FUN-40 | 782 *(gap)* | *(gap)* Printing a call result **directly**, without routing it through a declared variable, is correct for `text`, `boolean` and `list` but renders a declared `float` return as its raw IEEE-754 bit pattern and a declared `map` return as a raw heap address. | route every return type through a declared variable before printing, until this is fixed | yes — but a leaf must **not** emit the direct-print form for `float` or `map` while it is broken | `Print f2 of ...` etc. print a `number` directly, which is safe | todo — **Discrepancy 5** | blocked on D5 |
-| FUN-41 | 759 *(gap)* | *(gap)* A function with **no** declared return type, used in expression position, yields an untyped machine word (`Print announce of 9.` prints `1`). | — | **no** — a leaf must not emit this shape at all while vox #45 is open | f4 (`src/gen_core.vox:859`) has no return type but is only ever called as a **statement** (`src/gen_text.vox:408`), never in expression position, so the generator does not currently hit it | not assertable — already filed as **vox bug #45** (`vox/docs/BUGS_FOUND.md:2931`); recorded here because this is the section that defines the shape | |
+| FUN-41 | 759 *(gap)* | **RESOLVED 2026-08-22 (vox #45).** *(gap, as originally written)* A function with **no** declared return type, used in expression position, used to yield an untyped machine word (`Print announce of 9.` printed `1`). Now it is a compile error: `'announce' returns nothing, so its result cannot be used as a value here` — matching the fix already confirmed elsewhere (collections-a LST-18/19). | — | **no, from a runtime leaf** — this is now a compile-error claim, same category as `values.md` VAL-08 | f4 (`src/gen_core.vox:859`) has no return type but is only ever called as a **statement** (`src/gen_text.vox:408`), never in expression position, so the generator does not currently hit it — correctly, since it would now refuse to compile | not assertable (compile-error claim) — was filed as **vox bug #45** (`vox/docs/BUGS_FOUND.md:2931`), now fixed; re-verified directly against 0.4.9, probe re-recorded | |
 | FUN-42 | 673 *(gap)* | *(gap)* The manual never says **where** a function definition may stand. The compiler accepts one nested inside an `If` or `While` body and **hoists** it: the body does not run when the block runs, and the name is callable from the top level afterwards. | emit a definition inside a block, call it outside, assert it ran once | yes | none, and the generator explicitly forbids it to itself (`src/gen_flow.vox:495-501`: "a function definition is only legal at the top level") — a rule nobody wrote, stricter than the language | todo — hand-verified (`FUN-42.vox`); the manual should say which reading is intended | |
 | FUN-43 | 673 *(gap)* | *(gap)* A function body written on indented lines is closed by a **blank line**, not by EOF and not by the body's last period. Without one, every following top-level statement is swallowed into the body; the compiler warns but the program still builds and runs, silently doing nothing. | keep emitting the blank line — this is the one sameness this section genuinely requires | yes — the negative form is a legal program that produces no output, which a leaf could assert against, but it is a trap not a feature | every emitted definition ends `\n\n` (`src/gen_core.vox:845-859`, `src/gen_flow.vox:522`, `src/gen_misc.vox:393`) | exercised — and this is what justifies the blank-line invariant, see below | |
 
@@ -354,7 +390,7 @@ called got is 'give timer'.` is a parse error, and `Set got to 'give
 timer'.` works. Worth a manual sentence rather than a compiler change.
 Not filed.
 
-### 7. `Return a buffer, "<text literal>"` yields an empty buffer, silently (`D7.vox`)
+### 7. `Return a buffer, "<text literal>"` yields an empty buffer, silently (`D7.vox`) — RESOLVED (vox #53)
 
 ```
 a buffer called direct is "ABC".
@@ -378,9 +414,20 @@ On that reading this is a **missing diagnostic**, not a wrong answer, and
 the fix is to refuse the construct and name the way out, the way
 `push_whole_thing_not_interpolable` does (the precedent cited in vox
 #45's own fix direction). It is silent either way, and Discrepancy 8 is
-what silence costs here. Not filed.
+what silence costs here. Not filed at the time.
 
-### 8. The same construct **segfaults** once a second string-initialised buffer exists (`D8.vox`)
+**Resolution confirmed, 2026-08-22: fixed by vox #53.** `vox/docs/
+BUGS_FOUND.md` #53 ("`Return a buffer, "<text literal>"` answers with an
+empty buffer — or segfaults, once the program holds a second string")
+names this exact pair (D7/D8) as its origin. Re-run `D7.vox` against vox
+0.4.9: it no longer compiles. The construct is now refused outright,
+exactly the "missing diagnostic" fix this discrepancy's strongest
+reading predicted: `error: Cannot return text "ABC" as a buffer; the
+caller reads what Return hands back as a buffer, and text is not one.
+Build the buffer first: 'a buffer called made is "ABC". Return a buffer,
+made.'` — which is precisely the working form `FUN-23.vox` already used.
+
+### 8. The same construct **segfaults** once a second string-initialised buffer exists (`D8.vox`) — RESOLVED (vox #53)
 
 Six lines. Legal Vox. Compiles clean. Exits 139, deterministically
 (3/3 runs, and again under `check-probes.sh`):
@@ -417,6 +464,15 @@ Discrepancy 7 and this are one defect at two doses: the return expression
 hands back something that is not a buffer, and the receiving declaration
 treats it as one. Not filed, per PROCEDURE.md §5 — but this is the row to
 carry to Josj first.
+
+**Resolution confirmed, 2026-08-22: fixed by vox #53, same fix as
+Discrepancy 7.** They were one defect at two doses, and the fix was one
+fix: the construct is refused at compile time regardless of how many
+buffers exist, so the dose no longer matters. Re-run `D8.vox` against vox
+0.4.9: it no longer segfaults — it no longer compiles, with the same
+diagnostic D7 now gets. Top-severity memory-safety finding, closed the
+way CLAUDE.md's own framing said it had to be: not by making the crash
+answer correctly, but by refusing the program before it could run.
 
 ### 9. The "locals are not available at top level" rule is enforced, but the diagnostic points inside the function (`D9.vox`)
 
@@ -535,7 +591,7 @@ this document. Discrepancy 7 is the same construct at a lower dose
 (silent empty buffer), and Discrepancy 1 is the widest: **every**
 non-number global declared below a function reads as a raw machine word
 inside it, with no warning — a whole class of silent wrong answers, and
-the disease LANGUAGE.md:645-667 says 0.3.0 was written to cure.
+the disease LANGUAGE.md:647-666 says 0.3.0 was written to cure.
 
 **Why no campaign has ever found Discrepancy 1** is worth stating,
 because the answer is not the comfortable one. The generator already

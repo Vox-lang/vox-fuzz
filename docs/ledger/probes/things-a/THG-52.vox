@@ -1,6 +1,6 @@
 (THG-52: a thing is a value - assignment copies the whole thing, and the
  copy shares nothing with the original.
- Also covers: THG-54 (the origin/moved example, LANGUAGE.md:1020-1031,
+ Also covers: THG-54 (the origin/moved example, old manual lines 1020-1031,
  verbatim - 5 then 9).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-52.vox -o p && ./p
  expected output:

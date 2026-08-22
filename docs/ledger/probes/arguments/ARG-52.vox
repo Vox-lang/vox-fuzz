@@ -1,6 +1,6 @@
 (ARG-52 — *(not a manual claim — a gap in the manual)* two schemas may
  share a name: they merge into one variable and every alias of both
- triggers it. LANGUAGE.md:4364 says "Define each supported flag once"
+ triggers it. LANGUAGE.md:4451 says "Define each supported flag once"
  and nothing enforces it — no error, no warning.
  This probe also runs the two-short-alias schema that ARG-45's
  diagnostic claims is impossible: `-a` or `-b`, no long alias, both
