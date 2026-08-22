@@ -1,4 +1,4 @@
-(BAS-45 - the hang example, LANGUAGE.md:169-178: the blank line ejects
+(BAS-45 - the hang example, LANGUAGE.md:170-178: the blank line ejects
  `increment counter` from the While body, so the condition never changes
  and the loop never terminates - no error, no warning, and `Print "end"`
  never runs.

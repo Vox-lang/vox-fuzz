@@ -1,20 +1,22 @@
-(D7 — Discrepancy 7 repro: a list or map interpolated into a format string
- renders correctly in PRINT position and renders a raw heap address
- everywhere else. LANGUAGE.md:3082-3085 says all sinks "share one name
- resolver" and render "identically whether the result is printed, written to
- a file, or built into a buffer"; LANGUAGE.md:3054-3056 says a format string
- used as a value "works as a text initializer or assignment". Neither holds
- for a collection.
- The address CHANGES BETWEEN RUNS, so this probe prints stable verdicts
- instead of the addresses; the raw values seen were
- 139857342844928 / 139857342840832 / 139857342844928 in one run and
- different in the next. Found while probing LST-35; the claim lines are in
- the FMT ledger's range (2995-3138), not this one.
+(D7 — the VARIABLE-form sub-case is RESOLVED (vox #44), re-recorded
+ 2026-08-22 against vox 0.4.9. Originally: a list or map interpolated
+ into a format string via the VARIABLE form (`"{flat}"`) rendered
+ correctly in PRINT position and rendered a raw heap address everywhere
+ else. old manual lines 3082-3085 (now re-pinned in the FMT ledger's own
+ range) says all sinks "share one name resolver" and render "identically
+ whether the result is printed, written to a file, or built into a
+ buffer"; that promise now holds for this sub-case.
+ NOTE: the EXPRESSION form (`"{element 2 of nested}"`) is a DIFFERENT,
+ still-open sub-case — see collections-b.md's own D7 and vox candidate
+ #68. This probe only ever tested the variable form.
+ The address used to CHANGE BETWEEN RUNS, so this probe prints stable
+ verdicts instead of the raw addresses (that is still the right way to
+ probe it, even now that both verdicts read "ok").
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
  expected output:
    print position: [1, 2, 3]
-   text initializer: WRONG
-   buffer sink: WRONG
+   text initializer: ok
+   buffer sink: ok
 )
 a list called flat is [1, 2, 3].
 print "print position: {flat}".

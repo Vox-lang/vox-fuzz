@@ -1,20 +1,29 @@
 # Claim ledger: Control Flow
 
-Source: `../vox/LANGUAGE.md` lines **2035–2202** (Control Flow, through If
-Statement, While Loop, For Each Loop, Repeat, Loop Control, Program
-Termination, Increment/Decrement). **Manual version 0.4.8**, compiler
-`vox v0.4.8`.
+Source: `../vox/LANGUAGE.md` lines **2073–2240**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), re-pinned 2026-08-22 (previously
+pinned to a 5240-line 0.4.8 manual) — Control Flow, through If Statement,
+While Loop, For Each Loop, Repeat, Loop Control, Program Termination,
+Increment/Decrement.
 
-**Line-range delta.** `INDEX.md` pins FLW at 2026–2193 against manual
-0.4.7. The manual has since moved to 0.4.8 (5240 lines, was 5112) and the
-section now runs **2035–2202**; `## Control Flow` is at 2035 and
-`## Lists and Collections` at 2203. The old range's tail (2193) stopped
-one line short of `### Increment/Decrement`, which `INDEX.md`'s own
-description already lists as part of this section — it is mapped here
-(FLW-43…45). Re-pin `INDEX.md` to 2035–2202. *(The brief also named this
-section "Variables"; Variables is VAR, 446–644. The prefix, the output
-filename and the probe directory all said control flow, and control flow
-is what is at the line range, so control flow is what was mapped.)*
+The 0.4.8→0.4.9 drift in this range is a uniform **+38 lines**, confirmed
+at multiple anchors before applying it mechanically. All three
+discrepancies (still unadjudicated — no prior lawyer verdict) re-verified
+unchanged: the full `docs/check-probes.sh` sweep of this directory now
+passes 45/45 (previously 37/45 — 8 false failures came from a
+`check-probes.sh` bug, not compiler drift, fixed below).
+
+**Found and fixed a `check-probes.sh` bug affecting probes across
+several ledgers, not just this one.** The master's stricter PASS
+condition (exit code match must also match stdout, unless empty or a
+`Segmentation` line) only stripped the *parenthesized* exit annotation
+(`(exit 42)`) from the recorded block before comparing — but many probes
+across this repo (control-flow, expressions, functions, process-control,
+time — 15 files found by grep) use the *bare* convention, a line reading
+just `exit 42` with no parens, which the brief explicitly names as a
+convention the script must accept. `check-probes.sh` now strips both
+forms. This is a script fix, not a probe reword, per the brief's
+instruction not to reword probes to fit the checker.
 
 This is a **gap analysis**, not a from-scratch map. `existing leaf` names
 the leaf that already emits the construct, or `none`, and was found by
@@ -22,7 +31,7 @@ grepping the emitted keyword in `src/gen_*.vox` — never by leaf name.
 That distinction earned its keep immediately here: `gen leaf butif print`
 and `gen leaf butif append` do **not** cover FLW-03. They emit
 `<action>, but if <cond> <action>`, the generic conditional-branch clause
-of LANGUAGE.md:361–397 and :3014 (no `then`, attaches to a base action);
+of LANGUAGE.md:399–435 and :3014 (no `then`, attaches to a base action);
 the If statement's `But if <condition> then, <statement>` at :2050 is a
 different construct and **nothing in the generator emits it**.
 
@@ -54,57 +63,57 @@ skipped** (`docs/check-probes.sh docs/ledger/probes/control-flow`).
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FLW-01 | 2039–2041 | `If <condition> then, <statement>.` runs the statement only when the condition is true. | emit an If with a known-true and a known-false condition, assert only the true branch's marker was reached | yes — generator picks the condition, so it knows which branch fires: `If reached is not 1 then, Exit 95.` | `gen leaf rich condition` (gen_core.vox:488), `gen if` (gen_flow.vox, block form), argv assertions (gen_misc.vox:316–321), predicate leaves (gen_misc.vox:431–435) | exercised | |
-| FLW-02 | 2044–2046 | `Otherwise,` is the else branch and is taken exactly when the condition is false. | emit both a false-condition and a true-condition If/Otherwise pair, assert which branch ran | yes — set a witness number in each branch and assert it | `gen leaf rich condition`, gen_files.vox:139, gen_text.vox:493, gen_misc.vox:217/220/222/431/433/434/435 | exercised | |
-| FLW-03 | 2049–2051 | `But if <condition> then,` is an else-if arm; arms are tested in order, first match wins, `Otherwise` catches the rest. | emit a 2–4 arm chain and drive it with a value the generator chose, assert only the matching arm's witness | yes — the generator picks the discriminant, so it knows the arm | **none** — `gen leaf butif print`/`butif append` emit the *other* `but if` (LANGUAGE.md:361–397: `<action>, but if <cond> <action>`, no `then`). Nothing emits `But if ... then,`. | todo — real gap, hand-verified to work | |
-| FLW-04 | 2054 | Each `then,` / `but if ... then,` / `otherwise,` branch consumes actions until the sentence ends. | emit multi-action arms in all three positions, assert every action in the taken arm ran and none from the others | yes — count the witnesses | `gen leaf rich condition` emits one action per arm only; nothing emits a multi-action arm | todo (multi-action arms) | |
-| FLW-05 | 2055 | Several actions in one branch are separated by commas. | as FLW-04, specifically in the `Otherwise` arm | yes | none (all existing arms are single-action) | todo | |
-| FLW-06 | 2056 | A period ends the full `if` sentence — what follows is unconditional. | emit an If whose condition is false, followed by a period and a marker, assert the marker ran | yes | every If-bearing leaf ends its sentence with a period via `gen join lines`, but none asserts that the following statement ran unconditionally | exercised (construct); todo (verification) | |
-| FLW-07 | 2057 | A period before `but if`/`otherwise` does not end the chain when the chain continues — including across a newline. | emit an If whose `Otherwise` sits on its own line after the closing period, assert the else branch is still conditional | yes — drive it with a true condition and assert the else witness did **not** fire | none — every emitted `Otherwise` is on the same line as its `then,` arm | todo | |
-| FLW-08 | 2059–2061 | Worked example: `If ready then, print "a", print "b", print "c".` prints a, b, c. | reproduce verbatim | yes — output is fixed | none (composite of FLW-01/04/05, all separately covered) | todo (as a composite) | |
-| FLW-09 | 2064 | `When` can replace `If`. | draw the head keyword from {`If`, `When`} per emission | yes — semantics identical, so any FLW-01 assertion works under either spelling | **none** — `When` appears nowhere in any emitted string | todo — trivially cheap, and its absence is a fixed-vocabulary invariant | |
-| FLW-10 | 2065 | `Else` can replace `Otherwise` (after `If` as well as after `When` — hand-verified both). | draw the else keyword from {`Otherwise`, `Else`} per emission | yes, same as FLW-02 | **none** — `Else` appears nowhere in any emitted string | todo — same fixed-vocabulary invariant | |
-| FLW-11 | 2069–2071 | `While <condition>, <statements>.` repeats while the condition holds, and runs zero times when it is false at entry. | emit a bounded While with a generator-chosen trip count, assert the counter's final value; also emit one whose condition is false at entry and assert the body never ran | yes — the generator picks start and limit: `If u1 is not 10 then, Exit 95.` | `gen leaf while` (gen_flow.vox:272), `gen leaf loop break while`, `gen leaf loop continue while` — all print the counter, none asserts it | exercised | |
-| FLW-12 | 2073–2076 | Manual example: `While the counter is less than 10, print the counter, increment the counter.` — the `the` article on the loop counter, lowercase keywords. | emit the article form, and vary the keyword case | yes (same assertion as FLW-11) | none — **no emitted statement uses `the` as an optional article on a variable reference** (the only `the` in any emitted string is the mandatory one in `To do the t4's 'made at'`, gen_things.vox:124), and every loop keyword is emitted in one fixed case | todo — a fixed-vocabulary invariant the manual's own examples contradict | |
-| FLW-13 | 2078–2082 | A multi-action While body is comma-separated in one sentence and every action runs on every iteration. | emit a While with 2–4 body actions, assert per-action witness counts equal the trip count | yes | none — `gen leaf while`'s body is always exactly one `Increment`; the loop-control While leaves are a fixed 3-action shape | todo (variable-width body) | |
-| FLW-14 | 2084–2091 | Worked example: a While inside a function body works — composite (`is less than or equal to`, bare `total is total add i` assignment as a loop action, `Return a number, total.` after the loop's own period). `sum of 4` is 10. | emit a `To` definition whose body contains a loop, then call it and assert the return | yes — closed-form sum, generator knows it | **none** — every emitted function body (`f1`–`f4`, `grid sink N`, `read flags N`, thing methods) is a fixed straight-line shape; no generated `To` body has ever contained a loop | todo — real gap, and the one that most changes what the compiler sees | |
-| FLW-15 | 2095–2098 | `For each number from <start> to <end>,` — bounds may be literals or variables. | emit both literal- and variable-bounded ranges, assert the iteration count | yes — `If seen is not 3 then, Exit 95.` | `gen loop` (gen_flow.vox), gen_misc.vox:177 and :212, the four loop-control leaves — all literal bounds | exercised (literal bounds); todo (variable bounds — no leaf emits a range bound that is a runtime variable) | |
-| FLW-16 | 2100–2103 | `For each number from 1 to 10, print the number.` — the range is inclusive of both bounds. | emit a range and assert the count is `end - start + 1` | yes | as FLW-15; nothing asserts inclusivity | exercised (construct); todo (verification) | |
-| FLW-17 | 2105–2106 | Inside the loop `the number` is the current iteration value (bare `number` is the same value). | accumulate the loop variable and assert the closed-form sum | yes — `If total is not 18 then, Exit 95.` | `gen leaf loop break/continue foreach` print bare `number`; nothing sums or asserts it, and nothing emits the `the` form | exercised (bare form); todo (verification, and the article form) | |
-| FLW-18 | 2108–2111 | `For each <variable> in <list>, <statement>.` binds the loop variable to each element in order. | emit a list of generator-chosen elements and assert the concatenation/sum matches | yes — the generator wrote the list | gen_collections.vox:73 (`For each w{n} in l{n}, Print w{n}`), gen_collections.vox:48 (over `m{n}'s keys`) | exercised | |
-| FLW-19 | 2113–2117 | Manual example: `a list called nums is [1, 2, 3].` / `For each n in nums, print the n.` prints 1, 2, 3. | reproduce verbatim, including the `the` on the loop variable | yes | none uses the article form | todo (article form); exercised (bare form, via FLW-18's leaf) | |
-| FLW-20 | 2097 (undocumented precision) | *(gap in the manual)* A range whose start exceeds its end runs the body **zero** times — not once, not an error. | emit an inverted range, assert the body never ran | yes | none — every emitted range is drawn so start ≤ end | todo — hand-verified | |
-| FLW-21 | 2110 (undocumented precision) | *(gap)* The list form over an **empty** list runs the body zero times, no error. | emit `For each x in [], ...`, assert the body never ran | yes | `gen leaf treating print` iterates `arguments's all` (always empty in this generator), but over the *expansion* clause, not the `For each ... in` form, and asserts nothing | todo | |
-| FLW-22 | 2105–2106 (undocumented precision) | *(gap — see **Discrepancy 3**)* The loop variable outlives the loop: after the range form it holds `end + 1`; after the list form it holds the last element. | read the loop variable after the loop and assert the value | yes, once adjudicated — the generator knows both `end` and the last element | none | todo — **blocked on D3** | |
-| FLW-23 | 2119–2125 | `Repeat <count> times, <statements>.` runs the body exactly count times; the count may be a variable. | emit a Repeat with a generator-chosen count, assert the counter equals it | yes — `If r1 is not 7 then, Exit 95.` | `gen leaf repeat` (gen_flow.vox:286) — literal count only, prints without asserting | exercised (literal count); todo (variable count, verification) | |
-| FLW-24 | 2127–2130 | `Repeat 3 times, print "hello".` prints hello three times. | reproduce | yes | `gen leaf repeat` | exercised | |
-| FLW-25 | 2132–2139 | A multi-action Repeat is comma-separated exactly like While: `Repeat 2 times, print "a", print "b".` prints a, b, a, b — interleaved, not grouped. | emit a 2–4 action Repeat body, assert the interleaving order | yes — the output sequence is fully determined | none — `gen leaf repeat`'s body is always a single `Increment` | todo — real gap, and the exact shape that was a compile error before compiler bug #27 was fixed in v0.4.6 | |
-| FLW-26 | 2141–2150 | A period ends the Repeat body and closes the construct; the statement after it belongs to the surrounding scope and runs once. | emit `Repeat N times, <action>.` then a following statement, assert the following statement ran exactly once | yes — witness count of 1 vs N is the whole test | **none, and the generator actively avoids this shape**: `gen leaf repeat` emits a blank line before its closing `Print`, working around compiler bug #27 — which was **fixed in v0.4.6** (FLW-26's probe is the regression guard). The workaround is now an unjustified invariant. | todo — see Report | |
-| FLW-27 | 2143 | A blank line force-closes a Repeat (termination rule 2). | emit the blank-line form, assert the following statement ran once | yes | `gen leaf repeat` — this is the only Repeat closing form the generator emits | exercised | |
-| FLW-28 | 2152–2162 | Periods stack: a Repeat nested in another loop takes two periods to close both. `For each n from 1 to 2,` + `Repeat 2 times, print "r"..` gives four `r`s then `after`. | emit a nested loop pair closed by stacked periods, assert the product count and that the following statement ran once | yes — count is `outer × inner` | none — no leaf nests a Repeat inside anything, and `gen leaf repeat` is reachable only at the true top level | todo | |
-| FLW-29 | 2124 (undocumented precision) | *(gap)* A Repeat count of 0, or a negative count, runs the body zero times — no error, no wraparound, no hang. | emit a zero and a negative count, assert the body never ran | yes | none — the count is always drawn `'rng below' of 8 add 1`, i.e. 1–8, never 0 or negative | todo — hand-verified | |
-| FLW-30 | 2166–2167 | `Break.` leaves the loop immediately: the rest of the body is skipped on the breaking iteration and no further iterations run. | emit a guarded Break at a generator-chosen iteration, assert the witness count equals the guard | yes — the generator picks the guard, so it knows exactly how many iterations ran | `gen leaf loop break foreach`, `gen leaf loop break while` (gen_flow.vox:426/444), gen_misc.vox:179 — all print, none asserts | exercised | |
-| FLW-31 | 2166, 2168 | `Continue.` skips the rest of the body and goes to the next iteration; the loop still runs to completion. | emit a guarded Continue, assert the witness count is `trips - 1` | yes | `gen leaf loop continue foreach`, `gen leaf loop continue while` (gen_flow.vox:434/455) | exercised | |
-| FLW-32 | 2164–2169 (undocumented precision) | *(gap)* `Break` and `Continue` work inside a `Repeat` as well as inside `For each`/`While`. The manual's Loop Control section names no construct at all. | emit Break and Continue inside a Repeat body | yes, same assertions as FLW-30/31 | none — `gen leaf loop control` covers exactly four combinations, all For-each or While; Repeat is not among them | todo — hand-verified to work | |
-| FLW-33 | 2164–2169 (undocumented precision) | *(gap)* Outside any loop, `Break.`/`Continue.` are a **compile error** ("Break is only valid inside a loop"), not a runtime no-op. | — | **no, not by a generated program** — the generator's invariant is that everything it emits compiles; this is a claim about a *rejected* program, so it belongs to a negative-corpus harness, not a leaf | n/a | not assertable (by a leaf) — hand-verified, probe retained | |
-| FLW-34 | 2171–2176 | `Exit <code>.` exits immediately with that code; statements after it never run. | emit an Exit with a chosen code, assert the harness saw that exit status | yes — but the assertion is the **harness's**, not the program's; the generator already records the expected code | `gen program` (gen_core.vox:1074) emits `Exit {code}.` as the tail of **every** program, code drawn 0–255 skipping the reserved 91–94; argv assertions (gen_misc.vox:316–321) emit `Exit 91`–`94` | exercised | |
-| FLW-35 | 2181 | `Exit 0.` — success. | let the tail draw hit 0 | yes (harness-side) | `gen program`'s tail draw reaches 0 | exercised | |
-| FLW-36 | 2182 | `Exit 1.` — general error. | as FLW-35 | yes (harness-side) | same | exercised | |
-| FLW-37 | 2184–2186 | Worked example: an `arguments's empty` usage guard that prints usage and exits 1. | reproduce the example | yes — and it **does not behave as written**: see **Discrepancy 1** | none | todo — **blocked on D1**; do not build a leaf from this example until it is adjudicated, because a leaf copying it would emit a program that exits 1 unconditionally | |
-| FLW-38 | 2190 | The exit code defaults to 0 when it is not specified — bare `Exit.` compiles and exits 0. | emit a bare `Exit.` sometimes instead of `Exit <code>.` | yes (harness-side: expect 0) | **none** — every emitted Exit carries an explicit code | todo — and this is the fix for the "every program ends with `Exit <code>.`" invariant | |
-| FLW-39 | 2191 | All resources are automatically cleaned up before exit. | — | **no** — there is no observation point after `Exit` inside the exiting program. Hand-checked out of band: a file handle written to and never closed still has its bytes on disk after `Exit 3`. Probe retained; `check-probes.sh` can only confirm the status. | n/a | not assertable | |
-| FLW-40 | 2192 | `quit` is an alternative keyword for `Exit`, and takes a code. | draw the termination keyword from {`Exit`, `quit`, `terminate`} | yes (harness-side) | **none** — `quit` appears nowhere in any emitted string | todo — fixed-vocabulary invariant | |
-| FLW-41 | 2192 | `terminate` is an alternative keyword for `Exit`, and takes a code. | as FLW-40 | yes (harness-side) | **none** | todo | |
-| FLW-42 | 2176 (undocumented precision) | *(gap)* The code is the POSIX process status and is therefore taken modulo 256: `Exit 300.` leaves status 44. The code may also be a variable, not only a literal. | emit codes above 255 and variable-valued codes, and have the harness expect `code modulo 256` | yes (harness-side) — but note the reserved 91–94 band must be computed **after** the modulo, or a drawn 347 would land on 91 | `gen program` draws below 256 and so never crosses the boundary; no emitted Exit takes a variable | todo — matters to the runner's exit-code classification, not just to coverage | |
-| FLW-43 | 2196–2197 | `Increment the counter.` adds one to a number. | emit an Increment on a known value, assert the result | yes — `If counter is not 6 then, Exit 95.` | `gen leaf while`, `gen leaf repeat`, both loop-control While leaves (gen_flow.vox:272/286/444/455) — always as loop-progress, never asserted, and always the article-free spelling | exercised | |
-| FLW-44 | 2198 | `Decrement the value.` subtracts one. | emit a Decrement on a known value, assert the result | yes | **none** — `Decrement` appears nowhere in any emitted string | todo — real gap, one keyword wide | |
-| FLW-45 | 2194–2199 (undocumented precision) | *(gap — see **Discrepancy 2**)* `Increment`/`Decrement` are number-only, and the compiler says so two different ways: on a `text` it refuses the program ("Increment requires a number variable"); on a `float` it is a **silent no-op**. | assert a float is unchanged after an Increment (once adjudicated) | yes for the float half; the text half is a compile-error claim, not a leaf claim (as FLW-33) | none | todo — **blocked on D2** | |
+| FLW-01 | 2077–2079 | `If <condition> then, <statement>.` runs the statement only when the condition is true. | emit an If with a known-true and a known-false condition, assert only the true branch's marker was reached | yes — generator picks the condition, so it knows which branch fires: `If reached is not 1 then, Exit 95.` | `gen leaf rich condition` (gen_core.vox:488), `gen if` (gen_flow.vox, block form), argv assertions (gen_misc.vox:316–321), predicate leaves (gen_misc.vox:431–435) | exercised | |
+| FLW-02 | 2082–2084 | `Otherwise,` is the else branch and is taken exactly when the condition is false. | emit both a false-condition and a true-condition If/Otherwise pair, assert which branch ran | yes — set a witness number in each branch and assert it | `gen leaf rich condition`, gen_files.vox:139, gen_text.vox:493, gen_misc.vox:217/220/222/431/433/434/435 | exercised | |
+| FLW-03 | 2087–2089 | `But if <condition> then,` is an else-if arm; arms are tested in order, first match wins, `Otherwise` catches the rest. | emit a 2–4 arm chain and drive it with a value the generator chose, assert only the matching arm's witness | yes — the generator picks the discriminant, so it knows the arm | **none** — `gen leaf butif print`/`butif append` emit the *other* `but if` (LANGUAGE.md:399–435: `<action>, but if <cond> <action>`, no `then`). Nothing emits `But if ... then,`. | todo — real gap, hand-verified to work | |
+| FLW-04 | 2092 | Each `then,` / `but if ... then,` / `otherwise,` branch consumes actions until the sentence ends. | emit multi-action arms in all three positions, assert every action in the taken arm ran and none from the others | yes — count the witnesses | `gen leaf rich condition` emits one action per arm only; nothing emits a multi-action arm | todo (multi-action arms) | |
+| FLW-05 | 2093 | Several actions in one branch are separated by commas. | as FLW-04, specifically in the `Otherwise` arm | yes | none (all existing arms are single-action) | todo | |
+| FLW-06 | 2094 | A period ends the full `if` sentence — what follows is unconditional. | emit an If whose condition is false, followed by a period and a marker, assert the marker ran | yes | every If-bearing leaf ends its sentence with a period via `gen join lines`, but none asserts that the following statement ran unconditionally | exercised (construct); todo (verification) | |
+| FLW-07 | 2095 | A period before `but if`/`otherwise` does not end the chain when the chain continues — including across a newline. | emit an If whose `Otherwise` sits on its own line after the closing period, assert the else branch is still conditional | yes — drive it with a true condition and assert the else witness did **not** fire | none — every emitted `Otherwise` is on the same line as its `then,` arm | todo | |
+| FLW-08 | 2097–2099 | Worked example: `If ready then, print "a", print "b", print "c".` prints a, b, c. | reproduce verbatim | yes — output is fixed | none (composite of FLW-01/04/05, all separately covered) | todo (as a composite) | |
+| FLW-09 | 2102 | `When` can replace `If`. | draw the head keyword from {`If`, `When`} per emission | yes — semantics identical, so any FLW-01 assertion works under either spelling | **none** — `When` appears nowhere in any emitted string | todo — trivially cheap, and its absence is a fixed-vocabulary invariant | |
+| FLW-10 | 2103 | `Else` can replace `Otherwise` (after `If` as well as after `When` — hand-verified both). | draw the else keyword from {`Otherwise`, `Else`} per emission | yes, same as FLW-02 | **none** — `Else` appears nowhere in any emitted string | todo — same fixed-vocabulary invariant | |
+| FLW-11 | 2107–2109 | `While <condition>, <statements>.` repeats while the condition holds, and runs zero times when it is false at entry. | emit a bounded While with a generator-chosen trip count, assert the counter's final value; also emit one whose condition is false at entry and assert the body never ran | yes — the generator picks start and limit: `If u1 is not 10 then, Exit 95.` | `gen leaf while` (gen_flow.vox:272), `gen leaf loop break while`, `gen leaf loop continue while` — all print the counter, none asserts it | exercised | |
+| FLW-12 | 2111–2114 | Manual example: `While the counter is less than 10, print the counter, increment the counter.` — the `the` article on the loop counter, lowercase keywords. | emit the article form, and vary the keyword case | yes (same assertion as FLW-11) | none — **no emitted statement uses `the` as an optional article on a variable reference** (the only `the` in any emitted string is the mandatory one in `To do the t4's 'made at'`, gen_things.vox:124), and every loop keyword is emitted in one fixed case | todo — a fixed-vocabulary invariant the manual's own examples contradict | |
+| FLW-13 | 2116–2120 | A multi-action While body is comma-separated in one sentence and every action runs on every iteration. | emit a While with 2–4 body actions, assert per-action witness counts equal the trip count | yes | none — `gen leaf while`'s body is always exactly one `Increment`; the loop-control While leaves are a fixed 3-action shape | todo (variable-width body) | |
+| FLW-14 | 2122–2129 | Worked example: a While inside a function body works — composite (`is less than or equal to`, bare `total is total add i` assignment as a loop action, `Return a number, total.` after the loop's own period). `sum of 4` is 10. | emit a `To` definition whose body contains a loop, then call it and assert the return | yes — closed-form sum, generator knows it | **none** — every emitted function body (`f1`–`f4`, `grid sink N`, `read flags N`, thing methods) is a fixed straight-line shape; no generated `To` body has ever contained a loop | todo — real gap, and the one that most changes what the compiler sees | |
+| FLW-15 | 2133–2136 | `For each number from <start> to <end>,` — bounds may be literals or variables. | emit both literal- and variable-bounded ranges, assert the iteration count | yes — `If seen is not 3 then, Exit 95.` | `gen loop` (gen_flow.vox), gen_misc.vox:177 and :212, the four loop-control leaves — all literal bounds | exercised (literal bounds); todo (variable bounds — no leaf emits a range bound that is a runtime variable) | |
+| FLW-16 | 2138–2141 | `For each number from 1 to 10, print the number.` — the range is inclusive of both bounds. | emit a range and assert the count is `end - start + 1` | yes | as FLW-15; nothing asserts inclusivity | exercised (construct); todo (verification) | |
+| FLW-17 | 2143–2144 | Inside the loop `the number` is the current iteration value (bare `number` is the same value). | accumulate the loop variable and assert the closed-form sum | yes — `If total is not 18 then, Exit 95.` | `gen leaf loop break/continue foreach` print bare `number`; nothing sums or asserts it, and nothing emits the `the` form | exercised (bare form); todo (verification, and the article form) | |
+| FLW-18 | 2146–2149 | `For each <variable> in <list>, <statement>.` binds the loop variable to each element in order. | emit a list of generator-chosen elements and assert the concatenation/sum matches | yes — the generator wrote the list | gen_collections.vox:73 (`For each w{n} in l{n}, Print w{n}`), gen_collections.vox:48 (over `m{n}'s keys`) | exercised | |
+| FLW-19 | 2151–2155 | Manual example: `a list called nums is [1, 2, 3].` / `For each n in nums, print the n.` prints 1, 2, 3. | reproduce verbatim, including the `the` on the loop variable | yes | none uses the article form | todo (article form); exercised (bare form, via FLW-18's leaf) | |
+| FLW-20 | 2135 (undocumented precision) | *(gap in the manual)* A range whose start exceeds its end runs the body **zero** times — not once, not an error. | emit an inverted range, assert the body never ran | yes | none — every emitted range is drawn so start ≤ end | todo — hand-verified | |
+| FLW-21 | 2148 (undocumented precision) | *(gap)* The list form over an **empty** list runs the body zero times, no error. | emit `For each x in [], ...`, assert the body never ran | yes | `gen leaf treating print` iterates `arguments's all` (always empty in this generator), but over the *expansion* clause, not the `For each ... in` form, and asserts nothing | todo | |
+| FLW-22 | 2143–2144 (undocumented precision) | *(gap — see **Discrepancy 3**)* The loop variable outlives the loop: after the range form it holds `end + 1`; after the list form it holds the last element. | read the loop variable after the loop and assert the value | yes, once adjudicated — the generator knows both `end` and the last element | none | todo — **blocked on D3** | |
+| FLW-23 | 2157–2163 | `Repeat <count> times, <statements>.` runs the body exactly count times; the count may be a variable. | emit a Repeat with a generator-chosen count, assert the counter equals it | yes — `If r1 is not 7 then, Exit 95.` | `gen leaf repeat` (gen_flow.vox:286) — literal count only, prints without asserting | exercised (literal count); todo (variable count, verification) | |
+| FLW-24 | 2165–2168 | `Repeat 3 times, print "hello".` prints hello three times. | reproduce | yes | `gen leaf repeat` | exercised | |
+| FLW-25 | 2170–2177 | A multi-action Repeat is comma-separated exactly like While: `Repeat 2 times, print "a", print "b".` prints a, b, a, b — interleaved, not grouped. | emit a 2–4 action Repeat body, assert the interleaving order | yes — the output sequence is fully determined | none — `gen leaf repeat`'s body is always a single `Increment` | todo — real gap, and the exact shape that was a compile error before compiler bug #27 was fixed in v0.4.6 | |
+| FLW-26 | 2179–2188 | A period ends the Repeat body and closes the construct; the statement after it belongs to the surrounding scope and runs once. | emit `Repeat N times, <action>.` then a following statement, assert the following statement ran exactly once | yes — witness count of 1 vs N is the whole test | **none, and the generator actively avoids this shape**: `gen leaf repeat` emits a blank line before its closing `Print`, working around compiler bug #27 — which was **fixed in v0.4.6** (FLW-26's probe is the regression guard). The workaround is now an unjustified invariant. | todo — see Report | |
+| FLW-27 | 2181 | A blank line force-closes a Repeat (termination rule 2). | emit the blank-line form, assert the following statement ran once | yes | `gen leaf repeat` — this is the only Repeat closing form the generator emits | exercised | |
+| FLW-28 | 2190–2200 | Periods stack: a Repeat nested in another loop takes two periods to close both. `For each n from 1 to 2,` + `Repeat 2 times, print "r"..` gives four `r`s then `after`. | emit a nested loop pair closed by stacked periods, assert the product count and that the following statement ran once | yes — count is `outer × inner` | none — no leaf nests a Repeat inside anything, and `gen leaf repeat` is reachable only at the true top level | todo | |
+| FLW-29 | 2162 (undocumented precision) | *(gap)* A Repeat count of 0, or a negative count, runs the body zero times — no error, no wraparound, no hang. | emit a zero and a negative count, assert the body never ran | yes | none — the count is always drawn `'rng below' of 8 add 1`, i.e. 1–8, never 0 or negative | todo — hand-verified | |
+| FLW-30 | 2204–2205 | `Break.` leaves the loop immediately: the rest of the body is skipped on the breaking iteration and no further iterations run. | emit a guarded Break at a generator-chosen iteration, assert the witness count equals the guard | yes — the generator picks the guard, so it knows exactly how many iterations ran | `gen leaf loop break foreach`, `gen leaf loop break while` (gen_flow.vox:426/444), gen_misc.vox:179 — all print, none asserts | exercised | |
+| FLW-31 | 2204, 2206 | `Continue.` skips the rest of the body and goes to the next iteration; the loop still runs to completion. | emit a guarded Continue, assert the witness count is `trips - 1` | yes | `gen leaf loop continue foreach`, `gen leaf loop continue while` (gen_flow.vox:434/455) | exercised | |
+| FLW-32 | 2202–2207 (undocumented precision) | *(gap)* `Break` and `Continue` work inside a `Repeat` as well as inside `For each`/`While`. The manual's Loop Control section names no construct at all. | emit Break and Continue inside a Repeat body | yes, same assertions as FLW-30/31 | none — `gen leaf loop control` covers exactly four combinations, all For-each or While; Repeat is not among them | todo — hand-verified to work | |
+| FLW-33 | 2202–2207 (undocumented precision) | *(gap)* Outside any loop, `Break.`/`Continue.` are a **compile error** ("Break is only valid inside a loop"), not a runtime no-op. | — | **no, not by a generated program** — the generator's invariant is that everything it emits compiles; this is a claim about a *rejected* program, so it belongs to a negative-corpus harness, not a leaf | n/a | not assertable (by a leaf) — hand-verified, probe retained | |
+| FLW-34 | 2209–2214 | `Exit <code>.` exits immediately with that code; statements after it never run. | emit an Exit with a chosen code, assert the harness saw that exit status | yes — but the assertion is the **harness's**, not the program's; the generator already records the expected code | `gen program` (gen_core.vox:1074) emits `Exit {code}.` as the tail of **every** program, code drawn 0–255 skipping the reserved 91–94; argv assertions (gen_misc.vox:316–321) emit `Exit 91`–`94` | exercised | |
+| FLW-35 | 2219 | `Exit 0.` — success. | let the tail draw hit 0 | yes (harness-side) | `gen program`'s tail draw reaches 0 | exercised | |
+| FLW-36 | 2220 | `Exit 1.` — general error. | as FLW-35 | yes (harness-side) | same | exercised | |
+| FLW-37 | 2222–2224 | Worked example: an `arguments's empty` usage guard that prints usage and exits 1. | reproduce the example | yes — and it **does not behave as written**: see **Discrepancy 1** | none | todo — **blocked on D1**; do not build a leaf from this example until it is adjudicated, because a leaf copying it would emit a program that exits 1 unconditionally | |
+| FLW-38 | 2228 | The exit code defaults to 0 when it is not specified — bare `Exit.` compiles and exits 0. | emit a bare `Exit.` sometimes instead of `Exit <code>.` | yes (harness-side: expect 0) | **none** — every emitted Exit carries an explicit code | todo — and this is the fix for the "every program ends with `Exit <code>.`" invariant | |
+| FLW-39 | 2229 | All resources are automatically cleaned up before exit. | — | **no** — there is no observation point after `Exit` inside the exiting program. Hand-checked out of band: a file handle written to and never closed still has its bytes on disk after `Exit 3`. Probe retained; `check-probes.sh` can only confirm the status. | n/a | not assertable | |
+| FLW-40 | 2230 | `quit` is an alternative keyword for `Exit`, and takes a code. | draw the termination keyword from {`Exit`, `quit`, `terminate`} | yes (harness-side) | **none** — `quit` appears nowhere in any emitted string | todo — fixed-vocabulary invariant | |
+| FLW-41 | 2230 | `terminate` is an alternative keyword for `Exit`, and takes a code. | as FLW-40 | yes (harness-side) | **none** | todo | |
+| FLW-42 | 2214 (undocumented precision) | *(gap)* The code is the POSIX process status and is therefore taken modulo 256: `Exit 300.` leaves status 44. The code may also be a variable, not only a literal. | emit codes above 255 and variable-valued codes, and have the harness expect `code modulo 256` | yes (harness-side) — but note the reserved 91–94 band must be computed **after** the modulo, or a drawn 347 would land on 91 | `gen program` draws below 256 and so never crosses the boundary; no emitted Exit takes a variable | todo — matters to the runner's exit-code classification, not just to coverage | |
+| FLW-43 | 2234–2235 | `Increment the counter.` adds one to a number. | emit an Increment on a known value, assert the result | yes — `If counter is not 6 then, Exit 95.` | `gen leaf while`, `gen leaf repeat`, both loop-control While leaves (gen_flow.vox:272/286/444/455) — always as loop-progress, never asserted, and always the article-free spelling | exercised | |
+| FLW-44 | 2236 | `Decrement the value.` subtracts one. | emit a Decrement on a known value, assert the result | yes | **none** — `Decrement` appears nowhere in any emitted string | todo — real gap, one keyword wide | |
+| FLW-45 | 2232–2237 (undocumented precision) | *(gap — see **Discrepancy 2**)* `Increment`/`Decrement` are number-only, and the compiler says so two different ways: on a `text` it refuses the program ("Increment requires a number variable"); on a `float` it is a **silent no-op**. | assert a float is unchanged after an Increment (once adjudicated) | yes for the float half; the text half is a compile-error claim, not a leaf claim (as FLW-33) | none | todo — **blocked on D2** | |
 
 ## Discrepancies
 
 ### 1. The manual's usage-guard example does not guard — `Exit 1.` runs unconditionally
 
-LANGUAGE.md:2184–2186, under **Program Termination → Examples**:
+LANGUAGE.md:2222–2224, under **Program Termination → Examples**:
 
 ```
 If arguments's empty then,
@@ -115,7 +124,7 @@ If arguments's empty then,
 Read as written, this is the canonical "no arguments? print usage and
 bail" idiom, and it is presented as a working example of `Exit`. It is
 not one. `Print "Usage: ./program <file>".`'s period closes the `If`
-(termination rule 1, LANGUAGE.md:135 — a period closes the innermost open
+(termination rule 1, LANGUAGE.md:173 — a period closes the innermost open
 clause), so `Exit 1.` is a **top-level statement** and the program exits 1
 no matter what the condition was. The indentation is doing no work.
 
@@ -150,7 +159,7 @@ Print "reached the real work".
 work`, exit 0.
 
 **The reading in which the compiler is right:** it plainly is right. Rule
-1 is explicit, LANGUAGE.md:211 restates it for `Otherwise`, and the
+1 is explicit, LANGUAGE.md:249 restates it for `Otherwise`, and the
 Repeat section three subsections earlier (2141–2150) spends a paragraph
 on exactly this — "the statements after a closing period belong to the
 surrounding scope, not the loop". The compiler is applying the rule the
@@ -169,7 +178,7 @@ Not filed. Not decided.
 
 ### 2. `Increment` on a `float` is a silent no-op; on a `text` it is a compile error
 
-LANGUAGE.md:2194–2199 gives `Increment the counter.` / `Decrement the
+LANGUAGE.md:2235–2237 gives `Increment the counter.` / `Decrement the
 value.` with no stated operand type. Repro (`D2.vox`):
 
 ```
@@ -216,7 +225,7 @@ Not filed. Not decided.
 
 ### 3. The loop variable outlives its loop, holding `end + 1` (range) or the last element (list)
 
-LANGUAGE.md:2105–2106 introduces the loop variable under the heading
+LANGUAGE.md:2143–2144 introduces the loop variable under the heading
 **"Inside the loop:"** — "`the number` refers to the current iteration
 value". The section says nothing about the variable's existence outside
 the loop. Repro (`D3.vox`):
@@ -257,13 +266,13 @@ Not filed. Not decided.
 
 ## Invariants this section justifies
 
-- `then,` follows every `If`/`When` condition — LANGUAGE.md:2040, FLW-01
+- `then,` follows every `If`/`When` condition — LANGUAGE.md:2078, FLW-01
 - a comma follows every loop head (`While <cond>,`, `For each … ,`,
-  `Repeat <count> times,`) — LANGUAGE.md:2070/2097/2124, FLW-11/15/23
-- `times` follows every `Repeat` count — LANGUAGE.md:2124, FLW-23
+  `Repeat <count> times,`) — LANGUAGE.md:2108/2097/2124, FLW-11/15/23
+- `times` follows every `Repeat` count — LANGUAGE.md:2162, FLW-23
 - `Break`/`Continue` never appear outside a loop — FLW-33 (compile error;
   undocumented but hard-enforced)
-- `Exit`'s code, when present, is a number — LANGUAGE.md:2176, FLW-34
+- `Exit`'s code, when present, is a number — LANGUAGE.md:2214, FLW-34
 
 Everything else this section's constructs show as invariant is **not**
 justified by it. The ones the current corpus will show, with the row that
@@ -344,7 +353,7 @@ me to documents and probes, not `src/`.)*
 actually emits.* `gen leaf butif print` and `gen leaf butif append` look
 exactly like coverage of FLW-03, are named for it, and cover a different
 language construct in a different chapter (`<action>, but if <cond>
-<action>`, LANGUAGE.md:361). Had I trusted the names, the else-if chain —
+<action>`, LANGUAGE.md:399). Had I trusted the names, the else-if chain —
 which nothing emits — would have been marked `exercised` and never built.
 
 *Check the compiler's bug list before believing a generator comment about

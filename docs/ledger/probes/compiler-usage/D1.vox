@@ -1,7 +1,12 @@
-(CLI Discrepancy 1 - minimal repro. `--link <libs>` is documented (5152)
+(CLI Discrepancy 1 - minimal repro. `--link <libs>` is documented (5240)
  as "Link against shared libraries (comma-separated)", and the worked
- example (5169) shows it used together with `--lib-path`:
- `vox main.vox --link math --lib-path ./libs`. Hand-verified across four
+ example (5258) shows it used together with `--lib-path`:
+ `vox main.vox --link math --lib-path ./libs`.
+ RE-VERIFIED 2026-08-22 against vox 0.4.9: unchanged, byte-identical to
+ the original transcript below (cross-ref CLI-04.vox's own header for a
+ real, unrelated 0.4.9 change this discrepancy's setup ran into and
+ worked around: `--shared` now rejects top-level statements, LIB-25).
+ Hand-verified across four
  separate transcripts (same-directory, subdirectory, and a
  two-candidate-library case - CLI-05.vox carries all four) that omitting
  `--link` never once changes the outcome: the `see <lib> version <v>

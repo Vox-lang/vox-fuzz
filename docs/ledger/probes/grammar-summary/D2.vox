@@ -1,11 +1,11 @@
 (GRM Discrepancy 2 - minimal repro. primary's fourth alternative, `"("
- expr ")"` (:5231), claims parentheses group expressions. They do not -
+ expr ")"` (:5318), claims parentheses group expressions. They do not -
  parentheses are Vox's comment delimiters (LANGUAGE.md documents this
  elsewhere), so `(2 add 3)` is read as a comment and the statement loses
  its value entirely. Cross-ref EXP-D5 (expressions.md), which found this
  first, with the identical pro-compiler reading: the comment syntax is
  documented and load-bearing everywhere else in the language, `{...}` is
- the actual documented grouping punctuation (:1826, 1832), and the
+ the actual documented grouping punctuation (:1853, 1859), and the
  Grammar Summary's `"(" expr ")"` line is a leftover from an EBNF
  template, not a claim anyone verified against the implementation.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p

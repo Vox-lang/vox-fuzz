@@ -6,7 +6,7 @@
  `"true" as a boolean` - every row of the Basic Conversions table except the
  buffer one, which is EXP-72.
  EXP-68 and EXP-71 are recorded through `as text` rather than bare: booleans
- print as 1/0 per LANGUAGE.md:2238, so a bare Print cannot tell the manual's
+ print as 1/0 per LANGUAGE.md:2265, so a bare Print cannot tell the manual's
  documented `false` result from a number 0. Rendering the boolean back to text
  shows the cast really produced a boolean, and the `'s type` line confirms it.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-60.vox -o p && ./p

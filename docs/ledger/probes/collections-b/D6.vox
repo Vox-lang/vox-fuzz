@@ -1,5 +1,5 @@
 (D6 — Discrepancy 6 repro: the manual's "Call function with substitution"
- example (LANGUAGE.md:2986) does not compile, because it binds a loop
+ example (old manual line 2986) does not compile, because it binds a loop
  variable called `file` and `file` is a reserved keyword. Renaming the
  loop variable is the whole fix.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p

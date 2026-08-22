@@ -1,4 +1,4 @@
-(THG-06: examples/delivery.vox (LANGUAGE.md:803) is a complete program built
+(THG-06: examples/delivery.vox (old manual line 803) is a complete program built
  from two things of its own - it declares them, makes one with a manifest
  member, nests one inside the other, copies, prints and compares them.
  Verbatim copy of vox/examples/delivery.vox at manual version 0.4.8, kept

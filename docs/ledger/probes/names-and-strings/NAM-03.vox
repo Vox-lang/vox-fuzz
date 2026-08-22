@@ -1,4 +1,4 @@
-(NAM-03: LANGUAGE.md:651-652's worked example, reproduced verbatim,
+(NAM-03: LANGUAGE.md:652-653's worked example, reproduced verbatim,
  claimed by LANGUAGE.md:664-665 to now be a compile error. It is
  rejected — but on the "x" token (name position), never reaching the
  "get five" clause the manual's prose credits. See NAM-04 and

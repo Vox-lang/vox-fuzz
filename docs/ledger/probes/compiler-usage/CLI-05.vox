@@ -3,6 +3,9 @@
  once changed the outcome - see Discrepancy 1. NOT runnable as a single
  file by check-probes.sh's fixed invocation: needs a prebuilt
  libtally.so/.lib pair (CLI-04) beside it.
+ RE-VERIFIED 2026-08-22 against vox 0.4.9: all three transcripts below
+ re-run byte-for-byte identical (using CLI-04.vox's now-fixed,
+ --shared-clean source to build libtally.so -- see that file's header).
  Transcript (lib and source in the SAME directory):
    $ vox tally_lib.vox --shared -o libtally.so
    $ vox tally_user.vox -o u2 --link tally     (flag present)

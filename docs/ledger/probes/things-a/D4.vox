@@ -1,4 +1,4 @@
-(D4 - Discrepancy 4 repro: LANGUAGE.md:877-878 says "All three lines below
+(D4 - Discrepancy 4 repro: old manual lines 877-878 says "All three lines below
  declare a `point` and give every field its declared default", and the block
  that follows (880-894) contains ONE declaration.
  This probe is the three lines the sentence describes, written out. All

@@ -1,4 +1,4 @@
-(BUF-25: the worked example - declare a buffer from a string literal, mutate one byte, print shows the mutation. LANGUAGE.md:3266-3277 claims this prints "Jello".)
+(BUF-25: the worked example - declare a buffer from a string literal, mutate one byte, print shows the mutation. LANGUAGE.md:3412-3417 claims this prints "Jello".)
 (expected output:
 Jello
 )

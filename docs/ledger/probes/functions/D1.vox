@@ -6,25 +6,20 @@
  defined above them, only the number survives. The text and buffer
  addresses are static rodata/heap addresses and the float is its IEEE-754
  bit pattern, so every wrong answer looks like data. The list and buffer
- addresses vary per run, so this probe is compared on its EXIT CODE:
- it exits 3 because the in-function read of `label` did not equal the
- top-level one.
-  Ran (values seen on 2026-08-21): in-function reads printed
+ addresses vary per run (ASLR), so this probe is compared on its EXIT
+ CODE only: it exits 3 because the in-function read of `label` did not
+ equal the top-level one.
+ STILL OPEN on vox 0.4.9, re-verified 2026-08-22 — this is functions D1,
+ the brief's "still open" row: adjudicated (REPORT-CANDIDATES-0.4.10.md
+ candidate A) and tracked as vox candidate #66
+ (fix/bug-66-forward-global-read, branch present, in flight, not landed).
+  Ran (values seen 2026-08-21, pre-0.4.9): in-function reads printed
     42 / 4210888 / 4612811918334230528 / 140547700088832 / 140547700080640
-  against top-level 42 / hello / 2.5 / [1, 2, 3] / ABC.
+  Ran (values seen 2026-08-22, vox 0.4.9, byte-identical shape): in-function
+    reads printed 42 / 4210888 / 4612811918334230528 / <2 varying addresses>
+  against top-level 42 / hello / 2.5 / [1, 2, 3] / ABC, both times.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:
-   42
-   4210888
-   4612811918334230528
-   139733748330496
-   139733748322304
-   --- the same globals, read at top level ---
-   42
-   hello
-   2.5
-   [1, 2, 3]
-   ABC
    exit 3
 )
 To 'show all'.

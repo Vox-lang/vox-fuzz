@@ -1,4 +1,4 @@
-(D3 -- minimal repro. LANGUAGE.md:4931-4938's own worked example of a
+(D3 -- minimal repro. LANGUAGE.md:5019-5025's own worked example of a
  .lib file's format shows a zero-parameter, no-return-type entry as bare
  `greet.` in the Table of Contents. The actual compiler always prefixes
  `To` for every entry, parameter-taking or not.

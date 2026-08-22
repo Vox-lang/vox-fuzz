@@ -1,5 +1,5 @@
 (LIB-19 through LIB-24 -- writing a library. The mathkit worked example,
- LANGUAGE.md:4862-4869, compiles with --shared to a self-contained .so
+ LANGUAGE.md:4950-4956, compiles with --shared to a self-contained .so
  exporting exactly its two functions, mangled, with zero relocations, plus
  a beside-it .lib naming an identity. Needs --shared and nm/readelf, so it
  is not auto-run by check-probes.sh; this file and its recorded output are

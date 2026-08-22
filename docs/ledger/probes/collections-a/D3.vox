@@ -1,4 +1,4 @@
-(D3 — Discrepancy 3 repro: LANGUAGE.md:2419-2421 prescribes the guard idiom
+(D3 — Discrepancy 3 repro: old manual lines 2419-2421 prescribes the guard idiom
  "guard it yourself before operating - `if item is a number, ... item add 1
  ...`". That exact sentence does not compile: arithmetic on a mixed-list
  element is rejected whether or not it sits inside an `is a number` guard.

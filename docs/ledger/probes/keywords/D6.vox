@@ -1,11 +1,13 @@
-(Discrepancy 6 repro — SEGFAULT. `For each <name> in <collection>` is a
+(Discrepancy 6 — RESOLVED (vox #56), re-recorded 2026-08-22 against vox
+ 0.4.9. Used to be: SEGFAULT. `For each <name> in <collection>` is a
  documented iteration form and `all the numbers between …` is named as a
- range at 4715-4716, but the combination dies with SIGSEGV. Vox's headline
- promise is memory safety, so a signal death is the worst outcome a
- generated program can have. `... from 1 to 3` dies the same way.
+ range at 4715-4716, but the combination died with SIGSEGV. Now the
+ range is accepted in a `For each ... in` header and iterates correctly.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
  expected output:
-   (exit 139 - SIGSEGV, no output)
+   1
+   2
+   3
 )
 For each step in all the numbers between 1 and 3,
     Print step.

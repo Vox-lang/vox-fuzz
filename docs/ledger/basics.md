@@ -1,9 +1,19 @@
 # Claim ledger: Basics — statements, case, comments, paragraph breaks, sentence consumption, the termination rule
 
-Source: `../vox/LANGUAGE.md` lines **35–259** (manual version **0.4.8**):
-the whole of `## Basics` from `### Statements` down to the end of
-`#### This is how you choose which if an Otherwise belongs to`, stopping
-immediately before `### Ranges` at line 260. Row prefix **`BAS`**.
+Source: `../vox/LANGUAGE.md` lines **35–259**, manual version **Vox
+0.4.9** (5327 lines, vox `4b77934`), confirmed 2026-08-22 (previously
+pinned to a 5238-line 0.4.8 manual): the whole of `## Basics` from `###
+Statements` down to the end of `#### This is how you choose which if an
+Otherwise belongs to`, stopping immediately before `### Ranges` at line
+260. Row prefix **`BAS`**.
+
+**Zero line drift in this range between 0.4.8 and 0.4.9** — `### Ranges`
+is still exactly line 260, so every citation below needed no shift; the
+few that were stale (landing on a code fence) were pre-existing
+imprecisions from the original mapping pass, fixed in this pass. The
+full `docs/check-probes.sh` sweep of this directory (47 probes,
+including all discrepancy repros) reproduces every recorded output
+byte-for-byte on vox 0.4.9 — no manual or compiler change found.
 
 The brief that commissioned this map named the section **"Variables"**.
 That is a slip in the brief: lines 35–259 of the 0.4.8 manual are
@@ -325,7 +335,7 @@ generator has never used**, and each is an unjustified invariant that
 
 | invariant | why it is unjustified |
 |---|---|
-| no generated program contains a comment (0 in 40) | LANGUAGE.md:51–74 documents four comment positions and nesting; nothing requires their absence — BAS-07..BAS-14 |
+| no generated program contains a comment (0 in 40) | LANGUAGE.md:53–74 documents four comment positions and nesting; nothing requires their absence — BAS-07..BAS-14 |
 | every keyword is written in one fixed case per leaf | LANGUAGE.md:47 says case is free — BAS-03 |
 | indentation is always 2 spaces per nesting level, or 4 in a prelude body | LANGUAGE.md:207 says leading whitespace is ignored entirely — BAS-50 |
 | every statement is period-terminated | LANGUAGE.md:39 justifies the period as the *canonical* form, so this one is **cited but soft** — D1 shows the compiler does not require it, and until D1 is adjudicated this invariant should stay |

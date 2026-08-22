@@ -218,22 +218,48 @@ precisely what is missing rather than starting again.
 
 ---
 
-## Snapshot — 2026-08-20
+## Snapshot — 2026-08-22
 
 *This section dates quickly and is not an instruction. Everything above
 it is.*
 
-The buffer section is the first mapped: **39 claims, 6 exercised, 0
-verified** (no buffer leaf asserts anything yet) — about 18% covered, and buffers are the section
-that matters most.
+All 26 sections of LANGUAGE.md are now mapped (`docs/ledger/INDEX.md`
+has the full table): **1380 claims, 365 exercised, 10 verified**.
+Verified is the number that matters and it is still barely off the
+ground — ten rows, all in `arguments.md` (4) and `environment.md` (6).
+Almost everything else that compiles is `exercised` only: a leaf emits
+the construct and the program must not crash, but nothing checks the
+construct produced the *right* answer. Closing that gap — not finding
+more sections to map — is where the next phase of work belongs.
 
-Two discrepancies found while mapping it, both awaiting adjudication:
+The ledgers are pinned to **Vox 0.4.9** (5327 lines, vox `4b77934`), as
+of a full hand re-derivation of every citation on 2026-08-22. That pass
+also re-ran every retained discrepancy probe against the live 0.4.9
+binary; a substantial fraction of the discrepancies recorded since
+project start have since been resolved, by compiler fixes and by manual
+corrections both — the compiler and the manual each moved while this
+project wasn't looking, and neither direction can be assumed without
+re-running the probe. Buffers itself, the section this file's first
+snapshot singled out as mattering most, now stands at **2 of its 3
+original discrepancies resolved**:
 
-- **dynamic buffer capacity**: the manual says zero, the compiler's own
-  warning says zero, and `capacity` reports 4096
-- **`type` on a buffer**: a sized buffer reports `Text (dynamic)` while
-  a string-initialised one reports `Buffer (static)` — inverted from
-  what the declarations suggest, and LANGUAGE.md:3206 says `buffer` is
-  statically typed
+- **dynamic buffer capacity is still open** — the manual says zero, the
+  compiler's own warning says zero, `capacity` still reports 4096, and
+  no fix number exists as of today. This is a design question for
+  Josj (eager allocation vs. lazy), not a bug either side can just fix.
+- **`type` on a buffer is resolved** (vox #42, PR #189) — a sized
+  buffer now correctly reports `Buffer (static)`, matching a
+  string-initialised one; `BufferDecl` simply never registered
+  `declared_types` before.
+- **the byte read/write bounds-check split is resolved** — not by a
+  compiler change, but by the manual: PR #189 documented the rule
+  (writes 1..capacity extend size, reads 1..size, 0 is always out of
+  bounds) instead of leaving it to be reverse-engineered from a worked
+  example.
 
-Neither has been filed. Both reproduce.
+The pattern worth carrying forward: most discrepancies this project
+finds are not permanent. Re-probe them before treating an old "not
+filed, awaiting Josj" note as still true — `docs/ledger/INDEX.md`'s
+per-section "open discrepancies" column is the fast way to see what's
+still actually open today, and each ledger's own Discrepancies section
+has the full resolution history for the ones that aren't.

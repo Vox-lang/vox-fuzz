@@ -1,15 +1,17 @@
-(Discrepancy 1 (ENV), companion: the identical failure reproduces for
- `arguments's first`, run with one argument so the property is in
- range -- confirms the bug is in "declare a buffer directly from a `'s`
- property-read expression" generally, not anything specific to
- `environment`. Cross-cutting into ARG's territory; not filed there
- either, recorded here since this is where it was found.
+(Discrepancy 1 (ENV), companion — RESOLVED (vox #58), re-recorded
+ 2026-08-22 against vox 0.4.9. Used to be: the identical failure
+ reproduced for `arguments's first`, run with one argument so the
+ property is in range -- confirmed the bug was in "declare a buffer
+ directly from a `'s` property-read expression" generally, not anything
+ specific to `environment`. Cross-cutting into ARG's territory; not
+ filed there either, recorded here since this is where it was found.
+ Now the buffer correctly holds the argument's content and length.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p hello
  expected output:
    content:
-
+   hello
    size:
-   -1
+   5
 )
 a buffer called ab is arguments's first.
 print "content:".

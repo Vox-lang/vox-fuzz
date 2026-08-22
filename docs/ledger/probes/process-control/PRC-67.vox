@@ -1,4 +1,4 @@
-(PRC-67 — the supervisor snippet at LANGUAGE.md:4020-4053 compiles and
+(PRC-67 — the supervisor snippet at LANGUAGE.md:4110-4142 compiles and
  runs. The child exits immediately, so the deadline never fires and the
  program reports the child's exit code through the process library.
  VERBATIM except for ONE token: the manual's first line is

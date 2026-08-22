@@ -1,19 +1,16 @@
-(LST-18 — appending an OPAQUE value (a function with no declared return
- type) widens the list to mixed. LANGUAGE.md:2232-2235 says the element is
- then "always read back as what it is rather than silently reinterpreted".
- It is not: an opaque function returning a TEXT lands in the slot tagged as
- a number and prints as a raw address (4210906, deterministic).
- Also covers: LST-21 (the residual TAG_INTEGER guess of
- LANGUAGE.md:2250-2254 — this probe is what that hedge looks like in
- practice). See Discrepancy 5; minimal repro `D5.vox`.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-18.vox -o p && ./p
+(LST-18 — RE-RECORDED 2026-08-22 against vox 0.4.9. Appending an OPAQUE
+ value (a function with no declared return type) to a list USED TO widen
+ the list to mixed and print a raw address for a text (Discrepancy 5).
+ vox #45 fixed it: this is now a COMPILE ERROR, one per opaque append,
+ naming both the "declare the return type" and "assign to a declared
+ variable first" rewrites. LANGUAGE.md:2298-2306.
+ LST-21 (the withdrawn residual TAG_INTEGER-guess row) described the
+ pre-fix hedge this probe used to demonstrate; there is no hedge left to
+ demonstrate now that the write is refused outright.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-18.vox -o p
  expected output:
-   ["anchor", 5, 4210906]
-   5
-   4210906
-   text
-   number
-   number
+   error: 'opaque count' has no declared return type, so its result is read as a number here
+   (compile error - no binary is produced; a second, identical-shaped error follows for 'opaque label')
 )
 To 'opaque label'. Return "hi".
 

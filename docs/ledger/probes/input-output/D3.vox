@@ -5,7 +5,7 @@
  the print/format path is wrong, and only for a text (a number global is
  fine). Moving the function definition below the declaration fixes it.
  LANGUAGE.md:705 says top-level variables "can be used inside functions"
- with no ordering caveat; LANGUAGE.md:3167 leans on that same promise for
+ with no ordering caveat; LANGUAGE.md:3223 leans on that same promise for
  branch-declared names ("exactly like a top-level declaration" — which it
  is, defect included, so FMT-42 stands). Reached from this section via
  FMT-42, but the defect belongs to Functions / Variables, not here.

@@ -1,5 +1,5 @@
 (ARG-30 — declaring a new flag schema after `Parse flags.` is a
- compile-time error (LANGUAGE.md:4410). The diagnostic points at the
+ compile-time error (LANGUAGE.md:4497). The diagnostic points at the
  declaration itself; no binary is produced.
  (Compile-error claim: not assertable from a generated leaf, since
  emitting it produces a program that does not compile — outside the

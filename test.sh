@@ -3,10 +3,11 @@
 # diffs its output against the matching .expected file.
 
 VOX="${VOX:-../vox/target/release/vox}"
+VOX_REPO_ROOT="$(cd "$(dirname "$VOX")/../.." && pwd)"
 # Pin the runtime to the repo's coreasm. Without this an installed
 # /usr/share/vox/coreasm silently shadows it and we would be testing the
 # packaged compiler runtime instead of the one under development.
-export VOX_CORE_PATH="${VOX_CORE_PATH:-$(cd "$(dirname "$VOX")/../.." && pwd)/coreasm}"
+export VOX_CORE_PATH="${VOX_CORE_PATH:-$VOX_REPO_ROOT/coreasm}"
 # FAIL if the directory does not exist. vox does not error on a bad
 # VOX_CORE_PATH - it falls silently through to /usr/share/vox/coreasm,
 # so a wrong derivation here (an absolute $VOX, a snapshot binary) would
@@ -81,4 +82,14 @@ for f in "${FILES[@]}"; do
 done
 
 echo "passed: $PASSED  failed: $FAILED"
+
+# LANGUAGE.md:N citations in docs/ledger/ are the ledger's whole point —
+# a stale one is a false claim about what the manual says. Fast enough
+# (well under a second) to gate every run; src/ and tests/ are checked
+# separately (their citations belong to the generator authors, not this
+# gate) via `scripts/check-citations.sh src tests`.
+if [[ -x scripts/check-citations.sh ]]; then
+    LANGUAGE_MD="${LANGUAGE_MD:-$VOX_REPO_ROOT/LANGUAGE.md}" scripts/check-citations.sh docs || FAILED=$((FAILED+1))
+fi
+
 [[ $FAILED -eq 0 ]]

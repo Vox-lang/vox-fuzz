@@ -1,4 +1,4 @@
-(PRC-01 — LANGUAGE.md:3786-3788 says examples/initramfs.vox is "a
+(PRC-01 — LANGUAGE.md:3875-3877 says examples/initramfs.vox is "a
  complete, working early-userspace init sequence exercising all of them
  together". This IS that file, copied verbatim from
  /home/josj/scr/english/vox/examples/initramfs.vox.

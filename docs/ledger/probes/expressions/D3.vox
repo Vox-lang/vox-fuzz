@@ -1,5 +1,5 @@
 (Discrepancy 3 - minimal repro. The Comparisons and Property Checks blocks sit
- under `## Expressions`, and the Grammar Summary at LANGUAGE.md:5230-5232
+ under `## Expressions`, and the Grammar Summary at LANGUAGE.md:5312-5315
  derives `comparison` from `expr` while :5187 lets a var_decl take any `expr`.
  So `a boolean called dominant is x is greater than y.` should parse. It does
  not, and neither does a comparison in a Print. Both are accepted only in a

@@ -1,5 +1,5 @@
 (BAS-53 - TWO periods: the inner if is closed, so the Otherwise belongs to
- the OUTER one. LANGUAGE.md:227-237, verbatim. Prints `outer else` then
+ the OUTER one. LANGUAGE.md:228-237, verbatim. Prints `outer else` then
  `done` - one character different from BAS-52.
  `But if` behaves the same way in this position (verified separately:
  replacing `Otherwise,` with `But if m is equal to 5 then,` prints

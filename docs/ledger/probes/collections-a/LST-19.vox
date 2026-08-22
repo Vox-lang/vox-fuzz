@@ -1,13 +1,17 @@
-(LST-19 — the worked widening example of LANGUAGE.md:2238-2243, with the
- one repair it needs: the manual writes `append hello to items.`, which does
- not compile because a bare word is an identifier, not a text literal
- (LANGUAGE.md:645-668). Quoted, the example behaves exactly as documented.
- The manual's verbatim text is Discrepancy 1, repro `D1.vox`.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-19.vox -o p && ./p
+(LST-19 — RE-RECORDED 2026-08-22 against vox 0.4.9. This used to be the
+ worked widening example of old manual lines 2238-2243, repaired to quote
+ `"hello"` (the manual's own unquoted `hello` was Discrepancy 1, now
+ fixed — the current manual quotes it too, at 2288). What changed since:
+ the SECOND half of this same program, `append five of 4 to items.`
+ (five has no declared return type), used to compile and print `5`; vox
+ #45 now refuses it at compile time (Discrepancy 5). So this exact
+ program — which the manual used to show as fully working — is now
+ exactly the manual's OWN worked example of the compile error
+ (LANGUAGE.md:2309-2312, verbatim).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-19.vox -o p
  expected output:
-   hello
-   5
-   ["hello", 5]
+   error: 'five' has no declared return type, so its result is read as a number here
+   (compile error - no binary is produced)
 )
 To five with a number called x. Return x add 1.
 

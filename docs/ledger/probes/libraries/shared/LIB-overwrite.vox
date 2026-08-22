@@ -1,4 +1,4 @@
-(LIB-30 -- LANGUAGE.md:4926-4929 claims a repeat --shared build will not
+(LIB-30 -- LANGUAGE.md:5013-5016 claims a repeat --shared build will not
  overwrite an existing .lib: it should error and ask you to remove the
  .lib first. It does not; this is Discrepancy 1, and D1.vox is its
  minimal repro. This file is the fuller version: it also shows a

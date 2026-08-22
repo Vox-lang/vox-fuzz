@@ -1,7 +1,7 @@
 (FLW-22 (undocumented precision - see Discrepancy 3): the loop variable
  outlives the loop. After the range form it holds end+1 (the value that
  failed the test); after the list form it holds the LAST element. The
- manual scopes `the number` to "inside the loop" (LANGUAGE.md:2105-2106)
+ manual scopes `the number` to "inside the loop" (LANGUAGE.md:2143-2144)
  and says nothing about reading it afterwards.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-22.vox -o p && ./p
  expected output:

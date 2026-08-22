@@ -1,5 +1,5 @@
 (BAS-07 - comments use parentheses, exactly as the Comments section says.
- Also covers: BAS-08 (the whole example block at LANGUAGE.md:55-68 compiles
+ Also covers: BAS-08 (the whole example block at LANGUAGE.md:56-68 compiles
  and runs), and it is the block the four position claims BAS-09..BAS-12 and
  the nesting claim BAS-13 are taken from.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-07.vox -o p && ./p

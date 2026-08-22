@@ -1,13 +1,13 @@
-(FUN-41 — (gap) a function with NO declared return type, used in
- expression position, yields an untyped machine word: `announce` returns
- nothing and `Print announce of 9.` prints 1. This is vox bug #45
- (vox/docs/BUGS_FOUND.md:2931), already filed from the collections-a
- ledger; recorded here because this section is where the shape is
- defined and a leaf must avoid emitting it until #45 closes.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-41.vox -o p && ./p
+(FUN-41 — RESOLVED (vox #45), re-recorded 2026-08-22 against vox 0.4.9.
+ Used to be: (gap) a function with NO declared return type, used in
+ expression position, yielded an untyped machine word: `announce`
+ returns nothing and `Print announce of 9.` printed 1. This was vox bug
+ #45 (vox/docs/BUGS_FOUND.md:2931), filed from the collections-a ledger.
+ Now the construct is refused at compile time.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-41.vox -o p
  expected output:
-   got 9
-   1
+   error: 'announce' returns nothing, so its result cannot be used as a value here
+   (compile error - no binary is produced)
 )
 To announce with a number called n.
   Print "got {n}".

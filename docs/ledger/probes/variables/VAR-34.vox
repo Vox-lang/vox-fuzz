@@ -1,18 +1,19 @@
 (VAR-34: reusing an already-declared name as a `For each ... in <list>` loop
- variable is claimed to reject a conflicting type. It does not. `counted` is
- declared a number, the loop rebinds it to the text elements of a list
- literal whose elements are uniformly text, and the program compiles. After
- the loop `counted` still reports Number (static) while holding a text
- pointer, so arithmetic on it yields a raw address — 4198543 on the build
- that recorded this. That exact number is not stable across builds, so the
- probe asserts the shape instead of the value. This is the defect class
- LANGUAGE.md:603-606 says the rule closes — see Discrepancy 2.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-34.vox -o p && ./p
+ variable is claimed to reject a conflicting type. It does not — the loop
+ HEADER still compiles (see D2.vox, still open). `counted` is declared a
+ number, the loop rebinds it to the text elements of a list literal whose
+ elements are uniformly text, and the program compiles; after the loop
+ `counted` still reports Number (static) while holding a text pointer.
+ RE-RECORDED 2026-08-22 against vox 0.4.9: what changed is the DOWNSTREAM
+ arithmetic. It used to silently print a raw address (4198543 on the
+ build that first found this, not stable across builds). vox #54 made the
+ analyzer track the element type through the loop body (not the header),
+ so `counted add 1` is now a compile error instead - the probe below is a
+ compile-error probe now, not a runtime one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-34.vox -o p
  expected output:
-   alpha
-   beta
-   Number (static)
-   counted holds an address, not a number
+   error: Cannot use text counted in arithmetic; cast it first with 'as a number' or 'as a float'.
+   (compile error - no binary is produced)
 )
 a number called counted is 5.
 a list called words is ["alpha", "beta"].
