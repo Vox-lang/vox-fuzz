@@ -6,15 +6,15 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "a51add1",
-    "date": "2026-08-23",
-    "voxCommit": "1e612fb",
+    "commit": "2644f26",
+    "date": "2026-08-24",
+    "voxCommit": "950d856",
     "script": "scripts/quality-stats"
   },
   "claims": {
     "total": 1380,
-    "exercised": 365,
-    "verified": 10,
+    "exercised": 364,
+    "verified": 25,
     "sections": [
       {
         "prefix": "BAS",
@@ -109,8 +109,8 @@
         "ledger": "values.md",
         "section": "Dynamic values (value) and nothing",
         "claims": 32,
-        "exercised": 1,
-        "verified": 0
+        "exercised": 0,
+        "verified": 15
       },
       {
         "prefix": "LST2",
@@ -228,7 +228,7 @@
   },
   "probes": {
     "families": 27,
-    "leaves": 65,
+    "leaves": 73,
     "leafFiles": [
       "src/gen_buffers.vox",
       "src/gen_collections.vox",
@@ -275,6 +275,28 @@
       "compiled": null,
       "findings": null,
       "note": "guard sweep — generation only, no compile or run"
+    },
+    {
+      "date": "2026-08-23",
+      "vox": "0.4.11",
+      "voxFuzz": "4a8de95",
+      "seeds": "41000–41219",
+      "budget": "40",
+      "programs": 220,
+      "compiled": 220,
+      "findings": 0,
+      "note": "worker's three-tree differential for the value band (plain layout); middle tree exposed the kind-35 To-in-open-clause emission"
+    },
+    {
+      "date": "2026-08-23",
+      "vox": "0.4.11",
+      "voxFuzz": "4a8de95",
+      "seeds": "77777–77788",
+      "budget": "40",
+      "programs": 12,
+      "compiled": 12,
+      "findings": 0,
+      "note": "master's independent keep-run: 12/12 programs carry VAL assertions, 15 distinct rows, all runs exit 0"
     }
   ],
   "findings": {
@@ -291,7 +313,7 @@
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
-    "voxFuzz": 29,
+    "voxFuzz": 30,
     "vox": {
       "run": 597,
       "compileFail": 315
