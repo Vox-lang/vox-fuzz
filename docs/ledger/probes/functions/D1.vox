@@ -1,23 +1,27 @@
-(D1 — Discrepancy 1 repro: a global declared BELOW a function is read
- inside that function as a raw machine word unless it is a `number`.
- LANGUAGE.md:705 says top-level variables "are global and can be used
- inside functions" and puts no ordering condition on that. The same five
- globals, read at top level, all print correctly; read from a function
- defined above them, only the number survives. The text and buffer
- addresses are static rodata/heap addresses and the float is its IEEE-754
- bit pattern, so every wrong answer looks like data. The list and buffer
- addresses vary per run (ASLR), so this probe is compared on its EXIT
- CODE only: it exits 3 because the in-function read of `label` did not
- equal the top-level one.
- STILL OPEN on vox 0.4.9, re-verified 2026-08-22 — this is functions D1,
- the brief's "still open" row: adjudicated (REPORT-CANDIDATES-0.4.10.md
- candidate A) and tracked as vox candidate #66
- (fix/bug-66-forward-global-read, branch present, in flight, not landed).
+(D1 — Discrepancy 1 repro: on 0.4.9 and earlier, a global declared BELOW
+ a function was read inside that function as a raw machine word unless
+ it was a `number`. LANGUAGE.md:727 says top-level variables "are global
+ and can be used inside functions" — the same sentence now also states
+ the fixed rule directly (0.4.10). The same five globals, read at top
+ level, all printed correctly; read from a function defined above them,
+ only the number survived. The text and buffer addresses were static
+ rodata/heap addresses and the float was its IEEE-754 bit pattern, so
+ every wrong answer looked like data. The list and buffer addresses vary
+ per run (ASLR), so this probe is compared on its EXIT CODE only — it
+ always exits 3, whichever way the in-function reads come out; the
+ printed lines below the "Ran (values seen ...)" note are the record of
+ what actually happened at each version.
+ RESOLVED, 2026-08-22 — vox #66 ("Codegen now reads every top-level
+ declaration's type in a pre-pass and gives it to each function body
+ before generating it, so a global is read as its declared type wherever
+ the declaration sits").
   Ran (values seen 2026-08-21, pre-0.4.9): in-function reads printed
     42 / 4210888 / 4612811918334230528 / 140547700088832 / 140547700080640
   Ran (values seen 2026-08-22, vox 0.4.9, byte-identical shape): in-function
     reads printed 42 / 4210888 / 4612811918334230528 / <2 varying addresses>
   against top-level 42 / hello / 2.5 / [1, 2, 3] / ABC, both times.
+  Ran (values seen 2026-08-22, vox 0.4.10, FIXED): in-function reads now
+    print 42 / hello / 2.5 / [1, 2, 3] / ABC — byte-identical to top-level.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:
    exit 3

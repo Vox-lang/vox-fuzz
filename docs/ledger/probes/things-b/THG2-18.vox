@@ -1,4 +1,4 @@
-(THG2-18: the manifest worked example, LANGUAGE.md:1315-1332 (was
+(THG2-18: the manifest worked example, LANGUAGE.md:1375-1392 (was
  1287-1305), verbatim - a two-entry manifest whose members are both
  defined, one a maker (its first parameter is a number) and one a
  transformer (its first parameter is a point). It defines only; nothing

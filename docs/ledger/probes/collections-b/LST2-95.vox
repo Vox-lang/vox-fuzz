@@ -1,7 +1,7 @@
 (LST2-95 — undocumented precision: in a grid, a `treating` clause binds to
  the ONE `each` clause it follows, not to the whole sentence. Here only
  the right-hand clause carries `treating 0 as 9`, and a 0 drawn from the
- left-hand list is left alone. LANGUAGE.md:3122 gives the syntax with the
+ left-hand list is left alone. LANGUAGE.md:3217 gives the syntax with the
  clause attached to a single `each`, but never says what happens to the
  other clauses of a grid.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-95.vox -o p && ./p

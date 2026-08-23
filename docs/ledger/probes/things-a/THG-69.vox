@@ -1,5 +1,5 @@
 (THG-69: "Writing one field is what those lines mean: `Set origin's x to 5.`"
- (LANGUAGE.md:1128) - the sentence that closes the two rejections above, and
+ (LANGUAGE.md:1188) - the sentence that closes the two rejections above, and
  the line it names does work.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-69.vox -o p && ./p
  expected output:

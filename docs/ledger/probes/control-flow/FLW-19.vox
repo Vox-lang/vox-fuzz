@@ -1,4 +1,4 @@
-(FLW-19: the manual's list-based example (LANGUAGE.md:2153-2154) verbatim.
+(FLW-19: the manual's list-based example (LANGUAGE.md:2216-2217) verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-19.vox -o p && ./p
  expected output:
    1

@@ -1,6 +1,6 @@
 (BAS-57 - undocumented precision on BAS-41/BAS-51, and the repro behind
  Discrepancy 2: an `Otherwise` (or `But if`) still continues the innermost
- `if` ACROSS a blank line - even across the blank line that LANGUAGE.md:88
+ `if` ACROSS a blank line - even across the blank line that LANGUAGE.md:91
  says closes a function definition. Here the `Otherwise` block re-enters
  `check`'s body: it prints the parameter `n`, which only exists inside the
  function.

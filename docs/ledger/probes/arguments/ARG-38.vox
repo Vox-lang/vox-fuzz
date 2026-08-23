@@ -1,4 +1,4 @@
-(ARG-38 — the Practical Pattern example (LANGUAGE.md:4541-4553),
+(ARG-38 — the Practical Pattern example (LANGUAGE.md:4704-4716),
  verbatim, including the two quoted flag names: `'version'` and
  `'number'` are only legal because they are quoted — both are reserved
  words unquoted.

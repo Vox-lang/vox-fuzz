@@ -1,6 +1,6 @@
 (THG-72: printing a call's result directly needs a variable - the result is
  a whole thing that must land in storage before it can be read.
- Also covers: THG-73 (the exact diagnostic, LANGUAGE.md:1136-1149).
+ Also covers: THG-73 (the exact diagnostic, LANGUAGE.md:1196-1209).
  The caret lands on line 5, the `To nudged` definition, not on line 10, the
  offending `Print`. See Discrepancy 3.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-72.vox -o p && ./p

@@ -1,6 +1,6 @@
 (D1 — RESOLVED for this arm, re-recorded 2026-08-22 against vox 0.4.9.
  Used to be: loop expansion did NOT work with "any action that takes an
- argument" (LANGUAGE.md:312, and "works with any action" at :284) for
+ argument" (LANGUAGE.md:315, and "works with any action" at :284) for
  this arm specifically. `append each word from [...] to sink` (sink a
  buffer) now compiles and works, a side effect of vox #54/#55. The other
  two refuted arms (`write each word from [...] to output.`, `Set total

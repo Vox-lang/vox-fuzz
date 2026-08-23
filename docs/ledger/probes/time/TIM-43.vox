@@ -1,7 +1,7 @@
 (TIM-43 - the named-parts variant of the same example, verbatim from
- LANGUAGE.md:4377-4383: each zero-padded property is stored in a text
+ LANGUAGE.md:4540-4546: each zero-padded property is stored in a text
  first, then the three texts are combined in one more format string.
- Note the blank line at LANGUAGE.md:4380-4381 is inside the example and closes
+ Note the blank line at LANGUAGE.md:4543-4544 is inside the example and closes
  nothing here, since all four statements are at top level.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-43.vox -o p && ./p
  expected output:

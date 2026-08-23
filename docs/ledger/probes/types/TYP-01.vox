@@ -1,4 +1,4 @@
-(TYP-01: a `number` declared with a fractional literal (LANGUAGE.md:432
+(TYP-01: a `number` declared with a fractional literal (LANGUAGE.md:446
  claims `number` holds "whole numbers") is not rejected or truncated,
  and the `is a` predicate then disagrees with `'s type` about what it
  holds. Also covers Discrepancy 1.

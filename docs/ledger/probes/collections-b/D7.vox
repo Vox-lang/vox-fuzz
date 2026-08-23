@@ -1,19 +1,21 @@
-(D7 — SPLIT RESOLUTION, re-recorded 2026-08-22 against vox 0.4.9. This
- section's half of collections-a's D7: LANGUAGE.md:2811-2812 (was
- 2680-2681) says "the same rendering appears inside the variable form of
- {...} format interpolation". It used to appear in PRINT position only;
- as a text initializer the same slot used to yield a raw heap address
- that changed every run. vox #44 fixed the VARIABLE form (this probe's
- "text initializer" half) in every sink. The EXPRESSION form
- ("{element 2 of nested}") is a distinct sub-case #44 did NOT reach —
- still open, tracked as vox candidate #68 (fix/bug-68-format-hole-mixed-
- element, in flight). Written as verdict lines so the probe is
- re-runnable; the raw values are the wandering part.
+(D7 — FULLY RESOLVED, re-recorded 2026-08-22 against vox 0.4.10. This
+ section's half of collections-a's D7: LANGUAGE.md:2884-2888 (was
+ 2680-2681, then 2811-2813) now says both the variable and expression
+ forms of `{...}` format interpolation "dispatch on the element's runtime
+ tag, so an element renders in a hole exactly as it does printed as a
+ statement" — merged into one sentence covering both. It used to appear
+ in PRINT position only; as a text initializer the same slot used to
+ yield a raw heap address that changed every run. vox #44 fixed the
+ VARIABLE form (this probe's "text initializer" half) in every sink,
+ 2026-08-21. The EXPRESSION form ("{element 2 of nested}") was a distinct
+ sub-case #44 did NOT reach; vox #68 fixed it too, landing in 0.4.10.
+ Written as verdict lines so the probe is re-runnable; the raw values are
+ the wandering part.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D7.vox -o p && ./p
  expected output:
    print position: [1, 2, 3]
    text initializer renders the list
-   expression form renders something else (a heap address)
+   expression form renders the nested list
 )
 a list called flat is [1, 2, 3].
 print "print position: {flat}".

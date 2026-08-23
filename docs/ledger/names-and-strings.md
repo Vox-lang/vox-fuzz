@@ -1,7 +1,7 @@
 # Claim ledger: Names and strings
 
-Source: `../vox/LANGUAGE.md` lines 645–670, Vox 0.4.9 (5327 lines, vox
-4b77934), confirmed 2026-08-22 — the `## Names and strings` section
+Source: `../vox/LANGUAGE.md` lines 676–692, Vox 0.4.10 (5545 lines, vox
+527cb89), confirmed 2026-08-22 — the `## Names and strings` section
 between `Variables` (which ends at 644) and `## Functions` (which
 starts at 671). Confirmed by `grep -n "^## "`: zero drift from the
 0.4.8 pinned range; every row's citation re-checked by hand and holds
@@ -9,7 +9,7 @@ unchanged.
 
 This is a **gap analysis**, not a from-scratch map, and this section is
 genuinely small. It reads at first like a duplicate of Variables'
-"Naming Rules" table (LANGUAGE.md:612–641) — but that table is *inside*
+"Naming Rules" table (LANGUAGE.md:643–672) — but that table is *inside*
 the Variables section (446–644) and is already fully mapped, row for
 row, as `VAR-48` through `VAR-66` (`docs/ledger/variables.md`), whose
 last row (`VAR-66`) explicitly says "the `NAM` ledger owns the argument
@@ -33,19 +33,19 @@ this repo to run them against, and the rows say so.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| NAM-01 | 647–648 | Before 0.3.0, a double-quoted token was both a string literal and an identifier, decided by position, and that overload was "the root of a family of silent wrong answers." | — | **no** — a historical claim about a compiler version not present in this repo (`target/release/vox` is 0.4.8+); nothing to run it against | n/a | not assertable (historical) | |
-| NAM-02 | 652–660 | Worked example, pre-0.3.0 behavior: `a number called "x" is "get five".` / `print x.` prints a function pointer as a number (`4198480`) with no error or warning. | — | **no** — same reason as NAM-01; also a **specific fixed value** tied to a specific pre-0.3.0 binary layout, not reproducible from any binary in this repo | n/a | not assertable (historical) | |
-| NAM-03 | 662–665 | "So in 0.3.0 the two are split... The program above is now a compile error." | reproduce the worked example verbatim against the current compiler, assert it is rejected | yes, as a compile-error claim | none — no leaf ever emits a string literal in name position (every declaration uses a counter-suffixed bare identifier) | todo — no leaf emits a string literal in name position; hand-verified: the literal program from LANGUAGE.md:652–653 is rejected, **but by the `"x"` half, not the `"get five"` half** — see Discrepancy 1, which is about the next row | |
-| NAM-04 | 664–665 | Specifically: `is "get five"` "rejects the string in identifier position and points you at `'get five'`." | isolate the value-position half from the name-position half: declare with a bare name (`x`, not `"x"`) so the compiler must reach the `is "get five"` clause, and check what happens | yes — either a compile error citing `'get five'`, or (if it compiles) the printed value should be inert/an error, never a "looks like data" wrong answer | none | **todo — RESOLVED, vox #65**: the isolated claim now holds — `a number called n is "get five".` is refused at compile time (`cannot initialise 'n', which is a number, with text`), matching the reassignment form. See Discrepancy 1 (resolved). | unblocked |
-| NAM-05 | 666–667 | "The cost is that every program written before 0.3.0 must be migrated." | — | **no** — a claim about the corpus of *other* pre-existing Vox programs, not about this compiler's behavior on any one program | n/a | not assertable (narrative/consequence claim) | |
-| NAM-06 | 667 | "The payoff is that this class of silent wrong answer is gone." | the general claim ("this class... is gone") is falsified by any surviving instance of the pre-0.3.0 pattern | **no** as stated (a claim about a *class*, not one program) — but it predicts a negative result, and **Discrepancy 1 finds a positive one**, so the general claim does not hold either | n/a | **not assertable as written — and appears false**, see **Discrepancy 1** | blocked on D1 |
-| NAM-07 | 662–664 | Restatement: `"..."` is a string literal everywhere; a name is a bare or single-quoted identifier — no overlap, no context-sensitivity. | — | yes | all three forms are emitted across the generator (`VAR-48`) | folded into `VAR-48` — this ledger owns only the *argument for* the rule (why the split happened), not the rule's own truth, which `VAR-48`–`VAR-66` already cover | |
+| NAM-01 | — | Before 0.3.0, a double-quoted token was both a string literal and an identifier, decided by position, and that overload was "the root of a family of silent wrong answers." | — | **no** — a historical claim about a compiler version not present in this repo (`target/release/vox` is 0.4.8+); nothing to run it against | n/a | not assertable (historical) — **citation lost 2026-08-23**: not stated in 527cb89; it was at 5611:677–678 and the spec diet moved it to `docs/HISTORY.md` | |
+| NAM-02 | — | Worked example, pre-0.3.0 behavior: `a number called "x" is "get five".` / `print x.` prints a function pointer as a number (`4198480`) with no error or warning. | — | **no** — same reason as NAM-01; also a **specific fixed value** tied to a specific pre-0.3.0 binary layout, not reproducible from any binary in this repo | n/a | not assertable (historical) — **citation lost 2026-08-23**: not stated in 527cb89; the example line survives at 682, but `print x.` with its `4198480` output (5611:683) and the narrative (5611:686–690) moved to `docs/HISTORY.md` | |
+| NAM-03 | 682–685 | "So in 0.3.0 the two are split... The program above is now a compile error." | reproduce the worked example verbatim against the current compiler, assert it is rejected | yes, as a compile-error claim | none — no leaf ever emits a string literal in name position (every declaration uses a counter-suffixed bare identifier) | todo — no leaf emits a string literal in name position; hand-verified: the literal program from LANGUAGE.md:682 is rejected, **but by the `"x"` half, not the `"get five"` half** — see Discrepancy 1, which is about the next row | |
+| NAM-04 | 685–686 | Specifically: `is "get five"` "rejects the string in identifier position and points you at `'get five'`." | isolate the value-position half from the name-position half: declare with a bare name (`x`, not `"x"`) so the compiler must reach the `is "get five"` clause, and check what happens | yes — either a compile error citing `'get five'`, or (if it compiles) the printed value should be inert/an error, never a "looks like data" wrong answer | none | **todo — RESOLVED, vox #65**: the isolated claim now holds — `a number called n is "get five".` is refused at compile time (`cannot initialise 'n', which is a number, with text`), matching the reassignment form. See Discrepancy 1 (resolved). | unblocked |
+| NAM-05 | — | "The cost is that every program written before 0.3.0 must be migrated." | — | **no** — a claim about the corpus of *other* pre-existing Vox programs, not about this compiler's behavior on any one program | n/a | not assertable (narrative/consequence claim) — **citation lost 2026-08-23**: not stated in 527cb89; it was at 5611:696–697 and the spec diet moved it to `docs/HISTORY.md` | |
+| NAM-06 | — | "The payoff is that this class of silent wrong answer is gone." | the general claim ("this class... is gone") is falsified by any surviving instance of the pre-0.3.0 pattern | **no** as stated (a claim about a *class*, not one program) — but it predicts a negative result, and **Discrepancy 1 finds a positive one**, so the general claim does not hold either | n/a | **not assertable as written — and appears false**, see **Discrepancy 1**. **Citation lost 2026-08-23**: not stated in 527cb89; it was at 5611:697 and the spec diet moved it to `docs/HISTORY.md` | blocked on D1 |
+| NAM-07 | 678–679 | Restatement: `"..."` is a string literal everywhere; a name is a bare or single-quoted identifier — no overlap, no context-sensitivity. | — | yes | all three forms are emitted across the generator (`VAR-48`) | folded into `VAR-48` — this ledger owns only the *argument for* the rule (why the split happened), not the rule's own truth, which `VAR-48`–`VAR-66` already cover | |
 
 ## Discrepancies
 
 ### 1. The initial-declaration form (`a TYPE called NAME is "string literal".`) does not type-check its string-literal value against a non-text `TYPE` — reproducing, in narrower form, exactly the bug class this section says 0.3.0 closed — RESOLVED (vox #65)
 
-LANGUAGE.md:664–665 claims the worked example `a number called "x" is
+LANGUAGE.md:685–686 claims the worked example `a number called "x" is
 "get five".` is "now a compile error" because "`is "get five"` rejects
 the string in identifier position." Hand-verifying the program *as
 written* confirms it is rejected — but by the compiler's very first

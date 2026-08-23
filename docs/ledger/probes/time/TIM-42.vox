@@ -1,5 +1,5 @@
 (TIM-42 - the Formatted Time Output example, verbatim from
- LANGUAGE.md:4369-4371: three time properties read straight out of format
+ LANGUAGE.md:4532-4534: three time properties read straight out of format
  slots with the `:02` zero-pad specifier. Clock-dependent, so recorded as
  an exit-code probe; TIM-41.vox checks the shape deterministically.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-42.vox -o p && ./p

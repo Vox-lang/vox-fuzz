@@ -1,4 +1,4 @@
-(BAS-29 - the for-loop example, LANGUAGE.md:102:
+(BAS-29 - the for-loop example, LANGUAGE.md:105:
  `For each number from 1 to 10, print the number, print " ".`
  Both actions belong to the loop, so the separator prints once per
  iteration. Shortened to 1 to 3 so the recorded output stays small.

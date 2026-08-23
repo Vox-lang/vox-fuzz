@@ -1,5 +1,5 @@
 (FLW-25: a multi-action Repeat is comma-separated within one sentence,
- exactly like While - LANGUAGE.md:2177 claims `a b a b`, two actions per
+ exactly like While - LANGUAGE.md:2240 claims `a b a b`, two actions per
  iteration, two iterations.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-25.vox -o p && ./p
  expected output:

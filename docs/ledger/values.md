@@ -1,8 +1,8 @@
 # Claim ledger: Dynamic Values (`value`) and `nothing`
 
 Source: `../vox/LANGUAGE.md` lines **2541–2790**, manual version **Vox
-0.4.9** (5327 lines, vox `4b77934`), re-pinned 2026-08-22 (previously
-pinned to a 5112-line 0.4.7 manual): the `value` type (§Dynamic Values)
+0.4.10** (5545 lines, vox `527cb89`), re-pinned 2026-08-23 (previously
+pinned to a 5611-line 0.4.10 manual): the `value` type (§Dynamic Values)
 and `nothing` (§Nothing, the absent value). Row prefix **`VAL`**.
 
 **This section was substantially rewritten between 0.4.7 and 0.4.9, not
@@ -79,38 +79,38 @@ in this directory crashes any more. All 26 re-run clean with
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| VAL-01 | 2543–2549 | A `value` carries its runtime tag alongside its payload across a call, so one function can accept "whatever this slot holds" and ask `is a …` inside to find out which. | declare a `value` parameter, dispatch on `is a <type>` inside, print a per-branch label | yes — generator controls the argument, knows which branch must fire, asserts the label | none — no leaf emits `with a value` or any `is a <type>` predicate | todo | |
-| VAL-02 | 2551–2553 | Three declaration forms: `with a value called x` (parameter), `Return a value, <expr>` (return), `a value called r` (local). | emit all three forms in one program | yes — local form asserted on VAL-07, param on VAL-03, return on VAL-05 | `gen leaf value roundtrip`, `gen leaf text value` (local form only — `a value called y{n} is …`) | todo (param + return forms) | |
-| VAL-03 | 2555–2565 | Worked `describe` example: a `value` parameter dispatches `is a number` / `is a text` / Otherwise and prints `number` / `text` / `decimal` for `[1, "two", 3.5]`. | reproduce the example, assert the three labels | yes | none | todo — hand-verified (`VAL-03.vox`) | |
-| VAL-04 | 2567–2570 | Inside the callee a `value` parameter's `is a …` predicates read its tag, printing dispatches on it, and it can be forwarded or appended back into a list with the tag preserved; a `value` return carries its tag back out. | value param + predicate dispatch + append-back of a value return | yes | none | folded into VAL-03 (predicate dispatch) and VAL-05 (return round-trip) | |
-| VAL-05 | 2569–2582 | A function returning `a value` carries its tag back out, so the `echo` round-trip leaves `out` as `[1, "two", 3.5]` with the original tags intact. | reproduce the echo round-trip, assert `out`'s content and tags | yes — generator knows the input list | none | todo — hand-verified (`VAL-05.vox`) | |
-| VAL-06 | 2584–2587 | `value` is not a reserved word; recognized only where a type is expected, so `a value is 5.` declares a variable named `value`. | declare a variable named `value`, print it | yes | none | todo — hand-verified (`VAL-06.vox`) | |
-| VAL-07 | 2589–2599 | A `value` local keeps its tag through reassignment: `set r to 7.` retags a text-holding value as a number, so `If r is a number` then fires. | declare value from text, `set` to number, assert `is a number` | yes | `gen leaf value roundtrip` — reassigns a value across the type boundary (`Set y{n} to "reassigned{n}"`), so the reassignment-retag **construct** is exercised, but the tag is never asserted | exercised (construct, no assertion); todo (assertion + the number direction specifically) — hand-verified (`VAL-07.vox`) | |
-| VAL-08 | 2601–2610 | Bare arithmetic on a `value` is a compile error (its type is only known at runtime). | emit `v add 1` inside a `value`-parameter function → expect a compile error | **no, from a runtime leaf** — the generator's contract is "legal Vox that should compile and run"; emitting a known compile error is outside it. The compile-rejection itself is hand-verified. | none | not assertable (compile-error claim) — hand-verified (`VAL-08.vox`) | |
-| VAL-09 | 2612–2619 | A `value` can be retyped in place: `<valuevar> is a <type>.` reads the runtime tag, performs the conversion, stores the result back with the new tag. Works for `number`, `float`/`decimal`, `text`, and `boolean` targets. | emit a retype to each of the four targets, assert the post-retype value/behavior | yes | none | todo — hand-verified all four targets (`VAL-09.vox`). See **Discrepancy 2** for the `as`-cast-on-value the manual's analogy references. | |
-| VAL-10 | 2620–2624 | Worked retype example: `numstr` is `"357"`; `numstr is a number.`; `print numstr add 1` prints `358` (arithmetic works because the variable is now tracked as a number). | reproduce, assert `358` | yes — exact value known at generation time | none | todo — hand-verified (`VAL-10.vox`) | |
-| VAL-11 | 2631–2641 | The same phrase in **condition** position is a type predicate, not a cast: `If numstr is a number then` tests the tag and is false while `numstr` still holds the text `"357"`, so Otherwise fires. | emit the predicate on a text-holding value, assert the Otherwise branch | yes | none | todo — hand-verified (`VAL-11.vox`) | |
-| VAL-12 | 2643–2645 | After a successful in-place retype the variable is tracked with the new type for the rest of its lifetime; retyping to the type it already holds is a no-op. | retype then do arithmetic (proves the new type is tracked); retype to the same type, assert unchanged and no error | yes | none | todo — hand-verified no-op (`VAL-12.vox`); post-retype tracking covered by `VAL-10.vox` | |
-| VAL-13 | 2647–2657 | A failed conversion sets `_last_error` and leaves the variable as `0`; `On error` catches it. | retype `"abc"` to number wrapped in `On error`, assert handler fired and value `0` | yes | none | todo — hand-verified (`VAL-13.vox`) | |
-| VAL-14 | 2659–2666 | The `type` property on a `value` returns a text description with a `(dynamic)` suffix for each runtime tag: `Text`, `Number`, `Float`, `Boolean`, `List`, `Map`, `Nothing` (all `(dynamic)`). | declare a value of each tag, assert each `'s type` | yes | none — no leaf reads `'s type` on a value | todo — hand-verified all seven tags (`VAL-14.vox`) | |
-| VAL-15 | 2662–2666 | The type reported by `type` changes with reassignment (`Text (dynamic)` → `Number (dynamic)` after `set v to 42`). | print `type` before and after reassignment | yes | none | todo — hand-verified (`VAL-15.vox`) | |
-| VAL-16 | 2668 | `type` is a display helper for debugging/logging; type tests belong in the `is a <type>` predicate. | — | not a behavior — a usage recommendation | n/a | folded into VAL-14 (the property) and VAL-11 (the predicate) | |
-| VAL-17 | 2670–2673 | Retyping a statically-typed variable is a compile error; the compiler reports the declared type and points at the explicit cast (`a text called t is n as text.`) as the correct rewrite. | emit `n is a text.` for a `number` var → expect the compile error; the rewrite itself is valid | **no, from a runtime leaf** for the compile-error half (same reason as VAL-08); the rewrite half is assertable and hand-verified to produce `Text (static)` | none | not assertable (compile-error claim) — hand-verified (`VAL-17.vox`; rewrite verified separately) | |
-| VAL-18 | 2675–2678 | Recursion with `value` works: a `value` parameter threads its tag through every frame, so a walker over mixed data classifies correctly at any depth; `value` parameters compose (a value passed straight to another value function round-trips its tag). | a recursive/by-tag classifier over mixed data; two value functions composing | yes | none | todo — hand-verified (`VAL-18.vox`) | |
-| VAL-19 | 2680–2699 | **Claim rewritten 2026-08-22 — the manual's own claim reversed, not just its line number.** The old (0.4.7) manual said a conditional `value` return does not track its type; the current (0.4.9) manual says the opposite: **"Conditional `value` returns work."** A function whose only returns sit inside an `If`/`Otherwise` (the factorial pattern, no `Return` on the `To` line) carries its declared return type just as the single-expression form does, and each branch hands back its own runtime tag (worked example: `score of 7` → `7`, `score of "hello"` → `99`). If no branch fires, the function hands back the empty value of its declared type. | reproduce the worked example; assert both printed values | yes — the *working* assertion to emit is `If lost's type is not "Text (dynamic)" then, Exit 95.` after a text-returning branch | none | todo — unblocked (D1 resolved by vox #43, 0.4.8). Re-verified against 0.4.9 directly: `D1.vox`'s program still prints `99`, no segfault, exit 0. | |
-| VAL-20 | 2708–2709 | The internal ABI that carries the tag is documented in `docs/abi_value.md`; roadmap context in `docs/COLLECTIONS_ROADMAP.md` stage 1d. | — | not assertable — a documentation pointer, not a language behavior | n/a | not assertable | |
-| VAL-21 | 2713–2725 | `nothing` is the absent value (null equivalent); it can sit in a list slot, a map value, or a `value` parameter/return, and it prints as the word `nothing`. | put `nothing` in a list slot and a map value, print, assert the word `nothing` appears | yes | none — no leaf emits `nothing`/`null`/`nil` anywhere | todo — hand-verified (`VAL-21.vox`, also covers VAL-22) | |
-| VAL-22 | 2717–2725 | `nothing` prints inside aggregates as `[1, nothing, "x"]` and `{"found": 4, "absent": nothing}`. | reproduce both, assert the exact printed text | yes | none | folded into VAL-21 — hand-verified in `VAL-21.vox` | |
-| VAL-23 | 2727–2729 | `null` and `nil` are accepted spellings of the same literal as `nothing`; all three produce the identical value. | emit all three, assert identical printed form | yes | none | todo — hand-verified (`VAL-23.vox`) | |
-| VAL-24 | 2728–2729 | `nothing` is a reserved word; it cannot be used as a variable name. | declare a variable named `nothing` → expect a compile error | **no, from a runtime leaf** (compile-error claim, same reason as VAL-08) | none | not assertable (compile-error claim) — hand-verified (`VAL-24.vox`) | |
-| VAL-25 | 2731–2737 | Test for `nothing` with `is nothing` / `is not nothing` — an equality (like `is true`), not a type predicate; there is no `is a nothing`. | emit `is nothing` / `is not nothing` on present and `nothing`-valued map entries, assert the branch | yes | none | todo — hand-verified (`VAL-25.vox`, also covers VAL-31) | |
-| VAL-26 | 2739–2747 | `nothing` is not zero: `0 is nothing` is false and `nothing is 0` is false; `is nothing` compares the runtime type tag, so the two never collide. | emit both comparisons, assert neither "never" branch fires | yes | none | todo — hand-verified (`VAL-26.vox`) | |
-| VAL-27 | 2749–2758 | A missing map key is an error, not `nothing`: reading a never-set key sets the error flag (does not silently hand back `nothing`); "key absent" and "key holds nothing" stay distinguishable. | read a never-set key in `On error`, assert handler fires and value `0`; contrast with a key set to `nothing` | yes | none | todo — hand-verified (`VAL-27.vox`) | |
-| VAL-28 | 2760–2767 | Arithmetic on `nothing` written literally is a compile error. | emit `nothing add 1` literally → expect a compile error | **no, from a runtime leaf** (compile-error claim, same reason as VAL-08) | none | not assertable (compile-error claim) — hand-verified (`VAL-28.vox`) | |
-| VAL-29 | 2769–2777 | When a value turns out to be `nothing` at run time (read out of a map or mixed list), arithmetic on it sets the error flag (not a compile error); `On error` catches it. | read `nothing` from a map, add `1`, wrap in `On error`, assert the handler fires | yes | none | todo — hand-verified (`VAL-29.vox`) | |
-| VAL-30 | 2779–2786 | The stored payload of `nothing` really is `0`, so unguarded `total add missing_field` quietly evaluates to `total` (a plausible wrong answer); guard with `is not nothing` first. | show `m's "absent" add 1` evaluates to `1` (0 + 1) unguarded; show the guarded form | yes — generator knows the payload is `0` | none | todo — hand-verified (`VAL-30.vox`) | |
-| VAL-31 | 2788–2789 | Comparisons are not arithmetic, so `is nothing`, `is not nothing`, and ordinary equality keep working on a `nothing` without raising the flag. | run comparisons on a `nothing` with no `On error`, assert no flag | yes | none | folded into VAL-25 — hand-verified in `VAL-25.vox` (no `On error`, runs clean) | |
-| VAL-32 | 2701–2707 | *(new row, added 2026-08-22)* A function whose conditional branches declare **different** return types (`Return a text` in one, `Return a number` in the other) has no single type for the `To` line to promise, so it declares none and the caller reads the result as a number. This is the narrower limitation that survives now that VAL-19's general case (conditional returns of the *same* type) is fixed. Conditional `value` *parameters* with a void return still work as they always have. | reproduce with a text-in-one/number-in-other function, assert the caller sees the text's address reinterpreted as a number (a specific, deterministic wrong-looking value the generator can predict) | yes — the address a given string literal lands at is deterministic per compile, hand-verified in `VAL-32.vox` | none | todo — hand-verified: `classify of 5` (branch returns `Return a text, "big".`) read into a `number called result` prints `4198488`, a raw rodata address, not `0` | |
+| VAL-01 | 2616–2618 | A `value` carries its runtime tag alongside its payload across a call, so one function can accept "whatever this slot holds" and ask `is a …` inside to find out which. | declare a `value` parameter, dispatch on `is a <type>` inside, print a per-branch label | yes — generator controls the argument, knows which branch must fire, asserts the label | none — no leaf emits `with a value` or any `is a <type>` predicate | todo | |
+| VAL-02 | 2620–2622 | Three declaration forms: `with a value called x` (parameter), `Return a value, <expr>` (return), `a value called r` (local). | emit all three forms in one program | yes — local form asserted on VAL-07, param on VAL-03, return on VAL-05 | `gen leaf value roundtrip`, `gen leaf text value` (local form only — `a value called y{n} is …`) | todo (param + return forms) | |
+| VAL-03 | 2624–2634 | Worked `describe` example: a `value` parameter dispatches `is a number` / `is a text` / Otherwise and prints `number` / `text` / `decimal` for `[1, "two", 3.5]`. | reproduce the example, assert the three labels | yes | none | todo — hand-verified (`VAL-03.vox`) | |
+| VAL-04 | 2636–2639 | Inside the callee a `value` parameter's `is a …` predicates read its tag, printing dispatches on it, and it can be forwarded or appended back into a list with the tag preserved; a `value` return carries its tag back out. | value param + predicate dispatch + append-back of a value return | yes | none | folded into VAL-03 (predicate dispatch) and VAL-05 (return round-trip) | |
+| VAL-05 | 2638–2651 | A function returning `a value` carries its tag back out, so the `echo` round-trip leaves `out` as `[1, "two", 3.5]` with the original tags intact. | reproduce the echo round-trip, assert `out`'s content and tags | yes — generator knows the input list | none | todo — hand-verified (`VAL-05.vox`) | |
+| VAL-06 | 2653–2656 | `value` is not a reserved word; recognized only where a type is expected, so `a value is 5.` declares a variable named `value`. | declare a variable named `value`, print it | yes | none | todo — hand-verified (`VAL-06.vox`) | |
+| VAL-07 | 2658–2668 | A `value` local keeps its tag through reassignment: `set r to 7.` retags a text-holding value as a number, so `If r is a number` then fires. | declare value from text, `set` to number, assert `is a number` | yes | `gen leaf value roundtrip` — reassigns a value across the type boundary (`Set y{n} to "reassigned{n}"`), so the reassignment-retag **construct** is exercised, but the tag is never asserted | exercised (construct, no assertion); todo (assertion + the number direction specifically) — hand-verified (`VAL-07.vox`) | |
+| VAL-08 | 2670–2679 | Bare arithmetic on a `value` is a compile error (its type is only known at runtime). | emit `v add 1` inside a `value`-parameter function → expect a compile error | **no, from a runtime leaf** — the generator's contract is "legal Vox that should compile and run"; emitting a known compile error is outside it. The compile-rejection itself is hand-verified. | none | not assertable (compile-error claim) — hand-verified (`VAL-08.vox`) | |
+| VAL-09 | 2681–2688 | A `value` can be retyped in place: `<valuevar> is a <type>.` reads the runtime tag, performs the conversion, stores the result back with the new tag. Works for `number`, `float`/`decimal`, `text`, and `boolean` targets. | emit a retype to each of the four targets, assert the post-retype value/behavior | yes | none | todo — hand-verified all four targets (`VAL-09.vox`). See **Discrepancy 2** for the `as`-cast-on-value the manual's analogy references. | |
+| VAL-10 | 2689–2693 | Worked retype example: `numstr` is `"357"`; `numstr is a number.`; `print numstr add 1` prints `358` (arithmetic works because the variable is now tracked as a number). | reproduce, assert `358` | yes — exact value known at generation time | none | todo — hand-verified (`VAL-10.vox`) | |
+| VAL-11 | 2700–2710 | The same phrase in **condition** position is a type predicate, not a cast: `If numstr is a number then` tests the tag and is false while `numstr` still holds the text `"357"`, so Otherwise fires. | emit the predicate on a text-holding value, assert the Otherwise branch | yes | none | todo — hand-verified (`VAL-11.vox`) | |
+| VAL-12 | 2712–2714 | After a successful in-place retype the variable is tracked with the new type for the rest of its lifetime; retyping to the type it already holds is a no-op. | retype then do arithmetic (proves the new type is tracked); retype to the same type, assert unchanged and no error | yes | none | todo — hand-verified no-op (`VAL-12.vox`); post-retype tracking covered by `VAL-10.vox` | |
+| VAL-13 | 2716–2726 | A failed conversion sets `_last_error` and leaves the variable as `0`; `On error` catches it. | retype `"abc"` to number wrapped in `On error`, assert handler fired and value `0` | yes | none | todo — hand-verified (`VAL-13.vox`) | |
+| VAL-14 | 2728–2735 | The `type` property on a `value` returns a text description with a `(dynamic)` suffix for each runtime tag: `Text`, `Number`, `Float`, `Boolean`, `List`, `Map`, `Nothing` (all `(dynamic)`). | declare a value of each tag, assert each `'s type` | yes | none — no leaf reads `'s type` on a value | todo — hand-verified all seven tags (`VAL-14.vox`) | |
+| VAL-15 | 2731–2735 | The type reported by `type` changes with reassignment (`Text (dynamic)` → `Number (dynamic)` after `set v to 42`). | print `type` before and after reassignment | yes | none | todo — hand-verified (`VAL-15.vox`) | |
+| VAL-16 | 2737 | `type` is a display helper for debugging/logging; type tests belong in the `is a <type>` predicate. | — | not a behavior — a usage recommendation | n/a | folded into VAL-14 (the property) and VAL-11 (the predicate) | |
+| VAL-17 | 2743–2746 | Retyping a statically-typed variable is a compile error; the compiler reports the declared type and points at the explicit cast (`a text called t is n as text.`) as the correct rewrite. | emit `n is a text.` for a `number` var → expect the compile error; the rewrite itself is valid | **no, from a runtime leaf** for the compile-error half (same reason as VAL-08); the rewrite half is assertable and hand-verified to produce `Text (static)` | none | not assertable (compile-error claim) — hand-verified (`VAL-17.vox`; rewrite verified separately) | |
+| VAL-18 | 2748–2751 | Recursion with `value` works: a `value` parameter threads its tag through every frame, so a walker over mixed data classifies correctly at any depth; `value` parameters compose (a value passed straight to another value function round-trips its tag). | a recursive/by-tag classifier over mixed data; two value functions composing | yes | none | todo — hand-verified (`VAL-18.vox`) | |
+| VAL-19 | 2753–2772 | **Claim rewritten 2026-08-22 — the manual's own claim reversed, not just its line number.** The old (0.4.7) manual said a conditional `value` return does not track its type; the current (0.4.9) manual says the opposite: **"Conditional `value` returns work."** A function whose only returns sit inside an `If`/`Otherwise` (the factorial pattern, no `Return` on the `To` line) carries its declared return type just as the single-expression form does, and each branch hands back its own runtime tag (worked example: `score of 7` → `7`, `score of "hello"` → `99`). If no branch fires, the function hands back the empty value of its declared type. | reproduce the worked example; assert both printed values | yes — the *working* assertion to emit is `If lost's type is not "Text (dynamic)" then, Exit 95.` after a text-returning branch | none | todo — unblocked (D1 resolved by vox #43, 0.4.8). Re-verified against 0.4.9 directly: `D1.vox`'s program still prints `99`, no segfault, exit 0. | |
+| VAL-20 | 2781–2782 | The internal ABI that carries the tag is documented in `docs/abi_value.md`; roadmap context in `docs/COLLECTIONS_ROADMAP.md` stage 1d. | — | not assertable — a documentation pointer, not a language behavior | n/a | not assertable | |
+| VAL-21 | 2786–2798 | `nothing` is the absent value (null equivalent); it can sit in a list slot, a map value, or a `value` parameter/return, and it prints as the word `nothing`. | put `nothing` in a list slot and a map value, print, assert the word `nothing` appears | yes | none — no leaf emits `nothing`/`null`/`nil` anywhere | todo — hand-verified (`VAL-21.vox`, also covers VAL-22) | |
+| VAL-22 | 2790–2798 | `nothing` prints inside aggregates as `[1, nothing, "x"]` and `{"found": 4, "absent": nothing}`. | reproduce both, assert the exact printed text | yes | none | folded into VAL-21 — hand-verified in `VAL-21.vox` | |
+| VAL-23 | 2800–2802 | `null` and `nil` are accepted spellings of the same literal as `nothing`; all three produce the identical value. | emit all three, assert identical printed form | yes | none | todo — hand-verified (`VAL-23.vox`) | |
+| VAL-24 | 2801–2802 | `nothing` is a reserved word; it cannot be used as a variable name. | declare a variable named `nothing` → expect a compile error | **no, from a runtime leaf** (compile-error claim, same reason as VAL-08) | none | not assertable (compile-error claim) — hand-verified (`VAL-24.vox`) | |
+| VAL-25 | 2804–2810 | Test for `nothing` with `is nothing` / `is not nothing` — an equality (like `is true`), not a type predicate; there is no `is a nothing`. | emit `is nothing` / `is not nothing` on present and `nothing`-valued map entries, assert the branch | yes | none | todo — hand-verified (`VAL-25.vox`, also covers VAL-31) | |
+| VAL-26 | 2812–2820 | `nothing` is not zero: `0 is nothing` is false and `nothing is 0` is false; `is nothing` compares the runtime type tag, so the two never collide. | emit both comparisons, assert neither "never" branch fires | yes | none | todo — hand-verified (`VAL-26.vox`) | |
+| VAL-27 | 2822–2831 | A missing map key is an error, not `nothing`: reading a never-set key sets the error flag (does not silently hand back `nothing`); "key absent" and "key holds nothing" stay distinguishable. | read a never-set key in `On error`, assert handler fires and value `0`; contrast with a key set to `nothing` | yes | none | todo — hand-verified (`VAL-27.vox`) | |
+| VAL-28 | 2833–2840 | Arithmetic on `nothing` written literally is a compile error. | emit `nothing add 1` literally → expect a compile error | **no, from a runtime leaf** (compile-error claim, same reason as VAL-08) | none | not assertable (compile-error claim) — hand-verified (`VAL-28.vox`) | |
+| VAL-29 | 2842–2850 | When a value turns out to be `nothing` at run time (read out of a map or mixed list), arithmetic on it sets the error flag (not a compile error); `On error` catches it. | read `nothing` from a map, add `1`, wrap in `On error`, assert the handler fires | yes | none | todo — hand-verified (`VAL-29.vox`) | |
+| VAL-30 | 2852–2859 | The stored payload of `nothing` really is `0`, so unguarded `total add missing_field` quietly evaluates to `total` (a plausible wrong answer); guard with `is not nothing` first. | show `m's "absent" add 1` evaluates to `1` (0 + 1) unguarded; show the guarded form | yes — generator knows the payload is `0` | none | todo — hand-verified (`VAL-30.vox`) | |
+| VAL-31 | 2861–2862 | Comparisons are not arithmetic, so `is nothing`, `is not nothing`, and ordinary equality keep working on a `nothing` without raising the flag. | run comparisons on a `nothing` with no `On error`, assert no flag | yes | none | folded into VAL-25 — hand-verified in `VAL-25.vox` (no `On error`, runs clean) | |
+| VAL-32 | 2774–2780 | *(new row, added 2026-08-22)* A function whose conditional branches declare **different** return types (`Return a text` in one, `Return a number` in the other) has no single type for the `To` line to promise, so it declares none and the caller reads the result as a number. This is the narrower limitation that survives now that VAL-19's general case (conditional returns of the *same* type) is fixed. Conditional `value` *parameters* with a void return still work as they always have. | reproduce with a text-in-one/number-in-other function, assert the caller sees the text's address reinterpreted as a number (a specific, deterministic wrong-looking value the generator can predict) | yes — the address a given string literal lands at is deterministic per compile, hand-verified in `VAL-32.vox` | none | todo — hand-verified: `classify of 5` (branch returns `Return a text, "big".`) read into a `number called result` prints `4198488`, a raw rodata address, not `0` | |
 
 ## Discrepancies
 
@@ -175,7 +175,7 @@ LANGUAGE.md was corrected in the same change. Re-run against current main:
 
 The manual no longer calls this a limitation. Where 0.4.7 had the
 "does not track the return type" paragraph, the current (5327-line,
-0.4.9) manual has **"Conditional `value` returns work"** (LANGUAGE.md:2680–2699)
+0.4.9) manual has **"Conditional `value` returns work"** (LANGUAGE.md:2753–2772)
 with `D1.vox`'s program as its worked example; run verbatim it prints `7`
 then `99`. A narrower limitation remains documented at 2701–2707 —
 branches that declare *different* types (`Return a text` in one, `Return
@@ -192,7 +192,7 @@ Both probes were re-recorded to the fixed behaviour on 2026-08-21.
 **Resolution confirmed, 2026-08-22.** The underlying gap is exactly as
 found — `v as a number` on a `value` is still a compile error on 0.4.9,
 re-probed verbatim below with the identical message — but the manual has
-been clarified at LANGUAGE.md:2626–2629 to say so explicitly: "The
+been clarified at LANGUAGE.md:2695–2698 to say so explicitly: "The
 explicit `as` cast is not an alternative here: `numstr as number` is a
 compile error on a `value`, because a cast needs its source type at
 compile time and a `value` only knows its type at runtime — the in-place
@@ -241,41 +241,41 @@ with the line and the row ID that justifies it. (The invariant report
 fills its `citation` column from these lines.)
 
 - `nothing` always prints as the literal word `nothing` (never `null`,
-  `nil`, empty, or `0`) — LANGUAGE.md:2713, VAL-21 / VAL-22
+  `nil`, empty, or `0`) — LANGUAGE.md:2786, VAL-21 / VAL-22
 - `null`, `nil`, and `nothing` are interchangeable as the absent-value
   literal — **not** an invariant the generator should enforce: the manual
-  lists all three as valid (LANGUAGE.md:2727), so a leaf that *always*
+  lists all three as valid (LANGUAGE.md:2800), so a leaf that *always*
   picks one spelling would be asserting an undeclared rule. Variation here
   is the default (CLAUDE.md); the row that justifies allowing all three is
   VAL-23
 - `nothing` is a reserved word — a generated name must never collide with
-  it — LANGUAGE.md:2728, VAL-24
+  it — LANGUAGE.md:2801, VAL-24
 - `value` is **not** a reserved word, so `value` *may* appear as an
-  ordinary identifier (e.g. a variable named `value`) — LANGUAGE.md:2584,
+  ordinary identifier (e.g. a variable named `value`) — LANGUAGE.md:2653,
   VAL-06; the generator's name-pool must not blacklist it
 - a value's `type` is always reported with the `(dynamic)` suffix
-  (`Text (dynamic)`, `Number (dynamic)`, …) — LANGUAGE.md:2659, VAL-14
+  (`Text (dynamic)`, `Number (dynamic)`, …) — LANGUAGE.md:2728, VAL-14
 - in-place retype works only on variables declared `value`; a
   statically-typed variable retyped in place is a compile error, so a
   generated program must never emit `<staticvar> is a <type>.` —
-  LANGUAGE.md:2670, VAL-17
+  LANGUAGE.md:2743, VAL-17
 - arithmetic on a literal `nothing` is a compile error, so a generated
   program must never emit `nothing` directly inside an arithmetic
-  expression — LANGUAGE.md:2760, VAL-28
+  expression — LANGUAGE.md:2833, VAL-28
 - bare arithmetic on a `value` is a compile error, so a generated program
   must never use a `value` directly in arithmetic without first retyping
-  it (`v is a number.`) — LANGUAGE.md:2601, VAL-08 / VAL-09
+  it (`v is a number.`) — LANGUAGE.md:2670, VAL-08 / VAL-09
 - ~~the conditional `value` return (factorial pattern, no `Return` on the
   `To` line) is a documented *don't*; generated `value`-returning
   functions must use the single-expression `Return a value, <expr>.` form
-  on the `To` line — LANGUAGE.md:2680–2699, VAL-19 — WITHDRAWN, see below~~
+  on the `To` line — LANGUAGE.md:2753–2772, VAL-19 — WITHDRAWN, see below~~
   **Withdrawn 2026-08-21: this invariant is no longer justified.** vox #43
-  (0.4.8) made the conditional form work and LANGUAGE.md:2680–2699 now
+  (0.4.8) made the conditional form work and LANGUAGE.md:2753–2772 now
   documents it as working. A leaf that always picks the single-expression
   form is now an *unjustified* invariant — both forms are legal and the
   choice between them must vary. The one sameness that survives is
   narrower: branches that declare *different* types still have no single
-  return type (LANGUAGE.md:2701–2707, VAL-32), so a leaf must declare the same
+  return type (LANGUAGE.md:2774–2780, VAL-32), so a leaf must declare the same
   type in every branch of one function.
 
 No other sameness is required by this section. In particular the manual

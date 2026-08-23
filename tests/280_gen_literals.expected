@@ -1,5 +1,5 @@
 min length: 1 bytes
-max length: 105 bytes
+max length: 104 bytes
 mean length: 8 bytes over 1680 literals
 longer than 12 bytes: 335
 every literal is at least one byte: 1

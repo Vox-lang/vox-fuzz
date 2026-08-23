@@ -1,4 +1,4 @@
-(BAS-55 - the empty-Otherwise example, LANGUAGE.md:244-254, verbatim: an
+(BAS-55 - the empty-Otherwise example, LANGUAGE.md:247-257, verbatim: an
  `Otherwise,.` takes the inner if's else branch and does nothing with it,
  closing that chain, so the second `Otherwise` continues the outer if.
  Same result as two periods.

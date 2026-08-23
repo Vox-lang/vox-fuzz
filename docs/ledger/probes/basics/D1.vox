@@ -1,4 +1,4 @@
-(D1 - Discrepancy 1 repro: LANGUAGE.md:39 says "Every statement ends with
+(D1 - Discrepancy 1 repro: LANGUAGE.md:42 says "Every statement ends with
  a period", but the compiler does not require one, and a missing period
  does not fail - it silently changes which clause the next statement
  belongs to, differently for `If` than for `While`.

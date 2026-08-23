@@ -1,5 +1,5 @@
 (FLW-37 (see Discrepancy 1): the manual's usage-guard example
- (LANGUAGE.md:2222-2224) verbatim. It compiles and, with no arguments,
+ (LANGUAGE.md:2285-2287) verbatim. It compiles and, with no arguments,
  prints the usage line and exits 1 - which is why the example looks
  correct. What it does NOT do is guard: `Print "Usage..."`'s period closes
  the If, so `Exit 1.` is a top-level statement that runs whatever the

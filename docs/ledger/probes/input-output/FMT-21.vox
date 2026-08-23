@@ -1,6 +1,6 @@
 (FMT-21 — a possessive special name resolves inside a slot:
  `{arguments's count}`. Run with no arguments the count is 1, so the
- program name is counted. The manual's own example, LANGUAGE.md:3181.
+ program name is counted. The manual's own example, LANGUAGE.md:3283.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
    Arguments: 1

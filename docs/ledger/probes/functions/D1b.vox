@@ -3,22 +3,24 @@
  `src/gen_core.vox:963` rotates six prelude blocks so that the reader can
  be emitted BEFORE the flag schema it reads — deliberately, and the
  comment at `src/gen_misc.vox:369-375` records that this was hand-verified
- as legal Vox. It is legal. It is also one line away from printing a
- pointer.
- The reader as emitted survives only because it copies the text flag into
+ as legal Vox. It is legal. On 0.4.9 and earlier it was also one line away
+ from printing a pointer.
+ The reader as emitted survived only because it copied the text flag into
  a DECLARED text local first (`a text called fl1local is fl1label.`) and
- prints the local. This probe is that function with the copy removed —
- `Print fl1label.` straight from the forward-referenced global — and it
- prints a stack address. Run with no arguments so the flag takes its
- declared default `"d1"`; the top-level read prints `d1` and the
- in-function read prints the pointer.
+ printed the local. This probe is that function with the copy removed —
+ `Print fl1label.` straight from the forward-referenced global. Run with
+ no arguments so the flag takes its declared default `"d1"`.
  Same defect as D1.vox, reached through the generator's own prelude rather
- than a hand-written example. The address varies per run, so this probe
- is compared on its EXIT CODE: it exits 3 unconditionally.
+ than a hand-written example.
+ RESOLVED, 2026-08-22 — vox #66, same fix as D1.vox. Re-run verbatim
+ against 0.4.10: the in-function read now prints `d1`, matching the
+ top-level read, where 0.4.9 printed a stack address that varied per run
+ (which is why this probe still asserts on EXIT CODE as well: it exits 3
+ unconditionally either way).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1b.vox -o p && ./p
  expected output:
    d1
-   4198488
+   d1
    exit 3
 )
 To 'read flags 1'.

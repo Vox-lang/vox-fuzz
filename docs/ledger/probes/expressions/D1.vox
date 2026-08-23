@@ -1,4 +1,4 @@
-(Discrepancy 1 - minimal repro. LANGUAGE.md:1854 offers
+(Discrepancy 1 - minimal repro. LANGUAGE.md:1887 offers
  `{fibonacci of n subtract 1} add {fibonacci of n subtract 2}` as an arithmetic
  example. `of` binds only the next primary, so the argument is `n` and the
  `subtract 1` applies to the RESULT. Taken literally the example never

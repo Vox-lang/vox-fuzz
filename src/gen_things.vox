@@ -19,8 +19,8 @@ To 'gen leaf value roundtrip' with a text called indent and a boolean called nes
 (Thing member functions: this leaf drives both call forms - the
  type-possessive maker (`a <type>'s <maker> with ...`, the only way to
  reach a member whose first parameter is not the thing,
- LANGUAGE.md:1483) and the instance-possessive receiver
- (`i's <receiver>`, LANGUAGE.md:1422) - and reads the owner-return field
+ LANGUAGE.md:1543) and the instance-possessive receiver
+ (`i's <receiver>`, LANGUAGE.md:1482) - and reads the owner-return field
  back after each (finding 03). Data fields alone cannot reach the
  dispatch and owner-return path.
 
@@ -150,12 +150,12 @@ To 'gen leaf thing copy' with a text called indent and a boolean called nested.
  What pins the order, and all that does:
 
  - A nested field's type must be a PREVIOUSLY DEFINED thing
-   (LANGUAGE.md:879), so the definitions go out in manifest order, which
+   (LANGUAGE.md:939), so the definitions go out in manifest order, which
    is the order they were built in and therefore the order in which a
    nesting target always precedes the field that nests it. Which thing
    nests which IS drawn, so the dependency structure varies even though
    the traversal does not.
- - A member definition names its owner type (LANGUAGE.md:1309), so a
+ - A member definition names its owner type (LANGUAGE.md:1369), so a
    thing's methods follow its definition.
 
  Nothing pins whether the methods follow IMMEDIATELY. Hand-verified
@@ -203,8 +203,8 @@ To 'gen emit things interleaved' with a number called 'how many things'.
  template did.
 
  The last entry ends with a period and every earlier one with a comma,
- which is the language's own list punctuation (LANGUAGE.md:838-840), and
- the blank line after the body is what closes it (LANGUAGE.md:78-84).)
+ which is the language's own list punctuation (LANGUAGE.md:898-900), and
+ the blank line after the body is what closes it (LANGUAGE.md:81-87).)
 
 To 'gen emit one thing definition' with a number called 'the thing'.
     a text called 'the type' is 'gen thing written' of 'the thing'.
@@ -224,7 +224,7 @@ To 'gen emit one thing definition' with a number called 'the thing'.
      on an If instead, which left the loop open and swallowed the
      paragraph break that closes the thing: every entry came out
      followed by a blank line, and a blank line closes the body
-     (LANGUAGE.md:78-84).)
+     (LANGUAGE.md:81-87).)
     While 'the entries written' is less than 'how many entries',
         a number called 'the choice' is 'rng below' of 13,
         a boolean called 'write a method here' is false,
@@ -250,7 +250,7 @@ To 'gen emit one thing definition' with a number called 'the thing'.
     Return a number, 0.
 
 (One line of a thing's body: a manifest entry, or a data field with or
- without its default. LANGUAGE.md:853 says a field without a default
+ without its default. LANGUAGE.md:913 says a field without a default
  takes its type's zero value, so both spellings are legal and which one
  a field gets is drawn; a nested thing and a time have no literal to
  default to and never carry one.)
@@ -270,7 +270,7 @@ To 'gen emit one thing entry' with a number called 'the entry' and a boolean cal
     Return a number, 0.
 
 (A thing's members. Every declared member returns its owner
- (LANGUAGE.md:1337) and is defined exactly once (LANGUAGE.md:1396); a
+ (LANGUAGE.md:1397) and is defined exactly once (LANGUAGE.md:1456); a
  maker's first parameter is a number and a receiver's is the owner
  itself, which is what decides whether the type possessive alone reaches
  it or both call forms do.

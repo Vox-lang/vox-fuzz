@@ -1,9 +1,11 @@
-(D2 — Discrepancy 2 repro: LANGUAGE.md:2381-2383 says a `For each` over a
- list of maps "types the loop variable as a map". It does not: the loop
- variable carries the map TAG (so `is a map` fires on it — LST-55) but has
- no static type, and map access is a static check, so `entry's "tag"`
- inside the loop is a compile error. Extracting the element into a declared
- `map` variable first works (LST-57).
+(D2 — Discrepancy 2 repro — RESOLVED, manual corrected. Old manual line
+ 2381-2383 (pre-0.4.9) said a `For each` over a list of maps "types the
+ loop variable as a map". It does not: the loop variable carries the map
+ TAG (so `is a map` fires on it — LST-55) but has no static type, and map
+ access is a static check, so `entry's "tag"` inside the loop is a
+ compile error. Extracting the element into a declared `map` variable
+ first works (LST-57). LANGUAGE.md:2525-2539 now states the corrected
+ rule verbatim and shows the position-loop idiom as the worked example.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
  expected output:
    error: Map access target must be a map: entry

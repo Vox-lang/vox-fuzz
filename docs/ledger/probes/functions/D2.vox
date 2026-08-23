@@ -1,19 +1,26 @@
-(D2 — Discrepancy 2 repro (wrong-value half): a `map` parameter's `'s size`
- and `'s length` both return -1, while the same map read at top level
- returns 2. Element access through the parameter (`lookup's "ann"`) is
- correct, so it is the size/length property specifically that is wrong.
- LANGUAGE.md:724-725 says a typed parameter "supports the same properties
+(D2 — Discrepancy 2 repro (wrong-value half): on 0.4.9 and earlier, a
+ `map` parameter's `'s size` and `'s length` both returned -1, while the
+ same map read at top level returned 2. Element access through the
+ parameter (`lookup's "ann"`) was already correct, so it was the
+ size/length property specifically that was wrong.
+ LANGUAGE.md:752 says a typed parameter "supports the same properties
  and operations as a top-level variable of that type".
- The `a float called pad` line is load-bearing: without a float somewhere
- in the program the same code does not assemble at all — see D2b.vox.
+ The `a float called pad` line is load-bearing on 0.4.9: without a float
+ somewhere in the program the same code did not assemble at all — see
+ D2b.vox.
+ RESOLVED, 2026-08-22 — vox #76 ("the declared-type to codegen-type
+ table had been copied out four times and `map` had reached only the
+ declaration's copy... The four copies are now one
+ `vartype_of_declared_type`"). Re-run verbatim against 0.4.10: the
+ through-the-parameter block now matches the top-level block exactly.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
  expected output:
    2
    2
    30
    --- through the parameter ---
-   -1
-   -1
+   2
+   2
    30
 )
 a float called pad is 1.5.

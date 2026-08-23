@@ -1,4 +1,4 @@
-(OPR-10: `remainder` is an accepted spelling of modulo (LANGUAGE.md:4643).
+(OPR-10: `remainder` is an accepted spelling of modulo (LANGUAGE.md:4806).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-10.vox -o p && ./p
  expected output:
    2

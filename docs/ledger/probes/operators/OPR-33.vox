@@ -1,5 +1,5 @@
 (OPR-33: bitwise operations chain without braces and associate
- left to right (LANGUAGE.md:4693,
+ left to right (LANGUAGE.md:4865,
  `Set result to value bit-shift-right 8 bit-and 0xFF.`).
  First line is the manual's own shape with a declared operand:
  0x12345678 shifted right 8 is 0x123456, masked with 0xFF is 0x56 = 86.

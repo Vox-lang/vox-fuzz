@@ -1,5 +1,5 @@
 (FUN-38 — a call with arguments used inside a `Print` statement
- (LANGUAGE.md:782), which is the whole of the "Calling as Statement"
+ (LANGUAGE.md:843), which is the whole of the "Calling as Statement"
  section's example.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-38.vox -o p && ./p
  expected output:

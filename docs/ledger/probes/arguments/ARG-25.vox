@@ -1,8 +1,8 @@
 (ARG-25 — an explicit `Parse flags.` parses at exactly that point
- (LANGUAGE.md:4483-4487). The Print before it proves the parse point is
+ (LANGUAGE.md:4646-4650). The Print before it proves the parse point is
  chosen rather than implicit: ordinary code runs first, and
  every flag read after the statement sees parsed values.
- Also covers: ARG-29 (LANGUAGE.md:4496 — the explicit form chooses
+ Also covers: ARG-29 (LANGUAGE.md:4659 — the explicit form chooses
  exactly when parsing happens; the same statement, stated twice).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-25.vox -o p && ./p -v
  Args: -v

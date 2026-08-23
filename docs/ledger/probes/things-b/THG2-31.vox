@@ -2,7 +2,7 @@
  collision rule refuses the program rather than letting one shadow the other.
  The type owns one member space, so a global function whose first parameter is
  a point cannot be called `x` when point already has a field `x`.
- LANGUAGE.md:1595-1600, verbatim.
+ LANGUAGE.md:1655-1660, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-31.vox -o p && ./p
  expected output:
    error: point already has a field called 'x', so a function taking a point cannot be called 'x' too

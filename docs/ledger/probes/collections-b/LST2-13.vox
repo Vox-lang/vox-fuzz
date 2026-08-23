@@ -1,12 +1,15 @@
-(LST2-13 — the *expression* form of {...} interpolation does not dispatch
- on a nested element's runtime tag; only the *variable* form does.
- Written as verdict lines rather than raw prints because the failing case
- renders a live heap address that changes every run — see Discrepancy 7.
+(LST2-13 — RESOLVED, 2026-08-22, vox #68. On 0.4.9 and earlier the
+ *expression* form of {...} interpolation did not dispatch on a nested
+ element's runtime tag; only the *variable* form did. As of 0.4.10 both
+ forms dispatch on the runtime tag in every sink (LANGUAGE.md:2884-2888).
+ Written as verdict lines rather than raw prints, kept from the original
+ probe, though the hazard that motivated it (a live heap address that
+ changed every run) is gone — see Discrepancy 7.
  Also covers: LST2-12 (the variable form carries the full list rendering).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-13.vox -o p && ./p
  expected output:
    variable form: [1, [2, 3], "four"]
-   expression form does not dispatch on the tag
+   expression form dispatches on the tag
    expression form is fine for a scalar element
 )
 a list called nested is [1, [2, 3], "four"].

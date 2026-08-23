@@ -1,9 +1,9 @@
-(D1 - Discrepancy 1 repro: LANGUAGE.md:4312-4313 says `end` "belongs to
+(D1 - Discrepancy 1 repro: LANGUAGE.md:4475-4476 says `end` "belongs to
  the `exit` family of keywords and remains reserved". It is not reserved -
  this compiles and prints 7 - and `End.` on its own is not an exit
  statement either; the compiler answers "Unknown function: End". The
- manual's own examples at LANGUAGE.md:270 (`Set end to 5.`) and
- LANGUAGE.md:987 (`a point called end.`) require the compiler's behaviour,
+ manual's own examples at LANGUAGE.md:273 (`Set end to 5.`) and
+ LANGUAGE.md:1047 (`a point called end.`) require the compiler's behaviour,
  so the manual contradicts itself.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:
