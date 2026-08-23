@@ -44,10 +44,11 @@ jobs:
           VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
           make build
 
-      - name: Run the test suite
+      - name: Run the test suite (deterministic gate; soak tests are local-only)
         run: |
           VOX="$GITHUB_WORKSPACE/vox/target/release/vox" \
           VOX_CORE_PATH="$GITHUB_WORKSPACE/vox/coreasm" \
+          VOX_FUZZ_CI=1 \
           ./test.sh
 
       # Smoke fuzz removed 2026-08-19: a fuzzer answers "does a bug exist
