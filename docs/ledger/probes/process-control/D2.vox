@@ -1,4 +1,4 @@
-(D2 — Discrepancy 2 repro: LANGUAGE.md:4137 says the device-node statement
+(D2 — Discrepancy 2 repro: LANGUAGE.md:4153 says the device-node statement
  "Sets the error flag on failure", which places the failure at run time. A
  bad `type` is rejected at COMPILE time instead, so `On error` never sees
  it and the program never runs. Both behaviours are defensible; the manual

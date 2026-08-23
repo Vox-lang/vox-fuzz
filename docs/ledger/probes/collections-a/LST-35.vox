@@ -2,7 +2,7 @@
  EXPRESSION form of `{...}` interpolation had no runtime-tag dispatch, so
  a nested list did not render there and instead printed a live heap
  address that changed between runs. LANGUAGE.md's two sentences
- documenting the limitation are gone in 0.4.10 (LANGUAGE.md:2476 now
+ documenting the limitation are gone in 0.4.10 (LANGUAGE.md:2492 now
  reads "One limitation remains for this stage", where 0.4.9 read "Two").
  #68 fixed the underlying bug: the hole's expression path now dispatches
  on the slot's runtime tag "in every sink — Print, a text initializer,

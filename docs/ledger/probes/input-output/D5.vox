@@ -1,5 +1,5 @@
 (Discrepancy 5 — the "bare literal in a slot" diagnostic (FMT-18,
- LANGUAGE.md:3307-3310) is anchored at the first TEXTUAL occurrence of the
+ LANGUAGE.md:3323-3326) is anchored at the first TEXTUAL occurrence of the
  slot in the file, comments included, not at the code that caused it. Here
  the only real slot is on line 2, but the caret lands on line 1, inside a
  comment. Comments are otherwise inert: this same comment WITHOUT line 2

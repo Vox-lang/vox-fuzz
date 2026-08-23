@@ -1,4 +1,4 @@
-(Discrepancy 4 - minimal repro. LANGUAGE.md:1945 gives `the list is empty` as a
+(Discrepancy 4 - minimal repro. LANGUAGE.md:1961 gives `the list is empty` as a
  Property Checks example. It cannot be written: `list` is a reserved word and
  no variable may be called that. The other five lines of the same block use
  `x`, `y`, `z`, `n` and `value`, all of which ARE legal names - `value` is the

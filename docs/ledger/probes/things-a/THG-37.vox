@@ -1,6 +1,6 @@
 (THG-37: a `float` and a `boolean` field carry defaults; a `number` field
  with none is 0.
- Also covers: THG-38 (the water-tank example, LANGUAGE.md:1006-1017, verbatim).
+ Also covers: THG-38 (the water-tank example, LANGUAGE.md:1022-1033, verbatim).
  Note `Print cistern's 'the pump is running'` is not in the manual's block;
  the boolean is read in an If instead, which is what the example shows.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-37.vox -o p && ./p

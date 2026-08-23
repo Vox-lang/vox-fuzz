@@ -9,7 +9,7 @@
  [1, 2, 3], not [1, 20, 3], even though the identical treating clause DID
  substitute under `Print each` (GRM-16).
  RESOLVED, 2026-08-22 - vox #70, and the manual's grammar itself was
- corrected to match: LANGUAGE.md:5534-5535 now places `treating` right
+ corrected to match: LANGUAGE.md:5550-5551 now places `treating` right
  after `from expr`, matching how it always actually parsed. Re-run
  verbatim against 0.4.10: the substitution now fires.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p

@@ -251,7 +251,7 @@ To 'tokenize identifiers' with a text called 'the statement text'.
  A generated program's layout is drawn - gen_core.vox's 'gen relayout'
  rewrites every whitespace run: the indent width, where the line breaks,
  how wide each gap is, and whether a gap beside punctuation is there at
- all. None of that changes what the program says. LANGUAGE.md:210 says
+ all. None of that changes what the program says. LANGUAGE.md:226 says
  Vox ignores leading whitespace and a program can be minified without
  changing its meaning, and periods, commas and paragraph breaks are the
  only flow control there is.
@@ -275,7 +275,7 @@ To 'tokenize identifiers' with a text called 'the statement text'.
      this normal form layout-INVARIANT rather than merely tidier. A gap
      the randomiser is allowed to delete must not survive here either.
    - a period ends the statement, unless it has a digit on both sides,
-     where it is a decimal point instead: LANGUAGE.md:1893 and
+     where it is a decimal point instead: LANGUAGE.md:1909 and
      gen_literals.vox record that `3.` and `.5` are both parse errors,
      so "digits on both sides" is the whole rule. A run of periods
      closes several clauses at once and belongs to the statement it
@@ -442,7 +442,7 @@ To 'norm rewrite whitespace run' with a number called 'the run start'.
     Return a number, i.
 
 (Is the period at this position a decimal point rather than the end of a
- statement? Digits on both sides and nothing else: LANGUAGE.md:1893 -
+ statement? Digits on both sides and nothing else: LANGUAGE.md:1909 -
  `3.` and `.5` are both parse errors, hand-verified in gen_literals.vox,
  so a float always has a digit either side of its dot.)
 To 'norm period is a decimal point' with a number called 'the period position'.

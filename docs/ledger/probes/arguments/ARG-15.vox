@@ -1,5 +1,5 @@
 (ARG-15 — the flag schema form: a name, two alias strings joined by
- `or`, and `it is a <type>` (LANGUAGE.md:4652-4657).
+ `or`, and `it is a <type>` (LANGUAGE.md:4668-4673).
  Also covers: ARG-14 (declarative schema-first flag parsing exists at
  all), ARG-17 (a boolean flag's presence sets it true — printed as 1),
  ARG-18 (a text flag consumes the next token as text), ARG-19 (a number

@@ -667,7 +667,7 @@ before it is measured:
   of merely tidier);
 - a period ends the statement unless it has a digit on both sides, where
   it is a decimal point (`3.14`; `3.` and `.5` are both parse errors —
-  LANGUAGE.md:1863 and `gen_literals.vox`), and a run of periods closing
+  LANGUAGE.md:1909 and `gen_literals.vox`), and a run of periods closing
   several clauses stays with the statement it ends;
 - string literals, parenthesised comments and quoted multi-word names
   are copied through untouched, by scanners that mirror `layout copy

@@ -1,4 +1,4 @@
-(Discrepancy 4: LANGUAGE.md:670-672 says a bare identifier "is not a reserved
+(Discrepancy 4: LANGUAGE.md:686-688 says a bare identifier "is not a reserved
  keyword" and that "reserved keywords remain rejected as names". A for-range
  loop variable may be a reserved keyword: `For each number from 1 to 3`
  compiles and binds `number`, while `a number called number is 5.` is

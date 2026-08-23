@@ -1,4 +1,4 @@
-(OPR-06: `times` is an accepted spelling of multiplication (LANGUAGE.md:4842).
+(OPR-06: `times` is an accepted spelling of multiplication (LANGUAGE.md:4858).
  See OPR-41 for the one value position this spelling does not reach.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-06.vox -o p && ./p
  expected output:

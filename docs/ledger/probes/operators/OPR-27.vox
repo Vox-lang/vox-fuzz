@@ -1,4 +1,4 @@
-(OPR-27: `bit-shift-left` shifts left (LANGUAGE.md:4881).
+(OPR-27: `bit-shift-left` shifts left (LANGUAGE.md:4897).
  240 shifted left by 2 is 960. See OPR-37 for what a shift count of 64
  or more does.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-27.vox -o p && ./p

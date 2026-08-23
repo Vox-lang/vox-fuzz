@@ -1,4 +1,4 @@
-(EXP-97: LANGUAGE.md:2147-2149 - a non-default-base cast "stops parsing at the
+(EXP-97: LANGUAGE.md:2163-2165 - a non-default-base cast "stops parsing at the
  first character invalid for that base ... it does not set the error flag".
  The stopping half holds. The flag half does not: a string invalid from its
  first character sets the flag in base 5 and in base 16 exactly as it does in

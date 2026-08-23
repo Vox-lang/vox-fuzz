@@ -2,7 +2,7 @@
  on 2026-08-22 — not a ledger row, recorded here because PROCEDURE.md
  section 5 says record, do not adjudicate.
 
- The claim it contradicts: LANGUAGE.md:757 — "Variables declared at top
+ The claim it contradicts: LANGUAGE.md:773 — "Variables declared at top
  level are global and can be used inside functions."
  Not in the 0.4.10 register (#66-#91) — re-verified unchanged against
  0.4.10, 2026-08-22: byte-identical diagnostic, still reproduces. (Not
@@ -24,8 +24,8 @@
    - a `map` global behaves exactly like the `list` one.
 
  So the trigger is precisely "top-level Set + a function that reads it",
- for the two collection types. LANGUAGE.md:568 (Assignment) and
- LANGUAGE.md:757 (Function Scope) both describe the two halves as
+ for the two collection types. LANGUAGE.md:584 (Assignment) and
+ LANGUAGE.md:773 (Function Scope) both describe the two halves as
  ordinary, and neither says a collection is different.
 
  NOT adjudicated: it may be that a global collection's storage is meant

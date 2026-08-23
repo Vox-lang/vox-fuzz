@@ -1,4 +1,4 @@
-(THG-33: the prose at LANGUAGE.md:986-988 lists `decrement` among the
+(THG-33: the prose at LANGUAGE.md:1002-1004 lists `decrement` among the
  positions a field works in, but no example in the section shows it.
  Hand-verified here: it steps the field down by one, like increment.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-33.vox -o p && ./p

@@ -1,4 +1,4 @@
-(D6 — Discrepancy 6 repro: LANGUAGE.md:4076-4078 introduces the whole
+(D6 — Discrepancy 6 repro: LANGUAGE.md:4092-4094 introduces the whole
  section with "see examples/initramfs.vox for a complete, working
  early-userspace init sequence exercising all of them together". The
  example exercises the directory, mount, device-node, symlink, pivot_root

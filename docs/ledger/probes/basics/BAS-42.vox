@@ -1,4 +1,4 @@
-(BAS-42 - the `retries` worked example, LANGUAGE.md:142-149, verbatim. The
+(BAS-42 - the `retries` worked example, LANGUAGE.md:158-165, verbatim. The
  manual says it prints `retrying` once and `done` once after the loop runs
  its full three iterations, and it does.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-42.vox -o p && ./p
