@@ -1,0 +1,928 @@
+(quality-stats.vox - compile the project's quality numbers from the files
+ that already hold them, and write docs/ledger/quality-stats.json.
+
+ The Vox project's public /quality page states how much of LANGUAGE.md
+ this fuzzer has actually put on trial. Josj's requirement for that page
+ is that every number on it be "compiled from the Vox project and
+ Vox-Fuzzer itself, not hardcoded" - a hand-typed figure on a quality
+ page is the one kind of number nobody ever re-checks, and it starts
+ drifting the day it is typed. So this tool derives each figure from the
+ file that owns it, and the site reads one committed artefact.
+
+ CONTRACT. The site reads this file. Its schema was agreed with the site
+ master (~/scr/MASTERS-CHANNEL.md, 2026-08-23) - change it there first,
+ then here. In particular the site keys off `generated.commit` by name.
+
+ What it reads, and which file owns which number:
+
+   docs/ledger/INDEX.md      the per-section table - one row per
+                             LANGUAGE.md section, with its claim count
+                             and how many rows are exercised and
+                             verified. The totals are the columns
+                             summed, never a figure typed anywhere.
+   docs/ledger/PROCEDURE.md  the status ladder, for the one-sentence
+                             definitions of `exercised` and `verified`
+                             that the site prints beside the numbers.
+                             INDEX.md's own "How to read the counts"
+                             paragraph points here for them, so this
+                             follows the pointer rather than paraphrase.
+   docs/ledger/probes/       one directory per probe family.
+   src/gen_*.vox             the leaf library: every `To 'gen leaf ...`.
+   SEEDS.md                  the campaign ledger. docs/ledger/SEEDS.md is
+                             tried first, then the repo root, because the
+                             ledger has lived in both places.
+   docs/findings/            one directory per finding category, each
+                             holding numbered finding directories.
+   <vox repo>/docs/BUGS_FOUND.md   the defect register: `### N.` entries,
+                             classified by their own Status line.
+   tests/, <vox repo>/tests/, <vox repo>/tests/compile_fail/
+
+ What it writes: docs/ledger/quality-stats.json, pretty-printed through
+ the json library, and a one-line summary on stdout.
+
+ REQUIRED sources - a run stops with exit 2 rather than emit the file if
+ any of these is missing or does not parse: INDEX.md's table,
+ PROCEDURE.md's two status rows, docs/ledger/probes/, src/gen_*.vox, the
+ three test directories, and BUGS_FOUND.md. All of those are numbers the
+ page shows as measurements, and a plausible wrong measurement is worse
+ than a run that fails loudly: nobody audits a number that looks fine.
+ docs/findings/ and SEEDS.md are genuinely optional - a fresh clone that
+ has run no campaign has neither - so those emit an empty list or an
+ empty count, which is the honest answer, and never a guess.
+
+ Why in Vox: the same reason scripts/invariants.vox and
+ scripts/repin-citations.vox are (README, "Why it's written in Vox") - a
+ systems tool written in a young language finds bugs in that language by
+ existing, and this one is the first vox-fuzz tool to consume a Vox
+ shared library, so it exercises the `.lib` path as a side effect of
+ doing its job. Nothing here needed a construct the language lacks. The
+ two things Vox cannot do alone are listing a directory and running
+ `git`, and both go through the same fork/Execute/reap `run shell` that
+ invariants.vox and repin-citations.vox already use.
+
+ The json library is consumed as an installed system library, not a
+ vendored copy: `see json version "0.1" from "json.lib".` below, with
+ the interface found through `--lib-path` - the scripts/quality-stats
+ wrapper passes `--lib-path /usr/include/vox`, overridable with
+ VOX_LIB_PATH. The `.lib` names its own `.so`, so there is no `-l` and
+ no `-L` to get right. The flag is needed at all only because a bare
+ `.lib` name does not reach /usr/include/vox on its own - vox #99, open
+ as of 2026-08-23. When that closes, the flag comes out of the wrapper
+ and this line stays as it is.
+
+ Usage:
+   scripts/quality-stats [--out <path>] [--vox-repo <dir>] [--stdout]
+
+   --out       write somewhere other than docs/ledger/quality-stats.json.
+   --vox-repo  the sibling vox checkout. Default `../vox`, overridden by
+               VOX_REPO, which the wrapper derives from $VOX - a git
+               worktree's `../vox` is not the vox repo, so this matters.
+   --stdout    print the document instead of writing it.
+
+ Exit codes: 0 wrote the file, 2 a required source was missing or did
+ not parse and nothing was written.)
+
+see json version "0.1" from "json.lib".
+
+(---------------------------------------------------------------------
+ configuration and state
+
+ Every global lives here, above the functions that read it, because a
+ function may only reach a name already declared.
+ ---------------------------------------------------------------------)
+
+a text called 'the vox repo' is "../vox".
+a text called 'the index path' is "docs/ledger/INDEX.md".
+a text called 'the procedure path' is "docs/ledger/PROCEDURE.md".
+a text called 'the probes directory' is "docs/ledger/probes".
+a text called 'the leaf directory' is "src".
+a text called 'the findings directory' is "docs/findings".
+a text called 'the tests directory' is "tests".
+a text called 'the output path' is "docs/ledger/quality-stats.json".
+
+(The seed ledger has lived in two places. Both are tried, in this order,
+ and the first that exists is the one read. A checkout where neither
+ exists is not an error - it is a checkout that has run no campaign.)
+a text called 'the ledger seed path' is "docs/ledger/SEEDS.md".
+a text called 'the root seed path' is "SEEDS.md".
+
+(Opened once, and never closed. `at 2` borrows the descriptor rather than
+ naming a path, and `Close` on a borrowed descriptor closes the process's
+ stderr for good - after which every later notice, the one that says why
+ the run is stopping included, is written into a closed pipe and lost.
+ Opening it here also puts it above the functions that write to it.)
+open a file for writing called 'the error stream' at 2.
+
+(command line)
+a boolean called 'printing to stdout' is false.
+
+(scratch, named by pid so two runs in one checkout cannot collide)
+a text called 'the scratch directory' is "".
+
+(Each listing gets its own file, so a later one cannot read an earlier
+ one's leftovers if a `find` writes nothing.)
+a number called 'listings taken' is 0.
+
+(The defect register's tallies. Globals, because the line that classifies
+ one Status line is its own function - an `If` body that ends with a
+ nested `If` leaves the outer one open, and a loop written that way never
+ reaches its own increment.)
+a number called 'register entries found' is 0.
+a number called 'register entries fixed' is 0.
+a number called 'register entries open' is 0.
+a number called 'register entries otherwise' is 0.
+a number called 'register entries classified' is 0.
+
+(Left behind by 'lines of' for its own last check, since Vox returns one
+ value. This tool only ever reads files, so unlike repin-citations it
+ needs no record of whether one ended in a newline.)
+a boolean called 'a nul byte was seen' is false.
+
+(---------------------------------------------------------------------
+ shell and file helpers - the same shape scripts/invariants.vox and
+ scripts/repin-citations.vox use, kept local so this tool depends on
+ nothing in src/.
+ ---------------------------------------------------------------------)
+
+To 'run shell' with a text called 'the command'.
+    a list called 'the shell arguments' is [].
+    append "-c" to 'the shell arguments'.
+    append 'the command' to 'the shell arguments'.
+    a number called 'the child' is fork the process.
+    If 'the child' is 0 then, Execute "/bin/sh" with arguments 'the shell arguments', Exit 127.
+    a number called 'the reaped' is reap process 'the child'.
+    (`reap process` yields the PID; the wait status is a separate
+     expression - LANGUAGE.md, "The reaped status".)
+    a number called 'the status' is the reaped status.
+    a number called 'the terminating signal' is 'the status' bit-and 127.
+    If 'the terminating signal' is not 0 then, Return a number, 128 add 'the terminating signal'.
+    Return a number, 'the status' divide 256 modulo 256.
+
+(single-quote a value POSIX-style, so a path holding spaces or quotes
+ cannot break a command line)
+To 'shell quote' with a text called 'the value'.
+    a buffer called 'the source bytes' is 'the value'.
+    a buffer called 'the quoted bytes' is "'".
+    a number called 'the scan position' is 1.
+    a number called 'the byte count' is 'the source bytes's size.
+    a buffer called 'one byte' is " ".
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the source bytes',
+        If 'the current byte' is 39 then, append "'\\''" to 'the quoted bytes'.
+        If 'the current byte' is not 39 then, Set byte 1 of 'one byte' to 'the current byte', append 'one byte' to 'the quoted bytes'.
+        Set 'the scan position' to 'the scan position' add 1.
+    append "'" to 'the quoted bytes'.
+    a text called 'the result' is 'the quoted bytes' as text.
+    Return a text, 'the result'.
+
+(Stop the whole run. Nothing is written on this path, so a failed run
+ leaves the previous quality-stats.json exactly as it was rather than
+ half-replacing it with a document built from sources that did not read.)
+To 'stop with' with a text called 'the reason'.
+    Write "quality-stats: {'the reason'}\n" to 'the error stream'.
+    If 'the scratch directory' is not "" then, 'run shell' of "rm -rf {'shell quote' of 'the scratch directory'}".
+    Exit 2.
+
+(A notice that does not stop the run: an optional source that is absent
+ or unreadable. It goes to stderr so it cannot be mistaken for part of
+ the summary, and it is said out loud rather than swallowed, because the
+ emitted key will be empty and somebody should know why.)
+To 'note that' with a text called 'the reason'.
+    Write "quality-stats: {'the reason'}\n" to 'the error stream'.
+
+To 'path exists' with a text called 'the path'.
+    a number called 'the code' is 'run shell' of "test -e {'shell quote' of 'the path'}".
+    Return a boolean, 'the code' is 0.
+
+(A file to a list of its lines, newline stripped. Not a `Read line`
+ loop: that cannot tell a blank line from end of file without a separate
+ check, and these sources are full of blank lines. One Read fills a
+ dynamic buffer with the whole file and the split happens here.)
+To 'lines of' with a text called 'the path'.
+    a list called 'the result' is [].
+    open a file for reading called 'the input file' at 'the path'.
+    On error 'stop with' of "cannot read {'the path'}".
+    a buffer called 'the file bytes'.
+    Read from 'the input file' into 'the file bytes'.
+    Close 'the input file'.
+    a number called 'the byte count' is 'the file bytes's size.
+    Set 'a nul byte was seen' to false.
+    a buffer called 'the current line'.
+    a buffer called 'one byte' is " ".
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the file bytes',
+        If 'the current byte' is 10 then,
+            a buffer called 'the line copy' is 'the current line',
+            a text called 'the finished line' is 'the line copy' as text,
+            append 'the finished line' to 'the result',
+            clear 'the current line'.
+        If 'the current byte' is not 10 then,
+            Set byte 1 of 'one byte' to 'the current byte',
+            append 'one byte' to 'the current line'.
+        If 'the current byte' is 0 then, Set 'a nul byte was seen' to true.
+        Set 'the scan position' to 'the scan position' add 1.
+    (A Vox text ends at the first NUL, so a file holding one comes back
+     truncated, and a count taken from a truncated file is exactly the
+     plausible wrong number this tool exists not to produce.)
+    If 'a nul byte was seen' then, 'stop with' of "{'the path'} holds a NUL byte, which a Vox text ends at - refusing to read it rather than counting a truncated file".
+    If 'the current line's size is greater than 0 then,
+        a buffer called 'the tail copy' is 'the current line',
+        a text called 'the tail line' is 'the tail copy' as text,
+        append 'the tail line' to 'the result'.
+    Return a list, 'the result'.
+
+(The first line of a file, or "" - how a one-line shell result (a short
+ sha, a date) is read back, since Vox cannot capture a child's stdout
+ directly.)
+To 'first line of' with a text called 'the path'.
+    a list called 'the read lines' is 'lines of' of 'the path'.
+    If 'the read lines's length is 0 then, Return a text, "".
+    a text called 'the first' is element 1 of 'the read lines'.
+    Return a text, 'the first'.
+
+(Run a command whose output is a listing, and hand back its lines. The
+ sort is `LC_ALL=C` so the order is byte order and therefore the same on
+ every machine: this file is committed, and a locale-dependent ordering
+ would show up as a diff nobody asked for.)
+To 'the paths listed by' with a text called 'the find expression' and a text called 'the listing name'.
+    a text called 'the listing path' is "{'the scratch directory'}/{'the listing name'}".
+    a number called 'the listing code' is 'run shell' of "{'the find expression'} | LC_ALL=C sort > {'shell quote' of 'the listing path'}".
+    If 'the listing code' is not 0 then, 'stop with' of "listing failed ({'the listing code'}): {'the find expression'}".
+    Return a list, 'lines of' of 'the listing path'.
+
+(---------------------------------------------------------------------
+ text scanning. Everything works on a buffer and a 1-based position,
+ because that is the shape Vox gives for looking inside text.
+ ---------------------------------------------------------------------)
+
+To 'matches at' with a buffer called 'the haystack' and a number called 'the position' and a text called 'the needle'.
+    a buffer called 'the needle bytes' is 'the needle'.
+    a number called 'the needle length' is 'the needle bytes's size.
+    a number called 'the haystack length' is 'the haystack's size.
+    If 'the position' is less than 1 then, Return a boolean, false.
+    a number called 'the last needed' is {'the position' add 'the needle length'} subtract 1.
+    If 'the last needed' is greater than 'the haystack length' then, Return a boolean, false.
+    a boolean called 'the answer' is true.
+    a number called 'the offset' is 0.
+    While 'the offset' is less than 'the needle length' and 'the answer',
+        a number called 'the haystack byte' is byte {'the position' add 'the offset'} of 'the haystack',
+        a number called 'the needle byte' is byte {'the offset' add 1} of 'the needle bytes',
+        If 'the haystack byte' is not 'the needle byte' then, Set 'the answer' to false.
+        Set 'the offset' to 'the offset' add 1.
+    Return a boolean, 'the answer'.
+
+To 'the line starts with' with a text called 'the line' and a text called 'the opening'.
+    a buffer called 'the line bytes' is 'the line'.
+    Return a boolean, 'matches at' of 'the line bytes' and 1 and 'the opening'.
+
+(Does a line say a word, whatever case it wrote it in? The register's
+ Status lines say "fixed", "**fixed in 0.4.11**" and "Fixed in 0.4.10"
+ in about equal numbers, so a case-sensitive test would file a fixed
+ defect as unresolved.)
+To 'ignoring case, contains' with a text called 'the line' and a text called 'the lowercase needle'.
+    a buffer called 'the line bytes' is 'the line'.
+    a buffer called 'the lowered' is " ".
+    clear 'the lowered'.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'the line bytes's size.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the line bytes',
+        If 'the current byte' is greater than 64 and 'the current byte' is less than 91 then, Set 'the current byte' to 'the current byte' add 32.
+        Set byte 1 of 'one byte' to 'the current byte',
+        append 'one byte' to 'the lowered',
+        Set 'the scan position' to 'the scan position' add 1.
+    a boolean called 'the answer' is false.
+    Set 'the scan position' to 1.
+    While 'the scan position' is less than or equal to 'the byte count' and 'the answer' is false,
+        a boolean called 'a match here' is 'matches at' of 'the lowered' and 'the scan position' and 'the lowercase needle',
+        If 'a match here' then, Set 'the answer' to true.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a boolean, 'the answer'.
+
+(A markdown cell arrives padded, and often wearing the emphasis and code
+ markers that make the table readable. The site prints these strings as
+ prose, so the markers come off; the words themselves are untouched.)
+To 'the plain text of' with a text called 'the cell'.
+    a buffer called 'the cell bytes' is 'the cell'.
+    a buffer called 'the plain' is " ".
+    clear 'the plain'.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'the cell bytes's size.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the cell bytes',
+        a boolean called 'a marker here' is false,
+        If 'the current byte' is 96 then, Set 'a marker here' to true.
+        If 'matches at' of 'the cell bytes' and 'the scan position' and "**" then, Set 'a marker here' to true, Set 'the scan position' to 'the scan position' add 1.
+        If 'a marker here' is false then, Set byte 1 of 'one byte' to 'the current byte', append 'one byte' to 'the plain'.
+        Set 'the scan position' to 'the scan position' add 1.
+    a number called 'the first kept' is 1.
+    a number called 'the last kept' is 'the plain's size.
+    While 'the first kept' is less than or equal to 'the last kept' and byte 'the first kept' of 'the plain' is 32,
+        Set 'the first kept' to 'the first kept' add 1.
+    While 'the last kept' is greater than or equal to 'the first kept' and byte 'the last kept' of 'the plain' is 32,
+        Set 'the last kept' to 'the last kept' subtract 1.
+    a buffer called 'the trimmed' is " ".
+    clear 'the trimmed'.
+    a number called 'the copy position' is 'the first kept'.
+    While 'the copy position' is less than or equal to 'the last kept',
+        Set byte 1 of 'one byte' to byte 'the copy position' of 'the plain',
+        append 'one byte' to 'the trimmed',
+        Set 'the copy position' to 'the copy position' add 1.
+    If 'the trimmed's size is 0 then, Return a text, "".
+    a buffer called 'the trimmed copy' is 'the trimmed'.
+    a text called 'the answer' is 'the trimmed copy' as text.
+    Return a text, 'the answer'.
+
+(The cells of one markdown table row, in order, each already plain and
+ trimmed. A row must open and close with a pipe for this to be a row at
+ all; anything else answers with no cells, which every caller treats as
+ "the table ended here".)
+To 'the cells of' with a text called 'the row line'.
+    a list called 'the cells' is [].
+    a buffer called 'the row bytes' is 'the row line'.
+    a number called 'the byte count' is 'the row bytes's size.
+    If 'the byte count' is less than 2 then, Return a list, 'the cells'.
+    If byte 1 of 'the row bytes' is not 124 then, Return a list, 'the cells'.
+    If byte 'the byte count' of 'the row bytes' is not 124 then, Return a list, 'the cells'.
+    a buffer called 'the current cell' is " ".
+    clear 'the current cell'.
+    a buffer called 'one byte' is " ".
+    a number called 'the scan position' is 2.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the row bytes',
+        If 'the current byte' is 124 then,
+            a text called 'the raw cell' is "",
+            If 'the current cell's size is greater than 0 then,
+                a buffer called 'the cell copy' is 'the current cell',
+                Set 'the raw cell' to 'the cell copy' as text.
+            a text called 'the finished cell' is 'the plain text of' of 'the raw cell',
+            append 'the finished cell' to 'the cells',
+            clear 'the current cell'.
+        If 'the current byte' is not 124 then,
+            Set byte 1 of 'one byte' to 'the current byte',
+            append 'one byte' to 'the current cell'.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a list, 'the cells'.
+
+(A cell as a whole number, or -1 when it is not one. -1 rather than 0
+ because 0 is a real count in most of these columns, and a column that
+ failed to parse must never be indistinguishable from a column that
+ legitimately says none.)
+To 'the number in' with a text called 'the cell'.
+    a buffer called 'the cell bytes' is 'the cell'.
+    a number called 'the byte count' is 'the cell bytes's size.
+    If 'the byte count' is 0 then, Return a number, 0 subtract 1.
+    a number called 'the value' is 0.
+    a boolean called 'all digits' is true.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the byte count',
+        a number called 'the current byte' is byte 'the scan position' of 'the cell bytes',
+        If 'the current byte' is less than 48 then, Set 'all digits' to false.
+        If 'the current byte' is greater than 57 then, Set 'all digits' to false.
+        If 'all digits' then, Set 'the value' to {'the value' multiply 10} add {'the current byte' subtract 48}.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'all digits' is false then, Return a number, 0 subtract 1.
+    Return a number, 'the value'.
+
+(Everything after a prefix, as text - how a listing line becomes the name
+ of the directory it names.)
+To 'the part of' with a text called 'the path' and a text called 'the leading part'.
+    a buffer called 'the path bytes' is 'the path'.
+    a buffer called 'the prefix bytes' is 'the leading part'.
+    a number called 'the byte count' is 'the path bytes's size.
+    a number called 'the start' is 'the prefix bytes's size add 1.
+    a boolean called 'it leads with that' is 'matches at' of 'the path bytes' and 1 and 'the leading part'.
+    If 'it leads with that' is false then, Return a text, 'the path'.
+    a buffer called 'the tail' is " ".
+    clear 'the tail'.
+    a buffer called 'one byte' is " ".
+    a number called 'the scan position' is 'the start'.
+    While 'the scan position' is less than or equal to 'the byte count',
+        Set byte 1 of 'one byte' to byte 'the scan position' of 'the path bytes',
+        append 'one byte' to 'the tail',
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'the tail's size is 0 then, Return a text, "".
+    a buffer called 'the tail copy' is 'the tail'.
+    a text called 'the answer' is 'the tail copy' as text.
+    Return a text, 'the answer'.
+
+(---------------------------------------------------------------------
+ the claim ledger - docs/ledger/INDEX.md's table, which is the one
+ place the per-section claim counts are written down
+ ---------------------------------------------------------------------)
+
+(The row parser reads columns by POSITION, so the positions have to be
+ the ones the header names. Without this check a re-ordered table would
+ be read silently and wrongly - exercised counts landing under verified
+ is exactly the plausible-looking wrong number this tool exists not to
+ emit, and a wrong number nobody can see is worse than no file at all.)
+To 'insist that column' with a list called 'the header cells' and a number called 'the position' and a text called 'the name'.
+    If 'the header cells's length is less than 'the position' then, 'stop with' of "{'the index path'}: the section table's header has {'the header cells's length} columns, too few to hold `{'the name'}` at column {'the position'}".
+    a text called 'the column name' is element 'the position' of 'the header cells'.
+    If 'the column name' is not 'the name' then, 'stop with' of "{'the index path'}: the section table's column {'the position'} is `{'the column name'}`, expected `{'the name'}` - the columns moved and this tool reads them by position".
+
+To 'the claim row for' with a text called 'the prefix' and a text called 'the ledger' and a text called 'the section' and a number called 'the claims' and a number called 'the exercised' and a number called 'the verified'.
+    a map called 'the row' is {}.
+    Set 'the row's "prefix" to 'the prefix'.
+    Set 'the row's "ledger" to 'the ledger'.
+    Set 'the row's "section" to 'the section'.
+    Set 'the row's "claims" to 'the claims'.
+    Set 'the row's "exercised" to 'the exercised'.
+    Set 'the row's "verified" to 'the verified'.
+    Return a map, 'the row'.
+
+To 'the claims read from the index'.
+    a list called 'the index lines' is 'lines of' of 'the index path'.
+    a number called 'the line count' is 'the index lines's length.
+    a number called 'the header line' is 0.
+    a number called 'the search position' is 1.
+    While 'the search position' is less than or equal to 'the line count' and 'the header line' is 0,
+        a text called 'one line' is element 'the search position' of 'the index lines',
+        If 'the line starts with' of 'one line' and "| prefix | ledger |" then, Set 'the header line' to 'the search position'.
+        Set 'the search position' to 'the search position' add 1.
+    If 'the header line' is 0 then, 'stop with' of "{'the index path'} has no section table (no row opening `| prefix | ledger |`)".
+    a text called 'the header row' is element 'the header line' of 'the index lines'.
+    a list called 'the header cells' is 'the cells of' of 'the header row'.
+    'insist that column' of 'the header cells' and 1 and "prefix".
+    'insist that column' of 'the header cells' and 2 and "ledger".
+    'insist that column' of 'the header cells' and 4 and "section".
+    'insist that column' of 'the header cells' and 6 and "rows".
+    'insist that column' of 'the header cells' and 7 and "exercised".
+    'insist that column' of 'the header cells' and 8 and "verified".
+    a list called 'the sections' is [].
+    a number called 'the total claims' is 0.
+    a number called 'the total exercised' is 0.
+    a number called 'the total verified' is 0.
+    (The header is followed by markdown's dashed separator; the rows run
+     from there to the first line that is not a table row.)
+    a number called 'the row line' is 'the header line' add 2.
+    a boolean called 'still in the table' is true.
+    While 'the row line' is less than or equal to 'the line count' and 'still in the table',
+        a text called 'one row' is element 'the row line' of 'the index lines',
+        a list called 'the cells' is 'the cells of' of 'one row',
+        If 'the cells's length is 0 then, Set 'still in the table' to false.
+        If 'still in the table' then,
+            If 'the cells's length is not 10 then, 'stop with' of "{'the index path'} line {'the row line'}: a section row has {'the cells's length} cells, expected 10 - the table's shape changed and this tool would read the wrong columns".
+            a text called 'the prefix' is element 1 of 'the cells',
+            a text called 'the ledger' is element 2 of 'the cells',
+            a text called 'the section' is element 4 of 'the cells',
+            a number called 'the row claims' is 'the number in' of element 6 of 'the cells',
+            a number called 'the exercised' is 'the number in' of element 7 of 'the cells',
+            a number called 'the verified' is 'the number in' of element 8 of 'the cells',
+            If 'the row claims' is less than 0 then, 'stop with' of "{'the index path'} line {'the row line'}: the rows column reads `{element 6 of 'the cells'}`, which is not a count".
+            If 'the exercised' is less than 0 then, 'stop with' of "{'the index path'} line {'the row line'}: the exercised column reads `{element 7 of 'the cells'}`, which is not a count".
+            If 'the verified' is less than 0 then, 'stop with' of "{'the index path'} line {'the row line'}: the verified column reads `{element 8 of 'the cells'}`, which is not a count".
+            a map called 'the section row' is 'the claim row for' of 'the prefix' and 'the ledger' and 'the section' and 'the row claims' and 'the exercised' and 'the verified',
+            append 'the section row' to 'the sections',
+            Set 'the total claims' to 'the total claims' add 'the row claims',
+            Set 'the total exercised' to 'the total exercised' add 'the exercised',
+            Set 'the total verified' to 'the total verified' add 'the verified',
+            Set 'the row line' to 'the row line' add 1.
+        If 'still in the table' is false then, Set 'the row line' to 'the row line' add 1.
+    If 'the sections's length is 0 then, 'stop with' of "{'the index path'}: the section table has a header but no rows".
+    a map called 'the claim block' is {}.
+    Set 'the claim block's "total" to 'the total claims'.
+    Set 'the claim block's "exercised" to 'the total exercised'.
+    Set 'the claim block's "verified" to 'the total verified'.
+    Set 'the claim block's "sections" to 'the sections'.
+    Return a map, 'the claim block'.
+
+(---------------------------------------------------------------------
+ the definitions the site prints beside the numbers
+
+ "exercised" and "verified" are the whole point of the page, and a
+ reader who does not know which is which reads the numbers backwards.
+ The sentences come out of PROCEDURE.md's status ladder, which is where
+ INDEX.md's own "How to read the counts" paragraph sends a reader for
+ them, and that paragraph travels with them because it is what defines
+ `rows` - the figure the site calls "claims".
+ ---------------------------------------------------------------------)
+
+To 'the status sentence for' with a list called 'the procedure lines' and a text called 'the status'.
+    a number called 'the line count' is 'the procedure lines's length.
+    a text called 'the sentence' is "".
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the line count' and 'the sentence' is "",
+        a text called 'one line' is element 'the scan position' of 'the procedure lines',
+        a list called 'the cells' is 'the cells of' of 'one line',
+        If 'the cells's length is 2 and element 1 of 'the cells' is 'the status' then, Set 'the sentence' to element 2 of 'the cells'.
+        Set 'the scan position' to 'the scan position' add 1.
+    Return a text, 'the sentence'.
+
+(The "How to read the counts" paragraph, rejoined into one line. It is
+ wrapped across several lines in the file and means nothing broken up.)
+To 'the paragraph opening' with a text called 'the opening' and a list called 'the file lines'.
+    a number called 'the line count' is 'the file lines's length.
+    a number called 'the first line' is 0.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the line count' and 'the first line' is 0,
+        a text called 'one line' is element 'the scan position' of 'the file lines',
+        If 'the line starts with' of 'one line' and 'the opening' then, Set 'the first line' to 'the scan position'.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'the first line' is 0 then, Return a text, "".
+    a buffer called 'the paragraph' is " ".
+    clear 'the paragraph'.
+    Set 'the scan position' to 'the first line'.
+    a boolean called 'still in the paragraph' is true.
+    While 'the scan position' is less than or equal to 'the line count' and 'still in the paragraph',
+        a text called 'one line' is element 'the scan position' of 'the file lines',
+        If 'one line' is "" then, Set 'still in the paragraph' to false.
+        If 'still in the paragraph' then,
+            If 'the paragraph's size is greater than 0 then, append " " to 'the paragraph'.
+            a text called 'the plain line' is 'the plain text of' of 'one line',
+            a buffer called 'the line bytes' is 'the plain line',
+            append 'the line bytes' to 'the paragraph'.
+        Set 'the scan position' to 'the scan position' add 1.
+    a buffer called 'the paragraph copy' is 'the paragraph'.
+    a text called 'the answer' is 'the paragraph copy' as text.
+    Return a text, 'the answer'.
+
+To 'the definitions'.
+    a list called 'the procedure lines' is 'lines of' of 'the procedure path'.
+    a text called 'the exercised sentence' is 'the status sentence for' of 'the procedure lines' and "exercised".
+    a text called 'the verified sentence' is 'the status sentence for' of 'the procedure lines' and "verified".
+    If 'the exercised sentence' is "" then, 'stop with' of "{'the procedure path'}: the status ladder has no `exercised` row, so the site would have no definition to print".
+    If 'the verified sentence' is "" then, 'stop with' of "{'the procedure path'}: the status ladder has no `verified` row, so the site would have no definition to print".
+    a list called 'the index lines' is 'lines of' of 'the index path'.
+    a text called 'the counts paragraph' is 'the paragraph opening' of "How to read the counts" and 'the index lines'.
+    a map called 'the definition block' is {}.
+    Set 'the definition block's "exercised" to 'the exercised sentence'.
+    Set 'the definition block's "verified" to 'the verified sentence'.
+    Set 'the definition block's "howToReadTheCounts" to 'the counts paragraph'.
+    Set 'the definition block's "source" to "{'the procedure path'} (the status ladder) and {'the index path'}".
+    Return a map, 'the definition block'.
+
+(---------------------------------------------------------------------
+ the probe families and the leaf library
+ ---------------------------------------------------------------------)
+
+To 'the probes'.
+    If 'path exists' of 'the probes directory' is false then, 'stop with' of "{'the probes directory'} is missing - the probe family count is a measurement the page shows, and zero would be a lie".
+    a list called 'the family paths' is 'the paths listed by' of "find {'shell quote' of 'the probes directory'} -mindepth 1 -maxdepth 1 -type d" and "probe-families.txt".
+    a list called 'the leaf paths' is 'the paths listed by' of "find {'shell quote' of 'the leaf directory'} -maxdepth 1 -type f -name 'gen_*.vox'" and "leaf-files.txt".
+    If 'the leaf paths's length is 0 then, 'stop with' of "no {'the leaf directory'}/gen_*.vox files - the leaf library is where every generated construct comes from, and an empty list is not a believable answer".
+    a number called 'the leaf count' is 0.
+    a number called 'the file index' is 1.
+    While 'the file index' is less than or equal to 'the leaf paths's length,
+        a text called 'one leaf file' is element 'the file index' of 'the leaf paths',
+        a list called 'the leaf lines' is 'lines of' of 'one leaf file',
+        a number called 'the line index' is 1,
+        While 'the line index' is less than or equal to 'the leaf lines's length,
+            a text called 'one line' is element 'the line index' of 'the leaf lines',
+            If 'the line starts with' of 'one line' and "To 'gen leaf" then, Set 'the leaf count' to 'the leaf count' add 1.
+            Set 'the line index' to 'the line index' add 1.
+        Set 'the file index' to 'the file index' add 1.
+    If 'the leaf count' is 0 then, 'stop with' of "no `To 'gen leaf` definitions found in {'the leaf directory'}/gen_*.vox - either the leaf library moved or its naming changed".
+    a map called 'the probe block' is {}.
+    Set 'the probe block's "families" to 'the family paths's length.
+    Set 'the probe block's "leaves" to 'the leaf count'.
+    Set 'the probe block's "leafFiles" to 'the leaf paths'.
+    Return a map, 'the probe block'.
+
+(---------------------------------------------------------------------
+ the seed ledger - optional, and never invented
+ ---------------------------------------------------------------------)
+
+(A count column that does not hold a plain number holds `n/a`, and `n/a`
+ is not zero. It becomes null, which is the only honest rendering of a
+ sweep that never compiled anything.)
+To 'the count or nothing in' with a text called 'the cell'.
+    a number called 'the count' is 'the number in' of 'the cell'.
+    If 'the count' is less than 0 then, Return a value, nothing.
+    Return a value, 'the count'.
+
+To 'the seed row for' with a list called 'the cells'.
+    a map called 'the row' is {}.
+    Set 'the row's "date" to element 1 of 'the cells'.
+    Set 'the row's "vox" to element 2 of 'the cells'.
+    Set 'the row's "voxFuzz" to element 3 of 'the cells'.
+    Set 'the row's "seeds" to element 4 of 'the cells'.
+    Set 'the row's "budget" to element 5 of 'the cells'.
+    Set 'the row's "programs" to 'the count or nothing in' of element 6 of 'the cells'.
+    Set 'the row's "compiled" to 'the count or nothing in' of element 7 of 'the cells'.
+    Set 'the row's "findings" to 'the count or nothing in' of element 8 of 'the cells'.
+    Set 'the row's "note" to element 9 of 'the cells'.
+    Return a map, 'the row'.
+
+To 'the seed rows in' with a text called 'the path'.
+    a list called 'the rows' is [].
+    a list called 'the seed lines' is 'lines of' of 'the path'.
+    a number called 'the line count' is 'the seed lines's length.
+    a number called 'the header line' is 0.
+    a number called 'the search position' is 1.
+    While 'the search position' is less than or equal to 'the line count' and 'the header line' is 0,
+        a text called 'one line' is element 'the search position' of 'the seed lines',
+        If 'the line starts with' of 'one line' and "| Date | vox | vox-fuzz |" then, Set 'the header line' to 'the search position'.
+        Set 'the search position' to 'the search position' add 1.
+    If 'the header line' is 0 then,
+        'note that' of "{'the path'} has no campaign table (no row opening `| Date | vox | vox-fuzz |`) - emitting an empty seed list rather than inventing rows",
+        Return a list, 'the rows'.
+    a number called 'the row line' is 'the header line' add 2.
+    a boolean called 'still in the table' is true.
+    While 'the row line' is less than or equal to 'the line count' and 'still in the table',
+        a text called 'one row' is element 'the row line' of 'the seed lines',
+        a list called 'the cells' is 'the cells of' of 'one row',
+        a number called 'the cell count' is 'the cells's length,
+        If 'the cell count' is 0 then, Set 'still in the table' to false.
+        a boolean called 'the row is malformed' is false,
+        If 'still in the table' and 'the cell count' is not 9 then, Set 'the row is malformed' to true.
+        If 'the row is malformed' then, 'note that' of "{'the path'} line {'the row line'}: a campaign row has {'the cell count'} cells, expected 9 - emitting an empty seed list rather than half a ledger", Set 'the rows' to [], Set 'still in the table' to false.
+        If 'still in the table' then, a map called 'the seed row' is 'the seed row for' of 'the cells', append 'the seed row' to 'the rows'.
+        Set 'the row line' to 'the row line' add 1.
+    Return a list, 'the rows'.
+
+To 'the seeds'.
+    If 'path exists' of 'the ledger seed path' then, Return a list, 'the seed rows in' of 'the ledger seed path'.
+    If 'path exists' of 'the root seed path' then, Return a list, 'the seed rows in' of 'the root seed path'.
+    'note that' of "no seed ledger at {'the ledger seed path'} or {'the root seed path'} - emitting an empty seed list".
+    a list called 'no seed rows' is [].
+    Return a list, 'no seed rows'.
+
+(---------------------------------------------------------------------
+ the findings - optional, because a clone that has run no campaign has
+ none, and none is a real answer
+ ---------------------------------------------------------------------)
+
+To 'the findings'.
+    a map called 'the finding block' is {}.
+    a map called 'by category' is {}.
+    If 'path exists' of 'the findings directory' is false then,
+        'note that' of "{'the findings directory'} is missing - reporting no findings, which is what a clone that has run no campaign has",
+        Set 'the finding block's "total" to 0,
+        Set 'the finding block's "byCategory" to 'by category',
+        Return a map, 'the finding block'.
+    a list called 'the category paths' is 'the paths listed by' of "find {'shell quote' of 'the findings directory'} -mindepth 1 -maxdepth 1 -type d" and "finding-categories.txt".
+    a list called 'the finding paths' is 'the paths listed by' of "find {'shell quote' of 'the findings directory'} -mindepth 2 -maxdepth 2 -type d" and "findings.txt".
+    a number called 'the finding total' is 0.
+    a number called 'the category index' is 1.
+    While 'the category index' is less than or equal to 'the category paths's length,
+        a text called 'one category path' is element 'the category index' of 'the category paths',
+        a text called 'the category' is 'the part of' of 'one category path' and "{'the findings directory'}/",
+        a number called 'findings in this category' is 0,
+        a number called 'the finding index' is 1,
+        While 'the finding index' is less than or equal to 'the finding paths's length,
+            a text called 'one finding path' is element 'the finding index' of 'the finding paths',
+            If 'the line starts with' of 'one finding path' and "{'one category path'}/" then, Set 'findings in this category' to 'findings in this category' add 1.
+            Set 'the finding index' to 'the finding index' add 1.
+        Set 'by category's "{'the category'}" to 'findings in this category',
+        Set 'the finding total' to 'the finding total' add 'findings in this category',
+        Set 'the category index' to 'the category index' add 1.
+    Set 'the finding block's "total" to 'the finding total'.
+    Set 'the finding block's "byCategory" to 'by category'.
+    (`curated` and `bugsFiled` are in the agreed schema but no file in
+     this repo states either one. An omitted key says "not counted here";
+     a zero would say "counted, and there are none". They stay out until
+     something owns them.)
+    Return a map, 'the finding block'.
+
+(---------------------------------------------------------------------
+ the defect register - the vox repo's own docs/BUGS_FOUND.md
+ ---------------------------------------------------------------------)
+
+(An entry heading is `### N. title`: the marker, then a digit. The
+ register's ordinary section headings are `###` too, so the digit is the
+ whole test.)
+To 'it opens a register entry' with a text called 'the line'.
+    a boolean called 'it is a heading' is 'the line starts with' of 'the line' and "### ".
+    If 'it is a heading' is false then, Return a boolean, false.
+    a text called 'the numbering' is 'the part of' of 'the line' and "### ".
+    a buffer called 'the numbering bytes' is 'the numbering'.
+    If 'the numbering bytes's size is 0 then, Return a boolean, false.
+    a number called 'the first byte' is byte 1 of 'the numbering bytes'.
+    If 'the first byte' is less than 48 then, Return a boolean, false.
+    If 'the first byte' is greater than 57 then, Return a boolean, false.
+    Return a boolean, true.
+
+(The register's own vocabulary, in the order that decides. An entry that
+ says it is fixed is fixed, whatever else the line goes on to say.
+ Nothing else is read as a resolution: the entries that say neither are
+ documentation corrections and "not a compiler defect" - resolved, but
+ never fixed - and counting those as open would put defects on the page
+ that do not exist.)
+To 'record the status on' with a text called 'the line'.
+    Set 'register entries classified' to 'register entries classified' add 1.
+    a boolean called 'it says fixed' is 'ignoring case, contains' of 'the line' and "fixed".
+    a boolean called 'it says open' is 'ignoring case, contains' of 'the line' and "open".
+    If 'it says fixed' then, Set 'register entries fixed' to 'register entries fixed' add 1.
+    If 'it says fixed' is false and 'it says open' then, Set 'register entries open' to 'register entries open' add 1.
+    If 'it says fixed' is false and 'it says open' is false then, Set 'register entries otherwise' to 'register entries otherwise' add 1.
+
+To 'the register'.
+    (Zeroed here rather than trusted to be fresh: the tallies are globals
+     so that the classifier can be its own function, and a global that is
+     only correct the first time it is read is a trap for whoever calls
+     this twice.)
+    Set 'register entries found' to 0.
+    Set 'register entries fixed' to 0.
+    Set 'register entries open' to 0.
+    Set 'register entries otherwise' to 0.
+    Set 'register entries classified' to 0.
+    a text called 'the register path' is "{'the vox repo'}/docs/BUGS_FOUND.md".
+    If 'path exists' of 'the register path' is false then, 'stop with' of "{'the register path'} is missing - set VOX_REPO or pass --vox-repo to name the vox checkout".
+    a list called 'the register lines' is 'lines of' of 'the register path'.
+    a number called 'the line count' is 'the register lines's length.
+    a boolean called 'awaiting a status' is false.
+    a number called 'the scan position' is 1.
+    While 'the scan position' is less than or equal to 'the line count',
+        a text called 'one line' is element 'the scan position' of 'the register lines',
+        a boolean called 'an entry opens here' is 'it opens a register entry' of 'one line',
+        If 'an entry opens here' then, Set 'register entries found' to 'register entries found' add 1, Set 'awaiting a status' to true.
+        a boolean called 'a status line' is false,
+        If 'awaiting a status' then, Set 'a status line' to 'the line starts with' of 'one line' and "**Status".
+        If 'a status line' then, Set 'awaiting a status' to false, 'record the status on' of 'one line'.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'register entries found' is 0 then, 'stop with' of "{'the register path'} has no `### N.` entries - the register's heading shape changed".
+    If 'register entries classified' is not 'register entries found' then, 'stop with' of "{'the register path'}: {'register entries found'} entries but {'register entries classified'} Status lines - an entry with no status cannot be counted as fixed or open".
+    a map called 'the register block' is {}.
+    Set 'the register block's "found" to 'register entries found'.
+    Set 'the register block's "fixed" to 'register entries fixed'.
+    Set 'the register block's "open" to 'register entries open'.
+    Set 'the register block's "other" to 'register entries otherwise'.
+    Set 'the register block's "source" to "vox docs/BUGS_FOUND.md".
+    Return a map, 'the register block'.
+
+(---------------------------------------------------------------------
+ the test suites
+ ---------------------------------------------------------------------)
+
+To 'the count of vox files in' with a text called 'the directory'.
+    If 'path exists' of 'the directory' is false then, 'stop with' of "{'the directory'} is missing - a test count the page shows cannot be guessed".
+    Set 'listings taken' to 'listings taken' add 1.
+    a text called 'the listing name' is "tests-{'listings taken'}.txt".
+    a list called 'the test paths' is 'the paths listed by' of "find {'shell quote' of 'the directory'} -maxdepth 1 -type f -name '*.vox'" and 'the listing name'.
+    Return a number, 'the test paths's length.
+
+To 'the tests'.
+    a number called 'the fuzzer tests' is 'the count of vox files in' of 'the tests directory'.
+    a number called 'the vox run tests' is 'the count of vox files in' of "{'the vox repo'}/tests".
+    a number called 'the vox compile fail tests' is 'the count of vox files in' of "{'the vox repo'}/tests/compile_fail".
+    a map called 'the vox test block' is {}.
+    Set 'the vox test block's "run" to 'the vox run tests'.
+    Set 'the vox test block's "compileFail" to 'the vox compile fail tests'.
+    a map called 'the test block' is {}.
+    Set 'the test block's "voxFuzz" to 'the fuzzer tests'.
+    Set 'the test block's "vox" to 'the vox test block'.
+    Return a map, 'the test block'.
+
+(---------------------------------------------------------------------
+ provenance
+ ---------------------------------------------------------------------)
+
+(The vox-fuzz commit recorded is HEAD at the moment of generation, which
+ is necessarily the commit BEFORE the one that carries this file - the
+ file cannot name the commit that adds it. The site treats a commit that
+ is not main's head as "the numbers are from <commit>, <date>", so this
+ is exactly the fact it wants. A date and no time: the file is committed,
+ and a timestamp would make every regeneration a diff.)
+To 'the provenance'.
+    a text called 'the answer path' is "{'the scratch directory'}/answer.txt".
+    a text called 'the fuzzer commit' is "".
+    a number called 'the fuzzer code' is 'run shell' of "git rev-parse --short HEAD > {'shell quote' of 'the answer path'} 2>/dev/null".
+    If 'the fuzzer code' is 0 then, Set 'the fuzzer commit' to 'first line of' of 'the answer path'.
+    a text called 'the vox commit' is "".
+    a number called 'the vox code' is 'run shell' of "git -C {'shell quote' of 'the vox repo'} rev-parse --short HEAD > {'shell quote' of 'the answer path'} 2>/dev/null".
+    If 'the vox code' is 0 then, Set 'the vox commit' to 'first line of' of 'the answer path'.
+    If 'the vox commit' is "" then, 'stop with' of "cannot read the vox checkout's commit at {'the vox repo'} - the numbers are read against a compiler, and the page names which one".
+    a number called 'the date code' is 'run shell' of "date +%Y-%m-%d > {'shell quote' of 'the answer path'}".
+    If 'the date code' is not 0 then, 'stop with' of "cannot read today's date ({'the date code'})".
+    a text called 'the date' is 'first line of' of 'the answer path'.
+    a map called 'the provenance block' is {}.
+    Set 'the provenance block's "commit" to 'the fuzzer commit'.
+    Set 'the provenance block's "date" to 'the date'.
+    Set 'the provenance block's "voxCommit" to 'the vox commit'.
+    Set 'the provenance block's "script" to "scripts/quality-stats".
+    Return a map, 'the provenance block'.
+
+(Vox has no getpid, so the scratch directory's name is read the way
+ src/sandbox.vox and scripts/repin-citations.vox read it: the first field
+ of /proc/self/stat. ./vf_* is gitignored and already swept by test.sh,
+ which is why every scratch path in this repo lives there.)
+To 'self pid'.
+    open a file for reading called 'the stat file' at "/proc/self/stat".
+    On error Return a number, 0.
+    a buffer called 'the stat bytes'.
+    Read from 'the stat file' into 'the stat bytes'.
+    Close 'the stat file'.
+    a buffer called 'the digits' is " ".
+    clear 'the digits'.
+    a buffer called 'one byte' is " ".
+    a number called 'the byte count' is 'the stat bytes's size.
+    a number called 'the scan position' is 1.
+    a boolean called 'still in digits' is true.
+    While 'the scan position' is less than or equal to 'the byte count' and 'still in digits',
+        a number called 'the current byte' is byte 'the scan position' of 'the stat bytes',
+        If 'the current byte' is less than 48 then, Set 'still in digits' to false.
+        If 'the current byte' is greater than 57 then, Set 'still in digits' to false.
+        If 'still in digits' then, Set byte 1 of 'one byte' to 'the current byte', append 'one byte' to 'the digits'.
+        Set 'the scan position' to 'the scan position' add 1.
+    If 'the digits's size is 0 then, Return a number, 0.
+    a buffer called 'the digits copy' is 'the digits'.
+    a text called 'the pid text' is 'the digits copy' as text.
+    Return a number, 'the number in' of 'the pid text'.
+
+(The two ways the document leaves. Both live in functions because a file
+ handle opened inside an `If` body belongs to that body, and neither of
+ these is reachable except under one.)
+To 'write the document' with a buffer called 'the document bytes' and a text called 'the path'.
+    open a file for writing called 'the output file' at 'the path'.
+    On error 'stop with' of "cannot write {'the path'}".
+    Write 'the document bytes' to 'the output file'.
+    On error 'stop with' of "write failed on {'the path'}".
+    Close 'the output file'.
+
+(Not closed, for the reason the error stream is not: descriptor 1 is
+ borrowed from whoever started this program, and closing it would take
+ their stdout with it.)
+To 'print the document' with a buffer called 'the document bytes'.
+    open a file for writing called 'the standard output' at 1.
+    On error 'stop with' of "cannot write to standard output".
+    Write 'the document bytes' to 'the standard output'.
+
+(---------------------------------------------------------------------
+ main
+ ---------------------------------------------------------------------)
+
+If the environment variable "VOX_REPO" exists then, Set 'the vox repo' to environment's "VOX_REPO".
+
+a list called 'the arguments' is arguments's all.
+a number called 'the argument index' is 1.
+While 'the argument index' is less than or equal to 'the arguments's length,
+    a text called 'the argument' is element 'the argument index' of 'the arguments',
+    a text called 'the value' is "",
+    a boolean called 'it takes a value' is false,
+    If 'the argument' is "--out" then, Set 'it takes a value' to true.
+    If 'the argument' is "--vox-repo" then, Set 'it takes a value' to true.
+    If 'it takes a value' then,
+        Set 'the argument index' to 'the argument index' add 1,
+        If 'the argument index' is greater than 'the arguments's length then,
+            Print "quality-stats: {'the argument'} needs a value",
+            Exit 2.
+        Set 'the value' to element 'the argument index' of 'the arguments'.
+    If 'the argument' is "--out" then, Set 'the output path' to 'the value'.
+    If 'the argument' is "--vox-repo" then, Set 'the vox repo' to 'the value'.
+    If 'the argument' is "--stdout" then, Set 'printing to stdout' to true, Set 'it takes a value' to true.
+    If 'it takes a value' is false then,
+        Print "quality-stats: unknown argument {'the argument'}",
+        Exit 2.
+    Set 'the argument index' to 'the argument index' add 1.
+
+a number called 'the pid' is 'self pid'.
+Set 'the scratch directory' to "./vf_qstats_{'the pid'}".
+a number called 'the scratch made' is 'run shell' of "mkdir -p {'shell quote' of 'the scratch directory'}".
+If 'the scratch made' is not 0 then, 'stop with' of "cannot create {'the scratch directory'}".
+
+(Read every source before writing anything. A source that fails takes the
+ whole run down with it, and the previous quality-stats.json is still
+ whole - which is the point of doing all the reading first.)
+a map called 'the definition block' is 'the definitions'.
+a map called 'the provenance block' is 'the provenance'.
+a map called 'the claim block' is 'the claims read from the index'.
+a map called 'the probe block' is 'the probes'.
+a list called 'the seed rows' is 'the seeds'.
+a map called 'the finding block' is 'the findings'.
+a map called 'the register block' is 'the register'.
+a map called 'the test block' is 'the tests'.
+
+a map called 'the document' is {}.
+Set 'the document's "definitions" to 'the definition block'.
+Set 'the document's "generated" to 'the provenance block'.
+Set 'the document's "claims" to 'the claim block'.
+Set 'the document's "probes" to 'the probe block'.
+Set 'the document's "seeds" to 'the seed rows'.
+Set 'the document's "findings" to 'the finding block'.
+Set 'the document's "register" to 'the register block'.
+Set 'the document's "tests" to 'the test block'.
+
+a text called 'the rendered document' is 'to json with indent' of 'the document' and 2.
+
+(A buffer, never a format string: the document is nothing but `{`, and a
+ format string would read every one of them as an interpolation. The
+ newline is added because this is a committed text file, and one that
+ does not end in a newline becomes a diff on somebody else's commit.)
+a buffer called 'the file output' is 'the rendered document'.
+append "\n" to 'the file output'.
+
+If 'printing to stdout' then, 'print the document' of 'the file output'.
+If 'printing to stdout' is false then, 'write the document' of 'the file output' and 'the output path'.
+
+'run shell' of "rm -rf {'shell quote' of 'the scratch directory'}".
+
+a map called 'the vox test block' is 'the test block's "vox".
+a list called 'the section rows' is 'the claim block's "sections".
+(Pulled out one per line because a `"key"` cannot be written inside a
+ `{...}` interpolation - the quotes would close the string it is in.)
+a number called 'the claim total' is 'the claim block's "total".
+a number called 'the exercised total' is 'the claim block's "exercised".
+a number called 'the verified total' is 'the claim block's "verified".
+a number called 'the family count' is 'the probe block's "families".
+a number called 'the leaf total' is 'the probe block's "leaves".
+a number called 'the register total' is 'the register block's "found".
+a number called 'the fixed total' is 'the register block's "fixed".
+a number called 'the fuzzer test count' is 'the test block's "voxFuzz".
+a number called 'the vox run count' is 'the vox test block's "run".
+a number called 'the vox compile fail count' is 'the vox test block's "compileFail".
+If 'printing to stdout' is false then,
+    Print "quality-stats: {'the claim total'} claims in {'the section rows's length} sections, {'the exercised total'} exercised, {'the verified total'} verified; {'the family count'} probe families, {'the leaf total'} leaves; {'the register total'} register entries, {'the fixed total'} fixed; tests {'the fuzzer test count'} + {'the vox run count'} run + {'the vox compile fail count'} compile-fail -> {'the output path'}".

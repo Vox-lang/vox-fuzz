@@ -1,0 +1,300 @@
+{
+  "definitions": {
+    "exercised": "a leaf emits the construct; the program must not crash. This tests memory safety only. The floor.",
+    "verified": "a leaf emits the construct and asserts its documented result, so a wrong answer is a finding",
+    "howToReadTheCounts": "How to read the counts: rows is claims enumerated; exercised and verified are rows with a leaf in main (see PROCEDURE.md §3); invariants is unjustified invariants the section's leaves still contribute to the corpus report (blank until a campaign has been run against the section). Progress is verified / rows going up and invariants going down — nothing else.",
+    "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
+  },
+  "generated": {
+    "commit": "a51add1",
+    "date": "2026-08-23",
+    "voxCommit": "1e612fb",
+    "script": "scripts/quality-stats"
+  },
+  "claims": {
+    "total": 1380,
+    "exercised": 365,
+    "verified": 10,
+    "sections": [
+      {
+        "prefix": "BAS",
+        "ledger": "basics.md",
+        "section": "Basics: statements, case, comments, paragraph breaks, sentence consumption, the termination rule, closing more than one level",
+        "claims": 61,
+        "exercised": 15,
+        "verified": 0
+      },
+      {
+        "prefix": "BAS2",
+        "ledger": "expansion.md",
+        "section": "Basics: ranges, loop expansion, but if, treating",
+        "claims": 59,
+        "exercised": 18,
+        "verified": 0
+      },
+      {
+        "prefix": "TYP",
+        "ledger": "types.md",
+        "section": "Types",
+        "claims": 11,
+        "exercised": 1,
+        "verified": 0
+      },
+      {
+        "prefix": "VAR",
+        "ledger": "variables.md",
+        "section": "Variables: declaration forms, set/create, canonical forms, assignment, type immutability, naming rules",
+        "claims": 66,
+        "exercised": 17,
+        "verified": 0
+      },
+      {
+        "prefix": "NAM",
+        "ledger": "names-and-strings.md",
+        "section": "Names and strings",
+        "claims": 7,
+        "exercised": 0,
+        "verified": 0
+      },
+      {
+        "prefix": "FUN",
+        "ledger": "functions.md",
+        "section": "Functions: definition, scope, parameter/local types, calls, calling as statement, reading a result",
+        "claims": 43,
+        "exercised": 14,
+        "verified": 0
+      },
+      {
+        "prefix": "THG",
+        "ledger": "things-a.md",
+        "section": "Things: defining, declarations and field access, nesting, value copy semantics",
+        "claims": 75,
+        "exercised": 19,
+        "verified": 0
+      },
+      {
+        "prefix": "THG2",
+        "ledger": "things-b.md",
+        "section": "Things: printing, equality, manifest, the three call forms, one identifier space, top-level only, cross-file, .lib, sentence consumption, diagnostics, predicates",
+        "claims": 77,
+        "exercised": 11,
+        "verified": 0
+      },
+      {
+        "prefix": "EXP",
+        "ledger": "expressions.md",
+        "section": "Expressions: literals, references, arithmetic, comparisons, property checks, logical operators, plural are, type casting",
+        "claims": 100,
+        "exercised": 42,
+        "verified": 0
+      },
+      {
+        "prefix": "FLW",
+        "ledger": "control-flow.md",
+        "section": "Control flow: if, while, for each, repeat, loop control, termination, increment/decrement",
+        "claims": 45,
+        "exercised": 17,
+        "verified": 0
+      },
+      {
+        "prefix": "LST",
+        "ledger": "collections-a.md",
+        "section": "Lists and collections: literals, mixed-type, nested, maps, type predicates",
+        "claims": 70,
+        "exercised": 18,
+        "verified": 0
+      },
+      {
+        "prefix": "VAL",
+        "ledger": "values.md",
+        "section": "Dynamic values (value) and nothing",
+        "claims": 32,
+        "exercised": 1,
+        "verified": 0
+      },
+      {
+        "prefix": "LST2",
+        "ledger": "collections-b.md",
+        "section": "Collections: printing, properties, element access, appending, loop expansion with collections, but if, treating",
+        "claims": 96,
+        "exercised": 35,
+        "verified": 0
+      },
+      {
+        "prefix": "FMT",
+        "ledger": "input-output.md",
+        "section": "Input/Output: print, format strings, conditional print",
+        "claims": 55,
+        "exercised": 33,
+        "verified": 0
+      },
+      {
+        "prefix": "BUF",
+        "ledger": "buffers.md",
+        "section": "File I/O: buffers, object properties, buffer properties, resizing, byte access, append/copy",
+        "claims": 39,
+        "exercised": 6,
+        "verified": 0
+      },
+      {
+        "prefix": "FIL",
+        "ledger": "files.md",
+        "section": "File I/O: file/list/number properties, opening, reading, seeking, writing, closing, file operations, error handling, resource safety",
+        "claims": 103,
+        "exercised": 20,
+        "verified": 0
+      },
+      {
+        "prefix": "PRC",
+        "ledger": "process-control.md",
+        "section": "Directories, mounting, device nodes, symlinks, pivot_root, executing programs, process control, system control",
+        "claims": 87,
+        "exercised": 0,
+        "verified": 0
+      },
+      {
+        "prefix": "TIM",
+        "ledger": "time.md",
+        "section": "Time and timers",
+        "claims": 60,
+        "exercised": 12,
+        "verified": 0
+      },
+      {
+        "prefix": "ARG",
+        "ledger": "arguments.md",
+        "section": "Command-line arguments, flag parsing",
+        "claims": 54,
+        "exercised": 15,
+        "verified": 4
+      },
+      {
+        "prefix": "ENV",
+        "ledger": "environment.md",
+        "section": "Environment variables",
+        "claims": 12,
+        "exercised": 1,
+        "verified": 6
+      },
+      {
+        "prefix": "OPR",
+        "ledger": "operators.md",
+        "section": "Operators: arithmetic, comparison, logical, bitwise",
+        "claims": 42,
+        "exercised": 17,
+        "verified": 0
+      },
+      {
+        "prefix": "KEY",
+        "ledger": "keywords.md",
+        "section": "Keywords: articles, starters, flag schema, connectors, and, reserved aliases, two classes of special word, contextual keywords",
+        "claims": 86,
+        "exercised": 36,
+        "verified": 0
+      },
+      {
+        "prefix": "EXA",
+        "ledger": "examples.md",
+        "section": "Examples chapter — each example is a composite claim",
+        "claims": 5,
+        "exercised": 0,
+        "verified": 0
+      },
+      {
+        "prefix": "LIB",
+        "ledger": "libraries.md",
+        "section": "Libraries and imports: see, shared libraries, .lib interface, mangling, --link",
+        "claims": 64,
+        "exercised": 5,
+        "verified": 0
+      },
+      {
+        "prefix": "CLI",
+        "ledger": "compiler-usage.md",
+        "section": "Compiler usage — claims about the CLI, tested by the harness rather than by leaves",
+        "claims": 8,
+        "exercised": 2,
+        "verified": 0
+      },
+      {
+        "prefix": "GRM",
+        "ledger": "grammar-summary.md",
+        "section": "Grammar summary — each production is a claim that the forms it lists parse",
+        "claims": 23,
+        "exercised": 10,
+        "verified": 0
+      }
+    ]
+  },
+  "probes": {
+    "families": 27,
+    "leaves": 65,
+    "leafFiles": [
+      "src/gen_buffers.vox",
+      "src/gen_collections.vox",
+      "src/gen_core.vox",
+      "src/gen_files.vox",
+      "src/gen_flow.vox",
+      "src/gen_literals.vox",
+      "src/gen_manifest.vox",
+      "src/gen_misc.vox",
+      "src/gen_text.vox",
+      "src/gen_things.vox"
+    ]
+  },
+  "seeds": [
+    {
+      "date": "2026-08-19",
+      "vox": "0.4.5",
+      "voxFuzz": "c99e734",
+      "seeds": "1–1000",
+      "budget": "12",
+      "programs": 1000,
+      "compiled": 1000,
+      "findings": 0,
+      "note": "post-modernization baseline"
+    },
+    {
+      "date": "2026-08-19",
+      "vox": "0.4.5",
+      "voxFuzz": "c99e734",
+      "seeds": "7000–7999",
+      "budget": "16",
+      "programs": 1000,
+      "compiled": 1000,
+      "findings": 0,
+      "note": "independent range, master-run"
+    },
+    {
+      "date": "2026-08-19",
+      "vox": "0.4.5",
+      "voxFuzz": "f20eb77",
+      "seeds": "1–2000 ×4 budgets",
+      "budget": "12/40/100/300",
+      "programs": 8000,
+      "compiled": null,
+      "findings": null,
+      "note": "guard sweep — generation only, no compile or run"
+    }
+  ],
+  "findings": {
+    "total": 2,
+    "byCategory": {
+      "parser-reject": 2
+    }
+  },
+  "register": {
+    "found": 100,
+    "fixed": 96,
+    "open": 0,
+    "other": 4,
+    "source": "vox docs/BUGS_FOUND.md"
+  },
+  "tests": {
+    "voxFuzz": 29,
+    "vox": {
+      "run": 597,
+      "compileFail": 315
+    }
+  }
+}
