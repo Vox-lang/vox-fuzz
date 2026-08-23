@@ -1,4 +1,4 @@
-(Discrepancy 6: the type-immutability diagnostic at LANGUAGE.md:595-603 shows
+(Discrepancy 6: the type-immutability diagnostic at LANGUAGE.md:611-619 shows
  the caret on the offending statement. The caret is instead placed by
  searching the source text for that statement, so the FIRST textual copy
  wins — including one inside a comment. This comment contains such a copy on

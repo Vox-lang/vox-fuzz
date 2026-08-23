@@ -6,7 +6,7 @@
  types the loop variable as a map". The loop variable carries the TAG
  (LST-55 proves `is a map` fires) but is not statically a map, so
  `entry's "tag"` inside the loop is a compile error. Discrepancy 2
- RESOLVED — the manual was corrected (LANGUAGE.md:2561-2575) to state
+ RESOLVED — the manual was corrected (LANGUAGE.md:2577-2591) to state
  exactly this rule and show the position-loop idiom below as the worked
  example, instead of the false "types the loop variable" claim. See
  Discrepancy 2, repro `D2.vox`.

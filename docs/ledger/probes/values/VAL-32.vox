@@ -1,7 +1,7 @@
 (VAL-32: a function whose conditional branches declare DIFFERENT return
  types (Return a text in one, Return a number in the other) has no
  single type for the To line to promise, so the caller reads the result
- as a number. LANGUAGE.md:2810-2816, the narrower limitation that
+ as a number. LANGUAGE.md:2826-2832, the narrower limitation that
  replaced the old (0.4.7) "conditional returns don't track type" claim
  once vox #43 fixed the general case (VAL-19).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/values/VAL-32.vox -o p && ./p

@@ -1,4 +1,4 @@
-(D3 — Discrepancy 3 repro: LANGUAGE.md:4668 says flags may be marked
+(D3 — Discrepancy 3 repro: LANGUAGE.md:4684 says flags may be marked
  required "and/or" given defaults, and 4387 says a default "initializes
  the flag value if the flag is not passed". Declare both on one flag and
  the two rules meet head-on: the flag is not passed, so the default

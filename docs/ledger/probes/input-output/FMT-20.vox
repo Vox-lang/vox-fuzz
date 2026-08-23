@@ -1,6 +1,6 @@
 (FMT-20 — `{x multiply y}` — a second operator in a slot, so the feature
  is the expression grammar and not one hardcoded verb.
- The manual's own example, LANGUAGE.md:3320.
+ The manual's own example, LANGUAGE.md:3336.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
    Product: 30

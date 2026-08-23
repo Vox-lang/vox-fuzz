@@ -13,7 +13,7 @@ manual, though most individual row citations inside this section still
 landed unchanged (the shift and later within-section deletions/insertions
 partly cancel per-line — e.g. VAR-01's own citation is still 461). The
 Type Immutability subsection specifically grew by #74's new `'s
-<property>` clause (see VAR-44): LANGUAGE.md:642–648 (was 623) is longer
+<property>` clause (see VAR-44): LANGUAGE.md:658–664 (was 623) is longer
 than its 0.4.9 self, not just relocated.
 
 **Discrepancy 1 is RESOLVED (vox #54)** — re-verified directly against
@@ -84,72 +84,72 @@ missing does exist on the map path.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| VAR-01 | 477 | `a` or `an` before a type keyword declares a new variable. | emit both articles across programs | yes — declare under each article and assert the value; hand-verified that neither article is checked against the word after it (`an number` compiles), and that a user thing type is the only way a vowel-initial type is even reachable | every leaf emits `a`; **no leaf ever emits `an`** — grep of every emitted string finds zero | exercised (`a` only) — the missing `an` is an unjustified invariant, see Report | |
-| VAR-02 | 479–485 | Worked example: the five `a TYPE called NAME is VALUE.` declarations compile and each name holds its literal. | reproduce all five in one program and assert each | yes — the generator wrote the literals | number/text/boolean/list/map declarations are all emitted, but by five different leaves and never together | exercised (composite); sub-claims are VAR-08/10/11/12/13 | |
-| VAR-03 | 490 | `Set a TYPE called NAME to VALUE.` declares and initializes. | emit the `Set` lead-in as an alternative spelling of a declaration | yes — `If NAME is not <literal> then, Exit 95.` | **none** — grep for `Set a ` inside emitted strings finds zero | todo | |
-| VAR-04 | 491 | `Create a TYPE called NAME to VALUE.` declares and initializes. | emit the `Create` lead-in | yes, same assertion as VAR-03 | **none** — grep for `Create a ` inside emitted strings finds zero | todo — probe VAR-03.vox | |
-| VAR-05 | 496–497 | Every declarable type supports two equivalent forms, both routed through the same type resolver. | for each type, emit both forms in one program and assert they produce the same kind of variable | yes for the types that have both — assert `X's type` is equal for the initialized and the defaulted name | partial: the initialized form is everywhere, the defaulted form only for `timer` and thing types | todo — and the "every" does not hold: `timer` has only the defaulted form, `file`/`time` only the initialized one, see **Discrepancy 8** | |
-| VAR-06 | 499–504 | `A TYPE called NAME is VALUE.` declares and initializes immediately; `Set`/`Create` with `to <value>` is the same form with a different lead-in word. | emit the three lead-ins interchangeably and assert the same result from each | yes | the bare lead-in is universal; the other two are never emitted | exercised (bare form only) — probe VAR-03.vox | |
-| VAR-07 | 505–506 | `Create a TYPE called NAME.` declares NAME with no initializer and gives it that type's default (zero) value. | emit the no-initializer declaration and assert the default | yes — the default is fixed per type | the no-initializer *shape* is emitted (`a t1 called i{n}` in `gen leaf thing copy`, `a timer called tk{n}` in `gen leaf timer and clock`), but never under the `Create` lead-in and never for a builtin value type | todo — and the bare-lead-in spelling of this form is undocumented, see **Discrepancy 7** | |
-| VAR-08 | 509, 521 | Default for `number` is `0`. | `Create a number called N.` then `If N is not 0 then, Exit 95.` | yes | none | todo — probe VAR-07.vox | |
-| VAR-09 | 510, 522 | Default for `float` is `0.0`. | as VAR-08, against `0.0` | yes | none | todo — probe VAR-07.vox | |
-| VAR-10 | 523 | Default for `text` is the empty string. | assert the length or a bracketed print is empty | yes | none | todo | |
-| VAR-11 | 511, 524 | Default for `boolean` is `false` (`0`). | assert the name is false | yes; note the runtime prints a boolean as `1`/`0`, which is the Input/Output section's business | none | todo — probe VAR-07.vox | |
-| VAR-12 | 512, 525 | Default for `list` is `[]`. | assert `N's length` is 0 | yes | `a list called l{n} is []` (`gen leaf list mixed`) emits an empty list literal, which is a *different* construct — the initializer is present | todo — probe VAR-07.vox | |
-| VAR-13 | 513, 526 | Default for `map` is `{}`. | assert `N's length` is 0 | yes | none — every emitted map carries a literal | todo — probe VAR-07.vox | |
+| VAR-01 | 493 | `a` or `an` before a type keyword declares a new variable. | emit both articles across programs | yes — declare under each article and assert the value; hand-verified that neither article is checked against the word after it (`an number` compiles), and that a user thing type is the only way a vowel-initial type is even reachable | every leaf emits `a`; **no leaf ever emits `an`** — grep of every emitted string finds zero | exercised (`a` only) — the missing `an` is an unjustified invariant, see Report | |
+| VAR-02 | 495–501 | Worked example: the five `a TYPE called NAME is VALUE.` declarations compile and each name holds its literal. | reproduce all five in one program and assert each | yes — the generator wrote the literals | number/text/boolean/list/map declarations are all emitted, but by five different leaves and never together | exercised (composite); sub-claims are VAR-08/10/11/12/13 | |
+| VAR-03 | 506 | `Set a TYPE called NAME to VALUE.` declares and initializes. | emit the `Set` lead-in as an alternative spelling of a declaration | yes — `If NAME is not <literal> then, Exit 95.` | **none** — grep for `Set a ` inside emitted strings finds zero | todo | |
+| VAR-04 | 507 | `Create a TYPE called NAME to VALUE.` declares and initializes. | emit the `Create` lead-in | yes, same assertion as VAR-03 | **none** — grep for `Create a ` inside emitted strings finds zero | todo — probe VAR-03.vox | |
+| VAR-05 | 512–513 | Every declarable type supports two equivalent forms, both routed through the same type resolver. | for each type, emit both forms in one program and assert they produce the same kind of variable | yes for the types that have both — assert `X's type` is equal for the initialized and the defaulted name | partial: the initialized form is everywhere, the defaulted form only for `timer` and thing types | todo — and the "every" does not hold: `timer` has only the defaulted form, `file`/`time` only the initialized one, see **Discrepancy 8** | |
+| VAR-06 | 515–520 | `A TYPE called NAME is VALUE.` declares and initializes immediately; `Set`/`Create` with `to <value>` is the same form with a different lead-in word. | emit the three lead-ins interchangeably and assert the same result from each | yes | the bare lead-in is universal; the other two are never emitted | exercised (bare form only) — probe VAR-03.vox | |
+| VAR-07 | 521–522 | `Create a TYPE called NAME.` declares NAME with no initializer and gives it that type's default (zero) value. | emit the no-initializer declaration and assert the default | yes — the default is fixed per type | the no-initializer *shape* is emitted (`a t1 called i{n}` in `gen leaf thing copy`, `a timer called tk{n}` in `gen leaf timer and clock`), but never under the `Create` lead-in and never for a builtin value type | todo — and the bare-lead-in spelling of this form is undocumented, see **Discrepancy 7** | |
+| VAR-08 | 525, 537 | Default for `number` is `0`. | `Create a number called N.` then `If N is not 0 then, Exit 95.` | yes | none | todo — probe VAR-07.vox | |
+| VAR-09 | 526, 538 | Default for `float` is `0.0`. | as VAR-08, against `0.0` | yes | none | todo — probe VAR-07.vox | |
+| VAR-10 | 539 | Default for `text` is the empty string. | assert the length or a bracketed print is empty | yes | none | todo | |
+| VAR-11 | 527, 540 | Default for `boolean` is `false` (`0`). | assert the name is false | yes; note the runtime prints a boolean as `1`/`0`, which is the Input/Output section's business | none | todo — probe VAR-07.vox | |
+| VAR-12 | 528, 541 | Default for `list` is `[]`. | assert `N's length` is 0 | yes | `a list called l{n} is []` (`gen leaf list mixed`) emits an empty list literal, which is a *different* construct — the initializer is present | todo — probe VAR-07.vox | |
+| VAR-13 | 529, 542 | Default for `map` is `{}`. | assert `N's length` is 0 | yes | none — every emitted map carries a literal | todo — probe VAR-07.vox | |
 | VAR-14 | ?, 527 | Default for `buffer` is empty, 0 bytes, dynamic capacity. | assert size 0 and that appends grow it | yes for size; **no** for capacity — the compiler reports 4096, which is already Discrepancy 1 of `buffers.md` (BUF-02) | none | todo (size half); the capacity half is blocked on `buffers.md` D1 | |
-| VAR-15 | 515, 528 | Default for `value` is `nothing`. | `Create a value called N.` then `If N is not nothing then, Exit 95.` | yes | `gen leaf value roundtrip` declares `a value called y{n} is {number}` — always initialized, never defaulted | todo — probe VAR-07.vox | |
-| VAR-16 | 516, 529 | Default for `timer` is "ready to `Start`". | declare bare, Start, Stop, assert elapsed is not negative | yes, weakly — "ready" has no direct reading; the observable form is that Start/Stop then work | `gen leaf timer and clock` emits exactly `a timer called tk{n}` + `Start` + `Stop` + an elapsed read, and checks it is not negative — the closest thing to an assertion anywhere in the generator, though it prints a label rather than exiting 95 | exercised | |
+| VAR-15 | 531, 544 | Default for `value` is `nothing`. | `Create a value called N.` then `If N is not nothing then, Exit 95.` | yes | `gen leaf value roundtrip` declares `a value called y{n} is {number}` — always initialized, never defaulted | todo — probe VAR-07.vox | |
+| VAR-16 | 532, 545 | Default for `timer` is "ready to `Start`". | declare bare, Start, Stop, assert elapsed is not negative | yes, weakly — "ready" has no direct reading; the observable form is that Start/Stop then work | `gen leaf timer and clock` emits exactly `a timer called tk{n}` + `Start` + `Stop` + an elapsed read, and checks it is not negative — the closest thing to an assertion anywhere in the generator, though it prints a label rather than exiting 95 | exercised | |
 | VAR-17 | ?, 533–536 | `Create a file called N.` is rejected at compile time; a file needs a path. | — | **no** — emitting it produces a non-compiling program, outside the generator's "legal Vox that should compile and run" contract | n/a | not assertable | |
 | VAR-18 | ?, 533–536 | `Create a time called N.` is rejected at compile time; a time needs an initializer. | — | **no**, same reason as VAR-17 | n/a | not assertable | |
-| VAR-19 | 539–541 | The `file` rejection names what to supply, with the `Example:` line quoted in the manual. | — | **no**, same reason | n/a | not assertable — probe VAR-17.vox reproduces the diagnostic verbatim | |
-| VAR-20 | 543–546 | The `time` rejection names what to supply, with its `Example:` line. | — | **no**, same reason | n/a | not assertable — probe VAR-18.vox | |
-| VAR-21 | 548–549 | `a file called source is "input.txt".` and `a time called now is current time.` are the accepted way to give those types a value. | emit both declaration forms | yes — assert `X's type` | **none for either**: files reach the generated programs only through `open a file … called fr{n} at …`, and `time` only through `Get current time into tn{n}`; neither `a file called … is …` nor `a time called … is …` is ever emitted | todo — real gap, hand-verified to work | |
-| VAR-22 | 568 | `the` before a name references an existing variable. | emit the `the NAME` reference form | yes | `gen leaf timer and clock` emits `the tk{n}'s elapsed in milliseconds` and `the tn{n}'s unix` / `'s year` — the only three `the`-references in the whole generator, and all three are possessive reads | exercised (possessive read only) | |
-| VAR-23 | 571 | `the x is 10.` assigns to an existing variable. | emit the `the NAME is VALUE.` assignment | yes — the generator chose the value | **none** — the `the`-as-assignment-target form is never emitted | todo — probe VAR-22.vox | |
-| VAR-24 | 572 | `the counter is the counter add 1.` — `the` also reads on the right-hand side of an assignment. | emit a self-referential `the` assignment | yes | **none** | todo — probe VAR-22.vox | |
-| VAR-25 | 577–578 | A variable's type is fixed at its declaration and never changes; `value` is the one deliberate exception. | — | **no** — putting it on trial means emitting a mismatch, which does not compile. The exception half is VAR-41. | n/a | not assertable — probe VAR-26.vox | |
+| VAR-19 | 555–557 | The `file` rejection names what to supply, with the `Example:` line quoted in the manual. | — | **no**, same reason | n/a | not assertable — probe VAR-17.vox reproduces the diagnostic verbatim | |
+| VAR-20 | 559–562 | The `time` rejection names what to supply, with its `Example:` line. | — | **no**, same reason | n/a | not assertable — probe VAR-18.vox | |
+| VAR-21 | 564–565 | `a file called source is "input.txt".` and `a time called now is current time.` are the accepted way to give those types a value. | emit both declaration forms | yes — assert `X's type` | **none for either**: files reach the generated programs only through `open a file … called fr{n} at …`, and `time` only through `Get current time into tn{n}`; neither `a file called … is …` nor `a time called … is …` is ever emitted | todo — real gap, hand-verified to work | |
+| VAR-22 | 584 | `the` before a name references an existing variable. | emit the `the NAME` reference form | yes | `gen leaf timer and clock` emits `the tk{n}'s elapsed in milliseconds` and `the tn{n}'s unix` / `'s year` — the only three `the`-references in the whole generator, and all three are possessive reads | exercised (possessive read only) | |
+| VAR-23 | 587 | `the x is 10.` assigns to an existing variable. | emit the `the NAME is VALUE.` assignment | yes — the generator chose the value | **none** — the `the`-as-assignment-target form is never emitted | todo — probe VAR-22.vox | |
+| VAR-24 | 588 | `the counter is the counter add 1.` — `the` also reads on the right-hand side of an assignment. | emit a self-referential `the` assignment | yes | **none** | todo — probe VAR-22.vox | |
+| VAR-25 | 593–594 | A variable's type is fixed at its declaration and never changes; `value` is the one deliberate exception. | — | **no** — putting it on trial means emitting a mismatch, which does not compile. The exception half is VAR-41. | n/a | not assertable — probe VAR-26.vox | |
 | VAR-26 | ? | The `x is <value>.` write form on an already-declared name is type-checked. | — | **no**, compile-error claim. Worth noting separately that the *legal* same-type spelling `x is <value>.` is itself never emitted by any leaf. | none emits the bare reassignment spelling at all | not assertable | |
 | VAR-27 | ? | The `the x is <value>.` write form is type-checked the same way. | — | **no**, compile-error claim; the legal spelling is also never emitted | none | not assertable | |
 | VAR-28 | ? | The `Set x to <value>.` write form is type-checked the same way. | — | **no**, compile-error claim | the legal same-type spelling **is** emitted: `gen leaf assign` (`Set v{n} to <expr>.`), `gen leaf value roundtrip` (`Set y{n} to "…"`), `gen leaf timer and clock` (`Set ta{n} to ta{n} add te{n}`) | not assertable (the check); exercised (the form) | |
-| VAR-29 | 580–582 | A type mismatch on any of those three forms is a compile error, not a silent retype. | — | **no**, compile-error claim | n/a | not assertable — probes VAR-26/27/28.vox | |
-| VAR-30 | 585–586 | Worked example: after `a number called n is 5.`, `n is "abc".` errors with `cannot assign text to 'n', which is a number`. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-26.vox | |
-| VAR-31 | 587 | `n is "42" as a number.` is accepted and `n` becomes 42. | emit a cast-repaired reassignment of an existing name and assert the result | yes — `If n is not 42 then, Exit 95.` | partial: `gen leaf cast and break` emits `a number called cb{n} is ct{n} as a number` and `gen leaf base conversion` emits `a number called bg{n} is bx{n} as a number` — both **declare a new name**; the cast never lands on an already-declared one, which is the case this claim is about | todo | |
-| VAR-32 | 590–603 | The diagnostic names the variable, its declared type, its declaration site, the offending value's type, and the exact cast that would fix it. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-26.vox reproduces the block; but see **Discrepancy 6**, the caret is not where the manual shows it | |
-| VAR-33 | 605–607 | The repair uses the ordinary Type Casting mechanism (`as a number` / `as text`), not syntax invented for this rule. | emit both cast directions | yes | `as a number` and `as text` are both emitted (`gen leaf cast and break`, `gen leaf base conversion`), never asserted | exercised — probe VAR-31.vox | |
-| VAR-34 | 609–611 | Reusing an already-declared name as a `For each … in <collection>` loop variable rejects a conflicting type. | — | **no**, compile-error claim — but the *memory-safety* half is a real leaf need: emit the pattern and require the program not to produce a wrong answer | `For each w{n} in l{n}` and `For each k{n} in m{n}'s keys` are emitted (`gen leaf list mixed`, `gen leaf map inrange`), always with a fresh name, so the reuse case is never reached | todo — **the claim still does not hold for the loop header**, see **Discrepancy 2** (still open). Note the *downstream* symptom this row's own probe exercises changed: `counted add 1` after the loop used to silently print a raw address, and is now a compile error (vox #54's side effect) — the probe was re-recorded to that. | blocked on D2 |
-| VAR-35 | 609–611 | Reusing an already-declared name as a for-range loop variable rejects a conflicting type. | — | **no**, compile-error claim | for-range loops are emitted (`gen leaf timer and clock`, `gen leaf deep grid`, the loop-control leaves), always with a fresh name | not assertable — holds, probe VAR-35.vox | |
-| VAR-36 | 611 | Reusing an already-declared name as the target of `open … called` rejects a conflicting type. | — | **no**, compile-error claim | `open a file for reading called fr{n} at …` is emitted (`gen leaf file round trip`, `gen leaf stdin read`, `gen leaf file write`), always with a fresh name | not assertable — holds, probe VAR-36.vox | |
-| VAR-37 | 612 | Reusing an already-declared name as the target of `Allocate … for` rejects a conflicting type. | — | **no**, compile-error claim | **none** — `Allocate` is never emitted by any leaf, and appears nowhere else in LANGUAGE.md than this one line: the manual references a construct it does not define | not assertable — holds for text/list targets, does **not** hold for buffer targets, see **Discrepancy 3** | |
-| VAR-38 | 613–615 | A nested declaration that reuses an outer name at a different type is rejected; Vox has no block-level scoping, so there is no inner slot for it. | — | **no**, compile-error claim | nested declarations inside `If`/loop bodies are emitted constantly, always with a fresh name | not assertable — holds, probe VAR-38.vox | |
-| VAR-39 | 617–622 | Worked example: the `If` block redeclaring `n` as text errors with `cannot bind 'n' to text in this declaration`. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-38.vox reproduces it | |
-| VAR-40 | 626–629 | Buffer exemption: writing into a buffer formats the value's text representation into its content, so a buffer accepts any value type on every write. | write a number, a boolean, a float and a text into one buffer in turn and assert the content each time | yes — the generator knows what it wrote and what its text form is | partial: `gen leaf format types` and the `gb`/`gc`/`gw` format leaves write **text** into buffers via `is`, `set`, `append` and `copy` — a number, boolean or float written into a buffer is never emitted, and nothing asserts the resulting content | exercised (text sources only); todo for the cross-type writes and for all assertions | |
-| VAR-41 | 630–633 | `value` exemption: a `value`-declared name keeps accepting any type across reassignment. | reassign a value across at least two type boundaries and assert each | yes | `gen leaf value roundtrip` (`a value called y{n} is <number>` → `Set y{n} to "<text>"`) crosses exactly one boundary, number to text, and prints rather than asserts | exercised | |
-| VAR-42 | 634–637 | `<valuevar> is a <type>.` retypes a `value` in place: reads the runtime tag, converts, updates the tag. | emit an in-place retype and assert both the converted value and the new `'s type` | yes — the generator supplies the source text and knows its numeric value | **none** — the retype statement is never emitted; `grep` for `is a number.` in emitted strings finds only flag-schema lines (`it is a number.`), a different construct | todo — real gap, hand-verified to work | |
-| VAR-43 | 637–640 | The same statement applied to a statically-typed name is rejected. | — | **no**, compile-error claim | n/a | not assertable — holds, probe VAR-43.vox | |
-| VAR-44 | 642–648 | **Claim extended, 2026-08-22 (0.4.10, #74).** The check only rejects a mismatch provable statically from the value's own shape — a literal, a cast, a read from a list/map whose element type is provably uniform, and (new in 0.4.10) **a `'s <property>` read whose property has the same type whatever it is read from** — every Object Properties table entry except `first`/`last`/`absolute`/`duration`/`elapsed`, whose type follows the thing they are read from. Before #74, `a text called t is xs's length.` compiled and segfaulted on the first read — the type lock's oracle answered only for `first`/`last` and treated every other property as "type unknown". | for the property half: assign a mistyped property read (e.g. a `number` property into a declared `text`) and expect a compile error naming the two ways out | **no** — a claim about the boundary of a compile-time check; both sides of the boundary are compile errors or sanctioned garbage | n/a | not assertable — **and the list half did not hold through 0.4.9**, see **Discrepancy 1**; probes VAR-45.vox and D1b.vox. **The new property half hand-verified fixed against 0.4.10**: `a text called badlen is xs's length.` now refuses to compile, naming both ways out, where 0.4.9 segfaulted | |
-| VAR-45 | 648–651 | A value from a function call, or an unprovable list/map read, is allowed through unchecked. | emit the pattern and require no crash | **not as a correctness oracle** — the manual sanctions the resulting garbage, so there is no documented right answer to assert. As a **memory-safety** leaf it is worth emitting: the program must not crash. | **none** — no leaf assigns a function result or a collection read to an already-declared name of another type | todo (memory-safety leaf) | |
-| VAR-46 | 651–654 | The rule closes the class where the compiler-tracked type disagrees with what the variable holds — previously "a wrong number on screen at best and a segfault at worst". | emit the residual patterns and require the program not to crash | yes as a crash oracle | none | todo — **RESOLVED, vox #54**: the segfault no longer reproduces, the mismatch is now refused at compile time. See Discrepancy 1 (resolved); probe VAR-46.vox is now a compile-error probe. | unblocked |
-| VAR-47 | 653–655 | The rule says nothing about type agreement across a `.lib` import boundary; a library's declared signature is trusted, not verified against its `.so`. | — | **no** — needs a second compilation unit and a built `.so`/`.lib` pair, outside the generator's one-program contract | n/a | not assertable — hand-verified anyway; transcript below the table | |
-| VAR-48 | 658–660 | A name is an identifier, never a string literal: three forms, no overlap, no context-sensitivity. | emit all three forms in one program | yes | all three appear across the generator | exercised — **but the "no context-sensitivity" half does not hold**, see **Discrepancy 5** | |
-| VAR-49 | 664 | `"…"` is a string literal, always, everywhere. | — | yes, as data | emitted constantly as data (`Print "…"`, map keys, flag aliases, file paths) | exercised — probe VAR-48.vox | |
-| VAR-50 | 665 | `bare_word` is a single-word identifier. | — | yes | every emitted name | exercised — probe VAR-48.vox | |
-| VAR-51 | 666 | `'multi word'` is an identifier containing spaces. | — | yes | `gen leaf environment oob` emits `a text called 'the missing value {n}' is …` and reads it back — the **only** leaf that emits a quoted variable name; `'grid sink {n}'`, `'made at'` and `'reflected across'` are quoted *function* names, a different position | exercised (one leaf) — probe VAR-48.vox | |
-| VAR-52 | 668–669 | Where an identifier is expected and a string literal is found, that is a compile error. | — | **no**, compile-error claim | n/a | not assertable | |
-| VAR-53 | 670–671 | A bare identifier matches `[A-Za-z_][A-Za-z0-9_]*`. | vary the shape of emitted names across the whole accepted set | yes — declare and read back | every emitted name is lowercase letters followed by a counter (`v3`, `gb7`, `fl2label`): no capital, no underscore, no digit anywhere but the tail | exercised (a very narrow band of the set) — **and the manual's set is wrong**, see **Discrepancy 9** | |
-| VAR-54 | 670–672 | A bare identifier is not a reserved keyword; reserved keywords remain rejected as names. | — | **no**, compile-error claim | n/a | not assertable — **and it is not enforced in every binding position**, see **Discrepancy 4** | |
-| VAR-55 | 671–672 | A name that collides with a reserved word is written quoted (`'number'`, `'version'`). | emit a quoted reserved word as a name and read it back | yes | **none** — no emitted name is a quoted reserved word | todo, hand-verified to work | |
-| VAR-56 | 673–674 | A quoted identifier is `'`…`'` containing two or more characters. | emit two-character and longer quoted names | yes | `'the missing value {n}'` only — always long, always multi-word, always the same shape | exercised (one shape) | |
-| VAR-57 | 674 | A quoted identifier contains no newline. | — | **no**, compile-error claim | n/a | not assertable | |
-| VAR-58 | 674–676 | Exactly one character between single quotes is a character literal, so single-character quoted identifiers do not exist. | emit a character literal and assert its code point | yes — `a number called cN is 'A'.` then `If cN is not 65 then, Exit 95.` | **none** — no leaf emits a character literal at all | todo — a cheap, fully assertable row | |
-| VAR-59 | 677–678 | Single-word quoted identifiers are legal but non-canonical, and lex identically to the bare form. | declare under one spelling, read under the other, assert the value | yes | **none** — the one quoted name the generator emits is multi-word and is always read back in the same spelling | todo — fully assertable | |
-| VAR-60 | 679–681 | Possessive: after a closing identifier quote, an `s` immediately following and itself followed by a non-identifier character is the possessive marker. | emit `'quoted name's <property>` | yes — assert the property's value | **none** — the possessive is emitted only on bare names (`m{n}'s "label"`, `i{n}'s x1`, `tk{n}'s elapsed`); never on a quoted one | todo — real gap, hand-verified to work | |
-| VAR-61 | 681–682 | `'name''s` also works; both spellings are accepted. | emit the doubled form too | yes, same assertion | **none** | todo — probe VAR-60.vox | |
-| VAR-62 | 683–684 | Map keys are data, not names, and stay double-quoted. | — | yes | `gen leaf map inrange` / `oob` emit `m{n}'s "label"`, `Set m{n}'s "count" to …`, and map literals with double-quoted keys | exercised | |
-| VAR-63 | 684 | File paths are data, not names, and stay double-quoted. | — | yes | double-quoted paths are emitted (`open … at "…"`, `a text called fp{n} is "…"`); `see` is never emitted at all | exercised (for `open`) — **but the rule is not enforced for `see`**, see **Discrepancy 5** | |
-| VAR-64 | 684–685 | Flag aliases are data, not names, and stay double-quoted. | — | yes | `gen emit prelude flags` emits `a flag called fl{n}label is "-a" or "--alpha{n}", …` | exercised | |
-| VAR-65 | 685 | Version strings are data, not names, and stay double-quoted. | — | **no** — the only positions a version appears in are the `Library` header and `see … version …`, both of which need a second compilation unit | none — `see` and `Library` are never emitted | not assertable — hand-verified anyway; transcript in `D5.vox`, and the rule does **not** hold, see **Discrepancy 5** | |
-| VAR-66 | 687–688 | Cross-reference to *Names and strings* for why one token cannot mean two things. | — | — | — | folded into VAR-48; the `NAM` ledger owns the argument itself | |
+| VAR-29 | 596–598 | A type mismatch on any of those three forms is a compile error, not a silent retype. | — | **no**, compile-error claim | n/a | not assertable — probes VAR-26/27/28.vox | |
+| VAR-30 | 601–602 | Worked example: after `a number called n is 5.`, `n is "abc".` errors with `cannot assign text to 'n', which is a number`. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-26.vox | |
+| VAR-31 | 603 | `n is "42" as a number.` is accepted and `n` becomes 42. | emit a cast-repaired reassignment of an existing name and assert the result | yes — `If n is not 42 then, Exit 95.` | partial: `gen leaf cast and break` emits `a number called cb{n} is ct{n} as a number` and `gen leaf base conversion` emits `a number called bg{n} is bx{n} as a number` — both **declare a new name**; the cast never lands on an already-declared one, which is the case this claim is about | todo | |
+| VAR-32 | 606–619 | The diagnostic names the variable, its declared type, its declaration site, the offending value's type, and the exact cast that would fix it. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-26.vox reproduces the block; but see **Discrepancy 6**, the caret is not where the manual shows it | |
+| VAR-33 | 621–623 | The repair uses the ordinary Type Casting mechanism (`as a number` / `as text`), not syntax invented for this rule. | emit both cast directions | yes | `as a number` and `as text` are both emitted (`gen leaf cast and break`, `gen leaf base conversion`), never asserted | exercised — probe VAR-31.vox | |
+| VAR-34 | 625–627 | Reusing an already-declared name as a `For each … in <collection>` loop variable rejects a conflicting type. | — | **no**, compile-error claim — but the *memory-safety* half is a real leaf need: emit the pattern and require the program not to produce a wrong answer | `For each w{n} in l{n}` and `For each k{n} in m{n}'s keys` are emitted (`gen leaf list mixed`, `gen leaf map inrange`), always with a fresh name, so the reuse case is never reached | todo — **the claim still does not hold for the loop header**, see **Discrepancy 2** (still open). Note the *downstream* symptom this row's own probe exercises changed: `counted add 1` after the loop used to silently print a raw address, and is now a compile error (vox #54's side effect) — the probe was re-recorded to that. | blocked on D2 |
+| VAR-35 | 625–627 | Reusing an already-declared name as a for-range loop variable rejects a conflicting type. | — | **no**, compile-error claim | for-range loops are emitted (`gen leaf timer and clock`, `gen leaf deep grid`, the loop-control leaves), always with a fresh name | not assertable — holds, probe VAR-35.vox | |
+| VAR-36 | 627 | Reusing an already-declared name as the target of `open … called` rejects a conflicting type. | — | **no**, compile-error claim | `open a file for reading called fr{n} at …` is emitted (`gen leaf file round trip`, `gen leaf stdin read`, `gen leaf file write`), always with a fresh name | not assertable — holds, probe VAR-36.vox | |
+| VAR-37 | 628 | Reusing an already-declared name as the target of `Allocate … for` rejects a conflicting type. | — | **no**, compile-error claim | **none** — `Allocate` is never emitted by any leaf, and appears nowhere else in LANGUAGE.md than this one line: the manual references a construct it does not define | not assertable — holds for text/list targets, does **not** hold for buffer targets, see **Discrepancy 3** | |
+| VAR-38 | 629–631 | A nested declaration that reuses an outer name at a different type is rejected; Vox has no block-level scoping, so there is no inner slot for it. | — | **no**, compile-error claim | nested declarations inside `If`/loop bodies are emitted constantly, always with a fresh name | not assertable — holds, probe VAR-38.vox | |
+| VAR-39 | 633–638 | Worked example: the `If` block redeclaring `n` as text errors with `cannot bind 'n' to text in this declaration`. | — | **no**, compile-error claim | n/a | not assertable — probe VAR-38.vox reproduces it | |
+| VAR-40 | 642–645 | Buffer exemption: writing into a buffer formats the value's text representation into its content, so a buffer accepts any value type on every write. | write a number, a boolean, a float and a text into one buffer in turn and assert the content each time | yes — the generator knows what it wrote and what its text form is | partial: `gen leaf format types` and the `gb`/`gc`/`gw` format leaves write **text** into buffers via `is`, `set`, `append` and `copy` — a number, boolean or float written into a buffer is never emitted, and nothing asserts the resulting content | exercised (text sources only); todo for the cross-type writes and for all assertions | |
+| VAR-41 | 646–649 | `value` exemption: a `value`-declared name keeps accepting any type across reassignment. | reassign a value across at least two type boundaries and assert each | yes | `gen leaf value roundtrip` (`a value called y{n} is <number>` → `Set y{n} to "<text>"`) crosses exactly one boundary, number to text, and prints rather than asserts | exercised | |
+| VAR-42 | 650–653 | `<valuevar> is a <type>.` retypes a `value` in place: reads the runtime tag, converts, updates the tag. | emit an in-place retype and assert both the converted value and the new `'s type` | yes — the generator supplies the source text and knows its numeric value | **none** — the retype statement is never emitted; `grep` for `is a number.` in emitted strings finds only flag-schema lines (`it is a number.`), a different construct | todo — real gap, hand-verified to work | |
+| VAR-43 | 653–656 | The same statement applied to a statically-typed name is rejected. | — | **no**, compile-error claim | n/a | not assertable — holds, probe VAR-43.vox | |
+| VAR-44 | 658–664 | **Claim extended, 2026-08-22 (0.4.10, #74).** The check only rejects a mismatch provable statically from the value's own shape — a literal, a cast, a read from a list/map whose element type is provably uniform, and (new in 0.4.10) **a `'s <property>` read whose property has the same type whatever it is read from** — every Object Properties table entry except `first`/`last`/`absolute`/`duration`/`elapsed`, whose type follows the thing they are read from. Before #74, `a text called t is xs's length.` compiled and segfaulted on the first read — the type lock's oracle answered only for `first`/`last` and treated every other property as "type unknown". | for the property half: assign a mistyped property read (e.g. a `number` property into a declared `text`) and expect a compile error naming the two ways out | **no** — a claim about the boundary of a compile-time check; both sides of the boundary are compile errors or sanctioned garbage | n/a | not assertable — **and the list half did not hold through 0.4.9**, see **Discrepancy 1**; probes VAR-45.vox and D1b.vox. **The new property half hand-verified fixed against 0.4.10**: `a text called badlen is xs's length.` now refuses to compile, naming both ways out, where 0.4.9 segfaulted | |
+| VAR-45 | 664–667 | A value from a function call, or an unprovable list/map read, is allowed through unchecked. | emit the pattern and require no crash | **not as a correctness oracle** — the manual sanctions the resulting garbage, so there is no documented right answer to assert. As a **memory-safety** leaf it is worth emitting: the program must not crash. | **none** — no leaf assigns a function result or a collection read to an already-declared name of another type | todo (memory-safety leaf) | |
+| VAR-46 | 667–670 | The rule closes the class where the compiler-tracked type disagrees with what the variable holds — previously "a wrong number on screen at best and a segfault at worst". | emit the residual patterns and require the program not to crash | yes as a crash oracle | none | todo — **RESOLVED, vox #54**: the segfault no longer reproduces, the mismatch is now refused at compile time. See Discrepancy 1 (resolved); probe VAR-46.vox is now a compile-error probe. | unblocked |
+| VAR-47 | 669–671 | The rule says nothing about type agreement across a `.lib` import boundary; a library's declared signature is trusted, not verified against its `.so`. | — | **no** — needs a second compilation unit and a built `.so`/`.lib` pair, outside the generator's one-program contract | n/a | not assertable — hand-verified anyway; transcript below the table | |
+| VAR-48 | 674–676 | A name is an identifier, never a string literal: three forms, no overlap, no context-sensitivity. | emit all three forms in one program | yes | all three appear across the generator | exercised — **but the "no context-sensitivity" half does not hold**, see **Discrepancy 5** | |
+| VAR-49 | 680 | `"…"` is a string literal, always, everywhere. | — | yes, as data | emitted constantly as data (`Print "…"`, map keys, flag aliases, file paths) | exercised — probe VAR-48.vox | |
+| VAR-50 | 681 | `bare_word` is a single-word identifier. | — | yes | every emitted name | exercised — probe VAR-48.vox | |
+| VAR-51 | 682 | `'multi word'` is an identifier containing spaces. | — | yes | `gen leaf environment oob` emits `a text called 'the missing value {n}' is …` and reads it back — the **only** leaf that emits a quoted variable name; `'grid sink {n}'`, `'made at'` and `'reflected across'` are quoted *function* names, a different position | exercised (one leaf) — probe VAR-48.vox | |
+| VAR-52 | 684–685 | Where an identifier is expected and a string literal is found, that is a compile error. | — | **no**, compile-error claim | n/a | not assertable | |
+| VAR-53 | 686–687 | A bare identifier matches `[A-Za-z_][A-Za-z0-9_]*`. | vary the shape of emitted names across the whole accepted set | yes — declare and read back | every emitted name is lowercase letters followed by a counter (`v3`, `gb7`, `fl2label`): no capital, no underscore, no digit anywhere but the tail | exercised (a very narrow band of the set) — **and the manual's set is wrong**, see **Discrepancy 9** | |
+| VAR-54 | 686–688 | A bare identifier is not a reserved keyword; reserved keywords remain rejected as names. | — | **no**, compile-error claim | n/a | not assertable — **and it is not enforced in every binding position**, see **Discrepancy 4** | |
+| VAR-55 | 687–688 | A name that collides with a reserved word is written quoted (`'number'`, `'version'`). | emit a quoted reserved word as a name and read it back | yes | **none** — no emitted name is a quoted reserved word | todo, hand-verified to work | |
+| VAR-56 | 689–690 | A quoted identifier is `'`…`'` containing two or more characters. | emit two-character and longer quoted names | yes | `'the missing value {n}'` only — always long, always multi-word, always the same shape | exercised (one shape) | |
+| VAR-57 | 690 | A quoted identifier contains no newline. | — | **no**, compile-error claim | n/a | not assertable | |
+| VAR-58 | 690–692 | Exactly one character between single quotes is a character literal, so single-character quoted identifiers do not exist. | emit a character literal and assert its code point | yes — `a number called cN is 'A'.` then `If cN is not 65 then, Exit 95.` | **none** — no leaf emits a character literal at all | todo — a cheap, fully assertable row | |
+| VAR-59 | 693–694 | Single-word quoted identifiers are legal but non-canonical, and lex identically to the bare form. | declare under one spelling, read under the other, assert the value | yes | **none** — the one quoted name the generator emits is multi-word and is always read back in the same spelling | todo — fully assertable | |
+| VAR-60 | 695–697 | Possessive: after a closing identifier quote, an `s` immediately following and itself followed by a non-identifier character is the possessive marker. | emit `'quoted name's <property>` | yes — assert the property's value | **none** — the possessive is emitted only on bare names (`m{n}'s "label"`, `i{n}'s x1`, `tk{n}'s elapsed`); never on a quoted one | todo — real gap, hand-verified to work | |
+| VAR-61 | 697–698 | `'name''s` also works; both spellings are accepted. | emit the doubled form too | yes, same assertion | **none** | todo — probe VAR-60.vox | |
+| VAR-62 | 699–700 | Map keys are data, not names, and stay double-quoted. | — | yes | `gen leaf map inrange` / `oob` emit `m{n}'s "label"`, `Set m{n}'s "count" to …`, and map literals with double-quoted keys | exercised | |
+| VAR-63 | 700 | File paths are data, not names, and stay double-quoted. | — | yes | double-quoted paths are emitted (`open … at "…"`, `a text called fp{n} is "…"`); `see` is never emitted at all | exercised (for `open`) — **but the rule is not enforced for `see`**, see **Discrepancy 5** | |
+| VAR-64 | 700–701 | Flag aliases are data, not names, and stay double-quoted. | — | yes | `gen emit prelude flags` emits `a flag called fl{n}label is "-a" or "--alpha{n}", …` | exercised | |
+| VAR-65 | 701 | Version strings are data, not names, and stay double-quoted. | — | **no** — the only positions a version appears in are the `Library` header and `see … version …`, both of which need a second compilation unit | none — `see` and `Library` are never emitted | not assertable — hand-verified anyway; transcript in `D5.vox`, and the rule does **not** hold, see **Discrepancy 5** | |
+| VAR-66 | 703–704 | Cross-reference to *Names and strings* for why one token cannot mean two things. | — | — | — | folded into VAR-48; the `NAM` ledger owns the argument itself | |
 
 ### Note on VAR-47 — the `.lib` boundary, hand-verified
 
@@ -182,12 +182,12 @@ filed, none adjudicated. Ordered by severity.
 
 ### 1. A list-element read is not type-checked, and the mismatch it lets through segfaults — RESOLVED (vox #54)
 
-`D1.vox`, and the same program as `VAR-46.vox`. LANGUAGE.md:642–648 says
+`D1.vox`, and the same program as `VAR-46.vox`. LANGUAGE.md:658–664 says
 the check rejects a mismatch it can prove "from the value's own shape (a
 literal, a cast, **a read from a list/map whose element type is provably
 uniform**, …)" — 0.4.10 additionally extends this to a `'s <property>`
 read whose property type does not depend on what it's read from (#74, see
-VAR-44). LANGUAGE.md:651–654 says the point of this is to close the
+VAR-44). LANGUAGE.md:667–670 says the point of this is to close the
 class where the tracked type disagrees with the runtime value — "which
 previously produced a wrong number on screen at best and a segfault at
 worst".
@@ -220,9 +220,9 @@ what the compiler *can* prove rather than what it *does* prove in every
 position, and a list variable is tracked as `list` rather than `list of
 text`, so the element type genuinely is not in the type it carries — the
 map path may be getting its answer from the literal rather than from the
-variable's type. Under that reading LANGUAGE.md:644's parenthetical is
+variable's type. Under that reading LANGUAGE.md:660's parenthetical is
 over-promising and the code is consistent. That reading does **not** rescue
-LANGUAGE.md:651–654, which says the segfault case is closed; it is not.
+LANGUAGE.md:667–670, which says the segfault case is closed; it is not.
 
 This is a memory-safety violation on a program the compiler accepted, which
 by `CLAUDE.md` is top severity regardless of how the type rule is read.
@@ -237,7 +237,7 @@ list path now proves uniformity and rejects, matching the map path
 
 ### 2. `For each NAME in <collection>` does not type-check the rebinding — STILL OPEN, symptom changed by vox #54's side effect
 
-`D2.vox`, and `VAR-34.vox` for the consequence. LANGUAGE.md:609–612: "This
+`D2.vox`, and `VAR-34.vox` for the consequence. LANGUAGE.md:625–628: "This
 isn't limited to reassignment. Any construct that binds a name to a new
 runtime value is checked the same way: reusing an already-declared name as
 a `For each`/for-range loop variable … reject[s] a type that conflicts with
@@ -257,14 +257,14 @@ The for-**range** half of the same sentence does reject (`VAR-35.vox`), so
 the two halves of one claim behave differently. After the loop, `counted`
 holds a text pointer while still reporting `Number (static)`, and
 `counted add 1` prints a raw address (`VAR-34.vox`). No crash, but this is
-the "wrong number on screen" half of the class LANGUAGE.md:651–654 says is
+the "wrong number on screen" half of the class LANGUAGE.md:667–670 says is
 closed.
 
 Reading the compiler as correct: the same argument as Discrepancy 1 — the
 element type of a `list` is not part of what the compiler tracks, so there
 is nothing to compare against, and the for-range case is checkable only
 because a range is a number by construction. If that is the intended
-reading then LANGUAGE.md:609–611 should say "for-range" and not "`For
+reading then LANGUAGE.md:625–627 should say "for-range" and not "`For
 each`", because as written it promises a check that is not there.
 
 **Still open on vox 0.4.9, re-verified 2026-08-22 — but the *symptom*
@@ -276,8 +276,8 @@ rejection. What changed is `VAR-34.vox`'s downstream consequence —
 analyzer track the element type through the loop *body* (not the
 *header*), so that same arithmetic is now a clean compile error,
 `Cannot use text counted in arithmetic; cast it first with 'as a number'
-or 'as a float'.` The "wrong number on screen" half of LANGUAGE.md:651–654's
-promise is closed; the loop-header rejection LANGUAGE.md:609–612 itself
+or 'as a float'.` The "wrong number on screen" half of LANGUAGE.md:667–670's
+promise is closed; the loop-header rejection LANGUAGE.md:625–628 itself
 promises is not — this matches `vox-notes/REPORT-CANDIDATES-0.4.10.md`
 candidate C exactly ("`#54` closed the wrong-value consequence, not the
 rejection") and its own re-check: "On 0.4.9 the same program is `error:
@@ -292,7 +292,7 @@ adjudicated-but-unassigned rather than guessing a number.
 
 ### 3. `Allocate N for X` is let through onto a buffer, and zeroes its capacity
 
-`D3.vox`. LANGUAGE.md:611–613 names "the target of `Allocate ... for`"
+`D3.vox`. LANGUAGE.md:627–629 names "the target of `Allocate ... for`"
 among the bindings that reject a conflicting type.
 
 ```
@@ -312,7 +312,7 @@ makes a *number* target genuinely not a conflict — `a number called room is
 5.` followed by `Allocate 64 for room.` leaves `room` holding an address
 like 140491170975744, which is the compiler doing exactly what the rule
 says. The buffer case is the one that escapes: `buffer` is exempted from
-assignment checking by LANGUAGE.md:626–629, but that exemption is written
+assignment checking by LANGUAGE.md:642–645, but that exemption is written
 about *writing a value into a buffer*, which is not what `Allocate` does.
 
 Reading the compiler as correct: if the buffer exemption is implemented as
@@ -329,7 +329,7 @@ right.
 
 ### 4. Reserved keywords are rejected as declaration names but accepted as loop variables
 
-`D4.vox`. LANGUAGE.md:670–672: "A **bare identifier** … is not a reserved
+`D4.vox`. LANGUAGE.md:686–688: "A **bare identifier** … is not a reserved
 keyword. Reserved keywords remain rejected as names".
 
 ```
@@ -354,9 +354,9 @@ loop names should know which.
 ### 5. `see` paths and `version` strings accept single-quoted identifiers
 
 `VAR-63.vox` (runnable) and `D5.vox` (the version half, transcript only —
-it needs a built `.lib`). LANGUAGE.md:683–685 lists file paths and versions
+it needs a built `.lib`). LANGUAGE.md:699–701 lists file paths and versions
 among the things that are "data, not names" and "stay double-quoted", and
-LANGUAGE.md:659–660 promises the three name forms have "no overlap, no
+LANGUAGE.md:675–676 promises the three name forms have "no overlap, no
 context-sensitivity".
 
 ```
@@ -383,7 +383,7 @@ stated as a property of the language and not as advice.
 
 ### 6. The type-mismatch diagnostic places its caret by searching the source text
 
-`D6.vox`. LANGUAGE.md:595–603 shows the caret under the offending
+`D6.vox`. LANGUAGE.md:611–619 shows the caret under the offending
 statement. It is instead placed at the **first textual occurrence** of that
 statement anywhere in the file — including inside a comment:
 
@@ -419,7 +419,7 @@ it misleads exactly when a program is long enough to need the caret.
 
 ### 7. There are more than "Two Canonical Forms", and one of them is undocumented
 
-`D7.vox`. LANGUAGE.md:496–506 is headed "Two Canonical Forms" and describes
+`D7.vox`. LANGUAGE.md:512–522 is headed "Two Canonical Forms" and describes
 the no-initializer form only under `Create`. Accepted in fact:
 
 | lead-in | `is V` | `to V` | no initializer |
@@ -449,7 +449,7 @@ its documented equivalent is backwards.
 
 ### 8. `timer` supports only one of the two canonical forms
 
-`D8.vox`. LANGUAGE.md:496: "Every declarable type supports two equivalent
+`D8.vox`. LANGUAGE.md:512: "Every declarable type supports two equivalent
 forms". `a timer called clock is 0.` → `error: Expected a statement, got
 Is`. There is no initializer form for a timer at all.
 
@@ -463,7 +463,7 @@ write a leaf that does not compile.
 
 ### 9. A bare identifier may not start with an underscore
 
-`D9.vox`. LANGUAGE.md:670 gives the bare-identifier set as
+`D9.vox`. LANGUAGE.md:686 gives the bare-identifier set as
 `[A-Za-z_][A-Za-z0-9_]*`, which admits a leading underscore.
 
 ```
@@ -490,15 +490,15 @@ non-compiling programs.
 Samenesses the manual actually requires, for the `citation` column of
 `scripts/invariants`:
 
-- no generated variable name is ever double-quoted — LANGUAGE.md:664, 668, VAR-49, VAR-52
-- no generated bare name begins with a digit — LANGUAGE.md:670, VAR-53
-- no generated bare name is a reserved keyword **in declaration position** — LANGUAGE.md:670–672, VAR-54 (loop-variable position is exempt in fact — D4)
-- no generated quoted name is a single character — LANGUAGE.md:673–676, VAR-58
-- no generated quoted name contains a newline — LANGUAGE.md:674, VAR-57
-- every generated `file` or `time` declaration carries an initializer — LANGUAGE.md:533–536, VAR-17, VAR-18
-- no generated `timer` declaration carries an initializer — LANGUAGE.md:529, VAR-16, D8
-- a generated name is never redeclared, or rebound by a loop / `open` / `Allocate`, at a conflicting type — LANGUAGE.md:577–582, 609–615, VAR-25, VAR-34–VAR-39
-- map keys and flag aliases in generated programs are always double-quoted — LANGUAGE.md:683–685, VAR-62, VAR-64
+- no generated variable name is ever double-quoted — LANGUAGE.md:680, 684, VAR-49, VAR-52
+- no generated bare name begins with a digit — LANGUAGE.md:686, VAR-53
+- no generated bare name is a reserved keyword **in declaration position** — LANGUAGE.md:686–688, VAR-54 (loop-variable position is exempt in fact — D4)
+- no generated quoted name is a single character — LANGUAGE.md:689–692, VAR-58
+- no generated quoted name contains a newline — LANGUAGE.md:690, VAR-57
+- every generated `file` or `time` declaration carries an initializer — LANGUAGE.md:549–552, VAR-17, VAR-18
+- no generated `timer` declaration carries an initializer — LANGUAGE.md:545, VAR-16, D8
+- a generated name is never redeclared, or rebound by a loop / `open` / `Allocate`, at a conflicting type — LANGUAGE.md:593–598, 625–631, VAR-25, VAR-34–VAR-39
+- map keys and flag aliases in generated programs are always double-quoted — LANGUAGE.md:699–701, VAR-62, VAR-64
 
 One sameness the corpus will show that the **manual does not justify** but
 the compiler requires: no generated bare name begins with `_`. That is
@@ -539,7 +539,7 @@ section that no generated program has ever contained.
 
 **The biggest finding is Discrepancy 1**: a four-line program that the
 compiler accepts and that segfaults deterministically. It is exactly the
-failure LANGUAGE.md:651–654 says the type-immutability rule closed, and it
+failure LANGUAGE.md:667–670 says the type-immutability rule closed, and it
 is reachable from a list literal with uniform elements — an extremely
 ordinary shape. That is a broken memory-safety promise, which `CLAUDE.md`
 ranks above everything else here.

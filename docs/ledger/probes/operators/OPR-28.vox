@@ -1,4 +1,4 @@
-(OPR-28: `bit-shift-right` shifts right (LANGUAGE.md:4882).
+(OPR-28: `bit-shift-right` shifts right (LANGUAGE.md:4898).
  240 shifted right by 4 is 15.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-28.vox -o p && ./p
  expected output:

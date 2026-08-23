@@ -1,0 +1,14 @@
+reproducible: 1
+VAL-02 asserts: 1
+VAL-04 asserts: 1
+VAL-12 asserts: 1
+VAL-14 asserts: 1
+VAL-21 asserts: 1
+VAL-25 asserts: 1
+VAL-27 asserts: 1
+the type property emitted: 1
+is nothing emitted: 1
+is not nothing emitted: 1
+a drained handler emitted: 1
+the value leaves compile: 1
+every value assertion holds: 1

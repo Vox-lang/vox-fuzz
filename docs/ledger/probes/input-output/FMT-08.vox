@@ -1,4 +1,4 @@
-(FMT-08 — the worked example at LANGUAGE.md:3288-3290: a text slot and a
+(FMT-08 — the worked example at LANGUAGE.md:3304-3306: a text slot and a
  number slot in one string, with literal text between and after them.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:

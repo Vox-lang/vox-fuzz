@@ -1,6 +1,6 @@
 (LST-43 — `Set map's "key" to value` inserts a new entry or replaces an
  existing one.
- Also covers: LST-45 (the worked example of LANGUAGE.md:2443-2445 — a
+ Also covers: LST-45 (the worked example of LANGUAGE.md:2459-2461 — a
  replace leaves `length` at 2, it does not insert).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-43.vox -o p && ./p
  expected output:

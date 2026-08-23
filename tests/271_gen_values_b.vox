@@ -1,0 +1,95 @@
+see "../src/harness.vox".
+see "../src/runner.vox".
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(Ledger batch VAL-B: the seven `value` leaves (docs/ledger/values.md rows
+ VAL-02, 04, 12, 14, 21, 25, 27).
+
+ Same shape as 270_gen_values_a and for the same reason: the emitted text
+ is COMPILED AND RUN by the real compiler, because the only thing these
+ leaves exist for is that their assertions hold, and reading the text
+ alone would miss it. The program ends `Exit 0.`, so any other status is
+ either a ledger assertion that fired (95) or a crash.
+
+ Emitted twice from one seed and compared, because these leaves spend
+ names out of the shared vocabulary the batch-A leaves spend from: if
+ that record ever outlived a program, two programs from one seed would
+ stop being identical and every campaign's reproducibility would go with
+ them.)
+
+To 'emit the absent and forms leaves'.
+    clear gen_out.
+    'gen reset value names'.
+    'gen leaf value forms' of "" and false.
+    'gen leaf value dispatch label' of "" and false.
+    'gen leaf value retype tracking' of "" and false.
+    'gen leaf value type property' of "" and false.
+    'gen leaf absent value' of "" and false.
+    'gen leaf absent test' of "" and false.
+    'gen leaf absent key' of "" and false.
+    'gen emit' of "Exit 0.\n".
+
+'rng seed' of 11.
+'emit the absent and forms leaves'.
+a text called 'the first emission' is 'gen text'.
+'gen write' of "./vf_values_b.vox".
+
+'rng seed' of 11.
+'emit the absent and forms leaves'.
+a text called 'the second emission' is 'gen text'.
+Print "reproducible: {'the first emission' is equal to 'the second emission'}".
+
+a boolean called 'the forms row is covered' is 'gen text contains' of "ASSERT VAL-02".
+Print "VAL-02 asserts: {'the forms row is covered'}".
+a boolean called 'the dispatch row is covered' is 'gen text contains' of "ASSERT VAL-04".
+Print "VAL-04 asserts: {'the dispatch row is covered'}".
+a boolean called 'the tracking row is covered' is 'gen text contains' of "ASSERT VAL-12".
+Print "VAL-12 asserts: {'the tracking row is covered'}".
+a boolean called 'the type property row is covered' is 'gen text contains' of "ASSERT VAL-14".
+Print "VAL-14 asserts: {'the type property row is covered'}".
+a boolean called 'the absent value row is covered' is 'gen text contains' of "ASSERT VAL-21".
+Print "VAL-21 asserts: {'the absent value row is covered'}".
+a boolean called 'the absent test row is covered' is 'gen text contains' of "ASSERT VAL-25".
+Print "VAL-25 asserts: {'the absent test row is covered'}".
+a boolean called 'the absent key row is covered' is 'gen text contains' of "ASSERT VAL-27".
+Print "VAL-27 asserts: {'the absent key row is covered'}".
+
+(The constructs these seven rows turn on, checked by needle rather than
+ by leaf name: the `type` property read on a value, an `is nothing` test
+ and its negation, and the retype statement.)
+a boolean called 'the type property appears' is 'gen text contains' of "s type is not \"".
+Print "the type property emitted: {'the type property appears'}".
+a boolean called 'an absent test appears' is 'gen text contains' of "is nothing then,".
+Print "is nothing emitted: {'an absent test appears'}".
+a boolean called 'a present test appears' is 'gen text contains' of "is not nothing then,".
+Print "is not nothing emitted: {'a present test appears'}".
+a boolean called 'a drained handler appears' is 'gen text contains' of "On error Set ".
+Print "a drained handler emitted: {'a drained handler appears'}".
+
+(The compiler comes from 'vox path', which honours $VOX the way test.sh
+ sets it - a literal ../vox/... would only be right in a plain checkout
+ and would silently skip the check in a worktree.)
+a text called 'the compile command' is "{'shell quote' of 'vox path'} ./vf_values_b.vox -o ./vf_values_b > ./vf_values_b.cerr 2>&1".
+a number called 'the compile status' is 'run shell' of 'the compile command' and 60000.
+Print "the value leaves compile: {'the compile status' is 0}".
+a number called 'the run status' is 'run shell' of "./vf_values_b > ./vf_values_b.out 2>&1" and 60000.
+Print "every value assertion holds: {'the run status' is 0}".
+
+(Only on failure, so the expected file is unchanged when this passes.)
+If 'the compile status' is not 0 then,
+    a text called 'the compiler complaint' is 'read whole file' of "./vf_values_b.cerr",
+    Print "the compiler was {'vox path'}",
+    Print 'the compiler complaint'.
+If 'the run status' is not 0 then,
+    a text called 'what the program printed' is 'read whole file' of "./vf_values_b.out",
+    Print 'what the program printed'.

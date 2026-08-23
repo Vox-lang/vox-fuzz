@@ -1,4 +1,4 @@
-(D2 - Discrepancy 2 repro: LANGUAGE.md:139 says a blank line force-closes
+(D2 - Discrepancy 2 repro: LANGUAGE.md:155 says a blank line force-closes
  EVERY open clause at once, including an enclosing function definition,
  and LANGUAGE.md:91 says the blank line is what closes a function body.
  An `Otherwise` after that blank line nonetheless continues the `if`

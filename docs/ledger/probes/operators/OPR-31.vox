@@ -1,5 +1,5 @@
 (OPR-31: a bitwise expression is legal as a `Set ... to ...` value
- (LANGUAGE.md:4893, 4896, 4899, 4900). All four of the example's Set
+ (LANGUAGE.md:4909, 4912, 4915, 4916). All four of the example's Set
  lines are reproduced in order.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-31.vox -o p && ./p
  expected output:

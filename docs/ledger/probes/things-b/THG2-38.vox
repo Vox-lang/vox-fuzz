@@ -1,5 +1,5 @@
 (THG2-38: a member whose first parameter IS the thing gets both the type
- possessive and the instance possessive. LANGUAGE.md:1598-1620, verbatim -
+ possessive and the instance possessive. LANGUAGE.md:1614-1636, verbatim -
   the receiver form and the type-possessive form both reach the same member.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-38.vox -o p && ./p
  expected output:

@@ -1,7 +1,7 @@
-(TIM-30 - LANGUAGE.md:4513-4514 says `end` "belongs to the `exit` family
+(TIM-30 - LANGUAGE.md:4529-4530 says `end` "belongs to the `exit` family
  of keywords and remains reserved". It is not reserved: `a number called
  end is 7.` compiles and prints 7. See Discrepancy 1 and D1.vox; the
- manual's own examples at LANGUAGE.md:286 (`Set end to 5.`) and 960
+ manual's own examples at LANGUAGE.md:302 (`Set end to 5.`) and 960
  (`a point called end.`) depend on the compiler behaving this way.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-30.vox -o p && ./p
  expected output:

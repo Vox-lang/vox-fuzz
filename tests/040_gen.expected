@@ -83,66 +83,88 @@ If endnote is not 1118016078 then, Exit 92.
 If 'the callsign' is false then, Exit 93.
 
 Set v3 to v2 minus v2.
-Print v4 minus v1, but if v1 is less than v2 print v4 multiply v2.
-Set v2 to v3 multiply v3.
-a list called l1 is [].
-append v1 to l1, but if v4 is less than v2 or v4 modulo 4 is equal to 0 append v2 add v4, but if v2 is less than or equal to v4 and v2 modulo 2 is equal to 0 append v1 add v4, but if v4 is less than or equal to v1 and v4 modulo 3 is equal to 0 append v2, otherwise append v1.
-Print v2 multiply v2.
-a list called l2 is [].
-append v4 multiply v3 to l2, but if v1 is less than or equal to v3 and v1 modulo 3 is equal to 0 append v3 multiply v4, otherwise append v3 multiply v2.
-Create a buffer called storeroom with size 4095.
-If storeroom's empty is false then, Print "ASSERT BUF-12: expected 1 got {storeroom's empty}", Exit 95. Print storeroom's empty.
-Print v2 minus v2.
-append "rogkiqtj7tcocs02mn384875dys2810stztla01" to storeroom.
-If storeroom's size is not 39 then, Print "ASSERT BUF-10: expected 39 got {storeroom's size}", Exit 95. Print storeroom's size.
-If storeroom's capacity is not 4095 then, Print "ASSERT BUF-10: expected 4095 got {storeroom's capacity}", Exit 95. Print storeroom's capacity.
-If storeroom's length is not 39 then, Print "ASSERT BUF-11: expected 39 got {storeroom's length}", Exit 95. Print storeroom's length.
-If storeroom's length is not storeroom's size then, Print "ASSERT BUF-11: expected {storeroom's size} got {storeroom's length}", Exit 95. Print storeroom's length.
-If storeroom's empty then, Print "ASSERT BUF-12: expected 0 got {storeroom's empty}", Exit 95. Print storeroom's empty.
-Print storeroom's length.
-Set v1 to v1.
-Create a buffer called 'the sketchpad'.
-a number called 'the sketchpad appends made' is 0.
-a boolean called 'the sketchpad overflowed' is false.
-a boolean called 'the sketchpad found an error already pending' is false.
-On error Set 'the sketchpad found an error already pending' to true.
-While 'the sketchpad appends made' is less than 235, append "slvx72bh2atw4f8e0s0jbfzkdvl8bifkm" to 'the sketchpad', On error Set 'the sketchpad overflowed' to true. Set 'the sketchpad appends made' to 'the sketchpad appends made' add 1.
-If 'the sketchpad's size is not 7755 then, Print "ASSERT BUF-03: expected 7755 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
-If 'the sketchpad overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the sketchpad overflowed'}", Exit 95. Print 'the sketchpad overflowed'.
-Print 'the sketchpad's size.
-Print v2 minus v2.
-Set v2 to v1 multiply v2.
-a buffer called cupboard is 59017 bytes in size.
-If cupboard's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {cupboard's size}", Exit 95. Print cupboard's size.
-Print v2 multiply v3.
-If cupboard's capacity is not 59017 then, Print "ASSERT BUF-05: expected 59017 got {cupboard's capacity}", Exit 95. Print cupboard's capacity.
-Create a buffer called 'the tally sheet'.
-If 'the tally sheet's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
-Create a buffer called 'the drawer' with size 70036.
-If 'the drawer's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the drawer's size}", Exit 95. Print 'the drawer's size.
-Print v2 add v3.
-If 'the drawer's capacity is not 70036 then, Print "ASSERT BUF-05: expected 70036 got {'the drawer's capacity}", Exit 95. Print 'the drawer's capacity.
-Print 'the drawer's size.
-open a file for reading called sin1 at 0.
-a buffer called sb1 is 8 bytes.
-Read from sin1 into sb1.
-Print sb1's size.
-If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
-a buffer called sc1 is 8 bytes.
-Read from sin1 into sc1.
-Print sc1's size.
-Close sin1.
-a text called fp2 is "{annotation}/out2".
-open a file for writing called fw2 at fp2.
-Write "payload 52028\n" to fw2.
-Close fw2.
-open a file for reading called fr2 at fp2.
-a buffer called fb2 is 42 bytes in size.
-Read from fr2 into fb2.
-Print fb2's size.
-Print fr2's readable.
-Close fr2.
-'the reckoning' of each q1s1 from 5 to 5 and each q1s2 from 4 to 5 and each q1s3 from 0 to 1 and each q1s4 from 6 to 7 and each q1s5 from 4 to 4 and each q1s6 from 0 to 0 and each q1s7 from 2 to 2 and each q1s8 from 4 to 4 and each q1s9 from 8 to 8.
+Print arguments's count.
+Print arguments's empty.
+a text called 'satchel path' is "{annotation}/buffer1".
+open a file for writing called 'satchel being written' at 'satchel path'.
+Write "f9d3wdlxqiecd0" to 'satchel being written'.
+Close 'satchel being written'.
+open a file for reading called 'satchel being read' at 'satchel path'.
+a buffer called satchel is 9 bytes.
+a boolean called 'satchel was truncated' is false.
+Read from 'satchel being read' into satchel.
+On error Set 'satchel was truncated' to true.
+Close 'satchel being read'.
+If satchel's size is not 9 then, Print "ASSERT BUF-07: expected 9 got {satchel's size}", Exit 95. Print satchel's size.
+If satchel's size is not satchel's capacity then, Print "ASSERT BUF-07: expected {satchel's capacity} got {satchel's size}", Exit 95. Print satchel's size.
+Print satchel's size.
+a value called 'the tally' is nil.
+a value called 'the upshot' is {"the offering": 228903.1909183539929802343}.
+a boolean called 'the slot' is false.
+If 'the tally' is nothing then, Set 'the slot' to true.
+If 'the slot' is false then, Print "ASSERT VAL-25: expected is nothing to hold got {'the tally's type}", Exit 95.
+If 'the tally' is not nothing then, Print "ASSERT VAL-25: expected is not nothing to be false got {'the tally's type}", Exit 95.
+a boolean called result is false.
+If 'the upshot' is not nothing then, Set result to true.
+If result is false then, Print "ASSERT VAL-25: expected is not nothing to hold got {'the upshot's type}", Exit 95.
+If 'the upshot' is nothing then, Print "ASSERT VAL-25: expected is nothing to be false got {'the upshot's type}", Exit 95.
+Print 'the slot'.
+a value called 'the numeral' is "793569.66".
+'the numeral' is a decimal.
+If 'the numeral' is not a decimal then, Print "ASSERT VAL-12: expected a float after the retype got {'the numeral's type}", Exit 95.
+If 'the numeral' is a text then, Print "ASSERT VAL-12: expected the text tag to be gone got {'the numeral's type}", Exit 95.
+If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) got {'the numeral's type}", Exit 95.
+a number called 'the freight' is 0.
+On error Set 'the freight' to 0.
+'the numeral' is a decimal.
+On error Set 'the freight' to 1.
+If 'the freight' is not 0 then, Print "ASSERT VAL-12: expected no error retyping to a float it already holds got {'the freight'}", Exit 95.
+If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) after the no-op got {'the numeral's type}", Exit 95.
+If 'the numeral' is not 793569.66 then, Print "ASSERT VAL-12: expected 793569.66 after the no-op got {'the numeral's type}", Exit 95.
+Print 'the numeral's type.
+a text called fp1 is "{annotation}/out1".
+open a file for writing called fw1 at fp1.
+Write "payload 79799\n" to fw1.
+Close fw1.
+open a file for reading called fr1 at fp1.
+a buffer called fb1 is 65 bytes in size.
+Read from fr1 into fb1.
+Print fb1's size.
+Print fr1's readable.
+Close fr1.
+Set v3 to v2 times v3.
+a number called u1 is 0.
+While u1 is less than 5, Increment u1.
+Print u1.
+Print endnote.
+Print annotation.
+Print 'the byline'.
+Print 'the callsign'.
+Print banner.
 'the summed parts'.
+a buffer called 'the message slip'.
+a number called 'the message slip appends made' is 0.
+a boolean called 'the message slip overflowed' is false.
+a boolean called 'the message slip found an error already pending' is false.
+On error Set 'the message slip found an error already pending' to true.
+While 'the message slip appends made' is less than 253, append "tcocs02mn384875dys2810stzt" to 'the message slip', On error Set 'the message slip overflowed' to true. Set 'the message slip appends made' to 'the message slip appends made' add 1.
+If 'the message slip's size is not 6578 then, Print "ASSERT BUF-03: expected 6578 got {'the message slip's size}", Exit 95. Print 'the message slip's size.
+If 'the message slip overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the message slip overflowed'}", Exit 95. Print 'the message slip overflowed'.
+Print 'the message slip's size.
+Print v1 add v3.
+a number called u2 is 0.
+While u2 is less than 4, Increment u2.
+Print u2.
+open a file for reading called sin2 at 0.
+a buffer called sb2 is 25 bytes.
+Read from sin2 into sb2.
+Print sb2's size.
+If sb2 is empty then, Print "sb2 empty". Otherwise, Print "sb2 filled".
+a buffer called sc2 is 8 bytes.
+Read from sin2 into sc2.
+Print sc2's size.
+Close sin2.
+'the reckoning' of each q1s1 from 2 to 3 and each q1s2 from 8 to 9 and each q1s3 from 7 to 7 and each q1s4 from 2 to 2 and each q1s5 from 7 to 7 and each q1s6 from 7 to 7 and each q1s7 from 1 to 2 and each q1s8 from 2 to 2 and each q1s9 from 0 to 0.
+Exit.
 
 reproducible: 1

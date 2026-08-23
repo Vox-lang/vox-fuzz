@@ -365,11 +365,11 @@ To 'gen leaf assign' with a text called indent.
 
  That is what retires the zero/one/two split: it existed only because
  the prelude had exactly those three shapes, and it is also why no call
- could ever pass three arguments. LANGUAGE.md:709-739 puts no ceiling on
+ could ever pass three arguments. LANGUAGE.md:796-802 puts no ceiling on
  arity, so neither does this.
 
  `of`, `with`, `on` and `to` all introduce arguments
- (LANGUAGE.md:1494) - all four hand-verified against 0.4.7 on a
+ (LANGUAGE.md:1510) - all four hand-verified against 0.4.7 on a
  two-parameter call - so which one appears is drawn. Whether the result
  is printed follows the function rather than the call site: `Print
  <call>` needs a value, and a function that only prints has none.)
@@ -645,7 +645,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf buffer growth' of indent and nested.
     If kind is 104 then,
         'gen leaf buffer truncation' of indent and nested.
-    (The values band, 140-147, reserved above for the collections
+    (The values band, 140-154, reserved above for the collections
      surface. They are drawn only at depth 3 - see the section header in
      src/gen_collections.vox for why a leaf that both defines a function
      and closes on an If assertion cannot sit in a nested body.)
@@ -665,6 +665,25 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf value predicate' of indent and nested.
     If kind is 147 then,
         'gen leaf value bad retype' of indent and nested.
+    (Values batch B, 148-154: the declaration forms, the positive half of
+     the dispatch claim, retype tracking and its no-op, the `type`
+     property, and the three `nothing` rows. Same band, same depth-3-only
+     rule, for the same reason - each defines a function or ends on an
+     `If ... Exit 95.` assertion.)
+    If kind is 148 then,
+        'gen leaf value forms' of indent and nested.
+    If kind is 149 then,
+        'gen leaf value dispatch label' of indent and nested.
+    If kind is 150 then,
+        'gen leaf value retype tracking' of indent and nested.
+    If kind is 151 then,
+        'gen leaf value type property' of indent and nested.
+    If kind is 152 then,
+        'gen leaf absent value' of indent and nested.
+    If kind is 153 then,
+        'gen leaf absent test' of indent and nested.
+    If kind is 154 then,
+        'gen leaf absent key' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -821,15 +840,15 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          is parked at 99, outside the draw, so no number in this range
          dispatches to nothing. 45..49 are the five reserved-span
          buffer leaves, remapped to 100..104 just below.
-         50..57 are drawn as one contiguous span with the rest and then
-         shifted into the collections surface's reserved 140-147 band -
-         the eight `value` leaves. The shift keeps a single flat draw
+         50..64 are drawn as one contiguous span with the rest and then
+         shifted into the collections surface's reserved 140-154 band -
+         the fifteen `value` leaves. The shift keeps a single flat draw
          (so the existing kinds' odds move by exactly the new ones'
          share, and no seed's leaf choice depends on where a band
          happens to sit) while leaving the band numbers themselves
          where the reservation table put them, out of the way of the
          other surfaces' parallel work.)
-        Set kind to 'rng below' of 58.
+        Set kind to 'rng below' of 65.
         If kind is greater than 49 then,
             Set kind to kind add 90.
     If depth is equal to 2 then,
@@ -851,8 +870,8 @@ To 'gen statement' with a number called depth and a text called indent and a boo
      are top-level-only, exactly like 'gen leaf while' and 'gen leaf file
      round trip', so only depth 3 reaches past 102. The upper bound below
      (kind less than 50) keeps this remap off the value band, which has
-     already been shifted to 140-147 by the time this runs - without it
-     a value kind would be greater than 44 twice over and land past 147.)
+     already been shifted to 140-154 by the time this runs - without it
+     a value kind would be greater than 44 twice over and land past 154.)
     If depth is equal to 3 and kind is greater than 44 and kind is less than 50 then,
         Set kind to kind add 55.
     If depth is equal to 2 and kind is greater than 28 then,
@@ -970,14 +989,24 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         If kind is 103 then,
             Set 'safe kind' to 100.
         If kind is 104 then,
-            Set 'safe kind' to 101..
-        (140-147, the `value` leaves. Defensive in the same sense as the
+            Set 'safe kind' to 101.
+        (140-154, the `value` leaves. Defensive in the same sense as the
          entries above: avoid_onerror is only ever true below 'gen body',
          which recurses at depth 2 or lower, and the band is drawn at
          depth 3 alone - so these can never be reached here. Written
          anyway, because every one of them either defines a function or
          ends on an `If ... Exit 95.` assertion, and both would leave an
-         enclosing block open if the guarantee ever moved.)
+         enclosing block open if the guarantee ever moved.
+
+         THE SECOND PERIOD BELONGS TO WHICHEVER ENTRY IS LAST, and only
+         to that one. It closes the enclosing `If 'avoid onerror'`
+         clause, so an entry written after it sits OUTSIDE the guard and
+         runs for every statement at every depth. That is what happened
+         when this band was added below kind 104's `to 101..`: the whole
+         values band was remapped to kind 1 unconditionally, and leaves
+         140-147 were never once reached by a campaign, only by their
+         own unit test. Anything added here goes ABOVE this entry, and
+         the period moves with the entry that ends the list.)
         If kind is greater than 139 then,
             Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.
@@ -994,7 +1023,7 @@ To 'gen statement' with a number called depth and a text called indent and a boo
 
  - "every program has four functions": nothing says so. The count is
    drawn and zero is reachable.
- - "arities are 0, 1, 2 and 1": nothing says so. LANGUAGE.md:709-739
+ - "arities are 0, 1, 2 and 1": nothing says so. LANGUAGE.md:796-802
    puts no ceiling on arity and says parameters are optional.
  - "f1 always precedes f2 always precedes f3": nothing orders one
    function against another - Vox even permits a function body to
@@ -1005,7 +1034,7 @@ To 'gen statement' with a number called depth and a text called indent and a boo
    constants now come from 'literal integer' (gen_literals.vox), whose
    only bound is the compiler's own i64 literal range.
 
- `with` and `of` introduce parameters identically (LANGUAGE.md:736), so
+ `with` and `of` introduce parameters identically (LANGUAGE.md:752), so
  which one a definition uses is drawn too.)
 
 To 'gen emit prelude functions'.
@@ -1342,11 +1371,11 @@ To 'gen program' with a number called seed and a number called budget.
 (How a program stops. Three samenesses lived in the one line that used to
  write this, and not one of them had a citation.
 
- - The keyword. LANGUAGE.md:2329 ends the Program Termination section
+ - The keyword. LANGUAGE.md:2345 ends the Program Termination section
    with "Alternative keywords: `quit`, `terminate`", and the compiler
    takes each of them in either capitalisation. Six spellings, all six
    compiled and run against 0.4.9 before this was written.
- - Whether a code is written at all. LANGUAGE.md:2327: "Exit code
+ - Whether a code is written at all. LANGUAGE.md:2343: "Exit code
    defaults to 0 if not specified" - so `quit.` is a whole statement and
    the program exits 0. Verified.
  - Whether the program says anything at all. Nothing in the manual
@@ -1404,7 +1433,7 @@ To 'gen in lower case' with a text called 'the word'.
  Josj, 2026-08-20: "indentation and line separation are purely cosmetic;
  periods, commas and paragraph breaks are the only flow-control
  constructs, so Vox programs should essentially be minified with random
- blank characters and new lines." LANGUAGE.md:210 says the same thing
+ blank characters and new lines." LANGUAGE.md:226 says the same thing
  from the other side - Vox ignores leading whitespace entirely, so a
  program can be minified without changing its meaning, and the period
  count is the only thing that closes a clause.
@@ -1659,7 +1688,7 @@ To 'layout gap follows a possessive' with a number called 'the run start'.
 
 (The three places where vox 0.4.7 does NOT treat a line break the way it
  treats a space, each reproduced by hand and each recorded in the report
- as a discrepancy against LANGUAGE.md:210, which says a program can be
+ as a discrepancy against LANGUAGE.md:226, which says a program can be
  minified without changing its meaning:
 
    1. `is less than or equal` + newline + `to` is rejected with "Expected

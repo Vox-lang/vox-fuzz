@@ -1,6 +1,6 @@
 (THG2-13: there is no ordering on a whole thing - `origin is greater than
  marker` is rejected, and the message names the field to compare instead.
- LANGUAGE.md:1382-1393, verbatim.
+ LANGUAGE.md:1398-1409, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-13.vox -o p && ./p
  expected output:
    error: 'origin' holds a whole point, which nothing puts in order

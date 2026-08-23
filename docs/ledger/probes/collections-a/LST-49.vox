@@ -6,7 +6,7 @@
  yielded a raw untyped 0, which a text/list/map destination would
  dereference as a pointer and segfault (#91); now it yields the
  destination's own typed default (empty text / [] / {}) instead.
- Also covers: LST-51 (the worked example of LANGUAGE.md:2544-2545).
+ Also covers: LST-51 (the worked example of LANGUAGE.md:2560-2561).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-49.vox -o p && ./p
  expected output:
    0

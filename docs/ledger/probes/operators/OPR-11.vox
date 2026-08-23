@@ -1,4 +1,4 @@
-(OPR-11: `is equal to` tests equality (LANGUAGE.md:4850).
+(OPR-11: `is equal to` tests equality (LANGUAGE.md:4866).
  The second If proves it is a real test and not an unconditional branch.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-11.vox -o p && ./p
  expected output:

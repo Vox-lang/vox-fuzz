@@ -1,4 +1,4 @@
-(BAS2-20: LANGUAGE.md:328 claims loop expansion works with "any action that
+(BAS2-20: LANGUAGE.md:344 claims loop expansion works with "any action that
  takes an argument". It does not. `write <value> to <file>` takes an argument
  in exactly the shape `append <value> to <list>` does — and `append each ...
  to <list>` compiles (BAS2-39) while `write each ... to <file>` does not.

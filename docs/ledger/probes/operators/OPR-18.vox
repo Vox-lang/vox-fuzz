@@ -1,4 +1,4 @@
-(OPR-18: `is less than or equal to` admits the equal case (LANGUAGE.md:4855).
+(OPR-18: `is less than or equal to` admits the equal case (LANGUAGE.md:4871).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-18.vox -o p && ./p
  expected output:
    le fired on equal

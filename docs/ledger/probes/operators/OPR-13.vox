@@ -1,4 +1,4 @@
-(OPR-13: `is not equal to` tests inequality (LANGUAGE.md:4851).
+(OPR-13: `is not equal to` tests inequality (LANGUAGE.md:4867).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-13.vox -o p && ./p
  expected output:
    not equal to fired

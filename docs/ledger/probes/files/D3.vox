@@ -1,6 +1,6 @@
 (D3: Discrepancy 3 - `Seek ... to line N` used to land on line 2 for EVERY
  N of 2 or more, and a line target past EOF did not set the error flag
- (LANGUAGE.md:3800, 3802-3803 in manual 0.4.8; the ledger cites the 0.4.7
+ (LANGUAGE.md:3816, 3818-3819 in manual 0.4.8; the ledger cites the 0.4.7
  numbering 3507, 3509).
  **RESOLVED - fixed by vox #47 (0.4.8).** Re-run against current main, each
  seek lands on the line asked for and the past-EOF target raises the flag.

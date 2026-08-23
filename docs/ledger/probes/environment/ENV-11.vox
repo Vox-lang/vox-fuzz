@@ -1,4 +1,4 @@
-(ENV-11: the "Complete Example" (LANGUAGE.md:4810-4828), adapted --
+(ENV-11: the "Complete Example" (LANGUAGE.md:4826-4844), adapted --
  the greeting/precedence half only, with a namespaced env-var name
  instead of `GREET_NAME` (so no real host accidentally sets it) and the
  trailing `environment's "USER"` print DROPPED rather than reproduced,

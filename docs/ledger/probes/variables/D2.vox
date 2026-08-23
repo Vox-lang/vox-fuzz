@@ -1,4 +1,4 @@
-(Discrepancy 2: LANGUAGE.md:609-611 says reusing an already-declared name as
+(Discrepancy 2: LANGUAGE.md:625-627 says reusing an already-declared name as
  a `For each` loop variable rejects a conflicting type. The `in <collection>`
  form does not — only the for-range form does. `counted` is declared a number
  and comes out of the loop holding text while still reporting Number (static).

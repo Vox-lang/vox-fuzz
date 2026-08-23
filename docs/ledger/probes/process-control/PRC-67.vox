@@ -1,11 +1,11 @@
-(PRC-67 — the supervisor snippet at LANGUAGE.md:4311-4343 compiles and
+(PRC-67 — the supervisor snippet at LANGUAGE.md:4327-4359 compiles and
  runs. The child exits immediately, so the deadline never fires and the
  program reports the child's exit code through the process library.
  VERBATIM except for ONE token: the manual's first line is
  `see process version "0.1" from "./libprocess.lib".`, and the `from` path
  is resolved relative to the SOURCE FILE, so it is pointed at
  fixtures/libprocess.lib here. Nothing else is changed; the body below is
- LANGUAGE.md lines 4224-4253 exactly.
+ LANGUAGE.md lines 4240-4269 exactly.
  Ran, from the repo root:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
    /home/josj/scr/english/vox/target/release/vox \

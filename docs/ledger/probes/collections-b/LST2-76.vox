@@ -1,7 +1,7 @@
 (LST2-76 — the conditional-append example: in an `append` branch the
  `to <list>` target is omitted and inherited from the base statement.
  The manual's own example, plus the retargeting case: naming a DIFFERENT
- list in the branch is refused by name, exactly as LANGUAGE.md:3096 says.
+ list in the branch is refused by name, exactly as LANGUAGE.md:3112 says.
  Also covers: LST2-88 (target inheritance and the retargeting ban).
  The refusal, hand-run as its own program (D-free, just not compilable in
  the same file as a running probe):

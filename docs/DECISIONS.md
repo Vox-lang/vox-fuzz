@@ -289,4 +289,4 @@ cost the most time when forgotten.
   pretty-printed "beautiful" layout is planned — `--layout plain` is the
   reading aid. Layout itself (indentation, line breaks, tabs) is noise
   and is randomised by the layout pass; only periods, commas and
-  paragraph breaks are syntax (LANGUAGE.md:210, :81-83).
+  paragraph breaks are syntax (LANGUAGE.md:115-117, :81-83).

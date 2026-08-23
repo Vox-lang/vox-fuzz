@@ -1,6 +1,6 @@
 (FUN-10 — (gap) `Return a <type>, <expression>.` is also a statement
  inside the body, not only a clause on the `To` line, and an early return
- from inside an `If` leaves the function immediately. LANGUAGE.md:739 says
+ from inside an `If` leaves the function immediately. LANGUAGE.md:755 says
  only that "return type follows `Return a <type>,`" and never says where
  the sentence may stand; the generator already relies on the body form
  (src/gen_flow.vox:504).

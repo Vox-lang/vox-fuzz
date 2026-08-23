@@ -1,6 +1,6 @@
 (D1 — Discrepancy 1 repro: on 0.4.9 and earlier, a global declared BELOW
  a function was read inside that function as a raw machine word unless
- it was a `number`. LANGUAGE.md:757 says top-level variables "are global
+ it was a `number`. LANGUAGE.md:773 says top-level variables "are global
  and can be used inside functions" — the same sentence now also states
  the fixed rule directly (0.4.10). The same five globals, read at top
  level, all printed correctly; read from a function defined above them,

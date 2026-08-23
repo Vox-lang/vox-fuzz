@@ -36,8 +36,20 @@ else
     mapfile -t FILES < <(find "$TARGET" -name '*.vox' | sort)
 fi
 
+# CI runs the deterministic gate only: the soak tests are local-master
+# work (200 generates 2000 programs at budgets to 300, 270_layout re-runs
+# the corpus through every layout) and a shared runner kills or starves
+# them; the full suite remains the acceptance gate the master runs before
+# any merge (PROCEDURE 9). VOX_FUZZ_CI=1 is set by the workflow, never
+# locally.
+SOAK_TESTS="200_never_emitted 270_layout"
+
 for f in "${FILES[@]}"; do
     name="$(basename "$f" .vox)"
+    if [[ ${VOX_FUZZ_CI:-0} == 1 ]] && [[ " $SOAK_TESTS " == *" $name "* ]]; then
+        echo "SKIP $name (soak test, local gate only)"
+        continue
+    fi
     exp="$(dirname "$f")/$name.expected"
     [[ -f "$exp" ]] || continue
     bin="$WORK/$name"
