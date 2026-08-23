@@ -3315,6 +3315,8 @@ rounded (an exact tie goes to the even digit). Neither is capped (a very
 large `N` is simply a very large amount of output), but `N` has to be a
 count the compiler can hold, at most 9223372036854775807; past that it is a
 compile error naming the limit, not a width that quietly does nothing. A
+width may be zero - `{var:0}` and `{var:00}` pad nothing, the same no-op as
+any width too small to add characters. A
 precision past the value's exact decimal expansion pads with zeros, since the
 expansion has ended and not because accuracy has run out: a float is a
 binary fraction, so it always has an exact finite expansion, and `{pi:.50}`
@@ -5123,11 +5125,14 @@ own diagnostic: both name the canonical form `see '<lib>' version "<x.y>" from
 
 Those three shapes describe a `.vox` source include. A `.lib` path resolves
 differently: relative or bare, it is tried against the containing file's
-directory first and then each `--lib-path` directory, and its `Location` `.so`
-against the `.lib`'s own directory first and then `--lib-path`; absolute paths
-are used as-is. `--lib-path` is not consulted for a `.vox` include at all; for
-`--link` it only passes search paths to the linker (`-L`). See
-[Consuming a library](#consuming-a-library).
+directory first, then each `--lib-path` directory, and finally
+`/usr/include/vox` — where an installed library's interface lives, checked
+last so a development `.lib` beside the source or on `--lib-path` always
+shadows an installed one of the same name. Its `Location` `.so` resolves
+against the `.lib`'s own directory first and then `--lib-path` (no system
+step); absolute paths are used as-is. `--lib-path` is not consulted for a
+`.vox` include at all; for `--link` it only passes search paths to the
+linker (`-L`). See [Consuming a library](#consuming-a-library).
 
 **Circular includes.** The compiler tracks files already seen and skips a
 `see` that would re-enter one.
@@ -5294,7 +5299,8 @@ does the linking, because the `.lib` says where the `.so` is.
 
 `see` of a `.lib` is the consumption path. The compiler:
 
-1. Resolves the `.lib` (relative to the source, then `--lib-path`).
+1. Resolves the `.lib` (relative to the source, then `--lib-path`, then
+   `/usr/include/vox`).
 2. Parses it and selects the block matching name **and** version.
 3. Resolves `Location` relative to the `.lib`, then `--lib-path`.
 4. **Verifies against the `.so`'s dynamic symbol table**: every mangled name

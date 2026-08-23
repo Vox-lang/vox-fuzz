@@ -1,5 +1,5 @@
 (TIM-12 - the manual's Time Properties example, copied verbatim from
- LANGUAGE.md:4441-4454, compiles and runs. Every value it prints comes
+ LANGUAGE.md:4443-4456, compiles and runs. Every value it prints comes
  from the clock, so this is recorded as an exit-code probe with one real
  run kept underneath as documentation.
  Note: each `Print` ends its own line, so the example does NOT produce

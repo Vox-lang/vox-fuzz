@@ -1,6 +1,6 @@
 (Discrepancy 2 — RESOLVED (vox #44), re-recorded 2026-08-22 against vox
  0.4.9. Used to be: a LIST in a format string used as a VALUE rendered
- the list's raw pointer instead of the list. LANGUAGE.md:3366 says a
+ the list's raw pointer instead of the list. LANGUAGE.md:3368 says a
  format string used as a value "materializes into a fresh NUL-terminated
  string"; 3158-3161 says one shared name resolver makes every sink render
  identically. On 0.4.8 the same slot in a Print rendered correctly but

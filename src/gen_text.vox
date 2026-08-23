@@ -484,7 +484,7 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
  of that question.
 
  Also the "Formatted Time Output" capability, in the spelling that
- actually compiles. LANGUAGE.md:4348-4354 shows `now's hour as text
+ actually compiles. LANGUAGE.md:4350-4356 shows `now's hour as text
  padded to 2`, which does not exist ("Unknown function: padded");
  LANGUAGE.md:2094-2101 shows `"{h:02}"` for the same job, which does.
  The result is asserted rather than printed: an hour zero-padded to 2 is

@@ -1,5 +1,5 @@
 (FMT-26 — `a text called tok is "{word}".` builds a text from a BUFFER's
- contents. The manual's own worked example line, LANGUAGE.md:3375.
+ contents. The manual's own worked example line, LANGUAGE.md:3377.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
    echo

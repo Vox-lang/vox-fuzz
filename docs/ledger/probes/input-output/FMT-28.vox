@@ -1,4 +1,4 @@
-(FMT-28 — the whole worked example at LANGUAGE.md:3369-3379, compiled and
+(FMT-28 — the whole worked example at LANGUAGE.md:3371-3381, compiled and
  run. The manual's `copy hello to word.` names an undeclared `hello`, so
  the fragment is not runnable verbatim; `copy "echo" to word.` is the
  minimal repair and is the only change. Composite of FMT-24/25/26/27.

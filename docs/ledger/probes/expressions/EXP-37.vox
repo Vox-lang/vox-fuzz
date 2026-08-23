@@ -1,5 +1,5 @@
 (EXP-37: the Comparisons block sits under `## Expressions`, and the Grammar
- Summary at LANGUAGE.md:5565-5569 derives `comparison` from `expr`, so a
+ Summary at LANGUAGE.md:5571-5575 derives `comparison` from `expr`, so a
  comparison should be usable anywhere an expression is. It is not - the
  compiler accepts one only in a condition position. See Discrepancy 3.
  This probe records the refusal for the binding form; D3.vox records the

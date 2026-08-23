@@ -21,7 +21,7 @@
    - LANGUAGE.md:1898-1900   0x / 0b prefixes, 'A' is one character
    - LANGUAGE.md:1893        "Float literals are recognized by the
                              presence of a decimal point"
-   - LANGUAGE.md:3427-3433   the escape table: {{ }} \n \t \\
+   - LANGUAGE.md:3429-3435   the escape table: {{ }} \n \t \\
    - LANGUAGE.md:3295-3305   the format-specifier table
    - LANGUAGE.md:2012-2019   radix conversions, "any base from 2 through 36"
    - LANGUAGE.md:2764-2785   nothing / null / nil
@@ -63,7 +63,7 @@ a list called literal_upper_letters is ["A", "B", "C", "D", "E", "F", "G", "H", 
  hand-verified. A lone `}` is legal and is in the list; `}}` is in the
  escape list too, because the manual gives it as an escape.
 
- The escapes are the ones LANGUAGE.md:3427 tabulates - {{ }} \n \t \\ -
+ The escapes are the ones LANGUAGE.md:3429 tabulates - {{ }} \n \t \\ -
  plus \" and \r, which the manual does NOT list and the compiler
  nonetheless honours (probed: \" yields a quote, \r yields byte 13; every
  OTHER backslash pair just drops the backslash). Emitting an undocumented
@@ -399,7 +399,7 @@ To 'literal format specifier for a text'.
         Return a text, ":{'the width'}".
     Return a text, ":0{'the width'}".
 
-(A boolean is a whole number (LANGUAGE.md:3332, 3335 list it beside
+(A boolean is a whole number (LANGUAGE.md:3334, 3337 list it beside
  number for both precision and radix), so it takes the same picker as a
  number.)
 To 'literal format specifier for a boolean'.

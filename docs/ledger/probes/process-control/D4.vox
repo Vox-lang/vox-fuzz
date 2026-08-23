@@ -1,4 +1,4 @@
-(D4 — Discrepancy 4 repro: LANGUAGE.md:4304-4306 says
+(D4 — Discrepancy 4 repro: LANGUAGE.md:4306-4308 says
  examples/supervisor.vox "is this loop as a runnable program". It is not
  the same program. The manual's snippet opens with
  `see process version "0.1" from "./libprocess.lib".` and calls `crashed`

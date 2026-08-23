@@ -1,4 +1,4 @@
-(ARG-10 — the Basic Usage example (LANGUAGE.md:4607-4614) compiles and
+(ARG-10 — the Basic Usage example (LANGUAGE.md:4609-4616) compiles and
  behaves as the surrounding prose says: count into a number, `the argc`
  with its article, name into a text.
  One deviation from verbatim, and only one: the example's final

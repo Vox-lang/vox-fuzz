@@ -299,7 +299,7 @@ Strongest reading in which the compiler is correct: none that I can
 construct. `-1` is not a defensible answer for a two-entry map, and a
 program that fails to assemble is not a defensible outcome for legal Vox
 either. The most charitable framing is that `map` was added to the
-parameter-type list (LANGUAGE.md:780-?, "plan 296") ahead of the
+parameter-type list (LANGUAGE.md:780–782, "plan 296") ahead of the
 property plumbing, and the property dispatcher's fall-through happens to
 land on `file`. Not filed.
 

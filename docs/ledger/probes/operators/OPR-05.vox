@@ -1,4 +1,4 @@
-(OPR-05: `multiply` is the multiplication operator (LANGUAGE.md:4840).
+(OPR-05: `multiply` is the multiplication operator (LANGUAGE.md:4842).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-05.vox -o p && ./p
  expected output:
    120

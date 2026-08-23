@@ -1,4 +1,4 @@
-(OPR-20: `or` is logical disjunction (LANGUAGE.md:4860).
+(OPR-20: `or` is logical disjunction (LANGUAGE.md:4862).
  Only the false-false row must not fire.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-20.vox -o p && ./p
  expected output:

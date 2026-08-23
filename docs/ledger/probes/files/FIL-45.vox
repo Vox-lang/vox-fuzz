@@ -1,4 +1,4 @@
-(FIL-45: Read from ... into ... REPLACES the buffer's contents rather than appending to them - the opposite of what LANGUAGE.md:3665 says. See Discrepancy 2.
+(FIL-45: Read from ... into ... REPLACES the buffer's contents rather than appending to them - the opposite of what LANGUAGE.md:3667 says. See Discrepancy 2.
  Also covers: FIL-47, FIL-49.
  4 bytes of pre-existing content, 17 bytes of file, 128 bytes of room.
  An append would give 21. It gives 17.

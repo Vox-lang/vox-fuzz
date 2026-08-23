@@ -16,7 +16,7 @@
    hello_linked:
      0x0000000000000001 (NEEDED)             Shared library: [libmath.so]
      0x000000000000001d (RUNPATH)            Library runpath: [./libs]
-   (both builds exit 0; matches LANGUAGE.md:5453-5457 verbatim, with libs/
+   (both builds exit 0; matches LANGUAGE.md:5459-5463 verbatim, with libs/
     substituted for the manual's own directory name)
 )
 

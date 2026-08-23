@@ -178,7 +178,7 @@ LST-68 (their repros are `D3.vox` and `D4.vox`).
 | LST-56 | 2556–2559 | A map rides the `value` ABI: passed to a `value` parameter or returned from a `value` function it carries its tag (5) alongside the payload and round-trips intact. | pass a map through a `value` function, assert the rendering and `is a map` on the way out | yes | `gen leaf value roundtrip` emits a `value` local but never a `value` **parameter or return**, and never a map through one (`values.md` VAL-02) | todo — hand-verified (`LST-56.vox`); `'s type` reports `Map (dynamic)`, consistent with VAL-14 | |
 | LST-57 | 2561–2575 | **Claim corrected, 2026-08-22 — the manual now describes the real behaviour instead of the wrong one.** A map may be an element of a list (`[{"a": 1}, {"b": 2}]`); the slot carries the map tag (5), so `is a map` fires on a `For each` loop variable over such a list. The loop variable itself is **deliberately untyped**, though, and reading a key with `'s "key"` is a *static* check, so `entry's "tag"` inside the loop is a compile error — read a key by looping over the positions and declaring the element instead (worked example at 2460–2465, verbatim the idiom Discrepancy 2's resolution proposed). | emit a list of maps, iterate it, assert `is a map` fires on the loop variable; separately, emit the position-loop idiom and assert the keyed read | yes for both halves now that the manual states the real rule | none — no leaf puts a map in a list | todo — the tag half holds (`LST-57.vox`, `LST-55.vox`); the direct `entry's "tag"` form is **correctly** a compile error, not a bug — Discrepancy 2 RESOLVED (manual corrected to match the compiler, exactly the lawyer's recommendation) | |
 | LST-58 | 2577–2578 | Limitation: keys are text only — a non-text key is rejected with "Map keys must be text". | emit a numeric key → expect a compile error | **no, from a runtime leaf** — emitting a known compile error breaks the generator's "legal Vox that should compile and run" contract (same category as `values.md` VAL-08) | none | not assertable (compile-error claim) — hand-verified (`LST-58.vox`) | |
-| LST-59 | 2578–2579 | Limitation: there is no map entry deletion. | — | **no** — the claim is the absence of a feature; there is nothing to emit | none | not assertable (absence claim) — hand-verified (`LST-59.vox`): `Delete <map>'s "key".` does compile, but as the **file**-deletion sentence (LANGUAGE.md:3967) applied to the key's value, so it sets the error flag and changes nothing. No silent near-miss | |
+| LST-59 | 2578–2579 | Limitation: there is no map entry deletion. | — | **no** — the claim is the absence of a feature; there is nothing to emit | none | not assertable (absence claim) — hand-verified (`LST-59.vox`): `Delete <map>'s "key".` does compile, but as the **file**-deletion sentence (LANGUAGE.md:3969) applied to the key's value, so it sets the error flag and changes nothing. No silent near-miss | |
 | LST-60 | 2583–2585 | `is a <type-noun>` compares the value's runtime type tag, so it works on a mixed-list element whose type is only known at run time. | emit the predicate on a mixed element, assert the branch taken | yes — the generator knows every slot's type | none — `grep "is a "` across `src/` finds only flag-schema text (`it is a text`), never a predicate | todo — real gap, hand-verified (`LST-60.vox`) | |
 | LST-61 | 2587–2595 | Worked example: the four-arm dispatch over `[1, "two", 3.5, yes]` prints `number: 1`, `text: two`, `decimal: 3.5`, `boolean: 1`. | reproduce, assert the four lines | yes | none | folded into LST-60 — hand-verified in `LST-60.vox` | |
 | LST-62 | 2597 | The type nouns are `number`, `text`, `decimal`, `boolean`, `list`, `map`. | emit all six against a list holding one of each, assert each match | yes | none | todo — hand-verified all six (`LST-62.vox`) | |
@@ -401,9 +401,9 @@ Found while probing LST-35. The claim lines are in the FMT ledger's range, not
 this one, but the behaviour is what LST-16 and LST-35 rest on, so it is
 recorded here with the cross-reference.
 
-LANGUAGE.md:3400–3402 (was 3082–3085): all format-string sinks "share one name resolver, so
+LANGUAGE.md:3402–3404 (was 3082–3085): all format-string sinks "share one name resolver, so
 special names … render **identically** whether the result is printed, written
-to a file, or built into a buffer". LANGUAGE.md:3376 (was 3054–3056): a format string used
+to a file, or built into a buffer". LANGUAGE.md:3378 (was 3054–3056): a format string used
 as a value "materializes into a fresh NUL-terminated string, so it works as a
 text initializer or assignment". Repro (`D7.vox`), **re-verified against
 vox 0.4.9 — the variable form (`"{flat}"`) tested here now renders
@@ -466,7 +466,7 @@ in the EXP ledger's range (1789–2025), not this one, but the consequence
 governs every assertion this section could ever emit, so it is recorded here.
 
 LANGUAGE.md:1931 introduces `lhs is equal to rhs` with no type
-restriction, and LANGUAGE.md:4846 lists `is equal to` / `is` as *the*
+restriction, and LANGUAGE.md:4848 lists `is equal to` / `is` as *the*
 equality operator. Things are documented as compared **field by field**. A
 reader has no warning that collections are the exception. Repro (`D8.vox`),
 **re-verified against vox 0.4.9, byte-identical**:

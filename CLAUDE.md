@@ -63,7 +63,7 @@ Worked examples:
 | exactly four flags in every program | **defect** — no rule says four, or any number |
 | `Parse flags.` in every program | **defect** — the manual says it is optional (§3) |
 | flags always contiguous | **defect** — the manual explicitly permits code between schema declarations (§4), and the compiler accepts it |
-| buffer index starts at 1 | **justified** — LANGUAGE.md:3591 says 1-indexed |
+| buffer index starts at 1 | **justified** — LANGUAGE.md:3593 says 1-indexed |
 
 A pattern with no citation is not a tuning opportunity. It is a bug in
 the rule layer: something is being enforced that nobody declared.

@@ -1,7 +1,7 @@
 (FIL-91: a dynamic buffer grows to hold a file far larger than any initial reserve, with no error flag and no truncation.
  Also covers: FIL-85, FIL-90, FIL-97.
  80000 bytes into a buffer that started at capacity 4096. Note the first
- line: the manual (LANGUAGE.md:3816) says a dynamic buffer starts at zero
+ line: the manual (LANGUAGE.md:3818) says a dynamic buffer starts at zero
  capacity; it reports 4096. That is the buffers ledger's Discrepancy 1,
  restated by this section's own text - see FIL-90.
  Run from the vox-fuzz worktree root; the probe creates everything it

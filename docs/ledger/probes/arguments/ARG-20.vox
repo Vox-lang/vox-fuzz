@@ -1,5 +1,5 @@
 (ARG-20 — flags may be marked required AND given defaults
- (LANGUAGE.md:4666, "required and/or given defaults"). The combination
+ (LANGUAGE.md:4668, "required and/or given defaults"). The combination
  compiles. What it does at runtime is Discrepancy 3: required wins, the
  program aborts before the default can be observed, so the default is
  unreachable for exactly the invocation it exists to serve.

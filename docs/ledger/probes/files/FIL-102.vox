@@ -1,6 +1,6 @@
 (FIL-102: line N exists when the file holds at least N-1 newlines before
  it — a file ending in a newline has one empty last line to seek to;
- anything beyond that is past EOF and errors. LANGUAGE.md:3889-3891, the
+ anything beyond that is past EOF and errors. LANGUAGE.md:3891-3893, the
  new bullet the #47 fix (Discrepancy 3) brought with it.
  File "AA\nBB\n" has 2 newlines, so line 3 is the one empty trailing
  line (exists, size 0, no error) and line 4 is past it (errors).

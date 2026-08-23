@@ -4,7 +4,7 @@
  that already exists -- a repeat --shared build errors and asks you to
  remove the .lib first". It did not error; it silently rewrote the
  .lib, clobbering any hand edit. The manual was corrected in vox commit
- 70ca1c2 to document exactly this behavior (LANGUAGE.md:5228-5231) --
+ 70ca1c2 to document exactly this behavior (LANGUAGE.md:5233-5236) --
  see the ledger's Discrepancies section, item 1. Needs --shared, so
  not auto-run; see shared/LIB-overwrite.vox for the fuller version.
  Re-ran 2026-08-22 against vox 0.4.9 (commit bb406de), from the repo root, in a scratch directory:

@@ -1,4 +1,4 @@
-(OPR-23: LANGUAGE.md:4861 lists `aren't` as an accepted spelling of `not`.
+(OPR-23: LANGUAGE.md:4863 lists `aren't` as an accepted spelling of `not`.
  On 0.4.9 and earlier it failed for the same lexical reason as OPR-22.
  See Discrepancy 1. `aren't` stands for the plural `are not`
  (LANGUAGE.md:1972), so the witness needs a plural predicate that is

@@ -29,7 +29,7 @@ To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
 
 (--- The ledger's buffer leaves, batch A ------------------------------
 
- docs/ledger/buffers.md maps LANGUAGE.md:3277-3518 into numbered claims;
+ docs/ledger/buffers.md maps LANGUAGE.md:3277-3520 into numbered claims;
  everything below puts one of those claims on trial and ASSERTS its
  documented result, so a wrong answer is a finding rather than a line of
  output nobody reads. A failing assertion prints
@@ -225,7 +225,7 @@ To 'gen buffer size'.
 
 (BUF-01/BUF-05: the three spellings that declare a buffer of a stated
  capacity. `is N bytes in size` is LANGUAGE.md:3298; `Create ... with
- size N` is the worked example at LANGUAGE.md:3489; `is N bytes` is the
+ size N` is the worked example at LANGUAGE.md:3491; `is N bytes` is the
  spelling the compiler's own no-size warning recommends, and it compiles
  - hand-verified, all three, capacity exactly N. Nothing says one of
  them is canonical, so all three are drawn.)
@@ -409,16 +409,16 @@ To 'gen leaf buffer declaration' with a text called indent and a boolean called 
  properties report, before and after a write whose length the generator
  chose.
 
- BUF-10 (LANGUAGE.md:3392, 3394): size is bytes stored, capacity is
+ BUF-10 (LANGUAGE.md:3394, 3396): size is bytes stored, capacity is
  bytes holdable. The payload is built to a known length, so both are
  numbers the generator can assert outright.
 
- BUF-11 (LANGUAGE.md:3393): length is the same as size. Asserted twice -
+ BUF-11 (LANGUAGE.md:3395): length is the same as size. Asserted twice -
  against the literal the generator expects, and against `size` itself,
  because a synonym that agreed with the literal while disagreeing with
  its own twin would be a stranger bug and is worth catching separately.
 
- BUF-12 (LANGUAGE.md:3555): empty is true exactly while size is 0.
+ BUF-12 (LANGUAGE.md:3557): empty is true exactly while size is 0.
  Asserted before and after the append. Note this is the PROPERTY
  `X's empty`, not the `is empty` predicate 'gen leaf stdin read'
  already emits - different construct, different code path, and the
@@ -460,7 +460,7 @@ To 'gen leaf buffer properties' with a text called indent and a boolean called n
 
 (BUF-13: full is true exactly when size equals capacity.
 
- LANGUAGE.md:3556 states it "for fixed buffers", so a fixed buffer is
+ LANGUAGE.md:3558 states it "for fixed buffers", so a fixed buffer is
  what gets asserted: the appends are sized to reach the capacity exactly,
  in one to three pieces, and `full` is asserted false after every piece
  but the last and true after it.
