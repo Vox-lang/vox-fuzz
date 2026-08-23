@@ -645,7 +645,7 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf buffer growth' of indent and nested.
     If kind is 104 then,
         'gen leaf buffer truncation' of indent and nested.
-    (The values band, 140-147, reserved above for the collections
+    (The values band, 140-154, reserved above for the collections
      surface. They are drawn only at depth 3 - see the section header in
      src/gen_collections.vox for why a leaf that both defines a function
      and closes on an If assertion cannot sit in a nested body.)
@@ -665,6 +665,25 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf value predicate' of indent and nested.
     If kind is 147 then,
         'gen leaf value bad retype' of indent and nested.
+    (Values batch B, 148-154: the declaration forms, the positive half of
+     the dispatch claim, retype tracking and its no-op, the `type`
+     property, and the three `nothing` rows. Same band, same depth-3-only
+     rule, for the same reason - each defines a function or ends on an
+     `If ... Exit 95.` assertion.)
+    If kind is 148 then,
+        'gen leaf value forms' of indent and nested.
+    If kind is 149 then,
+        'gen leaf value dispatch label' of indent and nested.
+    If kind is 150 then,
+        'gen leaf value retype tracking' of indent and nested.
+    If kind is 151 then,
+        'gen leaf value type property' of indent and nested.
+    If kind is 152 then,
+        'gen leaf absent value' of indent and nested.
+    If kind is 153 then,
+        'gen leaf absent test' of indent and nested.
+    If kind is 154 then,
+        'gen leaf absent key' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -821,15 +840,15 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          is parked at 99, outside the draw, so no number in this range
          dispatches to nothing. 45..49 are the five reserved-span
          buffer leaves, remapped to 100..104 just below.
-         50..57 are drawn as one contiguous span with the rest and then
-         shifted into the collections surface's reserved 140-147 band -
-         the eight `value` leaves. The shift keeps a single flat draw
+         50..64 are drawn as one contiguous span with the rest and then
+         shifted into the collections surface's reserved 140-154 band -
+         the fifteen `value` leaves. The shift keeps a single flat draw
          (so the existing kinds' odds move by exactly the new ones'
          share, and no seed's leaf choice depends on where a band
          happens to sit) while leaving the band numbers themselves
          where the reservation table put them, out of the way of the
          other surfaces' parallel work.)
-        Set kind to 'rng below' of 58.
+        Set kind to 'rng below' of 65.
         If kind is greater than 49 then,
             Set kind to kind add 90.
     If depth is equal to 2 then,
@@ -851,8 +870,8 @@ To 'gen statement' with a number called depth and a text called indent and a boo
      are top-level-only, exactly like 'gen leaf while' and 'gen leaf file
      round trip', so only depth 3 reaches past 102. The upper bound below
      (kind less than 50) keeps this remap off the value band, which has
-     already been shifted to 140-147 by the time this runs - without it
-     a value kind would be greater than 44 twice over and land past 147.)
+     already been shifted to 140-154 by the time this runs - without it
+     a value kind would be greater than 44 twice over and land past 154.)
     If depth is equal to 3 and kind is greater than 44 and kind is less than 50 then,
         Set kind to kind add 55.
     If depth is equal to 2 and kind is greater than 28 then,
@@ -970,14 +989,24 @@ To 'gen statement' with a number called depth and a text called indent and a boo
         If kind is 103 then,
             Set 'safe kind' to 100.
         If kind is 104 then,
-            Set 'safe kind' to 101..
-        (140-147, the `value` leaves. Defensive in the same sense as the
+            Set 'safe kind' to 101.
+        (140-154, the `value` leaves. Defensive in the same sense as the
          entries above: avoid_onerror is only ever true below 'gen body',
          which recurses at depth 2 or lower, and the band is drawn at
          depth 3 alone - so these can never be reached here. Written
          anyway, because every one of them either defines a function or
          ends on an `If ... Exit 95.` assertion, and both would leave an
-         enclosing block open if the guarantee ever moved.)
+         enclosing block open if the guarantee ever moved.
+
+         THE SECOND PERIOD BELONGS TO WHICHEVER ENTRY IS LAST, and only
+         to that one. It closes the enclosing `If 'avoid onerror'`
+         clause, so an entry written after it sits OUTSIDE the guard and
+         runs for every statement at every depth. That is what happened
+         when this band was added below kind 104's `to 101..`: the whole
+         values band was remapped to kind 1 unconditionally, and leaves
+         140-147 were never once reached by a campaign, only by their
+         own unit test. Anything added here goes ABOVE this entry, and
+         the period moves with the entry that ends the list.)
         If kind is greater than 139 then,
             Set 'safe kind' to 1..
     'gen dispatch leaf' of 'safe kind' and indent and 'is nested'.

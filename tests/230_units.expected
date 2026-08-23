@@ -19,7 +19,7 @@ classify 128: check-asm
 classify 129: ice
 classify -1: hang
 pool lengths: types=31 functions=37 flags=29 fields=31 makers=19 receivers=19 parameters=101
-other pool lengths: buffers=29 value nouns=41 value verbs=29 environment=30 loop words=8
+other pool lengths: buffers=29 value nouns=89 value verbs=29 environment=30 loop words=8
 types vs functions: 0
 types vs flags: 0
 functions vs flags: 0
