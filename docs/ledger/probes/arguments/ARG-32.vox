@@ -1,6 +1,6 @@
 (ARG-32 — after parsing, `arguments's all` is the filtered positional
  view: recognized flags and their consumed values are gone
- (LANGUAGE.md:4667).
+ (LANGUAGE.md:4703).
  Also covers: ARG-33 (`arguments's raw` keeps the original user-provided
  sequence unchanged, flags and all) and ARG-34 (the manual's
  all-vs-raw worked example at 4422-4434, including a flag read from

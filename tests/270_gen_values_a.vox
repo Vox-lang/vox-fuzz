@@ -68,7 +68,7 @@ Print "VAL-13 asserts: {'the failed conversion row is covered'}".
 
 (The three constructs the section's own rules turn on, checked by needle
  rather than by leaf name: a value parameter, a value return, and the
- variable named `value` that LANGUAGE.md:2552 says must stay legal.)
+ variable named `value` that LANGUAGE.md:2588 says must stay legal.)
 a boolean called 'a value parameter appears' is 'gen text contains' of "with a value called".
 Print "value parameter emitted: {'a value parameter appears'}".
 a boolean called 'a value return appears' is 'gen text contains' of "Return a value,".

@@ -1,4 +1,4 @@
-(THG2-11: the Equality worked example, LANGUAGE.md:1324-1344, verbatim -
+(THG2-11: the Equality worked example, LANGUAGE.md:1354-1374, verbatim -
  a manifest member declared and defined alongside the two comparisons, so
  the example also shows that a function member takes no part in equality.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-11.vox -o p && ./p

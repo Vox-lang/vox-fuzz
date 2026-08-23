@@ -1,5 +1,5 @@
 (TIM-20 - the manual's four Sleep/Wait example lines, verbatim from
- LANGUAGE.md:4436-4439, compile and run. They take 6.5 seconds of wall
+ LANGUAGE.md:4472-4475, compile and run. They take 6.5 seconds of wall
  clock between them, which is why nothing is printed: the claim is that
  the program reaches its end.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-20.vox -o p && ./p

@@ -3,7 +3,7 @@
  statement.
  Here `Set origin to 5.` is line 6, and the caret lands on line 5 column 16 -
  the `origin` in `a point called origin.`, which is correct Vox.
- Same shape at LANGUAGE.md:1176-1186 (`increment origin.`), :1130-1131
+ Same shape at LANGUAGE.md:1206-1216 (`increment origin.`), :1130-1131
  (comparison with a single value), and :1136-1149, where `Print nudged of
  before.` on line 10 reports against `To nudged with a point called start.`
  on line 5.

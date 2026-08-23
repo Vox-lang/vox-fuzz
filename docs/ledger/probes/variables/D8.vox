@@ -1,4 +1,4 @@
-(Discrepancy 8: LANGUAGE.md:483 says every declarable type supports two
+(Discrepancy 8: LANGUAGE.md:496 says every declarable type supports two
  equivalent forms. A timer supports only the bare form; there is no
  initializer form for it, and the parser does not even reach a type error.
  (Compile-error claim.)

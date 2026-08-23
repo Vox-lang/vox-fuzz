@@ -1,5 +1,5 @@
 (OPR-29: the binary literals the Operators example opens with
- (LANGUAGE.md:4848-4849) are legal number initialisers and carry the
+ (LANGUAGE.md:4884-4885) are legal number initialisers and carry the
  values the section then relies on: 0b11110000 is 240, 0b10101010 is 170.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-29.vox -o p && ./p
  expected output:

@@ -1,4 +1,4 @@
-(FUN-25 — the `'contains token'` example fragment (LANGUAGE.md:762-767)
+(FUN-25 — the `'contains token'` example fragment (LANGUAGE.md:792-797)
  compiles and behaves: parameters introduced with `of`, a buffer
  parameter and a text parameter, a buffer declared INSIDE the body from a
  format string that interpolates the text parameter, and `'s size` and

@@ -1,6 +1,6 @@
 (FMT-56 — a width and a precision written together in one format
  specifier compose: {var:8.2} asks for two decimal places, padded out to
- eight characters. LANGUAGE.md:3318-3325 (new in 0.4.10, #85). Before
+ eight characters. LANGUAGE.md:3354-3361 (new in 0.4.10, #85). Before
  #85, {f:8.2} printed 2.5, not 2.50 — the width consumed the spec reader
  and the leftover ".2" fell to a catch-all that dropped the precision.
  On a float the digits print but the padding does not, because there is

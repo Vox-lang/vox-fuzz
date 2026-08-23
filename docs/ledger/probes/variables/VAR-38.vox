@@ -1,7 +1,7 @@
 (VAR-38, VAR-39: a nested declaration that reuses an outer name at a
  different type is rejected — Vox has no block-level scoping, so there is no
  inner slot for it to occupy. This is the worked example at
- LANGUAGE.md:602-606, and the message matches the one the manual quotes.
+ LANGUAGE.md:618-622, and the message matches the one the manual quotes.
  (Compile-error claim: not assertable from a runtime leaf.)
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-38.vox -o p && ./p
  expected output:

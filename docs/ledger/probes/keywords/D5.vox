@@ -1,5 +1,5 @@
 (Discrepancy 5 — RESOLVED (vox #56), re-recorded 2026-08-22 against vox
- 0.4.9. LANGUAGE.md:281 says ranges are inclusive ("1 to 5 includes 1, 2,
+ 0.4.9. LANGUAGE.md:294 says ranges are inclusive ("1 to 5 includes 1, 2,
  3, 4, and 5"), and 4715-4716 names `all the numbers from/between …` as
  a range phrase. Used to be: `all the numbers from 1 to 3` yielded 1,2 —
  the end bound was dropped. Now all three spellings agree.

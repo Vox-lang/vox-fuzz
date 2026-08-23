@@ -1,5 +1,5 @@
 (D1 — Discrepancy 1 repro: the manual's "Append strings" example
- (LANGUAGE.md:2837-2840) does not compile. Bare words are not text
+ (LANGUAGE.md:2873-2876) does not compile. Bare words are not text
  literals in Vox; `append "hello" to words.` is what compiles.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:

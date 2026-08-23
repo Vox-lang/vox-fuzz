@@ -1,4 +1,4 @@
-(OPR-26: `bit-xor` is bitwise XOR (LANGUAGE.md:4842).
+(OPR-26: `bit-xor` is bitwise XOR (LANGUAGE.md:4878).
  240 XOR 170 is 90 (0b01011010).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-26.vox -o p && ./p
  expected output:

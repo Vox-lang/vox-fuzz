@@ -3,7 +3,7 @@
  caret on the parameter's own declaration, which says `a timer called
  clock` two words to its left. The identical read on a top-level timer
  compiles and runs (see FUN-21/FUN-22, and the commented control below).
- LANGUAGE.md:750-753 lists `timer` among the eleven legal parameter types
+ LANGUAGE.md:780-783 lists `timer` among the eleven legal parameter types
  and says a typed parameter supports the same properties as a top-level
  variable of that type.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p

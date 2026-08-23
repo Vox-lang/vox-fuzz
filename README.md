@@ -6,11 +6,13 @@
 ![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)
 [![crates.io](https://img.shields.io/crates/v/vox-fuzz?style=flat-square)](https://crates.io/crates/vox-fuzz)
 
-A fuzzer for the [Vox](https://github.com/Vox-lang/vox) compiler —
+A fuzzer for the [Vox](https://github.com/Vox-lang/vox) compiler ([vox-lang.dev](https://vox-lang.dev)) —
 **written in Vox**. It generates random valid Vox programs, compiles
 them with the real compiler, runs the binaries under its own native
 process supervision, and records every case where the toolchain breaks
 its promises.
+What it has checked so far is summarised on the site's
+[quality page](https://vox-lang.dev/quality).
 
 ## The invariant under test
 

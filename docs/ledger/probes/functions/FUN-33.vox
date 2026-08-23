@@ -1,4 +1,4 @@
-(FUN-33 — the three example call fragments (LANGUAGE.md:823-825) parse
+(FUN-33 — the three example call fragments (LANGUAGE.md:853-855) parse
  and evaluate: a quoted name `of` two literals, a quoted name `of` a
  `the`-prefixed variable reference and a literal, and a bare name `with`
  two variables.

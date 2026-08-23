@@ -103,15 +103,15 @@ Rows with no probe file are the ones that cannot be run: `FIL-71`
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-01 | 3643 | `size` returns the file's size in bytes as a Number, live — it reads 0 before a write and the byte count after. | open a handle, write a known number of bytes, assert `h's size` | yes — the generator knows the exact payload length: `If fw{n}'s size is not 18 then, Exit 95.` | none reads `'s size` on a **file**; `gen leaf file round trip` and `gen leaf stdin read` read `'s size` on the destination **buffer**, which is a different property of a different object | todo | |
-| FIL-02 | 3644 | `descriptor` returns the raw file descriptor number as a Number. | print/assert `h's descriptor` after an open | partly — the exact number is allocation-dependent, but a lower bound is knowable: `If fr{n}'s descriptor is less than 0 then, Exit 95.` (a failed open reports a negative errno, see D5) | `gen leaf file write` (`src/gen_files.vox:97`) emits it — but that leaf is **disabled**: it is dispatched at kind 99, outside every draw (`src/gen_core.vox:578–582`), so no generated program contains it | todo | |
-| FIL-03 | 3645 | `readable` is true iff the file is open for reading. | open in each of the three modes, assert `readable` matches | yes — the generator chose the mode: `If fr{n}'s readable is false then, Exit 95.` | `gen leaf file round trip` (`src/gen_files.vox:184`) emits `Print fr{n}'s readable` on a reading handle only; never on a writing or appending one, and never asserted | exercised (reading mode only) | |
-| FIL-04 | 3646 | `writable` is true iff the file is open for writing. | same, for `writable` | yes, same shape | only the disabled `gen leaf file write` | todo | |
-| FIL-05 | 3647 | `modified` returns the last modification time as a Unix timestamp Number. | print/assert `h's modified` | partly — the wall clock is unknowable, but a range is: `If f{n}'s modified is less than 1700000000 then, Exit 95.` | only the disabled `gen leaf file write` (which prints `permissions`, not `modified` — nothing emits `modified` at all) | todo | |
-| FIL-06 | 3648 | `accessed` returns the last access time as a Unix timestamp Number. | as FIL-05 | yes, same range assertion | none | todo | |
-| FIL-07 | 3649 | `permissions` returns the file's permission bits as a Number (`e.g., 0644`). | print/assert `h's permissions` on a file the program itself created | yes — a file created by `open … for writing` is 0644, i.e. **420** decimal: `If f{n}'s permissions is not 420 then, Exit 95.` See the note below the table before writing that leaf. | only the disabled `gen leaf file write` | todo | |
+| FIL-01 | 3679 | `size` returns the file's size in bytes as a Number, live — it reads 0 before a write and the byte count after. | open a handle, write a known number of bytes, assert `h's size` | yes — the generator knows the exact payload length: `If fw{n}'s size is not 18 then, Exit 95.` | none reads `'s size` on a **file**; `gen leaf file round trip` and `gen leaf stdin read` read `'s size` on the destination **buffer**, which is a different property of a different object | todo | |
+| FIL-02 | 3680 | `descriptor` returns the raw file descriptor number as a Number. | print/assert `h's descriptor` after an open | partly — the exact number is allocation-dependent, but a lower bound is knowable: `If fr{n}'s descriptor is less than 0 then, Exit 95.` (a failed open reports a negative errno, see D5) | `gen leaf file write` (`src/gen_files.vox:97`) emits it — but that leaf is **disabled**: it is dispatched at kind 99, outside every draw (`src/gen_core.vox:578–582`), so no generated program contains it | todo | |
+| FIL-03 | 3681 | `readable` is true iff the file is open for reading. | open in each of the three modes, assert `readable` matches | yes — the generator chose the mode: `If fr{n}'s readable is false then, Exit 95.` | `gen leaf file round trip` (`src/gen_files.vox:184`) emits `Print fr{n}'s readable` on a reading handle only; never on a writing or appending one, and never asserted | exercised (reading mode only) | |
+| FIL-04 | 3682 | `writable` is true iff the file is open for writing. | same, for `writable` | yes, same shape | only the disabled `gen leaf file write` | todo | |
+| FIL-05 | 3683 | `modified` returns the last modification time as a Unix timestamp Number. | print/assert `h's modified` | partly — the wall clock is unknowable, but a range is: `If f{n}'s modified is less than 1700000000 then, Exit 95.` | only the disabled `gen leaf file write` (which prints `permissions`, not `modified` — nothing emits `modified` at all) | todo | |
+| FIL-06 | 3684 | `accessed` returns the last access time as a Unix timestamp Number. | as FIL-05 | yes, same range assertion | none | todo | |
+| FIL-07 | 3685 | `permissions` returns the file's permission bits as a Number (`e.g., 0644`). | print/assert `h's permissions` on a file the program itself created | yes — a file created by `open … for writing` is 0644, i.e. **420** decimal: `If f{n}'s permissions is not 420 then, Exit 95.` See the note below the table before writing that leaf. | only the disabled `gen leaf file write` | todo | |
 | FIL-08 | — | *(withdrawn, manual 0.4.9 — see Discrepancy 1)* `exists` returns whether the file exists, as a Boolean. **This claim no longer exists in the manual.** Vox bug #38 (parse error) was resolved by removing the table row (Josj's ruling, option 3 of 3) rather than implementing the property; LANGUAGE.md now documents the `On error`-around-`open` idiom in its place, at 3504–3525. | — | — | — | withdrawn (manual 0.4.9) | |
-| FIL-09 | 3652–3660 | The worked example (open for reading, `print src's size`, `print src's modified`, `If src's size is greater than 1048576 then, …`) compiles and behaves as the prose says. | reproduce the chain | yes, as a composite of FIL-01/05 plus a size comparison whose answer the generator knows | none as a chain; the `open`+`Read`+`Print size` half exists in `gen leaf file round trip` | todo (composite) | |
+| FIL-09 | 3688–3696 | The worked example (open for reading, `print src's size`, `print src's modified`, `If src's size is greater than 1048576 then, …`) compiles and behaves as the prose says. | reproduce the chain | yes, as a composite of FIL-01/05 plus a size comparison whose answer the generator knows | none as a chain; the `open`+`Read`+`Print size` half exists in `gen leaf file round trip` | todo (composite) | |
 
 **Note on FIL-07, for whoever writes the leaf.** `permissions` prints
 `420`, and `420` **is** octal `0644` — the property returns the raw
@@ -132,25 +132,25 @@ not when that comment was written.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-10 | 3689 | `length` returns the number of items in a list. | declare a list of known length, assert `l's length` | yes — the generator wrote the literal: `If l{n}'s length is not 3 then, Exit 95.` | none on a **list**; `gen leaf map inrange` (`src/gen_collections.vox:47`) reads `'s length` on a **map**, and `gen leaf timer and clock` (`src/gen_text.vox:493`) on a clock buffer | todo | |
-| FIL-11 | 3690 | `size` on a list is the same value as `length`. | assert `l's size is l's length`, and both against the known count | yes | none — `'s size` is never read on a list | todo | |
-| FIL-12 | 3691 | `empty` is true iff the list has no items. | assert on both a populated and an empty list | yes | none on a list; `'s empty` is read on `environment` (`src/gen_misc.vox:86`), on `arguments` (`:144`) and on a buffer (`:88`), never on a list | todo | |
-| FIL-13 | 3692 | `first` returns the first item in the list. | assert `l's first` equals the literal the generator emitted first | yes | none — `'s first` appears nowhere in `src/` | todo | |
-| FIL-14 | 3693 | `last` returns the last item in the list. | as FIL-13, for the last literal | yes | none — `'s last` appears nowhere in `src/` | todo | |
-| FIL-15 | 3696–3703 | The worked example compiles, and a Boolean property (`names's empty`) reads directly as an `If` condition with no comparison. | reproduce; emit the bare-property condition form | yes | the bare-property-as-condition form is emitted for **buffers** (`If sb{n} is empty then, …`, `src/gen_files.vox:139`) but that is the `is empty` **predicate**, a different construct from the `'s empty` **property** this row is about | todo | |
+| FIL-10 | 3725 | `length` returns the number of items in a list. | declare a list of known length, assert `l's length` | yes — the generator wrote the literal: `If l{n}'s length is not 3 then, Exit 95.` | none on a **list**; `gen leaf map inrange` (`src/gen_collections.vox:47`) reads `'s length` on a **map**, and `gen leaf timer and clock` (`src/gen_text.vox:493`) on a clock buffer | todo | |
+| FIL-11 | 3726 | `size` on a list is the same value as `length`. | assert `l's size is l's length`, and both against the known count | yes | none — `'s size` is never read on a list | todo | |
+| FIL-12 | 3727 | `empty` is true iff the list has no items. | assert on both a populated and an empty list | yes | none on a list; `'s empty` is read on `environment` (`src/gen_misc.vox:86`), on `arguments` (`:144`) and on a buffer (`:88`), never on a list | todo | |
+| FIL-13 | 3728 | `first` returns the first item in the list. | assert `l's first` equals the literal the generator emitted first | yes | none — `'s first` appears nowhere in `src/` | todo | |
+| FIL-14 | 3729 | `last` returns the last item in the list. | as FIL-13, for the last literal | yes | none — `'s last` appears nowhere in `src/` | todo | |
+| FIL-15 | 3732–3739 | The worked example compiles, and a Boolean property (`names's empty`) reads directly as an `If` condition with no comparison. | reproduce; emit the bare-property condition form | yes | the bare-property-as-condition form is emitted for **buffers** (`If sb{n} is empty then, …`, `src/gen_files.vox:139`) but that is the `is empty` **predicate**, a different construct from the `'s empty` **property** this row is about | todo | |
 
 ## List Element Access (3370–3401)
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-16 | 3707 | List indexes are **1-indexed**. | assert `element 1 of l` equals the first literal emitted | yes — this is the whole point of an assertion: today's leaf reads `element 1` and prints it, which passes identically under 0- and 1-indexing | `gen leaf list inrange` (`src/gen_collections.vox:15`) reads `element 1` but never asserts *which* element came back | todo (verification, not exercise) | |
-| FIL-17 | 3710–3714 | `element N of list` with a **literal** index returns the Nth item. | vary N across the list's length, assert each | yes | `gen leaf list inrange` — but the literal is **always `1`** (`src/gen_collections.vox:15`), an undeclared rule: nothing in the manual says a program reads the first element. `gen leaf format types` (`src/gen_text.vox:411`) also emits `Print element 1 of gl{n}`, same fixed index. | exercised (index 1 only) — see *Invariants* | |
-| FIL-18 | 3716–3717 | `element i of list` with a **variable/expression** index works. | emit an index that is a runtime Vox variable, not a number baked into the generated text | yes | none — every emitter interpolates the index into the generated source as a compile-time literal before the program is written. The variable-index path through the compiler is never taken. Identical gap to BUF-21 on buffers. | todo — real gap, hand-verified to work | |
-| FIL-19 | 3722 | `list's first` returns the same item as `element 1`. | assert both against each other and against the literal | yes | none | todo | |
-| FIL-20 | 3723 | `list's last` returns the same item as `element length`. | as FIL-19 | yes | none | todo | |
-| FIL-21 | 3727–3732 | **Claim extended, 2026-08-22 (0.4.10, #72/#91).** Out-of-bounds list access sets the error flag **and returns 0** — true unconditionally through 0.4.9 (an untyped 0 that a non-number destination could dereference and segfault on — #91). As of 0.4.10 this Error Handling overview states the same provable/unprovable split as the Lists section itself (see `collections-b.md` LST2-25/LST2-28): compiler-provable OOB reads yield the number 0 (only a `number`/`float`/`boolean` destination is legal); unprovable ones yield the destination's typed default (`0`/`""`/`[]`/`{}`). | capture the OOB read into a variable, assert it is 0 | yes — `If bad{n} is not 0 then, Exit 95.` | `gen leaf list oob` (`src/gen_collections.vox:25`) prints the OOB read directly and catches the error; it never captures the value, so the "returns 0" half is untested | exercised (error-flag half); todo (returns-0 half, and the typed-default half is new territory) | |
-| FIL-22 | 3733 | List OOB errors are catchable with `On error`. | — | yes | `gen leaf list oob` (`src/gen_collections.vox:26`) | exercised | |
-| FIL-23 | 3736–3740 | The error-handling worked example compiles and behaves as shown. | reproduce | yes | same as FIL-21/22 | exercised (composite) | |
+| FIL-16 | 3743 | List indexes are **1-indexed**. | assert `element 1 of l` equals the first literal emitted | yes — this is the whole point of an assertion: today's leaf reads `element 1` and prints it, which passes identically under 0- and 1-indexing | `gen leaf list inrange` (`src/gen_collections.vox:15`) reads `element 1` but never asserts *which* element came back | todo (verification, not exercise) | |
+| FIL-17 | 3746–3750 | `element N of list` with a **literal** index returns the Nth item. | vary N across the list's length, assert each | yes | `gen leaf list inrange` — but the literal is **always `1`** (`src/gen_collections.vox:15`), an undeclared rule: nothing in the manual says a program reads the first element. `gen leaf format types` (`src/gen_text.vox:411`) also emits `Print element 1 of gl{n}`, same fixed index. | exercised (index 1 only) — see *Invariants* | |
+| FIL-18 | 3752–3753 | `element i of list` with a **variable/expression** index works. | emit an index that is a runtime Vox variable, not a number baked into the generated text | yes | none — every emitter interpolates the index into the generated source as a compile-time literal before the program is written. The variable-index path through the compiler is never taken. Identical gap to BUF-21 on buffers. | todo — real gap, hand-verified to work | |
+| FIL-19 | 3758 | `list's first` returns the same item as `element 1`. | assert both against each other and against the literal | yes | none | todo | |
+| FIL-20 | 3759 | `list's last` returns the same item as `element length`. | as FIL-19 | yes | none | todo | |
+| FIL-21 | 3763–3768 | **Claim extended, 2026-08-22 (0.4.10, #72/#91).** Out-of-bounds list access sets the error flag **and returns 0** — true unconditionally through 0.4.9 (an untyped 0 that a non-number destination could dereference and segfault on — #91). As of 0.4.10 this Error Handling overview states the same provable/unprovable split as the Lists section itself (see `collections-b.md` LST2-25/LST2-28): compiler-provable OOB reads yield the number 0 (only a `number`/`float`/`boolean` destination is legal); unprovable ones yield the destination's typed default (`0`/`""`/`[]`/`{}`). | capture the OOB read into a variable, assert it is 0 | yes — `If bad{n} is not 0 then, Exit 95.` | `gen leaf list oob` (`src/gen_collections.vox:25`) prints the OOB read directly and catches the error; it never captures the value, so the "returns 0" half is untested | exercised (error-flag half); todo (returns-0 half, and the typed-default half is new territory) | |
+| FIL-22 | 3769 | List OOB errors are catchable with `On error`. | — | yes | `gen leaf list oob` (`src/gen_collections.vox:26`) | exercised | |
+| FIL-23 | 3772–3776 | The error-handling worked example compiles and behaves as shown. | reproduce | yes | same as FIL-21/22 | exercised (composite) | |
 
 Index `0` is out of bounds and errors — the 1-indexing claim from the
 other side, hand-verified in `FIL-21.vox`. Worth a leaf: `element 0` is
@@ -162,14 +162,14 @@ so it is never below 10).
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-24 | 3747 | `even` is true iff the number is even. | assert on a number the generator chose | yes — trivially: it drew the number | none | todo | |
-| FIL-25 | 3748 | `odd` is true iff the number is odd. | as FIL-24; also assert `odd` is the negation of `even` | yes | none | todo | |
-| FIL-26 | 3749 | `positive` is true iff the number is > 0. | assert on a positive, a negative and 0 | yes | none | todo | |
-| FIL-27 | 3750 | `negative` is true iff the number is < 0. | as FIL-26 | yes | none | todo | |
-| FIL-28 | 3751 | `zero` is true iff the number is 0. | as FIL-26 | yes | none | todo | |
-| FIL-29 | 3752 | `absolute` returns the absolute value. | assert against the known magnitude | yes | `gen leaf cast and break` (`src/gen_misc.vox:176`) emits `Print cn{n}'s absolute` on a deliberately extreme literal, unasserted | exercised | |
-| FIL-30 | 3753 | `sign` returns -1, 0 or 1. | assert all three cases | yes | none | todo | |
-| FIL-31 | 3756–3762 | The worked example (`If x's negative then, …`, `print x's absolute`) compiles and behaves as shown. | reproduce | yes | the `absolute` half only | todo (composite) | |
+| FIL-24 | 3783 | `even` is true iff the number is even. | assert on a number the generator chose | yes — trivially: it drew the number | none | todo | |
+| FIL-25 | 3784 | `odd` is true iff the number is odd. | as FIL-24; also assert `odd` is the negation of `even` | yes | none | todo | |
+| FIL-26 | 3785 | `positive` is true iff the number is > 0. | assert on a positive, a negative and 0 | yes | none | todo | |
+| FIL-27 | 3786 | `negative` is true iff the number is < 0. | as FIL-26 | yes | none | todo | |
+| FIL-28 | 3787 | `zero` is true iff the number is 0. | as FIL-26 | yes | none | todo | |
+| FIL-29 | 3788 | `absolute` returns the absolute value. | assert against the known magnitude | yes | `gen leaf cast and break` (`src/gen_misc.vox:176`) emits `Print cn{n}'s absolute` on a deliberately extreme literal, unasserted | exercised | |
+| FIL-30 | 3789 | `sign` returns -1, 0 or 1. | assert all three cases | yes | none | todo | |
+| FIL-31 | 3792–3798 | The worked example (`If x's negative then, …`, `print x's absolute`) compiles and behaves as shown. | reproduce | yes | the `absolute` half only | todo (composite) | |
 
 Six of the seven Number properties are emitted by nothing at all, and
 all seven are the cheapest assertions in the entire manual: the
@@ -180,19 +180,19 @@ anything. `FIL-24.vox` pins all seven in thirteen lines.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-32 | 3770 | `open a file for reading called X at "<path>"` opens an existing file for reading. | — | yes, via `readable`/`size` | `gen leaf file round trip` (`src/gen_files.vox:180`), `gen leaf stdin read` (`:135`, path form `"/dev/stdin"`) | exercised | |
-| FIL-33 | 3771 | `open a file for writing called X at "<path>"` opens a file for writing. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:177`), `gen leaf format types` (`src/gen_text.vox:418`, target `"/dev/stdout"` — see *Report*) | exercised | |
-| FIL-34 | 3772 | `open a file for appending called X at "<path>"` opens a file for appending. | — | yes | **none** — `for appending` is emitted by no leaf; only the generator's own `src/` code uses it | todo — real gap, one of three modes entirely untested | |
-| FIL-35 | 3775–3780 | A file can be opened at a bare descriptor number (`at 0`, `at 1`, `at 2`). | emit the numeric form for descriptors other than 0 | yes | `gen leaf stdin read` (`src/gen_files.vox:133–135`) emits `at 0` half the time; `at 1` and `at 2` are never emitted | exercised (`at 0` only) | |
-| FIL-36 | 3783 | A numeric `at` is a **borrowed descriptor**, not a filesystem path. | prove the negative: after `open … at 2`, assert no file named `"2"` exists | yes — `If "2" is available then, Exit 95.` | implied by `gen leaf stdin read`'s `at 0`, never asserted | todo (verification) | |
-| FIL-37 | 3785–3791 | The `for <mode>`, `called <name>` and `at <path>` clauses may appear **in any order**; all three permutations shown compile. | emit the clause order at random, not one fixed order | yes (it compiles or it does not) | **none** — every leaf emits exactly `open a file for <mode> called <name> at <path>`, the manual's first order. A fixed ordering the manual explicitly permits to vary. | todo — see *Invariants* | |
-| FIL-38 | 3794 | `reading` reads from an existing file. | — | yes | `gen leaf file round trip` | exercised | |
-| FIL-39 | 3795 | `writing` creates **or overwrites** — an existing file is truncated. | write a long payload, reopen for writing, write a short one, assert the resulting size is the short length | yes — both lengths are the generator's | `gen leaf file round trip` opens each path for writing exactly once, so the overwrite half is never reached | exercised (create half); todo (overwrite/truncate half) | |
-| FIL-40 | 3796 | `appending` adds to the end of an existing file. | write, then append, assert size is the sum | yes | none (FIL-34) | todo | |
-| FIL-41 | 3799 | Text is used for filesystem paths. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:176–177`, a text variable), `gen leaf stdin read` (a string literal) | exercised | |
-| FIL-42 | 3800 | Integers are used for file descriptors. | — | yes | `gen leaf stdin read` (`at 0`) | exercised | |
-| FIL-43 | 3801 | Descriptor literals must be in `0..2147483647`; outside that is a compile error. | emit the boundary values 0 and 2147483647; the rejected side cannot be emitted by a fuzzer that must produce compiling programs | boundary-in: yes. Boundary-out: **no** — a generated program that fails to compile is a generator defect, not a finding (`src/loop_gen.vox:290`), so `-1` and `2147483648` must never be emitted. | none emits either boundary | todo (in-range boundary only) | |
-| FIL-44 | 3802 | Non-integer, non-text `at` values (`at 1.5`, `at true`) are **compile-time** errors. | — | **no**, for the same reason as FIL-43: this claim can only be checked by a program that must not compile. Recorded as a probe, out of scope for a leaf. | n/a | not assertable (by a generator) | |
+| FIL-32 | 3806 | `open a file for reading called X at "<path>"` opens an existing file for reading. | — | yes, via `readable`/`size` | `gen leaf file round trip` (`src/gen_files.vox:180`), `gen leaf stdin read` (`:135`, path form `"/dev/stdin"`) | exercised | |
+| FIL-33 | 3807 | `open a file for writing called X at "<path>"` opens a file for writing. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:177`), `gen leaf format types` (`src/gen_text.vox:418`, target `"/dev/stdout"` — see *Report*) | exercised | |
+| FIL-34 | 3808 | `open a file for appending called X at "<path>"` opens a file for appending. | — | yes | **none** — `for appending` is emitted by no leaf; only the generator's own `src/` code uses it | todo — real gap, one of three modes entirely untested | |
+| FIL-35 | 3811–3816 | A file can be opened at a bare descriptor number (`at 0`, `at 1`, `at 2`). | emit the numeric form for descriptors other than 0 | yes | `gen leaf stdin read` (`src/gen_files.vox:133–135`) emits `at 0` half the time; `at 1` and `at 2` are never emitted | exercised (`at 0` only) | |
+| FIL-36 | 3819 | A numeric `at` is a **borrowed descriptor**, not a filesystem path. | prove the negative: after `open … at 2`, assert no file named `"2"` exists | yes — `If "2" is available then, Exit 95.` | implied by `gen leaf stdin read`'s `at 0`, never asserted | todo (verification) | |
+| FIL-37 | 3821–3827 | The `for <mode>`, `called <name>` and `at <path>` clauses may appear **in any order**; all three permutations shown compile. | emit the clause order at random, not one fixed order | yes (it compiles or it does not) | **none** — every leaf emits exactly `open a file for <mode> called <name> at <path>`, the manual's first order. A fixed ordering the manual explicitly permits to vary. | todo — see *Invariants* | |
+| FIL-38 | 3830 | `reading` reads from an existing file. | — | yes | `gen leaf file round trip` | exercised | |
+| FIL-39 | 3831 | `writing` creates **or overwrites** — an existing file is truncated. | write a long payload, reopen for writing, write a short one, assert the resulting size is the short length | yes — both lengths are the generator's | `gen leaf file round trip` opens each path for writing exactly once, so the overwrite half is never reached | exercised (create half); todo (overwrite/truncate half) | |
+| FIL-40 | 3832 | `appending` adds to the end of an existing file. | write, then append, assert size is the sum | yes | none (FIL-34) | todo | |
+| FIL-41 | 3835 | Text is used for filesystem paths. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:176–177`, a text variable), `gen leaf stdin read` (a string literal) | exercised | |
+| FIL-42 | 3836 | Integers are used for file descriptors. | — | yes | `gen leaf stdin read` (`at 0`) | exercised | |
+| FIL-43 | 3837 | Descriptor literals must be in `0..2147483647`; outside that is a compile error. | emit the boundary values 0 and 2147483647; the rejected side cannot be emitted by a fuzzer that must produce compiling programs | boundary-in: yes. Boundary-out: **no** — a generated program that fails to compile is a generator defect, not a finding (`src/loop_gen.vox:290`), so `-1` and `2147483648` must never be emitted. | none emits either boundary | todo (in-range boundary only) | |
+| FIL-44 | 3838 | Non-integer, non-text `at` values (`at 1.5`, `at true`) are **compile-time** errors. | — | **no**, for the same reason as FIL-43: this claim can only be checked by a program that must not compile. Recorded as a probe, out of scope for a leaf. | n/a | not assertable (by a generator) | |
 
 Hand-verified boundaries, all four (`FIL-43.vox` keeps the one that
 runs; these are the diagnostics for the rest):
@@ -206,18 +206,18 @@ runs; these are the diagnostics for the rest):
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-45 | 3811–3813 | *(claim reversed, manual 0.4.9 — see Discrepancy 2, resolved)* `Read` **replaces** the buffer's contents with the bytes read; each `Read` continues from the file's current position. The manual used to say "appends" (old 3471); Discrepancy 2 found the compiler replaces and argued the manual was wrong; **the manual was fixed to match the compiler**, not the other way round. | pre-seed a buffer with known bytes, read a known file into it, assert size equals the READ length, not the sum, and that the pre-seeded bytes are gone | yes — this is now a straightforward exercise, not a discrepancy check | `gen leaf file round trip` (`src/gen_files.vox:182`) and `gen leaf stdin read` (`:137`, `:141`) both `Read from` into a **fresh** buffer, where append and replace are indistinguishable — the leaf gap that let the old discrepancy hide is unchanged even though the discrepancy itself is resolved | todo — unblocked; the row's own assertion (pre-seed then compare) is what would put the fixed behaviour on trial | |
-| FIL-46 | 3814 | `Read line` **replaces** the buffer with the next line. | pre-seed, `Read line`, assert the pre-seeded bytes are gone | yes | none — `Read line` is emitted by no leaf at all | todo | |
-| FIL-47 | 3815 | Both `Read` and `Read line` work on files **and** on standard input. | all four combinations | yes | `Read from` on a file (`gen leaf file round trip`) and on stdin (`gen leaf stdin read`); neither `Read line` form | exercised (2 of 4) | |
-| FIL-48 | 3820 | `Read from standard input into <buffer>` — the spelled-out `standard input` form. | emit the words `standard input` | yes | **none** — `gen leaf stdin read` reaches stdin by path (`"/dev/stdin"`) or descriptor (`0`), never by the documented `standard input` keyword. Three spellings, and the manual's own is the one missing. | todo | |
-| FIL-49 | 3821 | `Read from <file handle> into <buffer>` reads a file. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:182`) | exercised | |
-| FIL-50 | 3827 | `Read line from <file handle> into <buffer>` reads one line of a file. | — | yes | none | todo | |
-| FIL-51 | 3828 | `Read line from standard input into <buffer>` reads one line of stdin. | — | yes | none | todo | |
-| FIL-52 | 3824 | `Read line` reads up to a `\n` **or EOF** — a final line with no newline comes back whole. | write a file whose last line has no newline, assert its length | yes — the generator wrote the file | none | todo | |
-| FIL-53 | 3832 | `Read line` **includes** the trailing newline when one is present. | assert the line's size is the text length **+ 1** | yes — this is the assertion that catches an off-by-one either way | none | todo | |
-| FIL-54 | 3833 | `Read line` returns an **empty buffer at EOF**, and reaching EOF is not an error. | read past the last line, assert size 0 and that no `On error` fired | yes | none | todo | |
-| FIL-55 | 3834 | `Read line` resets buffer contents before **each** read (replace, not append). | two successive `Read line`s, assert the second buffer holds only the second line | yes | none | todo | |
-| FIL-56 | 3835 | For a **fixed-size** buffer an overlong line is truncated and the error flag is set. | undersize the buffer relative to a line the generator wrote, wrap in `On error`, assert size == capacity | yes — the generator controls both lengths | none for `Read line`. The equivalent for plain `Read` is exercised probabilistically and unasserted: `gen leaf file round trip` and `gen leaf stdin read` deliberately sometimes undersize the buffer, but neither wraps the read in `On error`, so the flag half is never checked (identical to BUF-09). | todo | |
+| FIL-45 | 3847–3849 | *(claim reversed, manual 0.4.9 — see Discrepancy 2, resolved)* `Read` **replaces** the buffer's contents with the bytes read; each `Read` continues from the file's current position. The manual used to say "appends" (old 3471); Discrepancy 2 found the compiler replaces and argued the manual was wrong; **the manual was fixed to match the compiler**, not the other way round. | pre-seed a buffer with known bytes, read a known file into it, assert size equals the READ length, not the sum, and that the pre-seeded bytes are gone | yes — this is now a straightforward exercise, not a discrepancy check | `gen leaf file round trip` (`src/gen_files.vox:182`) and `gen leaf stdin read` (`:137`, `:141`) both `Read from` into a **fresh** buffer, where append and replace are indistinguishable — the leaf gap that let the old discrepancy hide is unchanged even though the discrepancy itself is resolved | todo — unblocked; the row's own assertion (pre-seed then compare) is what would put the fixed behaviour on trial | |
+| FIL-46 | 3850 | `Read line` **replaces** the buffer with the next line. | pre-seed, `Read line`, assert the pre-seeded bytes are gone | yes | none — `Read line` is emitted by no leaf at all | todo | |
+| FIL-47 | 3851 | Both `Read` and `Read line` work on files **and** on standard input. | all four combinations | yes | `Read from` on a file (`gen leaf file round trip`) and on stdin (`gen leaf stdin read`); neither `Read line` form | exercised (2 of 4) | |
+| FIL-48 | 3856 | `Read from standard input into <buffer>` — the spelled-out `standard input` form. | emit the words `standard input` | yes | **none** — `gen leaf stdin read` reaches stdin by path (`"/dev/stdin"`) or descriptor (`0`), never by the documented `standard input` keyword. Three spellings, and the manual's own is the one missing. | todo | |
+| FIL-49 | 3857 | `Read from <file handle> into <buffer>` reads a file. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:182`) | exercised | |
+| FIL-50 | 3863 | `Read line from <file handle> into <buffer>` reads one line of a file. | — | yes | none | todo | |
+| FIL-51 | 3864 | `Read line from standard input into <buffer>` reads one line of stdin. | — | yes | none | todo | |
+| FIL-52 | 3860 | `Read line` reads up to a `\n` **or EOF** — a final line with no newline comes back whole. | write a file whose last line has no newline, assert its length | yes — the generator wrote the file | none | todo | |
+| FIL-53 | 3868 | `Read line` **includes** the trailing newline when one is present. | assert the line's size is the text length **+ 1** | yes — this is the assertion that catches an off-by-one either way | none | todo | |
+| FIL-54 | 3869 | `Read line` returns an **empty buffer at EOF**, and reaching EOF is not an error. | read past the last line, assert size 0 and that no `On error` fired | yes | none | todo | |
+| FIL-55 | 3870 | `Read line` resets buffer contents before **each** read (replace, not append). | two successive `Read line`s, assert the second buffer holds only the second line | yes | none | todo | |
+| FIL-56 | 3871 | For a **fixed-size** buffer an overlong line is truncated and the error flag is set. | undersize the buffer relative to a line the generator wrote, wrap in `On error`, assert size == capacity | yes — the generator controls both lengths | none for `Read line`. The equivalent for plain `Read` is exercised probabilistically and unasserted: `gen leaf file round trip` and `gen leaf stdin read` deliberately sometimes undersize the buffer, but neither wraps the read in `On error`, so the flag half is never checked (identical to BUF-09). | todo | |
 
 `Read line` is the single largest untouched construct in this section:
 **seven rows (FIL-46, 50, 51, 52, 53, 54, 55), every one assertable,
@@ -230,13 +230,13 @@ exists to attack.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-57 | 3842 | `Seek <file> to line N` is accepted. | — | yes | **none** — the keyword `Seek` does not appear anywhere in `src/`, in a leaf or otherwise | todo | |
-| FIL-58 | 3843 | `Seek <file> to byte N` is accepted. | — | yes | none | todo | |
-| FIL-59 | 3844 | `Seek <file> to bytes N` (plural) is accepted, as a synonym of `byte`. | emit both spellings | yes | none | todo | |
-| FIL-60 | 3848 | Seek positions are **1-indexed**: `line 1` is the start of the file, `byte 1` is offset 0. | seek to byte 1, read N bytes, assert they are the file's first N | yes — the generator wrote the file | none | todo | |
-| FIL-61 | 3849 | `Seek … to line N` moves to the first byte of line **N**. | seek to each line of a file the generator wrote with distinct line lengths, assert the line that comes back | yes — seek to each line and assert the line that comes back; it used to fail for every N ≥ 3, fixed by vox #47 (0.4.8) | none | **todo — unblocked.** D3 is resolved: `D3.vox` now lands on the line asked for. The row stays `todo` because `Seek` still appears in no leaf anywhere in `src/`. | |
-| FIL-62 | 3850 | `Seek … to byte N` / `bytes N` moves to byte position N. | seek to a known offset, assert the bytes read | yes | none | todo | |
-| FIL-63 | 3851–3852 | Invalid targets — a line past EOF, a position < 1, an invalid descriptor — set the error flag. | each of the three, wrapped in `On error` | yes, all three: position < 1, invalid descriptor, and — since vox #47 (0.4.8) — a line past EOF. | none | **todo — unblocked.** D3 is resolved; `FIL-63.vox` now records all three handlers firing. The row stays `todo` because no leaf emits `Seek`. | |
+| FIL-57 | 3878 | `Seek <file> to line N` is accepted. | — | yes | **none** — the keyword `Seek` does not appear anywhere in `src/`, in a leaf or otherwise | todo | |
+| FIL-58 | 3879 | `Seek <file> to byte N` is accepted. | — | yes | none | todo | |
+| FIL-59 | 3880 | `Seek <file> to bytes N` (plural) is accepted, as a synonym of `byte`. | emit both spellings | yes | none | todo | |
+| FIL-60 | 3884 | Seek positions are **1-indexed**: `line 1` is the start of the file, `byte 1` is offset 0. | seek to byte 1, read N bytes, assert they are the file's first N | yes — the generator wrote the file | none | todo | |
+| FIL-61 | 3885 | `Seek … to line N` moves to the first byte of line **N**. | seek to each line of a file the generator wrote with distinct line lengths, assert the line that comes back | yes — seek to each line and assert the line that comes back; it used to fail for every N ≥ 3, fixed by vox #47 (0.4.8) | none | **todo — unblocked.** D3 is resolved: `D3.vox` now lands on the line asked for. The row stays `todo` because `Seek` still appears in no leaf anywhere in `src/`. | |
+| FIL-62 | 3886 | `Seek … to byte N` / `bytes N` moves to byte position N. | seek to a known offset, assert the bytes read | yes | none | todo | |
+| FIL-63 | 3887–3888 | Invalid targets — a line past EOF, a position < 1, an invalid descriptor — set the error flag. | each of the three, wrapped in `On error` | yes, all three: position < 1, invalid descriptor, and — since vox #47 (0.4.8) — a line past EOF. | none | **todo — unblocked.** D3 is resolved; `FIL-63.vox` now records all three handlers firing. The row stays `todo` because no leaf emits `Seek`. | |
 
 A byte position past EOF also does not set the flag. The manual does not
 claim it should — it names only "line past EOF" — and `lseek(2)` is
@@ -248,10 +248,10 @@ next reader does not file it; hand-verified in `FIL-63.vox`.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-64 | 3862 | `Write "<text>" to <file>` writes a string. | write a known payload, reopen, assert the file's size and content | yes — `If f{n}'s size is not 18 then, Exit 95.` | `gen leaf file round trip` (`src/gen_files.vox:178`), `gen leaf format types` (`src/gen_text.vox:419`) | exercised | |
-| FIL-65 | 3863 | `Write <buffer> to <file>` writes a buffer's bytes. | fill a buffer with known bytes, write it, assert the file size | yes | **none** — every generated `Write` has a string literal or a format string as its source; a buffer is never written | todo — real gap | |
-| FIL-66 | 3864 | `Write a newline to <file>` writes the special value newline (one byte). | assert the file grew by exactly 1 | yes | none | todo | |
-| FIL-67 | 3859 | Lead-in: `Write` takes strings, buffers, or special values. | — | — | — | folded into FIL-64/65/66 | |
+| FIL-64 | 3898 | `Write "<text>" to <file>` writes a string. | write a known payload, reopen, assert the file's size and content | yes — `If f{n}'s size is not 18 then, Exit 95.` | `gen leaf file round trip` (`src/gen_files.vox:178`), `gen leaf format types` (`src/gen_text.vox:419`) | exercised | |
+| FIL-65 | 3899 | `Write <buffer> to <file>` writes a buffer's bytes. | fill a buffer with known bytes, write it, assert the file size | yes | **none** — every generated `Write` has a string literal or a format string as its source; a buffer is never written | todo — real gap | |
+| FIL-66 | 3900 | `Write a newline to <file>` writes the special value newline (one byte). | assert the file grew by exactly 1 | yes | none | todo | |
+| FIL-67 | 3895 | Lead-in: `Write` takes strings, buffers, or special values. | — | — | — | folded into FIL-64/65/66 | |
 
 Two things a leaf-writer here must know, both hand-verified:
 
@@ -274,8 +274,8 @@ Two things a leaf-writer here must know, both hand-verified:
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-68 | 3902 | `Close the <name>.` — the definite-article form — closes the handle. | emit the article form | yes (it compiles or it does not) | **none** — every leaf emits the bare `Close <name>` | todo — see *Invariants* | |
-| FIL-69 | 3903 | `Close <name>.` — the bare form — closes the handle. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:179`, `:185`), `gen leaf stdin read` (`:143`), `gen leaf format types` (`src/gen_text.vox:420`) | exercised | |
+| FIL-68 | 3938 | `Close the <name>.` — the definite-article form — closes the handle. | emit the article form | yes (it compiles or it does not) | **none** — every leaf emits the bare `Close <name>` | todo — see *Invariants* | |
+| FIL-69 | 3939 | `Close <name>.` — the bare form — closes the handle. | — | yes | `gen leaf file round trip` (`src/gen_files.vox:179`, `:185`), `gen leaf stdin read` (`:143`), `gen leaf format types` (`src/gen_text.vox:420`) | exercised | |
 
 After a `Close`, a `Read from` the same handle sets the error flag and
 returns 0 bytes without crashing (`FIL-68.vox`) — a use-after-close is
@@ -287,12 +287,12 @@ CLAUDE.md asks for.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-70 | 3908–3912 | `If "<path>" is available then, …` checks whether a path is available. | emit the check on a path the generator created | yes — the generator knows whether it made the file: `If "…" is not available then, Exit 95.` | **none** — `is available` appears in `src/findings.vox:13` and `src/loop_gen.vox`, both generator-internal; no leaf emits it into a generated program | todo | |
-| FIL-71 | 3915 | `is available` compiles to `access(2)` with `F_OK`. | — | **no** — which syscall is used is not observable from inside a Vox program | n/a | not assertable | |
-| FIL-72 | 3916–3917 | It works on any path expression: string literal, text variable, or buffer. | emit all three source kinds | yes | none | todo | |
-| FIL-73 | 3917–3919 | It is not limited to plain files — a directory and a device node both answer. | check a directory the program made and a device node | yes — a directory the generator created must answer true | none | todo | |
-| FIL-74 | 3921–3926 | `is not available` negates the check and is usable as a `While` condition. | emit both the `If … is not available` and the `While … is not available` forms | yes, **but the `While` form needs a guard**: a loop on a path that never appears is an unbounded hang, which the runner would report as a false `hang` finding. Emit it only against a path that already exists, so the body never runs. | none | todo — with the hang caveat above | |
-| FIL-75 | 3929–3931 | `Delete the file "<path>".` removes the file. | create, delete, assert it is no longer available | yes | none in a generated program (`src/loop_gen.vox:230` is the generator's own writability probe) | todo | |
+| FIL-70 | 3944–3948 | `If "<path>" is available then, …` checks whether a path is available. | emit the check on a path the generator created | yes — the generator knows whether it made the file: `If "…" is not available then, Exit 95.` | **none** — `is available` appears in `src/findings.vox:13` and `src/loop_gen.vox`, both generator-internal; no leaf emits it into a generated program | todo | |
+| FIL-71 | 3951 | `is available` compiles to `access(2)` with `F_OK`. | — | **no** — which syscall is used is not observable from inside a Vox program | n/a | not assertable | |
+| FIL-72 | 3952–3953 | It works on any path expression: string literal, text variable, or buffer. | emit all three source kinds | yes | none | todo | |
+| FIL-73 | 3953–3955 | It is not limited to plain files — a directory and a device node both answer. | check a directory the program made and a device node | yes — a directory the generator created must answer true | none | todo | |
+| FIL-74 | 3957–3962 | `is not available` negates the check and is usable as a `While` condition. | emit both the `If … is not available` and the `While … is not available` forms | yes, **but the `While` form needs a guard**: a loop on a path that never appears is an unbounded hang, which the runner would report as a false `hang` finding. Emit it only against a path that already exists, so the body never runs. | none | todo — with the hang caveat above | |
+| FIL-75 | 3965–3967 | `Delete the file "<path>".` removes the file. | create, delete, assert it is no longer available | yes | none in a generated program (`src/loop_gen.vox:230` is the generator's own writability probe) | todo | |
 
 Deleting a file that is not there **does** set the error flag
 (`FIL-75.vox`) — undocumented, and a good `On error` leaf, since it is a
@@ -307,14 +307,14 @@ print.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-76 | 3936 | Operations that can fail set an error flag. | — | yes, per operation | the three `On error` leaves: `gen leaf buffer oob` (`src/gen_buffers.vox:26`), `gen leaf list oob` (`src/gen_collections.vox:26`), `gen leaf map oob` (`:57`), `gen leaf environment oob` (`src/gen_misc.vox:107`) | exercised | |
-| FIL-77 | 3940–3944 | `On error` after a specific operation reports whether **that** operation failed. | — | yes | as FIL-76 | exercised | |
-| FIL-78 | 3948 | Out-of-bounds list **and** buffer access are catchable. | — | yes | `gen leaf list oob`, `gen leaf buffer oob` | exercised | |
-| FIL-79 | 3949 | Fixed buffer overflow (data exceeds capacity) is catchable. | undersize a buffer against a known input, wrap the read in `On error`, assert the handler fired | yes | **none** — the two leaves that undersize a buffer (`gen leaf file round trip`, `gen leaf stdin read`) do not wrap their `Read` in `On error`, so the overflow is provoked but never caught. Same gap as BUF-09. | todo | |
-| FIL-80 | 3950–3952 | File operation failures are catchable. | force an open of a path that cannot exist, assert the handler fired | yes — the generator can name a path under its own scratch directory that it did not create | none — no leaf puts `On error` on a file operation | todo. **Note: this claim used to be true only of `open`, `Read line`, `Seek` and `Delete`, and false of `Write` (D4) and of `Read from` against a failed handle (D5). vox #48 (0.4.8) fixed both, so as of 0.4.8 the claim holds for every file operation probed here.** | |
-| FIL-81 | 3956–3959 | An `On error` handler takes a comma-joined list of actions, and `exit N` inside one exits with that code. | emit a multi-action handler | **no, not with `exit`** — vox-fuzz reserves 90–99 and reads every other exit code as the program's own; a leaf that exits from a handler makes the run unclassifiable. Emit the multi-action form with two prints instead. | none — every generated handler is a single `print` | todo (multi-action form only, no `exit`) | |
-| FIL-82 | 3961–3963 | Pattern: `element 100 of mylist` guarded by `On error`. | — | — | `gen leaf list oob` | folded into FIL-21/FIL-22 | |
-| FIL-83 | 3965–3967 | Pattern: detect truncation by hand with `If buffer's size is equal to buffer's capacity then, …`. | emit the comparison after a read that may truncate | yes | **none** — `'s capacity` is read by no leaf anywhere (the buffers ledger found the same at BUF-10) | todo | |
+| FIL-76 | 3972 | Operations that can fail set an error flag. | — | yes, per operation | the three `On error` leaves: `gen leaf buffer oob` (`src/gen_buffers.vox:26`), `gen leaf list oob` (`src/gen_collections.vox:26`), `gen leaf map oob` (`:57`), `gen leaf environment oob` (`src/gen_misc.vox:107`) | exercised | |
+| FIL-77 | 3976–3980 | `On error` after a specific operation reports whether **that** operation failed. | — | yes | as FIL-76 | exercised | |
+| FIL-78 | 3984 | Out-of-bounds list **and** buffer access are catchable. | — | yes | `gen leaf list oob`, `gen leaf buffer oob` | exercised | |
+| FIL-79 | 3985 | Fixed buffer overflow (data exceeds capacity) is catchable. | undersize a buffer against a known input, wrap the read in `On error`, assert the handler fired | yes | **none** — the two leaves that undersize a buffer (`gen leaf file round trip`, `gen leaf stdin read`) do not wrap their `Read` in `On error`, so the overflow is provoked but never caught. Same gap as BUF-09. | todo | |
+| FIL-80 | 3986–3988 | File operation failures are catchable. | force an open of a path that cannot exist, assert the handler fired | yes — the generator can name a path under its own scratch directory that it did not create | none — no leaf puts `On error` on a file operation | todo. **Note: this claim used to be true only of `open`, `Read line`, `Seek` and `Delete`, and false of `Write` (D4) and of `Read from` against a failed handle (D5). vox #48 (0.4.8) fixed both, so as of 0.4.8 the claim holds for every file operation probed here.** | |
+| FIL-81 | 3992–3995 | An `On error` handler takes a comma-joined list of actions, and `exit N` inside one exits with that code. | emit a multi-action handler | **no, not with `exit`** — vox-fuzz reserves 90–99 and reads every other exit code as the program's own; a leaf that exits from a handler makes the run unclassifiable. Emit the multi-action form with two prints instead. | none — every generated handler is a single `print` | todo (multi-action form only, no `exit`) | |
+| FIL-82 | 3997–3999 | Pattern: `element 100 of mylist` guarded by `On error`. | — | — | `gen leaf list oob` | folded into FIL-21/FIL-22 | |
+| FIL-83 | 4001–4003 | Pattern: detect truncation by hand with `If buffer's size is equal to buffer's capacity then, …`. | emit the comparison after a read that may truncate | yes | **none** — `'s capacity` is read by no leaf anywhere (the buffers ledger found the same at BUF-10) | todo | |
 
 **Undocumented, and it changes how every `On error` leaf must be
 written:** a flag no handler consumes stays set, and is then reported by
@@ -330,26 +330,26 @@ cannot set the flag at all.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| FIL-84 | 3972 | `vox` provides memory safety through automatic resource management. | — | **no** as stated — it is the chapter's thesis, discharged by FIL-85 through FIL-101 | n/a | not assertable (composite thesis) | |
-| FIL-85 | 3978 | No buffer overflows: buffers grow dynamically as needed. | read a file far larger than any initial reserve into a dynamic buffer, assert size == file size | yes — the generator wrote the file | none — every append/copy/read destination in the existing leaves is a **fixed**-size buffer; a genuinely unsized buffer is never a read target (same gap as BUF-36) | todo | |
-| FIL-86 | 3979 | No use-after-free: resources are tracked and cleaned at exit. | use a closed handle and a double-closed handle, assert neither crashes | the *no-crash* half: yes. The *tracking* mechanism: no. | none | todo (observable half) | |
-| FIL-87 | 3980 | No resource leaks: all FDs and buffers are cleaned up automatically. | — | **no** — a leak is by definition invisible to the leaking program; there is no channel to observe it from inside Vox | n/a | not assertable | |
-| FIL-88 | 3981 | No manual memory management — the compiler handles allocation and deallocation. | — | **no** — the absence of a language feature; nothing to emit | n/a | not assertable | |
-| FIL-89 | 3983–3991 | All resources are cleaned up on exit, **even if you forget to `Close`** (worked example). | exit with an open handle and an un-freed buffer; assert the process exits 0 and the bytes reached disk | yes — the exit code and the written bytes are both knowable | none — every leaf that opens a handle also closes it, so the forgot-to-close path is never generated | todo — real gap, and the manual's own example | |
-| FIL-90 | 3995 | Buffers start at **zero capacity** and grow automatically; no size specification is needed. | declare an unsized buffer, assert `'s capacity is 0` | yes, and it **fails**: capacity reads 4096 | none | blocked — **this is the buffers ledger's Discrepancy 1, restated by this section's own text.** `FIL-91.vox` reproduces it (first output line: `4096`). Not re-opened here; it belongs to that adjudication. | |
-| FIL-91 | 3998–4000 | `a buffer called inputbuf.` then `Read from source into inputbuf.` is safe regardless of file size. | read a large file into an unsized buffer, assert no error and full size | yes | none (FIL-85) | todo | |
-| FIL-92 | 4003–4005 | Internal structure: 8 bytes capacity, 8 bytes length, N bytes data. | — | **no** — a memory layout with no Vox-level introspection to observe it | n/a | not assertable | |
-| FIL-93 | 4011 | On open, the FD is registered in a tracking table. | open many handles without closing, assert none is reused and nothing crashes | the *registration* itself: no. Its consequence — no descriptor is recycled while a handle is live — **yes**, and it scales: 100000 unclosed opens, last descriptor 100002, exit 0 (`FIL-93.vox`) | none | todo (consequence only) | |
-| FIL-94 | 4012 | On close, the FD is unregistered from the table. | — | **no** — the table is not observable | n/a | not assertable | |
-| FIL-95 | 4013 | On exit, all remaining FDs are closed. | — | **no** — the program is gone by then; nothing inside Vox can observe it. (Note this is *not* discharged by the bytes being on disk: `Write` is unbuffered, so the data is there whether or not the FD was released.) | n/a | not assertable | |
-| FIL-96 | 4015–4022 | It works correctly with **conditional** file operations — an `open` inside an `If` whose `Close` is forgotten. | emit an open inside a conditional branch with no close | yes (exit 0, bytes on disk) | none — every generated `open` is unconditional and paired with a `Close` | todo — real gap | |
-| FIL-97 | 4028 | Safety-vs-C: buffer overflow is impossible, buffers auto-grow. | — | — | — | folded into FIL-85 | |
-| FIL-98 | 4029 | Safety-vs-C: a forgotten close is not a leak — auto-closed on exit. | — | — | — | folded into FIL-87/FIL-89 | |
-| FIL-99 | 4030 | Safety-vs-C: a forgotten free is not a leak — auto-freed on exit. | — | — | — | folded into FIL-89 | |
-| FIL-100 | 4031 | Safety-vs-C: double free is tracked and cannot happen. | close the same handle twice, assert no crash and no error flag | yes — hand-verified: a double `Close` neither crashes nor raises | none | todo | |
-| FIL-101 | 4032 | Safety-vs-C: use after free is not possible by design. | read and write a closed handle, assert no crash | yes for the no-crash half. Note the two halves disagree: a **read** of a closed handle sets the error flag, a **write** does not (D4). | none | todo | |
-| FIL-102 | 3853–3855 | *(new row, added 2026-08-22 per the master's brief)* Line `N` exists when the file holds at least `N-1` newlines before it — a file that ends in a newline has one empty last line to seek to; anything beyond that is past EOF and sets the error flag. This is the new precision Discrepancy 3's fix (vox #47) brought into the manual alongside the seek fix itself, at what was old-numbering 3603–3605 and is now 3690–3692. | write a file with a known newline count, seek to line `newlines+1` (should exist, empty, no error) and to line `newlines+2` (should error), assert both | yes — the generator wrote the file and knows its newline count | none — `Seek` appears in no leaf (FIL-57/61/63) | todo — hand-verified in `FIL-102.vox`: a 2-newline file lands line 3 at size 0 with no error, and errors on line 4 | |
-| FIL-103 | 3867–3885 | *(new row, added 2026-08-22)* `Write` takes a text, a buffer, or a format string; a bare number/float/boolean **or a `value`** is a compile-time error, not a runtime crash — new manual prose written to document the vox #40 fix (Discrepancy 6). A scalar's error names the exact rewrite (`Write "{count}" to output.`); a `value`'s error says to copy it into a typed variable first. | emit both rejected forms as compile-error probes (a leaf cannot emit them as running programs — see FIL-44's reasoning) | **no**, for the same reason as FIL-43/FIL-44: a fuzzer must never emit a program that fails to compile | n/a | not assertable (by a generator) — hand-verified in `FIL-103.vox` (the `value` half; the scalar half is already `D6.vox`) | |
+| FIL-84 | 4008 | `vox` provides memory safety through automatic resource management. | — | **no** as stated — it is the chapter's thesis, discharged by FIL-85 through FIL-101 | n/a | not assertable (composite thesis) | |
+| FIL-85 | 4014 | No buffer overflows: buffers grow dynamically as needed. | read a file far larger than any initial reserve into a dynamic buffer, assert size == file size | yes — the generator wrote the file | none — every append/copy/read destination in the existing leaves is a **fixed**-size buffer; a genuinely unsized buffer is never a read target (same gap as BUF-36) | todo | |
+| FIL-86 | 4015 | No use-after-free: resources are tracked and cleaned at exit. | use a closed handle and a double-closed handle, assert neither crashes | the *no-crash* half: yes. The *tracking* mechanism: no. | none | todo (observable half) | |
+| FIL-87 | 4016 | No resource leaks: all FDs and buffers are cleaned up automatically. | — | **no** — a leak is by definition invisible to the leaking program; there is no channel to observe it from inside Vox | n/a | not assertable | |
+| FIL-88 | 4017 | No manual memory management — the compiler handles allocation and deallocation. | — | **no** — the absence of a language feature; nothing to emit | n/a | not assertable | |
+| FIL-89 | 4019–4027 | All resources are cleaned up on exit, **even if you forget to `Close`** (worked example). | exit with an open handle and an un-freed buffer; assert the process exits 0 and the bytes reached disk | yes — the exit code and the written bytes are both knowable | none — every leaf that opens a handle also closes it, so the forgot-to-close path is never generated | todo — real gap, and the manual's own example | |
+| FIL-90 | ? | Buffers start at **zero capacity** and grow automatically; no size specification is needed. | declare an unsized buffer, assert `'s capacity is 0` | yes, and it **fails**: capacity reads 4096 | none | blocked — **this is the buffers ledger's Discrepancy 1, restated by this section's own text.** `FIL-91.vox` reproduces it (first output line: `4096`). Not re-opened here; it belongs to that adjudication. | |
+| FIL-91 | 4034–4036 | `a buffer called inputbuf.` then `Read from source into inputbuf.` is safe regardless of file size. | read a large file into an unsized buffer, assert no error and full size | yes | none (FIL-85) | todo | |
+| FIL-92 | 4039–4041 | Internal structure: 8 bytes capacity, 8 bytes length, N bytes data. | — | **no** — a memory layout with no Vox-level introspection to observe it | n/a | not assertable | |
+| FIL-93 | 4047 | On open, the FD is registered in a tracking table. | open many handles without closing, assert none is reused and nothing crashes | the *registration* itself: no. Its consequence — no descriptor is recycled while a handle is live — **yes**, and it scales: 100000 unclosed opens, last descriptor 100002, exit 0 (`FIL-93.vox`) | none | todo (consequence only) | |
+| FIL-94 | 4048 | On close, the FD is unregistered from the table. | — | **no** — the table is not observable | n/a | not assertable | |
+| FIL-95 | 4049 | On exit, all remaining FDs are closed. | — | **no** — the program is gone by then; nothing inside Vox can observe it. (Note this is *not* discharged by the bytes being on disk: `Write` is unbuffered, so the data is there whether or not the FD was released.) | n/a | not assertable | |
+| FIL-96 | 4051–4058 | It works correctly with **conditional** file operations — an `open` inside an `If` whose `Close` is forgotten. | emit an open inside a conditional branch with no close | yes (exit 0, bytes on disk) | none — every generated `open` is unconditional and paired with a `Close` | todo — real gap | |
+| FIL-97 | 4064 | Safety-vs-C: buffer overflow is impossible, buffers auto-grow. | — | — | — | folded into FIL-85 | |
+| FIL-98 | 4065 | Safety-vs-C: a forgotten close is not a leak — auto-closed on exit. | — | — | — | folded into FIL-87/FIL-89 | |
+| FIL-99 | 4066 | Safety-vs-C: a forgotten free is not a leak — auto-freed on exit. | — | — | — | folded into FIL-89 | |
+| FIL-100 | 4067 | Safety-vs-C: double free is tracked and cannot happen. | close the same handle twice, assert no crash and no error flag | yes — hand-verified: a double `Close` neither crashes nor raises | none | todo | |
+| FIL-101 | 4068 | Safety-vs-C: use after free is not possible by design. | read and write a closed handle, assert no crash | yes for the no-crash half. Note the two halves disagree: a **read** of a closed handle sets the error flag, a **write** does not (D4). | none | todo | |
+| FIL-102 | 3889–3891 | *(new row, added 2026-08-22 per the master's brief)* Line `N` exists when the file holds at least `N-1` newlines before it — a file that ends in a newline has one empty last line to seek to; anything beyond that is past EOF and sets the error flag. This is the new precision Discrepancy 3's fix (vox #47) brought into the manual alongside the seek fix itself, at what was old-numbering 3603–3605 and is now 3690–3692. | write a file with a known newline count, seek to line `newlines+1` (should exist, empty, no error) and to line `newlines+2` (should error), assert both | yes — the generator wrote the file and knows its newline count | none — `Seek` appears in no leaf (FIL-57/61/63) | todo — hand-verified in `FIL-102.vox`: a 2-newline file lands line 3 at size 0 with no error, and errors on line 4 | |
+| FIL-103 | 3903–3921 | *(new row, added 2026-08-22)* `Write` takes a text, a buffer, or a format string; a bare number/float/boolean **or a `value`** is a compile-time error, not a runtime crash — new manual prose written to document the vox #40 fix (Discrepancy 6). A scalar's error names the exact rewrite (`Write "{count}" to output.`); a `value`'s error says to copy it into a typed variable first. | emit both rejected forms as compile-error probes (a leaf cannot emit them as running programs — see FIL-44's reasoning) | **no**, for the same reason as FIL-43/FIL-44: a fuzzer must never emit a program that fails to compile | n/a | not assertable (by a generator) — hand-verified in `FIL-103.vox` (the `value` half; the scalar half is already `D6.vox`) | |
 
 ---
 
@@ -400,7 +400,7 @@ because #38 is evidently still open in 0.4.7 while #37 in the same
 comment is fixed.
 
 **Reading in which the compiler is correct:** `is available`
-(LANGUAGE.md:3915) is described as "the correct, **current** form of
+(LANGUAGE.md:3951) is described as "the correct, **current** form of
 this check", which is language the manual uses for a form that
 superseded another. If `exists` was deliberately retired in favour of
 `is available`, the compiler is right and the File Properties table is
@@ -413,7 +413,7 @@ the thing `is available` answers.
 
 ### 2. `Read from … into …` replaces the buffer; the manual says it appends
 
-`D2.vox`. LANGUAGE.md:3629: "`Read` appends incoming data to the buffer
+`D2.vox`. LANGUAGE.md:3665: "`Read` appends incoming data to the buffer
 and is best for bulk/stream processing" — stated as the explicit
 contrast against 3472, "`Read line` **replaces** the buffer with the
 next line". Repro: a buffer holding 4 bytes with room for 124 more,
@@ -453,7 +453,7 @@ tell, and would not have found this.
 **Resolution (lawyer): MANUAL BUG, high.** codegen/statements.rs:2100 resets the buffer length before reading under the comment "read replaces, not appends", and tests/runtime/b340_pipe_exact_fit.asm asserts it; no other manual sentence depends on append (the `data's full` truncation idiom requires replace). Fix :3480's sentence → vox docs (bundled with the #47/#48 fix branch).
 
 **Resolution confirmed, 2026-08-22: fixed in the manual, not the compiler.**
-The current manual (5327 lines) at LANGUAGE.md:3811–3813 now reads: "`Read`
+The current manual (5327 lines) at LANGUAGE.md:3847–3849 now reads: "`Read`
 replaces the buffer's contents with the bytes read; each `Read` continues
 from the file's current position, so it is best for bulk/stream
 processing." — exactly the lawyer's recommended fix. `D2.vox`'s own
@@ -463,9 +463,9 @@ the corrected claim.
 
 ### 3. `Seek … to line N` lands on line 2 for every N ≥ 2, and a line past EOF does not set the error flag — RESOLVED (vox #47)
 
-`D3.vox`. Two claims broke together. LANGUAGE.md:3849 (was 3507 at the
+`D3.vox`. Two claims broke together. LANGUAGE.md:3885 (was 3507 at the
 manual version this was found against): "`Seek … to line N` moves to the
-first byte of line `N`". LANGUAGE.md:3851–3852 (was 3509): "Invalid
+first byte of line `N`". LANGUAGE.md:3887–3888 (was 3509): "Invalid
 targets (e.g. line past EOF, position < 1, invalid fd) set the error
 flag."
 
@@ -507,7 +507,7 @@ the discrepancy are gone; both probes (`D3.vox`, `FIL-63.vox`) were
 re-recorded on 2026-08-21.
 
 **Both things this note used to flag as unmapped are now mapped
-(2026-08-22 re-pin).** The seeking rules are at LANGUAGE.md:3839–3856 in
+(2026-08-22 re-pin).** The seeking rules are at LANGUAGE.md:3875–3892 in
 the current (5327-line, 0.4.9) manual, and the new bullet defining
 exactly when line `N` exists is at 3690–3692 — "the file holds at least
 `N-1` newlines before it, so a file that ends in a newline has one empty
@@ -517,7 +517,7 @@ set the flag, which remains correct (see the note under FIL-63).
 
 ### 4. A failing `Write` never sets the error flag — RESOLVED (vox #48)
 
-`D4.vox`. LANGUAGE.md:3950 (was 3574) lists "File operation failures" among the
+`D4.vox`. LANGUAGE.md:3986 (was 3574) lists "File operation failures" among the
 catchable errors. Four distinct write failures, none caught:
 
 ```
@@ -556,7 +556,7 @@ which used to read "not one of the four failing writes set the error flag" —
 now reads "survived all four failing writes".
 
 **Confirmed still fixed on 0.4.9, and now spelled out in the manual
-itself, 2026-08-22.** LANGUAGE.md:3950–3952 (Catchable Errors) now reads:
+itself, 2026-08-22.** LANGUAGE.md:3986–3988 (Catchable Errors) now reads:
 "File operation failures — opening, seeking, reading, writing and
 deleting alike. A failed `Write` sets the flag, and so does a `Read
 from`, a `Read line from` or a `Write` on a handle whose own `open`
@@ -634,7 +634,7 @@ Characterised:
 So the compile-time guard exists but only catches the literal form; a
 variable of the same type walks straight through to the crash.
 
-**Reading in which the compiler is correct:** LANGUAGE.md:3859 (was 3513) says
+**Reading in which the compiler is correct:** LANGUAGE.md:3895 (was 3513) says
 `Write` takes "strings, buffers, or special values". A Number is none of
 those, so the *program* is outside the documented language and the
 compiler owes it nothing in particular — and the parser evidently agrees,
@@ -689,28 +689,28 @@ generator-known payload.
 Samenesses in the corpus that LANGUAGE.md actually **requires** in this
 area, and may therefore be cited in the `scripts/invariants` report:
 
-- a file handle is named by `called <name>` in every `open` — LANGUAGE.md:3770, FIL-32
-- an `open` names exactly one of `reading` / `writing` / `appending` — LANGUAGE.md:3794–3796, FIL-38/39/40
-- the `at` value is always either a quoted path or a bare integer, never a float, boolean or bare word — LANGUAGE.md:3799–3802, FIL-41/42/44
-- a descriptor literal is always within `0..2147483647` — LANGUAGE.md:3801, FIL-43
-- `Read`/`Read line` always names a destination buffer with `into` — LANGUAGE.md:3811–3828, FIL-45/46
-- list and seek positions are never 0 or negative in a *valid* access — LANGUAGE.md:3707 and 3685, FIL-16 and FIL-60 (an OOB leaf may of course emit them deliberately; that is the claim under test, not a violation)
-- an `On error` handler always follows the operation it is about, never precedes it — LANGUAGE.md:3940–3944, FIL-77
-- `Delete the file` always takes a path expression, never a file handle — LANGUAGE.md:3931, FIL-75
+- a file handle is named by `called <name>` in every `open` — LANGUAGE.md:3806, FIL-32
+- an `open` names exactly one of `reading` / `writing` / `appending` — LANGUAGE.md:3830–3832, FIL-38/39/40
+- the `at` value is always either a quoted path or a bare integer, never a float, boolean or bare word — LANGUAGE.md:3835–3838, FIL-41/42/44
+- a descriptor literal is always within `0..2147483647` — LANGUAGE.md:3837, FIL-43
+- `Read`/`Read line` always names a destination buffer with `into` — LANGUAGE.md:3847–3864, FIL-45/46
+- list and seek positions are never 0 or negative in a *valid* access — LANGUAGE.md:3743 and 3685, FIL-16 and FIL-60 (an OOB leaf may of course emit them deliberately; that is the claim under test, not a violation)
+- an `On error` handler always follows the operation it is about, never precedes it — LANGUAGE.md:3976–3980, FIL-77
+- `Delete the file` always takes a path expression, never a file handle — LANGUAGE.md:3967, FIL-75
 
 **Samenesses this section does NOT justify** — every one is a current or
 latent defect and needs either a citation from elsewhere or a fix:
 
 | invariant in today's corpus | verdict |
 |---|---|
-| every `open` uses the clause order `for <mode> called <name> at <path>` | **defect** — LANGUAGE.md:3785 explicitly permits any order and shows three permutations (FIL-37) |
-| every `Close` uses the bare form, never `Close the <name>` | **defect** — LANGUAGE.md:3902 shows the article form first (FIL-68) |
+| every `open` uses the clause order `for <mode> called <name> at <path>` | **defect** — LANGUAGE.md:3821 explicitly permits any order and shows three permutations (FIL-37) |
+| every `Close` uses the bare form, never `Close the <name>` | **defect** — LANGUAGE.md:3938 shows the article form first (FIL-68) |
 | every list read is `element 1` | **defect** — no rule fixes the index; `src/gen_collections.vox:15` and `src/gen_text.vox:411` both hard-code `1` (FIL-17) |
-| every file is opened exactly once per path, and always closed | **defect** — LANGUAGE.md:3985–3991 and 3852–3859 make the forgot-to-close and the reopen-to-overwrite paths documented, supported behaviour (FIL-39, FIL-89, FIL-96) |
+| every file is opened exactly once per path, and always closed | **defect** — LANGUAGE.md:4021–4027 and 3852–3859 make the forgot-to-close and the reopen-to-overwrite paths documented, supported behaviour (FIL-39, FIL-89, FIL-96) |
 | no generated program ever contains `Seek`, `Read line`, `is available`, `Delete the file`, or `for appending` | **defect** — five documented constructs at literally zero emission (FIL-34, FIL-46, FIL-57, FIL-70, FIL-75) |
-| every `Write` source is a string or format string | **defect** — LANGUAGE.md:3863–3864 documents buffer and newline sources (FIL-65, FIL-66) |
-| every stdin read reaches stdin by `"/dev/stdin"` or `0`, never by `standard input` | **defect** — LANGUAGE.md:3820 is the manual's own spelling (FIL-48) |
-| every `On error` handler is a single `print` | **defect** — LANGUAGE.md:3959 shows a comma-joined multi-action handler (FIL-81) |
+| every `Write` source is a string or format string | **defect** — LANGUAGE.md:3899–3900 documents buffer and newline sources (FIL-65, FIL-66) |
+| every stdin read reaches stdin by `"/dev/stdin"` or `0`, never by `standard input` | **defect** — LANGUAGE.md:3856 is the manual's own spelling (FIL-48) |
+| every `On error` handler is a single `print` | **defect** — LANGUAGE.md:3995 shows a comma-joined multi-action handler (FIL-81) |
 
 ---
 
@@ -740,7 +740,7 @@ the compiler implementing it — leaving **97 distinct claims**.
 - **1 is still blocked on an open discrepancy**: FIL-90, which is the
   *buffers* ledger's Discrepancy 1 (dynamic buffer capacity 4096 vs.
   documented "zero") restated by this section's own text at
-  LANGUAGE.md:3995, and belongs to that adjudication, not a new one —
+  LANGUAGE.md:4031, and belongs to that adjudication, not a new one —
   re-probed against vox 0.4.9 (see `buffers.md`), still open, still a
   design question for Josj, not yet a numbered fix.
 

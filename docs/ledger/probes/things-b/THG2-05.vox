@@ -1,4 +1,4 @@
-(THG2-05: the Printing worked example, LANGUAGE.md:1264-1298, verbatim. It is
+(THG2-05: the Printing worked example, LANGUAGE.md:1294-1328, verbatim. It is
  a composite of THG2-01 (definition order, recursion), THG2-03 (a quoted field
  name), THG2-04 (a function member takes no part), THG2-06 (a whole thing
  interpolates under Print) and the type-possessive maker call of THG2-34.

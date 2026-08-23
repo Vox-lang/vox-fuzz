@@ -2,7 +2,7 @@
  literal.
  Also covers: LST-41 (the value carries its runtime tag, so a text prints as
  text and a number as a number), LST-42 (the worked example of
- LANGUAGE.md:2398-2399).
+ LANGUAGE.md:2434-2435).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-39.vox -o p && ./p
  expected output:
    Ada

@@ -20,7 +20,7 @@ Read first, in this order:
    anyone's notes about what the compiler gets wrong; you compare against
    that section afterwards and report what your leaves did and did not
    find on their own.
-4. `../vox/LANGUAGE.md` lines 4634–4708 (the section itself), plus the
+4. `../vox/LANGUAGE.md` lines 4670–4744 (the section itself), plus the
    buffer and text declaration forms the section leans on (`a text called
    X is <expr>.`, `a buffer called X is <expr>.` — Variables 446–644,
    File I/O buffers 3139–3324), and `../vox/docs/STYLE.md`.

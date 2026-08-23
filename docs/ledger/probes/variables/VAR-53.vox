@@ -1,4 +1,4 @@
-(VAR-53: the bare-identifier character set. LANGUAGE.md:654 gives the set as
+(VAR-53: the bare-identifier character set. LANGUAGE.md:670 gives the set as
  [A-Za-z_][A-Za-z0-9_]*, which admits a leading underscore. The compiler
  rejects a leading underscore as reserved for the runtime — see Discrepancy 9
  — so what this probe records is the set the compiler ACTUALLY accepts: a

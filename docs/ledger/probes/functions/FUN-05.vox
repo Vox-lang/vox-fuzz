@@ -1,5 +1,5 @@
 (FUN-05 — a function name is a bare single word or a single-quoted
- multi-word name (LANGUAGE.md:719, restated for the call site at :768).
+ multi-word name (LANGUAGE.md:735, restated for the call site at :768).
  Both forms define and both forms call. The manual's wording pairs "bare"
  with "single word" and "single-quoted" with "multi-word", but the
  compiler also accepts a single-word name written SINGLE-QUOTED, at the

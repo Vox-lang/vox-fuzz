@@ -3,7 +3,7 @@
  readable 1 at top level and 0 through a parameter; a handle opened for
  writing reports writable 1 at top level and 0 through a parameter.
  `size` and `descriptor` are correct through the same parameter, so it is
- these two boolean properties specifically. LANGUAGE.md:775 says "file
+ these two boolean properties specifically. LANGUAGE.md:805 says "file
  parameters support file properties".
  Not in the 0.4.10 register (#66-#91) — re-verified unchanged against
  0.4.10, 2026-08-22: byte-identical output, still open.

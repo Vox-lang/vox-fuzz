@@ -1,4 +1,4 @@
-(LST-01 — the four list-literal declaration forms of LANGUAGE.md:2263-2268
+(LST-01 — the four list-literal declaration forms of LANGUAGE.md:2299-2304
  all compile: a number list, a text list, a mixed list, and an empty list.
  Also covers: LST-03 (a literal may mix types), LST-04 (`[]` is allowed and
  has length 0).

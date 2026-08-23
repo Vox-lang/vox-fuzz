@@ -1,6 +1,6 @@
 (THG-55: the three spellings of assignment - a declaration with an
  initialiser, a bare `is`, and `Set ... to` - are all assignment, so all
- three copy. The `the` reference form (LANGUAGE.md:552) copies too.
+ three copy. The `the` reference form (LANGUAGE.md:568) copies too.
  Each copy is mutated after the fact and the original is printed back
  unchanged: 5, 9, 5, 11, 5, 13.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-55.vox -o p && ./p

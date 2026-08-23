@@ -168,7 +168,7 @@ Print "classify -1: {'classify compile exit' of neg}".
  every other pool that declares a TOP-LEVEL name. Type names, function
  names, flag names, the buffer names 'gen buffer name' hands out and the
  value names 'gen fresh noun' hands out all land in Vox's one identifier
- space (LANGUAGE.md:1631), so one word in two pools is a program that
+ space (LANGUAGE.md:1661), so one word in two pools is a program that
  does not compile - and it would surface as a rare, seed-dependent
  compile failure rather than as anything obviously wrong with the lists.
  Counted here so a word added to one list cannot silently collide.
@@ -185,16 +185,16 @@ Print "classify -1: {'classify compile exit' of neg}".
  (gen_misc.vox). The pools deliberately NOT counted against these are
  the ones that do not spend into that space - gen_field_words,
  gen_maker_words and gen_receiver_words live in a type's member space
- and gen_parameter_words in a function's locals (LANGUAGE.md:1646, "A
+ and gen_parameter_words in a function's locals (LANGUAGE.md:1676, "A
  thing's own fields and members live in a separate per-type member
  space") - and the lists that are payload rather than names:
  gen_environment_variable_names holds the names of host environment
  variables, gen_environment_spoken_words holds words a program prints,
  'the value nonsense' holds sentences that will not parse as numbers,
  'the distinguishing words' are suffixes, and gen_alias_letters holds
- flag aliases, which LANGUAGE.md:667 lists among the things that "are
+ flag aliases, which LANGUAGE.md:683 lists among the things that "are
  data, not names". gen_environment_loop_words IS counted, because
- LANGUAGE.md:1645 says the collision error "names a function, a
+ LANGUAGE.md:1675 says the collision error "names a function, a
  parameter, a loop variable, an inferred variable, or another thing" -
  so a For-each variable shares the space even though the compiler was
  measured to accept the same loop variable twice.

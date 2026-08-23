@@ -1,4 +1,4 @@
-(TYP-02: `float` is documented as 64-bit IEEE 754 (LANGUAGE.md:447).
+(TYP-02: `float` is documented as 64-bit IEEE 754 (LANGUAGE.md:460).
  0.1 + 0.2 is not exactly representable in binary64 and rounds to a
  value strictly greater than the nearest representation of 0.3 — the
  textbook double-rounding fingerprint. Confirms the claim; not a

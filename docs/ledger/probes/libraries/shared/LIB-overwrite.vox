@@ -1,4 +1,4 @@
-(LIB-30 -- LANGUAGE.md:5192-5195 documents that a repeat --shared build
+(LIB-30 -- LANGUAGE.md:5228-5231 documents that a repeat --shared build
  overwrites an existing .lib in place. RESOLVED 2026-08-22: this used to
  be Discrepancy 1 (the manual then claimed it would error and ask you to
  remove the .lib first, which the compiler never did); the manual was

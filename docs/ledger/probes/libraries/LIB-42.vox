@@ -1,4 +1,4 @@
-(LIB-42 -- the consuming-a-library worked example, LANGUAGE.md:5244-5247,
+(LIB-42 -- the consuming-a-library worked example, LANGUAGE.md:5280-5283,
  reproduced verbatim against the checked-in fixtures/libmathkit.lib/.so
  pair. `see` resolves the .lib, selects the matching name+version block,
  verifies the .so exports every promised symbol, registers the

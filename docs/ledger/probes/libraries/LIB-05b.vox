@@ -1,6 +1,6 @@
 (LIB-05, half 2 of 3 -- retired form 2: `see <lib> version "<v>" from
  "<path>.so".` also pointed a library-style see at a .so directly, and
- gets the identical diagnostic to LIB-05. NOTE: LANGUAGE.md:5069 spells
+ gets the identical diagnostic to LIB-05. NOTE: LANGUAGE.md:5105 spells
  this form with the library name in double quotes -- `see "lib" version
  "1.0" from "./path.so".` -- but a double-quoted name is not valid Vox
  syntax in this position at all (names are bare or 'single-quoted', never

@@ -2,7 +2,7 @@
  Two fixture files each `see` the other and each names the other's thing as
  a field type; the merged registry cannot be built.
  What the manual credits to "the analyzer's registry DFS"
- (LANGUAGE.md:1068-1071) is not separately observable: the seen file
+ (LANGUAGE.md:1098-1101) is not separately observable: the seen file
  arrives where the `see` is written, so the SAME defined-earlier ordering
  rule fires first and produces "unknown field type". The DFS is
  defence-in-depth, and a Vox program cannot tell which of the two

@@ -1,7 +1,7 @@
 (PRC-77 — undocumented precision, and a hazard: the pid expression reaches
  kill(2) unfiltered, so the two broadcast pids are reachable from a Vox
  program. pid 0 signals the caller's whole PROCESS GROUP; pid -1 signals
- every process the uid is allowed to signal. LANGUAGE.md:4319-4320
+ every process the uid is allowed to signal. LANGUAGE.md:4355-4356
  documents exactly this lowering ("<pid-expr> is the target PID (loaded
  into rdi)") without noting that two ordinary-looking integers are
  broadcasts.

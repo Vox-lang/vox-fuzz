@@ -1,4 +1,4 @@
-(D3 — Discrepancy 3 repro: LANGUAGE.md:4141-4144 says the list-variable
+(D3 — Discrepancy 3 repro: LANGUAGE.md:4177-4180 says the list-variable
  form builds argv "from the list's current length and contents, sized and
  bounds-checked from that single length read so the argv array cannot be
  overrun regardless of the list's contents". The bounds claim holds — this

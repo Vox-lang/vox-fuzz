@@ -1,7 +1,7 @@
-(OPR-23: LANGUAGE.md:4825 lists `aren't` as an accepted spelling of `not`.
+(OPR-23: LANGUAGE.md:4861 lists `aren't` as an accepted spelling of `not`.
  On 0.4.9 and earlier it failed for the same lexical reason as OPR-22.
  See Discrepancy 1. `aren't` stands for the plural `are not`
- (LANGUAGE.md:1942), so the witness needs a plural predicate that is
+ (LANGUAGE.md:1972), so the witness needs a plural predicate that is
  actually true: `lhs` (7) and `rhs` (9) are both `aren't 3`.
  RESOLVED, 2026-08-22 - vox #84. Re-run verbatim against 0.4.10: compiles
  and fires.

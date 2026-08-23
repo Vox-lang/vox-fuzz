@@ -1,7 +1,7 @@
 (THG2-37: a maker cannot be reached by the instance possessive - a receiver
  has nothing to fill - and the message says so rather than reporting the
  member as missing, because the manifest does declare it.
- LANGUAGE.md:1548-1561, verbatim.
+ LANGUAGE.md:1578-1591, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-37.vox -o p && ./p
  expected output:
    error: point declares 'placed at', but a receiver cannot reach it here

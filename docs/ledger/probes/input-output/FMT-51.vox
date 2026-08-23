@@ -1,4 +1,4 @@
-(FMT-51 — the single-clause conditional print form at LANGUAGE.md:3399:
+(FMT-51 — the single-clause conditional print form at LANGUAGE.md:3435:
  `Print <default>, but if <condition> print <value>.` The alternative
  replaces the default; it is not printed in addition to it.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p

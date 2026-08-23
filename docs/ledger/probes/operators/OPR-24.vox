@@ -1,4 +1,4 @@
-(OPR-24: `bit-and` is bitwise AND (LANGUAGE.md:4840).
+(OPR-24: `bit-and` is bitwise AND (LANGUAGE.md:4876).
  0b11110000 is 240, 0b10101010 is 170, and 240 AND 170 is 160 (0b10100000).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-24.vox -o p && ./p
  expected output:
