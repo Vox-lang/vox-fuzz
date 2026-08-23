@@ -1,4 +1,4 @@
-(D9 — Discrepancy 9 repro: the rule at LANGUAGE.md:734 is enforced — a
+(D9 — Discrepancy 9 repro: the rule at LANGUAGE.md:764 is enforced — a
  local read at top level IS a compile-time error — but the diagnostic
  points at the wrong place and gives a hint about a construct the program
  does not contain. The offending statement is the top-level

@@ -1,4 +1,4 @@
-(Discrepancy 1 — LANGUAGE.md:3364-3368 says all sinks share one name
+(Discrepancy 1 — LANGUAGE.md:3402-3406 says all sinks share one name
  resolver and that special names like {arguments's first} "render
  identically whether the result is printed, written to a file, or built
  into a buffer". Under 0.4.7 printing and writing worked and building into

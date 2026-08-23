@@ -1,5 +1,5 @@
 (VAR-18 and VAR-20: `Create a time called NAME.` is rejected at compile
- time, with the diagnostic at LANGUAGE.md:527-529 reproduced exactly.
+ time, with the diagnostic at LANGUAGE.md:543-545 reproduced exactly.
  (Compile-error claim: not assertable from a runtime leaf.)
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-18.vox -o p && ./p
  expected output:

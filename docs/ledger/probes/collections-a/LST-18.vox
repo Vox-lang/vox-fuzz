@@ -3,7 +3,7 @@
  the list to mixed and print a raw address for a text (Discrepancy 5).
  vox #45 fixed it: this is now a COMPILE ERROR, one per opaque append,
  naming both the "declare the return type" and "assign to a declared
- variable first" rewrites. LANGUAGE.md:2361-2369.
+ variable first" rewrites. LANGUAGE.md:2397-2405.
  LST-21 (the withdrawn residual TAG_INTEGER-guess row) described the
  pre-fix hedge this probe used to demonstrate; there is no hedge left to
  demonstrate now that the write is refused outright.

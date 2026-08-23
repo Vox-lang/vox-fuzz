@@ -1,5 +1,5 @@
 (OPR-32: the shift count may be a plain integer literal
- (LANGUAGE.md:4861-4862), and may also be a variable - the manual only
+ (LANGUAGE.md:4899-4900), and may also be a variable - the manual only
  shows the literal form, so the variable form is probed alongside it.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-32.vox -o p && ./p
  expected output:

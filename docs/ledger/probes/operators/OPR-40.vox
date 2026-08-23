@@ -1,5 +1,5 @@
 (OPR-40 (undocumented precision): the comparison operators of
- LANGUAGE.md:4810-4817 are not first-class expressions. A comparison
+ LANGUAGE.md:4848-4855 are not first-class expressions. A comparison
  parses only in a condition position (an If/but-if/while condition);
  printing one, or binding one to a boolean, is a compile error. The
  arithmetic and bitwise operators have no such restriction. Nothing in

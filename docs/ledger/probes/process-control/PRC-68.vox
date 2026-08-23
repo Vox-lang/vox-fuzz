@@ -1,4 +1,4 @@
-(PRC-68 — LANGUAGE.md:4268-4270 says examples/supervisor.vox "is this loop
+(PRC-68 — LANGUAGE.md:4306-4308 says examples/supervisor.vox "is this loop
  as a runnable program, supervising both a job that finishes and a job
  that hangs". This IS that file, copied verbatim from
  /home/josj/scr/english/vox/examples/supervisor.vox, and it runs.

@@ -1,6 +1,6 @@
 (THG2-20: every declared member returns its owner. A definition whose Return
  hands back some other thing is a compile error naming both lines - the
- definition line and the Return line. LANGUAGE.md:1403-1416, verbatim.
+ definition line and the Return line. LANGUAGE.md:1433-1446, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-20.vox -o p && ./p
  expected output:
    error: A declared member returns its own thing: point's 'placed at' must return a point

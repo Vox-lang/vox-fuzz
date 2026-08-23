@@ -1,4 +1,4 @@
-(FLW-08: the manual's worked example (LANGUAGE.md:2161) verbatim -
+(FLW-08: the manual's worked example (LANGUAGE.md:2191) verbatim -
  `If ready then, print "a", print "b", print "c".`
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-08.vox -o p && ./p
  expected output:

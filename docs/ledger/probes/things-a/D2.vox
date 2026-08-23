@@ -1,6 +1,6 @@
 (D2 - Discrepancy 2 repro: the section's `(compile error: ...)` blocks read
  as verbatim transcripts but are abbreviated.
- This is the `increment origin.` case, LANGUAGE.md:1176-1186. The manual's
+ This is the `increment origin.` case, LANGUAGE.md:1206-1216. The manual's
  block ends its second line at "(plan 310 §5)"; the compiler continues
  ", printed as its fields (§7), and compared field by field (§8); no other
  position reads it as one value."

@@ -1,5 +1,5 @@
 (D4: Discrepancy 4 - a failing `Write` never set the error flag, so a
- write failure was undetectable from Vox. LANGUAGE.md:3737 (0.4.7
+ write failure was undetectable from Vox. LANGUAGE.md:3775 (0.4.7
  numbering) lists file operation failures as catchable.
  **RESOLVED - fixed by vox #48 (0.4.8).** Re-run against current main, all
  four failure modes now raise the flag and `On error` catches every one.

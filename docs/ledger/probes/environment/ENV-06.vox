@@ -1,4 +1,4 @@
-(ENV-06: the named lookup (LANGUAGE.md:4733, `environment's "NAME"`)
+(ENV-06: the named lookup (LANGUAGE.md:4771, `environment's "NAME"`)
  asserted against a value the tester controls, both unset and set.
  `check-probes.sh` only special-cases a `Ran:` line for a STDIN feed,
  not a leading `VAR=value` -- so the checked block below is the plain,

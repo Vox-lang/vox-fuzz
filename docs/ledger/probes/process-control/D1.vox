@@ -1,4 +1,4 @@
-(D1 — Discrepancy 1 repro: LANGUAGE.md:4096 says the device-node `type` is
+(D1 — Discrepancy 1 repro: LANGUAGE.md:4134 says the device-node `type` is
  `"c"` (character device) or `"b"` (block device). The compiler accepts a
  third, `"p"` (FIFO), and its own diagnostic names it — and `"p"` is the
  one form that needs no privilege, so unlike "c" and "b" it really does

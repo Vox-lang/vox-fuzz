@@ -1,5 +1,5 @@
-(NAM-03: LANGUAGE.md:682's worked example, reproduced verbatim,
- claimed by LANGUAGE.md:685-686 to now be a compile error. It is
+(NAM-03: LANGUAGE.md:698's worked example, reproduced verbatim,
+ claimed by LANGUAGE.md:701-702 to now be a compile error. It is
  rejected — but on the "x" token (name position), never reaching the
  "get five" clause the manual's prose credits. See NAM-04 and
  Discrepancy 1.

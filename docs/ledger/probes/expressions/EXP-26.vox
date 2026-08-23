@@ -1,4 +1,4 @@
-(EXP-26: LANGUAGE.md:1887 offers
+(EXP-26: LANGUAGE.md:1917 offers
  `{fibonacci of n subtract 1} add {fibonacci of n subtract 2}` as an example of
  a braced arithmetic subexpression. It parses, but NOT as the fibonacci
  recurrence: `of` binds only the next primary, so the braces contain

@@ -10,7 +10,7 @@
    error: Top-level print statement is not allowed in a shared library:
    only function definitions, 'Library', and 'see' may appear at the top
    level.
- (exit 1, and this is the diagnostic's text verbatim, matching LANGUAGE.md:5173-5175)
+ (exit 1, and this is the diagnostic's text verbatim, matching LANGUAGE.md:5214-5216)
 )
 
 Library topkit version "1.0".

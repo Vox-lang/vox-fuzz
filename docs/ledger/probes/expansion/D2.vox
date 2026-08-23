@@ -1,4 +1,4 @@
-(D2 — Discrepancy 2 repro: LANGUAGE.md:395 says "If no conditions match, the
+(D2 — Discrepancy 2 repro: LANGUAGE.md:408 says "If no conditions match, the
  default action runs", and :389 says the default action is the base
  statement. With a trailing `otherwise` present, no condition matches on 1
  and 3, and the base statement `append <the number> to out` does NOT run —

@@ -1,4 +1,4 @@
-(D8 — Discrepancy 8 repro: LANGUAGE.md:2746-2748 says each element
+(D8 — Discrepancy 8 repro: LANGUAGE.md:2782-2784 says each element
  "renders exactly as it does when printed individually: text elements are
  quoted". The two halves contradict each other — a text prints bare on its
  own and quoted inside a list — and the colon clause is the half the

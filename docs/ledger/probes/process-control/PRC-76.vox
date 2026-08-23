@@ -1,4 +1,4 @@
-(PRC-76 — the worked pattern at LANGUAGE.md:4341-4349: fork a child, send
+(PRC-76 — the worked pattern at LANGUAGE.md:4379-4387: fork a child, send
  it a real signal, reap any child, and find the reaped pid matches.
  VERBATIM from the manual except that the child's `Wait 30 seconds.` is
  kept as written — it never elapses, because the parent kills the child

@@ -1,4 +1,4 @@
-(D2 - Discrepancy 2 repro: LANGUAGE.md:1645-1646 says the identifier-space error
+(D2 - Discrepancy 2 repro: LANGUAGE.md:1675-1676 says the identifier-space error
  "names a function, a parameter, a loop variable, an inferred variable, or
  another thing, whichever came first." A parameter is what came first here, and
  the error calls it a variable. A loop variable and an inferred variable were

@@ -4,7 +4,7 @@
  EXP-08 is the decimal-point claim: `0` declared as a number prints `0`,
  while `0.0` declared as a float prints `0.0`, so the point is what makes
  the literal a float and the float survives into the value.
- Booleans print as 1/0 - LANGUAGE.md:2328, not a defect of this section.
+ Booleans print as 1/0 - LANGUAGE.md:2364, not a defect of this section.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-01.vox -o p && ./p
  expected output:
    42

@@ -1,6 +1,6 @@
 (ARG-26 — with `Parse flags.` omitted, parsing is inserted automatically
  immediately after the LAST flag schema declaration
- (LANGUAGE.md:4652). Reading a flag after the last schema works with no
+ (LANGUAGE.md:4690). Reading a flag after the last schema works with no
  parse statement anywhere in the file.
  Also covers: ARG-27 (a schema is valid as long as it precedes parsing)
  and ARG-28 (ordinary code before and between schema declarations is

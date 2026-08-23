@@ -1,4 +1,4 @@
-(THG2-36: the type-possessive worked example, LANGUAGE.md:1528-1540, verbatim.
+(THG2-36: the type-possessive worked example, LANGUAGE.md:1558-1570, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-36.vox -o p && ./p
  expected output:
    1

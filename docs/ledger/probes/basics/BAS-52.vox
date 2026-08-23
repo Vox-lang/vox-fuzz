@@ -1,5 +1,5 @@
 (BAS-52 - ONE period: the Otherwise belongs to the INNER if.
- LANGUAGE.md:217-226, verbatim. Prints only `done`.
+ LANGUAGE.md:230-239, verbatim. Prints only `done`.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-52.vox -o p && ./p
  expected output:
    done

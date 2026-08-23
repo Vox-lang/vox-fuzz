@@ -1,6 +1,6 @@
 (Discrepancy 1 (NAM) -- RESOLVED (vox #65), re-recorded 2026-08-22
  against vox 0.4.9. Used to isolate NAM-03's worked example down to
- only the half LANGUAGE.md:685-686 actually credits ("is "get five""
+ only the half LANGUAGE.md:701-702 actually credits ("is "get five""
  in value position) by fixing the name-position violation, and used to
  print a garbage number with no error or warning -- the initial-
  declaration form's value wasn't type-checked at all. Now it is,

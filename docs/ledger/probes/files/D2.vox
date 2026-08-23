@@ -1,4 +1,4 @@
-(D2: Discrepancy 2 - `Read from ... into ...` REPLACES the destination buffer's contents; LANGUAGE.md:3629 says it appends.
+(D2: Discrepancy 2 - `Read from ... into ...` REPLACES the destination buffer's contents; LANGUAGE.md:3667 says it appends.
  Both halves shown: a fixed 128-byte buffer with 4 bytes in it and room for
  all 17 more, and a dynamic buffer with the same 4 bytes. Both report 17,
  not 21. The printed content is the file's, with no "PRE-" prefix.

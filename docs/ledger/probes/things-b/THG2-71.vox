@@ -1,6 +1,6 @@
 (THG2-71: user-defined things are not in the runtime tag system in v1 - there
  is no `is a point`. The diagnostic enumerates exactly the six nouns the manual
- lists at LANGUAGE.md:1842-1843.
+ lists at LANGUAGE.md:1872-1873.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-71.vox -o p && ./p
  expected output:
    error: Expected a type noun (number, text, decimal, boolean, list, or map) after 'is a'

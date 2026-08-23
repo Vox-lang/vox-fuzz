@@ -1,10 +1,10 @@
 (TIM-12 - the manual's Time Properties example, copied verbatim from
- LANGUAGE.md:4405-4418, compiles and runs. Every value it prints comes
+ LANGUAGE.md:4443-4456, compiles and runs. Every value it prints comes
  from the clock, so this is recorded as an exit-code probe with one real
  run kept underneath as documentation.
  Note: each `Print` ends its own line, so the example does NOT produce
  `Current time: 04:07:49` - it produces eleven lines. `without newline`
- (LANGUAGE.md:3274) is what the example would need. Legal, but the layout
+ (LANGUAGE.md:3310) is what the example would need. Legal, but the layout
  the example implies is not what it does.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-12.vox -o p && ./p
  expected output:

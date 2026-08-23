@@ -1,4 +1,4 @@
-(FLW-16: the manual's example (LANGUAGE.md:2203) verbatim - `For each
+(FLW-16: the manual's example (LANGUAGE.md:2237) verbatim - `For each
  number from 1 to 10, print the number.` The range is INCLUSIVE of both
  bounds: ten lines, 1 through 10.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-16.vox -o p && ./p
