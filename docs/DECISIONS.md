@@ -290,3 +290,16 @@ cost the most time when forgotten.
   reading aid. Layout itself (indentation, line breaks, tabs) is noise
   and is randomised by the layout pass; only periods, commas and
   paragraph breaks are syntax (LANGUAGE.md:115-117, :81-83).
+
+- **Pool-drawn names are their own sameness class, and the pools grow
+  (Josj, 2026-08-24).** The value batch put 46 pool words over the
+  invariant report's 50% line and the ruling is a hybrid: (1)
+  `scripts/invariants` learns to classify an identifier drawn from a
+  declared generator pool separately from a hardcoded literal — reported
+  as `pool word`, never a failing "unjustified invariant", because a
+  declared vocabulary is not a hidden rule; (2) the pools also get
+  bigger (a larger prime; disjointness stays proven by
+  `tests/230_units.vox`), which lowers each word's presence honestly.
+  The STYLE.md register is explicitly subordinate for generated-name
+  pools — readability of pool words matters less than the measurement
+  being honest. The 46 flags from the value batch reclassify under (1).
