@@ -1,14 +1,19 @@
-(D1 - Discrepancy 1 repro: LANGUAGE.md:4662 lists `isn't` and `aren't` as
- accepted spellings of `not`. Neither lexes. src/lexer/scan.rs:360 does
- map "isn't" | "aren't" | "doesn't" | "don't" to Token::Not, so the
- intent is in the compiler - but the scanner splits the apostrophe off
- first (it is the possessive marker and the quoted-name delimiter,
- scan.rs:118 and :587), so the contraction never reaches that keyword
- table. `doesn't` and `don't` fail identically and are not documented.
+(D1 - Discrepancy 1 repro: LANGUAGE.md:4825 lists `isn't` and `aren't` as
+ accepted spellings of `not`. On 0.4.9 and earlier neither lexed.
+ src/lexer/scan.rs:360 mapped "isn't" | "aren't" | "doesn't" | "don't" to
+ Token::Not, so the intent was in the compiler - but the scanner split
+ the apostrophe off first (it is the possessive marker and the
+ quoted-name delimiter, scan.rs:118 and :587), so the contraction never
+ reached that keyword table. `doesn't` and `don't` failed identically and
+ were not documented.
+ RESOLVED, 2026-08-22 - vox #84 ("Each now lexes as the two words it
+ stands for - is not and are not - while the four undocumented
+ contractions ... were removed rather than woken"). Re-run verbatim
+ against 0.4.10: `isn't` now compiles and fires. `doesn't`/`don't` remain
+ refused, correctly (never documented).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p
  expected output:
-   error: Expected a statement, got Apostrophe
-   (no binary produced; compile error)
+   isnt fired
 )
 a number called lhs is 7.
 a number called rhs is 3.

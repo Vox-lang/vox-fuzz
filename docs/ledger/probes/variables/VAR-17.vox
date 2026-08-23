@@ -1,6 +1,6 @@
 (VAR-17 and VAR-19: `Create a file called NAME.` is rejected at compile
  time, and the message names what to supply — the diagnostic text at
- LANGUAGE.md:509-511 is reproduced exactly, `Example:` line included.
+ LANGUAGE.md:523-525 is reproduced exactly, `Example:` line included.
  (Compile-error claim: not assertable from a runtime leaf, since emitting
  it produces a non-compiling program — outside the generator's "legal Vox
  that should compile and run" contract.)

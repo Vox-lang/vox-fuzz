@@ -1,16 +1,19 @@
-(FUN-40 — (gap) printing a call result DIRECTLY, without routing it
- through a declared variable, is correct for text, boolean and list but
- renders a `float` as its raw IEEE-754 bit pattern — even though the
- return type IS declared, which is the thing vox bug #45 says fixes this
- class. The recorded output below is what the compiler actually prints
- (2.5 as a double is 0x4004000000000000 = 4612811918334230528). A `map`
- return is broken the same way, printing a raw heap address; it is left
- out of THIS probe only because the address varies per run and would make
- the probe uncomparable — D5.vox carries that half. See Discrepancy 5.
+(FUN-40 — printing a call result DIRECTLY, without routing it through a
+ declared variable, is correct for every type as of 0.4.10. On 0.4.9 and
+ earlier it was correct for text, boolean and list but rendered a `float`
+ as its raw IEEE-754 bit pattern — even though the return type WAS
+ declared, which is the thing vox bug #45 says fixes this class (2.5 as a
+ double is 0x4004000000000000 = 4612811918334230528). A `map` return was
+ broken the same way, printing a raw heap address; it is left out of THIS
+ probe only because the address varies per run and would make the probe
+ uncomparable — D5.vox carries that half. See Discrepancy 5.
+ RESOLVED, 2026-08-22 — vox #67, same fix as D5.vox. Re-run verbatim
+ against 0.4.10: the direct-print `float` now agrees with the
+ routed-through-a-variable print.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-40.vox -o p && ./p
  expected output:
    2.5
-   4612811918334230528
+   2.5
    seven
    1
    [1, 2, 3]

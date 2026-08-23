@@ -1,10 +1,11 @@
 (Discrepancy 1 — RESOLVED (vox #54), re-recorded 2026-08-22 against vox
- 0.4.9. Used to be: LANGUAGE.md:597-599 says the check rejects a mismatch
+ 0.4.10. Used to be: LANGUAGE.md:626-632 says the check rejects a mismatch
  it can prove from the value's own shape, naming "a read from a list/map
  whose element type is provably uniform". A map read WAS checked. A list
  read was not, and assigning a number element to a text name compiled
  and then SEGFAULTED on the first use. Now the list path also proves
  uniformity and rejects at compile time, matching the map path.
+ Re-verified against 0.4.10: same diagnostic, byte-identical.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p
  expected output:
    error: cannot assign number to 'label', which is a text

@@ -1,4 +1,4 @@
-(FLW-35: `Exit 0.` - the manual's "Success" example (LANGUAGE.md:2219).
+(FLW-35: `Exit 0.` - the manual's "Success" example (LANGUAGE.md:2282).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-35.vox -o p && ./p
  expected output:
    exiting clean

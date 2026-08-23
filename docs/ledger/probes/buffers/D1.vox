@@ -1,4 +1,4 @@
-(Discrepancy 1: LANGUAGE.md:3297 claims a dynamic buffer starts with zero capacity. The compiler's own declaration warning (stderr) also says "This creates a zero-capacity buffer" - but the capacity property itself disagrees with both.)
+(Discrepancy 1: LANGUAGE.md:3438 claims a dynamic buffer starts with zero capacity. The compiler's own declaration warning (stderr) also says "This creates a zero-capacity buffer" - but the capacity property itself disagrees with both.)
 (expected output:
 4096
 )

@@ -1,5 +1,5 @@
 (VAR-35: reusing an already-declared name as a for-range loop variable does
- reject a conflicting type — the half of LANGUAGE.md:564-566 that works.
+ reject a conflicting type — the half of LANGUAGE.md:593-595 that works.
  (Compile-error claim: not assertable from a runtime leaf.)
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-35.vox -o p && ./p
  expected output:

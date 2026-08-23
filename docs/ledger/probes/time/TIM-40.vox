@@ -1,4 +1,4 @@
-(TIM-40 - the Complete Timer Example, verbatim from LANGUAGE.md:4338-4360.
+(TIM-40 - the Complete Timer Example, verbatim from LANGUAGE.md:4501-4523.
  Clock-dependent (unix timestamps), so recorded as an exit-code probe with
  one real run kept underneath. Note the same one-line-per-Print behaviour
  as TIM-12, and that `duration in seconds` reads 1 for a 1.5-second job:

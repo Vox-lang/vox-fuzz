@@ -1,7 +1,9 @@
 (FUN-11 — variables declared at top level are global and can be read
- inside a function. Every type is read correctly SO LONG AS the global is
- declared ABOVE the function; when it is declared below, every non-number
- type is read as a raw machine word instead. See Discrepancy 1 and D1.vox.
+ inside a function. Every type is read correctly here (the global is
+ declared ABOVE the function). On 0.4.9 and earlier, a global declared
+ BELOW the function read every non-number type as a raw machine word
+ instead — RESOLVED by vox #66, 2026-08-22. See Discrepancy 1 and D1.vox,
+ which now confirms both orderings read identically on 0.4.10.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-11.vox -o p && ./p
  expected output:
    42

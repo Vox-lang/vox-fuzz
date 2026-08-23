@@ -1,5 +1,5 @@
 (EXP-13: a list used directly in arithmetic is a compile error. Unlike text and
- buffers the diagnostic offers no cast, because LANGUAGE.md:2052 lists lists
+ buffers the diagnostic offers no cast, because LANGUAGE.md:2115 lists lists
  among the things to cast but no list-to-number cast exists.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-13.vox -o p && ./p
  expected output:

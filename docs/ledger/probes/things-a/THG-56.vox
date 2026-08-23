@@ -1,6 +1,6 @@
 (THG-56: a copy is DEEP by construction - a nested thing is just more bytes,
  so copying a letter carries its point along and neither half is shared.
- Also covers: THG-57 (the letter/reply example, LANGUAGE.md:1038-1053,
+ Also covers: THG-57 (the letter/reply example, LANGUAGE.md:1098-1113,
  verbatim - 3 then 7).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-56.vox -o p && ./p
  expected output:

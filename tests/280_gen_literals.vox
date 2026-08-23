@@ -8,7 +8,7 @@ see "../src/gen_literals.vox".
  1. LEGALITY, by the real compiler. Each helper is drawn 120 times and
     each draw is dropped into the declaration its kind belongs in - an
     integer into `a number called`, a float into `a float called`, a
-    character into `a number called` (LANGUAGE.md:1809 says 'A' equals
+    character into `a number called` (LANGUAGE.md:1870 says 'A' equals
     65), `nothing` into a list slot (:2661 is explicit that a list slot
     is one of the three positions it may occupy). That program is then
     compiled AND run by the compiler under test. Checking the emitted
@@ -104,17 +104,19 @@ To 'one round of every helper' with a number called 'the round'.
     'put' of "a number called a{'the round'} is {'any number at all'}.\n".
 
 (The format-string round. The holes name variables the program really
- has - LANGUAGE.md:3115 is explicit that a bare literal inside a hole is
+ has - LANGUAGE.md:3206 is explicit that a bare literal inside a hole is
  rejected, so the caller must supply names, which is why the helper takes
  a list. An empty list is exercised too: it must degrade to a plain text
  literal rather than error.)
 
 To 'one round of format strings' with a number called 'the round'.
     a list called 'the names in scope' is ["n{'the round'}", "g{'the round'}", "t{'the round'}", "w{'the round'}"].
-    a text called 'the format string' is 'draw and record' of 'literal format string' of 'the names in scope'.
+    a list called 'the kinds in scope' is ["number", "float", "text", "boolean"].
+    a text called 'the format string' is 'draw and record' of 'literal format string' of 'the names in scope' and 'the kinds in scope'.
     'put' of "    a text called f{'the round'} is {'the format string'}.\n".
     a list called 'no names at all' is [].
-    a text called 'the plain one' is 'draw and record' of 'literal format string' of 'no names at all'.
+    a list called 'no kinds at all' is [].
+    a text called 'the plain one' is 'draw and record' of 'literal format string' of 'no names at all' and 'no kinds at all'.
     'put' of "    a text called p{'the round'} is {'the plain one'}.\n".
 
 To 'build the corpus'.

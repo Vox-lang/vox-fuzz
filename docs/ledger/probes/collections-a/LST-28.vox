@@ -1,7 +1,7 @@
 (LST-28 — a child list extracted with `element N of` is a usable list: its
  `length`, its own `element N of`, its `first`/`last`, and a `For each` over
  it all work.
- Also covers: LST-29 (the worked example of LANGUAGE.md:2278-2280).
+ Also covers: LST-29 (the worked example of LANGUAGE.md:2341-2343).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-28.vox -o p && ./p
  expected output:
    2

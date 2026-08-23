@@ -1,5 +1,5 @@
 (FUN-39 — (gap) a call WITH arguments is also legal as a bare statement,
- its result discarded. LANGUAGE.md:772-777 says only that calls with NO
+ its result discarded. LANGUAGE.md:833-838 says only that calls with NO
  arguments "can be written directly", and the "Calling as Statement"
  section's only example is a `Print`. Both a value-returning call and a
  void one stand alone as sentences, and the program continues.

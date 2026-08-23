@@ -1,4 +1,4 @@
-(Discrepancy 2: LANGUAGE.md:3346-3350 says a statically-typed variable, buffer included, reports its `type` property with "(static)". A buffer declared with a byte count is mistagged as "Buffer (static)"; a buffer declared from a string literal is tagged correctly.)
+(Discrepancy 2: LANGUAGE.md:3504-3508 says a statically-typed variable, buffer included, reports its `type` property with "(static)". A buffer declared with a byte count is mistagged as "Buffer (static)"; a buffer declared from a string literal is tagged correctly.)
 (expected output:
 Number (static)
 Buffer (static)

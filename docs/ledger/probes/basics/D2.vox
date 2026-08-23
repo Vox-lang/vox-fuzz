@@ -1,6 +1,6 @@
-(D2 - Discrepancy 2 repro: LANGUAGE.md:136 says a blank line force-closes
+(D2 - Discrepancy 2 repro: LANGUAGE.md:139 says a blank line force-closes
  EVERY open clause at once, including an enclosing function definition,
- and LANGUAGE.md:88 says the blank line is what closes a function body.
+ and LANGUAGE.md:91 says the blank line is what closes a function body.
  An `Otherwise` after that blank line nonetheless continues the `if`
  inside the function - it prints the parameter `n`, so it is executing
  inside `check`'s frame.

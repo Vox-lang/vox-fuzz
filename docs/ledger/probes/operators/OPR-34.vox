@@ -1,4 +1,4 @@
-(OPR-34: the Operators section's worked example (LANGUAGE.md:4676-4694),
+(OPR-34: the Operators section's worked example (LANGUAGE.md:4848-4866),
  copied verbatim, does not compile: its last line reads from `value`,
  which the example never declares. Every other line of the block is
  fine - OPR-29/30/31/32/33 each reproduce one of them with a declared

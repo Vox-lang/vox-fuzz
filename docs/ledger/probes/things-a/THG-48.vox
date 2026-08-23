@@ -1,6 +1,6 @@
 (THG-48: a thing containing ITSELF has no finite size, so the definition
  that closes the cycle is a compile error naming the chain.
- LANGUAGE.md:998-1003 abbreviates the diagnostic to two lines; the real one
+ LANGUAGE.md:1058-1063 abbreviates the diagnostic to two lines; the real one
  has three and opens "A thing cannot contain itself:" - see Discrepancy 2.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-48.vox -o p && ./p
  expected output:

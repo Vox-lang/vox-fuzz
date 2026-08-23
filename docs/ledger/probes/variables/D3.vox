@@ -1,4 +1,4 @@
-(Discrepancy 3: LANGUAGE.md:566-568 lists the target of `Allocate ... for`
+(Discrepancy 3: LANGUAGE.md:595-597 lists the target of `Allocate ... for`
  among the bindings that reject a conflicting type. A buffer target is let
  through, and the allocation silently replaces the buffer's capacity with 0 —
  an 8-byte buffer becomes a 0-byte one with no diagnostic. A text or list

@@ -1,12 +1,13 @@
-(OPR-22: LANGUAGE.md:4662 lists `isn't` as an accepted spelling of `not`.
- It is not: the apostrophe is a structural token (the possessive marker
- and the quoted-name delimiter), so the word never reaches the keyword
- table. See Discrepancy 1 and probes/operators/D1.vox.
- (Compile-error claim: not assertable from a runtime leaf.)
+(OPR-22: LANGUAGE.md:4825 lists `isn't` as an accepted spelling of `not`.
+ On 0.4.9 and earlier it was not: the apostrophe was a structural token
+ (the possessive marker and the quoted-name delimiter), so the word never
+ reached the keyword table. See Discrepancy 1 and probes/operators/D1.vox.
+ RESOLVED, 2026-08-22 - vox #84. Re-run verbatim against 0.4.10: compiles
+ and fires, witness shape (a true predicate fires, matching OPR-01-style
+ assertion).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-22.vox -o p && ./p
  expected output:
-   error: Expected a statement, got Apostrophe
-   (no binary produced; compile error)
+   isnt fired
 )
 a number called lhs is 7.
 a number called rhs is 3.

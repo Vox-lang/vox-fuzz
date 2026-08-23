@@ -1,19 +1,17 @@
-(Discrepancy 3 — a top-level TEXT global PRINTED from inside a function
- defined EARLIER in the file renders a raw pointer instead of the text.
- The value itself is intact: assigning it to a local first and printing
- the local is correct, and so is a comparison against the literal. Only
- the print/format path is wrong, and only for a text (a number global is
- fine). Moving the function definition below the declaration fixes it.
- LANGUAGE.md:705 says top-level variables "can be used inside functions"
- with no ordering caveat; LANGUAGE.md:3223 leans on that same promise for
- branch-declared names ("exactly like a top-level declaration" — which it
- is, defect included, so FMT-42 stands). Reached from this section via
- FMT-42, but the defect belongs to Functions / Variables, not here.
- Pro-compiler reading: the function body is analysed before the
- declaration is seen, so `label` has no known type yet and the printer
- falls through to the number path — i.e. this is a forward-reference
- ordering rule the manual never states, not a wrong answer for a
- well-formed program.
+(Discrepancy 3 — RESOLVED, 2026-08-22, vox #66. On 0.4.9 and earlier, a
+ top-level TEXT global PRINTED from inside a function defined EARLIER in
+ the file rendered a raw pointer instead of the text. The value itself
+ was intact: assigning it to a local first and printing the local was
+ correct, and so was a comparison against the literal. Only the
+ print/format path was wrong, and only for a text (a number global was
+ fine). Moving the function definition below the declaration used to fix
+ it, but as of 0.4.10 that is no longer necessary.
+ LANGUAGE.md:727 says top-level variables "can be used inside functions",
+ now with the ordering rule stated explicitly; LANGUAGE.md:3362 leans on
+ that same promise for branch-declared names ("exactly like a top-level
+ declaration" — which it now is, correctly, so FMT-42 holds without a
+ caveat). Reached from this section via FMT-42, but the defect belonged
+ to Functions / Variables, not here — see `functions.md` Discrepancy 1.
  Written as comparisons rather than raw prints because the address,
  though stable within one build, is not something to pin in a ledger.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
@@ -21,7 +19,7 @@
    top level printed the text
    the local copy printed the text
    the comparison inside the function succeeded
-   the direct print inside the function did NOT print the text
+   the direct print inside the function printed the text
 )
 To 'show label'.
   a text called copied is label.

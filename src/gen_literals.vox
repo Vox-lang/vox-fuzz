@@ -17,14 +17,14 @@
  The rules that bound anything here, all hand-verified against vox 0.4.8
  before they were written down (the probe log is in the worker report):
 
-   - LANGUAGE.md:1822-1837   the Literals table: which forms exist at all
-   - LANGUAGE.md:1807-1809   0x / 0b prefixes, 'A' is one character
-   - LANGUAGE.md:1802        "Float literals are recognized by the
+   - LANGUAGE.md:1855-1870   the Literals table: which forms exist at all
+   - LANGUAGE.md:1868-1870   0x / 0b prefixes, 'A' is one character
+   - LANGUAGE.md:1863        "Float literals are recognized by the
                              presence of a decimal point"
-   - LANGUAGE.md:3183-3191   the escape table: {{ }} \n \t \\
-   - LANGUAGE.md:3103-3113   the format-specifier table
-   - LANGUAGE.md:1935-1942   radix conversions, "any base from 2 through 36"
-   - LANGUAGE.md:2659-2676   nothing / null / nil
+   - LANGUAGE.md:3391-3397   the escape table: {{ }} \n \t \\
+   - LANGUAGE.md:3259-3269   the format-specifier table
+   - LANGUAGE.md:1982-1989   radix conversions, "any base from 2 through 36"
+   - LANGUAGE.md:2728-2749   nothing / null / nil
    - the compiler's own range check on an integer literal: "does not fit
      in a 64-bit number. Valid range is
      -9223372036854775808..9223372036854775807." LANGUAGE.md does NOT
@@ -63,7 +63,7 @@ a list called literal_upper_letters is ["A", "B", "C", "D", "E", "F", "G", "H", 
  hand-verified. A lone `}` is legal and is in the list; `}}` is in the
  escape list too, because the manual gives it as an escape.
 
- The escapes are the ones LANGUAGE.md:3183 tabulates - {{ }} \n \t \\ -
+ The escapes are the ones LANGUAGE.md:3391 tabulates - {{ }} \n \t \\ -
  plus \" and \r, which the manual does NOT list and the compiler
  nonetheless honours (probed: \" yields a quote, \r yields byte 13; every
  OTHER backslash pair just drops the backslash). Emitting an undocumented
@@ -81,7 +81,7 @@ a list called literal_text_pieces is [" ", "!", "#", "$", "%", "&", "'", "(", ")
 a number called literal_text_piece_count is literal_text_pieces's length.
 
 (What may sit between the two apostrophes of a character literal.
- LANGUAGE.md:1800 gives `'A'` and `'!'`; :1810 says `'A'` equals 65. The
+ LANGUAGE.md:1861 gives `'A'` and `'!'`; :1810 says `'A'` equals 65. The
  length is ONE, and that is a rule, not a tuning choice: 'AB' is a compile error
  and '' is a parse error, both hand-verified. So this is the one helper in
  the file that does not grow.
@@ -135,7 +135,7 @@ To 'literal one chance in three'.
     Return a boolean, 'the roll' is less than literal_stop_faces.
 
 (The digit for a value, in any base 2..36. Below ten it is a decimal
- digit; above it is a letter, and LANGUAGE.md:1942-1944 says the letters
+ digit; above it is a letter, and LANGUAGE.md:1989-1991 says the letters
  are case-insensitive, so the case is drawn. Hand-verified: "z9a" and "Z9A"
  both convert to 45694 in base 36.)
 
@@ -149,7 +149,7 @@ To 'literal base digit' with a number called 'the digit value'.
         Return a text, element 'the letter index' of literal_upper_letters.
     Return a text, element 'the letter index' of literal_lower_letters.
 
-(A sign, where the manual allows one. LANGUAGE.md:1794 gives `-5` for
+(A sign, where the manual allows one. LANGUAGE.md:1855 gives `-5` for
  integer and :1796 gives `-2.5` for float. `-0xff` and `-0b101` are NOT in
  the manual; both compile and evaluate to -255 and -5, hand-verified, so
  the hex and binary helpers draw a sign too and the probe is recorded.)
@@ -186,7 +186,7 @@ To 'literal leading zeros'.
  fits exactly when value is at most {ceiling subtract digit} divide base.
 
  A first digit of zero ends the run at "0", which is how the literal `0`
- from LANGUAGE.md:1794 gets emitted.)
+ from LANGUAGE.md:1855 gets emitted.)
 
 To 'literal magnitude' with a number called 'the base'.
     a number called 'the first digit value' is 'literal draw below' of 'the base'.
@@ -209,7 +209,7 @@ To 'literal magnitude' with a number called 'the base'.
 (The same run with NO value bound at all, for the base-conversion forms.
  There the digits live inside a "..." text and are parsed at RUN time, so
  the compiler's literal range check never sees them: a hundred octal
- sevens compiles, runs, and yields -1. Nothing in LANGUAGE.md:1935-1942
+ sevens compiles, runs, and yields -1. Nothing in LANGUAGE.md:1982-1989
  bounds the length of a string being converted, so nothing here does
  either.)
 
@@ -222,21 +222,21 @@ To 'literal digit run' with a number called 'the base'.
         Set 'the digits' to "{'the digits'}{'the digit'}".
     Return a text, 'the digits'.
 
-(Decimal integer, unsigned. LANGUAGE.md:1794 - `42`, `0`.)
+(Decimal integer, unsigned. LANGUAGE.md:1855 - `42`, `0`.)
 
 To 'literal whole number'.
     a text called 'the zeros' is 'literal leading zeros'.
     a text called 'the magnitude' is 'literal magnitude' of 10.
     Return a text, "{'the zeros'}{'the magnitude'}".
 
-(Decimal integer, signed. LANGUAGE.md:1794 - `42`, `0`, `-5`.)
+(Decimal integer, signed. LANGUAGE.md:1855 - `42`, `0`, `-5`.)
 
 To 'literal integer'.
     a text called 'the sign' is 'literal sign'.
     a text called 'the body' is 'literal whole number'.
     Return a text, "{'the sign'}{'the body'}".
 
-(Float. LANGUAGE.md:1796 gives `3.14`, `-2.5`, `0.0`; :1803 says a float
+(Float. LANGUAGE.md:1856 gives `3.14`, `-2.5`, `0.0`; :1803 says a float
  is "recognized by the presence of a decimal point".
 
  The dot is a USE-ONCE opportunity, exactly as dictated: at every step, if
@@ -250,7 +250,7 @@ To 'literal integer'.
 
  No value bound: the compiler range-checks integer literals, not float
  ones. A 4001-character float literal compiles and runs; it rounds, which
- is what 64-bit IEEE 754 (LANGUAGE.md:433) is entitled to do.)
+ is what 64-bit IEEE 754 (LANGUAGE.md:447) is entitled to do.)
 
 To 'literal float'.
     a text called 'the sign' is 'literal sign'.
@@ -275,7 +275,7 @@ To 'literal float'.
         Set 'the digits' to "{'the digits'}.{'the tail digit'}".
     Return a text, "{'the sign'}{'the zeros'}{'the digits'}".
 
-(Hexadecimal. LANGUAGE.md:1798 and :1808 - `0xFF`, `0xDEADBEEF`, "use 0x
+(Hexadecimal. LANGUAGE.md:1859 and :1808 - `0xFF`, `0xDEADBEEF`, "use 0x
  prefix". The manual writes the prefix lowercase and the digits uppercase;
  the compiler accepts `0X` and accepts either case of digit, both
  hand-verified, and no line says it must not, so both vary.)
@@ -293,7 +293,7 @@ To 'literal hexadecimal'.
     a text called 'the magnitude' is 'literal magnitude' of 16.
     Return a text, "{'the sign'}{'the prefix'}{'the zeros'}{'the magnitude'}".
 
-(Binary. LANGUAGE.md:1799 and :1809 - `0b10110100`, `0b1111`, "use 0b
+(Binary. LANGUAGE.md:1860 and :1809 - `0b10110100`, `0b1111`, "use 0b
  prefix". `0B` also parses, hand-verified.)
 
 To 'literal binary prefix'.
@@ -328,7 +328,7 @@ To 'literal text body'.
         Set 'the body' to "{'the body'}{'the piece'}".
     Return a text, 'the body'.
 
-(Text literal. LANGUAGE.md:1824 - `"Hello, World!"`. A 5000-character one
+(Text literal. LANGUAGE.md:1857 - `"Hello, World!"`. A 5000-character one
  compiles and prints all 5000; no rule bounds the length, so this does
  not.)
 
@@ -336,17 +336,25 @@ To 'literal text'.
     a text called 'the body' is 'literal text body'.
     Return a text, "\"{'the body'}\"".
 
-(A format specifier, drawn from the whole table at LANGUAGE.md:3103-3113:
- plain, .N, N, 0N, x, X, b, o, 04x. Every row was run against a number, a
- float, a text and a boolean - all 36 combinations compile and run, so a
- caller may hand over a name of any type without a compile risk.
+(A format specifier, drawn from the whole table at LANGUAGE.md:3259-3269:
+ plain, .N, N, 0N, x, X, b, o, 04x. Through vox 0.4.9 every row ran
+ against a number, a float, a text and a boolean - all 36 combinations
+ compiled and ran, so a caller could hand over a name of any type without
+ a compile risk. As of 0.4.10 (#71) a specifier the type cannot answer is
+ now a compile error instead: a radix (x/X/b/o, including the padded-hex
+ form) needs a whole number, so it is legal on a number or a boolean but
+ not a float or a text; a precision (.N) needs a decimal expansion, so it
+ is legal on a number, a float or a boolean but not a text. Only the bare
+ width forms (plain, N, 0N) are legal on every type - LANGUAGE.md's own
+ "a width asks nothing of a type" rule. So the picker is now one function
+ per legal set rather than one free draw across all nine.
 
  The width N is itself a literal and the manual bounds it nowhere, so it
  is drawn by 'literal whole number' like any other: unbounded. Note for whoever
  wires format holes into a leaf - a width of a million renders a million
  spaces, and the manual does not forbid it.)
 
-To 'literal format specifier'.
+To 'literal format specifier for a number'.
     a number called 'the pick' is 'literal draw below' of 9.
     If 'the pick' is 0 then,
         Return a text, "".
@@ -367,31 +375,80 @@ To 'literal format specifier'.
         Return a text, ":0{'the width'}".
     Return a text, ":0{'the width'}x".
 
+(Legal on a float: every width form plus precision, never a radix - a
+ float is not a whole number.)
+To 'literal format specifier for a float'.
+    a number called 'the pick' is 'literal draw below' of 4.
+    If 'the pick' is 0 then,
+        Return a text, "".
+    a text called 'the width' is 'literal whole number'.
+    If 'the pick' is 1 then,
+        Return a text, ":.{'the width'}".
+    If 'the pick' is 2 then,
+        Return a text, ":{'the width'}".
+    Return a text, ":0{'the width'}".
+
+(Legal on a text: a width form only - a text has neither a decimal
+ expansion nor a whole-number value to render in another base.)
+To 'literal format specifier for a text'.
+    a number called 'the pick' is 'literal draw below' of 3.
+    If 'the pick' is 0 then,
+        Return a text, "".
+    a text called 'the width' is 'literal whole number'.
+    If 'the pick' is 1 then,
+        Return a text, ":{'the width'}".
+    Return a text, ":0{'the width'}".
+
+(A boolean is a whole number (LANGUAGE.md:3296, 3299 list it beside
+ number for both precision and radix), so it takes the same picker as a
+ number.)
+To 'literal format specifier for a boolean'.
+    Return a text, 'literal format specifier for a number'.
+
+(Dispatches on 'the kind' word a caller of 'literal format hole' passes
+ alongside each name: "number", "float", "text" or "boolean". Kept
+ separate from the four pickers above so a future fifth type-bearing
+ caller only has to add one arm here.)
+To 'literal format specifier for kind' with a text called 'the kind'.
+    If 'the kind' is equal to "float" then,
+        Return a text, 'literal format specifier for a float'.
+    If 'the kind' is equal to "text" then,
+        Return a text, 'literal format specifier for a text'.
+    If 'the kind' is equal to "boolean" then,
+        Return a text, 'literal format specifier for a boolean'.
+    Return a text, 'literal format specifier for a number'.
+
 (One `{name}` or `{name:spec}` hole. The name comes from the caller,
- because LANGUAGE.md:3115 is explicit that the inside of a hole must be a
+ because LANGUAGE.md:3271 is explicit that the inside of a hole must be a
  variable or expression that exists - `{255:x}` is rejected - so a hole
  is the one place in this file where the generator may NOT invent the
- characters.
+ characters. As of 0.4.10 the specifier can no longer be drawn blind
+ either (see 'literal format specifier for a number' above), so the
+ caller also hands over each name's kind, position for position with
+ 'the names' - "number", "float", "text" or "boolean" - and this picks
+ the specifier only from what that kind's type can actually answer.
 
  The braces are built by concatenation rather than written inline: in this
  file's own strings a `{` would open a hole of ours.)
 
-To 'literal format hole' with a list called 'the names'.
+To 'literal format hole' with a list called 'the names' and a list called 'the kinds'.
     a number called 'how many names' is 'the names's length.
     a number called 'the pick' is 'literal draw below' of 'how many names'.
     a number called 'the index' is 'the pick' add 1.
     a text called 'the name' is element 'the index' of 'the names'.
-    a text called 'the format specifier' is 'literal format specifier'.
+    a text called 'the kind' is element 'the index' of 'the kinds'.
+    a text called 'the format specifier' is 'literal format specifier for kind' of 'the kind'.
     a text called 'the open brace' is "{{".
     a text called 'the close brace' is "}}".
     Return a text, "{'the open brace'}{'the name'}{'the format specifier'}{'the close brace'}".
 
-(Format string. LANGUAGE.md:3091-3115. A text literal whose body may open
- holes on the names the caller says the program has; an empty caller list
- means a plain text literal, which is the correct degenerate case rather
- than an error.)
+(Format string. LANGUAGE.md:3249-3271. A text literal whose body may open
+ holes on the names the caller says the program has, each paired with its
+ kind so the hole's specifier stays legal for it (see 'literal format
+ hole' above); an empty caller list means a plain text literal, which is
+ the correct degenerate case rather than an error.)
 
-To 'literal format string' with a list called 'the names'.
+To 'literal format string' with a list called 'the names' and a list called 'the kinds'.
     a number called 'how many names' is 'the names's length.
     a text called 'the body' is "".
     While 'literal keep going',
@@ -400,13 +457,13 @@ To 'literal format string' with a list called 'the names'.
             Set 'a hole goes here' to 'literal one chance in three'.
         a text called 'the piece' is "",
         If 'a hole goes here' is true then,
-            Set 'the piece' to 'literal format hole' of 'the names'.
+            Set 'the piece' to 'literal format hole' of 'the names' and 'the kinds'.
         If 'a hole goes here' is false then,
             Set 'the piece' to 'literal text piece'.
         Set 'the body' to "{'the body'}{'the piece'}".
     Return a text, "\"{'the body'}\"".
 
-(Character literal. LANGUAGE.md:1800 and :1810 - `'A'`, `'!'`, "'A' equals
+(Character literal. LANGUAGE.md:1861 and :1810 - `'A'`, `'!'`, "'A' equals
  65". Exactly one character between the apostrophes, and that IS the rule:
  'AB' does not compile and '' does not parse. The only fixed-length helper
  in the file, and the only one with a citation for being fixed.)
@@ -418,7 +475,7 @@ To 'literal character'.
     a text called 'the apostrophe' is "'".
     Return a text, "{'the apostrophe'}{'the piece'}{'the apostrophe'}".
 
-(Boolean. LANGUAGE.md:1797 - `true`, `false`. A two-word vocabulary with
+(Boolean. LANGUAGE.md:1858 - `true`, `false`. A two-word vocabulary with
  the citation the standard asks for.)
 
 To 'literal boolean'.
@@ -427,7 +484,7 @@ To 'literal boolean'.
         Return a text, "true".
     Return a text, "false".
 
-(The absent value. LANGUAGE.md:2674 - "`null` and `nil` are accepted
+(The absent value. LANGUAGE.md:2747 - "`null` and `nil` are accepted
  spellings of the same literal; all three produce the identical value", so
  all three are drawn.
 
@@ -445,7 +502,7 @@ To 'literal nothing'.
         Return a text, "null".
     Return a text, "nil".
 
-(The base-conversion forms, LANGUAGE.md:1935-1942. These are not literals
+(The base-conversion forms, LANGUAGE.md:1982-1989. These are not literals
  - they are a text literal plus a conversion phrase - but the dictated
  spec asks for "any other form of number we can parse", and octal exists
  in Vox ONLY here: `0o10` is NOT a literal (probed: "Unknown function:
@@ -486,7 +543,7 @@ To 'literal base conversion'.
     Return a text, "\"{'the sign'}{'the zeros'}{'the digits'}\" {'the phrase'}".
 
 (Octal, named on its own because the dictated spec names it. Same form as
- above, pinned to base 8: LANGUAGE.md:1937 - `"17" as an octal number`
+ above, pinned to base 8: LANGUAGE.md:1984 - `"17" as an octal number`
  is 15.)
 
 To 'literal octal number'.

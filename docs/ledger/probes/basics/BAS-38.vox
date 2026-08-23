@@ -1,4 +1,4 @@
-(BAS-38 - the sentence-ownership worked example, LANGUAGE.md:122-129. The
+(BAS-38 - the sentence-ownership worked example, LANGUAGE.md:125-132. The
  snippet in the manual is a FRAGMENT: `content`, `number_lines`, `output`
  and `source` are never declared and there is no `open`, so it cannot be
  compiled as printed. This is the faithful runnable form of it - same

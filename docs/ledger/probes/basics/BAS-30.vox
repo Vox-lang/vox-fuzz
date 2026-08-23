@@ -1,4 +1,4 @@
-(BAS-30 - the error-handler example, LANGUAGE.md:105:
+(BAS-30 - the error-handler example, LANGUAGE.md:108:
  `On error print "Something went wrong", exit 1.`
  Both actions belong to the handler, so the exit fires and `Print "not
  reached"` never runs. The handler binds to the statement BEFORE it - the

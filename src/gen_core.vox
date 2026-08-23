@@ -365,11 +365,11 @@ To 'gen leaf assign' with a text called indent.
 
  That is what retires the zero/one/two split: it existed only because
  the prelude had exactly those three shapes, and it is also why no call
- could ever pass three arguments. LANGUAGE.md:671-701 puts no ceiling on
+ could ever pass three arguments. LANGUAGE.md:693-723 puts no ceiling on
  arity, so neither does this.
 
  `of`, `with`, `on` and `to` all introduce arguments
- (LANGUAGE.md:1404) - all four hand-verified against 0.4.7 on a
+ (LANGUAGE.md:1464) - all four hand-verified against 0.4.7 on a
  two-parameter call - so which one appears is drawn. Whether the result
  is printed follows the function rather than the call site: `Print
  <call>` needs a value, and a function that only prints has none.)
@@ -994,7 +994,7 @@ To 'gen statement' with a number called depth and a text called indent and a boo
 
  - "every program has four functions": nothing says so. The count is
    drawn and zero is reachable.
- - "arities are 0, 1, 2 and 1": nothing says so. LANGUAGE.md:671-701
+ - "arities are 0, 1, 2 and 1": nothing says so. LANGUAGE.md:693-723
    puts no ceiling on arity and says parameters are optional.
  - "f1 always precedes f2 always precedes f3": nothing orders one
    function against another - Vox even permits a function body to
@@ -1005,7 +1005,7 @@ To 'gen statement' with a number called depth and a text called indent and a boo
    constants now come from 'literal integer' (gen_literals.vox), whose
    only bound is the compiler's own i64 literal range.
 
- `with` and `of` introduce parameters identically (LANGUAGE.md:698), so
+ `with` and `of` introduce parameters identically (LANGUAGE.md:720), so
  which one a definition uses is drawn too.)
 
 To 'gen emit prelude functions'.
@@ -1342,11 +1342,11 @@ To 'gen program' with a number called seed and a number called budget.
 (How a program stops. Three samenesses lived in the one line that used to
  write this, and not one of them had a citation.
 
- - The keyword. LANGUAGE.md:2230 ends the Program Termination section
+ - The keyword. LANGUAGE.md:2293 ends the Program Termination section
    with "Alternative keywords: `quit`, `terminate`", and the compiler
    takes each of them in either capitalisation. Six spellings, all six
    compiled and run against 0.4.9 before this was written.
- - Whether a code is written at all. LANGUAGE.md:2228: "Exit code
+ - Whether a code is written at all. LANGUAGE.md:2291: "Exit code
    defaults to 0 if not specified" - so `quit.` is a whole statement and
    the program exits 0. Verified.
  - Whether the program says anything at all. Nothing in the manual
@@ -1404,7 +1404,7 @@ To 'gen in lower case' with a text called 'the word'.
  Josj, 2026-08-20: "indentation and line separation are purely cosmetic;
  periods, commas and paragraph breaks are the only flow-control
  constructs, so Vox programs should essentially be minified with random
- blank characters and new lines." LANGUAGE.md:207 says the same thing
+ blank characters and new lines." LANGUAGE.md:210 says the same thing
  from the other side - Vox ignores leading whitespace entirely, so a
  program can be minified without changing its meaning, and the period
  count is the only thing that closes a clause.
@@ -1416,7 +1416,7 @@ To 'gen in lower case' with a text called 'the word'.
  and which scripts/invariants reported as a 100% invariant.
 
  There is exactly ONE thing about whitespace that is not cosmetic, and
- LANGUAGE.md:78-84 states it: a blank line is a PARAGRAPH BREAK, and a
+ LANGUAGE.md:81-87 states it: a blank line is a PARAGRAPH BREAK, and a
  paragraph break closes open clauses - a function body is closed by
  nothing else. So the pass has one hard rule of its own, and everything
  else is free:
@@ -1659,7 +1659,7 @@ To 'layout gap follows a possessive' with a number called 'the run start'.
 
 (The three places where vox 0.4.7 does NOT treat a line break the way it
  treats a space, each reproduced by hand and each recorded in the report
- as a discrepancy against LANGUAGE.md:207, which says a program can be
+ as a discrepancy against LANGUAGE.md:210, which says a program can be
  minified without changing its meaning:
 
    1. `is less than or equal` + newline + `to` is rejected with "Expected

@@ -3,7 +3,7 @@
  Also covers: THG-12 (zero values), THG-15 (number, float, boolean and time
  are all legal field types).
  Note the `time` field: it takes 0 with no initialiser, though a `time`
- VARIABLE must be initialised (LANGUAGE.md:501, 513-516) - see Discrepancy 1.
+ VARIABLE must be initialised (LANGUAGE.md:515, 527-530) - see Discrepancy 1.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-09.vox -o p && ./p
  expected output:
    7

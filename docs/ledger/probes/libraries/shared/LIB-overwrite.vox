@@ -1,4 +1,4 @@
-(LIB-30 -- LANGUAGE.md:5021-5024 documents that a repeat --shared build
+(LIB-30 -- LANGUAGE.md:5192-5195 documents that a repeat --shared build
  overwrites an existing .lib in place. RESOLVED 2026-08-22: this used to
  be Discrepancy 1 (the manual then claimed it would error and ask you to
  remove the .lib first, which the compiler never did); the manual was
@@ -14,6 +14,8 @@
    echo "PINNED EDIT" >> overwrite.lib
    $V docs/ledger/probes/libraries/shared/LIB-overwrite.vox --shared -o overwrite.so
    cat overwrite.lib
+ Re-ran again 2026-08-22 against vox 0.4.10 (commit b557ae5): byte-identical
+ result, both exit 0, the "PINNED EDIT" line still does not survive.
  expected output: both builds exit 0 with no diagnostic, and the final
  overwrite.lib does NOT contain the "PINNED EDIT" line -- it was silently
  replaced with a freshly generated .lib:

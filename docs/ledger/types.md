@@ -1,7 +1,7 @@
 # Claim ledger: Types
 
-Source: `../vox/LANGUAGE.md` lines 428–445, Vox 0.4.9 (5327 lines, vox
-4b77934), confirmed 2026-08-22 — the `Types` table between `Basics` and
+Source: `../vox/LANGUAGE.md` lines 442–459, Vox 0.4.10 (5545 lines, vox
+527cb89), confirmed 2026-08-22 — the `Types` table between `Basics` and
 `Variables`. Confirmed against the manual by `grep -n "^## "`: the
 section runs from the `## Types` heading at 428 to the blank line
 before `## Variables` at 446 — zero drift from the 0.4.8 pinned range.
@@ -37,23 +37,23 @@ owns the claim, cited in the row.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| TYP-01 | 432 | `number` (Integer) holds "whole numbers". | declare a `number` with a fractional literal, check it is retained and how `'s type` / `is a number` / `is a decimal` classify it | yes — `a number called n is 3.5. If n's type is not "Number (static)" then, Exit 95.` (the retention half); see Discrepancy 1 for why the classification half contradicts the row itself | none — every emitted `number` literal is drawn as a whole value (`'rng below'` and friends never emit a decimal point into a `number`-typed declaration) | todo — and the claim as titled does **not** hold, see **Discrepancy 1** | |
-| TYP-02 | 433 | `float` is "Floating-point numbers (64-bit IEEE 754)". | declare two floats whose sum is not exactly representable, assert the double-rounding | yes — `a float called s is f add g. If s is equal to 0.3 then, Exit 95.` (0.1+0.2 ≠ 0.3 in binary64) | `gen leaf timer and clock`? no — greps for `a float called` land in `gen_core.vox`/`gen_text.vox` as arithmetic operands, never followed by an equality assertion against an exact decimal | todo — hand-verified: the double-rounding is present exactly as IEEE 754 predicts | |
-| TYP-03 | 434 | `text` (String) holds "Text strings". | — | yes, trivially | text declarations are the single most common construct in every leaf file | exercised — no independent verification needed; the type's actual behavior (escaping, formatting, concatenation) is `FMT`'s and `EXP`'s territory, not this table's | |
-| TYP-04 | 435 | `boolean` is "`true` or `false`". | declare a boolean from each literal, assert both round-trip and print as the tag `is a boolean` recognizes | yes — `if b is a boolean then` after each declaration | `a boolean called ... is true`/`is false` forms appear across every leaf file as flags and predicate results, but nothing declares directly from the literal `false` in isolation and asserts the type/predicate | todo (isolated literal-pair check); hand-verified both literals compile, retain, and print `1`/`0` (not the words `true`/`false` — printing format is `EXP`'s/`FMT`'s claim, not this table's) | |
-| TYP-05 | 436 | `list` holds a "Collection of items". | — | yes | `LST-03`/`LST-06` (mixed-type list literals) | folded into `LST-03` | |
-| TYP-06 | 437 | `map` is a "Key/value collection (JSON object; **text keys**)". | declare a map literal with a non-text key, assert it is rejected | yes, as a compile-error claim — `Map keys must be text` | `LST-36` exercises text-keyed maps but never tries a non-text key | todo — no leaf emits a non-text map key; hand-verified: `a map called m is {5: 1}.` is rejected at compile time with `error: Map keys must be text` | |
-| TYP-07 | 438 | `buffer` is a "Memory block for I/O (dynamic or fixed-size)". | — | yes | the entire `BUF` ledger (39 rows) | folded into `BUF-01` (the two declaration forms) | |
-| TYP-08 | 439 | `file` is a "File descriptor handle (auto-cleaned)". | — | yes for the handle half; the auto-clean half is not assertable from inside Vox | `open a file for reading/writing called X at ...` (`gen leaf file round trip` and siblings, `src/gen_files.vox`) | folded into `FIL-87`/`FIL-89`/`FIL-98` (resource safety, "a forgotten close is not a leak") | |
-| TYP-09 | 440 | `time` is a "Date/time value (unix timestamp with components)". | — | yes | `Get current time into tn{n}` (`gen leaf timer and clock`, `gen_misc.vox:218`) declares a `time` implicitly rather than via `a time called X is current time.` | folded into `TIM-01`/`TIM-03` | |
-| TYP-10 | 441 | `timer` is a "Stopwatch for measuring durations". | — | yes | `a timer called tk{n}` / `Start`/`Stop` (`gen leaf timer and clock`) | folded into `TIM-21` | |
-| TYP-11 | 442 | `thing` is `*(contextual)*`, a "User-defined composite value type". | — | yes | `a t4 called i{n} is ...` (`gen leaf thing member`, `src/gen_things.vox`) declares instances of a defined thing type; no leaf declares a variable literally named `thing` to exercise the contextual half | folded into `THG-13` (contextual-elsewhere half) / `KEY-76`, `KEY-79` (the exact worked example `a number called thing is 1.`) | |
+| TYP-01 | 446 | `number` (Integer) holds "whole numbers". | declare a `number` with a fractional literal, check it is retained and how `'s type` / `is a number` / `is a decimal` classify it | yes — `a number called n is 3.5. If n's type is not "Number (static)" then, Exit 95.` (the retention half); see Discrepancy 1 for why the classification half contradicts the row itself | none — every emitted `number` literal is drawn as a whole value (`'rng below'` and friends never emit a decimal point into a `number`-typed declaration) | todo — and the claim as titled does **not** hold, see **Discrepancy 1** | |
+| TYP-02 | 447 | `float` is "Floating-point numbers (64-bit IEEE 754)". | declare two floats whose sum is not exactly representable, assert the double-rounding | yes — `a float called s is f add g. If s is equal to 0.3 then, Exit 95.` (0.1+0.2 ≠ 0.3 in binary64) | `gen leaf timer and clock`? no — greps for `a float called` land in `gen_core.vox`/`gen_text.vox` as arithmetic operands, never followed by an equality assertion against an exact decimal | todo — hand-verified: the double-rounding is present exactly as IEEE 754 predicts | |
+| TYP-03 | 448 | `text` (String) holds "Text strings". | — | yes, trivially | text declarations are the single most common construct in every leaf file | exercised — no independent verification needed; the type's actual behavior (escaping, formatting, concatenation) is `FMT`'s and `EXP`'s territory, not this table's | |
+| TYP-04 | 449 | `boolean` is "`true` or `false`". | declare a boolean from each literal, assert both round-trip and print as the tag `is a boolean` recognizes | yes — `if b is a boolean then` after each declaration | `a boolean called ... is true`/`is false` forms appear across every leaf file as flags and predicate results, but nothing declares directly from the literal `false` in isolation and asserts the type/predicate | todo (isolated literal-pair check); hand-verified both literals compile, retain, and print `1`/`0` (not the words `true`/`false` — printing format is `EXP`'s/`FMT`'s claim, not this table's) | |
+| TYP-05 | 450 | `list` holds a "Collection of items". | — | yes | `LST-03`/`LST-06` (mixed-type list literals) | folded into `LST-03` | |
+| TYP-06 | 451 | `map` is a "Key/value collection (JSON object; **text keys**)". | declare a map literal with a non-text key, assert it is rejected | yes, as a compile-error claim — `Map keys must be text` | `LST-36` exercises text-keyed maps but never tries a non-text key | todo — no leaf emits a non-text map key; hand-verified: `a map called m is {5: 1}.` is rejected at compile time with `error: Map keys must be text` | |
+| TYP-07 | 452 | `buffer` is a "Memory block for I/O (dynamic or fixed-size)". | — | yes | the entire `BUF` ledger (39 rows) | folded into `BUF-01` (the two declaration forms) | |
+| TYP-08 | 453 | `file` is a "File descriptor handle (auto-cleaned)". | — | yes for the handle half; the auto-clean half is not assertable from inside Vox | `open a file for reading/writing called X at ...` (`gen leaf file round trip` and siblings, `src/gen_files.vox`) | folded into `FIL-87`/`FIL-89`/`FIL-98` (resource safety, "a forgotten close is not a leak") | |
+| TYP-09 | 454 | `time` is a "Date/time value (unix timestamp with components)". | — | yes | `Get current time into tn{n}` (`gen leaf timer and clock`, `gen_misc.vox:218`) declares a `time` implicitly rather than via `a time called X is current time.` | folded into `TIM-01`/`TIM-03` | |
+| TYP-10 | 455 | `timer` is a "Stopwatch for measuring durations". | — | yes | `a timer called tk{n}` / `Start`/`Stop` (`gen leaf timer and clock`) | folded into `TIM-21` | |
+| TYP-11 | 456 | `thing` is `*(contextual)*`, a "User-defined composite value type". | — | yes | `a t4 called i{n} is ...` (`gen leaf thing member`, `src/gen_things.vox`) declares instances of a defined thing type; no leaf declares a variable literally named `thing` to exercise the contextual half | folded into `THG-13` (contextual-elsewhere half) / `KEY-76`, `KEY-79` (the exact worked example `a number called thing is 1.`) | |
 
 ## Discrepancies
 
 ### 1. A `number` silently holds and prints a fractional value, and the `is a` predicate then disagrees with `'s type` about what it is
 
-**LANGUAGE.md:432** describes the Integer type/`number` keyword as holding
+**LANGUAGE.md:446** describes the Integer type/`number` keyword as holding
 "Whole numbers." Nothing else in the manual (checked: no other occurrence
 of "whole number" or an integer-only restriction anywhere in
 LANGUAGE.md) states that assigning a fractional literal to a
@@ -82,9 +82,9 @@ So: (a) the fractional value is not rejected, not truncated, and not
 silently converted — it is stored and printed exactly as written,
 directly contradicting "whole numbers"; (b) worse, the `'s type`
 property (which reflects the *static declared* type per
-`LANGUAGE.md:3336–3350`/`BUF-14`'s sibling behavior) says
+`LANGUAGE.md:3494–3508`/`BUF-14`'s sibling behavior) says
 `Number (static)`, while the `is a <noun>` predicate (which
-`LANGUAGE.md:2403–2405`/`LST-62` establish reads a *runtime value tag*,
+`LANGUAGE.md:2463–2465`/`LST-62` establish reads a *runtime value tag*,
 not the declared type) says the opposite — `is a number` is **false**
 and `is a decimal` is **true** for the very same variable. Compare the
 same variable holding a whole value (`D1-frac.vox`'s companion, run by
@@ -95,7 +95,7 @@ assignment time from the literal's shape, independent of `n`'s static
 type.
 
 **Strongest reading under which the compiler is correct:** the `is a`
-predicate is documented (`LANGUAGE.md:2403–2405`, `LST-62`/`LST-63`) as a
+predicate is documented (`LANGUAGE.md:2463–2465`, `LST-62`/`LST-63`) as a
 **runtime value-shape** check — it exists specifically so a list holding
 mixed literals (`[1, "two", 3.5, yes]`) can be dispatched on per-element,
 and per that section's own worked example a bare `3.5` element already

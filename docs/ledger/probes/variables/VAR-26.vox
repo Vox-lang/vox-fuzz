@@ -1,9 +1,9 @@
 (VAR-25, VAR-26, VAR-29, VAR-30, VAR-32: a declared variable's type is
  fixed, so assigning text to a number is a compile error and not a silent
- retype — and the diagnostic carries all five parts LANGUAGE.md:545-547
+ retype — and the diagnostic carries all five parts LANGUAGE.md:574-576
  promises: the variable, its declared type, its declaration site, the type
  of the offending value, and the exact cast that would fix it. The block at
- LANGUAGE.md:550-558 is reproduced, column markers included.
+ LANGUAGE.md:579-587 is reproduced, column markers included.
  Neither this comment nor the recorded output below may echo the offending
  statement: the caret is placed by searching the source text, so any earlier
  copy of it in the file steals the span — see Discrepancy 6. The help line

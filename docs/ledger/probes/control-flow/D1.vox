@@ -1,8 +1,8 @@
 (D1 - Discrepancy 1 repro: the manual's usage-guard example
- (LANGUAGE.md:2222-2224) does not guard. The condition here is FALSE, so
+ (LANGUAGE.md:2285-2287) does not guard. The condition here is FALSE, so
  nothing in the guard should run and "reached the real work" should print
  - instead the program exits 1 in silence, because `Print "Usage..."`'s
- period closed the If (termination rule 1, LANGUAGE.md:173) and `Exit 1.`
+ period closed the If (termination rule 1, LANGUAGE.md:176) and `Exit 1.`
  is a top-level statement. Replacing that period with a comma gives the
  guard the example is written to look like.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D1.vox -o p && ./p

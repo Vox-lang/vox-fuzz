@@ -1,6 +1,6 @@
 (THG-17: `text`, `list`, `map` and `buffer` fields are deferred - a thing
  cannot hold one yet.
- Hand-run for all four (LANGUAGE.md:853) plus `file`, `timer` and `value`,
+ Hand-run for all four (LANGUAGE.md:913) plus `file`, `timer` and `value`,
  which the compiler rejects with the same diagnostic and the type name
  swapped; the manual names only the first four. This probe keeps the `text`
  case; the other six were run identically while mapping.

@@ -1,6 +1,6 @@
 (D2 — Discrepancy 2 repro: the manual explains the in-place retype as
  "the conversion that the corresponding static cast would use"
- (LANGUAGE.md:2511), but the corresponding static cast on a value
+ (LANGUAGE.md:2584), but the corresponding static cast on a value
  (`v as a number`) is itself a compile error — the conversion the analogy
  references is not implemented for values (ROADMAP finding 21). The in-place
  statement form (VAL-09/VAL-10) works; the `as`-cast-on-value form does not.

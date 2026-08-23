@@ -1,7 +1,7 @@
 # Claim ledger: Grammar Summary
 
-Source: `../vox/LANGUAGE.md` lines 5308–5372, Vox 0.4.9 (5327 lines, vox
-4b77934), confirmed 2026-08-22 — the EBNF block that closes the manual
+Source: `../vox/LANGUAGE.md` lines 5479–5545, Vox 0.4.10 (5545 lines, vox
+527cb89), confirmed 2026-08-22 — the EBNF block that closes the manual
 (33 named productions). Uniform +87 drift from the 0.4.8 pinned range
 (5176–5240), confirmed at every production boundary by hand (`## Grammar
 Summary` now at 5263, end of file now at 5327) — the whole block is one
@@ -40,29 +40,29 @@ GRM-02 has no probe file (folded, no independent syntax — see above).
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| GRM-01 | 5311 | `program ::= statement*` — a program is zero or more statements, run in sequence. | any multi-statement program | yes — trivially, by every probe in every ledger | every probe in `docs/ledger/probes/*/` is itself an instance | exercised | |
-| GRM-02 | 5312–5314 | `statement` is the union of print_stmt, var_decl, assignment, if_stmt, while_stmt, for_stmt, func_def, thing_def, member_def, increment, decrement, break, continue, append_stmt. | — | — (no independent syntax; each alternative is its own row below or a sibling ledger's) | — | folded — see GRM-03 through GRM-15 and FLW (control-flow.md) for increment/decrement/break/continue, whose own surface syntax this production does not spell out at all | |
-| GRM-03 | 5316–5317 | var_decl's two forms: `("a"\|"an") type "called" name "is" expr "."` and `("Set"\|"Create") "the"? type? "called"? name "to" expr "."` — both bring a NEW variable into being. | all spellings in one program | yes | `a TYPE called NAME is VALUE` is universal (VAR-02); `Set`/`Create ... to` are cross-ref'd at VAR-03/VAR-04 (**todo** there — no leaf emits either), and VAR-06 already notes the three lead-ins are meant to be interchangeable | exercised (bare `a`/`an` form, VAR-01/02); todo (`Set`/`Create` forms, same gap VAR-03/04/06 already record) | |
-| GRM-04 | 5319 | assignment: `"the" name "is" expr "."` — reassigns an EXISTING variable (distinct from var_decl's "is", GRM-03). | reassign then print | yes | VAR-26 notes this exact bare spelling ("`x is <value>.`") is never emitted by any leaf, despite being the legal, documented form | todo — cross-ref VAR-26 | |
-| GRM-05 | 5321 | append_stmt's first form: `"append" expr "to" name "."` — appends one value. | append twice, print | yes | BUF-31 (buffers.md): format-string leaves append into fixed buffers, but nothing asserts the result | exercised (construct); todo (assertion) — same gap BUF-31 already records | |
-| GRM-06 | 5324–5326 | func_def, folding in params/param (no independent syntax): `"To" identifier (("with"\|"of") params)? "." "Return" "a" type "," expr "."`, params via `and`. | both introducer prepositions, a multi-param list | yes | FUN-01/FUN-06 (functions.md): the one-sentence template and `with`/`of` interchangeability are both established there (`of` is a real gap: **no leaf ever emits it** in a definition, per FUN-06) | exercised (`with`, FUN-06); todo (`of` in a **definition** — GRM-08/FUN-32 already cover `of` at the **call** site, a different position) | |
+| GRM-01 | 5482 | `program ::= statement*` — a program is zero or more statements, run in sequence. | any multi-statement program | yes — trivially, by every probe in every ledger | every probe in `docs/ledger/probes/*/` is itself an instance | exercised | |
+| GRM-02 | 5483–5485 | `statement` is the union of print_stmt, var_decl, assignment, if_stmt, while_stmt, for_stmt, func_def, thing_def, member_def, increment, decrement, break, continue, append_stmt. | — | — (no independent syntax; each alternative is its own row below or a sibling ledger's) | — | folded — see GRM-03 through GRM-15 and FLW (control-flow.md) for increment/decrement/break/continue, whose own surface syntax this production does not spell out at all | |
+| GRM-03 | 5487–5488 | var_decl's two forms: `("a"\|"an") type "called" name "is" expr "."` and `("Set"\|"Create") "the"? type? "called"? name "to" expr "."` — both bring a NEW variable into being. | all spellings in one program | yes | `a TYPE called NAME is VALUE` is universal (VAR-02); `Set`/`Create ... to` are cross-ref'd at VAR-03/VAR-04 (**todo** there — no leaf emits either), and VAR-06 already notes the three lead-ins are meant to be interchangeable | exercised (bare `a`/`an` form, VAR-01/02); todo (`Set`/`Create` forms, same gap VAR-03/04/06 already record) | |
+| GRM-04 | 5490 | assignment: `"the" name "is" expr "."` — reassigns an EXISTING variable (distinct from var_decl's "is", GRM-03). | reassign then print | yes | VAR-26 notes this exact bare spelling ("`x is <value>.`") is never emitted by any leaf, despite being the legal, documented form | todo — cross-ref VAR-26 | |
+| GRM-05 | 5492 | append_stmt's first form: `"append" expr "to" name "."` — appends one value. | append twice, print | yes | BUF-31 (buffers.md): format-string leaves append into fixed buffers, but nothing asserts the result | exercised (construct); todo (assertion) — same gap BUF-31 already records | |
+| GRM-06 | 5495–5497 | func_def, folding in params/param (no independent syntax): `"To" identifier (("with"\|"of") params)? "." "Return" "a" type "," expr "."`, params via `and`. | both introducer prepositions, a multi-param list | yes | FUN-01/FUN-06 (functions.md): the one-sentence template and `with`/`of` interchangeability are both established there (`of` is a real gap: **no leaf ever emits it** in a definition, per FUN-06) | exercised (`with`, FUN-06); todo (`of` in a **definition** — GRM-08/FUN-32 already cover `of` at the **call** site, a different position) | |
 | GRM-07 | — | *(folded into GRM-06 — no independent syntax)* | — | — | — | — | |
-| GRM-08 | 5328 | func_call: `identifier ("of"\|"with"\|"to"\|"on") args` — four alternative call prepositions, same call kind. | call the same function all four ways | yes | **already established, not a new finding**: FUN-32 (functions.md:759) hand-verified this exact claim — "all four connectors... hand-verified identical," and records the same gap: `of` is the only one any leaf emits | exercised (`of`, FUN-32); todo (`to`/`with`/`on`, same gap FUN-32 already records) | |
-| GRM-09 | 5329–5330 | args/arg_clause (arg_clause folded — no independent syntax): each argument to a call is independently either a plain `expr` or a `loop_expansion` (a grid call). | a two-argument grid call | yes | LST2-44 (collections-b.md): `gen call grid`/`gen leaf deep grid` already use ranges as grid clauses of a function call — this row's contribution is confirming the Grammar Summary's own wording (`args ::= arg_clause*`) matches | exercised — cross-ref LST2-44 | |
-| GRM-10 | 5332–5335 | thing_def, folding in thing_entry/field_decl/member_decl (none has independent syntax outside it): `"A" "thing" "called" name "has" thing_entry ("," thing_entry)* "."`; a field_decl's `("is" literal)?` initializer is optional; a member_decl (`"a" "function" "called" name`) only declares the manifest slot — the callable body is GRM-11. | a field with a default, one without, one member_decl | yes | THG (things-a.md) maps field_decl's full claim set; THG2-14 (things-b.md) establishes the manifest pattern this row's member_decl half exercises | exercised — cross-ref THG/THG2-14 | |
-| GRM-11 | 5337–5338 | member_def: `"To" "do" "the" name "'s" name (("," ("with"\|"of"))? params)? "." body "Return" "a" name "," expr "."` — note the comma before `with`/`of` that a plain func_def lacks. | a manifest member with a parameter, called and its field read | yes | THG2-14/THG2-15 (things-b.md) already map this production's full claim set (this row's probe is adapted from `THG2-14.vox` almost verbatim) | exercised — cross-ref THG2-14/THG2-15 | |
-| GRM-12 | 5340–5342 | if_stmt: `("If"\|"When") condition "then" "," block ("but if" condition "then" "," block)* ("otherwise"\|"else")? ","? block? "."` — five alternation points. | When, else, otherwise, and a but-if chain, all in one program | yes | FLW-03/FLW-04/FLW-07 (control-flow.md) map "But if...then," and the period-before-"But if" sentence-continuation rule this row also had to rediscover by hand before finding FLW-03 already had it | exercised (`If`, `else`, `otherwise`, cross-ref FLW-03); todo (`When`, and the `But if...then,` chain form itself — FLW-03 says "hand-verified to work" but marks its OWN status `todo`, since no leaf in `main` emits it) | |
-| GRM-13 | 5344 | while_stmt: `"While" condition "," block "."` — no alternatives. | a counting loop | yes | FLW (control-flow.md) maps this production's full claim set | exercised — cross-ref FLW | |
-| GRM-14 | 5346–5347 | for_stmt's two forms: `"For each" name "from" expr "to" expr "," block "."` (range) and `"For each" name "in" expr "," block "."` (collection). | both forms in one program | yes | FLW (control-flow.md, range form); LST2 (collections-b.md, collection form) | exercised — cross-ref FLW/LST2 | |
-| GRM-15 | 5349–5353 | print_stmt's three forms: plain `Print expr` with a but-if tail, `Print each name from expr (treating)?` with a but-if tail, and `Print <func> of each name from expr` (per-item function return). This but-if is a DIFFERENT production from if_stmt's (GRM-12) — no `then`, no comma before the branch's `print` — sharing only the two words. | all three forms, one but-if firing | yes | FMT (input-output.md, plain form); LST2-55/LST2-44 (collections-b.md, the each/func forms) | exercised — cross-ref FMT/LST2 | |
-| GRM-16 | 5355 | loop_expansion: `"each" name "from" expr ("treating" expr "as" expr)?` — the shared clause used by print_stmt, args, append_stmt's second form, and for_stmt's "in" form. | a treating substitution under a bare `Print each` | yes | BAS2 (basics-expansion.md) maps this production's full claim set including grid/nested expansion | exercised (under `Print`, BAS2-52); **NOT exercised under append_stmt — see Discrepancy 3**, a silent no-op there despite parsing | |
-| GRM-17 | 5357–5360 | expr's precedence chain: or_expr → and_expr → comparison → additive → multiplicative → primary, in that binding order. | one expression exercising all six levels, inside a condition | yes | EXP (expressions.md) and OPR (operators.md) map operator behavior; **this production's own claim that plain `expr` is legal wherever the grammar cites it (var_decl, assignment, print_stmt) is FALSE for the `comparison` level — see Discrepancy 1, cross-ref EXP-D3** | exercised (precedence itself, inside an `If` condition — the only position a `comparison` actually parses); the wider `expr`-everywhere claim is **not assertable as written** — see Discrepancy 1 | |
-| GRM-18 | 5362 | multiplicative's operators: `multiply`, `times`, `divide`, `modulo` — `times` is a full synonym for `multiply`. | `times` and `multiply` side by side | yes | OPR-06 (operators.md) already established this; OPR-41 records a separate, narrower gap (`times` rejected specifically inside `append <value> to <collection>`'s value slot) | exercised — cross-ref OPR-06/OPR-41 | |
-| GRM-19 | 5363 | primary: `literal \| identifier \| func_call \| "(" expr ")"` — the fourth alternative claims parentheses group expressions. | a grouped arithmetic subexpression | yes | literal/identifier/func_call are exercised everywhere else in this ledger; **the parenthesized-grouping claim is FALSE — see Discrepancy 2, cross-ref EXP-D5** (parentheses are comments; the actual grouping punctuation, `{...}`, is not listed as a `primary` alternative at all) | exercised (first three alternatives); the fourth is **not assertable as written** — see Discrepancy 2 | |
-| GRM-20 | 5365–5367 | type: `number \| float \| text \| boolean \| list \| map \| buffer \| file \| time \| timer \| value \| <user-defined thing name>` — twelve type names. | one variable of every type, declared and printed/accessed | yes | each type has its own ledger (variables.md, buffers.md, files.md, time-and-timers.md, values.md, collections-a.md, things-a.md); none of them states "all twelve in one program" as a single combined claim, which is this row's own contribution | exercised — cross-ref the per-type ledgers | |
-| GRM-21 | 5368–5369 | name/identifier: `bare \| quoted` — "quoted" means single-quoted (`'my count'`); a name is never double-quoted. | a bare name and a single-quoted one holding the same value | yes | `names-and-strings.md` NAM-07 (LANGUAGE.md 662–664) states this exact restatement and folds it into `VAR-48`; single-quoted identifiers are also used incidentally across many probes (every function name in this repo) | exercised — cross-ref NAM-07/VAR-48 | |
-| GRM-22 | 5370 | literal: `string \| number \| "true" \| "false" \| "nothing"` — five literal forms. | all five as declaration initializers | yes | EXP-04 (expressions.md) covers `true`/`false` (and notes `false` is never emitted as a literal by any leaf); VAL (values.md) covers `nothing`; string/number literals are exercised constantly everywhere | exercised — cross-ref EXP-04/VAL; `false` as a literal is a gap EXP-04 already records | |
-| GRM-23 | 5371 | string: `'"' ... '"'` — "a string literal is data, never a name." Using one where a name is expected is a compile error. | trigger the compile error | **no, compile-error claim** — not assertable from a generated leaf (the fuzzer's contract is legal, compiling Vox) | `names-and-strings.md` NAM-03 (LANGUAGE.md 662–665) reproduces the manual's own worked example verbatim and hand-verifies the identical rejection — `NAM-03.vox`: `error: expected a name, found a string literal` | not assertable (compile-error claim) — cross-ref NAM-03; hand-verified: `expected a name, found a string literal` | |
+| GRM-08 | 5499 | func_call: `identifier ("of"\|"with"\|"to"\|"on") args` — four alternative call prepositions, same call kind. | call the same function all four ways | yes | **already established, not a new finding**: FUN-32 (functions.md:759) hand-verified this exact claim — "all four connectors... hand-verified identical," and records the same gap: `of` is the only one any leaf emits | exercised (`of`, FUN-32); todo (`to`/`with`/`on`, same gap FUN-32 already records) | |
+| GRM-09 | 5500–5501 | args/arg_clause (arg_clause folded — no independent syntax): each argument to a call is independently either a plain `expr` or a `loop_expansion` (a grid call). | a two-argument grid call | yes | LST2-44 (collections-b.md): `gen call grid`/`gen leaf deep grid` already use ranges as grid clauses of a function call — this row's contribution is confirming the Grammar Summary's own wording (`args ::= arg_clause*`) matches | exercised — cross-ref LST2-44 | |
+| GRM-10 | 5503–5506 | thing_def, folding in thing_entry/field_decl/member_decl (none has independent syntax outside it): `"A" "thing" "called" name "has" thing_entry ("," thing_entry)* "."`; a field_decl's `("is" literal)?` initializer is optional; a member_decl (`"a" "function" "called" name`) only declares the manifest slot — the callable body is GRM-11. | a field with a default, one without, one member_decl | yes | THG (things-a.md) maps field_decl's full claim set; THG2-14 (things-b.md) establishes the manifest pattern this row's member_decl half exercises | exercised — cross-ref THG/THG2-14 | |
+| GRM-11 | 5508–5509 | member_def: `"To" "do" "the" name "'s" name (("," ("with"\|"of"))? params)? "." body "Return" "a" name "," expr "."` — note the comma before `with`/`of` that a plain func_def lacks. | a manifest member with a parameter, called and its field read | yes | THG2-14/THG2-15 (things-b.md) already map this production's full claim set (this row's probe is adapted from `THG2-14.vox` almost verbatim) | exercised — cross-ref THG2-14/THG2-15 | |
+| GRM-12 | 5511–5513 | if_stmt: `("If"\|"When") condition "then" "," block ("but if" condition "then" "," block)* ("otherwise"\|"else")? ","? block? "."` — five alternation points. | When, else, otherwise, and a but-if chain, all in one program | yes | FLW-03/FLW-04/FLW-07 (control-flow.md) map "But if...then," and the period-before-"But if" sentence-continuation rule this row also had to rediscover by hand before finding FLW-03 already had it | exercised (`If`, `else`, `otherwise`, cross-ref FLW-03); todo (`When`, and the `But if...then,` chain form itself — FLW-03 says "hand-verified to work" but marks its OWN status `todo`, since no leaf in `main` emits it) | |
+| GRM-13 | 5515 | while_stmt: `"While" condition "," block "."` — no alternatives. | a counting loop | yes | FLW (control-flow.md) maps this production's full claim set | exercised — cross-ref FLW | |
+| GRM-14 | 5517–5518 | for_stmt's two forms: `"For each" name "from" expr "to" expr "," block "."` (range) and `"For each" name "in" expr "," block "."` (collection). | both forms in one program | yes | FLW (control-flow.md, range form); LST2 (collections-b.md, collection form) | exercised — cross-ref FLW/LST2 | |
+| GRM-15 | 5520–5524 | print_stmt's three forms: plain `Print expr` with a but-if tail, `Print each name from expr (treating)?` with a but-if tail, and `Print <func> of each name from expr` (per-item function return). This but-if is a DIFFERENT production from if_stmt's (GRM-12) — no `then`, no comma before the branch's `print` — sharing only the two words. | all three forms, one but-if firing | yes | FMT (input-output.md, plain form); LST2-55/LST2-44 (collections-b.md, the each/func forms) | exercised — cross-ref FMT/LST2 | |
+| GRM-16 | 5526 | loop_expansion: `"each" name "from" expr ("treating" expr "as" expr)?` — the shared clause used by print_stmt, args, append_stmt's second form, and for_stmt's "in" form. | a treating substitution under a bare `Print each`; separately, under `append_stmt` | yes | BAS2 (basics-expansion.md) maps this production's full claim set including grid/nested expansion | exercised (under `Print`, BAS2-52). **Discrepancy 3 RESOLVED (vox #70, 2026-08-22)** — the substitution under `append_stmt` was a silent no-op through 0.4.9; hand-verified fixed against 0.4.10 (`append each item from src treating 2 as 20 to dst.` now substitutes correctly), still no leaf emits it | |
+| GRM-17 | 5529–5533 | expr's precedence chain: or_expr → and_expr → comparison → additive → multiplicative → primary, in that binding order. | one expression exercising all six levels, inside a condition | yes | EXP (expressions.md) and OPR (operators.md) map operator behavior; **this production's own claim that plain `expr` is legal wherever the grammar cites it (var_decl, assignment, print_stmt) is FALSE for the `comparison` level — see Discrepancy 1, cross-ref EXP-D3** | exercised (precedence itself, inside an `If` condition — the only position a `comparison` actually parses); the wider `expr`-everywhere claim is **not assertable as written** — see Discrepancy 1 | |
+| GRM-18 | 5535 | multiplicative's operators: `multiply`, `times`, `divide`, `modulo` — `times` is a full synonym for `multiply`. | `times` and `multiply` side by side | yes | OPR-06 (operators.md) already established this; OPR-41 recorded a separate, narrower gap (`times` rejected specifically inside `append <value> to <collection>`'s value slot) — **RESOLVED (vox #77, 2026-08-22)**, `times` now works there too | exercised — cross-ref OPR-06/OPR-41 | |
+| GRM-19 | 5536 | primary: `literal \| identifier \| func_call \| "(" expr ")"` — the fourth alternative claims parentheses group expressions. | a grouped arithmetic subexpression | yes | literal/identifier/func_call are exercised everywhere else in this ledger; **the parenthesized-grouping claim is FALSE — see Discrepancy 2, cross-ref EXP-D5** (parentheses are comments; the actual grouping punctuation, `{...}`, is not listed as a `primary` alternative at all) | exercised (first three alternatives); the fourth is **not assertable as written** — see Discrepancy 2 | |
+| GRM-20 | 5538–5540 | type: `number \| float \| text \| boolean \| list \| map \| buffer \| file \| time \| timer \| value \| <user-defined thing name>` — twelve type names. | one variable of every type, declared and printed/accessed | yes | each type has its own ledger (variables.md, buffers.md, files.md, time-and-timers.md, values.md, collections-a.md, things-a.md); none of them states "all twelve in one program" as a single combined claim, which is this row's own contribution | exercised — cross-ref the per-type ledgers | |
+| GRM-21 | 5541–5542 | name/identifier: `bare \| quoted` — "quoted" means single-quoted (`'my count'`); a name is never double-quoted. | a bare name and a single-quoted one holding the same value | yes | `names-and-strings.md` NAM-07 (LANGUAGE.md 662–664) states this exact restatement and folds it into `VAR-48`; single-quoted identifiers are also used incidentally across many probes (every function name in this repo) | exercised — cross-ref NAM-07/VAR-48 | |
+| GRM-22 | 5543 | literal: `string \| number \| "true" \| "false" \| "nothing"` — five literal forms. | all five as declaration initializers | yes | EXP-04 (expressions.md) covers `true`/`false` (and notes `false` is never emitted as a literal by any leaf); VAL (values.md) covers `nothing`; string/number literals are exercised constantly everywhere | exercised — cross-ref EXP-04/VAL; `false` as a literal is a gap EXP-04 already records | |
+| GRM-23 | 5544 | string: `'"' ... '"'` — "a string literal is data, never a name." Using one where a name is expected is a compile error. | trigger the compile error | **no, compile-error claim** — not assertable from a generated leaf (the fuzzer's contract is legal, compiling Vox) | `names-and-strings.md` NAM-03 (LANGUAGE.md 662–665) reproduces the manual's own worked example verbatim and hand-verifies the identical rejection — `NAM-03.vox`: `error: expected a name, found a string literal` | not assertable (compile-error claim) — cross-ref NAM-03; hand-verified: `expected a name, found a string literal` | |
 
 ## Discrepancies
 
@@ -98,7 +98,7 @@ this ledger's own line range and a reader of the Grammar Summary alone
 
 ### 2. `primary`'s `"(" expr ")"` alternative — parentheses do not group; they are comments
 
-LANGUAGE.md:5363:
+LANGUAGE.md:5536:
 
 ```
 primary ::= literal | identifier | func_call | "(" expr ")"
@@ -117,14 +117,14 @@ correct (comment syntax is documented and load-bearing everywhere), and
 separately; see `expressions.md`'s Discrepancy 5. Worth adding here,
 since EXP-D5 does not mention it: `primary` as written is not just wrong
 about parentheses, it is also **incomplete** — `{...}`, the actual
-grouping punctuation (LANGUAGE.md:1853, 1859), is not listed as a
+grouping punctuation (LANGUAGE.md:1886, 1892), is not listed as a
 `primary` alternative at all. Fixing the parenthesis line without adding
 a `{...}` alternative would leave the production still not describing
 how grouping actually works.
 
-### 3. append_stmt's `treating` clause: wrong position in the manual's own grammar, and a silent no-op once moved to a position that parses
+### 3. append_stmt's `treating` clause: wrong position in the manual's own grammar, and a silent no-op once moved to a position that parses — RESOLVED (vox #70, manual grammar corrected)
 
-LANGUAGE.md:5321–5322:
+LANGUAGE.md:5492–5493, **before** 0.4.10:
 
 ```
 append_stmt ::= "append" expr "to" name "."
@@ -165,14 +165,35 @@ the manual's own worked shape for append_stmt does not parse under any
 placement its own line implies, and the one placement that does parse
 silently drops a documented feature. Not filed.
 
+**Resolution confirmed, 2026-08-22 — RESOLVED by vox #70, and the manual
+itself was corrected too.** LANGUAGE.md:5492–5493 now reads:
+
+```
+append_stmt ::= "append" expr "to" name "."
+              | "append" "each" name "from" expr ("treating" expr "as" expr)? "to" name "."
+```
+
+— `treating` moved to immediately after `from expr`, matching
+`loop_expansion`'s own placement (part 1 of this discrepancy, fixed by
+the manual PR rather than the compiler). CHANGELOG.md #70: "the clause
+was parsed and thrown away, so `append each name from names treating "-"
+as "anon" to out.` appended `["ann", "-"]`... Written after the
+destination it now names itself instead of falling through as `Expected
+a statement, got Treating`" — part 2, the silent no-op, fixed in the
+compiler. Re-ran the D3.vox repro shape against 0.4.10:
+`append each item from src treating 2 as 20 to dst.` now compiles (as it
+did before) **and** substitutes (`dst` is `[1, 20, 3]`, not `[1, 2,
+3]`), agreeing with `Print each`'s behaviour (GRM-16, `BAS2-52.vox`).
+Both symptoms are closed.
+
 ## Invariants this section justifies
 
 This section's own claims are almost entirely about **what parses**, not
 about what a compiling program must always contain — so it justifies
 very few corpus-level invariants on its own. The two genuine ones:
 
-- byte-for-byte, the article before a type keyword is always `a` or `an`, never a bare type name — LANGUAGE.md:5316, GRM-03 (cross-ref VAR-01)
-- a function call's connector is always one of exactly `of`/`with`/`to`/`on`, never a bare juxtaposition or another preposition — LANGUAGE.md:5328, GRM-08 (cross-ref FUN-32)
+- byte-for-byte, the article before a type keyword is always `a` or `an`, never a bare type name — LANGUAGE.md:5487, GRM-03 (cross-ref VAR-01)
+- a function call's connector is always one of exactly `of`/`with`/`to`/`on`, never a bare juxtaposition or another preposition — LANGUAGE.md:5499, GRM-08 (cross-ref FUN-32)
 
 Everything else this section documents (operator precedence, the type
 list, the literal list) is a closed, exhaustive vocabulary the compiler
@@ -187,15 +208,17 @@ is the language, not an undeclared generator rule.
 independent probe, per the header). All 21 non-folded, non-compile-error
 rows hand-verified and passing; 1 row (GRM-23) is a compile-error claim,
 not assertable from a generated leaf, also hand-verified. **3
-discrepancies**, none filed: two (Discrepancies 1 and 2) are **already
-adjudicated findings from expressions.md**, independently rediscovered
-here before the cross-reference was found — recorded rather than
-duplicated, because their line numbers fall inside this ledger's own
+discrepancies**, none filed at the time: two (Discrepancies 1 and 2) are
+**already adjudicated findings from expressions.md**, independently
+rediscovered here before the cross-reference was found — recorded rather
+than duplicated, because their line numbers fall inside this ledger's own
 range and a reader of only this section would hit the identical trap.
-The third (Discrepancy 3, append_stmt's `treating` clause) is genuinely
-new: no existing ledger row (`grep -rn "append.*treating"` across
-`collections-b.md`/`basics-expansion.md` finds nothing) already covers
-the combination of append-each plus a substitution.
+The third (Discrepancy 3, append_stmt's `treating` clause) was genuinely
+new here: no existing ledger row (`grep -rn "append.*treating"` across
+`collections-b.md`/`basics-expansion.md` found nothing) already covered
+the combination of append-each plus a substitution. **Discrepancy 3
+RESOLVED, 2026-08-22 — vox #70 (0.4.10), manual grammar also corrected**
+(see the discrepancy's own entry above).
 
 **The gaps that matter — grammar forms NO section ledger covers**, as
 asked for explicitly:

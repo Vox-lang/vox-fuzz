@@ -1,7 +1,7 @@
 (LST-60 — `is a <type-noun>` compares the value's runtime type tag, so it
  works on a mixed-list element whose type is only known at run time.
  Also covers: LST-61 (the worked dispatch example of
- LANGUAGE.md:2394-2400).
+ LANGUAGE.md:2454-2460).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-60.vox -o p && ./p
  expected output:
    number: 1
