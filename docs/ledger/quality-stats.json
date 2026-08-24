@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "6331b09",
+    "commit": "e855304",
     "date": "2026-08-24",
-    "voxCommit": "387a127",
+    "voxCommit": "2403ad3",
     "script": "scripts/quality-stats"
   },
   "claims": {
