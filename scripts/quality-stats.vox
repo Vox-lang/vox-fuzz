@@ -589,8 +589,13 @@ To 'the probes'.
 (A count column that does not hold a plain number holds `n/a`, and `n/a`
  is not zero. It becomes null, which is the only honest rendering of a
  sweep that never compiled anything.)
+(A leading tilde marks an approximate count — a campaign whose exact
+ tally was lost to an interruption. It parses as its number; the row's
+ note carries the caveat.)
 To 'the count or nothing in' with a text called 'the cell'.
-    a number called 'the count' is 'the number in' of 'the cell'.
+    a text called 'the bare cell' is 'the cell'.
+    If 'the line starts with' of 'the cell' and "~" then, Set 'the bare cell' to 'the part of' of 'the cell' and "~".
+    a number called 'the count' is 'the number in' of 'the bare cell'.
     If 'the count' is less than 0 then, Return a value, nothing.
     Return a value, 'the count'.
 
