@@ -1,4 +1,4 @@
-(ENV-10: the "Checking if Variable Exists" predicate (LANGUAGE.md:4819-
+(ENV-10: the "Checking if Variable Exists" predicate (LANGUAGE.md:4824-
  4517, `If the environment variable "NAME" exists then,`), both
  branches. No leaf emits this predicate at all -- the existing `oob`
  leaf (gen_misc.vox:103-110) tests the *lookup* form wrapped in `On

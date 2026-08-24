@@ -1,4 +1,4 @@
-(D1 - Discrepancy 1 repro: LANGUAGE.md:4529-4530 says `end` "belongs to
+(D1 - Discrepancy 1 repro: LANGUAGE.md:4534-4535 says `end` "belongs to
  the `exit` family of keywords and remains reserved". It is not reserved -
  this compiles and prints 7 - and `End.` on its own is not an exit
  statement either; the compiler answers "Unknown function: End". The

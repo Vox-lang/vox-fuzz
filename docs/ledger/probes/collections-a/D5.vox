@@ -7,7 +7,7 @@
  number` fired on it. Old line 2250-2254 conceded a conservative
  TAG_INTEGER guess, so the two paragraphs disagreed with each other.
  vox #45 fixed the COMPILER, not just the docs: the write is now refused
- outright. LANGUAGE.md:2413-2421 states the current (single, consistent)
+ outright. LANGUAGE.md:2418-2426 states the current (single, consistent)
  rule.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p
  expected output:

@@ -7,7 +7,7 @@
  fine). Moving the function definition below the declaration used to fix
  it, but as of 0.4.10 that is no longer necessary.
  LANGUAGE.md:773 says top-level variables "can be used inside functions",
- now with the ordering rule stated explicitly; LANGUAGE.md:3416 leans on
+ now with the ordering rule stated explicitly; LANGUAGE.md:3421 leans on
  that same promise for branch-declared names ("exactly like a top-level
  declaration" — which it now is, correctly, so FMT-42 holds without a
  caveat). Reached from this section via FMT-42, but the defect belonged

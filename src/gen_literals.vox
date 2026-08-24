@@ -21,10 +21,10 @@
    - LANGUAGE.md:1914-1916   0x / 0b prefixes, 'A' is one character
    - LANGUAGE.md:1909        "Float literals are recognized by the
                              presence of a decimal point"
-   - LANGUAGE.md:3445-3451   the escape table: {{ }} \n \t \\
-   - LANGUAGE.md:3311-3321   the format-specifier table
+   - LANGUAGE.md:3450-3456   the escape table: {{ }} \n \t \\
+   - LANGUAGE.md:3316-3326   the format-specifier table
    - LANGUAGE.md:2028-2035   radix conversions, "any base from 2 through 36"
-   - LANGUAGE.md:2780-2801   nothing / null / nil
+   - LANGUAGE.md:2785-2806   nothing / null / nil
    - the compiler's own range check on an integer literal: "does not fit
      in a 64-bit number. Valid range is
      -9223372036854775808..9223372036854775807." LANGUAGE.md does NOT
@@ -63,7 +63,7 @@ a list called literal_upper_letters is ["A", "B", "C", "D", "E", "F", "G", "H", 
  hand-verified. A lone `}` is legal and is in the list; `}}` is in the
  escape list too, because the manual gives it as an escape.
 
- The escapes are the ones LANGUAGE.md:3445 tabulates - {{ }} \n \t \\ -
+ The escapes are the ones LANGUAGE.md:3450 tabulates - {{ }} \n \t \\ -
  plus \" and \r, which the manual does NOT list and the compiler
  nonetheless honours (probed: \" yields a quote, \r yields byte 13; every
  OTHER backslash pair just drops the backslash). Emitting an undocumented
@@ -336,7 +336,7 @@ To 'literal text'.
     a text called 'the body' is 'literal text body'.
     Return a text, "\"{'the body'}\"".
 
-(A format specifier, drawn from the whole table at LANGUAGE.md:3311-3321:
+(A format specifier, drawn from the whole table at LANGUAGE.md:3316-3326:
  plain, .N, N, 0N, x, X, b, o, 04x. Through vox 0.4.9 every row ran
  against a number, a float, a text and a boolean - all 36 combinations
  compiled and ran, so a caller could hand over a name of any type without
@@ -399,7 +399,7 @@ To 'literal format specifier for a text'.
         Return a text, ":{'the width'}".
     Return a text, ":0{'the width'}".
 
-(A boolean is a whole number (LANGUAGE.md:3350, 3353 list it beside
+(A boolean is a whole number (LANGUAGE.md:3355, 3358 list it beside
  number for both precision and radix), so it takes the same picker as a
  number.)
 To 'literal format specifier for a boolean'.
@@ -419,7 +419,7 @@ To 'literal format specifier for kind' with a text called 'the kind'.
     Return a text, 'literal format specifier for a number'.
 
 (One `{name}` or `{name:spec}` hole. The name comes from the caller,
- because LANGUAGE.md:3323 is explicit that the inside of a hole must be a
+ because LANGUAGE.md:3328 is explicit that the inside of a hole must be a
  variable or expression that exists - `{255:x}` is rejected - so a hole
  is the one place in this file where the generator may NOT invent the
  characters. As of 0.4.10 the specifier can no longer be drawn blind
@@ -442,7 +442,7 @@ To 'literal format hole' with a list called 'the names' and a list called 'the k
     a text called 'the close brace' is "}}".
     Return a text, "{'the open brace'}{'the name'}{'the format specifier'}{'the close brace'}".
 
-(Format string. LANGUAGE.md:3301-?. A text literal whose body may open
+(Format string. LANGUAGE.md:3306-?. A text literal whose body may open
  holes on the names the caller says the program has, each paired with its
  kind so the hole's specifier stays legal for it (see 'literal format
  hole' above); an empty caller list means a plain text literal, which is
@@ -484,7 +484,7 @@ To 'literal boolean'.
         Return a text, "true".
     Return a text, "false".
 
-(The absent value. LANGUAGE.md:2852 - "`null` and `nil` are accepted
+(The absent value. LANGUAGE.md:2857 - "`null` and `nil` are accepted
  spellings of the same literal; all three produce the identical value", so
  all three are drawn.
 

@@ -1,6 +1,6 @@
 (ARG-46 — *(not a manual claim — a gap in the manual)* a number flag
  whose value does not parse as a number sets the error flag on the first
- read and holds 0. LANGUAGE.md:4680 says the token is "parsed as a
+ read and holds 0. LANGUAGE.md:4685 says the token is "parsed as a
  number" and stops there.
  The `On error` binds to the DECLARATION above it, which is where the
  read happens — not to the Print.

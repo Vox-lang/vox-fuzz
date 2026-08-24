@@ -1,4 +1,4 @@
-(Source for the reference mathkit library, verbatim from LANGUAGE.md:5181-5187.
+(Source for the reference mathkit library, verbatim from LANGUAGE.md:5186-5192.
  Built with: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    /home/josj/scr/english/vox/target/release/vox mathkit_lib.vox --shared -o libmathkit.so
  The resulting libmathkit.so and libmathkit.lib are checked in beside this

@@ -1371,11 +1371,11 @@ To 'gen program' with a number called seed and a number called budget.
 (How a program stops. Three samenesses lived in the one line that used to
  write this, and not one of them had a citation.
 
- - The keyword. LANGUAGE.md:2345 ends the Program Termination section
+ - The keyword. LANGUAGE.md:2350 ends the Program Termination section
    with "Alternative keywords: `quit`, `terminate`", and the compiler
    takes each of them in either capitalisation. Six spellings, all six
    compiled and run against 0.4.9 before this was written.
- - Whether a code is written at all. LANGUAGE.md:2343: "Exit code
+ - Whether a code is written at all. LANGUAGE.md:2348: "Exit code
    defaults to 0 if not specified" - so `quit.` is a whole statement and
    the program exits 0. Verified.
  - Whether the program says anything at all. Nothing in the manual

@@ -1,4 +1,4 @@
-(D9 — Discrepancy 9 repro: LANGUAGE.md:3062-3063 calls `respectively`
+(D9 — Discrepancy 9 repro: LANGUAGE.md:3067-3068 calls `respectively`
  "reserved as a possible future marker for a zip mode; it is not parsed
  today". It is genuinely not parsed — this sentence is a compile error —
  but it is NOT reserved as an identifier: `a number called respectively is

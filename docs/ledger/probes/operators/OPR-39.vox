@@ -1,6 +1,6 @@
 (OPR-39 (undocumented precision): the logical operators carry the
  conventional precedence - `not` binds tighter than `and`, and `and`
- binds tighter than `or`. LANGUAGE.md:4875-4879 lists the three
+ binds tighter than `or`. LANGUAGE.md:4880-4884 lists the three
  operators with no precedence at all.
  Line 1: `not denied and affirmed` fires, so `not` took only `denied`.
  Line 2: `not affirmed and affirmed` does not fire, confirming the same.

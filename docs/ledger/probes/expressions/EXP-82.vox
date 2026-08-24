@@ -1,4 +1,4 @@
-(EXP-82: the radix worked example at LANGUAGE.md:2083-2098 compiles verbatim
+(EXP-82: the radix worked example at LANGUAGE.md:2088-2103 compiles verbatim
  and produces the values its own trailing comments claim.
  The example prints nothing on its own, so the five Print lines at the end are
  the only addition; every declaration above them is the manual's text

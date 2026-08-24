@@ -1,6 +1,6 @@
 (D4 -- RESOLVED (vox #62), re-recorded 2026-08-22 against vox 0.4.9.
- LANGUAGE.md:5289-5291: "No returning clause means the function returns
- nothing", and step 5 of consuming a library (LANGUAGE.md:5325) says
+ LANGUAGE.md:5294-5296: "No returning clause means the function returns
+ nothing", and step 5 of consuming a library (LANGUAGE.md:5330) says
  calls "type-check like any other function". Here `greet` genuinely
  returns nothing -- its .lib entry is bare `To greet.`, no returning
  clause -- and used to be silently accepted into a typed variable. Now

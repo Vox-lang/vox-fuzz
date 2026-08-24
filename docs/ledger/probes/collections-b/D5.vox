@@ -2,7 +2,7 @@
  determines the list's element type for printing". It does not: each
  element renders by its own runtime tag regardless of what was appended
  first, in both directions. The rendering rule twenty lines earlier
- (LANGUAGE.md:2798-2800) is the one the compiler follows.
+ (LANGUAGE.md:2803-2805) is the one the compiler follows.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
  expected output:
    ["text first", 42]

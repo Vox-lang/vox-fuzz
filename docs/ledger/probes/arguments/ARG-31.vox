@@ -1,5 +1,5 @@
 (ARG-31 — using a flag variable before the parse point is a
- compile-time error (LANGUAGE.md:4715). This file has no explicit
+ compile-time error (LANGUAGE.md:4720). This file has no explicit
  `Parse flags.`, so the parse point is the automatic one after the last
  schema — which makes the read between the two declarations a use before
  parsing, and pins down the "immediately after the LAST flag schema

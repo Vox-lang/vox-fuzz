@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "937f12a",
+    "commit": "dcbfa05",
     "date": "2026-08-24",
-    "voxCommit": "190e315",
+    "voxCommit": "1d48b2a",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -317,10 +317,10 @@
     }
   },
   "register": {
-    "found": 100,
+    "found": 101,
     "fixed": 96,
     "open": 0,
-    "other": 4,
+    "other": 5,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {

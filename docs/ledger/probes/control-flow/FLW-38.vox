@@ -1,5 +1,5 @@
 (FLW-38: the exit code defaults to 0 when it is not specified
- (LANGUAGE.md:2343) - a bare `Exit.` compiles and exits 0.
+ (LANGUAGE.md:2348) - a bare `Exit.` compiles and exits 0.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-38.vox -o p && ./p
  expected output:
    before

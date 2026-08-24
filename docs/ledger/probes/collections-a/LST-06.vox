@@ -1,7 +1,7 @@
 (LST-06 — a list may freely hold numbers, texts, decimals and booleans
  together, and every element reads back as what it is.
  Also covers: LST-09 (each element prints as its own type), LST-10 (the
- worked example of LANGUAGE.md:2337-2339, which prints 1 / two / 3.5 / 1).
+ worked example of LANGUAGE.md:2342-2344, which prints 1 / two / 3.5 / 1).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-06.vox -o p && ./p
  expected output:
    1
