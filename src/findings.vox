@@ -16,6 +16,23 @@ a number called findings_count is 0.
  cannot read that global directly.)
 a text called findings_layout is "random".
 
+(The harness input surface a recorded program ran under, so repro.sh can
+ replay it. Like findings_layout these are mirrored out of the generator
+ by loop_gen.vox - the one place a finding is created from a generated
+ program - because this file is included by tests that do not load the
+ generator and cannot see gen_argv/gen_scratch_argv directly. findings_argv
+ is the drawn flags BEFORE the scratch pair is prepended (loop_gen.vox
+ captures it at that point), so repro.sh can pass the program the same
+ flags without the dead pid+seed scratch path the harness swept.
+ findings_scratch_flag is the alias the program declared for its scratch
+ directory, or "" when it did no file I/O. Both stay empty under the unit
+ tests, so a test-built repro.sh runs ./prog with no args, exactly as
+ before. Env is not among these: the generator does not choose it
+ (gen_misc.vox), and printing raw env values would break the privacy rule
+ this store already follows, so env is inherited by repro.sh, not replayed.)
+a list called findings_argv is [].
+a text called findings_scratch_flag is "".
+
 To 'finding path' with a text called category and a number called seed.
     a text called p is "{findings_dir}/{category}/{seed}".
     Return a text, p.
@@ -55,6 +72,11 @@ To 'finding save' with a text called category and a number called seed and a tex
     a buffer called 'the program bytes'.
     Read from 'the program source' into 'the program bytes'.
     Close 'the program source'.
+    (PROBE g2: empty program.vox is the symptom of defect 15 - the source
+     was unreadable when finding save ran. Warn loudly so a forced run
+     shows it on stdout instead of hiding in the findings dir.)
+    If 'the program bytes's size is 0 then,
+        Print "PROBE g2: EMPTY program.vox for {category} seed {seed} src {src}".
     a text called 'the program copy path' is "{'the finding directory'}/program.vox".
     open a file for writing called 'the program copy' at 'the program copy path'.
     Write 'the program bytes' to 'the program copy'.
@@ -66,8 +88,27 @@ To 'finding save' with a text called category and a number called seed and a tex
     a text called 'the version command' is "{'shell quote' of vox_binary} --version >> {'shell quote' of 'the finding directory'}/classification.txt 2>&1".
     a number called 'the version result' is 'run shell' of 'the version command' and 10000.
     a text called 'the repro path' is "{'the finding directory'}/repro.sh".
+    (Build the command line the harness used, so repro.sh runs the
+     program under the same input surface it had when the defect fired:
+     the drawn flags, and when the program did file I/O a fresh scratch
+     directory under the same alias - the harness's pid+seed scratch was
+     swept after the run, so repro.sh makes its own and traps it for
+     cleanup. Each drawn arg is shell-quoted; the scratch path is a shell
+     variable, so it never enters this Vox text unquoted. Env is inherited
+     by repro.sh, not replayed - the generator does not choose it, and
+     printing raw env values would break the privacy rule this store
+     already follows; stdin is not replayed either, and most programs take
+     none. Both gaps are noted here so a reader who needs them knows.)
+    a text called 'the repro args' is "".
+    If findings_scratch_flag is not "" then,
+        Set 'the repro args' to " {'shell quote' of findings_scratch_flag} \"$REPRO_SCRATCH\"".
+    For each 'the drawn arg' in findings_argv,
+        Set 'the repro args' to "{'the repro args'} {'shell quote' of 'the drawn arg'}".
+    a text called 'the scratch setup' is "".
+    If findings_scratch_flag is not "" then,
+        Set 'the scratch setup' to "REPRO_SCRATCH=\"$(mktemp -d)\" || exit 1\ntrap 'rm -rf \"$REPRO_SCRATCH\"' EXIT\n".
     open a file for writing called 'the repro file' at 'the repro path'.
-    Write "#!/bin/sh\nexport VOX_CORE_PATH=\"${{VOX_CORE_PATH:-{vox_core}}}\"\n{'shell quote' of vox_binary} program.vox -o prog && ./prog; echo \"exit: $?\"\n" to 'the repro file'.
+    Write "#!/bin/sh\nexport VOX_CORE_PATH=\"${{VOX_CORE_PATH:-{vox_core}}}\"\n{'the scratch setup'}{'shell quote' of vox_binary} program.vox -o prog && ./prog{'the repro args'}\necho \"exit: $?\"\n" to 'the repro file'.
     Close 'the repro file'.
     a text called 'the chmod command' is "chmod +x {'shell quote' of 'the finding directory'}/repro.sh".
     a number called 'the chmod result' is 'run shell' of 'the chmod command' and 5000.

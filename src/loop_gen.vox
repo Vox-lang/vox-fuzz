@@ -274,6 +274,14 @@ To 'fuzz gen once' with a number called seed and a number called budget and a nu
      of the shape under test, so it goes in front where no drawn shape
      can reach it - and the hostile shapes still end the line exactly as
      they intend.)
+    (Capture the drawn flags BEFORE the scratch pair is prepended, so
+     repro.sh can replay them without the dead pid+seed scratch path the
+     harness sweeps. findings_argv holds the clean flags; the scratch
+     alias goes separately as findings_scratch_flag, and repro.sh makes
+     its own fresh directory under it. Set here, before the prepend
+     below rebinds gen_argv to a new list.)
+    Set findings_argv to gen_argv.
+    Set findings_scratch_flag to gen_scratch_argv.
     If gen_scratch_argv is not "" then,
         a list called 'the argv with the scratch directory' is [gen_scratch_argv, 'the scratch path'],
         For each 'the drawn argument' in gen_argv, append 'the drawn argument' to 'the argv with the scratch directory'.
