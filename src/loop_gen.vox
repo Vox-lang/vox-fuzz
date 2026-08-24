@@ -67,7 +67,7 @@ To 'classify compile exit' with a number called code.
  NULs in the middle, hand-verified - so the scan sees the whole
  capture.
 
- Reading every byte is not enough on its own, and fuzzer defect 14 is
+ Reading every byte is not enough on its own, and the D1 addendum (the /dev/stdout reopen, 2026-08-20) is
  what the difference costs. A program that opens /dev/stdout while its
  stdout IS the capture file reopens that file at offset 0 and writes
  there, while the descriptor the ordinary Prints go through keeps its
