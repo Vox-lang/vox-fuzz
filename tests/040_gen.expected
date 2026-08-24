@@ -109,33 +109,25 @@ If 'the upshot' is not nothing then, Set result to true.
 If result is false then, Print "ASSERT VAL-25: expected is not nothing to hold got {'the upshot's type}", Exit 95.
 If 'the upshot' is nothing then, Print "ASSERT VAL-25: expected is nothing to be false got {'the upshot's type}", Exit 95.
 Print 'the slot'.
-a value called 'the numeral' is "793569.66".
-'the numeral' is a decimal.
-If 'the numeral' is not a decimal then, Print "ASSERT VAL-12: expected a float after the retype got {'the numeral's type}", Exit 95.
+a value called 'the numeral' is "7.93569".
+'the numeral' is a float.
+If 'the numeral' is not a float then, Print "ASSERT VAL-12: expected a float after the retype got {'the numeral's type}", Exit 95.
 If 'the numeral' is a text then, Print "ASSERT VAL-12: expected the text tag to be gone got {'the numeral's type}", Exit 95.
 If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) got {'the numeral's type}", Exit 95.
 a number called 'the freight' is 0.
 On error Set 'the freight' to 0.
-'the numeral' is a decimal.
+'the numeral' is a float.
 On error Set 'the freight' to 1.
 If 'the freight' is not 0 then, Print "ASSERT VAL-12: expected no error retyping to a float it already holds got {'the freight'}", Exit 95.
 If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) after the no-op got {'the numeral's type}", Exit 95.
-If 'the numeral' is not 793569.66 then, Print "ASSERT VAL-12: expected 793569.66 after the no-op got {'the numeral's type}", Exit 95.
+If 'the numeral' is not 7.93569 then, Print "ASSERT VAL-12: expected 7.93569 after the no-op got {'the numeral's type}", Exit 95.
 Print 'the numeral's type.
-a text called fp1 is "{annotation}/out1".
-open a file for writing called fw1 at fp1.
-Write "payload 79799\n" to fw1.
-Close fw1.
-open a file for reading called fr1 at fp1.
-a buffer called fb1 is 65 bytes in size.
-Read from fr1 into fb1.
-Print fb1's size.
-Print fr1's readable.
-Close fr1.
-Set v3 to v2 times v3.
-a number called u1 is 0.
-While u1 is less than 5, Increment u1.
-Print u1.
+a buffer called 'the shipping label' is 1 bytes in size.
+If 'the shipping label's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the shipping label's size}", Exit 95. Print 'the shipping label's size.
+If 'the shipping label's capacity is not 1 then, Print "ASSERT BUF-05: expected 1 got {'the shipping label's capacity}", Exit 95. Print 'the shipping label's capacity.
+Create a buffer called 'the waybill'.
+If 'the waybill's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the waybill's size}", Exit 95. Print 'the waybill's size.
+Print 'the waybill's size.
 Print endnote.
 Print annotation.
 Print 'the byline'.
@@ -152,19 +144,29 @@ If 'the message slip's size is not 6578 then, Print "ASSERT BUF-03: expected 657
 If 'the message slip overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the message slip overflowed'}", Exit 95. Print 'the message slip overflowed'.
 Print 'the message slip's size.
 Print v1 add v3.
-a number called u2 is 0.
-While u2 is less than 4, Increment u2.
-Print u2.
-open a file for reading called sin2 at 0.
-a buffer called sb2 is 25 bytes.
-Read from sin2 into sb2.
-Print sb2's size.
-If sb2 is empty then, Print "sb2 empty". Otherwise, Print "sb2 filled".
-a buffer called sc2 is 8 bytes.
-Read from sin2 into sc2.
-Print sc2's size.
-Close sin2.
-'the reckoning' of each q1s1 from 2 to 3 and each q1s2 from 8 to 9 and each q1s3 from 7 to 7 and each q1s4 from 2 to 2 and each q1s5 from 7 to 7 and each q1s6 from 7 to 7 and each q1s7 from 1 to 2 and each q1s8 from 2 to 2 and each q1s9 from 0 to 0.
-Exit.
+a number called u1 is 0.
+While u1 is less than 4, Increment u1.
+Print u1.
+a boolean called 'the house number' is false.
+If the environment variable "SHELL" exists then, Set 'the house number' to true. Print 'the house number'.
+a boolean called 'the house number seen again' is false.
+If the environment variable "SHELL" exists then, Set 'the house number seen again' to true. Print 'the house number seen again'.
+If 'the house number seen again' is not 'the house number' then, Print "ASSERT ENV-10: expected {'the house number'} got {'the house number seen again'}", Exit 95. Print 'the house number seen again'.
+Print 'the house number'.
+a value called guess is 85.
+guess is a text.
+If guess is not "85" then, Print "ASSERT VAL-09: expected \"85\" got {guess}", Exit 95.
+Print guess.
+open a file for reading called sin1 at 0.
+a buffer called sb1 is 55 bytes.
+Read from sin1 into sb1.
+Print sb1's size.
+If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
+a buffer called sc1 is 8 bytes.
+Read from sin1 into sc1.
+Print sc1's size.
+Close sin1.
+'the reckoning' of each q1s1 from 1 to 2 and each q1s2 from 2 to 2 and each q1s3 from 0 to 0 and each q1s4 from 7 to 7 and each q1s5 from 1 to 1 and each q1s6 from 2 to 2 and each q1s7 from 0 to 0 and each q1s8 from 0 to 0 and each q1s9 from 2 to 2.
+Quit 250.
 
 reproducible: 1

@@ -775,7 +775,11 @@ To 'gen retype source' with a number called 'the target'.
         a text called digits is 'gen random digits' of 'how many digits',
         Return a text, digits.
     If 'the target' is 2 then,
-        a text called 'a decimal number' is 'gen extreme float',
+        (Round-trippable, not 'gen extreme float': this leaf's value is
+         declared as quoted text and asserted against the bare literal,
+         so the two parse routes must agree on it. See 'gen round
+         trippable float' and FUZZER_DEFECTS.md defect 14.)
+        a text called 'a decimal number' is 'gen round trippable float',
         Return a text, 'a decimal number'.
     If 'the target' is 3 then,
         a number called 'the truth' is 'rng below' of 2,

@@ -332,3 +332,47 @@ Print "banned needles in value verbs: {'banned needles in' of 'the value verbs'}
 Print "banned needles in environment: {'banned needles in' of gen_environment_words}".
 Print "banned needles in loop words: {'banned needles in' of gen_environment_loop_words}".
 Print "banned needles in spoken words: {'banned needles in' of gen_environment_spoken_words}".
+
+(G1 / FUZZER_DEFECTS.md defect 14: a float drawn for a leaf that declares
+ it as quoted text and asserts it against the bare literal must
+ round-trip - the two parse routes agree only while the payload has at
+ most 17 significant digits (the IEEE-754 round-trip bound). Beyond 18
+ the text route takes the nearest double of the prefix and the literal
+ route the nearest double of the whole, one ulp apart, and the leaf's
+ cross-route assertion becomes unwinnable. 'gen round trippable float'
+ is the draw that clamps to 17; this counts the significant digits in a
+ thousand of its draws and pins the max, so a change that lets a
+ >17-digit payload through fails here instead of in a campaign.)
+
+To 'significant digits in' with a text called 'the float text'.
+    a buffer called 'the bytes' is "{'the float text'}".
+    a number called 'the size' is 'the bytes's size.
+    a number called 'the position' is 1.
+    a number called 'the count' is 0.
+    a boolean called 'seen nonzero' is false.
+    (Flattened to single-statement Ifs on purpose: a nested If would
+     close on its own period and leave the position increment inside the
+     outer clause, so a decimal point - byte 46 - would skip the
+     increment and loop forever. 46 is the decimal point, 48 is '0';
+     leading zeros before the first nonzero digit are not significant,
+     and from the first nonzero on every digit counts.)
+    While 'the position' is less than or equal to 'the size',
+        a number called 'the byte' is byte 'the position' of 'the bytes',
+        If 'the byte' is not 46 and 'the byte' is not 48 then, Set 'seen nonzero' to true.
+        If 'seen nonzero' and 'the byte' is not 46 then, Set 'the count' to 'the count' add 1.
+        Set 'the position' to 'the position' add 1.
+    Return a number, 'the count'.
+
+'rng seed' of 990321.
+a number called 'the float draw count' is 0.
+a number called 'the most significant digits' is 0.
+a number called 'too wide' is 0.
+While 'the float draw count' is less than 1000,
+    a text called 'a drawn float' is 'gen round trippable float',
+    a number called 'its significant digits' is 'significant digits in' of 'a drawn float',
+    If 'its significant digits' is greater than 'the most significant digits' then,
+        Set 'the most significant digits' to 'its significant digits'.
+    If 'its significant digits' is greater than 17 then,
+        Set 'too wide' to 'too wide' add 1.
+    Set 'the float draw count' to 'the float draw count' add 1.
+Print "round-trip float: max-sig-digits={'the most significant digits'} too-wide={'too wide'} (max<=17 and too-wide=0 means every drawn literal round-trips through both parse routes)".

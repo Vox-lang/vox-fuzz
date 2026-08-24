@@ -109,6 +109,42 @@ To 'gen extreme float'.
     a text called 'the fraction part' is 'gen random digits' of 'the fraction length'.
     Return a text, "{'the whole part'}.{'the fraction part'}".
 
+(A float payload that round-trips through BOTH parse routes, for the
+ leaves that declare a value as quoted text, retype it to float, and
+ assert it against the bare literal. 'gen extreme float' is the right
+ draw for a leaf that only EXERCISES the float, but those two routes
+ disagree on it: LANGUAGE.md:2065-2071 reads a source literal as the
+ nearest double of ALL its digits and a text as "the nearest float those
+ eighteen digits describe", so a payload with more than 18 significant
+ digits is parsed to two doubles one ulp apart, and a leaf that compares
+ route A's double against route B's literal is unwinnable - a compiler
+ defect that is actually the manual's own documented behaviour. See
+ FUZZER_DEFECTS.md (G1 / defect 14) for the campaign that proved it.
+
+ 17 significant digits is the IEEE-754 round-trip bound: a payload
+ drawn inside it is the same double on both routes, so the cross-route
+ assertion holds. The extremes that NEED more digits - a value beyond
+ 2^63, a long mantissa the double cannot hold - cannot be drawn inside
+ 17 and stay in 'gen extreme float' for the leaves that never assert
+ cross-route. The subnormal end is one significant digit already, so it
+ round-trips and stays.
+
+ 'gen random digits' makes the first whole digit nonzero, so every
+ whole digit is significant; the fraction fills the rest, and the total
+ never exceeds 17.)
+
+To 'gen round trippable float'.
+    a number called pick is 'rng below' of 10.
+    If pick is 0 then,
+        Return a text, "0.000000000000000000001".
+    a number called 'the total length' is 'rng below' of 16 add 2.
+    a number called 'the whole range' is 'the total length' minus 1.
+    a number called 'the whole length' is 'rng below' of 'the whole range' add 1.
+    a number called 'the fraction length' is 'the total length' minus 'the whole length'.
+    a text called 'the whole part' is 'gen random digits' of 'the whole length'.
+    a text called 'the fraction part' is 'gen random digits' of 'the fraction length'.
+    Return a text, "{'the whole part'}.{'the fraction part'}".
+
 To 'gen var ref'.
     If gen_vars is 0 then,
         Return a text, "0".
