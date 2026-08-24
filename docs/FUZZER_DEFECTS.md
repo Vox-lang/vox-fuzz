@@ -824,3 +824,48 @@ the marker to START a line, and still reports the LAST match.
    there (`detail across the hole` and the end-to-end `detail` both come
    back as the stand-in), so they are a regression guard rather than a
    restatement.
+
+## Defect 14 — float leaves assert one parse route against the other (found by the 90000 campaign, 2026-08-24)
+
+VAL-12's retype-tracking leaf declares its payload **via text**
+(`a value called 'the sample' is "469046.3893743563967901442".`),
+retypes to float, then asserts the payload equals the bare 25-digit
+literal. LANGUAGE.md:2065-2071 gives the two routes different
+readings: a source literal parses to the nearest double of all its
+digits, a text read to "the nearest float those eighteen digits
+describe". Whenever a drawn payload exceeds 18 significant digits and
+the prefix rounds differently, the two doubles differ and the
+assertion is unwinnable — the leaf reports a compiler defect that is
+actually the manual's own documented behaviour.
+
+**Proven:** seed 90320 rederived with --keep; the firing line compares
+the text-declared sample against the full literal. Python/IEEE check:
+the compiler's literal route is 0.0 ulps from the nearest double of
+all 25 digits, its text route 0.0 ulps from the nearest double of the
+18-digit prefix, the two exactly 1 ulp apart — the compiler is
+bit-exact on both routes. Minimal probes: literal-declared no-op
+retype and no-retype control both hold the payload; the text-route
+probe reproduces the split. Fix direction: clamp drawn float payload
+literals to 17 significant digits (round-trippable), or assert within
+one route.
+
+## Defect 15 — campaign-scale finding save reads an already-swept scratch (found by the 90000 campaign, 2026-08-24)
+
+All four findings of the 90000 campaign (seeds 90320/90330/90345/90348,
+class wrong-value) were recorded with an EMPTY program.vox and the
+detail "ledger assertion failed (exit 95) but no ASSERT line was found
+on stdout" — program and capture lost together, so the finding
+directory breaks its own self-contained-repro promise. Single-seed
+reruns of the same seeds (with and without --keep) record perfectly: a
+28073-byte program.vox and the real ASSERT detail. So the loss happens
+only at campaign scale, on the exit-95-without-ASSERT classification
+path — consistent with the finding save reading source and capture
+after the pid+seed scratch sweep, against loop_gen.vox's own
+save-then-sweep comment; "no ASSERT line" is also what the
+capture-open error path returns, so one swept directory explains both
+symptoms. Findings remain rederivable from their seeds.
+
+**Also noted here:** repro.sh does not recreate the harness
+environment, so a program with environment leaves can take a different
+path under it (seed 90320 exits 92 via an env-guarded exit in a plain
+shell, and asserts VAL-12 under the harness).
