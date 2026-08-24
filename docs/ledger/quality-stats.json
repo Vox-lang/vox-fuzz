@@ -6,7 +6,7 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "464aeee",
+    "commit": "6331b09",
     "date": "2026-08-24",
     "voxCommit": "387a127",
     "script": "scripts/quality-stats"
@@ -308,6 +308,17 @@
       "compiled": 994,
       "findings": 6,
       "note": "value-band celebration; 6 findings, all fuzzer Defects 14/15 (see FUZZER_DEFECTS.md), zero compiler bugs"
+    },
+    {
+      "date": "2026-08-24",
+      "vox": "0.4.12",
+      "voxFuzz": "22e5479",
+      "seeds": "100000–101999 (8-way stripe, 8×250)",
+      "budget": "40",
+      "programs": 2000,
+      "compiled": 1977,
+      "findings": 23,
+      "note": "first striped campaign: 19 findings were oversubscription deadline artifacts (8 stripes on 8 cores; scale deadlines or stripe under core count), 4 exposed Defect 16 (pool-name collision, see FUZZER_DEFECTS.md); zero compiler bugs"
     }
   ],
   "findings": {
@@ -316,7 +327,7 @@
     "byCategory": {
       "parser-reject": 2
     },
-    "total": 8
+    "total": 31
   },
   "register": {
     "found": 101,

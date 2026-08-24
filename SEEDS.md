@@ -29,6 +29,7 @@ Every seed record from before that is void as coverage.
 | 2026-08-23 | 0.4.11 | `4a8de95` | 41000–41219 | 40 | 220 | 220 | 0 | worker three-tree differential, value band (plain layout) |
 | 2026-08-23 | 0.4.11 | `4a8de95` | 77777–77788 | 40 | 12 | 12 | 0 | master keep-run: 15 VAL rows assert, all exit 0 |
 | 2026-08-24 | 0.4.12 | `937f12a` | 90000–90999 | 40 | 1000 | ~994 | 6 | value-band celebration; 6 findings, all fuzzer Defects 14/15 (see FUZZER_DEFECTS.md), zero compiler bugs |
+| 2026-08-24 | 0.4.12 | `22e5479` | 100000–101999 (8-way stripe, 8×250) | 40 | 2000 | 1977 | 23 | first striped campaign: 19 findings were oversubscription deadline artifacts (8 stripes on 8 cores; scale deadlines or stripe under core count), 4 exposed Defect 16 (pool-name collision, see FUZZER_DEFECTS.md); zero compiler bugs |
 
 `n/a` in Compiled/Findings marks a generation-only sweep: the
 never-emitted guard scans source text and deliberately does not compile,
