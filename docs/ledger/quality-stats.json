@@ -6,7 +6,7 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "595647f",
+    "commit": "934b835",
     "date": "2026-08-24",
     "voxCommit": "387a127",
     "script": "scripts/quality-stats"
@@ -302,9 +302,9 @@
       "date": "2026-08-24",
       "vox": "0.4.12",
       "voxFuzz": "937f12a",
-      "seeds": "90000–90806 (stopped early; rest unrun)",
+      "seeds": "90000–90999",
       "budget": "40",
-      "programs": null,
+      "programs": 1000,
       "compiled": null,
       "findings": 6,
       "note": "value-band celebration; 6 findings, all fuzzer Defects 14/15 (see FUZZER_DEFECTS.md), zero compiler bugs"
