@@ -26,9 +26,9 @@ Every seed record from before that is void as coverage.
 | 2026-08-19 | 0.4.5 | `c99e734` | 1–1000 | 12 | 1000 | 1000 | 0 | post-modernization baseline |
 | 2026-08-19 | 0.4.5 | `c99e734` | 7000–7999 | 16 | 1000 | 1000 | 0 | independent range, master-run |
 | 2026-08-19 | 0.4.5 | `f20eb77` | 1–2000 ×4 budgets | 12/40/100/300 | 8000 | n/a | n/a | guard sweep — **generation only**, no compile or run |
-| 2026-08-23 | 0.4.11 | `4a8de95` | 41000–41219 | 40 | 220 | 220 | 0 | worker's three-tree differential for the value band (plain layout); middle tree exposed the kind-35 To-in-open-clause emission |
-| 2026-08-23 | 0.4.11 | `4a8de95` | 77777–77788 | 40 | 12 | 12 | 0 | master's independent keep-run: 12/12 programs carry VAL assertions, 15 distinct rows, all runs exit 0 |
-| 2026-08-24 | 0.4.12 | `937f12a` | 90000–90806 (stopped for the 03:00 window; 90807–90999 unrun) | 40 | ~807 | ~801 | 6 | celebration campaign for the value band going live: four D15-empty recordings (90320/30/45/48) + two VAL-09 over-precise float asserts with full programs (90573, 90611) — all Defect 14/15 family, zero compiler bugs; evidence in vox-notes/parked/celebration-90000/ |
+| 2026-08-23 | 0.4.11 | `4a8de95` | 41000–41219 | 40 | 220 | 220 | 0 | worker three-tree differential, value band (plain layout) |
+| 2026-08-23 | 0.4.11 | `4a8de95` | 77777–77788 | 40 | 12 | 12 | 0 | master keep-run: 15 VAL rows assert, all exit 0 |
+| 2026-08-24 | 0.4.12 | `937f12a` | 90000–90806 (stopped early; rest unrun) | 40 | ~807 | ~801 | 6 | value-band celebration; 6 findings, all fuzzer Defects 14/15 (see FUZZER_DEFECTS.md), zero compiler bugs |
 
 `n/a` in Compiled/Findings marks a generation-only sweep: the
 never-emitted guard scans source text and deliberately does not compile,

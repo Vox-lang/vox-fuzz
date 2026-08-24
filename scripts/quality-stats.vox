@@ -651,7 +651,7 @@ To 'the findings'.
     a map called 'by category' is {}.
     If 'path exists' of 'the findings directory' is false then,
         'note that' of "{'the findings directory'} is missing - reporting no findings, which is what a clone that has run no campaign has",
-        Set 'the finding block's "total" to 0,
+        Set 'the finding block's "curated" to 0,
         Set 'the finding block's "byCategory" to 'by category',
         Return a map, 'the finding block'.
     a list called 'the category paths' is 'the paths listed by' of "find {'shell quote' of 'the findings directory'} -mindepth 1 -maxdepth 1 -type d" and "finding-categories.txt".
@@ -670,7 +670,7 @@ To 'the findings'.
         Set 'by category's "{'the category'}" to 'findings in this category',
         Set 'the finding total' to 'the finding total' add 'findings in this category',
         Set 'the category index' to 'the category index' add 1.
-    Set 'the finding block's "total" to 'the finding total'.
+    Set 'the finding block's "curated" to 'the finding total'.
     Set 'the finding block's "byCategory" to 'by category'.
     (`curated` and `bugsFiled` are in the agreed schema but no file in
      this repo states either one. An omitted key says "not counted here";
@@ -883,6 +883,19 @@ a map called 'the claim block' is 'the claims read from the index'.
 a map called 'the probe block' is 'the probes'.
 a list called 'the seed rows' is 'the seeds'.
 a map called 'the finding block' is 'the findings'.
+
+(The published total is every finding a campaign recorded: the sum of
+ SEEDS.md's findings column. The curated count above is the subset
+ written up under docs/findings/.)
+a number called 'the campaign finding total' is 0.
+a number called 'the seed row index' is 1.
+While 'the seed row index' is less than or equal to 'the seed rows's length,
+    a map called 'one seed row' is element 'the seed row index' of 'the seed rows',
+    a value called 'the row findings' is 'one seed row's "findings",
+    If 'the row findings' is a number then, 'the row findings' is a number, Set 'the campaign finding total' to 'the campaign finding total' add 'the row findings'.
+    Set 'the seed row index' to 'the seed row index' add 1.
+
+Set 'the finding block's "total" to 'the campaign finding total'.
 a map called 'the register block' is 'the register'.
 a map called 'the test block' is 'the tests'.
 
