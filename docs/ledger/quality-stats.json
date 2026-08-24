@@ -6,7 +6,7 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "836bbbf",
+    "commit": "595647f",
     "date": "2026-08-24",
     "voxCommit": "387a127",
     "script": "scripts/quality-stats"
@@ -311,11 +311,12 @@
     }
   ],
   "findings": {
+    "handReduced": 2,
     "curated": 2,
     "byCategory": {
       "parser-reject": 2
     },
-    "total": 6
+    "total": 8
   },
   "register": {
     "found": 101,

@@ -646,12 +646,22 @@ To 'the seeds'.
  none, and none is a real answer
  ---------------------------------------------------------------------)
 
+(Digits in a classification's seed line, as a number: 0 when the line
+ names no numeric seed, which is the hand-reduced marker.)
+To 'the seed digits of' with a text called 'the seed line'.
+    a number called 'the parsed' is 0.
+    a text called 'the after' is 'the part of' of 'the seed line' and "seed: ".
+    Set 'the parsed' to 'the after' as a number.
+    On error Set 'the parsed' to 0.
+    Return a number, 'the parsed'.
+
 To 'the findings'.
     a map called 'the finding block' is {}.
     a map called 'by category' is {}.
     If 'path exists' of 'the findings directory' is false then,
         'note that' of "{'the findings directory'} is missing - reporting no findings, which is what a clone that has run no campaign has",
         Set 'the finding block's "curated" to 0,
+        Set 'the finding block's "handReduced" to 0,
         Set 'the finding block's "byCategory" to 'by category',
         Return a map, 'the finding block'.
     a list called 'the category paths' is 'the paths listed by' of "find {'shell quote' of 'the findings directory'} -mindepth 1 -maxdepth 1 -type d" and "finding-categories.txt".
@@ -670,6 +680,24 @@ To 'the findings'.
         Set 'by category's "{'the category'}" to 'findings in this category',
         Set 'the finding total' to 'the finding total' add 'findings in this category',
         Set 'the category index' to 'the category index' add 1.
+    (A finding whose classification names no numeric seed was reduced by
+     hand outside any campaign, so no SEEDS.md row carries it; it joins
+     the published total separately. A campaign-seeded finding is already
+     in its row's count, so it never adds twice.)
+    a number called 'the hand-reduced findings' is 0.
+    a number called 'the classification index' is 1.
+    While 'the classification index' is less than or equal to 'the finding paths's length,
+        a text called 'one classified path' is element 'the classification index' of 'the finding paths',
+        a list called 'the classification lines' is 'lines of' of "{'one classified path'}/classification.txt",
+        a number called 'the class line index' is 1,
+        While 'the class line index' is less than or equal to 'the classification lines's length,
+            a text called 'one class line' is element 'the class line index' of 'the classification lines',
+            If 'the line starts with' of 'one class line' and "seed:" then,
+                a number called 'the parsed seed' is 'the seed digits of' of 'one class line',
+                If 'the parsed seed' is 0 then, Set 'the hand-reduced findings' to 'the hand-reduced findings' add 1..
+            Set 'the class line index' to 'the class line index' add 1.
+        Set 'the classification index' to 'the classification index' add 1.
+    Set 'the finding block's "handReduced" to 'the hand-reduced findings'.
     Set 'the finding block's "curated" to 'the finding total'.
     Set 'the finding block's "byCategory" to 'by category'.
     (`curated` and `bugsFiled` are in the agreed schema but no file in
@@ -895,6 +923,8 @@ While 'the seed row index' is less than or equal to 'the seed rows's length,
     If 'the row findings' is a number then, 'the row findings' is a number, Set 'the campaign finding total' to 'the campaign finding total' add 'the row findings'.
     Set 'the seed row index' to 'the seed row index' add 1.
 
+a value called 'the hand-reduced count' is 'the finding block's "handReduced".
+If 'the hand-reduced count' is a number then, 'the hand-reduced count' is a number, Set 'the campaign finding total' to 'the campaign finding total' add 'the hand-reduced count'.
 Set 'the finding block's "total" to 'the campaign finding total'.
 a map called 'the register block' is 'the register'.
 a map called 'the test block' is 'the tests'.
