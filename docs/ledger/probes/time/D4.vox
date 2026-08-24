@@ -1,4 +1,4 @@
-(D4 - Discrepancy 4 repro: LANGUAGE.md:4999-5005 presents its Reserved
+(D4 - Discrepancy 4 repro: LANGUAGE.md:5004-5010 presents its Reserved
  Aliases table as the list of alternate spellings that are reserved, and
  the Time and Timers section names no aliases at all. `stopwatch` is one:
  the compiler rejects it as a variable name and says in so many words that

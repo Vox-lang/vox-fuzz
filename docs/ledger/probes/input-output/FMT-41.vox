@@ -1,6 +1,6 @@
 (FMT-41 — a FILE HANDLE declared in every branch is equally in scope
  afterwards. Also covers FMT-44: this IS the manual's worked example
- (LANGUAGE.md:3420-3429), verbatim except for the flag declaration the
+ (LANGUAGE.md:3425-3434), verbatim except for the flag declaration the
  fragment omits, which is supplied here so it compiles. Run with no
  arguments the flag is empty, so the first branch runs and output goes
  to fd 1.

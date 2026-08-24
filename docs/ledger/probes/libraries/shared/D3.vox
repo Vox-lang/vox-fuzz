@@ -1,9 +1,9 @@
 (D3 -- minimal repro. RESOLVED 2026-08-22: the manual's own worked
- example of a .lib file's format (then at LANGUAGE.md:5255-5261) showed
+ example of a .lib file's format (then at LANGUAGE.md:5260-5266) showed
  a zero-parameter, no-return-type entry as bare `greet.` in the Table of
  Contents. The actual compiler always prefixed `To` for every entry,
  parameter-taking or not. The manual was corrected in vox commit
- 70ca1c2 (now LANGUAGE.md:5255-5261) to show `To greet.`, matching.
+ 70ca1c2 (now LANGUAGE.md:5260-5266) to show `To greet.`, matching.
  Re-ran 2026-08-22 against vox 0.4.9 (commit bb406de), from the repo root:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    /home/josj/scr/english/vox/target/release/vox

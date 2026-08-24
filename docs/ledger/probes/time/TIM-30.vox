@@ -1,4 +1,4 @@
-(TIM-30 - LANGUAGE.md:4529-4530 says `end` "belongs to the `exit` family
+(TIM-30 - LANGUAGE.md:4534-4535 says `end` "belongs to the `exit` family
  of keywords and remains reserved". It is not reserved: `a number called
  end is 7.` compiles and prints 7. See Discrepancy 1 and D1.vox; the
  manual's own examples at LANGUAGE.md:302 (`Set end to 5.`) and 960

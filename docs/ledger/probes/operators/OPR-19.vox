@@ -1,4 +1,4 @@
-(OPR-19: `and` is logical conjunction (LANGUAGE.md:4877).
+(OPR-19: `and` is logical conjunction (LANGUAGE.md:4882).
  All four rows of the truth table are exercised; only the true row fires.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-19.vox -o p && ./p
  expected output:

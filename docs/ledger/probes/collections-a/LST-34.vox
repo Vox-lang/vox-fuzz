@@ -1,4 +1,4 @@
-(LST-34 — LANGUAGE.md:2421-2425 warns that `element N of` yields a
+(LST-34 — LANGUAGE.md:2426-2430 warns that `element N of` yields a
  REFERENCE to the child list, not a copy, so a child extracted before the
  parent reallocates "may point at freed memory". Probed at 5000 appends
  (far past any plausible growth threshold): the child stays intact and

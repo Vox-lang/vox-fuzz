@@ -1,4 +1,4 @@
-(D2 -- minimal repro. LANGUAGE.md:5123 writes the second retired form as
+(D2 -- minimal repro. LANGUAGE.md:5128 writes the second retired form as
  `see "lib" version "1.0" from "./path.so".` -- the library name in
  double quotes. That is not valid Vox syntax in this position: names are
  bare or 'single-quoted', never a string literal, so this hits a generic

@@ -1,4 +1,4 @@
-(OPR-08: `modulo` is the modulo operator (LANGUAGE.md:4860).
+(OPR-08: `modulo` is the modulo operator (LANGUAGE.md:4865).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-08.vox -o p && ./p
  expected output:
    2

@@ -16,9 +16,9 @@
 
  Not one of them had a citation. LANGUAGE.md does not say a program has
  four things, or any things; it puts no ceiling on function count or
- arity; it says `Parse flags.` is optional (LANGUAGE.md:4695) and that
+ arity; it says `Parse flags.` is optional (LANGUAGE.md:4700) and that
  ordinary code may sit between flag schema declarations
- (LANGUAGE.md:4712). Every one of those 118 rows was an undeclared rule
+ (LANGUAGE.md:4717). Every one of those 118 rows was an undeclared rule
  - CLAUDE.md's "real enemy" - baked invisibly into the shape of a leaf.
 
  So the prelude is now DRAWN, per program, and what it drew is recorded
@@ -121,7 +121,7 @@
  report said so.
 
  Single-word entries are checked against the keyword tables at
- LANGUAGE.md:4928-5536: none is a reserved word, and none is a
+ LANGUAGE.md:4933-5541: none is a reserved word, and none is a
  contextual keyword either, since a contextual keyword is only claimed
  in its own grammatical position and a bare declaration name is not one.
  They matter more than the phrases do, because a phrase with a space is
@@ -276,7 +276,7 @@ a list called gen_param_written_names is [].
 a list called gen_param_kind is [].
 
 (Flags. `kind`: 0 text, 1 number, 2 boolean - the three
- LANGUAGE.md:4668-4676 lists. `default` is the literal as it is written
+ LANGUAGE.md:4673-4681 lists. `default` is the literal as it is written
  after `with default`, or "" for a flag that has none. `role` is 1 for
  the one flag that carries the scratch directory and 0 for every other.)
 
@@ -852,7 +852,7 @@ To 'gen build one flag' with a number called 'the role'.
     a text called 'the long alias' is 'gen dashed alias' of 'the flag phrase'.
     append 'the long alias' to gen_flag_long.
     (The scratch flag carries a path, so it is a text. Every other flag
-     draws across the three types LANGUAGE.md:4668-4676 lists.)
+     draws across the three types LANGUAGE.md:4673-4681 lists.)
     a number called 'the kind' is 0.
     If 'the role' is 0 then,
         Set 'the kind' to 'rng below' of 3.
@@ -871,7 +871,7 @@ To 'gen build one flag' with a number called 'the role'.
             Set gen_scratch_argv to 'the short alias'.
     Return a number, 0.
 
-(A default, or none. LANGUAGE.md:4693-4694: a flag with no default holds
+(A default, or none. LANGUAGE.md:4698-4699: a flag with no default holds
  its type's empty value, so both forms are legal for every type and
  which one a flag gets is drawn. Hand-verified against 0.4.7 that a
  boolean flag takes `with default true` and a number flag takes a

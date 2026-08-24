@@ -1,5 +1,5 @@
 (ARG-16 — the supported flag value types are exactly boolean, number and
- text (LANGUAGE.md:4676-4680). The list is exhaustive, and the compiler
+ text (LANGUAGE.md:4681-4685). The list is exhaustive, and the compiler
  says so in its own words: any other type name is refused, and the
  diagnostic names the same three.
  (Compile-error claim: not assertable from a generated leaf, for the

@@ -1,4 +1,4 @@
-(Discrepancy 4 — LANGUAGE.md:3463 says a conditional-print chain may be
+(Discrepancy 4 — LANGUAGE.md:3468 says a conditional-print chain may be
  chained "with `but if` or `and if`", which reads as the two spellings
  being interchangeable. They are not interchangeable in the first
  position: a chain whose FIRST clause is `and if` is a parse error. The

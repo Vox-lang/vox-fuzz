@@ -1,4 +1,4 @@
-(BUF-39: LANGUAGE.md:3505-3535's full worked example, reproduced verbatim - Create-with-size, 4 hex byte writes, formatted read-back, OOB read caught by On error.)
+(BUF-39: LANGUAGE.md:3510-3540's full worked example, reproduced verbatim - Create-with-size, 4 hex byte writes, formatted read-back, OOB read caught by On error.)
 (expected output:
 First byte: 0xDE
 Index out of bounds!

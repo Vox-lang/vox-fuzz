@@ -1,5 +1,5 @@
 (TIM-14 - the manual's Inline Time Access example, verbatim from
- LANGUAGE.md:4480-4482. Clock-dependent, so recorded as an exit-code
+ LANGUAGE.md:4485-4487. Clock-dependent, so recorded as an exit-code
  probe. Also covers TIM-13's construct (`current time's hour` with no
  stored time), which TIM-13.vox checks against a stored reading.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-14.vox -o p && ./p

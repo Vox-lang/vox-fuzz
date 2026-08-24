@@ -1,4 +1,4 @@
-(OPR-14: bare `is not` is an accepted spelling of inequality (LANGUAGE.md:4867).
+(OPR-14: bare `is not` is an accepted spelling of inequality (LANGUAGE.md:4872).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-14.vox -o p && ./p
  expected output:
    bare is not fired

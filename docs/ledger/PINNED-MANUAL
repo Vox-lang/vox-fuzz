@@ -13,7 +13,7 @@
  Written by `scripts/repin-citations --apply --pin`. See
  docs/ledger/PROCEDURE.md section 4.)
 
-commit e0c5b7f
-lines 5603
+commit 1d48b2a
+lines 5608
 version 0.4.10
-pinned 2026-08-23
+pinned 2026-08-24
