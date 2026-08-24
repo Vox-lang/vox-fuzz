@@ -869,3 +869,26 @@ symptoms. Findings remain rederivable from their seeds.
 environment, so a program with environment leaves can take a different
 path under it (seed 90320 exits 92 via an env-guarded exit in a plain
 shell, and asserts VAL-12 under the harness).
+
+## Defect 16 — a pool-name collision lets one leaf capture another's binding (found by the 100000 stripe campaign, 2026-08-24)
+
+The flag-schema leaf drew the pool word `caption` as a flag name
+(`caption is "-p" or "--caption", ...`); the file round-trip leaf in the
+same program built its path from `{caption}`, expecting the variable
+that binds the scratch directory. The name cycle's guarantee — two
+names in one program are distinct by construction — does not extend to
+the FIXED names a leaf expects to find already bound, so the flag
+claimed the word and the file leaf inherited a flag's value. With no
+`--caption` argument the path became `<default>/buffer2` outside the
+confined scratch: the write failed, the read returned 0, and BUF-07
+asserted — a confinement breach stopped only by kernel permissions,
+which docs/PROCEDURE and the generation policy say must never be the
+backstop.
+
+**Proven:** seeds 100103, 101434, 101707, 101964 (8-way stripe,
+100000–101999) all carry the signature; solo rerun with scratch argv
+reproduces `ASSERT BUF-07: expected N got 0` and `ls` shows the write
+never landed in scratch. Fix direction: the scratch binding's name must
+be reserved out of every draw pool (or drawn once and threaded), and
+`tests/230_units.vox` should prove pool-vs-fixed-binding disjointness
+the way it proves pool-vs-pool.
