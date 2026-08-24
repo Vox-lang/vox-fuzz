@@ -2,18 +2,18 @@
   "definitions": {
     "exercised": "a leaf emits the construct; the program must not crash. This tests memory safety only. The floor.",
     "verified": "a leaf emits the construct and asserts its documented result, so a wrong answer is a finding",
-    "howToReadTheCounts": "How to read the counts: rows is claims enumerated; exercised and verified are rows with a leaf in main (see PROCEDURE.md §3); invariants is unjustified invariants the section's leaves still contribute to the corpus report (blank until a campaign has been run against the section). Progress is verified / rows going up and invariants going down — nothing else.",
+    "howToReadTheCounts": "How to read the counts: rows is claims enumerated; exercised counts every row with a leaf in main that emits the construct, and verified is the subset of those whose leaf also asserts the documented result, so verified never exceeds exercised (see PROCEDURE.md §3); invariants is unjustified invariants the section's leaves still contribute to the corpus report (blank until a campaign has been run against the section). Progress is verified / rows going up and invariants going down — nothing else.",
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "e855304",
+    "commit": "1890577",
     "date": "2026-08-24",
     "voxCommit": "2403ad3",
     "script": "scripts/quality-stats"
   },
   "claims": {
     "total": 1380,
-    "exercised": 364,
+    "exercised": 389,
     "verified": 25,
     "sections": [
       {
@@ -109,7 +109,7 @@
         "ledger": "values.md",
         "section": "Dynamic values (value) and nothing",
         "claims": 32,
-        "exercised": 0,
+        "exercised": 15,
         "verified": 15
       },
       {
@@ -165,7 +165,7 @@
         "ledger": "arguments.md",
         "section": "Command-line arguments, flag parsing",
         "claims": 54,
-        "exercised": 15,
+        "exercised": 19,
         "verified": 4
       },
       {
@@ -173,7 +173,7 @@
         "ledger": "environment.md",
         "section": "Environment variables",
         "claims": 12,
-        "exercised": 1,
+        "exercised": 7,
         "verified": 6
       },
       {
