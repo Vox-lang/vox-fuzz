@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "2644f26",
+    "commit": "937f12a",
     "date": "2026-08-24",
-    "voxCommit": "950d856",
+    "voxCommit": "190e315",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -297,6 +297,17 @@
       "compiled": 12,
       "findings": 0,
       "note": "master's independent keep-run: 12/12 programs carry VAL assertions, 15 distinct rows, all runs exit 0"
+    },
+    {
+      "date": "2026-08-24",
+      "vox": "0.4.12",
+      "voxFuzz": "937f12a",
+      "seeds": "90000–90806 (stopped for the 03:00 window; 90807–90999 unrun)",
+      "budget": "40",
+      "programs": null,
+      "compiled": null,
+      "findings": 6,
+      "note": "celebration campaign for the value band going live: four D15-empty recordings (90320/30/45/48) + two VAL-09 over-precise float asserts with full programs (90573, 90611) — all Defect 14/15 family, zero compiler bugs; evidence in vox-notes/parked/celebration-90000/"
     }
   ],
   "findings": {
