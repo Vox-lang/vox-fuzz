@@ -865,6 +865,22 @@ save-then-sweep comment; "no ASSERT line" is also what the
 capture-open error path returns, so one swept directory explains both
 symptoms. Findings remain rederivable from their seeds.
 
+**CORRECTED 2026-08-24, and this entry was wrong.** Defect 15 is not a
+defect of its own: it is a symptom of Defect 14. The ordering blamed
+above is correct and always was — the exit-95 branch reads the capture
+and the source BEFORE the sweep, unchanged since the branch was
+introduced (`git blame` on loop_gen.vox), and two probes denied the
+only competing theory (a sticky error flag from a failed capture open
+emptying the following source read; a read after a failed open returned
+full bytes both times). The four empty findings were Defect 14's false
+positives — VAL-12's unwinnable cross-route float assertion firing exit
+95 — so clamping the drawn float payload removes the trigger and the
+symptom with it. Verified at campaign scale: with the exit-95 path
+forced over 120 seeds, all 50 findings carried a non-empty program.vox.
+A PROBE in `finding save` now prints on stdout if an empty program.vox
+is ever written again, so the symptom cannot hide even if some unknown
+path revives it. Fixed in the same commit as Defect 14.
+
 **Also noted here:** repro.sh does not recreate the harness
 environment, so a program with environment leaves can take a different
 path under it (seed 90320 exits 92 via an env-guarded exit in a plain
