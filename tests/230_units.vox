@@ -258,6 +258,104 @@ Print "loop words vs value nouns: {'words in common' of gen_environment_loop_wor
 Print "loop words vs value verbs: {'words in common' of gen_environment_loop_words and 'the value verbs'}".
 Print "loop words vs environment: {'words in common' of gen_environment_loop_words and gen_environment_words}".
 
+(Pool-vs-FIXED-binding disjointness - FUZZER_DEFECTS.md Defect 16. Every
+ row above checks two STATIC lists for a shared word. A FIXED binding is
+ not a list: it is a name a leaf expects to find ALREADY BOUND once the
+ manifest is built - gen_scratch_flag (gen_files.vox, gen_buffers.vox -
+ the scratch directory the harness supplies) and gen_reader_name /
+ gen_grid_sink_name (gen_misc.vox, gen_flow.vox - the flag-reader and
+ grid-sink calls). Each is drawn once per program and threaded by
+ variable rather than re-drawn, so there is no second list to diff it
+ against; the only way to prove the binding held is to build the
+ manifest, many times, and check what it actually produced.
+
+ 'gen program' builds the manifest and argv before it draws a single
+ statement, so a small budget is enough - these checks only read state
+ set in that first half. Every count below must read 0.)
+
+To 'count number equal to' with a list called 'the numbers' and a number called target.
+    a number called 'the hits' is 0.
+    a number called 'how many' is 'the numbers's length.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'how many',
+        a number called 'the candidate' is element 'the position' of 'the numbers',
+        If 'the candidate' is target then,
+            Set 'the hits' to 'the hits' add 1.
+        Set 'the position' to 'the position' add 1.
+    Return a number, 'the hits'.
+
+(The written name of whichever flag holds role 1, "" if none does - used
+ only after 'role ones' below has already confirmed there is exactly
+ one, so ambiguity here cannot hide a defect.)
+
+To 'the scratch role written name'.
+    a number called 'how many flags' is gen_flag_role's length.
+    a number called 'the position' is 1.
+    a text called 'the found name' is "".
+    While 'the position' is less than or equal to 'how many flags',
+        a number called 'the role' is element 'the position' of gen_flag_role,
+        If 'the role' is 1 then,
+            Set 'the found name' to element 'the position' of gen_flag_written_names.
+        Set 'the position' to 'the position' add 1.
+    Return a text, 'the found name'.
+
+a number called 'fixed binding trial' is 0.
+a number called 'file io trials' is 0.
+a number called 'unbound scratch flag' is 0.
+a number called 'scratch role miscount' is 0.
+a number called 'scratch role name mismatch' is 0.
+a number called 'scratch flag picked for argv stress' is 0.
+a number called 'reader equals sink' is 0.
+a number called 'reader in ordinary functions' is 0.
+a number called 'sink in ordinary functions' is 0.
+a number called 'reader in flag names' is 0.
+a number called 'sink in flag names' is 0.
+While 'fixed binding trial' is less than 1000,
+    'gen program' of 'fixed binding trial' and 3,
+    a number called 'role ones' is 'count number equal to' of gen_flag_role and 1,
+    (Flat, single-statement Ifs throughout this body on purpose - note
+     6b's own hazard: a multi-statement If closed with one period early
+     leaves a later If nested inside it, and if that later If's condition
+     is false on trial 0 (deterministic per seed), the loop's own
+     increment below can end up skipped every single time, which is an
+     infinite loop, not a wrong count. Every check here repeats its
+     guard condition instead of nesting under one.)
+    If gen_does_file_io then, Set 'file io trials' to 'file io trials' add 1.
+    If gen_does_file_io is false and 'role ones' is not 0 then, Set 'scratch role miscount' to 'scratch role miscount' add 1.
+    If gen_does_file_io and gen_scratch_flag is empty then, Set 'unbound scratch flag' to 'unbound scratch flag' add 1.
+    If gen_does_file_io and 'role ones' is not 1 then, Set 'scratch role miscount' to 'scratch role miscount' add 1.
+    a text called 'the scratch written name' is 'the scratch role written name',
+    If gen_does_file_io and 'the scratch written name' is not gen_scratch_flag then, Set 'scratch role name mismatch' to 'scratch role name mismatch' add 1.
+    a number called 'the text flag role' is 0,
+    If gen_text_flag is not 0 then, Set 'the text flag role' to element gen_text_flag of gen_flag_role.
+    If 'the text flag role' is 1 then, Set 'scratch flag picked for argv stress' to 'scratch flag picked for argv stress' add 1.
+    a number called 'the number flag role' is 0,
+    If gen_number_flag is not 0 then, Set 'the number flag role' to element gen_number_flag of gen_flag_role.
+    If 'the number flag role' is 1 then, Set 'scratch flag picked for argv stress' to 'scratch flag picked for argv stress' add 1.
+    a number called 'the boolean flag role' is 0,
+    If gen_boolean_flag is not 0 then, Set 'the boolean flag role' to element gen_boolean_flag of gen_flag_role.
+    If 'the boolean flag role' is 1 then, Set 'scratch flag picked for argv stress' to 'scratch flag picked for argv stress' add 1.
+    If gen_reader_name is gen_grid_sink_name then, Set 'reader equals sink' to 'reader equals sink' add 1.
+    a number called 'reader hits' is 'times a pool holds' of gen_function_written_names and gen_reader_name,
+    If 'reader hits' is not 0 then, Set 'reader in ordinary functions' to 'reader in ordinary functions' add 1.
+    a number called 'sink hits' is 'times a pool holds' of gen_function_written_names and gen_grid_sink_name,
+    If 'sink hits' is not 0 then, Set 'sink in ordinary functions' to 'sink in ordinary functions' add 1.
+    a number called 'reader flag hits' is 'times a pool holds' of gen_flag_written_names and gen_reader_name,
+    If 'reader flag hits' is not 0 then, Set 'reader in flag names' to 'reader in flag names' add 1.
+    a number called 'sink flag hits' is 'times a pool holds' of gen_flag_written_names and gen_grid_sink_name,
+    If 'sink flag hits' is not 0 then, Set 'sink in flag names' to 'sink in flag names' add 1.
+    Set 'fixed binding trial' to 'fixed binding trial' add 1.
+Print "fixed-binding trials: {'fixed binding trial'} file-io={'file io trials'}".
+Print "scratch flag unbound while file-io: {'unbound scratch flag'}".
+Print "scratch role count wrong: {'scratch role miscount'}".
+Print "scratch role written name mismatch: {'scratch role name mismatch'}".
+Print "scratch flag picked for argv stress: {'scratch flag picked for argv stress'}".
+Print "reader name equals grid sink name: {'reader equals sink'}".
+Print "reader name in ordinary functions: {'reader in ordinary functions'}".
+Print "grid sink name in ordinary functions: {'sink in ordinary functions'}".
+Print "reader name in flag names: {'reader in flag names'}".
+Print "grid sink name in flag names: {'sink in flag names'}".
+
 (No prelude word may CONTAIN one of tests/200_never_emitted.vox's banned
  needles. That guard scans generated source for the substring, so a name
  that merely embeds one trips it: "amount" contains "mount" and did,

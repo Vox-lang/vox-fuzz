@@ -174,15 +174,27 @@ To 'gen leaf file round trip' with a text called indent and a boolean called nes
     If gen_does_file_io is false then,
         'gen leaf print' of indent,
         Return a boolean, false.
+    (PROBE g3 / FUZZER_DEFECTS.md Defect 16: gen_scratch_flag is a FIXED
+     binding this leaf expects to already be threaded - the manifest
+     declares a scratch-role flag exactly when gen_does_file_io is true
+     (gen_manifest.vox's 'gen build manifest flags'), and sets it before
+     any leaf can run. If that ever failed, the path below would resolve
+     to a bare "/outN" outside the confined scratch directory, caught
+     only by the OS's write permission on "/" - the backstop PROCEDURE.md
+     rules out. Never emit that path; stand aside instead, loudly.)
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
     Set gen_file_ios to gen_file_ios add 1.
     Set gen_texts to gen_texts add 1.
     a number called n is gen_texts.
     a number called 'the payload' is 'rng below' of 100000.
     a number called 'the buffer size' is 'rng below' of 60 add 8.
     (The scratch flag's NAME is drawn per program (gen_manifest.vox), so
-     the path line interpolates whatever this program called it. It is
-     never empty here: the flag is declared exactly when gen_does_file_io
-     is true, which is what got this leaf past its own guard.)
+     the path line interpolates whatever this program called it. The
+     guard above is what makes "never empty here" true, rather than an
+     assumption resting only on the manifest's own comment.)
     a text called 'path line' is "a text called fp{n} is \"{{{gen_scratch_flag}}}/out{n}\"".
     a text called 'open write' is "open a file for writing called fw{n} at fp{n}".
     a text called 'write line' is "Write \"payload {'the payload'}\\n\" to fw{n}".

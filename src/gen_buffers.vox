@@ -632,6 +632,13 @@ To 'gen leaf buffer truncation' with a text called indent and a boolean called n
     If gen_does_file_io is false then,
         'gen leaf buffer properties' of indent and nested,
         Return a boolean, false.
+    (PROBE g3 / FUZZER_DEFECTS.md Defect 16: see gen_files.vox's matching
+     guard - never build a path from gen_scratch_flag without checking
+     the FIXED binding actually landed. Stand aside instead, loudly.)
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf buffer properties' of indent and nested,
+        Return a boolean, false.
     Set gen_file_ios to gen_file_ios add 1.
     a text called 'the stem' is 'gen buffer name'.
     a text called 'the name' is 'gen buffer reference' of 'the stem'.

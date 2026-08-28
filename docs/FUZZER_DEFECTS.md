@@ -1015,3 +1015,113 @@ language-inherent, not a fuzzer defect); byte-identical `program.vox`
 for every seed 900000–900199 between a binary built from this fix and
 one built from `origin/main` in a separate extract (`diff -r`, empty,
 exit 0).
+**FIXED 2026-08-28, with an open re-derivation gap — read the
+discrepancy note below before treating this as fully closed.**
+
+**Re-derived the source-level collision on all four proven seeds**
+before touching any code, both on `vox-fuzz` `22e5479` built against the
+vox `0.4.12` binary the campaign's own SEEDS.md row records: 100103
+draws `caption` (`caption is "-p" or "--caption", ...`, path
+`"{caption}/buffer2"`), 101434 draws `layby`, 101707 draws `coupon`
+(among two other ordinary flags in the same program — `voucher`,
+`legend` — proving the collision is with the SCRATCH role specifically,
+not just "any flag"), 101964 draws `subtitle`. All four match the
+ledger's account exactly.
+
+**The four seeds no longer reproduce a live finding, on any binary
+tried.** Solo reruns at budget 40 — on the unmodified `22e5479` build
+against both today's vox and the campaign's own `0.4.12` binary/coreasm
+(rebuilt from the `v0.4.12` tag to rule out a compiler-version
+difference), and on today's HEAD — all report 0 findings for all four
+seeds. An instrumented `22e5479` build (tracing `gen_scratch_argv` /
+`gen_scratch_flag` immediately before the child is exec'd) confirms the
+harness threads the scratch pair first on argv exactly as
+`loop_gen.vox`'s own comment says it should, for every one of the four.
+A partial 8-way concurrent re-run, mimicking the original stripe layout
+on the same `22e5479`/`0.4.12` pair, got roughly a third of the way
+through with no finding surfacing before it was stopped on a resource
+steer (the `22e5479` binary predates Defect 17's per-fragment
+allocation fix and leaks under sustained striping — an unrelated,
+already-known hazard, not this defect) — so concurrency as the trigger
+is neither confirmed nor ruled out; it was not re-attempted. The exact
+conditions that produced the original four findings were not recovered.
+Everything the current code does around the scratch binding was
+re-checked by hand against this outcome and found sound: the manifest
+excludes the scratch-role flag from the argv-stress builder's
+candidates (`gen_manifest.vox`'s `'gen manifest pick a flag of kind'`,
+present since the prelude was drawn, 2026-08-21 — predates this
+defect), the scratch pair is prepended to argv before any drawn shape
+can reach it (`loop_gen.vox`, also 2026-08-21), and every pool the
+scratch flag's word can come from is prime-length, so the per-program
+cycle's no-repeat guarantee actually holds (`gen_flag_words` is 29,
+`gen_function_words` is 37 — checked because the cycle's own comment
+says the guarantee depends on it and nothing had verified it).
+
+**Constructed a targeted reproduction instead** (PROCEDURE's fallback
+when a historical seed will not reproduce): compiled seed 100103's
+kept program and ran the binary directly WITHOUT its `--caption`
+argument, bypassing the harness rather than finding a harness bug.
+That reproduces the documented failure exactly — `ASSERT BUF-07:
+expected 12 got 0`, and no file lands anywhere because the interpolated
+path is the bare `/buffer2`, refused only by `/`'s write permission
+(confirmed absent afterward). This is real, hand-verified evidence of
+the hazard class the fix direction names: the confinement guarantee for
+both file leaves rests entirely on `gen_scratch_flag` being bound by
+the time they run, with nothing on the generator's own side checking
+that it held — an accidental backstop (kernel permissions) standing in
+for a guarantee that was never actually enforced anywhere in code, only
+asserted in a comment ("It is never empty here").
+
+**Fixed the enforcement gap, not a re-derivation of the trigger.**
+`gen_files.vox`'s `'gen leaf file round trip'` and `gen_buffers.vox`'s
+`'gen leaf buffer truncation'` — the only two leaves that interpolate
+`{gen_scratch_flag}` into a path — now check it themselves: if
+`gen_does_file_io` is true but `gen_scratch_flag` is empty, the leaf
+prints `PROBE g3` and falls back to the safe stand-in leaf instead of
+ever emitting a path built on the unbound name, converting "kernel
+permissions caught it by luck" into "the generator refuses to emit it."
+The other two FIXED-binding leaves in the codebase (`gen_reader_name`,
+`gen_grid_sink_name`, both `gen_manifest.vox`/drawn from
+`gen_function_words`) were already provably safe by construction
+(same-cycle, same-pool as ordinary functions) and needed no code
+change; `gen_grid_sink_local` is a function-LOCAL name (drawn from the
+parameter cycle, LANGUAGE.md:1692's separate member/local space), so it
+was never a candidate for this class of bug, matching how
+`gen_parameter_words` is already exempted from the pool-vs-pool checks
+above.
+
+`tests/230_units.vox` gained the pool-vs-FIXED-binding proof the fix
+direction asked for, generalised from the existing pool-vs-pool rows:
+since these names are not static lists, the proof runs 1000 seeds
+through `'gen program'` (the real manifest+argv path) and checks what
+it actually produced. Nine new rows, all reading 0: `gen_scratch_flag`
+is never empty while `gen_does_file_io` is true; exactly one flag ever
+carries role 1 and its written name always equals `gen_scratch_flag`;
+the argv-stress builder (`gen_text_flag`/`gen_number_flag`/
+`gen_boolean_flag`) never resolves to that flag; `gen_reader_name` never
+equals `gen_grid_sink_name`, and neither ever equals any ordinary
+function's or flag's written name. None of the 1000 trials printed
+`PROBE g3` either.
+
+**No pool word was removed and no draw was added or reordered** — the
+guards are plain `is empty` checks with no `'rng below'` call, so they
+consume nothing from the RNG stream. Seeds 900000–900199 at budget 40,
+`--keep`, generated on `origin/main` (`ef9dee2`) and on this branch:
+200/200 programs byte-identical, 0/0 findings both sides.
+
+`make build` + `./test.sh` (this worktree): 30/0, including the two
+local-only soak tests (`200_never_emitted`, `270_layout`).
+
+**Handed to Josj: the trigger for the original four findings is still
+open.** Either it needs the original 8-way concurrent layout to
+reproduce (untested past the partial, resource-stopped run above — a
+supervised, memory-bounded re-run under Defect 17's fix would be the
+next step, striped at or under core count per the SEEDS.md note on the
+19 oversubscription artifacts from the same campaign), or something
+about the original invocation — timeout, working directory, an
+intermediate generator state that predates `22e5479` and was never
+committed — differed from what could be reconstructed here. The fix
+above closes the hazard class regardless of which it turns out to be:
+even if the true trigger is still out there, the generator can no
+longer emit a path built on an unbound scratch name, and the new tests
+would catch a regression in the binding itself.
