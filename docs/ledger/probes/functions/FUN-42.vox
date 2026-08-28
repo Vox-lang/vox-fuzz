@@ -1,18 +1,20 @@
-(FUN-42 — (gap) LANGUAGE.md never says WHERE a function definition may
- stand. The compiler accepts one nested inside an `If` body and inside a
- `While` body, and HOISTS it: the body does not run when the block runs,
- and the name is callable from the top level afterwards. The generator
- currently forbids this to itself (src/gen_flow.vox:495-501 says "a
- function definition is only legal at the top level"), which is safe but
- stricter than the language — and being stricter than the language is
- exactly the kind of undeclared rule CLAUDE.md is about. Note the output:
- "nested in an If" and "nested in a While" appear only where they are
- CALLED, not where the blocks execute.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-42.vox -o p && ./p
+(FUN-42 — RESOLVED 2026-08-25 (vox bug #96, fixed 0.4.11). *(gap, as
+ originally written)* The manual was not specific about WHERE a function
+ definition may stand, and the compiler used to accept one nested inside
+ an `If` or `While` body and HOIST it: the body did not run when the
+ block ran, and the name was callable from the top level afterwards. The
+ manual now states the rule (LANGUAGE.md:757-769): definitions are
+ TOP-LEVEL ONLY — "a function is defined where a `thing` is defined: at
+ the top level" — and a definition reached while an `If`, a loop, or
+ another function's body is still open is a compile error. The compiler
+ enforces it (bug #96, fixed 0.4.11): a nested definition is refused
+ with "error: A function is defined at the top level, like a thing". The
+ generator's own top-level-only rule (`src/gen_flow.vox:495-501`) is now
+ exactly the language's rule, no longer stricter than it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-42.vox -o p
  expected output:
-   blocks have run
-   nested in an If
-   nested in a While
+   error: A function is defined at the top level, like a thing
+   (a compile error — the program is refused, and never runs)
 )
 a number called g is 1.
 If g is 1 then,
@@ -26,5 +28,3 @@ While rounds is less than 1,
     Print "nested in a While".
 
 Print "blocks have run".
-'from an if'.
-'from a while'.

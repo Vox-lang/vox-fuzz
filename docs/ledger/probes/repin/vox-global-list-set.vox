@@ -2,42 +2,25 @@
  on 2026-08-22 — not a ledger row, recorded here because PROCEDURE.md
  section 5 says record, do not adjudicate.
 
- The claim it contradicts: LANGUAGE.md:773 — "Variables declared at top
- level are global and can be used inside functions."
- Not in the 0.4.10 register (#66-#91) — re-verified unchanged against
- 0.4.10, 2026-08-22: byte-identical diagnostic, still reproduces. (Not
- the same bug as functions.md Discrepancy 1 / vox #66, which was about
- a global's TYPE being read wrong from a forward-referencing function —
- that one is fixed. This is a distinct refusal, "Unknown variable",
- triggered by top-level `Set` + a function read, on collection types
- only.)
+ The claim it contradicted: LANGUAGE.md:773 — "Variables declared at top
+ level are global and can be used inside functions." Not in the 0.4.10
+ register (#66-#91) — re-verified unchanged against 0.4.10, 2026-08-22:
+ byte-identical diagnostic, still reproduced. (Not the same bug as
+ functions.md Discrepancy 1 / vox #66, which was about a global's TYPE
+ being read wrong from a forward-referencing function — that one is
+ fixed. This was a distinct refusal, "Unknown variable", triggered by
+ top-level `Set` + a function read, on collection types only.)
 
- What happens: a global `list` (or `map`) that a FUNCTION reads cannot
- ALSO be reassigned by a top-level `Set`. The program below is refused,
- and the error points at the declaration on line 1 rather than at either
- use. Narrowed by hand:
-
-   - `append` to the global from inside a function: fine.
-   - `Set` on the global from INSIDE a function: fine.
-   - `Set` on the global at top level, no function reading it: fine.
-   - the same shape with a `text` global: fine, prints "new".
-   - a `map` global behaves exactly like the `list` one.
-
- So the trigger is precisely "top-level Set + a function that reads it",
- for the two collection types. LANGUAGE.md:584 (Assignment) and
- LANGUAGE.md:773 (Function Scope) both describe the two halves as
- ordinary, and neither says a collection is different.
-
- NOT adjudicated: it may be that a global collection's storage is meant
- to be rebound only through the paths that keep the callers' pointers
- valid, and that this diagnostic is a clumsy way of saying so. A human
- decides. The tool works around it by doing the assignment inside a
- function ('load the manuals' in scripts/repin-citations.vox).
-
- Ran: VOX_CORE_PATH=../vox/coreasm ../vox/target/release/vox docs/ledger/probes/repin/vox-global-list-set.vox -o p
+ RESOLVED 2026-08-25 — vox bug #92, fixed 0.4.13: a top-level `Set` on a
+ global `list` (or `map`) that a function reads is now legal — the
+ binding stays in scope, and the function sees the new value. The program
+ below compiles and prints "1", exactly what LANGUAGE.md:773 promises
+ ("variables declared at top level are global and can be used inside
+ functions"). Re-recorded to the current behavior: the probe now asserts
+ the value the manual promises instead of the old refusal.
+ Ran: VOX_CORE_PATH=../vox/coreasm ../vox/target/release/vox docs/ledger/probes/repin/vox-global-list-set.vox -o p && ./p
  expected output:
-   error: Unknown variable: xs
-   (a compile error — the program is refused, and never runs)
+   1
 )
 a list called xs is [].
 
