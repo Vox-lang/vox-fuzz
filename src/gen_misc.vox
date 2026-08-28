@@ -1,5 +1,19 @@
 a number called gen_envs is 0.
 
+(Scratch for 'gen environment variable name unset from': a byte-view of
+ the source expression it is handed, an accumulator for the name bytes
+ it pulls out, and the one-byte relay 'append' needs to move a single
+ byte into that accumulator. Program level and 'clear'ed per call
+ (Defect 17) - a fresh declaration per call is never freed until program
+ exit, so the version of this function that declared these locally cost
+ one allocation per byte of the name, unbounded over a campaign.)
+
+a buffer called 'the unset name source view' is "".
+
+a buffer called 'the unset name bytes' is "".
+
+a buffer called 'one unset name byte' is 1 bytes in size.
+
 (How many flag schemas this program declared. Kept because loop_gen and
  the tests report on it; it is no longer a NAME - names come off the
  manifest (gen_manifest.vox), which is what let the flag block stop
@@ -313,13 +327,14 @@ To 'gen leaf environment lookup' with a text called indent and a boolean called 
  Byte arithmetic on a text the generator wrote itself a moment ago.)
 
 To 'gen environment variable name unset from' with a text called 'the source'.
-    a buffer called 'the source bytes' is "{'the source'}".
-    a number called 'the byte count' is 'the source bytes's size.
-    a text called 'the name so far' is "".
+    clear 'the unset name source view'.
+    append 'the source' to 'the unset name source view'.
+    a number called 'the byte count' is 'the unset name source view's size.
+    clear 'the unset name bytes'.
     a number called 'the position' is 1.
     a boolean called 'inside the quotes' is false.
     While 'the position' is less than or equal to 'the byte count',
-        a number called 'the byte here' is byte 'the position' of 'the source bytes',
+        a number called 'the byte here' is byte 'the position' of 'the unset name source view',
         (Three flat Ifs, not one nested pair: a nested If closed by a
          single period leaves its parent open, and the increment below
          would fall inside it - the loop then never advances. Found by
@@ -329,11 +344,10 @@ To 'gen environment variable name unset from' with a text called 'the source'.
         If 'the byte here' is 34 and 'inside the quotes' is false then,
             Set 'inside the quotes' to true.
         If 'the byte here' is not 34 and 'inside the quotes' then,
-            a buffer called 'the one byte' is 1 bytes in size,
-            Set byte 1 of 'the one byte' to 'the byte here',
-            Set 'the name so far' to "{'the name so far'}{'the one byte'}".
+            Set byte 1 of 'one unset name byte' to 'the byte here',
+            append 'one unset name byte' to 'the unset name bytes'.
         Set 'the position' to 'the position' add 1.
-    Return a text, 'the name so far'.
+    Return a text, 'the unset name bytes' as text.
 
 (ENV-10, ENV-11: `If the environment variable "NAME" exists then,` is a
  predicate (LANGUAGE.md:4734-4739). Two readings of it on one name must

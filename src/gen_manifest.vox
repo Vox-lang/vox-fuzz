@@ -347,24 +347,34 @@ To 'gen stride for' with a number called 'how many words'.
 
 (A long alias from a phrase: spaces become hyphens behind a `--`. Two
  flags in one program have distinct phrases, so their aliases are
- distinct too. Hand-verified that `--the-caption` parses and matches.)
+ distinct too. Hand-verified that `--the-caption` parses and matches.
+
+ The three buffers below are program level and 'clear'ed per call
+ (Defect 17): declared locally, each is one more 4 KB allocation per
+ call never freed until program exit.)
+
+a buffer called 'the dashed alias source view' is "".
+
+a buffer called 'the dashed alias bytes' is "--".
+
+a buffer called 'one dashed alias byte' is " ".
 
 To 'gen dashed alias' with a text called phrase.
-    a buffer called 'the phrase bytes' is "{phrase}".
-    a buffer called 'the alias bytes' is "--".
-    a buffer called 'one byte' is " ".
-    a number called 'the byte count' is 'the phrase bytes's size.
+    clear 'the dashed alias source view'.
+    append phrase to 'the dashed alias source view'.
+    clear 'the dashed alias bytes'.
+    append "--" to 'the dashed alias bytes'.
+    a number called 'the byte count' is 'the dashed alias source view's size.
     a number called 'the position' is 1.
     While 'the position' is less than or equal to 'the byte count',
-        a number called 'the byte here' is byte 'the position' of 'the phrase bytes',
+        a number called 'the byte here' is byte 'the position' of 'the dashed alias source view',
         a number called 'the written byte' is 'the byte here',
         If 'the byte here' is 32 then,
             Set 'the written byte' to 45.
-        Set byte 1 of 'one byte' to 'the written byte',
-        append 'one byte' to 'the alias bytes',
+        Set byte 1 of 'one dashed alias byte' to 'the written byte',
+        append 'one dashed alias byte' to 'the dashed alias bytes',
         Set 'the position' to 'the position' add 1.
-    a text called 'the alias' is 'the alias bytes' as text.
-    Return a text, 'the alias'.
+    Return a text, 'the dashed alias bytes' as text.
 
 (One unspent letter, as a short alias. The walk takes a coprime stride
  over the alphabet so no two flags in a program share a letter and the

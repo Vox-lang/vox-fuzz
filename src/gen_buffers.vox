@@ -1,5 +1,16 @@
 a number called gen_bufs is 0.
 
+(Scratch views/accumulators, program level and 'clear'ed per call
+ (Defect 17): a fresh declaration per call is never freed until program
+ exit, so a per-call buffer is one 4 KB allocation per call, unbounded
+ over a campaign - regardless of how few bytes it actually holds.)
+
+a buffer called 'the one-word check view' is "".
+
+a buffer called 'the buffer reference view' is "".
+
+a buffer called 'the buffer filler bytes' is "".
+
 (Buffers: declaration, a write, and a read - the language's own claim
  is that out-of-bounds access sets the error flag and returns 0 rather
  than crashing, so the oob variant is what actually puts that claim on
@@ -99,12 +110,13 @@ To 'gen buffer names reset'.
  requires the single quotes only when the name contains a space.)
 
 To 'gen name is one word' with a text called 'the name'.
-    a buffer called 'the name bytes' is "{'the name'}".
-    a number called 'the byte count' is 'the name bytes's size.
+    clear 'the one-word check view'.
+    append 'the name' to 'the one-word check view'.
+    a number called 'the byte count' is 'the one-word check view's size.
     a number called 'the position' is 1.
     a boolean called 'a space was seen' is false.
     While 'the position' is less than or equal to 'the byte count',
-        a number called 'the byte here' is byte 'the position' of 'the name bytes',
+        a number called 'the byte here' is byte 'the position' of 'the one-word check view',
         If 'the byte here' is 32 then,
             Set 'a space was seen' to true.
         Set 'the position' to 'the position' add 1.
@@ -171,8 +183,9 @@ To 'gen buffer name'.
  opened with one.)
 
 To 'gen buffer reference' with a text called 'the stem'.
-    a buffer called 'the stem bytes' is "{'the stem'}".
-    a number called 'the first byte' is byte 1 of 'the stem bytes'.
+    clear 'the buffer reference view'.
+    append 'the stem' to 'the buffer reference view'.
+    a number called 'the first byte' is byte 1 of 'the buffer reference view'.
     If 'the first byte' is 39 then,
         Return a text, "{'the stem'}'".
     Return a text, 'the stem'.
@@ -327,14 +340,13 @@ To 'gen assert false' with a text called 'the row' and a text called 'the subjec
  what was counted.)
 
 To 'gen buffer filler' with a number called 'how many bytes'.
-    a text called 'the filler' is "".
+    clear 'the buffer filler bytes'.
     a number called 'the written' is 0.
     While 'the written' is less than 'how many bytes',
         a number called 'the pick' is 'rng below' of 36,
-        a text called 'the character' is 'gen digit for value' of 'the pick',
-        Set 'the filler' to "{'the filler'}{'the character'}",
+        append "{'gen digit for value' of 'the pick'}" to 'the buffer filler bytes',
         Set 'the written' to 'the written' add 1.
-    Return a text, 'the filler'.
+    Return a text, 'the buffer filler bytes' as text.
 
 (An unrelated statement, for the gap between a declaration and the use
  of it. LANGUAGE.md nowhere requires a buffer to be used where it is

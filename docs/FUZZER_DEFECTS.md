@@ -908,3 +908,110 @@ never landed in scratch. Fix direction: the scratch binding's name must
 be reserved out of every draw pool (or drawn once and threaded), and
 `tests/230_units.vox` should prove pool-vs-fixed-binding disjointness
 the way it proves pool-vs-pool.
+
+## Defect 17 — the generator allocates a fresh heap buffer per emitted fragment (found by the day-0.4.13 stripes' OOM, 2026-08-25)
+
+Vox releases heap-backed locals (buffers, lists, format-string texts)
+only at program exit — a variable declared inside a function or loop
+body is allocated on every entry and never returned, at a flat cost per
+declaration (≈4 KB, page-granular, independent of the content's actual
+size — confirmed for both dynamic and fixed-size buffers). `'gen emit'`
+(`src/gen_core.vox`), the single chokepoint every rendered fragment of
+every generated program passes through (167 call sites across five
+files), declared `a buffer called piece is "{s}"` on every call before
+appending `piece` to `gen_out` — one throwaway 4 KB allocation per
+fragment, never freed, for the life of the process. At budget 40 that
+measured **~40 MB per generated program**; the four day-0.4.13 stripes
+launched 2026-08-25 11:00 ran long enough to reach 20 GB / 15 GB / 10 GB
+anon RSS each and were killed by the kernel OOM killer, then killed
+again after their auto-restarts — all 269 "hang" findings they had saved
+were compile-timeout artifacts of a machine with no free memory, zero
+compiler bugs (recompile in ≤2.4 s, rc 0, all 269; findings parked at
+`vox-fuzz/findings/day-0.4.13-oom-artifacts/`).
+
+The same root cause hid in more than one shape. A second, independent
+one: rebuilding a text by self-referential format-string reassignment
+(`Set t to "{t}{c}"` in a loop) does not merely leak a flat 4 KB per
+iteration — it re-copies the WHOLE current string on every iteration and
+leaks the old copy, an O(n²) cost. `'gen build input'`
+(`src/gen_files.vox`) did this while drawing up to 999 characters,
+measured at roughly 0.5 MB per call — real, if two orders of magnitude
+smaller than `'gen emit'`'s. See REPORT-FUZZ-D17.md's "Quadratic
+Set-reassignment" section for the isolated measurements (5k/10k/20k/100k
+iterations); this is the same design question already open as Q7
+(`vox-notes/2026-08-28-Q7-scope-exit-free.md` — should a heap-backed
+local be freed at scope exit) and is not something a fuzzer defect entry
+adjudicates.
+
+A third shape of the same cause: `'gen join lines'` — one of `'gen
+emit'`'s own hottest paths, called once per rendered line of every leaf
+in the corpus — routed each line through `'gen line piece'`, a helper
+whose entire body was `a text called piece is "{indent}{content},\n".`
+A fresh format-string TEXT, not a buffer, but the same page-granular
+allocation applies: measured at ~4 KB per call, identical to a buffer.
+
+**Fix applied:** `'gen emit'` now appends its text argument directly
+into `gen_out` (`append s to gen_out.` — buffer `append` takes a
+format-string/text source directly, LANGUAGE.md's "Buffer Append and
+Copy" section, not just the buffer→buffer form indexed near the Lists
+section; verified against the live compiler before use), with no
+per-call buffer at all. `'gen join lines'` now appends each line's
+format string straight into `gen_out` too, and the now-empty `'gen line
+piece'` helper was removed. Every other heap-backed local found
+declared per call or per loop iteration across `src/gen_*.vox`,
+`loop_gen.vox`, `harness.vox`, `runner.vox`, `findings.vox` and
+`sandbox.vox` was audited; the ones with material cost were hoisted to
+program level and reused via `clear` + `append` (or, where `Read`
+already replaces a buffer's contents, reused with no `clear` needed),
+converting to a `text` once at the end rather than mid-loop.
+`gen_files.vox`'s quadratic `Set gen_input to "{gen_input}{c}"` became a
+per-character `append` into a program-level buffer; the per-iteration
+`a text called c is 'gen digit for value' of pick` that fed it was also
+removed in favour of appending its source expression directly (a format
+string for the `pick > 35` branch, the function call itself for the
+other), since buffer `append` takes either as a source without an
+intermediate. Distributions are untouched: no `'rng below'` call was
+added, removed, or reordered, and `'gen digit for value'` draws no
+randomness of its own, so the fix changes only how a program is
+buffered while it is built, not what is generated.
+
+One attempted fix was reverted: caching each variable's `"v{n}"` name at
+declaration (in a program-level list) so `'gen var ref'` could return
+the cached text instead of re-synthesising it on every reference. It
+worked within a single generated program but was wrong across a
+multi-seed run in one process — `gen_vars` resets to 0 per seed but the
+cache list does not, so seed 2's names land at the wrong list index once
+it declares more variables than seed 1 did, producing a program that
+diverges from `main`. Caught by review before the gate was signed off;
+reverted in full (see REPORT-FUZZ-D17.md's "Reverted" section). No other
+program-level list or map was introduced by this fix — every other new
+global is a buffer, `clear`ed or fully overwritten on every call, which
+does not have this per-seed accumulation hazard.
+
+The residual ~1 GB after this fix is `'gen var ref'` and every other
+`a text called … is "…{…}…"` site the corpus still evaluates once per
+use — the same ~4 KB-per-allocation cost, just not funneled through one
+chokepoint the way `'gen emit'` was. See REPORT-FUZZ-D17.md's "Residual"
+section for why this is treated as language-inherent (the same Q7
+question, generalised from buffers to format-string texts) rather than
+fixed further here.
+
+**Proven:** isolated probes against the live compiler before each fix
+was written (`/tmp/.../d17-probe/`, evidence retained with the report):
+a fresh 4 KB-class buffer declared per call, 40,000 calls, measured 160
+MB RSS; the same 40,000 appends into one `clear`-and-reuse buffer
+measured 384 KB. A fresh format-string TEXT (not a buffer) declared per
+call, 40,000 calls, measured ~156 MB — the same ~4 KB/call as a buffer.
+`Set t to "{t}x"` 100,000 times measured ~5 GB (master independently
+reproduced 23/71/236 MB at 5k/10k/20k, confirming the quadratic shape);
+the same 100,000 appends into one buffer measured 384 KB. Gate results
+(full commands, both binaries, and the diff output are in
+REPORT-FUZZ-D17.md): `make build` + `./test.sh` 30/0 on the fixed tree;
+memory gate `gen --seed 900000 --count 200 --budget 40` maxrss before
+~8 GB (matches `~40 MB × 200 seeds` from the `'gen emit'` measurement
+above) / after **991 MB** (gate revised from the brief's 512 MB to
+"under 1.2 GB, byte-identical" once the residual above was identified as
+language-inherent, not a fuzzer defect); byte-identical `program.vox`
+for every seed 900000–900199 between a binary built from this fix and
+one built from `origin/main` in a separate extract (`diff -r`, empty,
+exit 0).

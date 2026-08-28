@@ -1,5 +1,12 @@
 a number called gen_lists is 0.
 
+(Scratch view for 'phrase has a space', program level and 'clear'ed per
+ call (Defect 17): a fresh declaration per call is never freed until
+ program exit, so a per-call buffer is one 4 KB allocation per call,
+ unbounded over a campaign.)
+
+a buffer called 'the phrase space check view' is "".
+
 a number called gen_maps is 0.
 
 (Lists: declaration, append, and element access - in range and
@@ -238,12 +245,13 @@ To 'gen fresh verb'.
  came out of - a distinguishing word turns a bare noun into a phrase.)
 
 To 'phrase has a space' with a text called phrase.
-    a buffer called letters is "{phrase}".
+    clear 'the phrase space check view'.
+    append phrase to 'the phrase space check view'.
     a number called position is 1.
     a boolean called 'a space appears' is false.
-    a number called 'how long' is letters's length.
+    a number called 'how long' is 'the phrase space check view's length.
     While position is less than or equal to 'how long',
-        a number called 'the character code' is byte position of letters,
+        a number called 'the character code' is byte position of 'the phrase space check view',
         If 'the character code' is 32 then,
             Set 'a space appears' to true.
         Set position to position add 1.

@@ -13,6 +13,13 @@
 
 a text called gen_input is "".
 
+(Scratch accumulator for 'gen build input', program level and 'clear'ed
+ on entry (Defect 17): a function-local declaration here is never freed
+ until process exit, so a per-call buffer would still be one 4 KB
+ allocation per generated program, unbounded over a campaign.)
+
+a buffer called 'the built input' is "".
+
 a boolean called gen_reads_stdin is false.
 
 (Whether this program does real file I/O. The path comes in on the
@@ -194,7 +201,8 @@ To 'gen leaf file round trip' with a text called indent and a boolean called nes
  truncation path), embedded NULs (a C-string reader stops early, a
  length-bounded one does not — the distinction that buffer bugs live
  in), and a long line with no trailing newline.)
-(Input bytes, built as TEXT and appended — not written byte by byte.
+(Input bytes, appended into a dynamic buffer one character at a time —
+ not written byte by byte into a fixed one, and not rebuilt as TEXT.
 
  The obvious route, `Set byte N of buf to value` then `Write b to file`,
  is unavailable twice over. Writing a scalar to a file segfaults
@@ -204,18 +212,35 @@ To 'gen leaf file round trip' with a text called indent and a boolean called nes
  nothing. Buffer indexing is also 1-based, which cost a wrong bug report
  before it cost anything else.
 
- Appending text is the idiom gen_out already uses and is proven. The
- cost is that embedded NUL bytes are currently unreachable — a NUL
+ A dynamic buffer sidesteps both: `append` grows it, no index needed.
+ It also sidesteps a defect this function used to have (D17): rebuilding
+ `gen_input` by `Set gen_input to "{gen_input}{c}"` re-allocates the
+ WHOLE text on every character, an O(n^2) copy that measured ~5 GB of
+ leaked allocations for 100,000 one-byte appends against ~0.4 MB for the
+ same appends into one buffer, since a heap-backed variable is released
+ only at program exit and the old copy is never reachable again to free.
+ With `shape is 2` drawing up to 999 characters, the old form leaked on
+ the order of 0.5 MB per call - real, if smaller than 'gen emit's.
+
+ The cost is that embedded NUL bytes are currently unreachable — a NUL
  cannot be spelled inside a text literal — so the input alphabet is
  printable ASCII. That shape is worth having eventually, because a
  C-string reader stopping early where a length-bounded one does not is
  exactly where buffer bugs live; it needs a byte-level write path that
- does not go through #40.)
+ does not go through #40.
+
+ Each character is appended straight from its source expression - a
+ format string for a digit above 35, 'gen digit for value's own text
+ otherwise - rather than bound to a local first: buffer `append` takes
+ a format-string source directly (LANGUAGE.md "Format Strings
+ Everywhere"), so the intermediate text bought nothing but one more
+ allocation per character.)
 
 To 'gen build input'.
-    Set gen_input to "".
+    clear 'the built input'.
     a number called shape is 'rng below' of 5.
     If shape is 0 then,
+        Set gen_input to 'the built input' as text,
         Return a number, 0.
     a number called 'how many' is 'rng below' of 40 add 1.
     If shape is 2 then,
@@ -223,14 +248,16 @@ To 'gen build input'.
     a number called i is 0.
     While i is less than 'how many',
         a number called pick is 'rng below' of 62,
-        a text called c is 'gen digit for value' of pick,
         If pick is greater than 35 then,
-            Set c to "{pick}".
-        Set gen_input to "{gen_input}{c}",
+            append "{pick}" to 'the built input',
+        Otherwise,
+            append "{'gen digit for value' of pick}" to 'the built input'.
         Set i to i add 1.
     If shape is 4 then,
+        Set gen_input to 'the built input' as text,
         Return a number, 0.
-    Set gen_input to "{gen_input}\n".
+    append "\n" to 'the built input'.
+    Set gen_input to 'the built input' as text.
     Return a number, 0.
 
 To 'gen write input' with a text called path.
