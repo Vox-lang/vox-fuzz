@@ -1,6 +1,6 @@
 (D1 - Discrepancy 1 repro: a `time` FIELD takes zero with no initialiser,
  but a `time` VARIABLE must be initialised.
- LANGUAGE.md:932 "A field without a default takes its type's zero value" and
+ LANGUAGE.md:933 "A field without a default takes its type's zero value" and
  :851 "A field may be number, float, boolean, time" together say a time
  field has a zero. LANGUAGE.md:547 lists `time` as "not supported" on a bare
  `Create`, and :513-516 says "A time variable must be initialized" because

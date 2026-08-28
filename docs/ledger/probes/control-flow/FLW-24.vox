@@ -1,4 +1,4 @@
-(FLW-24: the manual's single-line example (LANGUAGE.md:2287) verbatim.
+(FLW-24: the manual's single-line example (LANGUAGE.md:2288) verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-24.vox -o p && ./p
  expected output:
    hello

@@ -1,5 +1,5 @@
 (TIM-55 - the time and timer property words are reserved variable names,
- which the manual's Reserved Aliases section (LANGUAGE.md:5004-5010) never
+ which the manual's Reserved Aliases section (LANGUAGE.md:5070-5148) never
  says. `duration` is shown here; hand-run, the same rejection covers
  `elapsed`, `running`, `timer`, `stopwatch`, `time`, `unix`, `hour`,
  `minute`, `day`, `month`, `year`, `wait`, `sleep`, `milliseconds`, `ms`

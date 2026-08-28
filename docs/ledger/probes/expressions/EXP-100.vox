@@ -1,4 +1,4 @@
-(EXP-100: undocumented precision on LANGUAGE.md:2083 - a base outside 2 to 36
+(EXP-100: undocumented precision on LANGUAGE.md:2084 - a base outside 2 to 36
  is rejected at COMPILE time, not at run time, and not silently clamped.
  The manual says which bases are supported but never says what happens to an
  unsupported one, so this row records the answer rather than a claim. It also

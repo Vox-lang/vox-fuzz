@@ -1,4 +1,4 @@
-(EXP-85: the casting Examples block at LANGUAGE.md:2111-2129 compiles verbatim
+(EXP-85: the casting Examples block at LANGUAGE.md:2112-2130 compiles verbatim
  and gives the documented results.
  Also covers: EXP-86, the inline cast `Print 3.14159 as a number`, which is the
  block's last line and the one form that casts in argument position rather

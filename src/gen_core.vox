@@ -123,7 +123,7 @@ To 'gen extreme float'.
  leaves that declare a value as quoted text, retype it to float, and
  assert it against the bare literal. 'gen extreme float' is the right
  draw for a leaf that only EXERCISES the float, but those two routes
- disagree on it: LANGUAGE.md:2065-2071 reads a source literal as the
+ disagree on it: LANGUAGE.md:2066-2072 reads a source literal as the
  nearest double of ALL its digits and a text as "the nearest float those
  eighteen digits describe", so a payload with more than 18 significant
  digits is parsed to two doubles one ulp apart, and a leaf that compares
@@ -418,7 +418,7 @@ To 'gen leaf assign' with a text called indent.
  arity, so neither does this.
 
  `of`, `with`, `on` and `to` all introduce arguments
- (LANGUAGE.md:1510) - all four hand-verified against 0.4.7 on a
+ (LANGUAGE.md:1511) - all four hand-verified against 0.4.7 on a
  two-parameter call - so which one appears is drawn. Whether the result
  is printed follows the function rather than the call site: `Print
  <call>` needs a value, and a function that only prints has none.)
@@ -1420,11 +1420,11 @@ To 'gen program' with a number called seed and a number called budget.
 (How a program stops. Three samenesses lived in the one line that used to
  write this, and not one of them had a citation.
 
- - The keyword. LANGUAGE.md:2350 ends the Program Termination section
+ - The keyword. LANGUAGE.md:2351 ends the Program Termination section
    with "Alternative keywords: `quit`, `terminate`", and the compiler
    takes each of them in either capitalisation. Six spellings, all six
    compiled and run against 0.4.9 before this was written.
- - Whether a code is written at all. LANGUAGE.md:2348: "Exit code
+ - Whether a code is written at all. LANGUAGE.md:2349: "Exit code
    defaults to 0 if not specified" - so `quit.` is a whole statement and
    the program exits 0. Verified.
  - Whether the program says anything at all. Nothing in the manual

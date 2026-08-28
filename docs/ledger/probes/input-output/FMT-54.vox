@@ -1,6 +1,6 @@
 (FMT-54 — a chain mixes `and if` with `but if` and both mean the same
  thing: first match wins. Hand-verified limit the manual's "Chain with
- `but if` or `and if`" (LANGUAGE.md:3468) does not state — the FIRST
+ `but if` or `and if`" (LANGUAGE.md:3471) does not state — the FIRST
  clause must be `but if`; opening with `and if` is a parse error
  ("Expected a statement, got Comma"). See Discrepancy 4.
  4 matches the second clause only; 6 matches the first.

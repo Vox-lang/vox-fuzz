@@ -1,4 +1,4 @@
-(OPR-16: `is less than` is a strict less-than (LANGUAGE.md:4874).
+(OPR-16: `is less than` is a strict less-than (LANGUAGE.md:4938).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-16.vox -o p && ./p
  expected output:
    less than fired

@@ -667,7 +667,7 @@ before it is measured:
   of merely tidier);
 - a period ends the statement unless it has a digit on both sides, where
   it is a decimal point (`3.14`; `3.` and `.5` are both parse errors —
-  LANGUAGE.md:1909 and `gen_literals.vox`), and a run of periods closing
+  LANGUAGE.md:1910 and `gen_literals.vox`), and a run of periods closing
   several clauses stays with the statement it ends;
 - string literals, parenthesised comments and quoted multi-word names
   are copied through untouched, by scanners that mirror `layout copy
@@ -830,7 +830,7 @@ the marker to START a line, and still reports the LAST match.
 VAL-12's retype-tracking leaf declares its payload **via text**
 (`a value called 'the sample' is "469046.3893743563967901442".`),
 retypes to float, then asserts the payload equals the bare 25-digit
-literal. LANGUAGE.md:2065-2071 gives the two routes different
+literal. LANGUAGE.md:2066-2072 gives the two routes different
 readings: a source literal parses to the nearest double of all its
 digits, a text read to "the nearest float those eighteen digits
 describe". Whenever a drawn payload exceeds 18 significant digits and

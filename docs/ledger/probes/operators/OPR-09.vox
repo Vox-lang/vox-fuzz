@@ -1,4 +1,4 @@
-(OPR-09: `mod` is an accepted spelling of modulo (LANGUAGE.md:4865).
+(OPR-09: `mod` is an accepted spelling of modulo (LANGUAGE.md:4929).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-09.vox -o p && ./p
  expected output:
    2

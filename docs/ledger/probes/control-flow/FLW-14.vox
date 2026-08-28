@@ -1,5 +1,5 @@
 (FLW-14: the manual's "loops inside functions" worked example
- (LANGUAGE.md:2240-2244) verbatim, plus a call site. Composite: a While
+ (LANGUAGE.md:2241-2245) verbatim, plus a call site. Composite: a While
  inside a function body, `is less than or equal to`, bare `total is total
  add i` assignment as a loop action, and `Return a number, total.` closing
  the function after the loop's own period. sum of 4 is 1+2+3+4.

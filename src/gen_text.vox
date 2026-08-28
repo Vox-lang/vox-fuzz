@@ -26,7 +26,7 @@ To 'gen digit for value' with a number called v.
     Return a text, d.
 
 To 'gen pick parse form' with a number called base.
-    (The six documented text-to-number forms, LANGUAGE.md:2019-2024. The
+    (The six documented text-to-number forms, LANGUAGE.md:2020-2025. The
      three named aliases are fixed-base, so they are only offered when the
      digits were generated for that base; the two base-N forms - spaced
      and fused, both documented and both real syntax - take any base 2-36,
@@ -48,7 +48,7 @@ To 'gen pick parse form' with a number called base.
     Return a text, 'the spaced form'.
 
 To 'gen pick format spec'.
-    (Number-to-text in a base, LANGUAGE.md:3321-3326 - the other
+    (Number-to-text in a base, LANGUAGE.md:3322-3327 - the other
      direction, and one Josj had to point out was even a thing. `b`
      renders bare while `x`/`X`/`o` carry 0x/0o prefixes, which is what
      the table documents.
@@ -157,7 +157,7 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
    `{13 multiply z}` rather than 52. Documented behaviour, not a defect -
    and the reason 'gen deep expr' grew a `grouped` parameter instead of
    this file growing a second expression builder.
- - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3328-3329
+ - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3329-3330
    says: `{255}` and `{255:x}` both fail with "Unknown variable: 255".
    A literal inside an EXPRESSION is fine - `{v1 add 5}`, `{5 add v1}`
    and `{v1 divide 7}` all compile and run - which is what makes 'gen
@@ -167,7 +167,7 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
    degenerate one-operand case can never reach a slot.
  - `<n> as text padded to 2`, which LANGUAGE.md's "Formatted Time
    Output" section uses in all three of its lines, does not compile
-   ("Unknown function: padded"). LANGUAGE.md:2168 documents the
+   ("Unknown function: padded"). LANGUAGE.md:2169 documents the
    zero-pad SPECIFIER as the way to do that same job, and that form
    works - so the specifier form is what 'gen leaf format types' emits.
    Reported as a documentation defect, not worked around silently.
@@ -322,7 +322,7 @@ To 'gen leaf format specifiers' with a text called indent and a boolean called n
         append 'print field hex' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(Expressions inside slots - LANGUAGE.md:3189-3197. The two shapes that
+(Expressions inside slots - LANGUAGE.md:3190-3198. The two shapes that
  section names by example (`{x add y}`, `{x multiply y}`) plus its
  `{arguments's count}` line, a chained three-operand form, an arbitrarily
  deep flat chain from 'gen deep expr', and a specifier applied to an
@@ -372,7 +372,7 @@ To 'gen leaf format expression' with a text called indent and a boolean called n
     a list called 'the lines' is ['x decl', 'y decl', 'print sum', 'print product', 'print chain', 'print deep', 'print count', 'held decl', 'print held'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(Format strings as VALUES - LANGUAGE.md:3199-3222 and 3076-3090. Every
+(Format strings as VALUES - LANGUAGE.md:3200-3223 and 3076-3090. Every
  sink those two sections name that this generator can reach safely:
 
  - a text initialized from a format string over a BUFFER's contents,
@@ -484,9 +484,9 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
  of that question.
 
  Also the "Formatted Time Output" capability, in the spelling that
- actually compiles. LANGUAGE.md:4592-4600 shows `now's hour as text
+ actually compiles. LANGUAGE.md:4656-4664 shows `now's hour as text
  padded to 2`, which does not exist ("Unknown function: padded");
- LANGUAGE.md:2168 shows `"{h:02}"` for the same job, which does.
+ LANGUAGE.md:2169 shows `"{h:02}"` for the same job, which does.
  The result is asserted rather than printed: an hour zero-padded to 2 is
  two characters whatever the clock says, so the program's output stays
  the same across runs while the formatting is still genuinely exercised.

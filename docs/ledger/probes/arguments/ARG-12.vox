@@ -1,5 +1,5 @@
 (ARG-12 — the Checking if Arguments Were Provided example
- (LANGUAGE.md:4654-4656), verbatim: `arguments's empty` used directly as
+ (LANGUAGE.md:4718-4720), verbatim: `arguments's empty` used directly as
  an If condition, with no comparison. Run with no arguments, so the
  branch is taken. The Otherwise arm is this probe's own addition, so
  that the recorded block proves which arm ran rather than proving only

@@ -1,4 +1,4 @@
-(D1 - Discrepancy 1 repro: LANGUAGE.md:4884 lists `isn't` and `aren't` as
+(D1 - Discrepancy 1 repro: LANGUAGE.md:4948 lists `isn't` and `aren't` as
  accepted spellings of `not`. On 0.4.9 and earlier neither lexed.
  src/lexer/scan.rs:360 mapped "isn't" | "aren't" | "doesn't" | "don't" to
  Token::Not, so the intent was in the compiler - but the scanner split

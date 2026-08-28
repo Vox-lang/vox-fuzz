@@ -21,7 +21,7 @@ vox v0.4.2 By Josjuar Lister 2026
 
 --- ADJUDICATION (master + language lawyer, 2026-08-18) ---
 NOT A COMPILER BUG. A body-level Return closes the function body - the
-formal grammar says so (LANGUAGE.md:5553/:5567) though the prose denies
+formal grammar says so (LANGUAGE.md:5701/:5715) though the prose denies
 it (:88). The statements after the Return were promoted to top level,
 and the second Return correctly errored there. Filed instead as: doc gap
 + diagnostic defect (no location, no hint), vox plan 318 items 2 and 4.
