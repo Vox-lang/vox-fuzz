@@ -1,5 +1,12 @@
 a number called gen_lists is 0.
 
+(Scratch view for 'phrase has a space', program level and 'clear'ed per
+ call (Defect 17): a fresh declaration per call is never freed until
+ program exit, so a per-call buffer is one 4 KB allocation per call,
+ unbounded over a campaign.)
+
+a buffer called 'the phrase space check view' is "".
+
 a number called gen_maps is 0.
 
 (Lists: declaration, append, and element access - in range and
@@ -125,7 +132,7 @@ To 'gen leaf list mixed' with a text called indent and a boolean called nested.
 
  Every word here is a TOP-LEVEL declaration in a generated program, so
  this list must stay DISJOINT from every other pool spending into Vox's
- one identifier space (LANGUAGE.md:1661) - the buffer words, the
+ one identifier space (LANGUAGE.md:1662) - the buffer words, the
  environment words, and the manifest's type, function and flag words.
  tests/230_units.vox counts every pairing, which is what catches a
  collision that would otherwise be a rare seed-dependent compile
@@ -238,12 +245,13 @@ To 'gen fresh verb'.
  came out of - a distinguishing word turns a bare noun into a phrase.)
 
 To 'phrase has a space' with a text called phrase.
-    a buffer called letters is "{phrase}".
+    clear 'the phrase space check view'.
+    append phrase to 'the phrase space check view'.
     a number called position is 1.
     a boolean called 'a space appears' is false.
-    a number called 'how long' is letters's length.
+    a number called 'how long' is 'the phrase space check view's length.
     While position is less than or equal to 'how long',
-        a number called 'the character code' is byte position of letters,
+        a number called 'the character code' is byte position of 'the phrase space check view',
         If 'the character code' is 32 then,
             Set 'a space appears' to true.
         Set position to position add 1.
@@ -278,7 +286,7 @@ To 'gen possessive name' with a text called phrase.
     a text called 'the plain possessive' is "{phrase}'s".
     Return a text, 'the plain possessive'.
 
-(VAL-06 in passing: `value` is not reserved (LANGUAGE.md:2609), so it is
+(VAL-06 in passing: `value` is not reserved (LANGUAGE.md:2610), so it is
  a legal parameter name and the name-pool must not blacklist it. A
  parameter is local to its own function, so this competes with nothing -
  hand-verified that a function taking `a value called value` and a
@@ -293,7 +301,7 @@ To 'gen value parameter name'.
     a text called 'an ordinary name' is 'gen fresh noun'.
     Return a text, 'an ordinary name'.
 
-(The seven runtime tags a `value` can carry, as LANGUAGE.md:2675 lists
+(The seven runtime tags a `value` can carry, as LANGUAGE.md:2676 lists
  them: 0 number, 1 text, 2 float, 3 boolean, 4 list, 5 map, 6 nothing.
  `nothing` is the odd one out - there is no `is a nothing` predicate
  (VAL-25), so it matches no branch and lands in Otherwise.)
@@ -304,7 +312,7 @@ To 'gen tag predicate' with a number called tag.
     If tag is 1 then,
         Return a text, "a text".
     If tag is 2 then,
-        (LANGUAGE.md:2639 gives `float` and `decimal` as the same target,
+        (LANGUAGE.md:2640 gives `float` and `decimal` as the same target,
          so neither spelling may be the one this generator always picks.)
         a number called 'the spelling' is 'rng below' of 2,
         If 'the spelling' is 0 then,
@@ -452,7 +460,7 @@ To 'gen value payload' with a number called tag.
     If tag is 5 then,
         a text called 'a map literal' is 'gen map payload',
         Return a text, 'a map literal'.
-    (LANGUAGE.md:2722 - all three spellings produce the identical value,
+    (LANGUAGE.md:2723 - all three spellings produce the identical value,
      so picking one of them always would be an undeclared rule.)
     a number called 'the absent spelling' is 'rng below' of 3.
     If 'the absent spelling' is 0 then,
@@ -499,7 +507,7 @@ To 'gen tag other than' with a number called 'the forbidden tag'.
     Return a number, 'a tag'.
 
 (The same draw restricted to the six tags a predicate can name -
- `nothing` matches none of them (LANGUAGE.md:2862), so a leaf that has
+ `nothing` matches none of them (LANGUAGE.md:2863), so a leaf that has
  to ASSERT a tag cannot be handed one.)
 
 To 'gen taggable other than' with a number called 'the forbidden tag'.
@@ -528,7 +536,7 @@ To 'gen branch label' with a number called style and a text called 'the tag name
     a text called 'the found form' is "found {'the tag name'}".
     Return a text, 'the found form'.
 
-(VAL-03 (LANGUAGE.md:2580-2590): a `value` parameter dispatches on
+(VAL-03 (LANGUAGE.md:2581-2591): a `value` parameter dispatches on
  `is a number` / `is a text` / `is a float` / `is a boolean` /
  `is a list` / `is a map` / Otherwise, and the tag it reads is the tag
  the caller passed.
@@ -546,7 +554,7 @@ To 'gen branch label' with a number called style and a text called 'the tag name
  argument there, a tag was lost across the call. The closing Otherwise
  asserts the other half - that every argument reached SOME branch -
  except when a `nothing` was passed, which matches no predicate at all
- (there is no `is a nothing`, LANGUAGE.md:2862) and legitimately lands
+ (there is no `is a nothing`, LANGUAGE.md:2863) and legitimately lands
  there.
 
  Branch order is rotated because nothing pins it: the six predicates are
@@ -633,7 +641,7 @@ To 'gen leaf value dispatch' with a text called indent and a boolean called nest
         'gen emit' of 'the call line',
         Set 'the argument position' to 'the argument position' add 1.
 
-(VAL-05 (LANGUAGE.md:2595-2607): a function returning `a value` carries
+(VAL-05 (LANGUAGE.md:2596-2608): a function returning `a value` carries
  the tag back out. The single-expression `Return a value, <expr>.` form
  on the `To` line is the ONLY form emitted here - the conditional return
  the manual warns about (VAL-19) segfaults on a tag mismatch, which is
@@ -683,7 +691,7 @@ To 'gen leaf value return' with a text called indent and a boolean called nested
         'gen value round trip' of indent and 'the function name',
         Set 'trips made' to 'trips made' add 1.
 
-(VAL-06 (LANGUAGE.md:2609-2612): `value` is recognized only where a type
+(VAL-06 (LANGUAGE.md:2610-2613): `value` is recognized only where a type
  is expected, so `a value is 5.` declares an ordinary variable NAMED
  value. Once per program - a second declaration would collide - and the
  same permission is what lets 'gen value parameter name' hand the word
@@ -729,7 +737,7 @@ To 'gen leaf value name' with a text called indent and a boolean called nested.
         a text called 'the print line' is "{indent}Print value.\n",
         'gen emit' of 'the print line'.
 
-(VAL-07 (LANGUAGE.md:2614-2624): a `value` local keeps its tag through
+(VAL-07 (LANGUAGE.md:2615-2625): a `value` local keeps its tag through
  reassignment, so `set r to 7.` retags a text-holding value as a number.
  Asserted in both directions - the new tag is there and the old one is
  gone - because a retag that merely ADDED a tag would pass the first
@@ -763,7 +771,7 @@ To 'gen leaf value retag' with a text called indent and a boolean called nested.
     'gen emit' of 'the old tag assertion'.
     'gen emit' of "{indent}Print {'the name'}.\n".
 
-(VAL-09 (LANGUAGE.md:2637-2643): `<valuevar> is a <type>.` in STATEMENT
+(VAL-09 (LANGUAGE.md:2638-2644): `<valuevar> is a <type>.` in STATEMENT
  position reads the runtime tag, converts, and stores the result back
  with the new tag - for number, float/decimal, text and boolean targets.
  The generator picks a payload it can convert itself, so it knows the
@@ -811,7 +819,7 @@ To 'gen leaf value retype' with a text called indent and a boolean called nested
     If 'the target' is 1 then,
         Set 'the comparison' to "\"{'the source payload'}\"".
     (After a successful retype the variable is tracked with the new type
-     for the rest of its lifetime (LANGUAGE.md:2663), so interpolating it
+     for the rest of its lifetime (LANGUAGE.md:2664), so interpolating it
      is faithful whatever the target was.)
     a text called 'what it holds' is "{{{'the name'}}}".
     a text called 'the declaration line' is "{indent}a value called {'the name'} is {'the source literal'}.\n".
@@ -822,7 +830,7 @@ To 'gen leaf value retype' with a text called indent and a boolean called nested
     'gen emit' of 'the assertion line'.
     'gen emit' of "{indent}Print {'the name'}.\n".
 
-(VAL-10 (LANGUAGE.md:2646-2649): the worked example - a text of numerals
+(VAL-10 (LANGUAGE.md:2647-2650): the worked example - a text of numerals
  retyped to a number is then TRACKED as a number, so arithmetic on it
  works and the sum is exactly what the generator computed. The manual's
  own figures are 357 and 1; neither is a rule, so both vary.)
@@ -843,7 +851,7 @@ To 'gen leaf value retype sum' with a text called indent and a boolean called ne
     'gen emit' of 'the assertion line'.
     'gen emit' of "{indent}Print {'the name'} add {addend}.\n".
 
-(VAL-11 (LANGUAGE.md:2651-2661): the SAME phrase in condition position
+(VAL-11 (LANGUAGE.md:2652-2662): the SAME phrase in condition position
  is a predicate, not a cast. The value keeps the tag and the payload it
  started with, so the leaf asserts both: the wrong-tag predicate is
  false, and nothing was converted behind its back.)
@@ -874,7 +882,7 @@ To 'gen leaf value predicate' with a text called indent and a boolean called nes
     'gen emit' of 'the payload assertion'.
     'gen emit' of "{indent}Print {'the name'}.\n".
 
-(VAL-13 (LANGUAGE.md:2773-2783): a conversion that cannot succeed sets
+(VAL-13 (LANGUAGE.md:2774-2784): a conversion that cannot succeed sets
  the error flag and leaves the variable as 0, and `On error` catches it.
  Both halves are asserted, because a runtime that silently left the text
  in place would still run the handler.)
@@ -904,7 +912,7 @@ To 'gen leaf value bad retype' with a text called indent and a boolean called ne
     'gen emit' of "{indent}Print {'the name'}.\n".
 
 (The capitalised type word the `type` property reports, one per runtime
- tag, as LANGUAGE.md:2769 lists them. It is a THIRD spelling of the same
+ tag, as LANGUAGE.md:2770 lists them. It is a THIRD spelling of the same
  seven tags - `gen tag predicate` writes the predicate's article form
  (`a number`), `gen bare tag name` the message form (`number`), and this
  the property's own form (`Number`) - because the three appear in three
@@ -926,7 +934,7 @@ To 'gen tag type name' with a number called tag.
     Return a text, "Nothing".
 
 (The whole text `'s type` must return for a tag - the word and the
- `(dynamic)` suffix LANGUAGE.md:2769 attaches to every one of them.)
+ `(dynamic)` suffix LANGUAGE.md:2770 attaches to every one of them.)
 
 To 'gen dynamic type text' with a number called tag.
     a text called 'the type word' is 'gen tag type name' of tag.
@@ -986,7 +994,7 @@ To 'gen drain the error flag' with a text called indent and a text called 'the w
 To 'gen open a function definition'.
     'gen emit' of "\n".
 
-(VAL-02 (LANGUAGE.md:2661-2663): the three declaration forms - the
+(VAL-02 (LANGUAGE.md:2662-2664): the three declaration forms - the
  parameter `with a value called x`, the return `Return a value, <expr>`,
  and the local `a value called r` - emitted in one program, with a value
  carried through all three and asserted on the way out.
@@ -1077,7 +1085,7 @@ To 'gen leaf value forms' with a text called indent and a boolean called nested.
         'gen emit' of 'the bare print'.
     'gen emit' of "{indent}Print {'the result name'}.\n".
 
-(VAL-04 (LANGUAGE.md:2677-2680): inside the callee a `value`
+(VAL-04 (LANGUAGE.md:2678-2681): inside the callee a `value`
  parameter's `is a ...` predicates read its tag and printing dispatches
  on it, and the parameter can be forwarded or appended back into a list
  with the tag preserved.
@@ -1091,7 +1099,7 @@ To 'gen leaf value forms' with a text called indent and a boolean called nested.
  compiler ever routed an argument to the wrong branch, the two disagree
  and the row fires.
 
- Every branch returns the same declared type, which LANGUAGE.md:2811
+ Every branch returns the same declared type, which LANGUAGE.md:2812
  says is what makes a conditionally-returning function carry a return
  type at all - the mixed-type case is VAL-32's limitation and is not
  emitted here.
@@ -1126,7 +1134,7 @@ To 'gen leaf value dispatch label' with a text called indent and a boolean calle
         a text called 'the branch line' is "{indent}    {opener} {'the parameter name'} is {'the predicate'}, Return a text, \"{'the label'}\".\n",
         'gen emit' of 'the branch line',
         Set offset to offset add 1.
-    (`nothing` matches no predicate (LANGUAGE.md:2845), so it is what
+    (`nothing` matches no predicate (LANGUAGE.md:2846), so it is what
      the closing branch is for and what the caller expects when it
      passes one.)
     a text called 'the absent label' is 'gen branch label' of 'the label style' and "nothing".
@@ -1209,7 +1217,7 @@ To 'gen leaf value forwarding' with a text called indent and a text called 'the 
         'gen emit' of 'the payload assertion'.
     'gen emit' of "{indent}Print {'the tally name'}.\n".
 
-(VAL-12 (LANGUAGE.md:2753-2755): after a successful in-place retype the
+(VAL-12 (LANGUAGE.md:2754-2756): after a successful in-place retype the
  variable is tracked with the NEW type for the rest of its lifetime, and
  retyping to the type it already holds is a no-op.
 
@@ -1223,7 +1231,7 @@ To 'gen leaf value forwarding' with a text called indent and a text called 'the 
  new type is a number - arithmetic on the variable works and gives the
  sum the generator computed. Arithmetic is the operation that is valid
  ONLY after the retype: on an untouched `value` it is a compile error
- (VAL-08, LANGUAGE.md:2711), so its succeeding here is the tracking
+ (VAL-08, LANGUAGE.md:2712), so its succeeding here is the tracking
  working.
 
  The no-op half asserts the payload is unchanged, the tag is unchanged,
@@ -1232,7 +1240,7 @@ To 'gen leaf value forwarding' with a text called indent and a text called 'the 
 
 To 'gen leaf value retype tracking' with a text called indent and a boolean called nested.
     (0 number, 1 text, 2 float, 3 boolean - the four retype targets
-     LANGUAGE.md:2722 names. The source is written as the text spelling
+     LANGUAGE.md:2723 names. The source is written as the text spelling
      of the answer, which is the manual's own worked shape and the only
      one where the generator knows the converted result exactly.)
     a number called 'the target' is 'rng below' of 4.
@@ -1295,11 +1303,11 @@ To 'gen leaf value retype tracking' with a text called indent and a boolean call
     'gen emit' of 'the payload assertion'.
     'gen emit' of "{indent}Print {'the possessive'} type.\n".
 
-(VAL-14 (LANGUAGE.md:2769-2776): the `type` property reads the runtime
+(VAL-14 (LANGUAGE.md:2770-2777): the `type` property reads the runtime
  tag and returns a text description with a `(dynamic)` suffix - `Text
  (dynamic)`, `Number (dynamic)`, `Float (dynamic)`, `Boolean (dynamic)`,
  `List (dynamic)`, `Map (dynamic)`, `Nothing (dynamic)`. The manual
- (LANGUAGE.md:2780) says those seven are the whole list, so a tag
+ (LANGUAGE.md:2781) says those seven are the whole list, so a tag
  outside them is itself a finding.
 
  The generator declares the value, so it knows the tag, so it asserts
@@ -1335,10 +1343,10 @@ To 'gen leaf value type property' with a text called indent and a boolean called
         Set 'tags shown' to 'tags shown' add 1.
     'gen emit' of "{indent}Print {'the last possessive'} type.\n".
 
-(VAL-21 (LANGUAGE.md:2827-2839): `nothing` is the absent value, and it
+(VAL-21 (LANGUAGE.md:2828-2840): `nothing` is the absent value, and it
  can sit in a list slot, a map value, or a `value` local. All three
  positions in one leaf, each read back into a `value` local and asserted
- with `is nothing` - which LANGUAGE.md:2845 says is the test, there
+ with `is nothing` - which LANGUAGE.md:2846 says is the test, there
  being no `is a nothing` predicate.
 
  A slot that is NOT the absent one is asserted too, in the opposite
@@ -1346,7 +1354,7 @@ To 'gen leaf value type property' with a text called indent and a boolean called
  pass the first three assertions and fail this one.
 
  All three spellings are drawn ('gen value payload' of tag 6 does the
- drawing), because LANGUAGE.md:2841 says `nothing`, `null` and `nil`
+ drawing), because LANGUAGE.md:2844 says `nothing`, `null` and `nil`
  produce the identical value and picking one always would be a rule
  nobody wrote. Which slot of the list and which key of the map hold the
  absent value are drawn for the same reason.)
@@ -1434,7 +1442,7 @@ To 'gen leaf absent value' with a text called indent and a boolean called nested
     'gen emit' of 'the local type assertion'.
     'gen emit' of "{indent}Print {'the list name'}.\n".
 
-(VAL-25 (LANGUAGE.md:2845-2851): `is nothing` and `is not nothing` are
+(VAL-25 (LANGUAGE.md:2846-2852): `is nothing` and `is not nothing` are
  the test, and they are an EQUALITY like `is true`, not a type
  predicate - there is no `is a nothing`.
 
@@ -1482,7 +1490,7 @@ To 'gen leaf absent test' with a text called indent and a boolean called nested.
     'gen emit' of 'the present denial'.
     'gen emit' of "{indent}Print {'the absent witness name'}.\n".
 
-(VAL-27 (LANGUAGE.md:2863-2872): reading a map key that was never set is
+(VAL-27 (LANGUAGE.md:2880-2884): reading a map key that was never set is
  an ERROR, not `nothing` - the read raises the error flag rather than
  silently handing back an absent value, so "the key is absent" and "the
  key holds nothing" stay distinguishable.
@@ -1533,7 +1541,7 @@ To 'gen leaf absent key' with a text called indent and a boolean called nested.
      error, and the generator's contract is legal Vox that should compile
      AND run (CLAUDE.md); emitting one would be a generator defect, not a
      finding. The compile-time half of this behaviour is undocumented -
-     LANGUAGE.md:2863 describes the missing read as a runtime error only -
+     LANGUAGE.md:2880 describes the missing read as a runtime error only -
      and is in the batch report as a candidate for the master.)
     a number called 'the receiver choice' is 'rng below' of 2.
     a text called 'the receiver type' is "a number".

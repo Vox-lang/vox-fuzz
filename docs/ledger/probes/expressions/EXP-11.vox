@@ -1,5 +1,5 @@
 (EXP-11: a text used directly in arithmetic is a compile error, not a runtime
- coercion - LANGUAGE.md:1911 and the restatement at :2025.
+ coercion - LANGUAGE.md:1912 and the restatement at :2025.
  The diagnostic names the variable and the fix, so a leaf emitting this form
  would fail the campaign at compile time rather than at run time.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-11.vox -o p && ./p

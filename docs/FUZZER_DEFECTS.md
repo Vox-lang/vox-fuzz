@@ -667,7 +667,7 @@ before it is measured:
   of merely tidier);
 - a period ends the statement unless it has a digit on both sides, where
   it is a decimal point (`3.14`; `3.` and `.5` are both parse errors —
-  LANGUAGE.md:1909 and `gen_literals.vox`), and a run of periods closing
+  LANGUAGE.md:1910 and `gen_literals.vox`), and a run of periods closing
   several clauses stays with the statement it ends;
 - string literals, parenthesised comments and quoted multi-word names
   are copied through untouched, by scanners that mirror `layout copy
@@ -830,7 +830,7 @@ the marker to START a line, and still reports the LAST match.
 VAL-12's retype-tracking leaf declares its payload **via text**
 (`a value called 'the sample' is "469046.3893743563967901442".`),
 retypes to float, then asserts the payload equals the bare 25-digit
-literal. LANGUAGE.md:2065-2071 gives the two routes different
+literal. LANGUAGE.md:2066-2072 gives the two routes different
 readings: a source literal parses to the nearest double of all its
 digits, a text read to "the nearest float those eighteen digits
 describe". Whenever a drawn payload exceeds 18 significant digits and
@@ -908,3 +908,220 @@ never landed in scratch. Fix direction: the scratch binding's name must
 be reserved out of every draw pool (or drawn once and threaded), and
 `tests/230_units.vox` should prove pool-vs-fixed-binding disjointness
 the way it proves pool-vs-pool.
+
+## Defect 17 — the generator allocates a fresh heap buffer per emitted fragment (found by the day-0.4.13 stripes' OOM, 2026-08-25)
+
+Vox releases heap-backed locals (buffers, lists, format-string texts)
+only at program exit — a variable declared inside a function or loop
+body is allocated on every entry and never returned, at a flat cost per
+declaration (≈4 KB, page-granular, independent of the content's actual
+size — confirmed for both dynamic and fixed-size buffers). `'gen emit'`
+(`src/gen_core.vox`), the single chokepoint every rendered fragment of
+every generated program passes through (167 call sites across five
+files), declared `a buffer called piece is "{s}"` on every call before
+appending `piece` to `gen_out` — one throwaway 4 KB allocation per
+fragment, never freed, for the life of the process. At budget 40 that
+measured **~40 MB per generated program**; the four day-0.4.13 stripes
+launched 2026-08-25 11:00 ran long enough to reach 20 GB / 15 GB / 10 GB
+anon RSS each and were killed by the kernel OOM killer, then killed
+again after their auto-restarts — all 269 "hang" findings they had saved
+were compile-timeout artifacts of a machine with no free memory, zero
+compiler bugs (recompile in ≤2.4 s, rc 0, all 269; findings parked at
+`vox-fuzz/findings/day-0.4.13-oom-artifacts/`).
+
+The same root cause hid in more than one shape. A second, independent
+one: rebuilding a text by self-referential format-string reassignment
+(`Set t to "{t}{c}"` in a loop) does not merely leak a flat 4 KB per
+iteration — it re-copies the WHOLE current string on every iteration and
+leaks the old copy, an O(n²) cost. `'gen build input'`
+(`src/gen_files.vox`) did this while drawing up to 999 characters,
+measured at roughly 0.5 MB per call — real, if two orders of magnitude
+smaller than `'gen emit'`'s. See REPORT-FUZZ-D17.md's "Quadratic
+Set-reassignment" section for the isolated measurements (5k/10k/20k/100k
+iterations); this is the same design question already open as Q7
+(`vox-notes/2026-08-28-Q7-scope-exit-free.md` — should a heap-backed
+local be freed at scope exit) and is not something a fuzzer defect entry
+adjudicates.
+
+A third shape of the same cause: `'gen join lines'` — one of `'gen
+emit'`'s own hottest paths, called once per rendered line of every leaf
+in the corpus — routed each line through `'gen line piece'`, a helper
+whose entire body was `a text called piece is "{indent}{content},\n".`
+A fresh format-string TEXT, not a buffer, but the same page-granular
+allocation applies: measured at ~4 KB per call, identical to a buffer.
+
+**Fix applied:** `'gen emit'` now appends its text argument directly
+into `gen_out` (`append s to gen_out.` — buffer `append` takes a
+format-string/text source directly, LANGUAGE.md's "Buffer Append and
+Copy" section, not just the buffer→buffer form indexed near the Lists
+section; verified against the live compiler before use), with no
+per-call buffer at all. `'gen join lines'` now appends each line's
+format string straight into `gen_out` too, and the now-empty `'gen line
+piece'` helper was removed. Every other heap-backed local found
+declared per call or per loop iteration across `src/gen_*.vox`,
+`loop_gen.vox`, `harness.vox`, `runner.vox`, `findings.vox` and
+`sandbox.vox` was audited; the ones with material cost were hoisted to
+program level and reused via `clear` + `append` (or, where `Read`
+already replaces a buffer's contents, reused with no `clear` needed),
+converting to a `text` once at the end rather than mid-loop.
+`gen_files.vox`'s quadratic `Set gen_input to "{gen_input}{c}"` became a
+per-character `append` into a program-level buffer; the per-iteration
+`a text called c is 'gen digit for value' of pick` that fed it was also
+removed in favour of appending its source expression directly (a format
+string for the `pick > 35` branch, the function call itself for the
+other), since buffer `append` takes either as a source without an
+intermediate. Distributions are untouched: no `'rng below'` call was
+added, removed, or reordered, and `'gen digit for value'` draws no
+randomness of its own, so the fix changes only how a program is
+buffered while it is built, not what is generated.
+
+One attempted fix was reverted: caching each variable's `"v{n}"` name at
+declaration (in a program-level list) so `'gen var ref'` could return
+the cached text instead of re-synthesising it on every reference. It
+worked within a single generated program but was wrong across a
+multi-seed run in one process — `gen_vars` resets to 0 per seed but the
+cache list does not, so seed 2's names land at the wrong list index once
+it declares more variables than seed 1 did, producing a program that
+diverges from `main`. Caught by review before the gate was signed off;
+reverted in full (see REPORT-FUZZ-D17.md's "Reverted" section). No other
+program-level list or map was introduced by this fix — every other new
+global is a buffer, `clear`ed or fully overwritten on every call, which
+does not have this per-seed accumulation hazard.
+
+The residual ~1 GB after this fix is `'gen var ref'` and every other
+`a text called … is "…{…}…"` site the corpus still evaluates once per
+use — the same ~4 KB-per-allocation cost, just not funneled through one
+chokepoint the way `'gen emit'` was. See REPORT-FUZZ-D17.md's "Residual"
+section for why this is treated as language-inherent (the same Q7
+question, generalised from buffers to format-string texts) rather than
+fixed further here.
+
+**Proven:** isolated probes against the live compiler before each fix
+was written (`/tmp/.../d17-probe/`, evidence retained with the report):
+a fresh 4 KB-class buffer declared per call, 40,000 calls, measured 160
+MB RSS; the same 40,000 appends into one `clear`-and-reuse buffer
+measured 384 KB. A fresh format-string TEXT (not a buffer) declared per
+call, 40,000 calls, measured ~156 MB — the same ~4 KB/call as a buffer.
+`Set t to "{t}x"` 100,000 times measured ~5 GB (master independently
+reproduced 23/71/236 MB at 5k/10k/20k, confirming the quadratic shape);
+the same 100,000 appends into one buffer measured 384 KB. Gate results
+(full commands, both binaries, and the diff output are in
+REPORT-FUZZ-D17.md): `make build` + `./test.sh` 30/0 on the fixed tree;
+memory gate `gen --seed 900000 --count 200 --budget 40` maxrss before
+~8 GB (matches `~40 MB × 200 seeds` from the `'gen emit'` measurement
+above) / after **991 MB** (gate revised from the brief's 512 MB to
+"under 1.2 GB, byte-identical" once the residual above was identified as
+language-inherent, not a fuzzer defect); byte-identical `program.vox`
+for every seed 900000–900199 between a binary built from this fix and
+one built from `origin/main` in a separate extract (`diff -r`, empty,
+exit 0).
+**FIXED 2026-08-28, with an open re-derivation gap — read the
+discrepancy note below before treating this as fully closed.**
+
+**Re-derived the source-level collision on all four proven seeds**
+before touching any code, both on `vox-fuzz` `22e5479` built against the
+vox `0.4.12` binary the campaign's own SEEDS.md row records: 100103
+draws `caption` (`caption is "-p" or "--caption", ...`, path
+`"{caption}/buffer2"`), 101434 draws `layby`, 101707 draws `coupon`
+(among two other ordinary flags in the same program — `voucher`,
+`legend` — proving the collision is with the SCRATCH role specifically,
+not just "any flag"), 101964 draws `subtitle`. All four match the
+ledger's account exactly.
+
+**The four seeds no longer reproduce a live finding, on any binary
+tried.** Solo reruns at budget 40 — on the unmodified `22e5479` build
+against both today's vox and the campaign's own `0.4.12` binary/coreasm
+(rebuilt from the `v0.4.12` tag to rule out a compiler-version
+difference), and on today's HEAD — all report 0 findings for all four
+seeds. An instrumented `22e5479` build (tracing `gen_scratch_argv` /
+`gen_scratch_flag` immediately before the child is exec'd) confirms the
+harness threads the scratch pair first on argv exactly as
+`loop_gen.vox`'s own comment says it should, for every one of the four.
+A partial 8-way concurrent re-run, mimicking the original stripe layout
+on the same `22e5479`/`0.4.12` pair, got roughly a third of the way
+through with no finding surfacing before it was stopped on a resource
+steer (the `22e5479` binary predates Defect 17's per-fragment
+allocation fix and leaks under sustained striping — an unrelated,
+already-known hazard, not this defect) — so concurrency as the trigger
+is neither confirmed nor ruled out; it was not re-attempted. The exact
+conditions that produced the original four findings were not recovered.
+Everything the current code does around the scratch binding was
+re-checked by hand against this outcome and found sound: the manifest
+excludes the scratch-role flag from the argv-stress builder's
+candidates (`gen_manifest.vox`'s `'gen manifest pick a flag of kind'`,
+present since the prelude was drawn, 2026-08-21 — predates this
+defect), the scratch pair is prepended to argv before any drawn shape
+can reach it (`loop_gen.vox`, also 2026-08-21), and every pool the
+scratch flag's word can come from is prime-length, so the per-program
+cycle's no-repeat guarantee actually holds (`gen_flag_words` is 29,
+`gen_function_words` is 37 — checked because the cycle's own comment
+says the guarantee depends on it and nothing had verified it).
+
+**Constructed a targeted reproduction instead** (PROCEDURE's fallback
+when a historical seed will not reproduce): compiled seed 100103's
+kept program and ran the binary directly WITHOUT its `--caption`
+argument, bypassing the harness rather than finding a harness bug.
+That reproduces the documented failure exactly — `ASSERT BUF-07:
+expected 12 got 0`, and no file lands anywhere because the interpolated
+path is the bare `/buffer2`, refused only by `/`'s write permission
+(confirmed absent afterward). This is real, hand-verified evidence of
+the hazard class the fix direction names: the confinement guarantee for
+both file leaves rests entirely on `gen_scratch_flag` being bound by
+the time they run, with nothing on the generator's own side checking
+that it held — an accidental backstop (kernel permissions) standing in
+for a guarantee that was never actually enforced anywhere in code, only
+asserted in a comment ("It is never empty here").
+
+**Fixed the enforcement gap, not a re-derivation of the trigger.**
+`gen_files.vox`'s `'gen leaf file round trip'` and `gen_buffers.vox`'s
+`'gen leaf buffer truncation'` — the only two leaves that interpolate
+`{gen_scratch_flag}` into a path — now check it themselves: if
+`gen_does_file_io` is true but `gen_scratch_flag` is empty, the leaf
+prints `PROBE g3` and falls back to the safe stand-in leaf instead of
+ever emitting a path built on the unbound name, converting "kernel
+permissions caught it by luck" into "the generator refuses to emit it."
+The other two FIXED-binding leaves in the codebase (`gen_reader_name`,
+`gen_grid_sink_name`, both `gen_manifest.vox`/drawn from
+`gen_function_words`) were already provably safe by construction
+(same-cycle, same-pool as ordinary functions) and needed no code
+change; `gen_grid_sink_local` is a function-LOCAL name (drawn from the
+parameter cycle, LANGUAGE.md:1692's separate member/local space), so it
+was never a candidate for this class of bug, matching how
+`gen_parameter_words` is already exempted from the pool-vs-pool checks
+above.
+
+`tests/230_units.vox` gained the pool-vs-FIXED-binding proof the fix
+direction asked for, generalised from the existing pool-vs-pool rows:
+since these names are not static lists, the proof runs 1000 seeds
+through `'gen program'` (the real manifest+argv path) and checks what
+it actually produced. Nine new rows, all reading 0: `gen_scratch_flag`
+is never empty while `gen_does_file_io` is true; exactly one flag ever
+carries role 1 and its written name always equals `gen_scratch_flag`;
+the argv-stress builder (`gen_text_flag`/`gen_number_flag`/
+`gen_boolean_flag`) never resolves to that flag; `gen_reader_name` never
+equals `gen_grid_sink_name`, and neither ever equals any ordinary
+function's or flag's written name. None of the 1000 trials printed
+`PROBE g3` either.
+
+**No pool word was removed and no draw was added or reordered** — the
+guards are plain `is empty` checks with no `'rng below'` call, so they
+consume nothing from the RNG stream. Seeds 900000–900199 at budget 40,
+`--keep`, generated on `origin/main` (`ef9dee2`) and on this branch:
+200/200 programs byte-identical, 0/0 findings both sides.
+
+`make build` + `./test.sh` (this worktree): 30/0, including the two
+local-only soak tests (`200_never_emitted`, `270_layout`).
+
+**Handed to Josj: the trigger for the original four findings is still
+open.** Either it needs the original 8-way concurrent layout to
+reproduce (untested past the partial, resource-stopped run above — a
+supervised, memory-bounded re-run under Defect 17's fix would be the
+next step, striped at or under core count per the SEEDS.md note on the
+19 oversubscription artifacts from the same campaign), or something
+about the original invocation — timeout, working directory, an
+intermediate generator state that predates `22e5479` and was never
+committed — differed from what could be reconstructed here. The fix
+above closes the hazard class regardless of which it turns out to be:
+even if the true trigger is still out there, the generator can no
+longer emit a path built on an unbound scratch name, and the new tests
+would catch a regression in the binding itself.

@@ -1,4 +1,4 @@
-(THG-41: LANGUAGE.md:1038-1049 verbatim - a thing declared inside a function,
+(THG-41: LANGUAGE.md:1039-1050 verbatim - a thing declared inside a function,
  written and incremented and interpolated there.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-41.vox -o p && ./p
  expected output:

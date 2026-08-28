@@ -3,7 +3,7 @@
  literal and the list-variable form. Nothing crashes and the program keeps
  running, so memory safety holds; the manual just never says the elements
  have to be text, and its phrase "regardless of the list's contents"
- (LANGUAGE.md:4202-4203) reads as though any contents are handled.
+ (LANGUAGE.md:4266-4267) reads as though any contents are handled.
  Minimal repro at D3.vox.
  Ran, from the repo root:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \

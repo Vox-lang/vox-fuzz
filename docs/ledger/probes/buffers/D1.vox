@@ -1,4 +1,4 @@
-(Discrepancy 1, RESOLVED in vox 0.4.11 (#93): LANGUAGE.md:3497 now states 4096 bytes of starting capacity; it formerly claimed zero. The compiler's own declaration warning (stderr) also says "This creates a zero-capacity buffer" - but the capacity property itself disagrees with both.)
+(Discrepancy 1, RESOLVED in vox 0.4.11 (#93): LANGUAGE.md:3500 now states 4096 bytes of starting capacity; it formerly claimed zero. The compiler's own declaration warning (stderr) also says "This creates a zero-capacity buffer" - but the capacity property itself disagrees with both.)
 (expected output:
 4096
 )

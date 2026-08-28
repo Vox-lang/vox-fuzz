@@ -1,7 +1,7 @@
 (OPR-37 (undocumented precision): shift counts are taken modulo 64.
  Shifting by 64 is a no-op (64 mod 64 is 0) and shifting by 100 shifts
  by 36. A negative count wraps the same way: -2 becomes 62, so
- 16 bit-shift-right -2 is 0. LANGUAGE.md:4902-4903 states no bound on
+ 16 bit-shift-right -2 is 0. LANGUAGE.md:4966-4967 states no bound on
  the shift count. This is memory-safe but it is a wrong-answer trap for
  any leaf that asserts a shift result without clamping its count.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-37.vox -o p && ./p

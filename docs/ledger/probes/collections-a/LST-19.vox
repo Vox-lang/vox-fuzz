@@ -7,7 +7,7 @@
  #45 now refuses it at compile time (Discrepancy 5). So this exact
  program — which the manual used to show as fully working — is now
  exactly the manual's OWN worked example of the compile error
- (LANGUAGE.md:2429-2432, verbatim).
+ (LANGUAGE.md:2430-2433, verbatim).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-19.vox -o p
  expected output:
    error: 'five' has no declared return type, so its result is read as a number here

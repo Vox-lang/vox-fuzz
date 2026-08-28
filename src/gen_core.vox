@@ -21,6 +21,17 @@
 
 Create a buffer called gen_out.
 
+(Scratch views, program level and 'clear'ed per call (Defect 17): a
+ fresh declaration per call is never freed until program exit, so a
+ per-call buffer is one 4 KB allocation per call, unbounded over a
+ campaign - regardless of how few bytes it actually holds.)
+
+a buffer called 'the lower case source view' is "".
+
+a buffer called 'the layout needle' is "".
+
+a buffer called 'the contains needle' is "".
+
 a number called gen_vars is 0.
 
 a number called gen_args is 0.
@@ -30,8 +41,7 @@ a number called gen_floats is 0.
 a number called gen_texts is 0.
 
 To 'gen emit' with a text called s.
-    a buffer called piece is "{s}".
-    append piece to gen_out.
+    append s to gen_out.
 
 To 'gen new var'.
     Set gen_vars to gen_vars add 1.
@@ -113,7 +123,7 @@ To 'gen extreme float'.
  leaves that declare a value as quoted text, retype it to float, and
  assert it against the bare literal. 'gen extreme float' is the right
  draw for a leaf that only EXERCISES the float, but those two routes
- disagree on it: LANGUAGE.md:2065-2071 reads a source literal as the
+ disagree on it: LANGUAGE.md:2066-2072 reads a source literal as the
  nearest double of ALL its digits and a text as "the nearest float those
  eighteen digits describe", so a payload with more than 18 significant
  digits is parsed to two doubles one ulp apart, and a leaf that compares
@@ -241,33 +251,36 @@ To 'gen condition'.
     a text called 'the or form' is "{'the comparison'} or {'the modulo check'}".
     Return a text, 'the or form'.
 
-(gen line piece: the punctuation a body line needs depends entirely on
+('gen join lines': the punctuation a body line needs depends entirely on
  whether it is nested inside an already-open clause. Nested, every
  line but the last continues that clause's action list with a comma;
  unnested (true top level), commas do not parse at all outside a
  clause, so every line is its own period-terminated sentence. The
  comma is what keeps a name declared on one line usable on the next -
  without it, the period would close the enclosing clause immediately,
- exactly the trap note 6b describes.)
+ exactly the trap note 6b describes.
 
-To 'gen line piece' with a text called indent and a text called content and a boolean called continues.
-    If continues then,
-        a text called piece is "{indent}{content},\n",
-        Return a text, piece.
-    a text called piece2 is "{indent}{content}.\n".
-    Return a text, piece2.
+ Each line is appended straight into gen_out as a format string rather
+ than built as its own text first (Defect 17): this is one of 'gen
+ emit's own hottest paths - one call per rendered line, of every leaf
+ in the corpus - and a fresh format-string TEXT declared per call leaks
+ exactly like a fresh buffer does (measured: a text built the same way,
+ 40,000 calls, ~156 MB - the same ~4 KB per call as a buffer, never
+ freed until program exit). The line-piece helper this used to call
+ bought nothing but that extra allocation.)
 
 To 'gen join lines' with a text called indent and a boolean called nested and a list called 'the lines'.
     a number called 'the count' is 'the lines's length.
     a number called 'the position' is 1.
     While 'the position' is less than 'the count',
         a text called 'the line' is element 'the position' of 'the lines',
-        a text called piece is 'gen line piece' of indent and 'the line' and nested,
-        'gen emit' of piece,
+        If nested then,
+            append "{indent}{'the line'},\n" to gen_out,
+        Otherwise,
+            append "{indent}{'the line'}.\n" to gen_out.
         Set 'the position' to 'the position' add 1.
     a text called 'the last line' is element 'the count' of 'the lines'.
-    a text called 'final piece' is 'gen line piece' of indent and 'the last line' and false.
-    'gen emit' of 'final piece'.
+    append "{indent}{'the last line'}.\n" to gen_out.
 
 (Deep expressions and the full operator matrix. Plan 323 lists this as
  "shallow, not absent": 'gen expr' emits exactly two operands and one of
@@ -405,7 +418,7 @@ To 'gen leaf assign' with a text called indent.
  arity, so neither does this.
 
  `of`, `with`, `on` and `to` all introduce arguments
- (LANGUAGE.md:1510) - all four hand-verified against 0.4.7 on a
+ (LANGUAGE.md:1511) - all four hand-verified against 0.4.7 on a
  two-parameter call - so which one appears is drawn. Whether the result
  is printed follows the function rather than the call site: `Print
  <call>` needs a value, and a function that only prints has none.)
@@ -1407,11 +1420,11 @@ To 'gen program' with a number called seed and a number called budget.
 (How a program stops. Three samenesses lived in the one line that used to
  write this, and not one of them had a citation.
 
- - The keyword. LANGUAGE.md:2350 ends the Program Termination section
+ - The keyword. LANGUAGE.md:2351 ends the Program Termination section
    with "Alternative keywords: `quit`, `terminate`", and the compiler
    takes each of them in either capitalisation. Six spellings, all six
    compiled and run against 0.4.9 before this was written.
- - Whether a code is written at all. LANGUAGE.md:2348: "Exit code
+ - Whether a code is written at all. LANGUAGE.md:2349: "Exit code
    defaults to 0 if not specified" - so `quit.` is a whole statement and
    the program exits 0. Verified.
  - Whether the program says anything at all. Nothing in the manual
@@ -1453,16 +1466,16 @@ To 'gen program ending' with a number called code.
  quietly specific to them.)
 
 To 'gen in lower case' with a text called 'the word'.
-    a buffer called 'the word bytes' is "{'the word'}".
-    a number called 'the byte count' is 'the word bytes's size.
+    clear 'the lower case source view'.
+    append 'the word' to 'the lower case source view'.
+    a number called 'the byte count' is 'the lower case source view's size.
     a number called 'the position' is 1.
     While 'the position' is less than or equal to 'the byte count',
-        a number called 'the byte here' is byte 'the position' of 'the word bytes',
+        a number called 'the byte here' is byte 'the position' of 'the lower case source view',
         If 'the byte here' is greater than 64 and 'the byte here' is less than 91 then,
-            Set byte 'the position' of 'the word bytes' to 'the byte here' add 32.
+            Set byte 'the position' of 'the lower case source view' to 'the byte here' add 32.
         Set 'the position' to 'the position' add 1.
-    a text called 'the lower case word' is 'the word bytes' as text.
-    Return a text, 'the lower case word'.
+    Return a text, 'the lower case source view' as text.
 
 (The layout randomiser: the last pass over a finished program.
 
@@ -1646,8 +1659,9 @@ To 'layout put inline gap' with a number called 'the previous byte' and a number
 (Does the word beginning at 'the word position' spell 'the word' - the
  whole word, not a prefix of a longer one?)
 To 'layout word starts at' with a number called 'the word position' and a text called 'the word'.
-    a buffer called 'the needle' is "{'the word'}".
-    a number called 'the needle length' is 'the needle's length.
+    clear 'the layout needle'.
+    append 'the word' to 'the layout needle'.
+    a number called 'the needle length' is 'the layout needle's length.
     a number called n is layout_src's length.
     a number called 'the last position' is 'the word position' add 'the needle length' minus 1.
     If 'the last position' is greater than n then,
@@ -1658,7 +1672,7 @@ To 'layout word starts at' with a number called 'the word position' and a text c
         a number called 'the source position' is 'the word position' add 'the offset',
         a number called 'the source byte' is byte 'the source position' of layout_src,
         a number called 'the needle position' is 'the offset' add 1,
-        a number called 'the needle byte' is byte 'the needle position' of 'the needle',
+        a number called 'the needle byte' is byte 'the needle position' of 'the layout needle',
         If 'the source byte' is not 'the needle byte' then,
             Set 'the bytes match' to false.
         Set 'the offset' to 'the offset' add 1.
@@ -1676,8 +1690,9 @@ To 'layout word starts at' with a number called 'the word position' and a text c
 (Does the word ending just before 'the position after the word' spell
  'the word'?)
 To 'layout word ends at' with a number called 'the position after the word' and a text called 'the word'.
-    a buffer called 'the needle' is "{'the word'}".
-    a number called 'the needle length' is 'the needle's length.
+    clear 'the layout needle'.
+    append 'the word' to 'the layout needle'.
+    a number called 'the needle length' is 'the layout needle's length.
     a number called 'the word position' is 'the position after the word' minus 'the needle length'.
     If 'the word position' is less than 1 then,
         Return a boolean, false.
@@ -1957,14 +1972,15 @@ To 'gen text matches at' with a number called start and a buffer called needle a
     Return a boolean, 'bytes match'.
 
 To 'gen text contains' with a text called needle.
-    a buffer called 'needle buf' is "{needle}".
+    clear 'the contains needle'.
+    append needle to 'the contains needle'.
     a number called 'haystack length' is gen_out's length.
-    a number called 'needle length' is 'needle buf's length.
+    a number called 'needle length' is 'the contains needle's length.
     a boolean called found is false.
     a number called 'last start' is 'haystack length' minus 'needle length' add 1.
     a number called 'scan start' is 1.
     While 'scan start' is less than or equal to 'last start',
-        a boolean called 'match here' is 'gen text matches at' of 'scan start' and 'needle buf' and 'needle length',
+        a boolean called 'match here' is 'gen text matches at' of 'scan start' and 'the contains needle' and 'needle length',
         If 'match here' then,
             Set found to true.
         Set 'scan start' to 'scan start' add 1.

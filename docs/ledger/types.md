@@ -82,9 +82,9 @@ So: (a) the fractional value is not rejected, not truncated, and not
 silently converted — it is stored and printed exactly as written,
 directly contradicting "whole numbers"; (b) worse, the `'s type`
 property (which reflects the *static declared* type per
-`LANGUAGE.md:3553–3567`/`BUF-14`'s sibling behavior) says
+`LANGUAGE.md:3559–3573`/`BUF-14`'s sibling behavior) says
 `Number (static)`, while the `is a <noun>` predicate (which
-`LANGUAGE.md:2520–2522`/`LST-62` establish reads a *runtime value tag*,
+`LANGUAGE.md:2521–2523`/`LST-62` establish reads a *runtime value tag*,
 not the declared type) says the opposite — `is a number` is **false**
 and `is a decimal` is **true** for the very same variable. Compare the
 same variable holding a whole value (`D1-frac.vox`'s companion, run by
@@ -95,7 +95,7 @@ assignment time from the literal's shape, independent of `n`'s static
 type.
 
 **Strongest reading under which the compiler is correct:** the `is a`
-predicate is documented (`LANGUAGE.md:2520–2522`, `LST-62`/`LST-63`) as a
+predicate is documented (`LANGUAGE.md:2521–2523`, `LST-62`/`LST-63`) as a
 **runtime value-shape** check — it exists specifically so a list holding
 mixed literals (`[1, "two", 3.5, yes]`) can be dispatched on per-element,
 and per that section's own worked example a bare `3.5` element already

@@ -1,6 +1,6 @@
 (THG-70: a thing cannot be interpolated into a TEXT INITIALIZER - a text
  initializer is a different sink from `Print`, which does render one.
- LANGUAGE.md:1235-1237. The caret is correct here: line 6, the slot itself.
+ LANGUAGE.md:1236-1238. The caret is correct here: line 6, the slot itself.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-70.vox -o p && ./p
  expected output:
    error: 'origin' holds a whole point, which only `Print` can interpolate

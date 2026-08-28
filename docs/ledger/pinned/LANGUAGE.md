@@ -1,6 +1,6 @@
 # Vox Language Specification
 
-**Version 0.4.13**
+**Version 0.4.14**
 
 This document defines the syntax and semantics of Vox (sentence based code).
 It states the language as it is now. What changed in which release is in
@@ -875,6 +875,7 @@ calculate with x and y
 - Function name is a bare single word (`calculate`) or a single-quoted multi-word name (`'add numbers'`)
 - For calls with arguments, use `of`, `to`, `with`, or `on`
 - Multiple arguments separated by `and`
+- Writing an argument right after the function name with none of these words is an error naming the missing preposition, not a call with that argument dropped
 
 Calls with no arguments can be written directly:
 
@@ -3414,6 +3415,8 @@ Execute "/bin/echo" with arguments cmdargs.
 
 Each evaluation allocates a new string; the source buffer can be
 cleared and reused without affecting texts already created from it.
+A text variable reassigned from a format string releases the string
+it no longer holds.
 
 #### Format Strings Everywhere
 
@@ -3496,7 +3499,10 @@ a buffer called data.
 **Features:**
 - Start with 4096 bytes of capacity (size 0) and grow automatically as needed
 - No buffer overflows possible - memory expands dynamically
-- Automatically freed on program exit
+- Automatically freed on program exit - but a buffer declared inside a
+  function or loop body is allocated fresh on every entry, so a
+  long-running loop should [`Free`](#releasing-a-buffer) it each time
+  round, or declare it once outside the loop and `clear` it instead
 
 #### Fixed-Size Buffers
 
@@ -3608,6 +3614,64 @@ resize buf to 128.
 - New buffer is allocated and old buffer is freed
 - Texts already made from the buffer with `as text` are independent
   copies, so resizing never disturbs them
+
+#### Releasing a Buffer
+
+`Free <buffer>.` releases a buffer's memory immediately, rather than
+waiting for program exit. `Release <buffer>.` and `Deallocate <buffer>.`
+are the same statement; all three accept an optional `the`:
+
+```vox fragment
+Free data.
+Release the data.
+Deallocate data.
+```
+
+After `Free`, the buffer is **empty**: its length is 0, `as text` reads
+back `""`, and every read or write past that is refused with the error
+flag - the same "no-op, error flag set, execution continues" contract as
+[Truncation Behavior](#fixed-size-buffers) above, since a freed buffer
+behaves exactly like a fixed buffer of capacity 0. `On error` catches it:
+
+```
+a buffer called line is "hello".
+Free line.
+print line's length.        (prints 0)
+print "[{line as text}]".   (prints [])
+
+append "more" to line.
+On error print "refused: line is freed".
+```
+
+`Free`ing an already-freed buffer is a no-op that sets the error flag
+rather than releasing anything a second time:
+
+```vox fragment
+Free line.
+Free line.
+On error print "already freed".
+```
+
+A `buffer` function parameter *is* the caller's buffer (see
+[Parameter and Local Types](#parameter-and-local-types)), so `Free` on one
+releases the same block the caller sees, and the caller's own variable is
+left empty too, exactly as a resize inside the function is.
+
+**Per-iteration use.** Declaring a buffer inside a loop body and freeing
+it at the end of each iteration keeps memory flat no matter how long the
+loop runs:
+
+```vox fragment
+a number called n is 0.
+While n is less than total_lines,
+    a buffer called line is 4096 bytes in size,
+    Read line from source into line,
+    print line as text,
+    Free line,
+    increment n.
+```
+
+A list also accepts `Free`.
 
 #### Buffer Byte Access
 
@@ -4952,6 +5016,8 @@ Set result to value bit-shift-right 8 bit-and 0xFF.
 | `Continue` | Skip to next iteration |
 | `Exit` | Terminate program with exit code |
 | `Append` | Add element to list |
+| `Free` | Release a buffer or list's memory immediately (see [Releasing a Buffer](#releasing-a-buffer)) |
+| `Allocate` | Reserve a raw block of heap memory, freed with `Free` |
 | `Create`, `Change`, `Remove`/`Delete` | Directories, device nodes, symlinks, chdir (see [Directories, Mounting, and Process Control](#directories-mounting-and-process-control)) |
 | `Mount`, `Unmount`/`Umount` | Mount/unmount filesystems |
 | `Pivot` | `pivot_root` - switch the root filesystem |
@@ -5001,15 +5067,97 @@ The word `and` has multiple context-dependent meanings:
 
 ### Reserved Aliases
 
-A few alternate spellings are also reserved because the compiler recognizes them as aliases for canonical keywords:
+A few alternate spellings are also reserved because the compiler recognizes them as aliases for canonical keywords. This table lists every alias the lexer folds onto a canonical keyword; a keyword with only one spelling is not repeated here (it is reserved too, but it is not an *alias* of anything):
 
-| Alias | Canonical keyword | Context |
-|-------|-------------------|---------|
-| `ms` | `milliseconds` | Time duration units (`Wait 500 ms.`) |
-| `message` | `text` | Type name (`a message called ...` is treated as `text`) |
-| `string` | `text` | Type name (already listed in the type synonyms) |
+| Alias | Canonical keyword |
+|-------|--------------------|
+| `abs` | `absolute` |
+| `plus` | `add` |
+| `push` | `append` |
+| `arg` | `argument` |
+| `param` | `argument` |
+| `parameter` | `argument` |
+| `args` | `arguments` |
+| `parameters` | `arguments` |
+| `params` | `arguments` |
+| `automatic` | `auto` |
+| `bool` | `boolean` |
+| `named` | `called` |
+| `closed` | `close` |
+| `skip` | `continue` |
+| `define` | `create` |
+| `make` | `create` |
+| `days` | `day` |
+| `remove` | `delete` |
+| `fd` | `descriptor` |
+| `disabled` | `disable` |
+| `enabled` | `enable` |
+| `env` | `environment` |
+| `equal` | `equals` |
+| `exist` | `exists` |
+| `quit` | `exit` |
+| `terminate` | `exit` |
+| `no` | `false` |
+| `decimal` | `float` |
+| `real` | `float` |
+| `deallocate` | `free` |
+| `release` | `free` |
+| `starting` | `from` |
+| `fetch` | `get` |
+| `retrieve` | `get` |
+| `bigger` | `greater` |
+| `larger` | `greater` |
+| `more` | `greater` |
+| `hours` | `hour` |
+| `inside` | `in` |
+| `within` | `in` |
+| `integer` | `int` |
+| `fewer` | `less` |
+| `smaller` | `less` |
+| `lib` | `library` |
+| `array` | `list` |
+| `collection` | `list` |
+| `dictionary` | `map` |
+| `ms` | `milliseconds` |
+| `minutes` | `minute` |
+| `mod` | `modulo` |
+| `remainder` | `modulo` |
+| `months` | `month` |
+| `nil` | `nothing` |
+| `null` | `nothing` |
+| `numbers` | `number` |
+| `at` | `on` |
+| `opened` | `open` |
+| `perms` | `permissions` |
+| `display` | `print` |
+| `prints` | `print` |
+| `show` | `print` |
+| `grow` | `resize` |
+| `reallocate` | `resize` |
+| `shrink` | `resize` |
+| `give` | `return` |
+| `returns` | `return` |
+| `import` | `see` |
+| `include` | `see` |
+| `require` | `see` |
+| `assign` | `set` |
+| `store` | `set` |
+| `delay` | `sleep` |
+| `minus` | `subtract` |
+| `message` | `text` |
+| `string` | `text` |
+| `stopwatch` | `timer` |
+| `up` | `to` |
+| `treat` | `treating` |
+| `yes` | `true` |
+| `timestamp` | `unix` |
+| `unixtime` | `unix` |
+| `var` | `variable` |
+| `ver` | `version` |
+| `pause` | `wait` |
+| `years` | `year` |
 
-These cannot be used as variable names. The diagnostic names the spelling you wrote and notes which canonical keyword it aliases, so `a number called ms is ...` reports `'ms'` as an alternate spelling of `'milliseconds'`, not the internal canonical name.
+These cannot be used as variable names. The diagnostic names the spelling you wrote and notes which canonical keyword it aliases, so `a number called ms is ...` reports `'ms'` as an alternate spelling of `'milliseconds'`, not the internal canonical name. `say` and `output` are *not* in this table: the lexer never folds them, so they are ordinary variable names (BUGS_FOUND #106) - only `show`, `display`, and `prints` are alternate spellings of `print`.
 
 Every keyword listed in the tables above is likewise reserved as a variable name. Two that are easy to hit by accident are worth calling out: the flag-schema keyword **`flag`** (`a flag called ...`) and the property keyword **`empty`** (`x's empty`). Writing `a number called flag is 1.` or `a number called empty is 1.` is rejected with the same "reserved keyword" diagnostic. (As with any reserved word, you can still quote the name (`'flag'`, `'empty'`) if you genuinely need it.)
 

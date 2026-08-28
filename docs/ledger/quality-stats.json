@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "1890577",
-    "date": "2026-08-24",
-    "voxCommit": "2403ad3",
+    "commit": "4c2c0a5",
+    "date": "2026-08-28",
+    "voxCommit": "4995394",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -319,6 +319,83 @@
       "compiled": 1977,
       "findings": 23,
       "note": "first striped campaign: 19 findings were oversubscription deadline artifacts (8 stripes on 8 cores; scale deadlines or stripe under core count), 4 exposed Defect 16 (pool-name collision, see FUZZER_DEFECTS.md); zero compiler bugs"
+    },
+    {
+      "date": "2026-08-25",
+      "vox": "0.4.13",
+      "voxFuzz": "ef9dee2",
+      "seeds": "200000–200428, 300000–300429, 400000–400544, 500000–500686 (4 stripes)",
+      "budget": "40/40/24/12",
+      "programs": 2000,
+      "compiled": 2000,
+      "findings": 269,
+      "note": "all 269 \"compile exceeded 60 s\" findings are artifacts of an OOM-starved box (vox-fuzz at 20/15/10 GB — Defect 17; every one recompiles in ≤ 2.4 s idle); 0 compiler bugs; parked as findings/day-0.4.13-oom-artifacts"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.13",
+      "voxFuzz": "ef9dee2",
+      "seeds": "200429–214999 (stripe-1, chunked ×200)",
+      "budget": "40",
+      "programs": 14571,
+      "compiled": 14571,
+      "findings": 0,
+      "note": "resumed the 25th's run under a chunked, memory-capped driver (fresh process per chunk, systemd MemoryMax); 73 chunks, 0 failed"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.13",
+      "voxFuzz": "ef9dee2",
+      "seeds": "300430–314999 (stripe-2, chunked ×200)",
+      "budget": "40",
+      "programs": 14570,
+      "compiled": 14570,
+      "findings": 0,
+      "note": "as stripe-1"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.13",
+      "voxFuzz": "ef9dee2",
+      "seeds": "400545–408944 (stripe-3, chunked ×300; 402945–408944 after a Josj-directed pause)",
+      "budget": "24",
+      "programs": 8100,
+      "compiled": 8100,
+      "findings": 0,
+      "note": "chunked, memory-capped driver; the compiler under test was rebuilt to 0.4.14 by the release at 21:19, so seeds from 408945 on belong to the next row"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.14",
+      "voxFuzz": "ef9dee2",
+      "seeds": "408945– (stripe-3 continued on the 0.4.14 binary)",
+      "budget": "24",
+      "programs": null,
+      "compiled": null,
+      "findings": null,
+      "note": "row closes with the campaign"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.13",
+      "voxFuzz": "ef9dee2",
+      "seeds": "500687–509186 (stripe-4, chunked ×500; 503187–509186 after the pause)",
+      "budget": "12",
+      "programs": 8000,
+      "compiled": 8000,
+      "findings": 0,
+      "note": "as stripe-3; seeds from 509187 (chunk started 21:20) ran on 0.4.14"
+    },
+    {
+      "date": "2026-08-28",
+      "vox": "0.4.14",
+      "voxFuzz": "ef9dee2",
+      "seeds": "509187– (stripe-4 continued on the 0.4.14 binary)",
+      "budget": "12",
+      "programs": null,
+      "compiled": null,
+      "findings": null,
+      "note": "row closes with the campaign"
     }
   ],
   "findings": {
@@ -327,20 +404,20 @@
     "byCategory": {
       "parser-reject": 2
     },
-    "total": 31
+    "total": 300
   },
   "register": {
-    "found": 101,
-    "fixed": 96,
-    "open": 0,
-    "other": 5,
+    "found": 108,
+    "fixed": 100,
+    "open": 2,
+    "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
     "voxFuzz": 30,
     "vox": {
-      "run": 597,
-      "compileFail": 315
+      "run": 621,
+      "compileFail": 324
     }
   }
 }

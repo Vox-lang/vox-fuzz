@@ -1,6 +1,6 @@
 (OPR-42 (undocumented precision): a text, buffer or list operand in a
  BITWISE expression is a compile error, the same as in arithmetic.
- LANGUAGE.md:1911 states this for arithmetic only; the Operators
+ LANGUAGE.md:1912 states this for arithmetic only; the Operators
  section says nothing about the bitwise operators' domain, and the
  bitwise table sits 2700 lines away from that note. Memory safety is
  preserved by the compiler, not by luck - this is the row that says so.

@@ -737,8 +737,23 @@ To 'it opens a register entry' with a text called 'the line'.
  that do not exist.)
 To 'record the status on' with a text called 'the line'.
     Set 'register entries classified' to 'register entries classified' add 1.
-    a boolean called 'it says fixed' is 'ignoring case, contains' of 'the line' and "fixed".
-    a boolean called 'it says open' is 'ignoring case, contains' of 'the line' and "open".
+    (State-first, the register's convention (vox #11, 2026-08-27): the
+     word right after `Status:` names the state, and the rest of the line
+     is prose that may mention the other word - `Open - diagnostic fixed
+     in v0.4.14` is an OPEN entry. The marker is written four ways:
+     `**Status:** fixed`, `**Status:** **fixed**`, `**Status: fixed`,
+     and `**Status: **fixed` - so the state word is looked for right
+     after `status:` with any run of `*` and spaces between.)
+    a boolean called 'it says fixed' is false.
+    If 'ignoring case, contains' of 'the line' and "status:** fixed" then, Set 'it says fixed' to true.
+    If 'ignoring case, contains' of 'the line' and "status:** **fixed" then, Set 'it says fixed' to true.
+    If 'ignoring case, contains' of 'the line' and "status: fixed" then, Set 'it says fixed' to true.
+    If 'ignoring case, contains' of 'the line' and "status: **fixed" then, Set 'it says fixed' to true.
+    a boolean called 'it says open' is false.
+    If 'ignoring case, contains' of 'the line' and "status:** open" then, Set 'it says open' to true.
+    If 'ignoring case, contains' of 'the line' and "status:** **open" then, Set 'it says open' to true.
+    If 'ignoring case, contains' of 'the line' and "status: open" then, Set 'it says open' to true.
+    If 'ignoring case, contains' of 'the line' and "status: **open" then, Set 'it says open' to true.
     If 'it says fixed' then, Set 'register entries fixed' to 'register entries fixed' add 1.
     If 'it says fixed' is false and 'it says open' then, Set 'register entries open' to 'register entries open' add 1.
     If 'it says fixed' is false and 'it says open' is false then, Set 'register entries otherwise' to 'register entries otherwise' add 1.

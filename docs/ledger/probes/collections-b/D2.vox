@@ -1,5 +1,5 @@
 (D2 — Discrepancy 2 repro: the `otherwise` clause the manual documents
- (LANGUAGE.md:3108, 3114) used to be a parse error after a `print` base
+ (LANGUAGE.md:3109, 3115) used to be a parse error after a `print` base
  action while being accepted after an `append` base.
  **RESOLVED — fixed by vox #50 (0.4.8+).** The bare spelling now compiles
  after `print` too, and this probe records the fixed behaviour: it

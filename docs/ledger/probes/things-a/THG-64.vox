@@ -1,6 +1,6 @@
 (THG-64: a whole nested thing read out of a segment is copied the same way -
  `nudged of span's start` passes a copy, and the segment is untouched.
- Also covers: THG-65 (the span example, LANGUAGE.md:1185-1203, verbatim -
+ Also covers: THG-65 (the span example, LANGUAGE.md:1186-1204, verbatim -
  41 then 40).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-64.vox -o p && ./p
  expected output:

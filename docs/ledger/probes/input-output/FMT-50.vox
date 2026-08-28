@@ -1,4 +1,4 @@
-(FMT-50 — the escape example at LANGUAGE.md:3450-3452 verbatim.
+(FMT-50 — the escape example at LANGUAGE.md:3453-3455 verbatim.
  Composite of FMT-45/46/47/48.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:

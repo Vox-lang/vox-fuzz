@@ -1,5 +1,5 @@
 (THG2-42: reusing a name is first-come-first-served; the second definition
- errors at its own line, naming the first. LANGUAGE.md:1684-1688, verbatim.
+ errors at its own line, naming the first. LANGUAGE.md:1685-1689, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-42.vox -o p && ./p
  expected output:
    error: 'point' is already defined as a variable on line 1

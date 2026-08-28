@@ -7,7 +7,7 @@
  ordinary compilable program on its own (calling 'double it' at the top
  level and printing the result, so one source served both roles). That
  dual-purpose design is now BROKEN -- the manual's Libraries and
- Imports chapter now documents (LANGUAGE.md:5230-5237, libraries.md
+ Imports chapter now documents (LANGUAGE.md:5378-5385, libraries.md
  LIB-25, already hand-verified there) that a `--shared` compile rejects
  ANY top-level executable statement: "Top-level ... statement is not
  allowed in a shared library: only function definitions, 'Library', and

@@ -16,9 +16,9 @@
 
  Not one of them had a citation. LANGUAGE.md does not say a program has
  four things, or any things; it puts no ceiling on function count or
- arity; it says `Parse flags.` is optional (LANGUAGE.md:4700) and that
+ arity; it says `Parse flags.` is optional (LANGUAGE.md:4764) and that
  ordinary code may sit between flag schema declarations
- (LANGUAGE.md:4717). Every one of those 118 rows was an undeclared rule
+ (LANGUAGE.md:4781). Every one of those 118 rows was an undeclared rule
  - CLAUDE.md's "real enemy" - baked invisibly into the shape of a leaf.
 
  So the prelude is now DRAWN, per program, and what it drew is recorded
@@ -62,24 +62,24 @@
    rejected: "A thing needs at least one field". So the per-thing field
    count starts at 1, and NOTHING else about it is pinned.
  - A field may be number, float, boolean, time, or any PREVIOUSLY
-   DEFINED thing (LANGUAGE.md:984-986). text/list/map/buffer are
+   DEFINED thing (LANGUAGE.md:985-987). text/list/map/buffer are
    deferred, so those five kinds are the whole space.
  - A thing's methods name their owner type, so a definition precedes
-   them (LANGUAGE.md:1415). Verified that a thing may otherwise sit
+   them (LANGUAGE.md:1416). Verified that a thing may otherwise sit
    anywhere: definitions may be emitted all together and then all the
    methods, or each definition followed by its own methods - both
    compile, so which one a program gets is drawn.
- - Every declared member returns its owner (LANGUAGE.md:1443), a maker's
+ - Every declared member returns its owner (LANGUAGE.md:1444), a maker's
    first parameter is not the owner and a receiver's is
-   (LANGUAGE.md:1589-1610), and the manifest is checked both ways
-   (LANGUAGE.md:1471) - so an entry without a definition, or a
+   (LANGUAGE.md:1590-1611), and the manifest is checked both ways
+   (LANGUAGE.md:1472) - so an entry without a definition, or a
    definition without an entry, is a compile error. Both are emitted
    from the same manifest row, which is what keeps them in step.
  - A flag needs BOTH aliases. `is "--tag", it is a text.` is rejected:
    "Expected long flag alias string like '--number'". So the
    `"-x" or "--long"` shape is the language's, not ours.
  - Type names, function names and flag names share ONE global identifier
-   space (LANGUAGE.md:1677), so every name this file hands out at top
+   space (LANGUAGE.md:1678), so every name this file hands out at top
    level must be unique. Field, method and parameter names live in a
    per-type member space or in a function's locals and are free to
    repeat across owners.
@@ -121,7 +121,7 @@
  report said so.
 
  Single-word entries are checked against the keyword tables at
- LANGUAGE.md:4933-5541: none is a reserved word, and none is a
+ LANGUAGE.md:4997-5689: none is a reserved word, and none is a
  contextual keyword either, since a contextual keyword is only claimed
  in its own grammatical position and a bare declaration name is not one.
  They matter more than the phrases do, because a phrase with a space is
@@ -134,7 +134,7 @@ a list called gen_field_words is ["span", "reach", "drift", "depth", "height", "
 (Makers and receivers get separate pools so a thing that has both can
  never draw the same name twice into one member space - the second
  declaration of a name in a type's member space is a compile error
- (LANGUAGE.md:1696).)
+ (LANGUAGE.md:1697).)
 
 a list called gen_maker_words is ["placed at", "set down at", "pinned to", "logged against", "sited on", "fixed upon", "struck at", "raised by", "marked out", "laid flat", "put aside", "planted deep", "recorded once", "staked out", "noted briefly", "entered anew", "posted onward", "struck", "raised"].
 
@@ -215,7 +215,7 @@ a list called gen_thing_method_first is [].
 a list called gen_thing_method_count is [].
 
 (Fields. `kind`: 0 number, 1 float, 2 boolean, 3 time, 4 a nested thing
- - the five LANGUAGE.md:984-986 allows, and `target` names the nested
+ - the five LANGUAGE.md:985-987 allows, and `target` names the nested
  thing for kind 4.)
 
 a list called gen_field_names is [].
@@ -226,9 +226,9 @@ a list called gen_field_kind is [].
 a list called gen_field_target is [].
 
 (Methods. `kind`: 0 a maker - first parameter is a number, so only the
- type possessive reaches it (LANGUAGE.md:1589); 1 a receiver - first
+ type possessive reaches it (LANGUAGE.md:1590); 1 a receiver - first
  parameter is the owner, so both call forms reach it
- (LANGUAGE.md:1610).)
+ (LANGUAGE.md:1611).)
 
 a list called gen_method_names is [].
 a list called gen_method_written_names is [].
@@ -276,7 +276,7 @@ a list called gen_param_written_names is [].
 a list called gen_param_kind is [].
 
 (Flags. `kind`: 0 text, 1 number, 2 boolean - the three
- LANGUAGE.md:4673-4681 lists. `default` is the literal as it is written
+ LANGUAGE.md:4737-4745 lists. `default` is the literal as it is written
  after `with default`, or "" for a flag that has none. `role` is 1 for
  the one flag that carries the scratch directory and 0 for every other.)
 
@@ -347,24 +347,34 @@ To 'gen stride for' with a number called 'how many words'.
 
 (A long alias from a phrase: spaces become hyphens behind a `--`. Two
  flags in one program have distinct phrases, so their aliases are
- distinct too. Hand-verified that `--the-caption` parses and matches.)
+ distinct too. Hand-verified that `--the-caption` parses and matches.
+
+ The three buffers below are program level and 'clear'ed per call
+ (Defect 17): declared locally, each is one more 4 KB allocation per
+ call never freed until program exit.)
+
+a buffer called 'the dashed alias source view' is "".
+
+a buffer called 'the dashed alias bytes' is "--".
+
+a buffer called 'one dashed alias byte' is " ".
 
 To 'gen dashed alias' with a text called phrase.
-    a buffer called 'the phrase bytes' is "{phrase}".
-    a buffer called 'the alias bytes' is "--".
-    a buffer called 'one byte' is " ".
-    a number called 'the byte count' is 'the phrase bytes's size.
+    clear 'the dashed alias source view'.
+    append phrase to 'the dashed alias source view'.
+    clear 'the dashed alias bytes'.
+    append "--" to 'the dashed alias bytes'.
+    a number called 'the byte count' is 'the dashed alias source view's size.
     a number called 'the position' is 1.
     While 'the position' is less than or equal to 'the byte count',
-        a number called 'the byte here' is byte 'the position' of 'the phrase bytes',
+        a number called 'the byte here' is byte 'the position' of 'the dashed alias source view',
         a number called 'the written byte' is 'the byte here',
         If 'the byte here' is 32 then,
             Set 'the written byte' to 45.
-        Set byte 1 of 'one byte' to 'the written byte',
-        append 'one byte' to 'the alias bytes',
+        Set byte 1 of 'one dashed alias byte' to 'the written byte',
+        append 'one dashed alias byte' to 'the dashed alias bytes',
         Set 'the position' to 'the position' add 1.
-    a text called 'the alias' is 'the alias bytes' as text.
-    Return a text, 'the alias'.
+    Return a text, 'the dashed alias bytes' as text.
 
 (One unspent letter, as a short alias. The walk takes a coprime stride
  over the alphabet so no two flags in a program share a letter and the
@@ -456,7 +466,7 @@ To 'gen field type written' with a number called 'the field'.
     Return a text, 'the target name'.
 
 (A field's default, written after `is`, or "" for a field that takes its
- type's zero value. LANGUAGE.md:959 says a field without a default takes
+ type's zero value. LANGUAGE.md:960 says a field without a default takes
  its type's zero value, so BOTH forms are legal and which one a field
  gets is drawn. A nested thing has no literal to default to and a time
  has none either, so those two never carry one.)
@@ -636,7 +646,7 @@ To 'gen build one field' with a number called 'this thing'.
     a text called 'the field possessive' is 'gen possessive name' of 'the field phrase'.
     append 'the field possessive' to gen_field_possessives.
     append 'this thing' to gen_field_owner.
-    (LANGUAGE.md:984-986: a field may be number, float, boolean, time,
+    (LANGUAGE.md:985-987: a field may be number, float, boolean, time,
      or any PREVIOUSLY DEFINED thing. text, list, map and buffer are
      deferred, so these five are the whole space and the draw covers it.
      The nesting kind falls back to a number when there is no earlier
@@ -852,7 +862,7 @@ To 'gen build one flag' with a number called 'the role'.
     a text called 'the long alias' is 'gen dashed alias' of 'the flag phrase'.
     append 'the long alias' to gen_flag_long.
     (The scratch flag carries a path, so it is a text. Every other flag
-     draws across the three types LANGUAGE.md:4673-4681 lists.)
+     draws across the three types LANGUAGE.md:4737-4745 lists.)
     a number called 'the kind' is 0.
     If 'the role' is 0 then,
         Set 'the kind' to 'rng below' of 3.
@@ -871,7 +881,7 @@ To 'gen build one flag' with a number called 'the role'.
             Set gen_scratch_argv to 'the short alias'.
     Return a number, 0.
 
-(A default, or none. LANGUAGE.md:4698-4699: a flag with no default holds
+(A default, or none. LANGUAGE.md:4762-4763: a flag with no default holds
  its type's empty value, so both forms are legal for every type and
  which one a flag gets is drawn. Hand-verified against 0.4.7 that a
  boolean flag takes `with default true` and a number flag takes a

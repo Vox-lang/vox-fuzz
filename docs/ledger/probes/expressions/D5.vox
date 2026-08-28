@@ -1,4 +1,4 @@
-(Discrepancy 5 - minimal repro. LANGUAGE.md:1938 says to group arithmetic
+(Discrepancy 5 - minimal repro. LANGUAGE.md:1939 says to group arithmetic
  subexpressions with curly braces, and :1826 shows `{x add y} multiply z`. The
  Grammar Summary at :5233 instead gives `primary ::= literal | identifier |
  func_call | "(" expr ")"`, which claims parentheses group.

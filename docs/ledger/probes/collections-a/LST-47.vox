@@ -1,7 +1,7 @@
 (LST-47 — `keys` and `values` each yield a FRESH list in insertion order:
  appending to the returned list does not touch the map, a replace keeps the
  key in its original position, and an insert lands at the end.
- Also covers: LST-48 (the worked iteration of LANGUAGE.md:2474-2475).
+ Also covers: LST-48 (the worked iteration of LANGUAGE.md:2475-2476).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-47.vox -o p && ./p
  expected output:
    ["name", "age", "intruder"]

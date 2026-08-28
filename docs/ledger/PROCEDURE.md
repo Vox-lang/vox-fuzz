@@ -358,7 +358,7 @@ manual actually requires, with the LANGUAGE.md line and the row ID:
 
 ```
 - blank line after every function definition — LANGUAGE.md:736–741, FUN-43
-- buffer byte index never 0 — LANGUAGE.md:3614, BUF-19
+- buffer byte index never 0 — LANGUAGE.md:3678, BUF-19
 ```
 
 The report's `citation` column is filled from these lines. An invariant

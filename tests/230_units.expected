@@ -48,6 +48,16 @@ loop words vs buffers: 0
 loop words vs value nouns: 0
 loop words vs value verbs: 0
 loop words vs environment: 0
+fixed-binding trials: 1000 file-io=450
+scratch flag unbound while file-io: 0
+scratch role count wrong: 0
+scratch role written name mismatch: 0
+scratch flag picked for argv stress: 0
+reader name equals grid sink name: 0
+reader name in ordinary functions: 0
+grid sink name in ordinary functions: 0
+reader name in flag names: 0
+grid sink name in flag names: 0
 banned needles in types: 0
 banned needles in fields: 0
 banned needles in makers: 0

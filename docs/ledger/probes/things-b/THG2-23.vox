@@ -1,6 +1,6 @@
 (THG2-23: a `To do` naming a member the manifest does not list errors at the
  definition, naming the entry to add and listing what the type does declare.
- LANGUAGE.md:1475-1484, verbatim.
+ LANGUAGE.md:1476-1485, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-23.vox -o p && ./p
  expected output:
    error: point does not declare sparkle - add `a function called sparkle` to the type
