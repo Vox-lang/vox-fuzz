@@ -6,15 +6,15 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "4c2c0a5",
-    "date": "2026-08-28",
-    "voxCommit": "4995394",
+    "commit": "e43176f",
+    "date": "2026-08-29",
+    "voxCommit": "unknown (pre-merge stack, GitHub #239; fixes #104 #109 #110 #111 #112)",
     "script": "scripts/quality-stats"
   },
   "claims": {
-    "total": 1380,
-    "exercised": 389,
-    "verified": 25,
+    "total": 1432,
+    "exercised": 433,
+    "verified": 68,
     "sections": [
       {
         "prefix": "BAS",
@@ -28,7 +28,7 @@
         "prefix": "BAS2",
         "ledger": "expansion.md",
         "section": "Basics: ranges, loop expansion, but if, treating",
-        "claims": 59,
+        "claims": 62,
         "exercised": 18,
         "verified": 0
       },
@@ -36,7 +36,7 @@
         "prefix": "TYP",
         "ledger": "types.md",
         "section": "Types",
-        "claims": 11,
+        "claims": 12,
         "exercised": 1,
         "verified": 0
       },
@@ -60,7 +60,7 @@
         "prefix": "FUN",
         "ledger": "functions.md",
         "section": "Functions: definition, scope, parameter/local types, calls, calling as statement, reading a result",
-        "claims": 43,
+        "claims": 51,
         "exercised": 14,
         "verified": 0
       },
@@ -68,17 +68,17 @@
         "prefix": "THG",
         "ledger": "things-a.md",
         "section": "Things: defining, declarations and field access, nesting, value copy semantics",
-        "claims": 75,
-        "exercised": 19,
-        "verified": 0
+        "claims": 76,
+        "exercised": 25,
+        "verified": 6
       },
       {
         "prefix": "THG2",
         "ledger": "things-b.md",
         "section": "Things: printing, equality, manifest, the three call forms, one identifier space, top-level only, cross-file, .lib, sentence consumption, diagnostics, predicates",
         "claims": 77,
-        "exercised": 11,
-        "verified": 0
+        "exercised": 20,
+        "verified": 8
       },
       {
         "prefix": "EXP",
@@ -93,14 +93,14 @@
         "ledger": "control-flow.md",
         "section": "Control flow: if, while, for each, repeat, loop control, termination, increment/decrement",
         "claims": 45,
-        "exercised": 17,
-        "verified": 0
+        "exercised": 22,
+        "verified": 4
       },
       {
         "prefix": "LST",
         "ledger": "collections-a.md",
         "section": "Lists and collections: literals, mixed-type, nested, maps, type predicates",
-        "claims": 70,
+        "claims": 82,
         "exercised": 18,
         "verified": 0
       },
@@ -124,7 +124,7 @@
         "prefix": "FMT",
         "ledger": "input-output.md",
         "section": "Input/Output: print, format strings, conditional print",
-        "claims": 55,
+        "claims": 58,
         "exercised": 33,
         "verified": 0
       },
@@ -132,17 +132,17 @@
         "prefix": "BUF",
         "ledger": "buffers.md",
         "section": "File I/O: buffers, object properties, buffer properties, resizing, byte access, append/copy",
-        "claims": 39,
-        "exercised": 6,
-        "verified": 0
+        "claims": 61,
+        "exercised": 14,
+        "verified": 8
       },
       {
         "prefix": "FIL",
         "ledger": "files.md",
         "section": "File I/O: file/list/number properties, opening, reading, seeking, writing, closing, file operations, error handling, resource safety",
         "claims": 103,
-        "exercised": 20,
-        "verified": 0
+        "exercised": 36,
+        "verified": 17
       },
       {
         "prefix": "PRC",
@@ -188,7 +188,7 @@
         "prefix": "KEY",
         "ledger": "keywords.md",
         "section": "Keywords: articles, starters, flag schema, connectors, and, reserved aliases, two classes of special word, contextual keywords",
-        "claims": 86,
+        "claims": 88,
         "exercised": 36,
         "verified": 0
       },
@@ -228,7 +228,7 @@
   },
   "probes": {
     "families": 27,
-    "leaves": 73,
+    "leaves": 105,
     "leafFiles": [
       "src/gen_buffers.vox",
       "src/gen_collections.vox",
@@ -368,12 +368,12 @@
       "date": "2026-08-28",
       "vox": "0.4.14",
       "voxFuzz": "ef9dee2",
-      "seeds": "408945– (stripe-3 continued on the 0.4.14 binary)",
+      "seeds": "408945–418544 (stripe-3 continued on the 0.4.14 binary)",
       "budget": "24",
-      "programs": null,
-      "compiled": null,
-      "findings": null,
-      "note": "row closes with the campaign"
+      "programs": 9600,
+      "compiled": 9600,
+      "findings": 0,
+      "note": "32 chunks of 300; cut by the 03:00 poweroff, last completed chunk exit 02:51:24; chunk 418545–418844 interrupted, not counted. Whole stripe-3 including the 0.4.13 part: 60 chunks, 18,000 programs, 0 findings"
     },
     {
       "date": "2026-08-28",
@@ -390,12 +390,12 @@
       "date": "2026-08-28",
       "vox": "0.4.14",
       "voxFuzz": "ef9dee2",
-      "seeds": "509187– (stripe-4 continued on the 0.4.14 binary)",
+      "seeds": "509187–519186 (stripe-4 continued on the 0.4.14 binary)",
       "budget": "12",
-      "programs": null,
-      "compiled": null,
-      "findings": null,
-      "note": "row closes with the campaign"
+      "programs": 10000,
+      "compiled": 10000,
+      "findings": 0,
+      "note": "20 chunks of 500; cut by the 03:00 poweroff, last completed chunk exit 02:47:41; chunk 519187–519686 interrupted, not counted. Whole stripe-4: 37 chunks, 18,500 programs, 0 findings"
     }
   ],
   "findings": {
@@ -407,16 +407,16 @@
     "total": 300
   },
   "register": {
-    "found": 108,
-    "fixed": 100,
-    "open": 2,
+    "found": 112,
+    "fixed": 105,
+    "open": 1,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
-    "voxFuzz": 30,
+    "voxFuzz": 36,
     "vox": {
-      "run": 621,
+      "run": 675,
       "compileFail": 324
     }
   }
