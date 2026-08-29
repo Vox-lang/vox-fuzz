@@ -1,0 +1,18 @@
+(BAS2-61: `byte` is itself a legal loop-variable name in the buffer-bytes
+ loop-expansion position, and reads back as a plain identifier inside
+ the body (LANGUAGE.md:352-353, 0.4.15, #104).
+ Also covers: BAS2-60 (the b1/b2 lines show `byte N of data` agrees with
+ what the loop below yields, 65/66).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BAS2-61.vox -o p && ./p
+ expected output:
+   65
+   66
+   1065
+   1066
+)
+a buffer called data is "AB".
+a number called b1 is byte 1 of data.
+a number called b2 is byte 2 of data.
+print b1.
+print b2.
+For each byte from data, print byte add 1000.

@@ -1,0 +1,12 @@
+(LST-77: reading a nested collection back out with `'s first`/`'s last`
+ copies it (LANGUAGE.md:2500-2501, 0.4.15, #111).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-77.vox -o p && ./p
+ expected output:
+   [[1, 2], [3, 4]]
+   [999, 2]
+)
+a list called outer is [[1, 2], [3, 4]].
+a list called f is outer's first.
+Set element 1 of f to 999.
+print outer.
+print f.

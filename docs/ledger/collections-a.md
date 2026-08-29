@@ -87,8 +87,9 @@ everything here: `element N of`, `'s first`, `'s last`, `'s length`,
 element-wise), the `is a <type>` predicates, and — for a nested child —
 extraction into a declared `list`/`map` variable first, which works
 (LST-28). Where a row's claim is *about* the rendering (LST-16, LST-24,
-LST-32, LST-38, LST-54), the assertable part is the structure and the error
-flag, not the printed text; those rows say so.
+LST-32, LST-38, LST-53), the assertable part is the structure and the error
+flag, not the printed text; those rows say so. (LST-54, formerly in this
+list, is withdrawn as of 0.4.15 — #111, see below.)
 
 ## Probes
 
@@ -172,8 +173,8 @@ LST-68 (their repros are `D3.vox` and `D4.vox`).
 | LST-50 | 2581–2583 | "No such key" stays distinguishable from "the key is set to `nothing`". | read an absent key and a `nothing`-valued key, assert the two behave differently | yes | none — no leaf emits `nothing` anywhere (`values.md` VAL-21) | todo — cross-reference: probed as `values.md` **VAL-27**, not re-probed here. Citation shifted only (2430–2432 → 2561–2563); claim itself unaffected by the 0.4.10 missing-key rule change (LST-49) | |
 | LST-51 | 2585–2588 | Worked example: `print person's "nope"` prints `0` and the handler prints `missing`. | reproduce, assert both lines | yes | `gen leaf map oob` is the same shape without the assertion | folded into LST-49 — hand-verified in `LST-49.vox` | |
 | LST-52 | 2590 | A map value may be a list or another map, and printing is recursive. | emit a map holding a list and a map, extract each child into a typed variable, assert its length and entries | yes, entry-wise (**Discrepancy 8**) | none — every map value in every leaf is a number or a text | todo — real gap, hand-verified (`LST-52.vox`) | |
-| LST-53 | 2590–? | `_map_print` shares the same 64-deep `_print_depth` budget as `_list_print`, so a mixed map/list tree is cycle-safe. | build a map→list→map cycle, print under `on error`, assert the handler fired and the program continued | yes | none | todo — hand-verified (`LST-53.vox`); same memory-safety weight as LST-32 | |
-| LST-54 | ?–? | A self-referential map (`set m's "self" to m.`) prints 64 levels deep, then `...`, sets the error flag, and unwinds safely. | reproduce, assert the handler fired and the program continued | yes for the error flag and the survival; the depth is eyeball-only (**Discrepancy 8**) | none | todo — hand-verified (`LST-54.vox`), exactly 64 levels | |
+| LST-53 | 2590–2593 | **Claim narrowed, 2026-08-29 (0.4.15, #111) — same treatment as LST-32.** `_map_print` shares the same 64-deep `_print_depth` budget as `_list_print`, **as a defensive backstop** — the old framing ("so a mixed map/list tree is cycle-safe") is gone, since #111 makes nesting always copy, so a genuine map→list→map cycle can no longer be built at all. The cap now only guards a hypothetical of 64 separate, explicitly-written nested levels. | build a map/list tree nested 64 explicit levels deep (no self-reference will do it any more — see LST-54, withdrawn), print it, assert the error flag and that the program continues | yes for the error flag and the survival — which is the memory-safety half; the 64-level rendering itself is not capturable (**Discrepancy 8**) | none | todo — **still worth building, and now more expensive to reach** (64 explicit levels, not a `set m's "self" to m.` cycle). Old probe (`LST-53.vox`, map→list→map self-reference, 0.4.14) is stale — its own construction no longer reaches the cap at all, see LST-54 | |
+| LST-54 | withdrawn (manual v0.4.15, #111) | **Withdrawn, 2026-08-29 — same treatment as LST-33.** The claim this row cited — a self-referential map (`set m's "self" to m.`) prints 64 levels deep, then `...`, sets the error flag, and unwinds safely — no longer exists in any form: LANGUAGE.md now states the opposite result for that exact statement (LANGUAGE.md:2593–2597, #111). Verified directly against the 0.4.15 stack: `set m's "self" to m.` now nests exactly **one** level deep, no error, no `...`. See LST-82 for the claim that replaces this one. | — | — | — | withdrawn — superseded by the new copy-in semantics (#111); no longer a live claim | |
 | LST-55 | 2599–2601 | The `is a map` predicate folds to true on a statically-typed map variable and compares the tag at run time on a mixed value. | emit both forms, assert the branch | yes | none — no leaf emits any predicate | todo — hand-verified (`LST-55.vox`) | |
 | LST-56 | 2601–2604 | A map rides the `value` ABI: passed to a `value` parameter or returned from a `value` function it carries its tag (5) alongside the payload and round-trips intact. | pass a map through a `value` function, assert the rendering and `is a map` on the way out | yes | `gen leaf value roundtrip` emits a `value` local but never a `value` **parameter or return**, and never a map through one (`values.md` VAL-02) | todo — hand-verified (`LST-56.vox`); `'s type` reports `Map (dynamic)`, consistent with VAL-14 | |
 | LST-57 | 2606–2620 | **Claim corrected, 2026-08-22 — the manual now describes the real behaviour instead of the wrong one.** A map may be an element of a list (`[{"a": 1}, {"b": 2}]`); the slot carries the map tag (5), so `is a map` fires on a `For each` loop variable over such a list. The loop variable itself is **deliberately untyped**, though, and reading a key with `'s "key"` is a *static* check, so `entry's "tag"` inside the loop is a compile error — read a key by looping over the positions and declaring the element instead (worked example at 2460–2465, verbatim the idiom Discrepancy 2's resolution proposed). | emit a list of maps, iterate it, assert `is a map` fires on the loop variable; separately, emit the position-loop idiom and assert the keyed read | yes for both halves now that the manual states the real rule | none — no leaf puts a map in a list | todo — the tag half holds (`LST-57.vox`, `LST-55.vox`); the direct `entry's "tag"` form is **correctly** a compile error, not a bug — Discrepancy 2 RESOLVED (manual corrected to match the compiler, exactly the lawyer's recommendation) | |
@@ -190,6 +191,18 @@ LST-68 (their repros are `D3.vox` and `D4.vox`).
 | LST-68 | 2678–2683 | **Claim corrected, 2026-08-22.** The cast expression is explicitly **not** a way round the guard limitation: `item as a number` on a dynamically-tagged element is rejected for the same reason arithmetic is (`<value> as a <type>` converts a *statically*-typed value only). The manual no longer offers this as the recommended conversion — LST-67's position-loop idiom is. | emit the cast on a mixed element → expect a compile error, exactly as the manual now says to expect | **no, from a runtime leaf** — this is now correctly documented as a compile-error claim (same category as `values.md` VAL-08), not a passing construct | none | not assertable (compile-error claim) — Discrepancy 4 RESOLVED (manual corrected; overlaps `values.md` D2, also resolved) | |
 | LST-69 | 2685–2687 | A predicate result is itself a boolean value: it can be stored in a list (`append item is a number to flags`) and each stored slot carries the boolean tag, so a later `is a boolean` recognises it. | emit the append-a-predicate form, assert each stored slot and the round-trip predicate | yes, element-wise — the generator knows every slot's type, so it knows every flag | none | todo — hand-verified (`LST-69.vox`) | |
 | LST-70 | 2689–2693 | User-defined things are not in the tag system in v1: there is no `is a <thing>` predicate, and a `list` or `map` of user things, or a `value` holding one, is deferred. | emit `is a <thing>` → expect a compile error; emit a list of things → expect a compile error | **no, from a runtime leaf** (compile-error claims, same category as LST-58) | `gen leaf thing`/`thing member`/`thing copy` emit things, but never near a list, a map or a predicate — correctly, since all three are rejected | not assertable (compile-error claim) — hand-verified both halves (`LST-70.vox`; the list-of-things rejection is recorded in its header) | |
+| LST-71 | 2493–2494 | **New row, 2026-08-29 (0.4.15).** Printing is recursive at any depth: a nested list prints exactly as written, however deep — a distinct, more general restatement of LST-23's "prints recursively with brackets" (2458–2459), new text as of 0.4.15. | build a list nested several levels deep (e.g. 4), print it, assert the exact rendering | yes — the generator wrote every element | none | todo — hand-verified (`a list called deep is [1, [2, [3, [4, 5]]]]. print deep.` → `[1, [2, [3, [4, 5]]]]`, exactly as written) | |
+| LST-72 | 2496–2501 | **New row, 2026-08-29 (0.4.15, #111) — GitHub #34, owner ruling.** A collection placed inside another collection is a **copy**, not a shared reference: the parent owns its contents. This is the general rule the following rows (LST-73 through LST-79) each put on trial for one specific write-in or read-out form. | — | n/a — a framing claim, not independently testable; see the sub-claim rows | n/a | not a leaf need — the sub-claim rows below carry the assertions | |
+| LST-73 | 2498–2499 | Building a list or map literal with a collection element copies it. | build `outer` from a literal containing a previously-declared `inner`, mutate `inner` afterward, assert `outer`'s copy is unaffected | yes | none | todo — hand-verified (`a list called inner is [1, 2]. a list called outer is [inner, 3]. Set element 1 of inner to 777. print outer.` → `[[1, 2], 3]`, unaffected) | |
+| LST-74 | 2499 | Appending a collection to a list copies it. | `append` a previously-declared list into another list, mutate the source afterward, assert the destination's copy is unaffected | yes | none | todo — hand-verified (`append src to out.` then `Set element 1 of src to 999.` leaves `out` as `[[1, 2]]`, `src` as `[999, 2]`) | |
+| LST-75 | 2499–2500 | Setting a map value to a collection copies it. | `Set map's "key" to <list>` from a previously-declared list, mutate the source afterward, assert the map's copy is unaffected | yes | none | todo — hand-verified (a map built from `{"key": inner}` then `Set element 1 of inner to 999.` leaves the map's `"key"` as `[1, 2]`) | |
+| LST-76 | 2500–2501 | Reading a nested collection back out with `element N of` copies it. | extract a nested element with `element N of`, mutate the extracted copy, assert the parent is unaffected | yes | none | todo — hand-verified (`a list called got is element 1 of outer. Set element 1 of got to 555. print outer.` → still `[[1, 2], 3]`) | |
+| LST-77 | 2500–2501 | Reading a nested collection back out with `'s first`/`'s last` copies it. | extract with `'s first`, mutate the extracted copy, assert the parent is unaffected | yes | none | todo — hand-verified (`a list called f is outer's first. Set element 1 of f to 999.` leaves `outer` as `[[1, 2], [3, 4]]`, `f` as `[999, 2]`) | |
+| LST-78 | 2500–2501 | Reading a nested collection back out as a map value copies it. | read a map value that is itself a list, mutate the extracted copy, assert the map is unaffected | yes | none | todo — hand-verified (`a list called got is m's "key". Set element 1 of got to 555.` leaves `m`'s `"key"` as `[1, 2]`) | |
+| LST-79 | 2500–2501 | Reading a nested collection back out via a `For each` loop binding copies it. | bind the loop variable to a nested-collection element, declare a fresh variable from it, mutate that, assert the parent is unaffected | yes | none | todo — hand-verified (`For each item in outer, a list called captured is item, Set element 1 of captured to 999.` leaves `outer` as `[[1, 2], [3, 4]]`) | |
+| LST-80 | 2506–2515 | The worked example (declare `inner`/`outer`, mutate `inner`, print `outer` unaffected; extract `got` via `element 1 of`, mutate `got`, print `outer` still unaffected) compiles and behaves exactly as shown. | reproduce verbatim | yes | none | todo (as a composite); sub-claims covered by LST-73 (the `inner`/`outer` half) and LST-76 (the `got` half) | |
+| LST-81 | 2517–2519 | **Replaces withdrawn LST-33.** Because nesting always copies, a list can never truly contain itself: `a list called x is []. append x to x.` copies `x`'s state at the moment of the append (here, `[]`) and appends that copy, so `x` ends up `[[]]` — one level deep, not a cycle. | reproduce verbatim, assert the exact result | yes | none | todo — hand-verified (`a list called x is []. append x to x. print x.` → `[[]]`, no error, no cycle) | |
+| LST-82 | 2593–2597 | **New row, 2026-08-29 (0.4.15, #111).** A map value that is itself a collection is copied in — the same copy-in rule a list applies to its own elements — so `set m's "self" to m.` copies `m`'s state at the moment of the `set` (before `"self"` exists in it) rather than making `m` contain itself: `m` ends up one level deep, not a cycle. | reproduce, assert the exact result | yes | none | todo — hand-verified (`a map called m is {"a": 1}. set m's "self" to m. print m.` → `{"a": 1, "self": {"a": 1}}`, one level deep) | |
 
 ## Discrepancies
 
@@ -524,7 +537,7 @@ each with the line and the row that justifies it:
 - booleans inside a list always render `1`/`0`, never `true`/`false` — LANGUAGE.md:2407, LST-17
 - text elements inside a list always render quoted; numbers never — LANGUAGE.md:2407, LST-09
 - nested list elements always render with their own brackets, recursively — LANGUAGE.md:2458–2461, LST-23
-- recursive printing always stops at exactly depth 64 and always emits `...` at the cap — LANGUAGE.md:2520–2523, LST-32, LST-54
+- recursive printing always stops at exactly depth 64 and always emits `...` at the cap — LANGUAGE.md:2520–2523, LST-32, LST-53 (LST-54 withdrawn, 0.4.15, #111 — see above)
 - map literals always wrapped in `{` `}` with `"key": value` pairs — LANGUAGE.md:2528, LST-37
 - an empty map always renders exactly `{}` — LANGUAGE.md:2528, LST-37
 - every map key is always a quoted text — LANGUAGE.md:2527, 2622–2623, LST-36, LST-58
@@ -590,16 +603,30 @@ sub-sections that no leaf touches — **nested lists** (LST-22…LST-35),
 **type predicates** (LST-60…LST-70), and **cycle-safe printing**
 (LST-32, LST-53, LST-54).
 
-**Biggest finding — the cycle-safety claims are untested and they are the
-memory-safety claims in this section.** LST-32, LST-53 and LST-54 say that a
-self-referential list, a self-referential map, and a mixed map/list cycle each
-print to a 64-deep cap, set the error flag, and *unwind safely instead of
-overflowing the stack*. That is a stack-overflow guard, stated in the manual,
-that nothing in the fuzzer has ever exercised — and building a cycle is two
-lines of generated Vox (`a list called ring is []. append ring to ring.`). By
-`CLAUDE.md`'s ordering — every signal death is top severity, buffers and
-collections are where the promise lives — that is where the first leaf batch
-for this section should go, ahead of the assertion retrofits.
+**Biggest finding (HISTORICAL, true through 0.4.14) — the cycle-safety
+claims are untested and they are the memory-safety claims in this
+section.** LST-32, LST-53 and LST-54 say that a self-referential list, a
+self-referential map, and a mixed map/list cycle each print to a 64-deep
+cap, set the error flag, and *unwind safely instead of overflowing the
+stack*. That is a stack-overflow guard, stated in the manual, that
+nothing in the fuzzer has ever exercised — and building a cycle is two
+lines of generated Vox (`a list called ring is []. append ring to ring.`).
+By `CLAUDE.md`'s ordering — every signal death is top severity, buffers
+and collections are where the promise lives — that is where the first
+leaf batch for this section should go, ahead of the assertion retrofits.
+
+**Superseded, 2026-08-29 (0.4.15, #111).** That two-line cycle-building
+idiom no longer builds a cycle at all — nesting always copies now, so
+`append ring to ring.` yields `[[]]`, not a self-reference. LST-33,
+LST-34 and LST-54 (the rows whose claims depended on a cycle actually
+existing) are withdrawn; LST-32 and LST-53 are narrowed (the depth-64
+cap is still real, as a defensive backstop, but is now only reachable
+via 64 explicit nested literal levels — much more expensive to build
+than the old two-line idiom, see their rows above). The stack-overflow
+guard itself is presumably still real and still untested by any leaf,
+but the cheap way to reach it is gone; the next worker's cost-benefit
+call on whether to build 64 explicit levels is now a real trade-off,
+not a two-line freebie.
 
 **Runner-up — Discrepancy 5, an opaque text in a list silently reinterpreted
 as a number and printed as a stable code address — RESOLVED (vox #45).**
@@ -662,11 +689,15 @@ everything in the table.
 
 ### What I could not do
 
-- **LST-34** — the documented use-after-free (a child list held across a
-  parent reallocation) did not reproduce at 5000 appends. The manual hedges
-  with "may", so the row is not a discrepancy, but I cannot say the hazard is
-  absent — only that I did not find the shape that triggers it. It is worth a
-  targeted red-team attempt rather than a leaf.
+- **LST-34** (HISTORICAL, true through 0.4.14) — the documented use-after-free
+  (a child list held across a parent reallocation) did not reproduce at 5000
+  appends. The manual hedges with "may", so the row is not a discrepancy, but
+  I cannot say the hazard is absent — only that I did not find the shape that
+  triggers it. It is worth a targeted red-team attempt rather than a leaf.
+  **Superseded, 2026-08-29 (0.4.15, #111): LST-34 is withdrawn — the manual
+  no longer claims this hazard exists at all** (`element N of` now copies,
+  per the replacement text at LANGUAGE.md:2496–2515), so there is nothing
+  left to red-team.
 - **LST-08, LST-25** — the homogeneous fast path is a compile-time property.
   I probed its observable shadow (arithmetic on the loop variable is accepted
   for a homogeneous list, rejected for a mixed one) but there is no way from

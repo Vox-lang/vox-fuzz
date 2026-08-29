@@ -1,0 +1,12 @@
+(BAS2-62: an empty (size-0) buffer iterates zero times in the buffer-
+ bytes loop expansion, extending the general empty-collection rule
+ shown for lists (LANGUAGE.md:3145-3146, "print each n from []." does
+ nothing) to the new buffer collection — not restated for buffers by
+ name, hand-verified to hold anyway.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BAS2-62.vox -o p && ./p
+ expected output:
+   after
+)
+a buffer called blank is 8 bytes.
+For each byte from blank, print byte.
+print "after".

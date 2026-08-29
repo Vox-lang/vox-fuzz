@@ -1,0 +1,10 @@
+(LST-75: setting a map value to a collection copies it
+ (LANGUAGE.md:2499-2500, 0.4.15, #111).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-75.vox -o p && ./p
+ expected output:
+   {"key": [1, 2]}
+)
+a list called inner is [1, 2].
+a map called m is {"key": inner}.
+Set element 1 of inner to 999.
+print m.

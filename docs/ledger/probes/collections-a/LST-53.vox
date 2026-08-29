@@ -1,6 +1,16 @@
-(LST-53 — `_map_print` shares the same 64-deep `_print_depth` budget as
- `_list_print`, so a tree that alternates map and list is cycle-safe too:
- it prints to the cap, then `...`, sets the error flag, and unwinds.
+(LST-53 — HISTORICAL, 0.4.14 and earlier. On those manuals, `_map_print`
+ shared the same 64-deep `_print_depth` budget as `_list_print`, so a
+ tree that alternates map and list was cycle-safe too: it printed to the
+ cap, then `...`, set the error flag, and unwound.
+
+ STALE as of 0.4.15 (#111): `set root's "kids" to branch.` and
+ `append root to branch.` both copy now, so this program no longer
+ builds any cross-reference at all — it prints `{"kids": []}` and never
+ triggers `On error`. LST-53's row is narrowed (the depth cap itself is
+ still real, LANGUAGE.md:2590-2593, but only reachable via 64 explicit
+ nested levels now); this probe is retained as the historical record of
+ the pre-#111 behavior. LST-54 is withdrawn; see LST-82 for the 0.4.15
+ self-referential-map behavior.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-53.vox -o p && ./p
  expected output:
    {"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [{"kids": [...]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}

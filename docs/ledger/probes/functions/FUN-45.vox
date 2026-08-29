@@ -1,0 +1,10 @@
+(FUN-45: a function declared with a single-quoted single-word name both
+ defines and is called correctly (LANGUAGE.md:758, 882, 0.4.15, #110).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-45.vox -o p && ./p
+ expected output:
+   42
+)
+To 'greet' with a number called x.
+  Print x.
+
+'greet' of 42.

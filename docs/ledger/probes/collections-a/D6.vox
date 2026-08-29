@@ -1,10 +1,19 @@
-(D6 — Discrepancy 6 repro: the cyclic-list example at
- LANGUAGE.md:2431-2434 records its output as "(prints: [[...]] then
- cyclic)". The compiler prints 64 opening brackets, `...`, 64 closing
- brackets, then `cyclic`. The surrounding PROSE (2293-2297) is exact and
- correct; only the example's inline comment is abbreviated. Recorded because
- a leaf that asserted the example's literal text would manufacture a
- false finding on every run.
+(D6 — Discrepancy 6 repro, HISTORICAL, 0.4.14 and earlier. The cyclic-list
+ example at LANGUAGE.md:2431-2434 (0.4.14 numbering) records its output as
+ "(prints: [[...]] then cyclic)". The compiler printed 64 opening brackets,
+ `...`, 64 closing brackets, then `cyclic`. The surrounding PROSE
+ (2293-2297) was exact and correct; only the example's inline comment was
+ abbreviated. Recorded because a leaf that asserted the example's literal
+ text would manufacture a false finding on every run.
+
+ MOOT as of 0.4.15 (#111): `append x to x.` no longer builds a
+ self-referential list — nesting always copies now — so this exact program
+ prints `[[]]` and never reaches the depth cap or the error handler. The
+ discrepancy is resolved (see collections-a.md, Discrepancy 6): there is no
+ longer a "(prints: …)" comment on this example to be abbreviated or
+ verbatim, because the example's own documented output changed. Retained
+ as the historical record of the pre-#111 behavior, not as a
+ currently-passing claim. See LST-32.vox and LST-33 (withdrawn).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p
  expected output:
    [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]

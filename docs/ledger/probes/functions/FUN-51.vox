@@ -1,0 +1,24 @@
+(FUN-51: a thing-returning function that falls off its end hands back
+ the all-defaults instance for that type (LANGUAGE.md:2849-2855, 0.4.15,
+ #112). Before #112 this read the caller's leftover stack — a
+ wrong-answer, not a crash (CHANGELOG.md, Unreleased). The type's own
+ declared field defaults (x is 7, y is 9) are deliberately non-zero, so
+ seeing them back (not 0/0, not garbage) confirms this is the
+ all-defaults instance, not an accidentally-zeroed or uninitialised one.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-51.vox -o p && ./p
+ expected output:
+   7
+   9
+)
+A thing called point has
+  a number called x is 7,
+  a number called y is 9.
+
+To 'maybe point' with a boolean called b.
+  If b,
+    a point called somewhere,
+    Return a point, somewhere.
+
+a point called r is 'maybe point' of false.
+print r's x.
+print r's y.

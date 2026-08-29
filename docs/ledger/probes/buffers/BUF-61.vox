@@ -1,0 +1,10 @@
+(BUF-61: "Iterating bytes" — the manual's own worked example in the
+ Buffer Byte Access subsection (LANGUAGE.md:3755, 0.4.15, #104), pinned
+ verbatim. Also covers: BAS2-60/61 (expansion.md), same construct.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-61.vox -o p && ./p
+ expected output:
+   65
+   66
+)
+a buffer called data is "AB".
+For each byte from data, print byte.

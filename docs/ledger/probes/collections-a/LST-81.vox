@@ -1,0 +1,13 @@
+(LST-81: because nesting always copies, a list can never truly contain
+ itself: `append x to x.` copies x's state at the moment of the append
+ and appends that copy, so x ends up [[]] one level deep, not a cycle
+ (LANGUAGE.md:2517-2519, 0.4.15, #111). Replaces withdrawn LST-33 (the
+ 0.4.14 and earlier text described this same program as building a real
+ cycle, capped at print depth 64).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-81.vox -o p && ./p
+ expected output:
+   [[]]
+)
+a list called x is [].
+append x to x.
+print x.

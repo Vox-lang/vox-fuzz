@@ -48,6 +48,7 @@ owns the claim, cited in the row.
 | TYP-09 | 488 | `time` is a "Date/time value (unix timestamp with components)". | — | yes | `Get current time into tn{n}` (`gen leaf timer and clock`, `gen_misc.vox:218`) declares a `time` implicitly rather than via `a time called X is current time.` | folded into `TIM-01`/`TIM-03` | |
 | TYP-10 | 489 | `timer` is a "Stopwatch for measuring durations". | — | yes | `a timer called tk{n}` / `Start`/`Stop` (`gen leaf timer and clock`) | folded into `TIM-21` | |
 | TYP-11 | ? | `thing` is `*(contextual)*`, a "User-defined composite value type". | — | yes | `a t4 called i{n} is ...` (`gen leaf thing member`, `src/gen_things.vox`) declares instances of a defined thing type; no leaf declares a variable literally named `thing` to exercise the contextual half | folded into `THG-13` (contextual-elsewhere half) / `KEY-76`, `KEY-79` (the exact worked example `a number called thing is 1.`) | |
+| TYP-12 | 492 | **New row, 2026-08-29 (0.4.15).** `int` and `integer` are accepted spellings of `number`. | declare with `int` and separately `integer`, assert both behave as a `number` (arithmetic works, `'s type` reports `Number (static)`) | yes | none — every declaring leaf spells the type `number`, never `int`/`integer` | todo — real gap, hand-verified (`an int called first is 5. an integer called second is 7. print first add second. print first's type. print second's type.` → `12`, `Number (static)`, `Number (static)`) | |
 
 ## Discrepancies
 

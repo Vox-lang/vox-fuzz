@@ -1,0 +1,11 @@
+(LST-82: a map value that is itself a collection is copied in, so
+ `set m's "self" to m.` copies m's state at the moment of the set
+ (before "self" exists in it), one level deep, not a cycle
+ (LANGUAGE.md:2593-2597, 0.4.15, #111).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-82.vox -o p && ./p
+ expected output:
+   {"a": 1, "self": {"a": 1}}
+)
+a map called m is {"a": 1}.
+set m's "self" to m.
+print m.
