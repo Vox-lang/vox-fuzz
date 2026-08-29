@@ -1,0 +1,80 @@
+--- THG2-06: a whole thing interpolates into a format string ---
+a cairn called i1.
+Set i1's 'the chain length' to -0027.
+Print i1.
+Print "the north offset reading: {i1}".
+
+--- the same leaf, nested ---
+  a cairn called i2,
+  Set i2's 'the chain length' to -0027,
+  Print i2,
+  Print "the north offset reading: {i2}".
+
+--- THG2-08, THG2-09: is / is not between two things ---
+a cairn called i3.
+a cairn called i4.
+If i3 is not i4 then, Print "ASSERT THG2-08: expected i3 to equal i4", Exit 95. Print i3.
+Set i4's 'the chain length' to -00027.
+If i3 is i4 then, Print "ASSERT THG2-09: expected i3 to differ from i4", Exit 95. Print i3.
+
+--- THG2-10: the comparison recurses into a nested field ---
+a waypoint called i5.
+a waypoint called i6.
+Set i5's height's 'the chain length' to -00027.
+If i5 is i6 then, Print "ASSERT THG2-10: expected i5 to differ from i6", Exit 95. Print i5.
+Set i6's height's 'the chain length' to -00027.
+If i5 is not i6 then, Print "ASSERT THG2-10: expected i5 to equal i6", Exit 95. Print i5.
+
+--- THG2-21: an ordinary global function taking a thing, both call forms ---
+a cairn called i7.
+Set i7's 'the chain length' to -000027.
+a number called c1 is 'the balance so far' of i7.
+If c1 is not 729 then, Print "ASSERT THG2-21: expected 729 got {c1}", Exit 95. Print c1.
+a number called c2 is i7's 'the balance so far'.
+If c2 is not 729 then, Print "ASSERT THG2-21: expected 729 got {c2}", Exit 95. Print c2.
+
+--- THG2-27: of / to / with / on all introduce arguments ---
+a cairn called i8.
+Set i8's 'the chain length' to -000027.
+a number called c3 is 'chalk the score' on i8 and 378.
+If c3 is not -10206 then, Print "ASSERT THG2-27: expected -10206 got {c3}", Exit 95. Print c3.
+a number called c4 is 'chalk the score' of i8 and 378.
+If c4 is not -10206 then, Print "ASSERT THG2-27: expected -10206 got {c4}", Exit 95. Print c4.
+a number called c5 is 'chalk the score' to i8 and 378.
+If c5 is not -10206 then, Print "ASSERT THG2-27: expected -10206 got {c5}", Exit 95. Print c5.
+a number called c6 is 'chalk the score' with i8 and 378.
+If c6 is not -10206 then, Print "ASSERT THG2-27: expected -10206 got {c6}", Exit 95. Print c6.
+
+--- THG2-30: the receiver fills the first parameter, the rest follow the preposition ---
+a cairn called i9.
+Set i9's 'the chain length' to -000027.
+a number called c7 is i9's 'chalk the score' on 378.
+If c7 is not -10206 then, Print "ASSERT THG2-30: expected -10206 got {c7}", Exit 95. Print c7.
+
+--- THG2-32: a receiver reached through a field reads the same way ---
+a waypoint called i10.
+Set i10's height's 'the chain length' to -000027.
+a number called c8 is i10's height's 'the balance so far'.
+If c8 is not 729 then, Print "ASSERT THG2-32: expected 729 got {c8}", Exit 95. Print c8.
+
+--- THG2-70: is a <type> recognises the six builtins ---
+a text called c9 is 'roll it along' of 9223372036854775807.
+If c9 is not "number" then, Print "ASSERT THG2-70: expected number got {c9}", Exit 95. Print c9.
+
+--- the same leaf, nested ---
+  a text called c10 is 'roll it along' of 9223372036854775807,
+  If c10 is not "number" then, Print "ASSERT THG2-70: expected number got {c10}", Exit 95. Print c10.
+
+--- a program with no things at all: every gen_thing_fn_*-dependent leaf stands aside ---
+Print 0 minus 0.
+
+--- the reset fix: seed 1 (has things) run immediately before seed 4 (has none) in one process ---
+thing fn ready after a things-free program: 0
+nested-receiver ready after a things-free program: 0
+Print 0 minus 0.
+
+--- THG2-70's predicate function stays available even with zero things ---
+predicate ready with no things: 1
+a text called c11 is 'gather up' of true.
+If c11 is not "boolean" then, Print "ASSERT THG2-70: expected boolean got {c11}", Exit 95. Print c11.
+

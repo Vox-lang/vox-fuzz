@@ -276,3 +276,566 @@ To 'gen write input' with a text called path.
     open a file for writing called 'the input file' at path.
     Write gen_input to 'the input file'.
     Close 'the input file'.
+
+(--- Ledger batch A: list and number properties -----------------------
+
+ docs/ledger/files.md, rows FIL-10, FIL-11, FIL-12, FIL-13, FIL-14 (List
+ Properties, LANGUAGE.md:3808-3826, mirrored at :2948-2967) and FIL-24,
+ FIL-25, FIL-26 (Number Properties, LANGUAGE.md:3866-3880). Both leaves
+ below are pure in-memory assertions - no file handle is opened, no
+ file-handle row (FIL-01..07, 40, 46, 48, 50) is touched; those are
+ batch B's.
+
+ Every assertion reuses the generic helpers 'gen assert number' / '…
+ number is' / '… number matches' / '… true' / '… false' and the
+ word-vocabulary name allocator ('gen buffer name' / '… reference' /
+ '… property'), all from gen_buffers.vox - misleadingly named for
+ buffers but plain text helpers underneath (PROCEDURE.md §6a), reused
+ here rather than copied. The container-word pool reads naturally
+ enough for a list ("a list called 'the crate' is [...]") and passably
+ for a number, and reusing it - rather than spinning up a second
+ top-level name pool that would need its own disjointness rows in
+ tests/230_units.vox - keeps this batch small.
+
+ ORDERING TWO OR THREE BLOCKS SAFELY: `If <cond> then, For each x in Y,
+ append x to Z.` opens two clauses (the `If`, then the `For each`), and
+ one trailing period closes only the innermost one - LANGUAGE.md:154,
+ "and only that one" - leaving the `If` open to swallow whatever comes
+ next. Two such statements back to back is exactly the swallowed-tail
+ trap PROCEDURE.md §6a already warns about, not a compiler defect (the
+ report has the full repro and the master's correction); the fix at the
+ call site would be to stack a second period (`..`, LANGUAGE.md:211-224)
+ to close both clauses at once. Rather than count stacked periods by
+ hand at every ordering call site, no `If` here ever wraps a `For each`
+ at all: the concatenation loops live unconditionally inside their own
+ plain function ('gen concat two blocks' / 'gen concat three blocks'),
+ and the only thing an `If` ever wraps at a call site is a single plain
+ `Set … to …`, which needs one period like any other.)
+
+(A random element type for a list literal - number, float, text or
+ boolean, all four forms LANGUAGE.md:2371-2380 shows inside `[...]`
+ ("Mixed-Type Lists"). Delegates straight to the unbounded literal
+ generators in gen_literals.vox, so a list element drawn here carries
+ the same sign/leading-zero/escape variety any scalar declaration does,
+ with no separate vocabulary of its own to keep in sync.)
+
+To 'gen typed literal' with a number called kind.
+    If kind is 0 then,
+        Return a text, 'literal integer'.
+    If kind is 1 then,
+        Return a text, 'literal float'.
+    If kind is 2 then,
+        Return a text, 'literal text'.
+    Return a text, 'literal boolean'.
+
+(Unconditional concatenation only - see the header comment above for
+ why no caller ever wraps the `For each` in an `If`.)
+
+To 'gen concat two blocks' with a list called 'the first block' and a list called 'the second block'.
+    a list called 'the combined' is [].
+    For each line in 'the first block', append line to 'the combined'.
+    For each line in 'the second block', append line to 'the combined'.
+    Return a list, 'the combined'.
+
+To 'gen concat three blocks' with a list called 'the first block' and a list called 'the second block' and a list called 'the third block'.
+    a list called 'the combined' is [].
+    For each line in 'the first block', append line to 'the combined'.
+    For each line in 'the second block', append line to 'the combined'.
+    For each line in 'the third block', append line to 'the combined'.
+    Return a list, 'the combined'.
+
+(FIL-10, FIL-11, FIL-12, FIL-13, FIL-14: length, size (a documented
+ synonym for length), empty, first and last.
+
+ Two lists are declared every time - one forced to `[]` and one forced
+ to at least one element - because FIL-12's claim needs both a true and
+ a false `empty` reading to mean anything, and which block is WRITTEN
+ FIRST is drawn (the row's own "random which is emitted first"). The
+ populated list's element type (number, float, text or boolean) and its
+ count (1..5, so the one-element case where first and last coincide is
+ reachable) are both drawn; each element is 'gen typed literal's own
+ unbounded random spelling, reused VERBATIM as the comparison operand
+ for FIL-13/FIL-14, so the assertion checks the generator's writing
+ against itself rather than a second, independently-fallible reading of
+ the manual.
+
+ first/last on the EMPTY list are read too, but NOT asserted:
+ LANGUAGE.md's List Properties table promises a value for a populated
+ list, and says nothing about what first/last report on one with no
+ items - unlike element-by-index access, which the Bounds Checking
+ paragraph explicitly covers (LANGUAGE.md:3841-3846). Hand-verified
+ against 0.4.14: both set the error flag and read back 0, the same
+ default-value shape the documented bounds-checking behaviour uses for
+ an out-of-range index - but nothing in the manual says so for these
+ two properties specifically, so the read here is exercised for
+ crash-safety only. Recorded in the worker report, not as a ledger row.)
+
+To 'gen leaf list properties' with a text called indent and a boolean called nested.
+    a text called 'the empty stem' is 'gen buffer name'.
+    a text called 'the empty name' is 'gen buffer reference' of 'the empty stem'.
+    a text called 'the empty length access' is 'gen buffer property' of 'the empty stem' and "length".
+    a text called 'the empty size access' is 'gen buffer property' of 'the empty stem' and "size".
+    a text called 'the empty flag access' is 'gen buffer property' of 'the empty stem' and "empty".
+    a text called 'the empty first access' is 'gen buffer property' of 'the empty stem' and "first".
+    a text called 'the empty last access' is 'gen buffer property' of 'the empty stem' and "last".
+    a text called 'the empty declaration' is "a list called {'the empty name'} is []".
+    a text called 'the empty length check' is 'gen assert number is' of "FIL-10" and 'the empty length access' and 0.
+    a text called 'the empty size matches' is 'gen assert number matches' of "FIL-11" and 'the empty size access' and 'the empty length access'.
+    a text called 'the empty size check' is 'gen assert number is' of "FIL-11" and 'the empty size access' and 0.
+    a text called 'the empty flag check' is 'gen assert true' of "FIL-12" and 'the empty flag access'.
+    a text called 'the empty first read' is "Print {'the empty first access'}".
+    a text called 'the empty last read' is "Print {'the empty last access'}".
+    a list called 'the empty block' is ['the empty declaration', 'the empty length check', 'the empty size matches', 'the empty size check', 'the empty flag check', 'the empty first read', 'the empty last read'].
+    a text called 'the full stem' is 'gen buffer name'.
+    a text called 'the full name' is 'gen buffer reference' of 'the full stem'.
+    a text called 'the full length access' is 'gen buffer property' of 'the full stem' and "length".
+    a text called 'the full size access' is 'gen buffer property' of 'the full stem' and "size".
+    a text called 'the full flag access' is 'gen buffer property' of 'the full stem' and "empty".
+    a text called 'the full first access' is 'gen buffer property' of 'the full stem' and "first".
+    a text called 'the full last access' is 'gen buffer property' of 'the full stem' and "last".
+    a number called 'the full count' is 'rng below' of 5 add 1.
+    a number called 'the type draw' is 'rng below' of 4.
+    a text called 'the full elements' is "".
+    a text called 'the first literal' is "".
+    a text called 'the last literal' is "".
+    a number called 'element index' is 0.
+    While 'element index' is less than 'the full count',
+        a text called 'the drawn literal' is 'gen typed literal' of 'the type draw',
+        If 'element index' is 0 then,
+            Set 'the first literal' to 'the drawn literal',
+            Set 'the full elements' to 'the drawn literal'.
+        If 'element index' is greater than 0 then,
+            Set 'the full elements' to "{'the full elements'}, {'the drawn literal'}".
+        Set 'the last literal' to 'the drawn literal',
+        Set 'element index' to 'element index' add 1.
+    a text called 'the full declaration' is "a list called {'the full name'} is [{'the full elements'}]".
+    a text called 'the full length check' is 'gen assert number is' of "FIL-10" and 'the full length access' and 'the full count'.
+    a text called 'the full size matches' is 'gen assert number matches' of "FIL-11" and 'the full size access' and 'the full length access'.
+    a text called 'the full size check' is 'gen assert number is' of "FIL-11" and 'the full size access' and 'the full count'.
+    a text called 'the full flag check' is 'gen assert false' of "FIL-12" and 'the full flag access'.
+    a text called 'the full first check' is 'gen assert number' of "FIL-13" and 'the full first access' and 'the first literal' and "the literal the generator wrote first".
+    a text called 'the full last check' is 'gen assert number' of "FIL-14" and 'the full last access' and 'the last literal' and "the literal the generator wrote last".
+    a list called 'the full block' is ['the full declaration', 'the full length check', 'the full size matches', 'the full size check', 'the full flag check', 'the full first check', 'the full last check'].
+    a list called 'the lines' is [].
+    a number called 'the order draw' is 'rng below' of 2.
+    If 'the order draw' is 0 then,
+        Set 'the lines' to 'gen concat two blocks' of 'the empty block' and 'the full block'.
+    If 'the order draw' is 1 then,
+        Set 'the lines' to 'gen concat two blocks' of 'the full block' and 'the empty block'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-24, FIL-25, FIL-26: even, odd and positive, each on a positive
+ number, a negative number and zero, in a random order - the row's own
+ "random order" for FIL-26 extended to all three checks so the block
+ stays self-contained per number. Magnitudes are a wide uniform draw
+ (1..1000000), so parity varies too: which of the three numbers, if
+ any, is even is not pinned by anything here.
+
+ FIL-25 also asserts AGREEMENT: `odd` must disagree with `even` on the
+ SAME reading, not just match the generator's own independently
+ computed expectation - the same "assert agreement" oracle
+ PROCEDURE.md §6a documents, applied here even though the generator
+ also has an independent expectation to check both ways.
+
+ Six explicit orderings rather than a shuffle, the same choice
+ 'gen emit ordered blocks' (gen_core.vox) makes for six blocks: every
+ one is legal by inspection, and three items make the enumeration
+ short.)
+
+To 'gen leaf number properties' with a text called indent and a boolean called nested.
+    a number called 'the positive magnitude' is 'rng below' of 1000000 add 1.
+    a text called 'the positive stem' is 'gen buffer name'.
+    a text called 'the positive name' is 'gen buffer reference' of 'the positive stem'.
+    a text called 'the positive access' is 'gen buffer property' of 'the positive stem' and "positive".
+    a text called 'the positive even access' is 'gen buffer property' of 'the positive stem' and "even".
+    a text called 'the positive odd access' is 'gen buffer property' of 'the positive stem' and "odd".
+    a text called 'the positive declaration' is "a number called {'the positive name'} is {'the positive magnitude'}".
+    a text called 'the positive check' is 'gen assert true' of "FIL-26" and 'the positive access'.
+    a text called 'the positive even check' is 'gen assert false' of "FIL-24" and 'the positive even access'.
+    a text called 'the positive odd check' is 'gen assert true' of "FIL-25" and 'the positive odd access'.
+    If 'the positive magnitude' modulo 2 is 0 then,
+        Set 'the positive even check' to 'gen assert true' of "FIL-24" and 'the positive even access',
+        Set 'the positive odd check' to 'gen assert false' of "FIL-25" and 'the positive odd access'.
+    a text called 'the positive disagree check' is "If {'the positive odd access'} is {'the positive even access'} then, Print \"ASSERT FIL-25: odd equalled even for {'the positive name'}\", Exit 95. Print {'the positive odd access'}".
+    a list called 'the positive block' is ['the positive declaration', 'the positive check', 'the positive even check', 'the positive odd check', 'the positive disagree check'].
+    a number called 'the negative magnitude' is 'rng below' of 1000000 add 1.
+    a number called 'the negative value' is 0 subtract 'the negative magnitude'.
+    a text called 'the negative stem' is 'gen buffer name'.
+    a text called 'the negative name' is 'gen buffer reference' of 'the negative stem'.
+    a text called 'the negative access' is 'gen buffer property' of 'the negative stem' and "positive".
+    a text called 'the negative even access' is 'gen buffer property' of 'the negative stem' and "even".
+    a text called 'the negative odd access' is 'gen buffer property' of 'the negative stem' and "odd".
+    a text called 'the negative declaration' is "a number called {'the negative name'} is {'the negative value'}".
+    a text called 'the negative check' is 'gen assert false' of "FIL-26" and 'the negative access'.
+    a text called 'the negative even check' is 'gen assert false' of "FIL-24" and 'the negative even access'.
+    a text called 'the negative odd check' is 'gen assert true' of "FIL-25" and 'the negative odd access'.
+    If 'the negative magnitude' modulo 2 is 0 then,
+        Set 'the negative even check' to 'gen assert true' of "FIL-24" and 'the negative even access',
+        Set 'the negative odd check' to 'gen assert false' of "FIL-25" and 'the negative odd access'.
+    a text called 'the negative disagree check' is "If {'the negative odd access'} is {'the negative even access'} then, Print \"ASSERT FIL-25: odd equalled even for {'the negative name'}\", Exit 95. Print {'the negative odd access'}".
+    a list called 'the negative block' is ['the negative declaration', 'the negative check', 'the negative even check', 'the negative odd check', 'the negative disagree check'].
+    a text called 'the zero stem' is 'gen buffer name'.
+    a text called 'the zero name' is 'gen buffer reference' of 'the zero stem'.
+    a text called 'the zero access' is 'gen buffer property' of 'the zero stem' and "positive".
+    a text called 'the zero even access' is 'gen buffer property' of 'the zero stem' and "even".
+    a text called 'the zero odd access' is 'gen buffer property' of 'the zero stem' and "odd".
+    a text called 'the zero declaration' is "a number called {'the zero name'} is 0".
+    a text called 'the zero check' is 'gen assert false' of "FIL-26" and 'the zero access'.
+    a text called 'the zero even check' is 'gen assert true' of "FIL-24" and 'the zero even access'.
+    a text called 'the zero odd check' is 'gen assert false' of "FIL-25" and 'the zero odd access'.
+    a text called 'the zero disagree check' is "If {'the zero odd access'} is {'the zero even access'} then, Print \"ASSERT FIL-25: odd equalled even for {'the zero name'}\", Exit 95. Print {'the zero odd access'}".
+    a list called 'the zero block' is ['the zero declaration', 'the zero check', 'the zero even check', 'the zero odd check', 'the zero disagree check'].
+    a number called 'the order draw' is 'rng below' of 6.
+    a list called 'the lines' is [].
+    If 'the order draw' is 0 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the positive block' and 'the negative block' and 'the zero block'.
+    If 'the order draw' is 1 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the positive block' and 'the zero block' and 'the negative block'.
+    If 'the order draw' is 2 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the negative block' and 'the positive block' and 'the zero block'.
+    If 'the order draw' is 3 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the negative block' and 'the zero block' and 'the positive block'.
+    If 'the order draw' is 4 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the zero block' and 'the positive block' and 'the negative block'.
+    If 'the order draw' is 5 then,
+        Set 'the lines' to 'gen concat three blocks' of 'the zero block' and 'the negative block' and 'the positive block'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's file leaves, batch B, 2026-08-29 ----------------------
+
+ docs/ledger/files.md maps LANGUAGE.md's File I/O chapter, lines
+ 3762-4158, into numbered claims;
+ everything below puts one of those claims on trial and ASSERTS its
+ documented result, exit 95 and `ASSERT <ID>: expected <x> got <y>` on
+ failure, the same as every other ledger leaf. Reuses gen_buffers.vox's
+ name allocator ('gen buffer name' / 'gen buffer reference' / 'gen
+ buffer property' / 'gen buffer companion') and assertion helpers ('gen
+ assert number is' / 'gen assert number matches' / 'gen assert true' /
+ 'gen assert false') rather than copying them - both are surface-neutral
+ despite their names (PROCEDURE.md 6a). Every open below targets a path
+ built from gen_scratch_flag, the per-run scratch directory the harness
+ hands this program on the command line - the same D16 guard 'gen leaf
+ file round trip' uses, repeated in each leaf below rather than shared,
+ since a leaf that forgets its own guard is exactly the failure mode the
+ guard exists to catch. Never a path the generator assembled itself,
+ never anything outside that directory.
+
+ A property read AFTER Close does not crash, but it does not report the
+ true value either - it reads -1 (found by hand while building FIL-40's
+ probe: checking size straight after Close read -1, not the 5 bytes
+ actually written). Every assertion below therefore runs on the
+ still-open handle, immediately after the operation it is about, before
+ any Close.
+
+ Rows covered here: FIL-01, FIL-02, FIL-03, FIL-04, FIL-05, FIL-06,
+ FIL-07, FIL-40, FIL-46. Retained probes:
+ docs/ledger/probes/files/FIL-02.vox, FIL-04.vox, FIL-06.vox, FIL-07.vox,
+ FIL-40.vox, FIL-53.vox (the last also covers FIL-46) - each is the
+ exact rendered assertion shape, run clean and then deliberately broken
+ to confirm the Exit 95 path.)
+
+(A range assertion: 'gen assert number is'/'matches' in gen_buffers.vox
+ only ever test equality, and two of this batch's claims - FIL-02's
+ descriptor, FIL-05/FIL-06's timestamps - are knowable only as a floor
+ or a ceiling, never as a literal number the generator could have
+ written itself. 'the minimum'/'the maximum' are EXPRESSIONS, not always
+ literals - 'current time's unix' for the not-in-the-future half,
+ hand-verified against 0.4.14 to work inline inside an If condition the
+ same way the manual's own inline Print example uses it
+ (LANGUAGE.md:4550, the "Inline Time Access" example; docs/ledger/
+ probes/files/FIL-06.vox.).)
+
+To 'gen file assert at least' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown'.
+    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is less than {'the minimum'} then, Print \"ASSERT {'the row'}: expected at least {'the minimum shown'} got {'the got shown'}\", Exit 95. Print {'the subject'}".
+    Return a text, 'the line'.
+
+(A two-sided range assertion whose SUCCESS path prints a fixed marker
+ rather than the subject - unlike 'gen file assert at least' above,
+ which prints the observed value because a descriptor number is
+ deterministic across the oracle's two runs of one binary. A file's
+ modified/accessed timestamp is not: it can tick a wall-clock second
+ between those two runs (a fresh write on each run, no guarantee both
+ land in the same second), and a first version of this leaf that
+ printed the raw value was caught by a live campaign (200 programs,
+ seed 5001) as a `nondeterministic` finding within 20 programs - a
+ defect in the leaf, not in the compiler. The bound-vs-subject checks
+ are exactly as strict; only what prints on success differs, the same
+ tradeoff 'gen leaf timer and clock' already makes (src/gen_misc.vox)
+ for the identical reason.)
+
+To 'gen file assert range quietly' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown' and a text called 'the maximum' and a text called 'the maximum shown'.
+    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the low line' is "If {'the subject'} is less than {'the minimum'} then, Print \"ASSERT {'the row'}: expected at least {'the minimum shown'} got {'the got shown'}\", Exit 95.".
+    a text called 'the high line' is "If {'the subject'} is greater than {'the maximum'} then, Print \"ASSERT {'the row'}: expected at most {'the maximum shown'} got {'the got shown'}\", Exit 95.".
+    a text called 'the line' is "{'the low line'} {'the high line'} Print \"{'the row'} in range\"".
+    Return a text, 'the line'.
+
+(FIL-01: size reads 0 immediately after an open for writing, and the
+ exact byte count after a write of known length - LANGUAGE.md:3766.
+ Probe: docs/ledger/probes/files/FIL-02.vox (also covers this row).)
+
+To 'gen leaf file size' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    (PROBE g3 / FUZZER_DEFECTS.md Defect 16: see 'gen leaf file round
+     trip's matching guard - never build a path from gen_scratch_flag
+     without checking the FIXED binding actually landed. Stand aside
+     instead, loudly.)
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the payload draw' is 'rng below' of 500.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}size\"".
+    a text called 'the open line' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the before check' is 'gen assert number is' of "FIL-01" and 'the size access' and 0.
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the after check' is 'gen assert number is' of "FIL-01" and 'the size access' and 'the payload length'.
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the open line', 'the before check', 'the write line', 'the after check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-02: descriptor is a Number, at least 3 for a freshly opened handle
+ - fds 0-2 are stdio, so a real open never lands below that.
+ LANGUAGE.md:3767. Probe: docs/ledger/probes/files/FIL-02.vox.)
+
+To 'gen leaf file descriptor' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the descriptor access' is 'gen buffer property' of 'the stem' and "descriptor".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}descr\"".
+    a text called 'the open line' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the descriptor check' is 'gen file assert at least' of "FIL-02" and 'the descriptor access' and "3" and "3".
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the open line', 'the descriptor check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-03, FIL-04: readable is true iff open for reading, writable iff
+ open for writing - appending counts as writing for this property, hand-
+ verified. LANGUAGE.md:3768-3769. A file is seeded first (writing mode
+ always succeeds, even on a path that does not exist yet), then reopened
+ in a DRAWN mode - reading, writing or appending - so which mode a given
+ program tests varies across the corpus. Probe:
+ docs/ledger/probes/files/FIL-04.vox.)
+
+To 'gen leaf file readable writable' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the readable access' is 'gen buffer property' of 'the stem' and "readable".
+    a text called 'the writable access' is 'gen buffer property' of 'the stem' and "writable".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the seed length draw' is 'rng below' of 40.
+    a number called 'the seed length' is 'the seed length draw' add 1.
+    a text called 'the seed payload' is 'gen buffer filler' of 'the seed length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}mode\"".
+    a text called 'the seed open' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the seed write' is "Write \"{'the seed payload'}\" to {'the handle'}".
+    a text called 'the seed close' is "Close {'the handle'}".
+    a number called 'the mode draw' is 'rng below' of 3.
+    a text called 'the mode' is "reading".
+    a boolean called 'reading was drawn' is true.
+    a boolean called 'writing was drawn' is false.
+    If 'the mode draw' is 1 then,
+        Set 'the mode' to "writing",
+        Set 'reading was drawn' to false,
+        Set 'writing was drawn' to true.
+    If 'the mode draw' is 2 then,
+        Set 'the mode' to "appending",
+        Set 'reading was drawn' to false,
+        Set 'writing was drawn' to true.
+    a text called 'the reopen' is "open a file for {'the mode'} called {'the handle'} at {'the path name'}".
+    a text called 'the readable check' is 'gen assert false' of "FIL-03" and 'the readable access'.
+    If 'reading was drawn' then,
+        Set 'the readable check' to 'gen assert true' of "FIL-03" and 'the readable access'.
+    a text called 'the writable check' is 'gen assert false' of "FIL-04" and 'the writable access'.
+    If 'writing was drawn' then,
+        Set 'the writable check' to 'gen assert true' of "FIL-04" and 'the writable access'.
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the reopen', 'the readable check', 'the writable check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-05, FIL-06: modified and accessed return Unix timestamps -
+ LANGUAGE.md:3770-3771. Bounded on both sides: never below 1 (never 0 or
+ negative), and never after `current time's unix` - the manual gives a
+ clock (LANGUAGE.md:4524, the `unix` time property), so "not in the future" is assertable
+ exactly rather than as a wide fixed floor. Prints a fixed marker on
+ success, never the raw timestamp - see 'gen file assert range
+ quietly's own comment for why. Probe: docs/ledger/probes/files/
+ FIL-06.vox.)
+
+To 'gen leaf file times' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the modified access' is 'gen buffer property' of 'the stem' and "modified".
+    a text called 'the accessed access' is 'gen buffer property' of 'the stem' and "accessed".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the payload draw' is 'rng below' of 40.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}times\"".
+    a text called 'the open line' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the now expression' is "current time's unix".
+    a text called 'the now shown' is 'gen buffer slot of' of 'the now expression'.
+    a text called 'the modified check' is 'gen file assert range quietly' of "FIL-05" and 'the modified access' and "1" and "1" and 'the now expression' and 'the now shown'.
+    a text called 'the accessed check' is 'gen file assert range quietly' of "FIL-06" and 'the accessed access' and "1" and "1" and 'the now expression' and 'the now shown'.
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the open line', 'the write line', 'the modified check', 'the accessed check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-07: permissions returns the file's permission bits as a Number.
+ LANGUAGE.md:3772's table entry is "File permission bits (e.g., 0644)" -
+ an EXAMPLE, not a promised value, and the mode a fresh file lands at is
+ umask-dependent: 420 (octal 0644) under umask 022, 384 (octal 0600)
+ under a stricter 077. Asserting the literal 420 would file a false
+ wrong-value finding on any machine or container with a different
+ umask. What the manual DOES promise is the shape - a Number, and mode
+ bits fit in three octal digits - so the assertion is a range, 0..511
+ (0..0777), via 'gen file assert range quietly' (reused from FIL-05/
+ FIL-06's leaf below rather than copied: same two-sided-bound, print-a-
+ marker-not-the-value shape, here because the value is
+ environment-dependent rather than wall-clock-dependent). Probe:
+ docs/ledger/probes/files/FIL-07.vox, which records 420 as the value
+ OBSERVED under this machine's umask 022, not as the claim.)
+
+To 'gen leaf file permissions' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the permissions access' is 'gen buffer property' of 'the stem' and "permissions".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}perm\"".
+    a text called 'the open line' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the permissions check' is 'gen file assert range quietly' of "FIL-07" and 'the permissions access' and "0" and "0" and "511" and "511".
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the open line', 'the permissions check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-40: appending adds to the end of an existing file - LANGUAGE.md:
+ 3919. Write N bytes, close, reopen for appending, write M, close,
+ reopen for reading: size is N+M throughout - checked on the live
+ handle each time, never after a Close (see the section header). Probe:
+ docs/ledger/probes/files/FIL-40.vox.)
+
+To 'gen leaf file appending' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the first length draw' is 'rng below' of 200.
+    a number called 'the first length' is 'the first length draw' add 1.
+    a text called 'the first payload' is 'gen buffer filler' of 'the first length'.
+    a number called 'the second length draw' is 'rng below' of 200.
+    a number called 'the second length' is 'the second length draw' add 1.
+    a text called 'the second payload' is 'gen buffer filler' of 'the second length'.
+    a number called 'the total length' is 'the first length' add 'the second length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}append\"".
+    a text called 'the first open' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the first write' is "Write \"{'the first payload'}\" to {'the handle'}".
+    a text called 'the first check' is 'gen assert number is' of "FIL-40" and 'the size access' and 'the first length'.
+    a text called 'the first close' is "Close {'the handle'}".
+    a text called 'the second open' is "open a file for appending called {'the handle'} at {'the path name'}".
+    a text called 'the second write' is "Write \"{'the second payload'}\" to {'the handle'}".
+    a text called 'the second check' is 'gen assert number is' of "FIL-40" and 'the size access' and 'the total length'.
+    a text called 'the second close' is "Close {'the handle'}".
+    a text called 'the third open' is "open a file for reading called {'the handle'} at {'the path name'}".
+    a text called 'the third check' is 'gen assert number is' of "FIL-40" and 'the size access' and 'the total length'.
+    a text called 'the third close' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the first open', 'the first write', 'the first check', 'the first close', 'the second open', 'the second write', 'the second check', 'the second close', 'the third open', 'the third check', 'the third close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-46: Read line REPLACES the buffer with the next line, rather than
+ appending to it - LANGUAGE.md:3937. A fixed-length seed is appended to
+ the sink buffer first; if Read line appended instead of replacing, the
+ final size would be seed length + line length + 1 (the newline), not
+ line length + 1 - so the one post-read size check puts both the
+ replace claim and the newline-retention claim (LANGUAGE.md:3955, not
+ this batch's row, caught for free) on trial together, the same
+ reasoning D2's probe used for plain `Read`. Probe:
+ docs/ledger/probes/files/FIL-53.vox.)
+
+To 'gen leaf read line replaces' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink size access' is 'gen buffer property' of 'the sink stem' and "size".
+    a number called 'the seed length draw' is 'rng below' of 40.
+    a number called 'the seed length' is 'the seed length draw' add 1.
+    a text called 'the seed payload' is 'gen buffer filler' of 'the seed length'.
+    a number called 'the line length draw' is 'rng below' of 60.
+    a number called 'the line length' is 'the line length draw' add 1.
+    a text called 'the line payload' is 'gen buffer filler' of 'the line length'.
+    a number called 'the expected size' is 'the line length' add 1.
+    a number called 'the sink capacity' is 'the seed length' add 'the line length' add 32.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}line\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the line payload'}\\n\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the sink capacity'} bytes in size".
+    a text called 'the seed line' is "append \"{'the seed payload'}\" to {'the sink name'}".
+    a text called 'the seed size check' is 'gen assert number is' of "FIL-46" and 'the sink size access' and 'the seed length'.
+    a text called 'the read statement' is "Read line from {'the source handle'} into {'the sink name'}".
+    a text called 'the replaced check' is 'gen assert number is' of "FIL-46" and 'the sink size access' and 'the expected size'.
+    a text called 'the read close' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the sink line', 'the seed line', 'the seed size check', 'the read statement', 'the replaced check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.

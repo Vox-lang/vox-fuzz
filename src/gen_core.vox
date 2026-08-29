@@ -694,6 +694,93 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf buffer growth' of indent and nested.
     If kind is 104 then,
         'gen leaf buffer truncation' of indent and nested.
+    ( ── buffers leaves, batch A, 2026-08-28 ── )
+    If kind is 105 then,
+        'gen leaf buffer fixed overflow' of indent and nested.
+    If kind is 106 then,
+        'gen leaf buffer resize' of indent and nested.
+    If kind is 107 then,
+        'gen leaf buffer write read bounds' of indent and nested.
+    If kind is 108 then,
+        'gen leaf buffer clear' of indent and nested.
+    If kind is 109 then,
+        'gen leaf buffer length synonym' of indent and nested.
+    ( ── files leaves, batch A, 2026-08-28 ── )
+    (FIL-10, FIL-11, FIL-12, FIL-13, FIL-14, FIL-24, FIL-25, FIL-26, in
+     the 120-139 span the reservation above set aside for this surface.
+     Drawn only at depth 3, on the same reasoning as the values band
+     just below - see 'gen statement's new depth-3-only remap. Batch B
+     (the file-handle rows) continues from kind 122.)
+    If kind is 120 then,
+        'gen leaf list properties' of indent and nested.
+    If kind is 121 then,
+        'gen leaf number properties' of indent and nested.
+    ( ── things leaves, batch A, 2026-08-28 ── )
+    If kind is 180 then,
+        'gen leaf thing zero default' of indent and nested.
+    If kind is 181 then,
+        'gen leaf thing pinned defaults' of indent and nested.
+    If kind is 182 then,
+        'gen leaf thing declaration forms' of indent and nested.
+    If kind is 183 then,
+        'gen leaf thing param copy' of indent and nested.
+    If kind is 184 then,
+        'gen leaf thing nested param copy' of indent and nested.
+    ( ── flow leaves, batch A, 2026-08-28 ── )
+    (docs/ledger/control-flow.md rows FLW-05, FLW-07, FLW-21, FLW-28,
+     FLW-41, in the 200-219 span the reservation table sets aside for
+     this surface. Every one of them is top-level only - see each leaf's
+     own comment in src/gen_flow.vox for why - so, like 29-31 before
+     them, none is offered to 'gen any leaf' or to the depth 2/1/0
+     draws.)
+    If kind is 200 then,
+        'gen leaf if comma actions otherwise' of indent and nested.
+    If kind is 201 then,
+        'gen leaf if otherwise across newline' of indent and nested.
+    If kind is 202 then,
+        'gen leaf empty list loop' of indent and nested.
+    If kind is 203 then,
+        'gen leaf stacked periods' of indent and nested.
+    If kind is 204 then,
+        'gen leaf terminate' of indent and nested.
+    ( ── files leaves, batch B, 2026-08-29 ── )
+    (FIL-01, FIL-02, FIL-03, FIL-04, FIL-05, FIL-06, FIL-07, FIL-40,
+     FIL-46, in the 120-139 span the reservation above set aside for
+     this surface - continuing from 122, since 120-121 (FIL-10/11/12/13/
+     14/24/25/26) belong to batch A. Drawn only at depth 3, the same as
+     the buffer and value bands just above and below - see 'gen
+     statement's depth-3-only remap.)
+    If kind is 122 then,
+        'gen leaf file size' of indent and nested.
+    If kind is 123 then,
+        'gen leaf file descriptor' of indent and nested.
+    If kind is 124 then,
+        'gen leaf file readable writable' of indent and nested.
+    If kind is 125 then,
+        'gen leaf file times' of indent and nested.
+    If kind is 126 then,
+        'gen leaf file permissions' of indent and nested.
+    If kind is 127 then,
+        'gen leaf file appending' of indent and nested.
+    If kind is 128 then,
+        'gen leaf read line replaces' of indent and nested.
+    ( ── things leaves, batch A, 2026-08-29 ── )
+    If kind is 185 then,
+        'gen leaf thing format whole' of indent and nested.
+    If kind is 186 then,
+        'gen leaf thing equality' of indent and nested.
+    If kind is 187 then,
+        'gen leaf thing nested equality' of indent and nested.
+    If kind is 188 then,
+        'gen leaf thing free function' of indent and nested.
+    If kind is 189 then,
+        'gen leaf thing call prepositions' of indent and nested.
+    If kind is 190 then,
+        'gen leaf thing extra argument' of indent and nested.
+    If kind is 191 then,
+        'gen leaf thing field receiver' of indent and nested.
+    If kind is 192 then,
+        'gen leaf thing type predicate' of indent and nested.
     (The values band, 140-154, reserved above for the collections
      surface. They are drawn only at depth 3 - see the section header in
      src/gen_collections.vox for why a leaf that both defines a function
@@ -868,7 +955,14 @@ To 'gen body' with a number called depth and a text called indent.
  ledger's buffer leaves 100-102 are the one later addition every depth
  reaches, including 0: they are plain declarations, appends and reads,
  so the argument for holding them out of the deepest level would have to
- be about nesting budget, and nothing about them consumes any.
+ be about nesting budget, and nothing about them consumes any. 105-109
+ (batch A, 2026-08-28) join 103-104 in staying top-level-only instead:
+ every one of them carries an On error (write/read bounds, fixed
+ overflow) or, for the two that do not, was kept out of the depth-2/1
+ remap rather than adding a third span there on a first pass - see the
+ remap comment above 'gen statement's own body for why widening that
+ slot risks the collections surface's parallel edit to the same lines
+ tonight more than the nesting variety is worth.
 
  31-38 and 39-42 join 29-30 in the top-level-only band, since depth 2/1
  stop at 28 and depth 0 at 15. 39-42 are the format-string leaves
@@ -896,10 +990,34 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          share, and no seed's leaf choice depends on where a band
          happens to sit) while leaving the band numbers themselves
          where the reservation table put them, out of the way of the
-         other surfaces' parallel work.)
-        Set kind to 'rng below' of 65.
-        If kind is greater than 49 then,
+         other surfaces' parallel work.
+         65..69 are five more reserved-span buffer leaves (batch A,
+         2026-08-28), remapped to 105..109 just below, the same way
+         45..49 remap to 100..104 - a second, later span rather than a
+         wider first one, so this line's own arithmetic (0..64) and the
+         values band's (50..64, add 90) stay exactly as another
+         worker's parallel edit here would find them; only the upper
+         bound below is new.)
+        (Merged by the master, 2026-08-29: four batches each widened this
+         draw by their own span tonight; one draw of 97 with one remap per
+         reserved span keeps every leaf reachable and no raw value remapped
+         twice - each If tests the RAW draw range, and every remapped value
+         lands above 100, outside every later test.)
+        Set kind to 'rng below' of 97.
+        If kind is greater than 49 and kind is less than 65 then,
             Set kind to kind add 90.
+        If kind is greater than 64 and kind is less than 70 then,
+            Set kind to kind add 40.
+        If kind is greater than 69 and kind is less than 72 then,
+            Set kind to kind add 50.
+        If kind is greater than 71 and kind is less than 77 then,
+            Set kind to kind add 108.
+        If kind is greater than 76 and kind is less than 82 then,
+            Set kind to kind add 123.
+        If kind is greater than 81 and kind is less than 89 then,
+            Set kind to kind add 40.
+        If kind is greater than 88 and kind is less than 97 then,
+            Set kind to kind add 96.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 32.
     If depth is equal to 1 then,

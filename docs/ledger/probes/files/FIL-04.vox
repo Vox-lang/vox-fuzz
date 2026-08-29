@@ -1,0 +1,34 @@
+(FIL-04: writable is true iff the file is open for writing.
+ Also covers: FIL-03 (the readable twin, asserted on the same handle).
+ All three modes, since the leaf DRAWS which one a given program tests:
+ reading -> readable true, writable false; writing -> readable false,
+ writable true; appending -> readable false, writable true (appending
+ IS a writing mode for this property, confirmed below).
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-04.vox -o p && ./p
+ actual output:
+   1
+   0
+   0
+   1
+   0
+   1
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the sketchpad' at "vf_scratch/files/fil04.txt".
+Write "seed" to 'the sketchpad'.
+Close 'the sketchpad'.
+open a file for reading called 'the sketchpad' at "vf_scratch/files/fil04.txt".
+If 'the sketchpad's readable is false then, Print "ASSERT FIL-03: expected 1 got {'the sketchpad's readable}", Exit 95. Print 'the sketchpad's readable.
+If 'the sketchpad's writable then, Print "ASSERT FIL-04: expected 0 got {'the sketchpad's writable}", Exit 95. Print 'the sketchpad's writable.
+Close 'the sketchpad'.
+open a file for writing called 'the sketchpad' at "vf_scratch/files/fil04.txt".
+If 'the sketchpad's readable then, Print "ASSERT FIL-03: expected 0 got {'the sketchpad's readable}", Exit 95. Print 'the sketchpad's readable.
+If 'the sketchpad's writable is false then, Print "ASSERT FIL-04: expected 1 got {'the sketchpad's writable}", Exit 95. Print 'the sketchpad's writable.
+Close 'the sketchpad'.
+open a file for appending called 'the sketchpad' at "vf_scratch/files/fil04.txt".
+If 'the sketchpad's readable then, Print "ASSERT FIL-03: expected 0 got {'the sketchpad's readable}", Exit 95. Print 'the sketchpad's readable.
+If 'the sketchpad's writable is false then, Print "ASSERT FIL-04: expected 1 got {'the sketchpad's writable}", Exit 95. Print 'the sketchpad's writable.
+Close 'the sketchpad'.

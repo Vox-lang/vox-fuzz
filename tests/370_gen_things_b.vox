@@ -1,0 +1,119 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(Things (part B), batch A - docs/ledger/things-b.md rows THG2-06,
+ THG2-08, THG2-09, THG2-10, THG2-21, THG2-27, THG2-30, THG2-32, THG2-70.
+
+ Every leaf here reads the manifest (gen_pick_thing/gen_pick_field, or
+ this batch's own gen_thing_function_*/gen_thing_predicate_* pair), so each
+ group below builds one with 'gen build manifest' at a fixed seed before
+ calling the leaf directly and printing 'gen text' - the golden is the
+ leaf's own rendered output, the same convention tests/300 uses for the
+ buffer leaves.
+
+ Seed 1 draws a manifest with both a plain thing and a nested one
+ (things=5, both queries true - checked by hand against this seed
+ before pinning it), so every leaf below has something to fire on. Seed
+ 4 draws zero things, which is what proves the fix below: without it,
+ 'gen thing function ready' stayed true from whatever the PREVIOUS program in
+ the same process last set it, because 'gen build thing functions' -
+ the only place that used to reset it - is never reached when a program
+ has no things at all. Seed 1 immediately before seed 4 in one process
+ is exactly the shape that broke.)
+
+To 'gen things b setup' with a number called seed.
+    'rng seed' of seed.
+    Set gen_does_file_io to false.
+    'gen build manifest'.
+    'gen build thing predicate function'.
+    'gen build thing functions'.
+
+Print "--- THG2-06: a whole thing interpolates into a format string ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing format whole' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing format whole' of "  " and true.
+Print 'gen text'.
+
+Print "--- THG2-08, THG2-09: is / is not between two things ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing equality' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-10: the comparison recurses into a nested field ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing nested equality' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-21: an ordinary global function taking a thing, both call forms ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing free function' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-27: of / to / with / on all introduce arguments ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing call prepositions' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-30: the receiver fills the first parameter, the rest follow the preposition ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing extra argument' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-32: a receiver reached through a field reads the same way ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing field receiver' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-70: is a <type> recognises the six builtins ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing type predicate' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'gen things b setup' of 1.
+clear gen_out.
+'gen leaf thing type predicate' of "  " and true.
+Print 'gen text'.
+
+Print "--- a program with no things at all: every gen_thing_fn_*-dependent leaf stands aside ---".
+'gen things b setup' of 4.
+clear gen_out.
+'gen leaf thing free function' of "" and false.
+Print 'gen text'.
+
+Print "--- the reset fix: seed 1 (has things) run immediately before seed 4 (has none) in one process ---".
+'gen things b setup' of 1.
+'gen things b setup' of 4.
+Print "thing fn ready after a things-free program: {gen_thing_function_ready}".
+Print "nested-receiver ready after a things-free program: {gen_thing_function_nested_ready}".
+clear gen_out.
+'gen leaf thing call prepositions' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-70's predicate function stays available even with zero things ---".
+Print "predicate ready with no things: {gen_thing_predicate_ready}".
+clear gen_out.
+'gen leaf thing type predicate' of "" and false.
+Print 'gen text'.

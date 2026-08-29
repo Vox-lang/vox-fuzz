@@ -1,0 +1,91 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's things leaves, batch A - docs/ledger/things-a.md rows
+ THG-12, THG-25, THG-34, THG-37, THG-58, THG-64.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself - the
+ same reasoning 300_gen_buffers_a.vox gives: these leaves exist to emit
+ assertions, and an assertion whose text drifts is an assertion nobody
+ is reading.
+
+ 'gen reset manifest cycles' stands in for 'gen buffer names reset':
+ these leaves spend fresh names from the manifest's own type/field/
+ function vocabularies (see gen_things.vox's block comment on the
+ batch), so resetting that shared cycle state before each call is what
+ makes the draw reproducible here, exactly as it is for a live program.
+
+ Every leaf here is top-level-only by construction - a fresh thing (and,
+ for two of them, a fresh plain function) can only be defined at the
+ true top level (LANGUAGE.md:931) - so unlike the buffer leaves, there
+ is no nested-rendering variant to also exercise.)
+
+Print "--- THG-12: an undefaulted field of each zero-having type ---".
+'rng seed' of 1.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing zero default' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-12 again, a different order and kinds ---".
+'rng seed' of 2.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing zero default' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-37: a defaulted float, a defaulted boolean, an undefaulted number ---".
+'rng seed' of 3.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing pinned defaults' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-25, THG-34: bare declaration, random field defaults ---".
+'rng seed' of 4.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing declaration forms' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-25, THG-34 again, a different form and field shape ---".
+'rng seed' of 5.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing declaration forms' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-58: a function receives a copy, the caller is unchanged ---".
+'rng seed' of 6.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing param copy' of "" and false.
+Print 'gen text'.
+
+Print "--- THG-64: a nested thing passed through a chained possessive is copied too ---".
+'rng seed' of 7.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing nested param copy' of "" and false.
+Print 'gen text'.
+
+Print "--- names: no repeat across five type-spending leaves in one run ---".
+'rng seed' of 9.
+'gen reset manifest cycles'.
+clear gen_out.
+'gen leaf thing zero default' of "" and false.
+'gen leaf thing pinned defaults' of "" and false.
+'gen leaf thing declaration forms' of "" and false.
+'gen leaf thing param copy' of "" and false.
+'gen leaf thing nested param copy' of "" and false.
+Print 'gen text'.

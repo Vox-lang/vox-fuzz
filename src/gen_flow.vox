@@ -561,3 +561,290 @@ To 'gen emit prelude grid sinks'.
     a text called 'the introducer' is 'gen parameter introducer'.
     a text called 'the definition' is "To {gen_grid_sink_name} {'the introducer'} {'the parameter list'}.\n    a number called {gen_grid_sink_local} is {sum}.\n    Print {gen_grid_sink_local}.\n\n".
     'gen emit' of 'the definition'.
+
+(--- The ledger's control-flow leaves, batch A -------------------------
+
+ docs/ledger/control-flow.md maps LANGUAGE.md:2188-2361 (Vox 0.4.14 pin)
+ into numbered claims; the five leaves below put FLW-05, FLW-07, FLW-21,
+ FLW-28 and FLW-41 on trial and ASSERT the documented result, the same
+ way gen_buffers.vox's ledger leaves do - reusing 'gen assert number is'
+ from there rather than copying it, per docs/ledger/PROCEDURE.md §6a
+ ("assertion helpers... are plain text helpers despite their names; call
+ them from any surface"). A failing assertion prints
+ `ASSERT FLW-NN: expected X got Y` and exits 95, which loop_gen.vox
+ classifies as a wrong-value finding carrying that line as its detail.
+
+ All five are drawn TOP-LEVEL ONLY (kinds 200-204, folded onto depth 3's
+ widened draw in 'gen statement' - see that function's own comment),
+ never offered to 'gen any leaf' or to the depth 2/1/0 draws, the same
+ position 'gen leaf while'/'gen leaf repeat'/'gen leaf loop control'
+ hold. Punctuation is the subject of every one of these rows - a comma
+ continuing a branch, a period closing one level, two periods closing
+ two, a period continuing an if-chain across a newline - and 'gen join
+ lines' only ever adds ONE period to a rendered line, and only to the
+ LAST line of a call, regardless of nesting. Nested (comma-joined) use
+ would corrupt at least three of the five: FLW-05 embeds an Otherwise
+ inside one rendered line the same way 'gen leaf rich condition' (kind
+ 28) does, which LANGUAGE.md's "closing more than one level" section
+ documents as unsafe once nested inside another still-open If (the
+ Otherwise binds to the OUTER If once the inner one's own embedded
+ period closes it - see kind 28's exclusion from 'gen any leaf' for the
+ same hazard); FLW-07 needs an ACTUAL top-level newline between the If's
+ period and Otherwise, which a comma-joined nested rendering would
+ replace with a comma, changing which clause the comma even continues;
+ FLW-21's list-form For-each is itself a nesting clause exactly like
+ kinds 9/14/6-grid, so a comma after its own body action (nested=true)
+ would silently fold the leaf's own trailing assertion into the loop
+ body instead of running it once afterward. Top-level only sidesteps all
+ three at once, and FLW-28 and FLW-41 are held there too for the
+ simplest-to-verify reason 'gen leaf while' already gives.
+
+ Every claim below was hand-run against the pinned vox 0.4.14 before
+ being written; the five retained probes are docs/ledger/probes/
+ control-flow/FLW-05.vox, FLW-07.vox, FLW-21.vox, FLW-28.vox, FLW-41.vox.
+
+ Witness/tally names come off gen_buffers.vox's own word pool
+ ('gen buffer name' for an unused word) rather than a fixed phrase plus
+ a counter (review round 2, master, 2026-08-29): the first version named
+ every one of them "'the branch tally N'"/"'the lap tally N'"/etc., and
+ the merged invariants diff caught `tally` alone crossing the report's
+ 50% line - a fixed word four of these five leaves all happened to
+ share, cited by nothing in LANGUAGE.md. The pool already gives
+ program-unique, readable names and already tracks what is taken per
+ program (shared with every buffer in the corpus, so a flow witness and
+ a real buffer never collide on a word either) - reusing it needs no
+ counter of this surface's own, so gen_flow_branches/chains/empties/
+ stacks are gone along with their resets in 'gen program'.
+
+ 'gen flow witness name' (below) draws the word and decides the WRITTEN
+ form itself rather than calling 'gen buffer reference' for that part -
+ hand-reduced while wiring this up: `Print "{'pantry'}"` - a single-
+ quoted, single WORD name, no property after it - fails to compile
+ ("Unknown variable: 'pantry'") even though `Print 'pantry'.` alone and
+ `Print "{'pantry's size}"` (the same name WITH a property) both compile
+ and run correctly (repro in REPORT-LEAVES-FLOW-A.md, not filed as a
+ ledger discrepancy - that adjudication is the master's, not a leaf
+ worker's). Every one of these five leaves' assertions interpolates the
+ bare witness with no property to hide behind, and the pool quotes a
+ one-word name on roughly half its draws (LANGUAGE.md:753 makes that
+ quoting optional, not required) - so a naive `'gen buffer reference'`
+ call would compile four leaves in five and fail the fifth at random,
+ seed to seed. The fix quotes only when the drawn word actually has a
+ space (the case LANGUAGE.md:753 requires it for, and the one case
+ already proven safe to interpolate); a one-word draw is written bare.
+ Recorded as a candidate in the batch report, not adjudicated here.)
+
+To 'gen flow witness name'.
+    a text called 'the stem' is 'gen buffer name'.
+    a boolean called 'the stem is one word' is 'gen name is one word' of 'the stem'.
+    If 'the stem is one word' then,
+        Return a text, gen_buffer_last_word.
+    a text called 'the reference' is 'gen buffer reference' of 'the stem'.
+    Return a text, 'the reference'.
+
+(FLW-05 (LANGUAGE.md:2208): "Separate multiple actions in a branch with
+ commas" - the manual's own worked example (2211-2213) shows this only
+ for the THEN branch; nothing shows the Otherwise arm doing the same,
+ though the sentence-consumption rule (2207) draws no distinction
+ between branches. Branch SELECTION is FLW-01/FLW-02's claim, already
+ covered elsewhere, so this leaf forces the Otherwise arm to fire - the
+ comparison operator and which operand carries the gap vary across three
+ shapes (always false, never the same reason twice) so the corpus does
+ not read "the condition is always false" as one fixed template. Each
+ comma-joined action in the Otherwise arm shifts a running tally one
+ decimal digit left and adds its own 1-based position, so the value read
+ back afterwards is 12 for two actions, 12345 for five: it can only be
+ that number if every action ran, exactly once each, in the order
+ written - any action skipped, doubled, or reordered lands on a
+ different number, so the single assertion covers completeness and
+ ordering together. Hand-verified against vox 0.4.14 at docs/ledger/
+ probes/control-flow/FLW-05.vox (3 comma actions in the Otherwise arm):
+ the tally read back 123.)
+
+To 'gen leaf if comma actions otherwise' with a text called indent and a boolean called nested.
+    a text called 'the tally name' is 'gen flow witness name'.
+    a number called 'the base value' is 'rng below' of 1000 add 1.
+    a number called 'the gap' is 'rng below' of 50 add 1.
+    a number called 'the operator choice' is 'rng below' of 3.
+    a number called 'the left value' is 'the base value'.
+    a number called 'the right value' is 'the base value'.
+    a text called comparison is "is not equal to".
+    If 'the operator choice' is 0 then,
+        Set 'the right value' to 'the base value' add 'the gap',
+        Set comparison to "is greater than".
+    If 'the operator choice' is 1 then,
+        Set 'the left value' to 'the base value' add 'the gap',
+        Set comparison to "is less than".
+    a text called 'the tally decl' is "a number called {'the tally name'} is 0".
+    a text called condition is "{'the left value'} {comparison} {'the right value'}".
+    a number called 'the action count' is 'rng below' of 4 add 2.
+    a text called 'the otherwise chain' is "".
+    a number called position is 1.
+    While position is less than or equal to 'the action count',
+        a text called action is "Set {'the tally name'} to {'the tally name'} multiply 10 add {position}",
+        If position is 1 then,
+            Set 'the otherwise chain' to action.
+        If position is greater than 1 then,
+            Set 'the otherwise chain' to "{'the otherwise chain'}, {action}".
+        Set position to position add 1.
+    a number called 'the expected tally' is 0.
+    Set position to 1.
+    While position is less than or equal to 'the action count',
+        Set 'the expected tally' to 'the expected tally' multiply 10 add position,
+        Set position to position add 1.
+    a text called 'the if line' is "If {condition} then, Print \"unreachable\". Otherwise, {'the otherwise chain'}".
+    a text called 'the assertion' is 'gen assert number is' of "FLW-05" and 'the tally name' and 'the expected tally'.
+    a list called 'the lines' is ['the tally decl', 'the if line', 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FLW-07 (LANGUAGE.md:2210): "A period before but if/otherwise is treated
+ as part of the same if-chain when the chain continues" - hand-verified
+ across an ACTUAL newline, the one dimension no existing leaf reaches:
+ every other Otherwise in this generator sits on the SAME rendered line
+ as its `then,` arm (one format-string element joined by 'gen join
+ lines'), so the period before it never crosses real whitespace.
+ Building the If and the Otherwise as TWO SEPARATE elements of 'the
+ lines' does exactly that: 'gen join lines' terminates each with its own
+ period and its own newline (top level only, so every line gets a
+ period, not a comma), so the rendered program reads exactly like the
+ manual's own worked example - the If on one line, a period, a newline,
+ then Otherwise starting the next line - an ORDINARY newline, not a
+ blank one (which would force-close something else instead). WHICH
+ branch fires is genuinely random here (this row is about the
+ punctuation, not the selection FLW-01/02 already cover): the generator
+ draws both operands and a comparison and works out for itself, before
+ rendering, which side will win, then asserts a witness that only
+ matches if the side it predicted is the side that actually ran. Hand-
+ verified against vox 0.4.14 at docs/ledger/probes/control-flow/
+ FLW-07.vox.)
+
+To 'gen leaf if otherwise across newline' with a text called indent and a boolean called nested.
+    a text called 'the outcome name' is 'gen flow witness name'.
+    a number called 'the left value' is 'rng below' of 100.
+    a number called 'the right value' is 'rng below' of 100.
+    a number called 'the operator choice' is 'rng below' of 3.
+    a text called comparison is "is equal to".
+    If 'the operator choice' is 0 then,
+        Set comparison to "is greater than".
+    If 'the operator choice' is 1 then,
+        Set comparison to "is less than".
+    a boolean called 'the then arm fires' is false.
+    If 'the operator choice' is 0 and 'the left value' is greater than 'the right value' then,
+        Set 'the then arm fires' to true.
+    If 'the operator choice' is 1 and 'the left value' is less than 'the right value' then,
+        Set 'the then arm fires' to true.
+    If 'the operator choice' is 2 and 'the left value' is equal to 'the right value' then,
+        Set 'the then arm fires' to true.
+    a number called 'the expected outcome' is 2.
+    If 'the then arm fires' then,
+        Set 'the expected outcome' to 1.
+    a text called 'the outcome decl' is "a number called {'the outcome name'} is 0".
+    a text called condition is "{'the left value'} {comparison} {'the right value'}".
+    a text called 'the if line' is "If {condition} then, Set {'the outcome name'} to 1".
+    a text called 'the otherwise line' is "Otherwise, Set {'the outcome name'} to 2".
+    a text called 'the assertion' is 'gen assert number is' of "FLW-07" and 'the outcome name' and 'the expected outcome'.
+    a list called 'the lines' is ['the outcome decl', 'the if line', 'the otherwise line', 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FLW-21 (LANGUAGE.md:2267, undocumented precision): the list form of For
+ each over an EMPTY list runs the body zero times, no error - the manual
+ states the list form (2264-2273) but never says what an empty list
+ does. Hand-verified against vox 0.4.14 at docs/ledger/probes/control-
+ flow/FLW-21.vox that it simply runs zero times: no crash, no error. The
+ witness starts at a sentinel the body would overwrite if it ran even
+ once, so reading it back unchanged after the loop is the whole
+ assertion. The list itself is fresh every draw (gen_lists, shared with
+ every other list-declaring leaf in the corpus, so two of them in one
+ program never collide on a name); the loop variable ('item') is not,
+ the same way every existing range-form leaf already reuses the bare
+ name 'number' across separate top-level loops with no collision - a
+ For-each's own loop variable is scoped to that loop, not the program.)
+
+To 'gen leaf empty list loop' with a text called indent and a boolean called nested.
+    Set gen_lists to gen_lists add 1.
+    a text called 'the witness name' is 'gen flow witness name'.
+    a text called 'the list decl' is "a list called l{gen_lists} is []".
+    a text called 'the witness decl' is "a number called {'the witness name'} is 0".
+    a text called 'the loop line' is "For each item in l{gen_lists}, Set {'the witness name'} to 1".
+    a text called 'the assertion' is 'gen assert number is' of "FLW-21" and 'the witness name' and 0.
+    a list called 'the lines' is ['the list decl', 'the witness decl', 'the loop line', 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FLW-28 (LANGUAGE.md:2311-2321): periods stack - a Repeat nested inside
+ a For-each takes two periods, on the same rendered line, to close both
+ levels at once (see "Closing more than one level"). This is NOT the
+ historical bug #27 shape documented above 'gen leaf repeat' (a LONE
+ period failing to close a TOP-LEVEL Repeat, fixed in v0.4.6 per FLW-26
+ and FUZZER_DEFECTS.md) - this Repeat is NESTED inside a For-each and
+ closed by a period stacked with the For-each's own, exactly the shape
+ LANGUAGE.md's own worked example uses, and gen_flow.vox's existing
+ comment above 'gen leaf while' already records that stacked closes on a
+ nested loop hand-verify correctly on 0.4.9. This leaf varies both
+ counts (2-5 each) and asserts the PRODUCT via a running tally (proving
+ every inner iteration of every outer iteration actually ran) and that
+ the statement after the double period ran exactly once (proving the
+ double period closed BOTH levels together - not zero, not two or more).
+ Built as raw text via 'gen emit' rather than through 'gen join lines'
+ for the two-period line specifically, because 'gen join lines' only
+ ever appends ONE period, to the LAST line of a call: this construct
+ needs two literal periods immediately adjacent on one line, wherever it
+ sits in 'the lines'. Hand-verified against vox 0.4.14 at docs/ledger/
+ probes/control-flow/FLW-28.vox (2 outer x 2 inner): the lap tally read
+ back 4 and the after-tally read back 1.)
+
+To 'gen leaf stacked periods' with a text called indent and a boolean called nested.
+    a number called 'the outer count' is 'rng below' of 4 add 2.
+    a number called 'the inner count' is 'rng below' of 4 add 2.
+    a number called 'the expected product' is 'the outer count' multiply 'the inner count'.
+    a text called 'the lap tally name' is 'gen flow witness name'.
+    a text called 'the after tally name' is 'gen flow witness name'.
+    a text called 'the lap decl' is "a number called {'the lap tally name'} is 0".
+    a text called 'the after decl' is "a number called {'the after tally name'} is 0".
+    a list called 'the setup lines' is ['the lap decl', 'the after decl'].
+    'gen join lines' of indent and nested and 'the setup lines'.
+    a text called 'the inner action' is "Set {'the lap tally name'} to {'the lap tally name'} add 1".
+    a text called 'the outer head' is "{indent}For each lap from 1 to {'the outer count'},\n".
+    a text called 'the inner line' is "{indent}  Repeat {'the inner count'} times, {'the inner action'}..\n".
+    a text called block is "{'the outer head'}{'the inner line'}".
+    'gen emit' of block.
+    a text called 'the after action' is "Set {'the after tally name'} to {'the after tally name'} add 1".
+    a text called 'the product assertion' is 'gen assert number is' of "FLW-28" and 'the lap tally name' and 'the expected product'.
+    a text called 'the after assertion' is 'gen assert number is' of "FLW-28" and 'the after tally name' and 1.
+    a list called 'the closing lines' is ['the after action', 'the product assertion', 'the after assertion'].
+    'gen join lines' of indent and nested and 'the closing lines'.
+
+(FLW-41 (LANGUAGE.md:2351): `terminate` is an alternative keyword for
+ `Exit` and takes a code - already drawn generically as one of three
+ spellings for the program's own NATURAL tail ('gen program ending' in
+ gen_core.vox), but never before as an ordinary statement in the middle
+ of the statement stream, which is the shape this leaf adds: wherever it
+ lands, a witness line prints and the very next statement the program
+ executes is `terminate <code>.`. src/loop_gen.vox's own classifier
+ comment reads "A nonzero exit code is normal and is not a finding", and
+ its exit-code handling only treats 91-94 (argv) and 95 (the ledger's
+ own channel) specially - so a nonzero exit outside 90-99 is tolerated,
+ not a finding, which is the SECOND of the two cases prompt.md names:
+ the code is drawn at random from the full non-reserved range rather
+ than pinned to 0 (the alternative it offers for a runner that WOULD
+ treat a nonzero exit as a finding, which this one does not - see
+ src/runner.vox and loop_gen.vox's classifier, read before this leaf was
+ written). Nothing about it can be asserted from INSIDE the exiting
+ program - there is no statement left to run once it has - so this is a
+ harness-side claim like FLW-34/35/36/38/40: hand-verified against vox
+ 0.4.14 at docs/ledger/probes/control-flow/FLW-41.vox, where the witness
+ line printed and the process's actual exit status was the code that
+ followed it.)
+
+To 'gen leaf terminate' with a text called indent and a boolean called nested.
+    a number called 'the raw code' is 'rng below' of 246.
+    a number called 'the exit code' is 'the raw code'.
+    If 'the raw code' is greater than 89 then,
+        Set 'the exit code' to 'the raw code' add 10.
+    a text called keyword is "Terminate".
+    a number called 'the case draw' is 'rng below' of 7.
+    If 'the case draw' is less than 3 then,
+        Set keyword to 'gen in lower case' of keyword.
+    a text called witness is "Print \"reached the terminate statement\"".
+    a text called ending is "{keyword} {'the exit code'}".
+    a list called 'the lines' is [witness, ending].
+    'gen join lines' of indent and nested and 'the lines'.

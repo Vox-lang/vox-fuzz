@@ -1,0 +1,48 @@
+--- FLW-05: comma-separated actions in the Otherwise arm ---
+a number called 'the inbox' is 0.
+If 313 is not equal to 313 then, Print "unreachable". Otherwise, Set 'the inbox' to 'the inbox' multiply 10 add 1, Set 'the inbox' to 'the inbox' multiply 10 add 2, Set 'the inbox' to 'the inbox' multiply 10 add 3, Set 'the inbox' to 'the inbox' multiply 10 add 4, Set 'the inbox' to 'the inbox' multiply 10 add 5.
+If 'the inbox' is not 12345 then, Print "ASSERT FLW-05: expected 12345 got {'the inbox'}", Exit 95. Print 'the inbox'.
+
+--- FLW-07: Otherwise on its own line after the period, THEN arm wins ---
+a number called cupboard is 0.
+If 30 is equal to 53 then, Set cupboard to 1.
+Otherwise, Set cupboard to 2.
+If cupboard is not 2 then, Print "ASSERT FLW-07: expected 2 got {cupboard}", Exit 95. Print cupboard.
+
+--- FLW-07 again, a seed where the OTHERWISE arm wins instead ---
+a number called scratch is 0.
+If 32 is less than 11 then, Set scratch to 1.
+Otherwise, Set scratch to 2.
+If scratch is not 2 then, Print "ASSERT FLW-07: expected 2 got {scratch}", Exit 95. Print scratch.
+
+--- FLW-21: the list form of For each over an empty list ---
+a list called l1 is [].
+a number called cupboard is 0.
+For each item in l1, Set cupboard to 1.
+If cupboard is not 0 then, Print "ASSERT FLW-21: expected 0 got {cupboard}", Exit 95. Print cupboard.
+
+--- FLW-28: a Repeat nested in a For each, closed by stacked periods ---
+a number called workbench is 0.
+a number called storeroom is 0.
+For each lap from 1 to 4,
+  Repeat 2 times, Set workbench to workbench add 1..
+Set storeroom to storeroom add 1.
+If workbench is not 8 then, Print "ASSERT FLW-28: expected 8 got {workbench}", Exit 95. Print workbench.
+If storeroom is not 1 then, Print "ASSERT FLW-28: expected 1 got {storeroom}", Exit 95. Print storeroom.
+
+--- FLW-41: terminate, lower case ---
+Print "reached the terminate statement".
+terminate 136.
+
+--- FLW-41 again, upper case ---
+Print "reached the terminate statement".
+Terminate 27.
+
+--- two FLW-05 draws in one program never collide on a name ---
+a number called cupboard is 0.
+If 309 is not equal to 309 then, Print "unreachable". Otherwise, Set cupboard to cupboard multiply 10 add 1, Set cupboard to cupboard multiply 10 add 2.
+If cupboard is not 12 then, Print "ASSERT FLW-05: expected 12 got {cupboard}", Exit 95. Print cupboard.
+a number called toolbox is 0.
+If 495 is greater than 502 then, Print "unreachable". Otherwise, Set toolbox to toolbox multiply 10 add 1, Set toolbox to toolbox multiply 10 add 2, Set toolbox to toolbox multiply 10 add 3.
+If toolbox is not 123 then, Print "ASSERT FLW-05: expected 123 got {toolbox}", Exit 95. Print toolbox.
+

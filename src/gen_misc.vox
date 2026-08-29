@@ -572,7 +572,7 @@ To 'gen leaf cast and break' with a text called indent and a boolean called nest
     a text called 'absolute probe' is "Print cn{n}'s absolute".
     a text called 'loop line' is "For each ce{n} from 1 to {'the ceiling'},".
     a text called 'the accumulate line' is "    a number called cs{n} is ce{n} multiply 2,".
-    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break.".
+    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break..".
     a list called 'the lines' is ['source decl', 'to text', 'print text', 'round trip', 'print round trip', 'absolute probe'].
     'gen join lines' of indent and nested and 'the lines'.
     'gen emit' of "{indent}{'loop line'}\n{indent}{'the accumulate line'}\n{indent}{'the guard line'}\n".

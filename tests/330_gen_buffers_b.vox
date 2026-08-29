@@ -1,0 +1,114 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's buffer leaves, night of 2026-08-28 - docs/ledger/buffers.md
+ rows BUF-06, BUF-11, BUF-15, BUF-16, BUF-17, BUF-29, BUF-30, BUF-33.
+ Same shape as tests/300_gen_buffers_a.vox and for the same reason: each
+ leaf is called directly off a pinned rng seed and its emitted source
+ printed in full, so the golden is the generated Vox itself, at the true
+ top level (nested false) and inside a block (nested true) both.
+
+ BUF-11 gets three seeds instead of one: the whole point of 'gen leaf
+ buffer length synonym' is that the mutation between the two checks is
+ drawn, not fixed, so one golden alone would not show that the append,
+ set-byte and clear branches are all actually reachable.)
+
+Print "--- BUF-06: append past a fixed buffer's capacity truncates at capacity ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer fixed overflow' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer fixed overflow' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-15, BUF-16, BUF-17: resize, grow-preserves, shrink-truncates ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer resize' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer resize' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-29, BUF-30: write bound is capacity, read bound is size ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer write read bounds' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer write read bounds' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-33: clear sets size to 0 and preserves capacity - fixed form ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer clear' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-33 again - dynamic form draws too ---".
+'rng seed' of 40.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer clear' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer clear' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-11: length is size, mutation drawn - append branch ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer length synonym' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-11 again - set-byte branch ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer length synonym' of "" and false.
+Print 'gen text'.
+
+Print "--- BUF-11 again - clear branch ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer length synonym' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer length synonym' of "  " and true.
+Print 'gen text'.

@@ -1,0 +1,144 @@
+--- FIL-10..14: list properties, empty block first ---
+a list called cupboard is [].
+If cupboard's length is not 0 then, Print "ASSERT FIL-10: expected 0 got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's size is not cupboard's length then, Print "ASSERT FIL-11: expected {cupboard's length} got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard's size is not 0 then, Print "ASSERT FIL-11: expected 0 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard's empty is false then, Print "ASSERT FIL-12: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+Print cupboard's first.
+Print cupboard's last.
+a list called 'workbench' is [000000853, -9, 72279, -057, 0000000].
+If 'workbench's length is not 5 then, Print "ASSERT FIL-10: expected 5 got {'workbench's length}", Exit 95. Print 'workbench's length.
+If 'workbench's size is not 'workbench's length then, Print "ASSERT FIL-11: expected {'workbench's length} got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench's size is not 5 then, Print "ASSERT FIL-11: expected 5 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench's empty then, Print "ASSERT FIL-12: expected 0 got {'workbench's empty}", Exit 95. Print 'workbench's empty.
+If 'workbench's first is not 000000853 then, Print "ASSERT FIL-13: expected the literal the generator wrote first got {'workbench's first}", Exit 95. Print 'workbench's first.
+If 'workbench's last is not 0000000 then, Print "ASSERT FIL-14: expected the literal the generator wrote last got {'workbench's last}", Exit 95. Print 'workbench's last.
+
+--- FIL-10..14: list properties, full block first, nested ---
+    a list called 'the sketchpad' is [-12.3, 6.6, -2.3, -02.7],
+    If 'the sketchpad's length is not 4 then, Print "ASSERT FIL-10: expected 4 got {'the sketchpad's length}", Exit 95. Print 'the sketchpad's length,
+    If 'the sketchpad's size is not 'the sketchpad's length then, Print "ASSERT FIL-11: expected {'the sketchpad's length} got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size,
+    If 'the sketchpad's size is not 4 then, Print "ASSERT FIL-11: expected 4 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size,
+    If 'the sketchpad's empty then, Print "ASSERT FIL-12: expected 0 got {'the sketchpad's empty}", Exit 95. Print 'the sketchpad's empty,
+    If 'the sketchpad's first is not -12.3 then, Print "ASSERT FIL-13: expected the literal the generator wrote first got {'the sketchpad's first}", Exit 95. Print 'the sketchpad's first,
+    If 'the sketchpad's last is not -02.7 then, Print "ASSERT FIL-14: expected the literal the generator wrote last got {'the sketchpad's last}", Exit 95. Print 'the sketchpad's last,
+    a list called 'the dispatch note' is [],
+    If 'the dispatch note's length is not 0 then, Print "ASSERT FIL-10: expected 0 got {'the dispatch note's length}", Exit 95. Print 'the dispatch note's length,
+    If 'the dispatch note's size is not 'the dispatch note's length then, Print "ASSERT FIL-11: expected {'the dispatch note's length} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size,
+    If 'the dispatch note's size is not 0 then, Print "ASSERT FIL-11: expected 0 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size,
+    If 'the dispatch note's empty is false then, Print "ASSERT FIL-12: expected 1 got {'the dispatch note's empty}", Exit 95. Print 'the dispatch note's empty,
+    Print 'the dispatch note's first,
+    Print 'the dispatch note's last.
+
+--- FIL-13, FIL-14: one-element list (first and last coincide) ---
+a list called 'the sketchpad' is [0058.3328].
+If 'the sketchpad's length is not 1 then, Print "ASSERT FIL-10: expected 1 got {'the sketchpad's length}", Exit 95. Print 'the sketchpad's length.
+If 'the sketchpad's size is not 'the sketchpad's length then, Print "ASSERT FIL-11: expected {'the sketchpad's length} got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad's size is not 1 then, Print "ASSERT FIL-11: expected 1 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad's empty then, Print "ASSERT FIL-12: expected 0 got {'the sketchpad's empty}", Exit 95. Print 'the sketchpad's empty.
+If 'the sketchpad's first is not 0058.3328 then, Print "ASSERT FIL-13: expected the literal the generator wrote first got {'the sketchpad's first}", Exit 95. Print 'the sketchpad's first.
+If 'the sketchpad's last is not 0058.3328 then, Print "ASSERT FIL-14: expected the literal the generator wrote last got {'the sketchpad's last}", Exit 95. Print 'the sketchpad's last.
+a list called 'the greeting' is [].
+If 'the greeting's length is not 0 then, Print "ASSERT FIL-10: expected 0 got {'the greeting's length}", Exit 95. Print 'the greeting's length.
+If 'the greeting's size is not 'the greeting's length then, Print "ASSERT FIL-11: expected {'the greeting's length} got {'the greeting's size}", Exit 95. Print 'the greeting's size.
+If 'the greeting's size is not 0 then, Print "ASSERT FIL-11: expected 0 got {'the greeting's size}", Exit 95. Print 'the greeting's size.
+If 'the greeting's empty is false then, Print "ASSERT FIL-12: expected 1 got {'the greeting's empty}", Exit 95. Print 'the greeting's empty.
+Print 'the greeting's first.
+Print 'the greeting's last.
+
+--- FIL-24, FIL-25, FIL-26: signed numbers, one ordering ---
+a number called 'the waybill' is -394108.
+If 'the waybill's positive then, Print "ASSERT FIL-26: expected 0 got {'the waybill's positive}", Exit 95. Print 'the waybill's positive.
+If 'the waybill's even is false then, Print "ASSERT FIL-24: expected 1 got {'the waybill's even}", Exit 95. Print 'the waybill's even.
+If 'the waybill's odd then, Print "ASSERT FIL-25: expected 0 got {'the waybill's odd}", Exit 95. Print 'the waybill's odd.
+If 'the waybill's odd is 'the waybill's even then, Print "ASSERT FIL-25: odd equalled even for 'the waybill'", Exit 95. Print 'the waybill's odd.
+a number called 'the crate' is 0.
+If 'the crate's positive then, Print "ASSERT FIL-26: expected 0 got {'the crate's positive}", Exit 95. Print 'the crate's positive.
+If 'the crate's even is false then, Print "ASSERT FIL-24: expected 1 got {'the crate's even}", Exit 95. Print 'the crate's even.
+If 'the crate's odd then, Print "ASSERT FIL-25: expected 0 got {'the crate's odd}", Exit 95. Print 'the crate's odd.
+If 'the crate's odd is 'the crate's even then, Print "ASSERT FIL-25: odd equalled even for 'the crate'", Exit 95. Print 'the crate's odd.
+a number called toolbox is 27735.
+If toolbox's positive is false then, Print "ASSERT FIL-26: expected 1 got {toolbox's positive}", Exit 95. Print toolbox's positive.
+If toolbox's even then, Print "ASSERT FIL-24: expected 0 got {toolbox's even}", Exit 95. Print toolbox's even.
+If toolbox's odd is false then, Print "ASSERT FIL-25: expected 1 got {toolbox's odd}", Exit 95. Print toolbox's odd.
+If toolbox's odd is toolbox's even then, Print "ASSERT FIL-25: odd equalled even for toolbox", Exit 95. Print toolbox's odd.
+
+--- FIL-24, FIL-25, FIL-26: signed numbers, nested ---
+    a number called 'the sketchpad' is 0,
+    If 'the sketchpad's positive then, Print "ASSERT FIL-26: expected 0 got {'the sketchpad's positive}", Exit 95. Print 'the sketchpad's positive,
+    If 'the sketchpad's even is false then, Print "ASSERT FIL-24: expected 1 got {'the sketchpad's even}", Exit 95. Print 'the sketchpad's even,
+    If 'the sketchpad's odd then, Print "ASSERT FIL-25: expected 0 got {'the sketchpad's odd}", Exit 95. Print 'the sketchpad's odd,
+    If 'the sketchpad's odd is 'the sketchpad's even then, Print "ASSERT FIL-25: odd equalled even for 'the sketchpad'", Exit 95. Print 'the sketchpad's odd,
+    a number called 'the tray' is -113254,
+    If 'the tray's positive then, Print "ASSERT FIL-26: expected 0 got {'the tray's positive}", Exit 95. Print 'the tray's positive,
+    If 'the tray's even is false then, Print "ASSERT FIL-24: expected 1 got {'the tray's even}", Exit 95. Print 'the tray's even,
+    If 'the tray's odd then, Print "ASSERT FIL-25: expected 0 got {'the tray's odd}", Exit 95. Print 'the tray's odd,
+    If 'the tray's odd is 'the tray's even then, Print "ASSERT FIL-25: odd equalled even for 'the tray'", Exit 95. Print 'the tray's odd,
+    a number called 'the drawer' is 55464,
+    If 'the drawer's positive is false then, Print "ASSERT FIL-26: expected 1 got {'the drawer's positive}", Exit 95. Print 'the drawer's positive,
+    If 'the drawer's even is false then, Print "ASSERT FIL-24: expected 1 got {'the drawer's even}", Exit 95. Print 'the drawer's even,
+    If 'the drawer's odd then, Print "ASSERT FIL-25: expected 0 got {'the drawer's odd}", Exit 95. Print 'the drawer's odd,
+    If 'the drawer's odd is 'the drawer's even then, Print "ASSERT FIL-25: odd equalled even for 'the drawer'", Exit 95. Print 'the drawer's odd.
+
+--- FIL-24, FIL-25, FIL-26: signed numbers, another ordering ---
+a number called 'the shipping label' is -411120.
+If 'the shipping label's positive then, Print "ASSERT FIL-26: expected 0 got {'the shipping label's positive}", Exit 95. Print 'the shipping label's positive.
+If 'the shipping label's even is false then, Print "ASSERT FIL-24: expected 1 got {'the shipping label's even}", Exit 95. Print 'the shipping label's even.
+If 'the shipping label's odd then, Print "ASSERT FIL-25: expected 0 got {'the shipping label's odd}", Exit 95. Print 'the shipping label's odd.
+If 'the shipping label's odd is 'the shipping label's even then, Print "ASSERT FIL-25: odd equalled even for 'the shipping label'", Exit 95. Print 'the shipping label's odd.
+a number called 'the sketchpad' is 624785.
+If 'the sketchpad's positive is false then, Print "ASSERT FIL-26: expected 1 got {'the sketchpad's positive}", Exit 95. Print 'the sketchpad's positive.
+If 'the sketchpad's even then, Print "ASSERT FIL-24: expected 0 got {'the sketchpad's even}", Exit 95. Print 'the sketchpad's even.
+If 'the sketchpad's odd is false then, Print "ASSERT FIL-25: expected 1 got {'the sketchpad's odd}", Exit 95. Print 'the sketchpad's odd.
+If 'the sketchpad's odd is 'the sketchpad's even then, Print "ASSERT FIL-25: odd equalled even for 'the sketchpad'", Exit 95. Print 'the sketchpad's odd.
+a number called notebook is 0.
+If notebook's positive then, Print "ASSERT FIL-26: expected 0 got {notebook's positive}", Exit 95. Print notebook's positive.
+If notebook's even is false then, Print "ASSERT FIL-24: expected 1 got {notebook's even}", Exit 95. Print notebook's even.
+If notebook's odd then, Print "ASSERT FIL-25: expected 0 got {notebook's odd}", Exit 95. Print notebook's odd.
+If notebook's odd is notebook's even then, Print "ASSERT FIL-25: odd equalled even for notebook", Exit 95. Print notebook's odd.
+
+--- gen typed literal: all four kinds ---
+-4
+-041.3
+"["
+true
+--- gen concat two/three blocks: order is preserved ---
+a
+b
+c
+d
+x
+y
+z
+--- dispatch: kind 120 and 121 reach the new leaves ---
+a list called pantry is [].
+If pantry's length is not 0 then, Print "ASSERT FIL-10: expected 0 got {pantry's length}", Exit 95. Print pantry's length.
+If pantry's size is not pantry's length then, Print "ASSERT FIL-11: expected {pantry's length} got {pantry's size}", Exit 95. Print pantry's size.
+If pantry's size is not 0 then, Print "ASSERT FIL-11: expected 0 got {pantry's size}", Exit 95. Print pantry's size.
+If pantry's empty is false then, Print "ASSERT FIL-12: expected 1 got {pantry's empty}", Exit 95. Print pantry's empty.
+Print pantry's first.
+Print pantry's last.
+a list called 'the sketchpad' is [-078, 0000000, 777, -000000029, -25].
+If 'the sketchpad's length is not 5 then, Print "ASSERT FIL-10: expected 5 got {'the sketchpad's length}", Exit 95. Print 'the sketchpad's length.
+If 'the sketchpad's size is not 'the sketchpad's length then, Print "ASSERT FIL-11: expected {'the sketchpad's length} got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad's size is not 5 then, Print "ASSERT FIL-11: expected 5 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+If 'the sketchpad's empty then, Print "ASSERT FIL-12: expected 0 got {'the sketchpad's empty}", Exit 95. Print 'the sketchpad's empty.
+If 'the sketchpad's first is not -078 then, Print "ASSERT FIL-13: expected the literal the generator wrote first got {'the sketchpad's first}", Exit 95. Print 'the sketchpad's first.
+If 'the sketchpad's last is not -25 then, Print "ASSERT FIL-14: expected the literal the generator wrote last got {'the sketchpad's last}", Exit 95. Print 'the sketchpad's last.
+
+a number called 'loading bay' is -551547.
+If 'loading bay's positive then, Print "ASSERT FIL-26: expected 0 got {'loading bay's positive}", Exit 95. Print 'loading bay's positive.
+If 'loading bay's even then, Print "ASSERT FIL-24: expected 0 got {'loading bay's even}", Exit 95. Print 'loading bay's even.
+If 'loading bay's odd is false then, Print "ASSERT FIL-25: expected 1 got {'loading bay's odd}", Exit 95. Print 'loading bay's odd.
+If 'loading bay's odd is 'loading bay's even then, Print "ASSERT FIL-25: odd equalled even for 'loading bay'", Exit 95. Print 'loading bay's odd.
+a number called 'the message slip' is 110921.
+If 'the message slip's positive is false then, Print "ASSERT FIL-26: expected 1 got {'the message slip's positive}", Exit 95. Print 'the message slip's positive.
+If 'the message slip's even then, Print "ASSERT FIL-24: expected 0 got {'the message slip's even}", Exit 95. Print 'the message slip's even.
+If 'the message slip's odd is false then, Print "ASSERT FIL-25: expected 1 got {'the message slip's odd}", Exit 95. Print 'the message slip's odd.
+If 'the message slip's odd is 'the message slip's even then, Print "ASSERT FIL-25: odd equalled even for 'the message slip'", Exit 95. Print 'the message slip's odd.
+a number called 'the pigeonhole' is 0.
+If 'the pigeonhole's positive then, Print "ASSERT FIL-26: expected 0 got {'the pigeonhole's positive}", Exit 95. Print 'the pigeonhole's positive.
+If 'the pigeonhole's even is false then, Print "ASSERT FIL-24: expected 1 got {'the pigeonhole's even}", Exit 95. Print 'the pigeonhole's even.
+If 'the pigeonhole's odd then, Print "ASSERT FIL-25: expected 0 got {'the pigeonhole's odd}", Exit 95. Print 'the pigeonhole's odd.
+If 'the pigeonhole's odd is 'the pigeonhole's even then, Print "ASSERT FIL-25: odd equalled even for 'the pigeonhole'", Exit 95. Print 'the pigeonhole's odd.
+

@@ -1,0 +1,142 @@
+--- THG-12: an undefaulted field of each zero-having type ---
+A thing called sounding has
+    a time called 'the chain length',
+    a number called 'the spread',
+    a float called 'the depth in fathoms',
+    a boolean called 'the freeboard'.
+
+a sounding called i1.
+If i1's 'the spread' is not 0 then, Print "ASSERT THG-12: expected 0 got {i1's 'the spread'}", Exit 95. Print i1's 'the spread'.
+If i1's 'the depth in fathoms' is not 0.0 then, Print "ASSERT THG-12: expected 0.0 got {i1's 'the depth in fathoms'}", Exit 95. Print i1's 'the depth in fathoms'.
+If i1's 'the freeboard' then, Print "ASSERT THG-12: expected 0 got {i1's 'the freeboard'}", Exit 95. Print i1's 'the freeboard'.
+If i1's 'the chain length' is not 0 then, Print "ASSERT THG-12: expected 0 got {i1's 'the chain length'}", Exit 95. Print i1's 'the chain length'.
+
+--- THG-12 again, a different order and kinds ---
+A thing called sounding has
+    a boolean called 'the paces walked',
+    a number called 'the gradient',
+    a time called 'the spread',
+    a float called drift.
+
+a sounding called i2.
+If i2's 'the gradient' is not 0 then, Print "ASSERT THG-12: expected 0 got {i2's 'the gradient'}", Exit 95. Print i2's 'the gradient'.
+If i2's drift is not 0.0 then, Print "ASSERT THG-12: expected 0.0 got {i2's drift}", Exit 95. Print i2's drift.
+If i2's 'the paces walked' then, Print "ASSERT THG-12: expected 0 got {i2's 'the paces walked'}", Exit 95. Print i2's 'the paces walked'.
+If i2's 'the spread' is not 0 then, Print "ASSERT THG-12: expected 0 got {i2's 'the spread'}", Exit 95. Print i2's 'the spread'.
+
+--- THG-37: a defaulted float, a defaulted boolean, an undefaulted number ---
+A thing called 'the datum point' has
+    a boolean called 'the delta' is true,
+    a number called drift,
+    a float called 'the drop' is 3294500.77307058.
+
+a 'the datum point' called i3.
+If i3's 'the drop' is not 3294500.77307058 then, Print "ASSERT THG-37: expected 3294500.77307058 got {i3's 'the drop'}", Exit 95. Print i3's 'the drop'.
+If i3's 'the delta' is false then, Print "ASSERT THG-37: expected 1 got {i3's 'the delta'}", Exit 95. Print i3's 'the delta'.
+If i3's drift is not 0 then, Print "ASSERT THG-37: expected 0 got {i3's drift}", Exit 95. Print i3's drift.
+
+--- THG-25, THG-34: bare declaration, random field defaults ---
+A thing called 'the station' has
+    a number called 'the bearing in degrees' is 009421.
+
+a 'the station' called i4.
+Set a 'the station' called i5 to i4.
+If i5's 'the bearing in degrees' is not 009421 then, Print "ASSERT THG-25: expected 009421 got {i5's 'the bearing in degrees'}", Exit 95. Print i5's 'the bearing in degrees'.
+
+--- THG-25, THG-34 again, a different form and field shape ---
+A thing called 'the trig point' has
+    a number called 'the north offset' is -009448,
+    a float called offset is 8681.35200259167915231475,
+    a number called fall is 03954.
+
+a 'the trig point' called i6.
+If i6's 'the north offset' is not -009448 then, Print "ASSERT THG-25: expected -009448 got {i6's 'the north offset'}", Exit 95. Print i6's 'the north offset'.
+If i6's offset is not 8681.35200259167915231475 then, Print "ASSERT THG-25: expected 8681.35200259167915231475 got {i6's offset}", Exit 95. Print i6's offset.
+If i6's fall is not 03954 then, Print "ASSERT THG-25: expected 03954 got {i6's fall}", Exit 95. Print i6's fall.
+
+--- THG-58: a function receives a copy, the caller is unchanged ---
+A thing called 'the boundary stone' has
+    a number called height is 875.
+
+To 'the opening gambit' with a 'the boundary stone' called 'the brief trimming'.
+    Set 'the brief trimming's height to 'the brief trimming's height add 15.
+    Return a 'the boundary stone', 'the brief trimming'.
+
+a 'the boundary stone' called i7.
+a 'the boundary stone' called i8 is 'the opening gambit' to i7.
+If i7's height is not 875 then, Print "ASSERT THG-58: expected 875 got {i7's height}", Exit 95. Print i7's height.
+If i8's height is not 890 then, Print "ASSERT THG-58: expected 890 got {i8's height}", Exit 95. Print i8's height.
+
+--- THG-64: a nested thing passed through a chained possessive is copied too ---
+A thing called cairn has
+    a number called span is -721.
+
+A thing called 'the measurement' has
+    a cairn called 'the gradient'.
+
+To 'the opening gambit' of a cairn called dose.
+    Set dose's span to dose's span add 30.
+    Return a cairn, dose.
+
+a 'the measurement' called i9.
+a cairn called i10 is 'the opening gambit' of i9's 'the gradient'.
+If i9's 'the gradient's span is not -721 then, Print "ASSERT THG-64: expected -721 got {i9's 'the gradient's span}", Exit 95. Print i9's 'the gradient's span.
+If i10's span is not -691 then, Print "ASSERT THG-64: expected -691 got {i10's span}", Exit 95. Print i10's span.
+
+--- names: no repeat across five type-spending leaves in one run ---
+A thing called 'the field note' has
+    a time called span,
+    a boolean called 'the lie',
+    a float called width,
+    a number called 'the aspect'.
+
+a 'the field note' called i11.
+If i11's 'the aspect' is not 0 then, Print "ASSERT THG-12: expected 0 got {i11's 'the aspect'}", Exit 95. Print i11's 'the aspect'.
+If i11's width is not 0.0 then, Print "ASSERT THG-12: expected 0.0 got {i11's width}", Exit 95. Print i11's width.
+If i11's 'the lie' then, Print "ASSERT THG-12: expected 0 got {i11's 'the lie'}", Exit 95. Print i11's 'the lie'.
+If i11's span is not 0 then, Print "ASSERT THG-12: expected 0 got {i11's span}", Exit 95. Print i11's span.
+A thing called 'the survey marker' has
+    a float called 'the bearing in degrees' is 4391.361956254287303,
+    a boolean called 'the spread' is false,
+    a number called offset.
+
+a 'the survey marker' called i12.
+If i12's 'the bearing in degrees' is not 4391.361956254287303 then, Print "ASSERT THG-37: expected 4391.361956254287303 got {i12's 'the bearing in degrees'}", Exit 95. Print i12's 'the bearing in degrees'.
+If i12's 'the spread' then, Print "ASSERT THG-37: expected 0 got {i12's 'the spread'}", Exit 95. Print i12's 'the spread'.
+If i12's offset is not 0 then, Print "ASSERT THG-37: expected 0 got {i12's offset}", Exit 95. Print i12's offset.
+A thing called sounding has
+    a number called 'the gradient' is 00904710,
+    a float called depth is 598514038280.9111312342,
+    a number called 'the run' is 0009121421454161.
+
+a sounding called i13.
+Set a sounding called i14 to i13.
+If i14's 'the gradient' is not 00904710 then, Print "ASSERT THG-25: expected 00904710 got {i14's 'the gradient'}", Exit 95. Print i14's 'the gradient'.
+If i14's depth is not 598514038280.9111312342 then, Print "ASSERT THG-25: expected 598514038280.9111312342 got {i14's depth}", Exit 95. Print i14's depth.
+If i14's 'the run' is not 0009121421454161 then, Print "ASSERT THG-25: expected 0009121421454161 got {i14's 'the run'}", Exit 95. Print i14's 'the run'.
+A thing called 'the sighting' has
+    a number called 'the freeboard' is 901.
+
+To 'the opening gambit' with a 'the sighting' called 'the opening heap'.
+    Set 'the opening heap's 'the freeboard' to 'the opening heap's 'the freeboard' add 6.
+    Return a 'the sighting', 'the opening heap'.
+
+a 'the sighting' called i15.
+a 'the sighting' called i16 is 'the opening gambit' on i15.
+If i15's 'the freeboard' is not 901 then, Print "ASSERT THG-58: expected 901 got {i15's 'the freeboard'}", Exit 95. Print i15's 'the freeboard'.
+If i16's 'the freeboard' is not 907 then, Print "ASSERT THG-58: expected 907 got {i16's 'the freeboard'}", Exit 95. Print i16's 'the freeboard'.
+A thing called coordinate has
+    a number called 'the tide height' is 336.
+
+A thing called 'the datum point' has
+    a coordinate called 'the datum'.
+
+To 'the gross weight' of a coordinate called 'the near sliver'.
+    Set 'the near sliver's 'the tide height' to 'the near sliver's 'the tide height' add 5.
+    Return a coordinate, 'the near sliver'.
+
+a 'the datum point' called i17.
+a coordinate called i18 is 'the gross weight' of i17's 'the datum'.
+If i17's 'the datum's 'the tide height' is not 336 then, Print "ASSERT THG-64: expected 336 got {i17's 'the datum's 'the tide height'}", Exit 95. Print i17's 'the datum's 'the tide height'.
+If i18's 'the tide height' is not 341 then, Print "ASSERT THG-64: expected 341 got {i18's 'the tide height'}", Exit 95. Print i18's 'the tide height'.
+

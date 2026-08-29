@@ -1,0 +1,31 @@
+(FIL-02: descriptor is a Number, and for a freshly opened file it is at
+ least 3 (fds 0-2 are stdio; a real open never lands below that).
+ Also covers: FIL-01 (size is 0 before a write and the byte count after,
+ checked BEFORE Close - reading a property after Close reports -1, not
+ the true value, which is why every assertion here happens on the open
+ handle).
+ This is the exact assertion SHAPE the leaf renders: `If <bad> then,
+ Print "ASSERT <ID>: ...", Exit 95. Print <subject>` - not just the raw
+ value, the failing branch too (proven by the deliberately-broken run
+ below).
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-02.vox -o p && ./p
+ actual output:
+   0
+   3
+   10
+ Then with the first size line changed to `is not 4` (a deliberately
+ wrong expectation), to prove a failing assertion is classified
+ correctly:
+   ASSERT FIL-01: expected 4 got 0
+ exit code 95.
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the toolbox' at "vf_scratch/files/fil02.txt".
+If 'the toolbox's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the toolbox's size}", Exit 95. Print 'the toolbox's size.
+If 'the toolbox's descriptor is less than 3 then, Print "ASSERT FIL-02: expected at least 3 got {'the toolbox's descriptor}", Exit 95. Print 'the toolbox's descriptor.
+Write "seed bytes" to 'the toolbox'.
+If 'the toolbox's size is not 10 then, Print "ASSERT FIL-01: expected 10 got {'the toolbox's size}", Exit 95. Print 'the toolbox's size.
+Close 'the toolbox'.

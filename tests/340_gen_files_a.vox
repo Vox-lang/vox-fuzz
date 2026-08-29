@@ -1,0 +1,97 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's files leaves, batch A - docs/ledger/files.md rows FIL-10,
+ FIL-11, FIL-12, FIL-13, FIL-14, FIL-24, FIL-25, FIL-26.
+
+ Same shape as tests/300_gen_buffers_a.vox and tests/310_gen_environment_a.vox:
+ each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself.
+ Seeds below are picked to show the one-element list (first/last
+ coincide, FIL-14), the zero-length list, both orders of FIL-12's
+ empty/populated pair, and several of the six FIL-26 orderings and both
+ parities of FIL-24/FIL-25 - not to prove any one seed's output, only
+ that the shape stays exactly what a person reading it would expect.)
+
+Set gen_flags to 1.
+
+Print "--- FIL-10..14: list properties, empty block first ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list properties' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-10..14: list properties, full block first, nested ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list properties' of "    " and true.
+Print 'gen text'.
+
+Print "--- FIL-13, FIL-14: one-element list (first and last coincide) ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list properties' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-24, FIL-25, FIL-26: signed numbers, one ordering ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number properties' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-24, FIL-25, FIL-26: signed numbers, nested ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number properties' of "    " and true.
+Print 'gen text'.
+
+Print "--- FIL-24, FIL-25, FIL-26: signed numbers, another ordering ---".
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number properties' of "" and false.
+Print 'gen text'.
+
+Print "--- gen typed literal: all four kinds ---".
+'rng seed' of 12.
+Print 'gen typed literal' of 0.
+Print 'gen typed literal' of 1.
+Print 'gen typed literal' of 2.
+Print 'gen typed literal' of 3.
+
+Print "--- gen concat two/three blocks: order is preserved ---".
+a list called pair is 'gen concat two blocks' of ["a", "b"] and ["c", "d"].
+Print element 1 of pair.
+Print element 2 of pair.
+Print element 3 of pair.
+Print element 4 of pair.
+a list called triple is 'gen concat three blocks' of ["x"] and ["y"] and ["z"].
+Print element 1 of triple.
+Print element 2 of triple.
+Print element 3 of triple.
+
+Print "--- dispatch: kind 120 and 121 reach the new leaves ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen dispatch leaf' of 120 and "" and false.
+Print 'gen text'.
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen dispatch leaf' of 121 and "" and false.
+Print 'gen text'.
