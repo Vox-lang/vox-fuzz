@@ -1,4 +1,4 @@
-(OPR-21: `not` is logical negation (LANGUAGE.md:4948).
+(OPR-21: `not` is logical negation (LANGUAGE.md:4988).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-21.vox -o p && ./p
  expected output:
    not fired on false

@@ -1,6 +1,6 @@
 (BUF-51: `Free`ing an already-freed buffer is a no-op that sets the
  error flag rather than releasing anything a second time — the worked
- example at LANGUAGE.md:3650-3652 compiles and behaves as shown.
+ example at LANGUAGE.md:3675-3677 compiles and behaves as shown.
  Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-51.vox -o p && ./p
  expected output:
    already freed

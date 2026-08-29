@@ -1,6 +1,6 @@
 (LST-59 — there is no map entry deletion. There is also no silent
  near-miss: `Delete <map>'s "key".` parses as the FILE-deletion sentence of
- LANGUAGE.md:4054 applied to the key's value, so it sets the error flag
+ LANGUAGE.md:4094 applied to the key's value, so it sets the error flag
  and the map is unchanged. Hand-checked in a directory containing a file
  named `36`: that file was not removed either.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-59.vox -o p && ./p

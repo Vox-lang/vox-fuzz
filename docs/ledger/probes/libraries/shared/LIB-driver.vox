@@ -2,7 +2,7 @@
  the mathkit library, then a hand-written nasm+ld driver (LIB-driver.asm)
  calls its exports directly by their mangled labels, using the Vox
  calling convention: integer arguments in rdi, rsi, ...; result in rax.
- Reproduces LANGUAGE.md:5569-5605 verbatim except for the output filename.
+ Reproduces LANGUAGE.md:5695-5731 verbatim except for the output filename.
  Ran, from the repo root, in a scratch directory:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm
    V=/home/josj/scr/english/vox/target/release/vox

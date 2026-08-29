@@ -1,5 +1,5 @@
 (D3 - Discrepancy 3 repro: the range loop variable outlives the loop and
- holds end+1. LANGUAGE.md:2262-2263 introduces `the number` under "Inside
+ holds end+1. LANGUAGE.md:2272-2273 introduces `the number` under "Inside
  the loop", and nothing in the section says it is readable afterwards or
  what it would hold - here it resolves at top level to 4, the value that
  failed the loop test.

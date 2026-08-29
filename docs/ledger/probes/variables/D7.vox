@@ -1,4 +1,4 @@
-(Discrepancy 7: LANGUAGE.md:512-522 is headed "Two Canonical Forms" and
+(Discrepancy 7: LANGUAGE.md:519-529 is headed "Two Canonical Forms" and
  describes the no-initializer form only under `Create`. There are more forms
  than two: the lead-in may be absent, `Set` or `Create`, and the initializer
  may be `is V`, `to V` (after Set/Create only) or absent — and the entirely

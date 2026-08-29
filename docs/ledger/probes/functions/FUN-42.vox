@@ -3,7 +3,7 @@
  definition may stand, and the compiler used to accept one nested inside
  an `If` or `While` body and HOIST it: the body did not run when the
  block ran, and the name was callable from the top level afterwards. The
- manual now states the rule (LANGUAGE.md:757-769): definitions are
+ manual now states the rule (LANGUAGE.md:764-776): definitions are
  TOP-LEVEL ONLY — "a function is defined where a `thing` is defined: at
  the top level" — and a definition reached while an `If`, a loop, or
  another function's body is still open is a compile error. The compiler

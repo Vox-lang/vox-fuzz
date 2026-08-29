@@ -2,7 +2,7 @@
  returned handle is usable — but only if it is received with `Set`. The
  `a file called X is <call>.` declaration form does not track the type,
  and the first property read off X is rejected with the caret on the
- DECLARATION. LANGUAGE.md:799-801 lists `file` among the eleven legal
+ DECLARATION. LANGUAGE.md:806-808 lists `file` among the eleven legal
  return types and :748-750 says "a function call's declared return type is
  tracked through assignment".
  The strongest pro-compiler reading is that this is not about functions

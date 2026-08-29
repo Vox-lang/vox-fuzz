@@ -1,4 +1,4 @@
-(FMT-57 — LANGUAGE.md:3418 (new in 0.4.14, #108). "A text variable
+(FMT-57 — LANGUAGE.md:3443 (new in 0.4.14, #108). "A text variable
  reassigned from a format string releases the string it no longer
  holds." The fix itself (freeing the old string on `Set <text> to
  "<format>"`, instead of leaking one buffer per evaluation) is a memory

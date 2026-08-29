@@ -1,4 +1,4 @@
-(ENV-02, ENV-05: `count` and `empty` (LANGUAGE.md:4852, 4855) must
+(ENV-02, ENV-05: `count` and `empty` (LANGUAGE.md:4892, 4895) must
  agree on the same environment -- count is 0 iff empty is true. This
  holds regardless of what the real host environment actually contains
  (both branches print the same line), so the check is a real oracle

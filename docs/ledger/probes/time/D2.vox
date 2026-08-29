@@ -1,4 +1,4 @@
-(D2 - Discrepancy 2 repro: LANGUAGE.md:4605-4606 marks `duration` and
+(D2 - Discrepancy 2 repro: LANGUAGE.md:4645-4646 marks `duration` and
  `elapsed` "requires cast". Neither does. Both read with no `in <unit>` at
  all, and the uncast reading is the seconds one.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p

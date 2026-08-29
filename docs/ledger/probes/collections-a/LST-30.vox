@@ -1,6 +1,6 @@
 (LST-30 — `is a list` recognises a nested-list element by its runtime tag,
  and folds to true on a statically-typed list variable.
- Also covers: LST-31 (the worked example of LANGUAGE.md:2409-2411, which
+ Also covers: LST-31 (the worked example of LANGUAGE.md:2419-2421, which
  prints s / L / s).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-30.vox -o p && ./p
  expected output:

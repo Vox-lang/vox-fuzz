@@ -3,7 +3,7 @@
  same map read at top level returned 2. Element access through the
  parameter (`lookup's "ann"`) was already correct, so it was the
  size/length property specifically that was wrong.
- LANGUAGE.md:798 says a typed parameter "supports the same properties
+ LANGUAGE.md:805 says a typed parameter "supports the same properties
  and operations as a top-level variable of that type".
  The `a float called pad` line is load-bearing on 0.4.9: without a float
  somewhere in the program the same code did not assemble at all — see

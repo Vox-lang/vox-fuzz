@@ -4,7 +4,7 @@
  manual's own example only shows list clauses (which retain the last
  element), so the range case is the trap: a range `1 to 3` leaves 4.
  The handwritten `For each ... from 1 to 3` at the bottom leaves 4 too,
- which is exactly the equivalence LANGUAGE.md:3057-3058 promises.
+ which is exactly the equivalence LANGUAGE.md:3082-3083 promises.
  Also covers: LST2-70 (the range clause's end+1 value), LST2-72 (loop
  variables shadow outer variables and the outer name keeps the last
  iteration's value afterwards).

@@ -8,7 +8,7 @@ see "../src/gen_literals.vox".
  1. LEGALITY, by the real compiler. Each helper is drawn 120 times and
     each draw is dropped into the declaration its kind belongs in - an
     integer into `a number called`, a float into `a float called`, a
-    character into `a number called` (LANGUAGE.md:1917 says 'A' equals
+    character into `a number called` (LANGUAGE.md:1927 says 'A' equals
     65), `nothing` into a list slot (:2661 is explicit that a list slot
     is one of the three positions it may occupy). That program is then
     compiled AND run by the compiler under test. Checking the emitted
@@ -104,7 +104,7 @@ To 'one round of every helper' with a number called 'the round'.
     'put' of "a number called a{'the round'} is {'any number at all'}.\n".
 
 (The format-string round. The holes name variables the program really
- has - LANGUAGE.md:3264 is explicit that a bare literal inside a hole is
+ has - LANGUAGE.md:3289 is explicit that a bare literal inside a hole is
  rejected, so the caller must supply names, which is why the helper takes
  a list. An empty list is exercised too: it must degrade to a plain text
  literal rather than error.)

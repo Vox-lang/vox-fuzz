@@ -27,7 +27,7 @@ see "../src/gen_misc.vox".
 
  Every leaf here is top-level-only by construction - a fresh thing (and,
  for two of them, a fresh plain function) can only be defined at the
- true top level (LANGUAGE.md:931) - so unlike the buffer leaves, there
+ true top level (LANGUAGE.md:938) - so unlike the buffer leaves, there
  is no nested-rendering variant to also exercise.)
 
 Print "--- THG-12: an undefaulted field of each zero-having type ---".

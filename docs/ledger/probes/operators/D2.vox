@@ -1,5 +1,5 @@
 (D2 - Discrepancy 2 repro: the Operators section's only worked example
- (LANGUAGE.md:4971-4989) does not compile. Its last line,
+ (LANGUAGE.md:5011-5029) does not compile. Its last line,
  `Set result to value bit-shift-right 8 bit-and 0xFF.`, reads from
  `value`, which the block never declares - the block declares `lhs`,
  `rhs` and `result` and nothing else. This file is that block copied

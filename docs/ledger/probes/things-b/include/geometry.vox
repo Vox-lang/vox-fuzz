@@ -1,5 +1,5 @@
 (A thing definition and the functions that travel with it, for the cross-file
- probes THG2-49 and THG2-52. LANGUAGE.md:1754-1770, verbatim. This file is a
+ probes THG2-49 and THG2-52. LANGUAGE.md:1764-1780, verbatim. This file is a
  fragment: a `see` includes it, and it is never compiled on its own, which
  is why it sits in include/ rather than beside the probes.
 )

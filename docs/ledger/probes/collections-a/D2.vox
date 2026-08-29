@@ -4,7 +4,7 @@
  TAG (so `is a map` fires on it — LST-55) but has no static type, and map
  access is a static check, so `entry's "tag"` inside the loop is a
  compile error. Extracting the element into a declared `map` variable
- first works (LST-57). LANGUAGE.md:2583-2597 now states the corrected
+ first works (LST-57). LANGUAGE.md:2606-2620 now states the corrected
  rule verbatim and shows the position-loop idiom as the worked example.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
  expected output:

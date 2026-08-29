@@ -1,4 +1,4 @@
-(Discrepancy 2 - minimal repro. LANGUAGE.md:2168 says text to number "fails if
+(Discrepancy 2 - minimal repro. LANGUAGE.md:2178 says text to number "fails if
  text is not a valid number and sets the error flag"; :2027-2029 says a
  NON-default-base cast stops at the first invalid character and "does not set
  the error flag". Neither bullet describes what happens.

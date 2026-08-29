@@ -1,6 +1,6 @@
 (FIL-103: a `value` is refused as a `Write` source — its type is only
  known at runtime, so the compiler cannot tell a text it could write
- from a number it could not. LANGUAGE.md:4000-4008, new prose since
+ from a number it could not. LANGUAGE.md:4040-4048, new prose since
  vox #40 (Discrepancy 6) closed the segfault by extending the same
  compile-time guard to variables and, it turns out, to `value` too.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-103.vox -o p

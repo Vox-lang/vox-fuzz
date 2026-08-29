@@ -19,8 +19,8 @@ To 'gen leaf value roundtrip' with a text called indent and a boolean called nes
 (Thing member functions: this leaf drives both call forms - the
  type-possessive maker (`a <type>'s <maker> with ...`, the only way to
  reach a member whose first parameter is not the thing,
- LANGUAGE.md:1590) and the instance-possessive receiver
- (`i's <receiver>`, LANGUAGE.md:1529) - and reads the owner-return field
+ LANGUAGE.md:1600) and the instance-possessive receiver
+ (`i's <receiver>`, LANGUAGE.md:1539) - and reads the owner-return field
  back after each (finding 03). Data fields alone cannot reach the
  dispatch and owner-return path.
 
@@ -150,12 +150,12 @@ To 'gen leaf thing copy' with a text called indent and a boolean called nested.
  What pins the order, and all that does:
 
  - A nested field's type must be a PREVIOUSLY DEFINED thing
-   (LANGUAGE.md:986), so the definitions go out in manifest order, which
+   (LANGUAGE.md:994), so the definitions go out in manifest order, which
    is the order they were built in and therefore the order in which a
    nesting target always precedes the field that nests it. Which thing
    nests which IS drawn, so the dependency structure varies even though
    the traversal does not.
- - A member definition names its owner type (LANGUAGE.md:1416), so a
+ - A member definition names its owner type (LANGUAGE.md:1426), so a
    thing's methods follow its definition.
 
  Nothing pins whether the methods follow IMMEDIATELY. Hand-verified
@@ -228,7 +228,7 @@ To 'gen emit things interleaved' with a number called 'how many things'.
  template did.
 
  The last entry ends with a period and every earlier one with a comma,
- which is the language's own list punctuation (LANGUAGE.md:945-947), and
+ which is the language's own list punctuation (LANGUAGE.md:952-954), and
  the blank line after the body is what closes it (LANGUAGE.md:81-87).)
 
 To 'gen emit one thing definition' with a number called 'the thing'.
@@ -275,7 +275,7 @@ To 'gen emit one thing definition' with a number called 'the thing'.
     Return a number, 0.
 
 (One line of a thing's body: a manifest entry, or a data field with or
- without its default. LANGUAGE.md:960 says a field without a default
+ without its default. LANGUAGE.md:967 says a field without a default
  takes its type's zero value, so both spellings are legal and which one
  a field gets is drawn; a nested thing and a time have no literal to
  default to and never carry one.)
@@ -295,7 +295,7 @@ To 'gen emit one thing entry' with a number called 'the entry' and a boolean cal
     Return a number, 0.
 
 (A thing's members. Every declared member returns its owner
- (LANGUAGE.md:1444) and is defined exactly once (LANGUAGE.md:1503); a
+ (LANGUAGE.md:1454) and is defined exactly once (LANGUAGE.md:1513); a
  maker's first parameter is a number and a receiver's is the owner
  itself, which is what decides whether the type possessive alone reaches
  it or both call forms do.
@@ -347,7 +347,7 @@ To 'gen emit one method' with a number called 'the thing' and a number called 't
  needs a SPECIFIC field-default shape the manifest's own random draw
  cannot guarantee on demand (an undefaulted field of a given kind, or a
  declared default the leaf must know in advance to assert against). A
- thing definition is legal only at the true top level (LANGUAGE.md:931,
+ thing definition is legal only at the true top level (LANGUAGE.md:938,
  THG-03), so every leaf here is registered top-level-only in
  gen_core.vox's kind bands - hand-verified against vox 0.4.14 that a
  fresh `A thing called ...` and a fresh `To ...` may both be interleaved
@@ -414,7 +414,7 @@ To 'gen things a fresh function'.
     Return a text, 'the phrase'.
 
 (THG-12: a field without a default takes its type's zero value -
- number 0, float 0.0, boolean 0, time 0 (LANGUAGE.md:960, 1047-1048). A
+ number 0, float 0.0, boolean 0, time 0 (LANGUAGE.md:967, 1055-1056). A
  fresh thing gets one undefaulted field of each of the four zero-having
  types, in a random order, and every field is read back before any write
  and asserted against the RENDERED zero the manual promises - hand-
@@ -466,7 +466,7 @@ To 'gen leaf thing zero default' with a text called indent and a boolean called 
     'gen join lines' of indent and nested and 'the lines'.
 
 (THG-37: a float field and a boolean field carry defaults; a number
- field with none is 0 (LANGUAGE.md:1047-1048) - the water-tank shape,
+ field with none is 0 (LANGUAGE.md:1055-1056) - the water-tank shape,
  field order and values random. Distinct from THG-12 above: here the
  float and boolean fields ALWAYS carry a declared default and the number
  field NEVER does, in one thing at once, matching the row's own wording
@@ -522,7 +522,7 @@ To 'gen leaf thing pinned defaults' with a text called indent and a boolean call
     'gen join lines' of indent and nested and 'the lines'.
 
 (THG-25, THG-34: every declaration form gives every field its declared
- default (LANGUAGE.md:1011-1012); `Create` does too (LANGUAGE.md:1033).
+ default (LANGUAGE.md:1019-1020); `Create` does too (LANGUAGE.md:1041).
  A fresh thing gets 1-3 fields of random kind (number/float/boolean),
  each with a random declared default; the declaration form - bare,
  `Create`, or `Set a T called N to <a whole T>` from an already-declared
@@ -604,7 +604,7 @@ To 'gen leaf thing declaration forms' with a text called indent and a boolean ca
         Set 'the field checked so far' to 'the field checked so far' add 1.
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG-58: a function receives a COPY of a thing (LANGUAGE.md:1189-1191).
+(THG-58: a function receives a COPY of a thing (LANGUAGE.md:1199-1201).
  A fresh function takes a fresh thing type by value, writes its
  parameter's one number field, and returns it; the caller's own value is
  asserted UNCHANGED afterwards, and the returned copy is asserted
@@ -652,7 +652,7 @@ To 'gen leaf thing param copy' with a text called indent and a boolean called ne
 
 (THG-64: a whole nested thing read out of a segment is copied the same
  way - `nudged of span's start` passes a copy and leaves the segment
- untouched (LANGUAGE.md:1210-1211). A fresh outer thing nests a fresh
+ untouched (LANGUAGE.md:1220-1221). A fresh outer thing nests a fresh
  inner thing; the same mutate-and-return shape as THG-58 above is called
  with the CHAINED POSSESSIVE `segment's inner-field` as its argument -
  hand-verified against vox 0.4.14 that this compiles and copies exactly
@@ -737,7 +737,7 @@ a text called gen_thing_predicate_written is "".
 
 a list called gen_thing_call_prepositions is ["of", "to", "with", "on"].
 
-(THG2-70 (LANGUAGE.md:1888-1890): the type nouns `is a <type>` recognises
+(THG2-70 (LANGUAGE.md:1898-1900): the type nouns `is a <type>` recognises
  are the six builtins - number, text, decimal, boolean, list, map. One
  dispatch function, built once and unconditionally - even a program with
  zero things gets one, since it takes only a `value` and depends on
@@ -778,7 +778,7 @@ To 'gen build thing predicate function'.
     Set gen_thing_predicate_ready to true.
     Return a number, 0.
 
-(THG2-21, THG2-27, THG2-30, THG2-32 (LANGUAGE.md:1466-1470): a function
+(THG2-21, THG2-27, THG2-30, THG2-32 (LANGUAGE.md:1476-1480): a function
  computing some other type from a thing is an ordinary global function
  with no manifest entry, reached by the instance possessive - unlike
  every function 'gen emit prelude functions' already puts on the page
@@ -872,14 +872,14 @@ To 'gen assert text equals' with a text called 'the row' and a text called 'the 
     a text called 'the line' is "If {'the subject'} is not \"{'the expected'}\" then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the got shown'}\", Exit 95. Print {'the subject'}".
     Return a text, 'the line'.
 
-(THG2-06 (LANGUAGE.md:1347-1348): a whole thing interpolates into a
+(THG2-06 (LANGUAGE.md:1357-1358): a whole thing interpolates into a
  format string under `Print`, the same rendering `Print p.` produces on
  its own - the existing leaves ('gen thing flat', 'gen thing nested')
  already put a bare `Print i{n}.` on the page; this is the first leaf to
  put the SAME instance inside a `{…}` slot instead. Not assertable from
  inside: neither rendering can be captured into a comparable value
  (THG2-01), and interpolating a whole thing into a TEXT initializer is
- rejected outright rather than merely uncheckable (LANGUAGE.md:1349-
+ rejected outright rather than merely uncheckable (LANGUAGE.md:1359-
  1362, "Interpolate a field instead"), so there is no route to a captured
  value even in principle. The two Prints below - the bare thing and the
  same instance inside a format string - are the whole of the check;
@@ -915,7 +915,7 @@ To 'gen leaf thing format whole' with a text called indent and a boolean called 
     append 'the interpolated print' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-08, THG2-09 (LANGUAGE.md:1366-1367): `is` between two values of
+(THG2-08, THG2-09 (LANGUAGE.md:1376-1377): `is` between two values of
  the same thing compares those same fields at the same depth, and `is
  not` is its negation. Two fresh instances start equal by construction -
  every field takes its type's zero value until this leaf sets one - so
@@ -951,7 +951,7 @@ To 'gen leaf thing equality' with a text called indent and a boolean called nest
     a list called 'the lines' is ['the first declaration', 'the second declaration', 'the equal assert', 'the set line', 'the not equal assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-10 (LANGUAGE.md:1367-1368): the comparison is written out by the
+(THG2-10 (LANGUAGE.md:1377-1378): the comparison is written out by the
  compiler, so it recurses into nested things - the difference this time
  sits two levels down, in the field of a field. Same construction as
  THG2-08/09: two fresh outer instances start equal (every field
@@ -986,7 +986,7 @@ To 'gen leaf thing nested equality' with a text called indent and a boolean call
     a list called 'the lines' is ['the first declaration', 'the second declaration', 'the diverge line', 'the not equal assert', 'the converge line', 'the equal assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-21 (LANGUAGE.md:1466-1470): a function computing some other type
+(THG2-21 (LANGUAGE.md:1476-1480): a function computing some other type
  from a thing is an ordinary global function with no manifest entry,
  reached by BOTH the free call and the instance possessive - the two
  built once in 'gen build thing functions' and called here on a fresh
@@ -1017,7 +1017,7 @@ To 'gen leaf thing free function' with a text called indent and a boolean called
     a list called 'the lines' is ['the instance declaration', 'the set line', 'the free decl', 'the free assert', 'the receiver decl', 'the receiver assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-27 (LANGUAGE.md:1511): `of`, `to`, `with`, and `on` all introduce
+(THG2-27 (LANGUAGE.md:1521): `of`, `to`, `with`, and `on` all introduce
  arguments - covered here in the free-call form, all four every firing
  (the row's own claim is that all four exist, so testing all four is the
  citation, not an invariant needing one); THG2-30 covers the instance-
@@ -1058,7 +1058,7 @@ To 'gen leaf thing call prepositions' with a text called indent and a boolean ca
         Set 'the step' to 'the step' add 1.
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-30 (LANGUAGE.md:1530-1531): the receiver fills the function's
+(THG2-30 (LANGUAGE.md:1540-1541): the receiver fills the function's
  first parameter, and any further arguments follow the call preposition
  - `i's 'name' <prep> factor` puts the instance in the first (thing)
  parameter and `factor` in the second, through whichever of the four
@@ -1089,7 +1089,7 @@ To 'gen leaf thing extra argument' with a text called indent and a boolean calle
     a list called 'the lines' is ['the instance declaration', 'the set line', 'the call decl', 'the call assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-32 (LANGUAGE.md:1534-1535): a receiver is anything that names a
+(THG2-32 (LANGUAGE.md:1544-1545): a receiver is anything that names a
  whole thing, so a FIELD holding one reads the same way - `outer's
  inner's 'name'` calls the arity-one function on the thing held in
  outer's own field, not on a separately-declared instance. Only fires
@@ -1119,7 +1119,7 @@ To 'gen leaf thing field receiver' with a text called indent and a boolean calle
     a list called 'the lines' is ['the instance declaration', 'the set line', 'the call decl', 'the call assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(THG2-70 (LANGUAGE.md:1888-1890): calls 'gen build thing predicate
+(THG2-70 (LANGUAGE.md:1898-1900): calls 'gen build thing predicate
  function's dispatch with a drawn payload of one of the six builtin tags
  (number/text/decimal-or-float/boolean/list/map, reusing 'gen value
  payload'/'gen value expression' from gen_collections.vox - VAL-03's own

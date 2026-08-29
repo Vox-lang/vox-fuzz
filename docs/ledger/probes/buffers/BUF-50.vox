@@ -1,4 +1,4 @@
-(BUF-50: the worked example at LANGUAGE.md:3637-3643 — declare a buffer
+(BUF-50: the worked example at LANGUAGE.md:3662-3668 — declare a buffer
  from a string, `Free` it, print its length (0) and `as text` ("[]"),
  then `append` and catch the refusal with `On error` — compiles and
  behaves exactly as shown.

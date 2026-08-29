@@ -2,8 +2,8 @@
  Also covers: LST-23 (a nested list prints recursively with its brackets
  intact), LST-24 (`[1, [2, 3], "four"]` prints exactly as written),
  LST-25 (a homogeneous list-of-lists keeps the fast path and still prints
- recursively), LST-26 (the worked example of LANGUAGE.md:2386-2388),
- LST-27 (two-level extraction, LANGUAGE.md:2390-2391).
+ recursively), LST-26 (the worked example of LANGUAGE.md:2396-2398),
+ LST-27 (two-level extraction, LANGUAGE.md:2400-2401).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-22.vox -o p && ./p
  expected output:
    [1, [2, 3], "four"]

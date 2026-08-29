@@ -1,4 +1,4 @@
-(BUF-53: the "Per-iteration use" worked example (LANGUAGE.md:3660-3672)
+(BUF-53: the "Per-iteration use" worked example (LANGUAGE.md:3685-3697)
  — declaring a buffer inside a loop body and `Free`ing it at the end of
  each iteration — compiles and runs without crashing. The manual's own
  fragment omits the `total_lines`/`source` declarations (a `vox

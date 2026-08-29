@@ -346,6 +346,11 @@ The action executes once per item in the collection or range, with the loop vari
 **Supported collections:**
 - **Ranges:** `1 to 10`, `start to end` - numeric sequences
 - **Lists:** `[1, 2, 3]`, any list variable
+- **A buffer's bytes:** any buffer variable - each iteration binds the
+  variable to one byte's value (0-255), in order 1..size, the same value
+  `byte N of <buffer>` yields (see [Buffer Byte
+  Access](#buffer-byte-access)). `byte` is itself a legal loop-variable
+  name here.
 - `arguments's all` - all command-line arguments (argv[1..])
 
 #### Chained `each` clauses: a grid
@@ -483,6 +488,8 @@ substitution that fires hands the `<replacement>`'s own type out with it.
 | Time | `time` | Date/time value (unix timestamp with components) |
 | Timer | `timer` | Stopwatch for measuring durations |
 | Thing | `thing` *(contextual)* | User-defined composite value type: see [Things](#things) |
+
+`int` and `integer` are accepted spellings of `number`.
 
 ---
 
@@ -748,9 +755,9 @@ To 'check divisibility' of a number called divisor and a number called dividend.
 ```
 
 **Rules:**
-- Function name is a bare single word (`add`) or a single-quoted multi-word name (`'add numbers'`)
+- Function name is a bare word, or any name in single quotes (a single word may be quoted too) (`add`, `'add numbers'`)
 - Parameters are optional. If present, introduce them with `with` or `of` (both work identically)
-- Parameters use `a <type> called <name>` syntax (bare if single-word, `'single-quoted'` if it contains spaces)
+- Parameters use `a <type> called <name>` syntax: a bare word, or any name in single quotes (a single word may be quoted too)
 - Multiple parameters joined with `and`
 - Return type follows `Return a <type>,`
 
@@ -872,7 +879,7 @@ calculate with x and y
 ```
 
 **Rules:**
-- Function name is a bare single word (`calculate`) or a single-quoted multi-word name (`'add numbers'`)
+- Function name is a bare word, or any name in single quotes (a single word may be quoted too) (`calculate`, `'add numbers'`)
 - For calls with arguments, use `of`, `to`, `with`, or `on`
 - Multiple arguments separated by `and`
 - Writing an argument right after the function name with none of these words is an error naming the missing preposition, not a call with that argument dropped
@@ -970,8 +977,9 @@ a number called thing is 42.
 Print thing.
 ```
 
-A thing name may be a bare word (`point`) or a quoted multi-word name
-(`'bounding box'`), the same forms any identifier takes:
+A thing name may be a bare word, or any name in single quotes (a single
+word may be quoted too) (`point`, `'bounding box'`), the same forms any
+identifier takes:
 
 ```
 A thing called 'bounding box' has
@@ -1167,7 +1175,9 @@ Print moved's x.
 The three spellings of assignment (a declaration with an initialiser, a
 bare `is`, and `Set ... to`) are all assignment, so all three copy. A
 copy is deep by construction: a nested thing is just more bytes, so
-copying a letter carries its point along and neither half is shared:
+copying a letter carries its point along and neither half is shared -
+the same as a nested collection (a list or map placed inside another
+list or map is copied too, not shared; see [Nested Lists](#nested-lists)):
 
 ```
 A thing called point has
@@ -2480,27 +2490,37 @@ For each item in [1, [2, 3], "x"],
 (prints: s, L, s)
 ```
 
-Printing is recursive and **cycle-safe**: a list that contains itself
-(for example `a list called x is []. append x to x.`) would recurse
-forever, so printing is capped at a depth of 64. When the limit is hit
-the over-deep subtree prints as `...`, the error flag is set, and printing
-unwinds safely instead of overflowing the stack. Use `on error` to react:
+Printing is recursive: a nested list prints exactly as written, however
+deep.
+
+**A collection placed inside another collection is a copy**, not a
+shared reference (owner ruling, GitHub #34, 2026-08-29): the parent owns
+its contents. Building a list or map literal with a collection element,
+appending a collection to a list, setting a map value to a collection,
+and reading a nested collection back out (`element N of`, `first`/`last`,
+a map value, a `For each` binding) all copy - nothing written afterward
+through the original name, or through an extracted child, reaches back
+into the other:
 
 ```
-a list called x is [].
-append x to x.
-print x.
-on error print "cyclic".
-(prints: [[...]] then cyclic; abbreviated: 64 opening brackets, then
- `...`, then 64 closing brackets, then `cyclic`)
+a list called inner is [1, 2].
+a list called outer is [inner, 3].
+Set element 1 of inner to 777.
+print outer.                       (prints: [[1, 2], 3] - unaffected)
+print inner.                       (prints: [777, 2])
+
+a list called got is element 1 of outer.
+Set element 1 of got to 555.
+print outer.                       (still [[1, 2], 3] - got is its own copy)
 ```
 
-One limitation remains for this stage. Extracting a child with `element N
-of` yields a *reference* to the child list, not a copy: if the parent is
-later grown by appending enough elements to force a reallocation, a child
-extracted before that reallocation may point at freed memory. Extract a
-child after the parent has finished growing, or copy it element-by-element.
-See `docs/COLLECTIONS_ROADMAP.md` for the roadmap.
+Because nesting always copies, a list can never truly contain itself:
+`a list called x is []. append x to x.` copies `x`'s state at the moment
+of the append (here, `[]`) and appends that copy, so `x` ends up `[[]]` -
+one level deep, not a cycle. Printing still caps recursion at a depth of
+64 as a defensive backstop (an over-deep subtree would print as `...` and
+set the error flag), but ordinary nesting never approaches it, since
+building one requires that many *separate*, explicitly-written levels.
 
 ### Maps
 
@@ -2568,10 +2588,13 @@ on error print "missing". (prints: missing)
 ```
 
 A map value may be a list or another map, and printing is recursive:
-`_map_print` renders `{"key": value, …}` and shares the same 64-deep
-`_print_depth` budget as `_list_print`, so a mixed map/list tree is
-cycle-safe. A self-referential map (`set m's "self" to m.`) prints 64
-levels deep, then `...`, sets the error flag, and unwinds safely.
+`_map_print` renders `{"key": value, …}`, sharing the same 64-deep
+`_print_depth` budget as `_list_print` as a defensive backstop. A map
+value that is itself a collection is copied in - the same [copy-in
+rule](#nested-lists) a list applies to its own elements - so `set m's
+"self" to m.` copies `m`'s state at the moment of the `set` (before
+"self" exists in it) rather than making `m` contain itself: `m` ends up
+one level deep, not a cycle.
 
 The `is a map` predicate recognises a map (runtime tag 5): it folds to
 true on a statically-typed map variable and compares the tag at run time
@@ -2826,8 +2849,10 @@ print score of "hello".    (prints: 99)
 The same is true of a conditional return of any declared type: `Return a
 text, "big".` inside a branch makes the function a text-returning one. If
 no branch fires and the function falls off its end, it hands back the
-empty value of its declared type: empty text, zero, or a `value` tagged
-as the number `0`.
+empty value of its declared type: empty text, zero (`0` / `0.0` /
+`false`, and the zero time for a `time` return), an empty list `[]`, an
+empty map `{}`, an empty buffer, the all-defaults instance for a thing,
+or a `value` tagged as the number `0`.
 
 **One limitation to know.** A function whose branches declare *different*
 types (`Return a text` in one and `Return a number` in the other) has no
@@ -3671,7 +3696,16 @@ While n is less than total_lines,
     increment n.
 ```
 
-A list also accepts `Free`.
+A list also accepts `Free`, with the same after-state a buffer gets: it
+becomes **empty** (length 0, `empty` is true, prints `[]`), and every later
+write - `append`, `Set element N of ...` - is refused with the error flag;
+a second `Free` is the same no-op-that-flags, not a second release. Free
+releases the list and every collection it holds: a nested list or map
+element is freed too, recursively, before the list itself is. A `list`
+function parameter is the caller's list (see
+[A collection parameter is the caller's collection](#a-collection-parameter-is-the-callers-collection)),
+so freeing one empties the caller's own variable too, exactly as growth
+through a parameter already does.
 
 #### Buffer Byte Access
 
@@ -3717,6 +3751,12 @@ the current size extends `size` to that position, zero-filling any gap
 (`byte N of buf`) accepts positions from 1 up to the current *size* only -
 a byte that has never been written or appended is out of bounds even
 when the capacity has room for it. Position 0 is out of bounds for both.
+
+**Iterating bytes:** `each ... from` walks a buffer's bytes as numbers (0-255), in order 1..size - the same value `byte N of <buffer>` yields - and `byte` is itself a legal loop-variable name there:
+```
+a buffer called data is "AB".
+For each byte from data, print byte.
+```
 
 #### Buffer Append and Copy
 
@@ -5025,6 +5065,20 @@ Set result to value bit-shift-right 8 bit-and 0xFF.
 | `Shutdown`/`Poweroff`, `Reboot`/`Restart`, `Halt` | `reboot(2)` - power off/restart/halt the machine |
 | `fork`, `reap` | Process control expressions - `fork(2)`/`wait4(2)` |
 | `Send signal` | `kill(2)` - send a signal to a process (`child` aliases `process`) |
+| `Read` | `Read from <file> into <buffer>.` / `Read line from <file> into <buffer>.` |
+| `Write` | `Write <value> to <file>.` |
+| `Open` | `open a file for reading/writing/appending called <name> at <path>.` |
+| `Close` | `Close <file>.` |
+| `Wait` | `Wait <n> seconds.` / `Wait <n> milliseconds.` |
+| `Sleep` | `Sleep for <n> seconds.` / `Sleep for <n> milliseconds.` |
+| `Get` | `Get current time into <name>.` |
+| `Clear` | Set a buffer's length to 0, keeping its capacity (`clear <buffer>.`) |
+| `Copy` | Replace a buffer's contents with another's bytes (`copy <source> to <destination>.`) |
+| `Resize` | Change a buffer's capacity, preserving data up to the smaller of the two lengths (`resize <buffer> to <n> bytes.`) |
+| `Seek` | Move a file's read/write position (`Seek <file> to line <n>.` / `Seek <file> to byte <n>.`) |
+| `Repeat` | Loop a fixed number of times (`Repeat <n> times, <statements>.`, see [Repeat](#repeat)) |
+| `See` | Include another Vox source file, or consume a shared library's `.lib` interface (see [The `see` Keyword](#the-see-keyword)) |
+| `Library` | Declare a shared library's name and version at the top of a `.vox` file (see [Shared libraries](#shared-libraries)) |
 
 ### Flag Schema
 
@@ -5048,6 +5102,14 @@ Set result to value bit-shift-right 8 bit-and 0xFF.
 | `then` | After condition |
 | `otherwise`, `else` | Alternative branch |
 | `from`, `to` | Range bounds |
+| `between` | Range bound, inclusive of both ends (see [Ranges](#ranges)) |
+| `in` | Collection/range membership (`For each x in <list>`) and unit casting (`<timer>'s duration in seconds`) |
+| `into` | Destination of `Read from <file> into <buffer>.` and `Get current time into <name>.` |
+| `each` | Universal loop expansion: turns any action into a loop (`<action> each <var> from <collection>`, see [Loop Expansion](#loop-expansion)) |
+| `without` | Suppresses the trailing newline (`Print <x> without newline.`); also the `without waiting` reap suffix |
+| `as` | Type-cast target (`as a number`) and substitution replacement (`treating X as Y`) |
+| `treating` | Inline value substitution (`treating <match> as <replacement>`, see [Inline Substitution with `treating`](#inline-substitution-with-treating)) |
+| `times` | Loop-count unit in `Repeat <n> times, <statements>.` |
 
 ### The `and` Keyword
 
@@ -5065,6 +5127,39 @@ The word `and` has multiple context-dependent meanings:
 - When `and` appears between two conditions (no comma), it's a logical operator
 - When `and` follows `with`/`of`/`to`/`on`, it separates arguments
 
+### Types
+
+The type keywords, reserved as variable names for the same reason a
+statement starter is (see [Types](#types) for what each one holds):
+
+| Keyword | Purpose |
+|---------|---------|
+| `number` | Integer type |
+| `int` | Alternate spelling of `number` (its alias `integer` is in the Reserved Aliases table below) |
+| `float` | Floating-point type |
+| `text` | String type |
+| `boolean` | Boolean type |
+| `true`, `false` | The two boolean literal values |
+| `list` | Collection type (see [Lists and Collections](#lists-and-collections)) |
+| `map` | Key/value collection type (see [Maps](#maps)) |
+| `buffer` | Memory-block type for I/O (see [Buffers](#buffers)) |
+| `file` | File descriptor handle type (see [File I/O](#file-io)) |
+| `time` | Date/time value type (see [Time and Timers](#time-and-timers)) |
+| `timer` | Stopwatch type for measuring durations (see [Timers](#timers)) |
+| `nothing` | The absent value literal (see [Nothing (the absent value)](#nothing-the-absent-value)) |
+
+### Operators
+
+The operator keywords, fully defined in [Operators](#operators):
+
+| Keyword | Purpose |
+|---------|---------|
+| `add`, `subtract`, `multiply`, `divide`, `modulo` | Arithmetic operators (`x add 5`, see [Arithmetic](#arithmetic)) |
+| `is`, `are`, `equals`, `greater`, `less`, `than` | Comparison operators (`x is greater than 5`, see [Comparisons](#comparisons)) |
+| `not` | Logical negation (see [Logical Operators](#logical-operators)) |
+| `even`, `odd`, `positive`, `negative`, `zero`, `empty` | Property-check predicates (`the x is even`, see [Property Checks](#property-checks)) |
+| `bit-and`, `bit-or`, `bit-xor`, `bit-not`, `bit-shift-left`, `bit-shift-right` | Bitwise operators (see [Bitwise Operators](#bitwise-operators)) |
+
 ### Reserved Aliases
 
 A few alternate spellings are also reserved because the compiler recognizes them as aliases for canonical keywords. This table lists every alias the lexer folds onto a canonical keyword; a keyword with only one spelling is not repeated here (it is reserved too, but it is not an *alias* of anything):
@@ -5080,7 +5175,6 @@ A few alternate spellings are also reserved because the compiler recognizes them
 | `args` | `arguments` |
 | `parameters` | `arguments` |
 | `params` | `arguments` |
-| `automatic` | `auto` |
 | `bool` | `boolean` |
 | `named` | `called` |
 | `closed` | `close` |
@@ -5090,8 +5184,6 @@ A few alternate spellings are also reserved because the compiler recognizes them
 | `days` | `day` |
 | `remove` | `delete` |
 | `fd` | `descriptor` |
-| `disabled` | `disable` |
-| `enabled` | `enable` |
 | `env` | `environment` |
 | `equal` | `equals` |
 | `exist` | `exists` |
@@ -5160,6 +5252,40 @@ A few alternate spellings are also reserved because the compiler recognizes them
 These cannot be used as variable names. The diagnostic names the spelling you wrote and notes which canonical keyword it aliases, so `a number called ms is ...` reports `'ms'` as an alternate spelling of `'milliseconds'`, not the internal canonical name. `say` and `output` are *not* in this table: the lexer never folds them, so they are ordinary variable names (BUGS_FOUND #106) - only `show`, `display`, and `prints` are alternate spellings of `print`.
 
 Every keyword listed in the tables above is likewise reserved as a variable name. Two that are easy to hit by accident are worth calling out: the flag-schema keyword **`flag`** (`a flag called ...`) and the property keyword **`empty`** (`x's empty`). Writing `a number called flag is 1.` or `a number called empty is 1.` is rejected with the same "reserved keyword" diagnostic. (As with any reserved word, you can still quote the name (`'flag'`, `'empty'`) if you genuinely need it.)
+
+### Reserved Nouns and Properties
+
+Words reserved as the head of a built-in noun phrase, rather than as a
+statement starter, operator, type name, or connector:
+
+| Keyword | Purpose |
+|---------|---------|
+| `arguments` | Command-line arguments, accessed via `'s` (`arguments's count`, `arguments's first`, ...) — see [Command-Line Arguments](#command-line-arguments) |
+| `argument` | Indexed argument access (`the argument at <i>`) and the `the argument count` phrase — see [Dynamic Index Access](#dynamic-index-access) |
+| `environment` | Environment variables, accessed via `'s` (`environment's "HOME"`, `environment's count`, ...) — see [Environment Variables](#environment-variables) |
+| `variable` | Optional noun in `the environment variable "<NAME>"` / `the environment variable count` |
+| `input`, `standard` | `standard input` - the process's stdin (`Read from standard input into <buffer>.`) |
+| `byte` | Single-byte access by position (`byte <n> of <buffer>`, `Set byte <n> of <buffer> to <value>.`) — see [Buffer Byte Access](#buffer-byte-access) |
+| `elapsed` | A running timer's elapsed duration (`the '<timer>''s elapsed in seconds`) — see [Timer Properties](#timer-properties) |
+| `error` | The `On error <action>.` handler that runs after a failed operation — see [Error Handling](#error-handling) |
+| `exists` | Predicate on a named environment variable (`the environment variable "<NAME>" exists`) — see [Checking if Variable Exists](#checking-if-variable-exists) |
+
+### File, Buffer, List, and Time Properties
+
+Property words claimed by the `'s` syntax, or by their own access phrase,
+across buffers, files, lists, maps, numbers, and time values:
+
+| Keyword | Purpose |
+|---------|---------|
+| `descriptor`, `modified`, `accessed`, `permissions`, `readable`, `writable`, `full` | File properties, accessed via `'s` (`<file>'s descriptor`, `<file>'s modified`, ...) — see [File Properties](#file-properties) |
+| `reading`, `writing`, `appending` | File-open modes (`open a file for reading/writing/appending ...`) — see [Opening Files](#opening-files) |
+| `keys`, `values` | Map properties, each yielding a fresh list (`<map>'s keys`, `<map>'s values`) — see [Maps](#maps) |
+| `absolute`, `sign` | Number properties (`<n>'s absolute`, `<n>'s sign`) — see [Number Properties](#number-properties) |
+| `element` | List element access by position (`element <n> of <list>`) — see [List Element Access](#list-element-access-object-properties) |
+| `bytes` | Buffer size unit (`<n> bytes in size`) and seek target (`Seek <file> to bytes <n>.`) — see [Buffers](#buffers) / [Seeking](#seeking) |
+| `current`, `hour`, `minute`, `day`, `month`, `year`, `unix` | Current time and its properties (`current time`, `<time>'s hour`, ...) — see [Time and Timers](#time-and-timers) |
+| `duration`, `running` | Timer properties (`<timer>'s duration`, `<timer>'s running`) — see [Timer Properties](#timer-properties) |
+| `millisecond`, `milliseconds`, `seconds` | Duration units (`Wait <n> seconds.`, `Sleep for <n> milliseconds.`) — see [Time and Timers](#time-and-timers) |
 
 ### Two classes of special word
 

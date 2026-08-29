@@ -2,7 +2,7 @@
  on 2026-08-22 — not a ledger row, recorded here because PROCEDURE.md
  section 5 says record, do not adjudicate.
 
- The claim it contradicted: LANGUAGE.md:773 — "Variables declared at top
+ The claim it contradicted: LANGUAGE.md:780 — "Variables declared at top
  level are global and can be used inside functions." Not in the 0.4.10
  register (#66-#91) — re-verified unchanged against 0.4.10, 2026-08-22:
  byte-identical diagnostic, still reproduced. (Not the same bug as
@@ -14,7 +14,7 @@
  RESOLVED 2026-08-25 — vox bug #92, fixed 0.4.13: a top-level `Set` on a
  global `list` (or `map`) that a function reads is now legal — the
  binding stays in scope, and the function sees the new value. The program
- below compiles and prints "1", exactly what LANGUAGE.md:773 promises
+ below compiles and prints "1", exactly what LANGUAGE.md:780 promises
  ("variables declared at top level are global and can be used inside
  functions"). Re-recorded to the current behavior: the probe now asserts
  the value the manual promises instead of the old refusal.

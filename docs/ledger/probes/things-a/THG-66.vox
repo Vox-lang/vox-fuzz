@@ -1,6 +1,6 @@
 (THG-66: assigning a single VALUE to a whole thing is rejected, with the
  field to write named instead.
- Also covers: THG-67 (the exact diagnostic, LANGUAGE.md:1211-1221).
+ Also covers: THG-67 (the exact diagnostic, LANGUAGE.md:1221-1231).
  The caret lands on line 5 - the DECLARATION of `origin` - not on line 6,
  the offending `Set`. See Discrepancy 3.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-66.vox -o p && ./p

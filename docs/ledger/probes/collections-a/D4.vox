@@ -1,4 +1,4 @@
-(D4 — Discrepancy 4 repro: LANGUAGE.md:2543-2545 says "To *convert* a value
+(D4 — Discrepancy 4 repro: LANGUAGE.md:2563-2565 says "To *convert* a value
  rather than test it, use the cast expression `<value> as a <type>` - e.g.
  `item as a number` or `item as a float`". Both are compile errors on the
  mixed-list element the sentence is about, and the compiler's own message

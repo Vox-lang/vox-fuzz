@@ -1,4 +1,4 @@
-(FMT-06 — the worked example at LANGUAGE.md:3300-3302 verbatim: two
+(FMT-06 — the worked example at LANGUAGE.md:3325-3327 verbatim: two
  without-newline prints then a plain one produce a single line
  `Loading: 75%`. Also settles that `%` in a literal is just a character,
  not a format directive.

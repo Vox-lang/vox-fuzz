@@ -5,7 +5,7 @@
  this: parentheses are Vox's comment delimiters, so `(x add y)` is a
  comment and "Print (x add y) multiply z." errors with "Expected a
  statement, got Multiply"). The real grouping punctuation is `{...}`
- (LANGUAGE.md:1933, 1939), which this production does not list as a
+ (LANGUAGE.md:1943, 1949), which this production does not list as a
  `primary` alternative at all - so `primary` as literally written is
  both wrong (parens don't group) and incomplete (braces do, unlisted).
  This probe shows the working form.

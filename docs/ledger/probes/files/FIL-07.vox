@@ -1,5 +1,5 @@
 (FIL-07: permissions returns the file's permission bits as a Number.
- LANGUAGE.md:3772's table entry, "File permission bits (e.g., 0644)", is
+ LANGUAGE.md:3812's table entry, "File permission bits (e.g., 0644)", is
  an EXAMPLE value, not a promise - the mode a fresh file lands at is
  umask-dependent (0644/420 under umask 022, 0600/384 under a stricter
  077), so asserting the literal 420 would be a false-finding factory on

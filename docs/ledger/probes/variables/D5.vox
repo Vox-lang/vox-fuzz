@@ -1,4 +1,4 @@
-(Discrepancy 5: LANGUAGE.md:699-701 lists versions among the things that are
+(Discrepancy 5: LANGUAGE.md:706-708 lists versions among the things that are
  "data, not names" and "stay double-quoted", and 612-613 says the three name
  forms have no overlap and no context-sensitivity. A single-quoted version
  string is accepted and really is matched against the library — asking for

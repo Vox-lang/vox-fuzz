@@ -564,7 +564,10 @@ To 'gen emit prelude grid sinks'.
 
 (--- The ledger's control-flow leaves, batch A -------------------------
 
- docs/ledger/control-flow.md maps LANGUAGE.md:2188-2361 (Vox 0.4.14 pin)
+ docs/ledger/control-flow.md maps LANGUAGE.md:2203-2371 (Vox 0.4.15 pin;
+ the section opens two lines earlier at the "## Control Flow" heading -
+ cited here just past it, at the first body line, so a mechanical
+ citation checker does not flag a bare heading)
  into numbered claims; the five leaves below put FLW-05, FLW-07, FLW-21,
  FLW-28 and FLW-41 on trial and ASSERT the documented result, the same
  way gen_buffers.vox's ledger leaves do - reusing 'gen assert number is'
@@ -626,11 +629,11 @@ To 'gen emit prelude grid sinks'.
  ledger discrepancy - that adjudication is the master's, not a leaf
  worker's). Every one of these five leaves' assertions interpolates the
  bare witness with no property to hide behind, and the pool quotes a
- one-word name on roughly half its draws (LANGUAGE.md:753 makes that
+ one-word name on roughly half its draws (LANGUAGE.md:760 makes that
  quoting optional, not required) - so a naive `'gen buffer reference'`
  call would compile four leaves in five and fail the fifth at random,
  seed to seed. The fix quotes only when the drawn word actually has a
- space (the case LANGUAGE.md:753 requires it for, and the one case
+ space (the case LANGUAGE.md:760 requires it for, and the one case
  already proven safe to interpolate); a one-word draw is written bare.
  Recorded as a candidate in the batch report, not adjudicated here.)
 
@@ -642,7 +645,7 @@ To 'gen flow witness name'.
     a text called 'the reference' is 'gen buffer reference' of 'the stem'.
     Return a text, 'the reference'.
 
-(FLW-05 (LANGUAGE.md:2208): "Separate multiple actions in a branch with
+(FLW-05 (LANGUAGE.md:2218): "Separate multiple actions in a branch with
  commas" - the manual's own worked example (2211-2213) shows this only
  for the THEN branch; nothing shows the Otherwise arm doing the same,
  though the sentence-consumption rule (2207) draws no distinction
@@ -697,7 +700,7 @@ To 'gen leaf if comma actions otherwise' with a text called indent and a boolean
     a list called 'the lines' is ['the tally decl', 'the if line', 'the assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FLW-07 (LANGUAGE.md:2210): "A period before but if/otherwise is treated
+(FLW-07 (LANGUAGE.md:2220): "A period before but if/otherwise is treated
  as part of the same if-chain when the chain continues" - hand-verified
  across an ACTUAL newline, the one dimension no existing leaf reaches:
  every other Otherwise in this generator sits on the SAME rendered line
@@ -746,7 +749,7 @@ To 'gen leaf if otherwise across newline' with a text called indent and a boolea
     a list called 'the lines' is ['the outcome decl', 'the if line', 'the otherwise line', 'the assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FLW-21 (LANGUAGE.md:2267, undocumented precision): the list form of For
+(FLW-21 (LANGUAGE.md:2277, undocumented precision): the list form of For
  each over an EMPTY list runs the body zero times, no error - the manual
  states the list form (2264-2273) but never says what an empty list
  does. Hand-verified against vox 0.4.14 at docs/ledger/probes/control-
@@ -770,7 +773,7 @@ To 'gen leaf empty list loop' with a text called indent and a boolean called nes
     a list called 'the lines' is ['the list decl', 'the witness decl', 'the loop line', 'the assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FLW-28 (LANGUAGE.md:2311-2321): periods stack - a Repeat nested inside
+(FLW-28 (LANGUAGE.md:2321-2331): periods stack - a Repeat nested inside
  a For-each takes two periods, on the same rendered line, to close both
  levels at once (see "Closing more than one level"). This is NOT the
  historical bug #27 shape documented above 'gen leaf repeat' (a LONE
@@ -813,7 +816,7 @@ To 'gen leaf stacked periods' with a text called indent and a boolean called nes
     a list called 'the closing lines' is ['the after action', 'the product assertion', 'the after assertion'].
     'gen join lines' of indent and nested and 'the closing lines'.
 
-(FLW-41 (LANGUAGE.md:2351): `terminate` is an alternative keyword for
+(FLW-41 (LANGUAGE.md:2361): `terminate` is an alternative keyword for
  `Exit` and takes a code - already drawn generically as one of three
  spellings for the program's own NATURAL tail ('gen program ending' in
  gen_core.vox), but never before as an ordinary statement in the middle

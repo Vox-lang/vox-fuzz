@@ -1,5 +1,5 @@
 (THG-68: stepping a whole thing with `increment` is rejected, naming its
- fields. LANGUAGE.md:1223-1233.
+ fields. LANGUAGE.md:1233-1243.
  The manual's block stops the second line at "(plan 310 §5)"; the compiler
  says more - see Discrepancy 2.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-68.vox -o p && ./p

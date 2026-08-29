@@ -7,7 +7,7 @@
  caret to line 9, which is right.
  NOT specific to things: the same shape with `a number called cursor is 4.`
  reproduces identically, so this belongs to whoever maps Function Scope
- (LANGUAGE.md:781, was 705). Recorded here because it was found while probing
+ (LANGUAGE.md:788, was 705). Recorded here because it was found while probing
  old manual lines 929-930 (now 1034-1035). Not in the 0.4.10 register
  (#66-#91) — re-verified unchanged against 0.4.10, 2026-08-22.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p

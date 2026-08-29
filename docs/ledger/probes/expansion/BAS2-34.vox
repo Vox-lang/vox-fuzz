@@ -1,4 +1,4 @@
-(BAS2-34: the primary-only bound restriction LANGUAGE.md:386 states for
+(BAS2-34: the primary-only bound restriction LANGUAGE.md:391 states for
  `each` clauses is not specific to `each` clauses, nor to the start bound:
  a plain `For each` range rejects an arithmetic END bound with the same
  diagnostic. `print each number from 1 to 2 add 1.` is rejected identically.

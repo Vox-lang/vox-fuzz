@@ -1,14 +1,17 @@
-(D4: "A list also accepts `Free`." (LANGUAGE.md:3674). Hand-verified:
- the statement compiles and runs, but has NO observable effect on the
- list — length, emptiness and contents are all unchanged, and a
- subsequent `append` is not refused. This IS Discrepancy 4.
- Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox D4.vox -o p && ./p
+(D4: "A list also accepts `Free`, with the same after-state a buffer
+ gets ..." (LANGUAGE.md:3699-3708). RESOLVED, vox #109, 0.4.15 — this
+ was Discrepancy 4 (the compiler used to no-op `Free` on a list; 0.4.14
+ output was 3/0/[1, 2, 3]/4/[1, 2, 3, 9], no refusal). Re-verified
+ against the 0.4.15 stack: the list is now empty after `Free`, and the
+ following `append` is refused with the error flag.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack D4.vox -o p && ./p
  expected output:
-   3
    0
-   [1, 2, 3]
-   4
-   [1, 2, 3, 9]
+   1
+   []
+   append to freed list refused
+   0
+   []
 )
 a list called nums is [1, 2, 3].
 Free nums.

@@ -1,5 +1,5 @@
 (KEY-81 — every alias listed in the Reserved Aliases table
- (LANGUAGE.md:5072-5158, 85 rows, 0.4.14 #106) is refused as a variable
+ (LANGUAGE.md:5167-5250, 85 rows, 0.4.14 #106) is refused as a variable
  name, with the diagnostic naming the spelling written and its
  canonical keyword. Hand-verified across eight aliases drawn from
  different parts of the table (top, upper-middle, middle, and the last

@@ -1,6 +1,6 @@
 (BAS2-32: a range bound in an `each` clause takes a primary, not an
  expression — `each col from row add 1 to 4` is a parse error, exactly as
- LANGUAGE.md:386-387 says. The braced form that fixes it is BAS2-33.
+ LANGUAGE.md:391-392 says. The braced form that fixes it is BAS2-33.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS2-32.vox -o p && ./p
  expected output:
    error: Expected a statement, got Add

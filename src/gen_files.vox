@@ -280,8 +280,9 @@ To 'gen write input' with a text called path.
 (--- Ledger batch A: list and number properties -----------------------
 
  docs/ledger/files.md, rows FIL-10, FIL-11, FIL-12, FIL-13, FIL-14 (List
- Properties, LANGUAGE.md:3808-3826, mirrored at :2948-2967) and FIL-24,
- FIL-25, FIL-26 (Number Properties, LANGUAGE.md:3866-3880). Both leaves
+ Properties table, heading two lines above, LANGUAGE.md:3850-3866,
+ mirrored at :2948-2967) and FIL-24, FIL-25, FIL-26 (Number Properties
+ table, heading one line above, LANGUAGE.md:3908-3920). Both leaves
  below are pure in-memory assertions - no file handle is opened, no
  file-handle row (FIL-01..07, 40, 46, 48, 50) is touched; those are
  batch B's.
@@ -304,7 +305,8 @@ To 'gen write input' with a text called path.
  next. Two such statements back to back is exactly the swallowed-tail
  trap PROCEDURE.md §6a already warns about, not a compiler defect (the
  report has the full repro and the master's correction); the fix at the
- call site would be to stack a second period (`..`, LANGUAGE.md:211-224)
+ call site would be to stack a second period (`..`, LANGUAGE.md:213-224,
+ just past the "### Closing more than one level" heading)
  to close both clauses at once. Rather than count stacked periods by
  hand at every ordering call site, no `If` here ever wraps a `For each`
  at all: the concatenation loops live unconditionally inside their own
@@ -313,7 +315,7 @@ To 'gen write input' with a text called path.
  `Set … to …`, which needs one period like any other.)
 
 (A random element type for a list literal - number, float, text or
- boolean, all four forms LANGUAGE.md:2371-2380 shows inside `[...]`
+ boolean, all four forms LANGUAGE.md:2381-2390 shows inside `[...]`
  ("Mixed-Type Lists"). Delegates straight to the unbounded literal
  generators in gen_literals.vox, so a list element drawn here carries
  the same sign/leading-zero/escape variety any scalar declaration does,
@@ -363,7 +365,8 @@ To 'gen concat three blocks' with a list called 'the first block' and a list cal
  LANGUAGE.md's List Properties table promises a value for a populated
  list, and says nothing about what first/last report on one with no
  items - unlike element-by-index access, which the Bounds Checking
- paragraph explicitly covers (LANGUAGE.md:3841-3846). Hand-verified
+ paragraph explicitly covers (LANGUAGE.md:3883-3886, just past the
+ code fence). Hand-verified
  against 0.4.14: both set the error flag and read back 0, the same
  default-value shape the documented bounds-checking behaviour uses for
  an out-of-range index - but nothing in the manual says so for these
@@ -542,7 +545,7 @@ To 'gen leaf number properties' with a text called indent and a boolean called n
  literals - 'current time's unix' for the not-in-the-future half,
  hand-verified against 0.4.14 to work inline inside an If condition the
  same way the manual's own inline Print example uses it
- (LANGUAGE.md:4550, the "Inline Time Access" example; docs/ledger/
+ (LANGUAGE.md:4590, the "Inline Time Access" example; docs/ledger/
  probes/files/FIL-06.vox.).)
 
 To 'gen file assert at least' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown'.
@@ -572,7 +575,7 @@ To 'gen file assert range quietly' with a text called 'the row' and a text calle
     Return a text, 'the line'.
 
 (FIL-01: size reads 0 immediately after an open for writing, and the
- exact byte count after a write of known length - LANGUAGE.md:3766.
+ exact byte count after a write of known length - LANGUAGE.md:3806.
  Probe: docs/ledger/probes/files/FIL-02.vox (also covers this row).)
 
 To 'gen leaf file size' with a text called indent and a boolean called nested.
@@ -606,7 +609,7 @@ To 'gen leaf file size' with a text called indent and a boolean called nested.
 
 (FIL-02: descriptor is a Number, at least 3 for a freshly opened handle
  - fds 0-2 are stdio, so a real open never lands below that.
- LANGUAGE.md:3767. Probe: docs/ledger/probes/files/FIL-02.vox.)
+ LANGUAGE.md:3807. Probe: docs/ledger/probes/files/FIL-02.vox.)
 
 To 'gen leaf file descriptor' with a text called indent and a boolean called nested.
     If gen_does_file_io is false then,
@@ -630,7 +633,7 @@ To 'gen leaf file descriptor' with a text called indent and a boolean called nes
 
 (FIL-03, FIL-04: readable is true iff open for reading, writable iff
  open for writing - appending counts as writing for this property, hand-
- verified. LANGUAGE.md:3768-3769. A file is seeded first (writing mode
+ verified. LANGUAGE.md:3808-3809. A file is seeded first (writing mode
  always succeeds, even on a path that does not exist yet), then reopened
  in a DRAWN mode - reading, writing or appending - so which mode a given
  program tests varies across the corpus. Probe:
@@ -681,9 +684,9 @@ To 'gen leaf file readable writable' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-05, FIL-06: modified and accessed return Unix timestamps -
- LANGUAGE.md:3770-3771. Bounded on both sides: never below 1 (never 0 or
+ LANGUAGE.md:3810-3811. Bounded on both sides: never below 1 (never 0 or
  negative), and never after `current time's unix` - the manual gives a
- clock (LANGUAGE.md:4524, the `unix` time property), so "not in the future" is assertable
+ clock (LANGUAGE.md:4564, the `unix` time property), so "not in the future" is assertable
  exactly rather than as a wide fixed floor. Prints a fixed marker on
  success, never the raw timestamp - see 'gen file assert range
  quietly's own comment for why. Probe: docs/ledger/probes/files/
@@ -718,7 +721,7 @@ To 'gen leaf file times' with a text called indent and a boolean called nested.
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-07: permissions returns the file's permission bits as a Number.
- LANGUAGE.md:3772's table entry is "File permission bits (e.g., 0644)" -
+ LANGUAGE.md:3812's table entry is "File permission bits (e.g., 0644)" -
  an EXAMPLE, not a promised value, and the mode a fresh file lands at is
  umask-dependent: 420 (octal 0644) under umask 022, 384 (octal 0600)
  under a stricter 077. Asserting the literal 420 would file a false
@@ -794,11 +797,11 @@ To 'gen leaf file appending' with a text called indent and a boolean called nest
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-46: Read line REPLACES the buffer with the next line, rather than
- appending to it - LANGUAGE.md:3937. A fixed-length seed is appended to
+ appending to it - LANGUAGE.md:3977. A fixed-length seed is appended to
  the sink buffer first; if Read line appended instead of replacing, the
  final size would be seed length + line length + 1 (the newline), not
  line length + 1 - so the one post-read size check puts both the
- replace claim and the newline-retention claim (LANGUAGE.md:3955, not
+ replace claim and the newline-retention claim (LANGUAGE.md:3995, not
  this batch's row, caught for free) on trial together, the same
  reasoning D2's probe used for plain `Read`. Probe:
  docs/ledger/probes/files/FIL-53.vox.)
