@@ -1,0 +1,12 @@
+(BUF-56: after `Free`, `append` to a list is refused with the error
+ flag (LANGUAGE.md:3700-3701, 0.4.15, #109).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-56.vox -o p && ./p
+ expected output:
+   append to freed list refused
+   0
+)
+a list called nums is [1, 2, 3].
+Free nums.
+append 9 to nums.
+On error print "append to freed list refused".
+print nums's length.

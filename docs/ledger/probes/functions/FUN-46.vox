@@ -1,0 +1,10 @@
+(FUN-46: a parameter declared with a single-quoted single-word name
+ works exactly like a bare one (LANGUAGE.md:760, 0.4.15, #110).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-46.vox -o p && ./p
+ expected output:
+   7
+)
+To 'greet' with a number called 'radius'.
+  Print radius.
+
+'greet' of 7.

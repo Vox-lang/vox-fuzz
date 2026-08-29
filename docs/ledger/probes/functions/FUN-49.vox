@@ -1,0 +1,21 @@
+(FUN-49: a buffer-returning function that falls off its end hands back
+ a real, usable empty buffer (LANGUAGE.md:2849-2855, 0.4.15, #112).
+ Before #112 this segfaulted (CHANGELOG.md, Unreleased). Capacity reads
+ 4096, not 0 — consistent with buffers.md Discrepancy 1 (dynamic buffer
+ capacity), not a new finding.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-49.vox -o p && ./p
+ expected output:
+   0
+   4096
+   x
+)
+To 'maybe buf' with a boolean called b.
+  If b,
+    a buffer called made is "hi",
+    Return a buffer, made.
+
+a buffer called r is 'maybe buf' of false.
+print r's size.
+print r's capacity.
+append "x" to r.
+print r.

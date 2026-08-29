@@ -1,0 +1,18 @@
+(FMT-58: a single-quoted one-word name resolves inside a `{...}`
+ format-string slot, for every declared type (LANGUAGE.md:718, 0.4.15,
+ #110). Before the fix (0.4.14 and earlier), every line here failed to
+ compile and run: `error: Unknown variable: 'tally'` (and likewise for
+ 'label', 'flag') — the slot parser used the placeholder's raw quoted
+ text as the name instead of routing it through the real lexer.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FMT-58.vox -o p && ./p
+ expected output:
+   42
+   hello
+   1
+)
+a number called 'tally' is 42.
+print "{'tally'}".
+a text called 'label' is "hello".
+print "{'label'}".
+a boolean called 'flag' is true.
+print "{'flag'}".

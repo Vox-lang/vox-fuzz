@@ -1,0 +1,18 @@
+(LST-80: the manual's own worked example for nested-collection copy
+ semantics (LANGUAGE.md:2506-2515, 0.4.15, #111), reproduced verbatim.
+ Also covers: LST-73 (inner/outer half), LST-76 (got half).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-80.vox -o p && ./p
+ expected output:
+   [[1, 2], 3]
+   [777, 2]
+   [[1, 2], 3]
+)
+a list called inner is [1, 2].
+a list called outer is [inner, 3].
+Set element 1 of inner to 777.
+print outer.
+print inner.
+
+a list called got is element 1 of outer.
+Set element 1 of got to 555.
+print outer.

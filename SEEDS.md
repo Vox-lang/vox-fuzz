@@ -34,9 +34,9 @@ Every seed record from before that is void as coverage.
 | 2026-08-28 | 0.4.13 | `ef9dee2` | 200429–214999 (stripe-1, chunked ×200) | 40 | 14571 | 14571 | 0 | resumed the 25th's run under a chunked, memory-capped driver (fresh process per chunk, systemd MemoryMax); 73 chunks, 0 failed |
 | 2026-08-28 | 0.4.13 | `ef9dee2` | 300430–314999 (stripe-2, chunked ×200) | 40 | 14570 | 14570 | 0 | as stripe-1 |
 | 2026-08-28 | 0.4.13 | `ef9dee2` | 400545–408944 (stripe-3, chunked ×300; 402945–408944 after a Josj-directed pause) | 24 | 8100 | 8100 | 0 | chunked, memory-capped driver; the compiler under test was rebuilt to 0.4.14 by the release at 21:19, so seeds from 408945 on belong to the next row |
-| 2026-08-28 | 0.4.14 | `ef9dee2` | 408945– (stripe-3 continued on the 0.4.14 binary) | 24 | (running) | | 0 so far | row closes with the campaign |
+| 2026-08-28 | 0.4.14 | `ef9dee2` | 408945–418544 (stripe-3 continued on the 0.4.14 binary) | 24 | 9600 | 9600 | 0 | 32 chunks of 300; cut by the 03:00 poweroff, last completed chunk exit 02:51:24; chunk 418545–418844 interrupted, not counted. Whole stripe-3 including the 0.4.13 part: 60 chunks, 18,000 programs, 0 findings |
 | 2026-08-28 | 0.4.13 | `ef9dee2` | 500687–509186 (stripe-4, chunked ×500; 503187–509186 after the pause) | 12 | 8000 | 8000 | 0 | as stripe-3; seeds from 509187 (chunk started 21:20) ran on 0.4.14 |
-| 2026-08-28 | 0.4.14 | `ef9dee2` | 509187– (stripe-4 continued on the 0.4.14 binary) | 12 | (running) | | 0 so far | row closes with the campaign |
+| 2026-08-28 | 0.4.14 | `ef9dee2` | 509187–519186 (stripe-4 continued on the 0.4.14 binary) | 12 | 10000 | 10000 | 0 | 20 chunks of 500; cut by the 03:00 poweroff, last completed chunk exit 02:47:41; chunk 519187–519686 interrupted, not counted. Whole stripe-4: 37 chunks, 18,500 programs, 0 findings |
 
 `n/a` in Compiled/Findings marks a generation-only sweep: the
 never-emitted guard scans source text and deliberately does not compile,

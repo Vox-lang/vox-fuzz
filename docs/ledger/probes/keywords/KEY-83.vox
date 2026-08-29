@@ -1,0 +1,26 @@
+(KEY-83 — every word in the Connectors table (LANGUAGE.md:5094-5113,
+ 0.4.15, #106 second half / GitHub #239) is reserved as a variable
+ name. Hand-verified across all 8 new words, each compiled and run
+ separately:
+
+   between, in, into, each, without, as, treating, times
+
+ All eight hand-run outputs:
+   error: Cannot use 'between' as a variable name - it's a reserved keyword.
+   error: Cannot use 'in' as a variable name - it's a reserved keyword.
+   error: Cannot use 'into' as a variable name - it's a reserved keyword.
+   error: Cannot use 'each' as a variable name - it's a reserved keyword.
+   error: Cannot use 'without' as a variable name - it's a reserved keyword.
+   error: Cannot use 'as' as a variable name - it's a reserved keyword.
+   error: Cannot use 'treating' as a variable name - it's a reserved keyword.
+   error: Cannot use 'times' as a variable name - it's a reserved keyword.
+
+ `docs/check-probes.sh` mechanically re-runs and matches only the first
+ (`between`, below); the rest are the retained record per PROCEDURE.md §4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack KEY-83.vox -o p && ./p
+ expected output:
+   error: Cannot use 'between' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called between is 1.
+print between.

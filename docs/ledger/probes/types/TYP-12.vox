@@ -1,0 +1,13 @@
+(TYP-12: `int` and `integer` are accepted spellings of `number`
+ (LANGUAGE.md:492, 0.4.15).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack TYP-12.vox -o p && ./p
+ expected output:
+   12
+   Number (static)
+   Number (static)
+)
+an int called first is 5.
+an integer called second is 7.
+print first add second.
+print first's type.
+print second's type.

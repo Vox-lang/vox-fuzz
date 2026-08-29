@@ -1,0 +1,28 @@
+(KEY-87 — every word in the new File, Buffer, List, and Time Properties
+ table (LANGUAGE.md:5275-5289, 0.4.15, #106 second half / GitHub #239)
+ is reserved as a variable name. Hand-verified across eight of the
+ words:
+
+   descriptor, permissions, readable, writable, reading, appending,
+   absolute, duration
+
+ All eight hand-run outputs:
+   error: Cannot use 'descriptor' as a variable name - it's a reserved keyword.
+   error: Cannot use 'permissions' as a variable name - it's a reserved keyword.
+   error: Cannot use 'readable' as a variable name - it's a reserved keyword.
+   error: Cannot use 'writable' as a variable name - it's a reserved keyword.
+   error: Cannot use 'reading' as a variable name - it's a reserved keyword.
+   error: Cannot use 'appending' as a variable name - it's a reserved keyword.
+   error: Cannot use 'absolute' as a variable name - it's a reserved keyword.
+   error: Cannot use 'duration' as a variable name - it's a reserved keyword.
+
+ `docs/check-probes.sh` mechanically re-runs and matches only the first
+ (`descriptor`, below); the rest are the retained record per
+ PROCEDURE.md §4.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack KEY-87.vox -o p && ./p
+ expected output:
+   error: Cannot use 'descriptor' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called descriptor is 1.
+print descriptor.

@@ -1,0 +1,12 @@
+(BUF-58: `Free`ing an already-freed list is the same no-op-that-flags,
+ not a second release (LANGUAGE.md:3701-3702, 0.4.15, #109).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-58.vox -o p && ./p
+ expected output:
+   already freed
+   0
+)
+a list called nums is [1, 2, 3].
+Free nums.
+Free nums.
+On error print "already freed".
+print nums's length.

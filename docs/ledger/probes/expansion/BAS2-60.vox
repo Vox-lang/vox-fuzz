@@ -1,0 +1,11 @@
+(BAS2-60: a buffer is a supported loop-expansion collection — each
+ iteration binds the loop variable to one byte's value (0-255), in
+ order 1..size, the same value `byte N of <buffer>` yields
+ (LANGUAGE.md:349-353, 0.4.15, #104).
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BAS2-60.vox -o p && ./p
+ expected output:
+   65
+   66
+)
+a buffer called data is "AB".
+For each byte from data, print byte.

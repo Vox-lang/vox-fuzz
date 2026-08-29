@@ -1,0 +1,14 @@
+(LST-79: reading a nested collection back out via a `For each` loop
+ binding copies it (LANGUAGE.md:2500-2501, 0.4.15, #111). The loop
+ variable itself cannot be a mutation target directly (`Element set
+ target must be a list: item`), so the copy is shown by declaring a
+ fresh variable from the binding and mutating that.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-79.vox -o p && ./p
+ expected output:
+   [[1, 2], [3, 4]]
+)
+a list called outer is [[1, 2], [3, 4]].
+For each item in outer,
+  a list called captured is item,
+  Set element 1 of captured to 999.
+print outer.

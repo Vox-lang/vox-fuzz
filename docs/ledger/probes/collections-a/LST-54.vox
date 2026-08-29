@@ -1,5 +1,13 @@
-(LST-54 — a self-referential map prints 64 levels deep, then `...`, sets the
- error flag, and unwinds safely.
+(LST-54 — WITHDRAWN, 2026-08-29 (0.4.15, #111). HISTORICAL, 0.4.14 and
+ earlier: on those manuals, a self-referential map printed 64 levels
+ deep, then `...`, set the error flag, and unwound safely.
+
+ As of 0.4.15, `set loopy's "self" to loopy.` copies loopy's state at
+ the moment of the `set` (before "self" exists), so this program now
+ prints `{"tag": 1, "self": {"tag": 1}}` — one level deep, no error, no
+ handler firing. See LST-82 for the direct 0.4.15 probe (`LST-82.vox`)
+ and LANGUAGE.md:2593-2597 for the citation. Retained as the historical
+ record of the pre-#111 behavior.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-54.vox -o p && ./p
  expected output:
    {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": {"tag": 1, "self": ...}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
