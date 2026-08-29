@@ -1,5 +1,5 @@
-(Discrepancy 1 repro — LANGUAGE.md:5162 says "Every keyword listed in the
- tables above is likewise reserved as a variable name", and LANGUAGE.md:5168
+(Discrepancy 1 repro — LANGUAGE.md:5254 says "Every keyword listed in the
+ tables above is likewise reserved as a variable name", and LANGUAGE.md:5294
  says reserved keywords — "statement starters" among them — are "banned as
  bare names everywhere". Thirteen words from the Statement Starters table
  (4637-4643) are nevertheless accepted as ordinary variable names and read

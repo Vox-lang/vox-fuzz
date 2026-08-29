@@ -1,5 +1,5 @@
 (TYP-06: `map` is documented as a "Key/value collection (JSON object;
- text keys)" (LANGUAGE.md:480). A non-text key in a map literal is
+ text keys)" (LANGUAGE.md:485). A non-text key in a map literal is
  rejected at compile time — confirms the claim.
  (Compile-error claim: not assertable from a runtime leaf.)
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TYP-06.vox -o p && ./p

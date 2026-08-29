@@ -68,7 +68,7 @@ a number called gen_reader_calls is 0.
 
 (--- The ledger's environment leaves, batch A ---------------------------
 
- docs/ledger/environment.md maps LANGUAGE.md:4757-4831 into numbered
+ docs/ledger/environment.md maps LANGUAGE.md:4797-4871 into numbered
  claims; everything below puts one of those claims on trial and ASSERTS
  its documented result, the same way the buffer leaves in gen_buffers.vox
  do: a failing assertion prints
@@ -87,7 +87,7 @@ a number called gen_reader_calls is 0.
  not. The generator does not choose the child's environment - there is
  an argv oracle ('gen build argv', below) but no environment companion -
  so no leaf here asserts WHAT a variable holds. What it can assert is
- agreement: LANGUAGE.md:4763-4769 documents count, empty, first, last and
+ agreement: LANGUAGE.md:4803-4809 documents count, empty, first, last and
  the named lookup as properties of ONE environment, so two readings of
  the same property cannot disagree, and `count` cannot say "none" while
  `empty` says "some". A text value read into a `text` and the same value
@@ -95,10 +95,10 @@ a number called gen_reader_calls is 0.
  text-valued expression - the Variables and File I/O sections' worked
  examples, `a buffer called b is "hello"` and `a buffer called b is
  <text name>`) are two readings of one value, and the buffer's `size`
- and `empty` (LANGUAGE.md:3581-3584) are how a program measures them -
+ and `empty` (LANGUAGE.md:3606-3609) are how a program measures them -
  a `text` has no size property of its own. The one thing the generator
  DOES control is absence: a name it invents under VOXFUZZ_UNSET_ is set
- by nobody, so `exists` (LANGUAGE.md:4798-4803) on it is asserted false.
+ by nobody, so `exists` (LANGUAGE.md:4838-4843) on it is asserted false.
 
  Privacy, inherited from the leaf this block replaces: a generated
  program never prints a raw environment value - the first version of
@@ -114,7 +114,7 @@ a number called gen_reader_calls is 0.
 
  Every word here is a TOP-LEVEL declaration in the generated program, so
  this pool must stay disjoint from every other pool that spends into
- Vox's one global identifier space (LANGUAGE.md:1678, under the heading
+ Vox's one global identifier space (LANGUAGE.md:1688, under the heading
  "One identifier space": "Type names, variable names, and function names
  share a single global identifier namespace") - the manifest's type,
  function and flag pools (gen_manifest.vox), gen_buffer_words
@@ -184,7 +184,7 @@ To 'gen environment companion' with a text called role.
     a text called 'the companion' is "'{gen_environment_last_word} {role}'".
     Return a text, 'the companion'.
 
-(Which variable a named lookup asks for. LANGUAGE.md:4769-4780 reads
+(Which variable a named lookup asks for. LANGUAGE.md:4809-4820 reads
  HOME, USER and SHELL by name; a generated program asks for those and for
  other names a process usually has, chosen at random - the leaf never
  assumes any of them is set. A VOXFUZZ_UNSET_ name is the other case:
@@ -207,7 +207,7 @@ To 'gen environment variable name'.
     Return a text, 'the name'.
 
 (The source expression a reading comes from - one of the four text-valued
- properties LANGUAGE.md:4763-4769 gives, and which row that is.)
+ properties LANGUAGE.md:4803-4809 gives, and which row that is.)
 
 a text called gen_environment_last_row is "ENV-06".
 
@@ -235,7 +235,7 @@ To 'gen environment source'.
  takes whatever punctuation 'gen join lines' adds (the same shape as
  gen_buffers.vox's 'gen assert number', which this reuses).)
 
-(ENV-02, ENV-05: `count` is the number of variables (LANGUAGE.md:4765)
+(ENV-02, ENV-05: `count` is the number of variables (LANGUAGE.md:4805)
  and `empty` is true iff there are none (4482) - so count is 0 exactly
  when empty is true, whatever the host's environment holds. Each property
  is read into a named variable or used inline, at random, and the two
@@ -271,7 +271,7 @@ To 'gen leaf environment agreement' with a text called indent and a boolean call
 
 (ENV-06 (ENV-07, ENV-09 folded), ENV-03, ENV-04: a text-valued property -
  the named lookup, `first`, or `last` - read into a `text` the manual's
- own way (LANGUAGE.md:4853-4867), and then again into whichever of the
+ own way (LANGUAGE.md:4893-4907), and then again into whichever of the
  other receivers the manual allows for a text value: a `buffer` declared
  straight from the property, a second such buffer, a `value`. The text is
  copied into a buffer of its own so it can be measured, and every pair of
@@ -350,7 +350,7 @@ To 'gen environment variable name unset from' with a text called 'the source'.
     Return a text, 'the unset name bytes' as text.
 
 (ENV-10, ENV-11: `If the environment variable "NAME" exists then,` is a
- predicate (LANGUAGE.md:4798-4803). Two readings of it on one name must
+ predicate (LANGUAGE.md:4838-4843). Two readings of it on one name must
  agree; on a name the generator invented it must be false. Each line
  keeps its If closed and ends on a plain statement, and the manual's
  Otherwise branch and its Complete Example's `If ... But if ... exists`
@@ -403,7 +403,7 @@ To 'gen environment spoken word'.
     Return a text, 'the word'.
 
 (ENV-03, ENV-04: `first` and `last` are the full "NAME=value" string
- (LANGUAGE.md:4853-4854), so a non-empty entry contains an `=`. The entry
+ (LANGUAGE.md:4893-4894), so a non-empty entry contains an `=`. The entry
  is read into a text, copied into a buffer, and its bytes scanned for 61
  in one For each line - one line, because a loop split across lines would
  take a period from 'gen join lines' on its first line and close with an
@@ -572,7 +572,7 @@ To 'gen leaf cast and break' with a text called indent and a boolean called nest
     a text called 'absolute probe' is "Print cn{n}'s absolute".
     a text called 'loop line' is "For each ce{n} from 1 to {'the ceiling'},".
     a text called 'the accumulate line' is "    a number called cs{n} is ce{n} multiply 2,".
-    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break.".
+    a text called 'the guard line' is "    If cs{n} is greater than {'the ceiling'} then, Break..".
     a list called 'the lines' is ['source decl', 'to text', 'print text', 'round trip', 'print round trip', 'absolute probe'].
     'gen join lines' of indent and nested and 'the lines'.
     'gen emit' of "{indent}{'loop line'}\n{indent}{'the accumulate line'}\n{indent}{'the guard line'}\n".
@@ -841,7 +841,7 @@ To 'gen emit argv assertions'.
 
 (The boolean flag, both ways round. When the invocation passed it, it
  must be true; when it did not, it must hold its DECLARED DEFAULT -
- false when it has none (LANGUAGE.md:4762-4765), true when the manifest
+ false when it has none (LANGUAGE.md:4802-4805), true when the manifest
  gave it `with default true`. Asserting `is false` unconditionally is
  what would break the moment a boolean flag drew a default, which is
  exactly the sort of assertion CLAUDE.md calls a false-finding factory.)
@@ -882,27 +882,27 @@ To 'gen emit boolean flag assertion'.
  - "one text, one number, one boolean, in that order": nothing says so.
    Each flag's type is drawn.
  - "only the text flag may carry a default": nothing says so.
-   LANGUAGE.md:4762-4765 gives every type an empty value AND allows
+   LANGUAGE.md:4802-4805 gives every type an empty value AND allows
    `with default` on every type - both hand-verified against 0.4.7,
    including `with default true` on a boolean.
- - "`Parse flags.` is always written": LANGUAGE.md:4764 says the
+ - "`Parse flags.` is always written": LANGUAGE.md:4804 says the
    opposite - omit it and Vox inserts parsing immediately after the last
    schema declaration. Verified: a program with two flags, a global
    between them and no `Parse flags.` compiles and reads both.
- - "the four declarations are contiguous": LANGUAGE.md:4781 explicitly
+ - "the four declarations are contiguous": LANGUAGE.md:4821 explicitly
    permits normal code before and between schema declarations, and the
    compiler agrees.
 
  What genuinely holds, and is enforced here:
 
  - a schema must precede the parse point, and a flag read before the
-   parse point is a compile-time error (LANGUAGE.md:4784). Every read
+   parse point is a compile-time error (LANGUAGE.md:4824). Every read
    this generator emits is either in the statement stream, which follows
    every block, or inside a function body, which is legal wherever the
    function is defined because the CALL happens after the parse point -
    verified, and the reason the reader may be emitted before the schema.
  - declaring a schema AFTER `Parse flags.` is a compile-time error
-   (LANGUAGE.md:4772), so the parse line, when it is written at all,
+   (LANGUAGE.md:4812), so the parse line, when it is written at all,
    goes after every declaration in this block.
  - a `required` flag would abort at runtime whenever argv did not
    supply it, and the invariant is a program that compiles AND runs, so
@@ -913,7 +913,7 @@ To 'gen emit prelude flags'.
     a number called 'the flag' is 1.
     While 'the flag' is less than or equal to 'how many flags',
         'gen emit one flag' of 'the flag',
-        (LANGUAGE.md:4781: "You may place normal code before/between
+        (LANGUAGE.md:4821: "You may place normal code before/between
          schema declarations." So sometimes something else goes here -
          an ordinary global, the same declaration 'gen emit globals
          block' writes - and the flag block stops being a contiguous
@@ -922,7 +922,7 @@ To 'gen emit prelude flags'.
         If 'the interleave draw' is less than 4 then,
             a number called 'the fresh global' is 'gen new var'.
         Set 'the flag' to 'the flag' add 1.
-    (LANGUAGE.md:4764: omit it and Vox inserts parsing immediately after
+    (LANGUAGE.md:4804: omit it and Vox inserts parsing immediately after
      the last schema declaration, so writing it is optional whether or
      not there are flags to parse. Hand-verified both edges against
      0.4.7: `Parse flags.` with no schema at all compiles and runs, and

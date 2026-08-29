@@ -1,4 +1,4 @@
-(ENV-03: `first` (LANGUAGE.md:4853) is documented as the full
+(ENV-03: `first` (LANGUAGE.md:4893) is documented as the full
  "NAME=value" string. Scan its bytes for `=` to confirm the shape,
  vacuously true on an empty environment (`first` returns an empty
  string with no error there -- confirmed separately). NOTE: this reads

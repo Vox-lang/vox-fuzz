@@ -1,0 +1,110 @@
+--- FIL-01: size is live, 0 before a write and the byte count after ---
+a text called 'the manifest path' is "{'the workspace'}/1size".
+open a file for writing called 'the manifest' at 'the manifest path'.
+If 'the manifest's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
+Write "4cqtgqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme121fhuf3chc65iqdwt5tcfcaaku8xixpqkf3ggt07k7gd8hushax5t2hcsx49gjbzcqez1125rx549v1zs6dmnev4kkgzgwqtqatnk8vmbc87xgc1sy9if3gyhzejynbak35e1pt" to 'the manifest'.
+If 'the manifest's size is not 174 then, Print "ASSERT FIL-01: expected 174 got {'the manifest's size}", Exit 95. Print 'the manifest's size.
+Close 'the manifest'.
+
+--- the same leaf, nested ---
+  a text called 'the manifest path' is "{'the workspace'}/2size",
+  open a file for writing called 'the manifest' at 'the manifest path',
+  If 'the manifest's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the manifest's size}", Exit 95. Print 'the manifest's size,
+  Write "4cqtgqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme121fhuf3chc65iqdwt5tcfcaaku8xixpqkf3ggt07k7gd8hushax5t2hcsx49gjbzcqez1125rx549v1zs6dmnev4kkgzgwqtqatnk8vmbc87xgc1sy9if3gyhzejynbak35e1pt" to 'the manifest',
+  If 'the manifest's size is not 174 then, Print "ASSERT FIL-01: expected 174 got {'the manifest's size}", Exit 95. Print 'the manifest's size,
+  Close 'the manifest'.
+
+--- FIL-02: descriptor is a Number, at least 3 ---
+a text called 'the dispatch note path' is "{'the workspace'}/3descr".
+open a file for writing called 'the dispatch note' at 'the dispatch note path'.
+If 'the dispatch note's descriptor is less than 3 then, Print "ASSERT FIL-02: expected at least 3 got {'the dispatch note's descriptor}", Exit 95. Print 'the dispatch note's descriptor.
+Close 'the dispatch note'.
+
+--- FIL-03, FIL-04: readable/writable per drawn mode - reading ---
+a text called 'scratch path' is "{'the workspace'}/4mode".
+open a file for writing called 'scratch' at 'scratch path'.
+Write "4g4c3vq72lk0r" to 'scratch'.
+Close 'scratch'.
+open a file for reading called 'scratch' at 'scratch path'.
+If 'scratch's readable is false then, Print "ASSERT FIL-03: expected 1 got {'scratch's readable}", Exit 95. Print 'scratch's readable.
+If 'scratch's writable then, Print "ASSERT FIL-04: expected 0 got {'scratch's writable}", Exit 95. Print 'scratch's writable.
+Close 'scratch'.
+
+--- FIL-03, FIL-04: writing ---
+a text called 'the inbox path' is "{'the workspace'}/5mode".
+open a file for writing called 'the inbox' at 'the inbox path'.
+Write "estwumzsydfba" to 'the inbox'.
+Close 'the inbox'.
+open a file for writing called 'the inbox' at 'the inbox path'.
+If 'the inbox's readable then, Print "ASSERT FIL-03: expected 0 got {'the inbox's readable}", Exit 95. Print 'the inbox's readable.
+If 'the inbox's writable is false then, Print "ASSERT FIL-04: expected 1 got {'the inbox's writable}", Exit 95. Print 'the inbox's writable.
+Close 'the inbox'.
+
+--- FIL-03, FIL-04: appending ---
+a text called 'pantry path' is "{'the workspace'}/6mode".
+open a file for writing called pantry at 'pantry path'.
+Write "oz3zy8bcrws00f" to pantry.
+Close pantry.
+open a file for appending called pantry at 'pantry path'.
+If pantry's readable then, Print "ASSERT FIL-03: expected 0 got {pantry's readable}", Exit 95. Print pantry's readable.
+If pantry's writable is false then, Print "ASSERT FIL-04: expected 1 got {pantry's writable}", Exit 95. Print pantry's writable.
+Close pantry.
+
+--- FIL-05, FIL-06: modified/accessed, bounded both sides ---
+a text called 'the manifest path' is "{'the workspace'}/7times".
+open a file for writing called 'the manifest' at 'the manifest path'.
+Write "eoee7h2rw4xpiz" to 'the manifest'.
+If 'the manifest's modified is less than 1 then, Print "ASSERT FIL-05: expected at least 1 got {'the manifest's modified}", Exit 95. If 'the manifest's modified is greater than current time's unix then, Print "ASSERT FIL-05: expected at most {current time's unix} got {'the manifest's modified}", Exit 95. Print "FIL-05 in range".
+If 'the manifest's accessed is less than 1 then, Print "ASSERT FIL-06: expected at least 1 got {'the manifest's accessed}", Exit 95. If 'the manifest's accessed is greater than current time's unix then, Print "ASSERT FIL-06: expected at most {current time's unix} got {'the manifest's accessed}", Exit 95. Print "FIL-06 in range".
+Close 'the manifest'.
+
+--- FIL-07: permissions is 420 on a fresh file ---
+a text called 'the greeting path' is "{'the workspace'}/8perm".
+open a file for writing called 'the greeting' at 'the greeting path'.
+If 'the greeting's permissions is less than 0 then, Print "ASSERT FIL-07: expected at least 0 got {'the greeting's permissions}", Exit 95. If 'the greeting's permissions is greater than 511 then, Print "ASSERT FIL-07: expected at most 511 got {'the greeting's permissions}", Exit 95. Print "FIL-07 in range".
+Close 'the greeting'.
+
+--- FIL-40: appending adds to the end, size is N+M ---
+a text called 'toolbox path' is "{'the workspace'}/9append".
+open a file for writing called 'toolbox' at 'toolbox path'.
+Write "kpcoy890aqcqznh05lsioh5k3qdr3frxxmrgc7o37qiam0kpv4pfl4hlsdpd0y3larqr4nhkb" to 'toolbox'.
+If 'toolbox's size is not 73 then, Print "ASSERT FIL-40: expected 73 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
+Close 'toolbox'.
+open a file for appending called 'toolbox' at 'toolbox path'.
+Write "50sp62swskocq7ii4mayb1539zt5a14mwgs1fc4b1luw62veov4bs2cgbyol58a1csqkuw8mfpqunvn5g2gb8lukt7r7mxs51teah6qxuppmehxnitxnykvvoupmn0qsiwchspg56yuz5uyouax7n3ursi0rqgho9zruq4f3bfv03y5vf6jdidfg" to 'toolbox'.
+If 'toolbox's size is not 257 then, Print "ASSERT FIL-40: expected 257 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
+Close 'toolbox'.
+open a file for reading called 'toolbox' at 'toolbox path'.
+If 'toolbox's size is not 257 then, Print "ASSERT FIL-40: expected 257 got {'toolbox's size}", Exit 95. Print 'toolbox's size.
+Close 'toolbox'.
+
+--- FIL-46: Read line replaces, not appends ---
+a text called 'the waybill path' is "{'the workspace'}/10line".
+open a file for writing called 'the waybill' at 'the waybill path'.
+Write "ijgem4yn1zfex0n1isvpva87rakzbmg0g5f242on7u896s6lfly25\n" to 'the waybill'.
+Close 'the waybill'.
+open a file for reading called 'the waybill' at 'the waybill path'.
+a buffer called 'notebook' is 116 bytes in size.
+append "9ypzhaodrsgbktlr62apo09x18md703" to 'notebook'.
+If 'notebook's size is not 31 then, Print "ASSERT FIL-46: expected 31 got {'notebook's size}", Exit 95. Print 'notebook's size.
+Read line from 'the waybill' into 'notebook'.
+If 'notebook's size is not 54 then, Print "ASSERT FIL-46: expected 54 got {'notebook's size}", Exit 95. Print 'notebook's size.
+Close 'the waybill'.
+
+--- FIL-46, nested ---
+  a text called 'the waybill path' is "{'the workspace'}/11line",
+  open a file for writing called 'the waybill' at 'the waybill path',
+  Write "ijgem4yn1zfex0n1isvpva87rakzbmg0g5f242on7u896s6lfly25\n" to 'the waybill',
+  Close 'the waybill',
+  open a file for reading called 'the waybill' at 'the waybill path',
+  a buffer called 'notebook' is 116 bytes in size,
+  append "9ypzhaodrsgbktlr62apo09x18md703" to 'notebook',
+  If 'notebook's size is not 31 then, Print "ASSERT FIL-46: expected 31 got {'notebook's size}", Exit 95. Print 'notebook's size,
+  Read line from 'the waybill' into 'notebook',
+  If 'notebook's size is not 54 then, Print "ASSERT FIL-46: expected 54 got {'notebook's size}", Exit 95. Print 'notebook's size,
+  Close 'the waybill'.
+
+--- every leaf above with no file I/O committed ---
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0

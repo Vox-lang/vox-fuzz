@@ -1,10 +1,21 @@
-(LST-34 — LANGUAGE.md:2427-2431 warns that `element N of` yields a
- REFERENCE to the child list, not a copy, so a child extracted before the
- parent reallocates "may point at freed memory". Probed at 5000 appends
- (far past any plausible growth threshold): the child stays intact and
- readable. The hazard is hedged ("may"), so this is not a discrepancy — but
- it is the one place in this section where the manual itself points at a
- use-after-free, and no leaf goes near it.
+(LST-34 — HISTORICAL, 0.4.14 and earlier. LANGUAGE.md:2437-2441 (0.4.14
+ numbering) warned that `element N of` yields a REFERENCE to the child
+ list, not a copy, so a child extracted before the parent reallocates
+ "may point at freed memory". Probed at 5000 appends (far past any
+ plausible growth threshold): the child stayed intact and readable. The
+ hazard was hedged ("may"), so this was not a discrepancy in itself — but
+ it was the one place in this section where the manual pointed at a
+ use-after-free, and no leaf went near it.
+
+ WITHDRAWN as of 0.4.15 (#111): the two-sentence limitation this probe
+ tests is deleted from LANGUAGE.md outright, and the replacement text
+ (2496-2515) asserts the opposite — `element N of` now copies, so there
+ is no reference to dangle in the first place. This probe still compiles
+ and its numbers still hold under 0.4.15 (a copy that stays intact is a
+ weaker, always-true fact), but it no longer puts the WARNED-ABOUT claim
+ on trial, because that claim no longer exists. Retained as the
+ historical record. See `nested-elementcopy.vox` in the step-04 probe set
+ for the direct copy-semantics probe that replaces this row's purpose.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-34.vox -o p && ./p
  expected output:
    5003

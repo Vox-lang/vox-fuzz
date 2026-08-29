@@ -1,6 +1,6 @@
 (FMT-37 — "all sinks share one name resolver, so special names like
  {arguments's first} and {current time's hour} render identically whether
- printed, written to a file, or built into a buffer" (LANGUAGE.md:3416).
+ printed, written to a file, or built into a buffer" (LANGUAGE.md:3441).
  It holds for {current time's hour}, which is what this probe carries. It
  does NOT hold for the argument text properties: {arguments's first} into
  a buffer SEGFAULTS — see Discrepancy 1 and D1.vox.

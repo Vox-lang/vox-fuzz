@@ -1,4 +1,4 @@
-(TYP-04: `boolean` holds `true` or `false` (LANGUAGE.md:478). Both
+(TYP-04: `boolean` holds `true` or `false` (LANGUAGE.md:483). Both
  literals declare, retain, print (as the tag `1`/`0`, not the words —
  printing format is EXP's/FMT's claim, not this table's) and are
  recognized by `is a boolean`.

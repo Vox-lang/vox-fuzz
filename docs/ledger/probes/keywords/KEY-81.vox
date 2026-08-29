@@ -1,0 +1,64 @@
+(KEY-81 — every alias listed in the Reserved Aliases table
+ (LANGUAGE.md:5167-5250, 85 rows, 0.4.14 #106) is refused as a variable
+ name, with the diagnostic naming the spelling written and its
+ canonical keyword. Hand-verified across eight aliases drawn from
+ different parts of the table (top, upper-middle, middle, and the last
+ row), each compiled and run separately since a compile error halts the
+ program at the first offending declaration and the other seven cannot
+ be reached in the same run:
+
+   abs        (line 5074, top)       -> absolute
+   push       (line 5076)            -> append
+   mod        (line 5123, middle)    -> modulo
+   nil        (line 5126)            -> nothing
+   show       (line 5134)            -> print
+   grow       (line 5135)            -> resize
+   stopwatch  (line 5149)            -> timer
+   years      (line 5158, last row)  -> year
+
+ All eight hand-run outputs, each its own `vox <file> -o p` invocation:
+   error: Cannot use 'abs' as a variable name - it's a reserved keyword.
+     'abs' is an alternate spelling of the reserved keyword 'absolute'.
+     Tip: Try a more descriptive name like 'abs_value' or 'my_abs'
+   error: Cannot use 'push' as a variable name - it's a reserved keyword.
+     'push' is an alternate spelling of the reserved keyword 'append'.
+     Tip: Try a more descriptive name like 'push_value' or 'my_push'
+   error: Cannot use 'mod' as a variable name - it's a reserved keyword.
+     'mod' is an alternate spelling of the reserved keyword 'modulo'.
+     Tip: Try a more descriptive name like 'mod_value' or 'my_mod'
+   error: Cannot use 'nil' as a variable name - it's a reserved keyword.
+     'nil' is an alternate spelling of the reserved keyword 'nothing'.
+     Tip: Try a more descriptive name like 'nil_value' or 'my_nil'
+   error: Cannot use 'show' as a variable name - it's a reserved keyword.
+     'show' is an alternate spelling of the reserved keyword 'print'.
+     Tip: Try a more descriptive name like 'show_value' or 'my_show'
+   error: Cannot use 'grow' as a variable name - it's a reserved keyword.
+     'grow' is an alternate spelling of the reserved keyword 'resize'.
+     Tip: Try a more descriptive name like 'grow_value' or 'my_grow'
+   error: Cannot use 'stopwatch' as a variable name - it's a reserved keyword.
+     'stopwatch' is an alternate spelling of the reserved keyword 'timer'.
+     Tip: Try a more descriptive name like 'stopwatch_value' or 'my_stopwatch'
+   error: Cannot use 'years' as a variable name - it's a reserved keyword.
+     'years' is an alternate spelling of the reserved keyword 'year'.
+     Tip: Try a more descriptive name like 'years_value' or 'my_years'
+
+ The eight follow one exact diagnostic template: "Cannot use '<alias>' as
+ a variable name - it's a reserved keyword. '<alias>' is an alternate
+ spelling of the reserved keyword '<canonical>'." — matching the
+ `ms`/ `milliseconds` and `message`/`text` shapes already recorded at
+ KEY-51/KEY-52.
+
+ `docs/check-probes.sh` mechanically re-runs and matches only the FIRST
+ of the eight (below, `abs`) — a single program cannot reach the other
+ seven diagnostics in one compile, since the compiler stops at its
+ first error. The other seven were each hand-run as their own one-line
+ program (`a number called <alias> is 1.` / `Print <alias>.`) and their
+ outputs recorded verbatim above; this is the retained record for all
+ eight, per PROCEDURE.md §4.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox KEY-81.vox -o p && ./p
+ expected output:
+   error: Cannot use 'abs' as a variable name - it's a reserved keyword.
+   (no binary produced; compile error)
+)
+a number called abs is 1.
+Print abs.

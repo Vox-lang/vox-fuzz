@@ -1,0 +1,33 @@
+(FIL-53: Read line includes the trailing newline when one is present.
+ Also covers: FIL-46 (Read line REPLACES the buffer, not appends) - the
+ two claims are asserted by the SAME number: a fixed-length seed is
+ appended to the sink buffer first, then Read line's result is checked
+ to be EXACTLY the written line's length plus one (the newline). If
+ Read line appended instead of replacing, the size would be seed length
+ + line length + 1, not line length + 1 - so this one assertion puts
+ both claims on trial at once, the same reasoning D2's own probe used
+ for the plain `Read` claim.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-53.vox -o p && ./p
+ actual output:
+   10
+   11
+ Then with the post-read check changed to `is not 21` (seed length +
+ line length, the WRONG "append" answer), to prove a failing assertion
+ is classified correctly:
+   ASSERT FIL-46: expected 21 got 11
+ exit code 95.
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the postbag' at "vf_scratch/files/fil53.txt".
+Write "helloworld\n" to 'the postbag'.
+Close 'the postbag'.
+open a file for reading called 'the postbag' at "vf_scratch/files/fil53.txt".
+a buffer called 'the pallet' is 64 bytes in size.
+append "PRESEED123" to 'the pallet'.
+If 'the pallet's size is not 10 then, Print "ASSERT FIL-46: expected 10 got {'the pallet's size}", Exit 95. Print 'the pallet's size.
+Read line from 'the postbag' into 'the pallet'.
+If 'the pallet's size is not 11 then, Print "ASSERT FIL-46: expected 11 got {'the pallet's size}", Exit 95. Print 'the pallet's size.
+Close 'the postbag'.

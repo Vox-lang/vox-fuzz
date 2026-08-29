@@ -1,7 +1,7 @@
 (D3 - Discrepancy 3 repro: the two whole-thing comparison diagnostics point
  their caret at the DECLARATION of the left operand rather than at the
  comparison that is wrong. Here the offending line is 11; the caret lands on
- line 9. LANGUAGE.md:1444-1447 shows the sibling owner-return diagnostic naming
+ line 9. LANGUAGE.md:1454-1457 shows the sibling owner-return diagnostic naming
  both lines, so the section does treat location as part of the message.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p
  expected output:

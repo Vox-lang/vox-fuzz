@@ -1,5 +1,5 @@
 (D7 — FULLY RESOLVED, re-recorded 2026-08-22 against vox 0.4.10. This
- section's half of collections-a's D7: LANGUAGE.md:2942-2946 (was
+ section's half of collections-a's D7: LANGUAGE.md:2967-2971 (was
  2680-2681, then 2811-2813) now says both the variable and expression
  forms of `{...}` format interpolation "dispatch on the element's runtime
  tag, so an element renders in a hole exactly as it does printed as a

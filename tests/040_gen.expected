@@ -1,29 +1,19 @@
 --- seed 42 ---
+
+To 'the running sum' with a value called 'the opening heap'.
+    If 'the opening heap' is a number then, Return a text, "number".
+    Otherwise if 'the opening heap' is a text then, Return a text, "text".
+    Otherwise if 'the opening heap' is a float then, Return a text, "float".
+    Otherwise if 'the opening heap' is a boolean then, Return a text, "boolean".
+    Otherwise if 'the opening heap' is a list then, Return a text, "list".
+    Otherwise if 'the opening heap' is a map then, Return a text, "map".
+    Otherwise, Return a text, "the east side".
+
 A thing called 'the coordinate' has
+    a number called 'the clearance' is -26,
+    a float called depth is 221.95672421052155578,
     a function called 'set down at',
-    a number called 'the clearance' is -09,
-    a float called depth is 9223372036854775807.5,
     a function called 'turned over'.
-
-A thing called 'the sighting' has
-    a function called 'reflected across',
-    a function called 'recorded once',
-    a boolean called 'the north offset' is false,
-    a time called 'the chain length'.
-
-A thing called 'the fix' has
-    a boolean called 'the gradient' is false,
-    a function called 'sited on',
-    a function called mirrored.
-
-A thing called landmark has
-    a 'the coordinate' called 'the margin'.
-
-A thing called cairn has
-    a number called drift,
-    a time called offset,
-    a number called 'the paces walked' is 0000009254,
-    a number called 'the arc' is 00000000199394.
 
 To do the 'the coordinate's 'set down at', with a number called 'the second portion'.
     a 'the coordinate' called 'the incoming stint'.
@@ -35,6 +25,12 @@ To do the 'the coordinate's 'turned over', with a 'the coordinate' called 'the o
     Set slice's 'the clearance' to 0 subtract 'the odd smidgen's 'the clearance'.
     Return a 'the coordinate', slice.
 
+A thing called 'the sighting' has
+    a function called 'reflected across',
+    a boolean called 'the north offset',
+    a time called 'the chain length',
+    a function called 'recorded once'.
+
 To do the 'the sighting's 'reflected across', with a 'the sighting' called crop.
     a 'the sighting' called crumb.
     Return a 'the sighting', crumb.
@@ -42,6 +38,11 @@ To do the 'the sighting's 'reflected across', with a 'the sighting' called crop.
 To do the 'the sighting's 'recorded once', with a number called 'the trailing load'.
     a 'the sighting' called 'the brief trimming'.
     Return a 'the sighting', 'the brief trimming'.
+
+A thing called 'the fix' has
+    a boolean called 'the gradient',
+    a function called 'sited on',
+    a function called mirrored.
 
 To do the 'the fix's 'sited on', with a number called allowance.
     a 'the fix' called spell.
@@ -51,12 +52,29 @@ To do the 'the fix's mirrored, with a 'the fix' called estimate.
     a 'the fix' called 'the lower slice'.
     Return a 'the fix', 'the lower slice'.
 
+A thing called landmark has
+    a 'the coordinate' called 'the margin'.
+
+A thing called cairn has
+    a number called drift,
+    a time called offset,
+    a number called 'the paces walked' is -00199394,
+    a number called 'the arc'.
+
+
+To 'fold together' of a 'the coordinate' called 'the heavy scrap'.
+    Return a number, 'the heavy scrap's 'the clearance' multiply 'the heavy scrap's 'the clearance'.
+
+
+To 'the working tally' with a 'the coordinate' called helping and a number called leg.
+    Return a number, helping's 'the clearance' multiply leg.
+
 To 'the reckoning' with a number called 'the wet crop' and a number called 'the level crumb' and a number called heap and a number called scrap and a number called 'the third allowance' and a number called 'the outgoing spell' and a number called 'the running estimate' and a number called wedge and a number called gain.
     a number called speck is 'the wet crop' add 'the level crumb' add heap add scrap add 'the third allowance' add 'the outgoing spell' add 'the running estimate' add wedge add gain.
     Print speck.
 
 To 'the summed parts'.
-    a number called 'endnote as read' is endnote add -036043.
+    a number called 'endnote as read' is endnote add 01.
     Print 'endnote as read'.
     a text called 'annotation as read' is annotation.
     Print 'annotation as read'.
@@ -67,106 +85,103 @@ To 'the summed parts'.
     a boolean called 'banner as read' is banner.
     Print 'banner as read'.
 
-a number called v1 is 1794482551.
+a number called v1 is 545079448255143295.
+a number called v2 is 129989774211636.
 a flag called endnote is "-m" or "--endnote", it is a number with default 312364.
 a flag called annotation is "-v" or "--annotation", it is a text.
 a flag called 'the byline' is "-e" or "--the-byline", it is a text.
-a number called v2 is 58029989774.
 a flag called 'the callsign' is "-n" or "--the-callsign", it is a boolean.
-a number called v3 is 9223372036854775807.
 a flag called banner is "-w" or "--banner", it is a boolean.
-a number called v4 is 64733562.
 Parse flags.
 
 If 'the byline' is not "the survey plot 47215" then, Exit 91.
 If endnote is not 1118016078 then, Exit 92.
 If 'the callsign' is false then, Exit 93.
 
-Set v3 to v2 minus v2.
-Print arguments's count.
-Print arguments's empty.
-a text called 'satchel path' is "{annotation}/buffer1".
-open a file for writing called 'satchel being written' at 'satchel path'.
-Write "f9d3wdlxqiecd0" to 'satchel being written'.
-Close 'satchel being written'.
-open a file for reading called 'satchel being read' at 'satchel path'.
-a buffer called satchel is 9 bytes.
-a boolean called 'satchel was truncated' is false.
-Read from 'satchel being read' into satchel.
-On error Set 'satchel was truncated' to true.
-Close 'satchel being read'.
-If satchel's size is not 9 then, Print "ASSERT BUF-07: expected 9 got {satchel's size}", Exit 95. Print satchel's size.
-If satchel's size is not satchel's capacity then, Print "ASSERT BUF-07: expected {satchel's capacity} got {satchel's size}", Exit 95. Print satchel's size.
-Print satchel's size.
-a value called 'the tally' is nil.
-a value called 'the upshot' is {"the offering": 228903.1909183539929802343}.
-a boolean called 'the slot' is false.
-If 'the tally' is nothing then, Set 'the slot' to true.
-If 'the slot' is false then, Print "ASSERT VAL-25: expected is nothing to hold got {'the tally's type}", Exit 95.
-If 'the tally' is not nothing then, Print "ASSERT VAL-25: expected is not nothing to be false got {'the tally's type}", Exit 95.
-a boolean called result is false.
-If 'the upshot' is not nothing then, Set result to true.
-If result is false then, Print "ASSERT VAL-25: expected is not nothing to hold got {'the upshot's type}", Exit 95.
-If 'the upshot' is nothing then, Print "ASSERT VAL-25: expected is nothing to be false got {'the upshot's type}", Exit 95.
-Print 'the slot'.
-a value called 'the numeral' is "7.93569".
-'the numeral' is a float.
-If 'the numeral' is not a float then, Print "ASSERT VAL-12: expected a float after the retype got {'the numeral's type}", Exit 95.
-If 'the numeral' is a text then, Print "ASSERT VAL-12: expected the text tag to be gone got {'the numeral's type}", Exit 95.
-If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) got {'the numeral's type}", Exit 95.
-a number called 'the freight' is 0.
-On error Set 'the freight' to 0.
-'the numeral' is a float.
-On error Set 'the freight' to 1.
-If 'the freight' is not 0 then, Print "ASSERT VAL-12: expected no error retyping to a float it already holds got {'the freight'}", Exit 95.
-If 'the numeral's type is not "Float (dynamic)" then, Print "ASSERT VAL-12: expected Float (dynamic) after the no-op got {'the numeral's type}", Exit 95.
-If 'the numeral' is not 7.93569 then, Print "ASSERT VAL-12: expected 7.93569 after the no-op got {'the numeral's type}", Exit 95.
-Print 'the numeral's type.
-a buffer called 'the shipping label' is 1 bytes in size.
-If 'the shipping label's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the shipping label's size}", Exit 95. Print 'the shipping label's size.
-If 'the shipping label's capacity is not 1 then, Print "ASSERT BUF-05: expected 1 got {'the shipping label's capacity}", Exit 95. Print 'the shipping label's capacity.
-Create a buffer called 'the waybill'.
-If 'the waybill's size is not 0 then, Print "ASSERT BUF-01: expected 0 got {'the waybill's size}", Exit 95. Print 'the waybill's size.
-Print 'the waybill's size.
-Print endnote.
-Print annotation.
-Print 'the byline'.
-Print 'the callsign'.
-Print banner.
+Print v1 minus v1, but if v1 is equal to v2 print v1 add v1.
+a number called xn1 is 265.
+a number called xy1 is 44.
+Print "sum {xn1 add xy1}".
+Print "product {xn1 multiply xy1}".
+Print "chain {xn1 multiply xy1 modulo 2:03x}".
+Print "deep {v2 minus v2 minus v2 times v1 times v1 multiply v1 modulo 10 minus v2 add v1:02x}".
+Print "arguments {arguments's count}".
+a text called xt1 is "held {xn1 add xy1} {xn1 multiply xy1 modulo 2:03x}".
+Print xt1.
+a text called 'the postbag path' is "{annotation}/1size".
+open a file for writing called 'the postbag' at 'the postbag path'.
+If 'the postbag's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+Write "xx8zt0acfdxnia3pxdjnzkpdosy09lrogkiqtj7tcocs02mn384875dys2810stztla01q3gecz84x2tbbdslvx72bh2atw4f8e0s0jbfzkdvl8bifkmpj4xccay0ajfswh0vjl0afijxkbqqmqxpp4fm12kikkqh828r7il0r83" to 'the postbag'.
+If 'the postbag's size is not 172 then, Print "ASSERT FIL-01: expected 172 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+Close 'the postbag'.
+a buffer called 'the tally sheet'.
+a number called 'the tally sheet appends made' is 0.
+a boolean called 'the tally sheet overflowed' is false.
+a boolean called 'the tally sheet found an error already pending' is false.
+On error Set 'the tally sheet found an error already pending' to true.
+While 'the tally sheet appends made' is less than 261, append "54uvbkgiwm2pvo798" to 'the tally sheet', On error Set 'the tally sheet overflowed' to true. Set 'the tally sheet appends made' to 'the tally sheet appends made' add 1.
+If 'the tally sheet's size is not 4437 then, Print "ASSERT BUF-03: expected 4437 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
+If 'the tally sheet overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the tally sheet overflowed'}", Exit 95. Print 'the tally sheet overflowed'.
+Print 'the tally sheet's size.
+a number called 'the dispatch note' is 0.
+If 23 is not equal to 23 then, Print "unreachable". Otherwise, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 1, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 2, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 3.
+If 'the dispatch note' is not 123 then, Print "ASSERT FLW-05: expected 123 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+a text called 'workbench path' is "{annotation}/2size".
+open a file for writing called workbench at 'workbench path'.
+If workbench's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {workbench's size}", Exit 95. Print workbench's size.
+Write "tszdnox4yebhe4pd0ssivwr13whfff0jbyk3qef1ru37zk75wh2tblqk31ozspeoxyb6l6cpg0lnns7723zip08yrxmvpc47mqqrh2v9vj7vzf1g4oncq7po2ytaogewlmh5k3ni9kg4i5rjzx78y56xgytj480ahj8wu9005owvikxuywwdsu9lm99abrcl8rst4jv2gybv79pfl435h94copvba4dq321w2vrnexf0jtw3wm754aki1hio0bndpqzc86phmj4gervc5xt6ov06fd4l8ebv2gpkxbfz1bfjgjjfzzhcwue3zkpllc7bhhc9e47aw6ewaniaf60uf0ct4qdbk2lkle79ofwavi6a9jwmsg46q7zkp1eoeh" to workbench.
+If workbench's size is not 382 then, Print "ASSERT FIL-01: expected 382 got {workbench's size}", Exit 95. Print workbench's size.
+Close workbench.
+a buffer called ledger is 4097 bytes in size.
+If ledger's empty is false then, Print "ASSERT BUF-12: expected 1 got {ledger's empty}", Exit 95. Print ledger's empty.
+append "on10kv62qlkgrr5s24748s01taic7b24t1nke9kdhc" to ledger.
+If ledger's size is not 42 then, Print "ASSERT BUF-10: expected 42 got {ledger's size}", Exit 95. Print ledger's size.
+If ledger's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {ledger's capacity}", Exit 95. Print ledger's capacity.
+If ledger's length is not 42 then, Print "ASSERT BUF-11: expected 42 got {ledger's length}", Exit 95. Print ledger's length.
+If ledger's length is not ledger's size then, Print "ASSERT BUF-11: expected {ledger's size} got {ledger's length}", Exit 95. Print ledger's length.
+If ledger's empty then, Print "ASSERT BUF-12: expected 0 got {ledger's empty}", Exit 95. Print ledger's empty.
+Print ledger's length.
+a text called 'the sketchpad path' is "{annotation}/3mode".
+open a file for writing called 'the sketchpad' at 'the sketchpad path'.
+Write "f" to 'the sketchpad'.
+Close 'the sketchpad'.
+open a file for appending called 'the sketchpad' at 'the sketchpad path'.
+If 'the sketchpad's readable then, Print "ASSERT FIL-03: expected 0 got {'the sketchpad's readable}", Exit 95. Print 'the sketchpad's readable.
+If 'the sketchpad's writable is false then, Print "ASSERT FIL-04: expected 1 got {'the sketchpad's writable}", Exit 95. Print 'the sketchpad's writable.
+Close 'the sketchpad'.
+Create a buffer called 'the greeting' with size 77.
+append "80duzh57" to 'the greeting'.
+a number called 'the greeting capacity before clearing' is 'the greeting's capacity.
+clear 'the greeting'.
+If 'the greeting's size is not 0 then, Print "ASSERT BUF-33: expected 0 got {'the greeting's size}", Exit 95. Print 'the greeting's size.
+If 'the greeting's capacity is not 'the greeting capacity before clearing' then, Print "ASSERT BUF-33: expected {'the greeting capacity before clearing'} got {'the greeting's capacity}", Exit 95. Print 'the greeting's capacity.
+a text called fp2 is "{annotation}/out2".
+open a file for writing called fw2 at fp2.
+Write "payload 2545\n" to fw2.
+Close fw2.
+open a file for reading called fr2 at fp2.
+a buffer called fb2 is 21 bytes in size.
+Read from fr2 into fb2.
+Print fb2's size.
+Print fr2's readable.
+Close fr2.
+Print "reached the terminate statement".
+Terminate 168.
+a value called 'the tally' is "false".
+'the tally' is a boolean.
+If 'the tally' is not false then, Print "ASSERT VAL-09: expected false got {'the tally'}", Exit 95.
+Print 'the tally'.
+open a file for reading called sin3 at 0.
+a buffer called sb3 is 37 bytes.
+Read from sin3 into sb3.
+Print sb3's size.
+If sb3 is empty then, Print "sb3 empty". Otherwise, Print "sb3 filled".
+a buffer called sc3 is 8 bytes.
+Read from sin3 into sc3.
+Print sc3's size.
+Close sin3.
+'the reckoning' of each q1s1 from 6 to 6 and each q1s2 from 5 to 5 and each q1s3 from 3 to 3 and each q1s4 from 3 to 3 and each q1s5 from 7 to 7 and each q1s6 from 8 to 8 and each q1s7 from 0 to 1 and each q1s8 from 6 to 6 and each q1s9 from 6 to 6.
 'the summed parts'.
-a buffer called 'the message slip'.
-a number called 'the message slip appends made' is 0.
-a boolean called 'the message slip overflowed' is false.
-a boolean called 'the message slip found an error already pending' is false.
-On error Set 'the message slip found an error already pending' to true.
-While 'the message slip appends made' is less than 253, append "tcocs02mn384875dys2810stzt" to 'the message slip', On error Set 'the message slip overflowed' to true. Set 'the message slip appends made' to 'the message slip appends made' add 1.
-If 'the message slip's size is not 6578 then, Print "ASSERT BUF-03: expected 6578 got {'the message slip's size}", Exit 95. Print 'the message slip's size.
-If 'the message slip overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the message slip overflowed'}", Exit 95. Print 'the message slip overflowed'.
-Print 'the message slip's size.
-Print v1 add v3.
-a number called u1 is 0.
-While u1 is less than 4, Increment u1.
-Print u1.
-a boolean called 'the house number' is false.
-If the environment variable "SHELL" exists then, Set 'the house number' to true. Print 'the house number'.
-a boolean called 'the house number seen again' is false.
-If the environment variable "SHELL" exists then, Set 'the house number seen again' to true. Print 'the house number seen again'.
-If 'the house number seen again' is not 'the house number' then, Print "ASSERT ENV-10: expected {'the house number'} got {'the house number seen again'}", Exit 95. Print 'the house number seen again'.
-Print 'the house number'.
-a value called guess is 85.
-guess is a text.
-If guess is not "85" then, Print "ASSERT VAL-09: expected \"85\" got {guess}", Exit 95.
-Print guess.
-open a file for reading called sin1 at 0.
-a buffer called sb1 is 55 bytes.
-Read from sin1 into sb1.
-Print sb1's size.
-If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
-a buffer called sc1 is 8 bytes.
-Read from sin1 into sc1.
-Print sc1's size.
-Close sin1.
-'the reckoning' of each q1s1 from 1 to 2 and each q1s2 from 2 to 2 and each q1s3 from 0 to 0 and each q1s4 from 7 to 7 and each q1s5 from 1 to 1 and each q1s6 from 2 to 2 and each q1s7 from 0 to 0 and each q1s8 from 0 to 0 and each q1s9 from 2 to 2.
-Quit 250.
+quit 34.
 
 reproducible: 1

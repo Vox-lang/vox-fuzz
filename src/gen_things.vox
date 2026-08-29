@@ -19,8 +19,8 @@ To 'gen leaf value roundtrip' with a text called indent and a boolean called nes
 (Thing member functions: this leaf drives both call forms - the
  type-possessive maker (`a <type>'s <maker> with ...`, the only way to
  reach a member whose first parameter is not the thing,
- LANGUAGE.md:1590) and the instance-possessive receiver
- (`i's <receiver>`, LANGUAGE.md:1529) - and reads the owner-return field
+ LANGUAGE.md:1600) and the instance-possessive receiver
+ (`i's <receiver>`, LANGUAGE.md:1539) - and reads the owner-return field
  back after each (finding 03). Data fields alone cannot reach the
  dispatch and owner-return path.
 
@@ -150,12 +150,12 @@ To 'gen leaf thing copy' with a text called indent and a boolean called nested.
  What pins the order, and all that does:
 
  - A nested field's type must be a PREVIOUSLY DEFINED thing
-   (LANGUAGE.md:986), so the definitions go out in manifest order, which
+   (LANGUAGE.md:994), so the definitions go out in manifest order, which
    is the order they were built in and therefore the order in which a
    nesting target always precedes the field that nests it. Which thing
    nests which IS drawn, so the dependency structure varies even though
    the traversal does not.
- - A member definition names its owner type (LANGUAGE.md:1416), so a
+ - A member definition names its owner type (LANGUAGE.md:1426), so a
    thing's methods follow its definition.
 
  Nothing pins whether the methods follow IMMEDIATELY. Hand-verified
@@ -166,15 +166,40 @@ To 'gen leaf thing copy' with a text called indent and a boolean called nested.
  contiguous and in this order" in 150 of 150 programs has nothing left
  to be contiguous about.)
 
+(THG2-70's dispatch function has no thing to depend on, so it is built
+ first, unconditionally - even a program with zero things gets one, on
+ the same "drawn whether or not it is used" rule 'gen build manifest
+ extras' already follows for the grid sink and the flag reader, so the
+ seed-to-name mapping never depends on a decision taken elsewhere.
+
+ THG2-21/27/30/32's pair, by contrast, names a thing type in its own
+ signature, so it can only be built once that type is on the page - the
+ call sites below run AFTER either emission path, never before.)
+
 To 'gen emit things block'.
+    'gen build thing predicate function'.
+    (Reset here, unconditionally, rather than only inside 'gen build
+     thing functions' - one process generates many programs in a loop,
+     reusing every global, and a program with zero things returns below
+     before that function is ever called. Without this reset a THING-
+     FREE program inherited gen_thing_function_ready true (and a stale owner/
+     field pair) from whichever earlier program in the same run last set
+     it, and 'gen leaf thing free function' and friends fired on a thing
+     that was never declared - hand-caught: seed 111 of a 200-program
+     run emitted `a  called i1.` and called a function taking it, both
+     with an EMPTY type name, because program 111 has no things at all.)
+    Set gen_thing_function_ready to false.
+    Set gen_thing_function_nested_ready to false.
     a number called 'how many things' is gen_thing_names's length.
     If 'how many things' is 0 then,
         Return a number, 0.
     a number called 'the grouping draw' is 'rng below' of 11.
     If 'the grouping draw' is less than 5 then,
         'gen emit things grouped' of 'how many things',
+        'gen build thing functions',
         Return a number, 0.
     'gen emit things interleaved' of 'how many things'.
+    'gen build thing functions'.
     Return a number, 0.
 
 To 'gen emit things grouped' with a number called 'how many things'.
@@ -203,7 +228,7 @@ To 'gen emit things interleaved' with a number called 'how many things'.
  template did.
 
  The last entry ends with a period and every earlier one with a comma,
- which is the language's own list punctuation (LANGUAGE.md:945-947), and
+ which is the language's own list punctuation (LANGUAGE.md:952-954), and
  the blank line after the body is what closes it (LANGUAGE.md:81-87).)
 
 To 'gen emit one thing definition' with a number called 'the thing'.
@@ -250,7 +275,7 @@ To 'gen emit one thing definition' with a number called 'the thing'.
     Return a number, 0.
 
 (One line of a thing's body: a manifest entry, or a data field with or
- without its default. LANGUAGE.md:960 says a field without a default
+ without its default. LANGUAGE.md:967 says a field without a default
  takes its type's zero value, so both spellings are legal and which one
  a field gets is drawn; a nested thing and a time have no literal to
  default to and never carry one.)
@@ -270,7 +295,7 @@ To 'gen emit one thing entry' with a number called 'the entry' and a boolean cal
     Return a number, 0.
 
 (A thing's members. Every declared member returns its owner
- (LANGUAGE.md:1444) and is defined exactly once (LANGUAGE.md:1503); a
+ (LANGUAGE.md:1454) and is defined exactly once (LANGUAGE.md:1513); a
  maker's first parameter is a number and a receiver's is the owner
  itself, which is what decides whether the type possessive alone reaches
  it or both call forms do.
@@ -313,3 +338,808 @@ To 'gen emit one method' with a number called 'the thing' and a number called 't
     'gen emit' of "    Return a {'the type'}, {'the local'}.\n".
     'gen emit' of "\n".
     Return a number, 0.
+
+( ── things leaves, batch A, 2026-08-28 ──
+
+ THG-12, THG-25, THG-34, THG-37, THG-58, THG-64. Every leaf below defines
+ its OWN fresh thing type(s) (and, for THG-58/64, a fresh plain function)
+ rather than asking the manifest for one already built, because each row
+ needs a SPECIFIC field-default shape the manifest's own random draw
+ cannot guarantee on demand (an undefaulted field of a given kind, or a
+ declared default the leaf must know in advance to assert against). A
+ thing definition is legal only at the true top level (LANGUAGE.md:938,
+ THG-03), so every leaf here is registered top-level-only in
+ gen_core.vox's kind bands - hand-verified against vox 0.4.14 that a
+ fresh `A thing called ...` and a fresh `To ...` may both be interleaved
+ among a program's ordinary top-level statements, not only before them.
+
+ Names are spent from the SAME vocabularies and cycle state the manifest
+ itself uses (gen_type_words/gen_field_words/gen_function_words with
+ their existing spent/offset/stride globals, gen_manifest.vox's own
+ 'gen fresh parameter phrase') rather than a new pool of this batch's
+ own - 'gen cycled word' already guarantees no repeat within one program
+ (it grows a disambiguating suffix once a vocabulary's own laps run out),
+ and reusing the manifest's already-once-per-program-reset cycle state is
+ what makes that guarantee apply here too, with no new reset to wire in.)
+
+(A permutation of the field slots 0..3, so THG-12's four zero-typed
+ fields are declared in no fixed order across draws - nothing in
+ LANGUAGE.md pins field order and a generator that always wrote
+ number/float/boolean/time in that sequence would be exactly the
+ undeclared-invariant CLAUDE.md warns against.)
+
+a list called gen_things_a_zero_field_order is [[0,1,2,3],[0,1,3,2],[0,2,1,3],[0,2,3,1],[0,3,1,2],[0,3,2,1],[1,0,2,3],[1,0,3,2],[1,2,0,3],[1,2,3,0],[1,3,0,2],[1,3,2,0],[2,0,1,3],[2,0,3,1],[2,1,0,3],[2,1,3,0],[2,3,0,1],[2,3,1,0],[3,0,1,2],[3,0,2,1],[3,1,0,2],[3,1,2,0],[3,2,0,1],[3,2,1,0]].
+
+(The same, for THG-37's three pinned fields.)
+
+a list called gen_things_a_pinned_field_order is [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]].
+
+To 'gen things a kind keyword' with a number called kind.
+    If kind is 0 then,
+        Return a text, "number".
+    If kind is 1 then,
+        Return a text, "float".
+    If kind is 2 then,
+        Return a text, "boolean".
+    Return a text, "time".
+
+To 'gen things a boolean draw'.
+    a number called 'the truth draw' is 'rng below' of 11.
+    If 'the truth draw' is less than 6 then,
+        Return a number, 0.
+    Return a number, 1.
+
+To 'gen things a boolean literal' with a number called truth.
+    If truth is 0 then,
+        Return a text, "false".
+    Return a text, "true".
+
+(A fresh, program-unique type/field/function phrase, spent from the
+ manifest's own vocabulary and cycle state - see the block comment
+ above.)
+
+To 'gen things a fresh type'.
+    Set gen_type_spent to gen_type_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of gen_type_words and gen_type_spent and gen_type_offset and gen_type_stride.
+    Return a text, 'the phrase'.
+
+To 'gen things a fresh field'.
+    Set gen_field_spent to gen_field_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of gen_field_words and gen_field_spent and gen_field_offset and gen_field_stride.
+    Return a text, 'the phrase'.
+
+To 'gen things a fresh function'.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Return a text, 'the phrase'.
+
+(THG-12: a field without a default takes its type's zero value -
+ number 0, float 0.0, boolean 0, time 0 (LANGUAGE.md:967, 1055-1056). A
+ fresh thing gets one undefaulted field of each of the four zero-having
+ types, in a random order, and every field is read back before any write
+ and asserted against the RENDERED zero the manual promises - hand-
+ verified against vox 0.4.14 that `If sample's drift is not 0.0 then`
+ both compiles and holds for a fresh, never-written float field, so the
+ float assertion compares against the literal `0.0`, not the bare `0`
+ that would be wrong for this type.)
+
+To 'gen leaf thing zero default' with a text called indent and a boolean called nested.
+    a text called 'the type phrase' is 'gen things a fresh type'.
+    a text called 'the type' is 'gen written name' of 'the type phrase'.
+    a text called 'number phrase' is 'gen things a fresh field'.
+    a text called 'float phrase' is 'gen things a fresh field'.
+    a text called 'boolean phrase' is 'gen things a fresh field'.
+    a text called 'time phrase' is 'gen things a fresh field'.
+    a text called 'number field' is 'gen written name' of 'number phrase'.
+    a text called 'float field' is 'gen written name' of 'float phrase'.
+    a text called 'boolean field' is 'gen written name' of 'boolean phrase'.
+    a text called 'time field' is 'gen written name' of 'time phrase'.
+    a list called 'the field names' is ['number field', 'float field', 'boolean field', 'time field'].
+    a number called 'how many orders' is gen_things_a_zero_field_order's length.
+    a number called 'the order draw' is 'rng below' of 'how many orders'.
+    a number called 'the order slot' is 'the order draw' add 1.
+    a list called 'the order' is element 'the order slot' of gen_things_a_zero_field_order.
+    'gen emit' of "A thing called {'the type'} has\n".
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 4,
+        a number called 'the field kind' is element 'the position' of 'the order',
+        a text called 'the field keyword' is 'gen things a kind keyword' of 'the field kind',
+        a number called 'the name slot' is 'the field kind' add 1,
+        a text called 'the field name' is element 'the name slot' of 'the field names',
+        a text called 'the ending' is ",",
+        If 'the position' is 4 then,
+            Set 'the ending' to ".".
+        'gen emit' of "    a {'the field keyword'} called {'the field name'}{'the ending'}\n",
+        Set 'the position' to 'the position' add 1.
+    'gen emit' of "\n".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance declaration' is "a {'the type'} called i{gen_instances}".
+    a text called 'number subject' is "i{gen_instances}'s {'number field'}".
+    a text called 'float subject' is "i{gen_instances}'s {'float field'}".
+    a text called 'boolean subject' is "i{gen_instances}'s {'boolean field'}".
+    a text called 'time subject' is "i{gen_instances}'s {'time field'}".
+    a text called 'number assert' is 'gen assert number is' of "THG-12" and 'number subject' and 0.
+    a text called 'float assert' is 'gen assert number' of "THG-12" and 'float subject' and "0.0" and "0.0".
+    a text called 'boolean assert' is 'gen assert false' of "THG-12" and 'boolean subject'.
+    a text called 'time assert' is 'gen assert number is' of "THG-12" and 'time subject' and 0.
+    a list called 'the lines' is ['the instance declaration', 'number assert', 'float assert', 'boolean assert', 'time assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG-37: a float field and a boolean field carry defaults; a number
+ field with none is 0 (LANGUAGE.md:1055-1056) - the water-tank shape,
+ field order and values random. Distinct from THG-12 above: here the
+ float and boolean fields ALWAYS carry a declared default and the number
+ field NEVER does, in one thing at once, matching the row's own wording
+ rather than THG-12's all-undefaulted shape.)
+
+To 'gen leaf thing pinned defaults' with a text called indent and a boolean called nested.
+    a text called 'the type phrase' is 'gen things a fresh type'.
+    a text called 'the type' is 'gen written name' of 'the type phrase'.
+    a text called 'float phrase' is 'gen things a fresh field'.
+    a text called 'boolean phrase' is 'gen things a fresh field'.
+    a text called 'number phrase' is 'gen things a fresh field'.
+    a text called 'float field' is 'gen written name' of 'float phrase'.
+    a text called 'boolean field' is 'gen written name' of 'boolean phrase'.
+    a text called 'number field' is 'gen written name' of 'number phrase'.
+    a text called 'the float default' is 'gen extreme float'.
+    a number called 'the boolean draw' is 'gen things a boolean draw'.
+    a text called 'the boolean default' is 'gen things a boolean literal' of 'the boolean draw'.
+    a list called 'the field names' is ['float field', 'boolean field', 'number field'].
+    a list called 'the field defaults' is ['the float default', 'the boolean default', ""].
+    a list called 'the field keywords' is ["float", "boolean", "number"].
+    a number called 'how many orders' is gen_things_a_pinned_field_order's length.
+    a number called 'the order draw' is 'rng below' of 'how many orders'.
+    a number called 'the order slot' is 'the order draw' add 1.
+    a list called 'the order' is element 'the order slot' of gen_things_a_pinned_field_order.
+    'gen emit' of "A thing called {'the type'} has\n".
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 3,
+        a number called 'the field kind' is element 'the position' of 'the order',
+        a number called 'the name slot' is 'the field kind' add 1,
+        a text called 'the field name' is element 'the name slot' of 'the field names',
+        a text called 'the field keyword' is element 'the name slot' of 'the field keywords',
+        a text called 'the field default' is element 'the name slot' of 'the field defaults',
+        a text called 'the ending' is ",",
+        If 'the position' is 3 then,
+            Set 'the ending' to ".".
+        a text called 'the field line' is "    a {'the field keyword'} called {'the field name'}{'the ending'}\n",
+        If 'the field default' is not "" then,
+            Set 'the field line' to "    a {'the field keyword'} called {'the field name'} is {'the field default'}{'the ending'}\n".
+        'gen emit' of 'the field line',
+        Set 'the position' to 'the position' add 1.
+    'gen emit' of "\n".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance declaration' is "a {'the type'} called i{gen_instances}".
+    a text called 'float subject' is "i{gen_instances}'s {'float field'}".
+    a text called 'boolean subject' is "i{gen_instances}'s {'boolean field'}".
+    a text called 'number subject' is "i{gen_instances}'s {'number field'}".
+    a text called 'float assert' is 'gen assert number' of "THG-37" and 'float subject' and 'the float default' and 'the float default'.
+    a text called 'boolean assert' is 'gen assert true' of "THG-37" and 'boolean subject'.
+    If 'the boolean draw' is 0 then,
+        Set 'boolean assert' to 'gen assert false' of "THG-37" and 'boolean subject'.
+    a text called 'number assert' is 'gen assert number is' of "THG-37" and 'number subject' and 0.
+    a list called 'the lines' is ['the instance declaration', 'float assert', 'boolean assert', 'number assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG-25, THG-34: every declaration form gives every field its declared
+ default (LANGUAGE.md:1019-1020); `Create` does too (LANGUAGE.md:1041).
+ A fresh thing gets 1-3 fields of random kind (number/float/boolean),
+ each with a random declared default; the declaration form - bare,
+ `Create`, or `Set a T called N to <a whole T>` from an already-declared
+ source of the same type - is drawn at random and the resulting
+ instance's fields are asserted against their declared defaults. Over a
+ campaign this puts all three forms on trial; any one draw exercises
+ `Create` about a third of the time, which is THG-34's row.)
+
+To 'gen leaf thing declaration forms' with a text called indent and a boolean called nested.
+    a text called 'the type phrase' is 'gen things a fresh type'.
+    a text called 'the type' is 'gen written name' of 'the type phrase'.
+    a number called 'the field count draw' is 'rng below' of 3.
+    a number called 'how many fields' is 'the field count draw' add 1.
+    a list called 'the field names' is [].
+    a list called 'the field keywords' is [].
+    a list called 'the field defaults' is [].
+    a number called 'the field made' is 0.
+    While 'the field made' is less than 'how many fields',
+        a text called 'the field phrase' is 'gen things a fresh field',
+        a text called 'the field name' is 'gen written name' of 'the field phrase',
+        a number called 'the kind draw' is 'rng below' of 3,
+        a text called 'the field keyword' is "number",
+        a text called 'the field default' is "",
+        If 'the kind draw' is 0 then,
+            Set 'the field default' to 'literal integer'.
+        If 'the kind draw' is 1 then,
+            Set 'the field keyword' to "float",
+            Set 'the field default' to 'gen extreme float'.
+        If 'the kind draw' is 2 then,
+            Set 'the field keyword' to "boolean",
+            a number called 'the boolean draw' is 'gen things a boolean draw',
+            Set 'the field default' to 'gen things a boolean literal' of 'the boolean draw'.
+        append 'the field name' to 'the field names',
+        append 'the field keyword' to 'the field keywords',
+        append 'the field default' to 'the field defaults',
+        Set 'the field made' to 'the field made' add 1.
+    'gen emit' of "A thing called {'the type'} has\n".
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'how many fields',
+        a text called 'the built name' is element 'the position' of 'the field names',
+        a text called 'the built keyword' is element 'the position' of 'the field keywords',
+        a text called 'the built default' is element 'the position' of 'the field defaults',
+        a text called 'the ending' is ",",
+        If 'the position' is 'how many fields' then,
+            Set 'the ending' to ".".
+        'gen emit' of "    a {'the built keyword'} called {'the built name'} is {'the built default'}{'the ending'}\n",
+        Set 'the position' to 'the position' add 1.
+    'gen emit' of "\n".
+    a number called 'the form draw' is 'rng below' of 3.
+    a list called 'the lines' is [].
+    Set gen_instances to gen_instances add 1.
+    a number called 'the target instance number' is gen_instances.
+    If 'the form draw' is 0 then,
+        a text called 'the target decl' is "a {'the type'} called i{'the target instance number'}",
+        append 'the target decl' to 'the lines'.
+    If 'the form draw' is 1 then,
+        a text called 'the create decl' is "Create a {'the type'} called i{'the target instance number'}",
+        append 'the create decl' to 'the lines'.
+    If 'the form draw' is 2 then,
+        a text called 'the source decl' is "a {'the type'} called i{'the target instance number'}",
+        append 'the source decl' to 'the lines',
+        Set gen_instances to gen_instances add 1,
+        a number called 'the copy instance number' is gen_instances,
+        a text called 'the copy decl' is "Set a {'the type'} called i{'the copy instance number'} to i{'the target instance number'}",
+        append 'the copy decl' to 'the lines',
+        Set 'the target instance number' to 'the copy instance number'.
+    a number called 'the field checked so far' is 1.
+    While 'the field checked so far' is less than or equal to 'how many fields',
+        a text called 'the checked name' is element 'the field checked so far' of 'the field names',
+        a text called 'the checked keyword' is element 'the field checked so far' of 'the field keywords',
+        a text called 'the checked default' is element 'the field checked so far' of 'the field defaults',
+        a text called 'the subject' is "i{'the target instance number'}'s {'the checked name'}",
+        a text called 'the assert line' is 'gen assert number' of "THG-25" and 'the subject' and 'the checked default' and 'the checked default',
+        If 'the checked keyword' is "boolean" and 'the checked default' is "true" then,
+            Set 'the assert line' to 'gen assert true' of "THG-25" and 'the subject'.
+        If 'the checked keyword' is "boolean" and 'the checked default' is "false" then,
+            Set 'the assert line' to 'gen assert false' of "THG-25" and 'the subject'.
+        append 'the assert line' to 'the lines',
+        Set 'the field checked so far' to 'the field checked so far' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG-58: a function receives a COPY of a thing (LANGUAGE.md:1199-1201).
+ A fresh function takes a fresh thing type by value, writes its
+ parameter's one number field, and returns it; the caller's own value is
+ asserted UNCHANGED afterwards, and the returned copy is asserted
+ mutated - the write cannot escape the call, and `Return` is the only
+ way a change gets back to the caller (THG-59, exercised here too).)
+
+To 'gen leaf thing param copy' with a text called indent and a boolean called nested.
+    a text called 'the type phrase' is 'gen things a fresh type'.
+    a text called 'the type' is 'gen written name' of 'the type phrase'.
+    a text called 'the field phrase' is 'gen things a fresh field'.
+    a text called 'the field' is 'gen written name' of 'the field phrase'.
+    a number called 'the sign draw' is 'rng below' of 2.
+    a number called 'the magnitude' is 'rng below' of 1000.
+    a number called 'the original value' is 'the magnitude'.
+    If 'the sign draw' is 0 then,
+        Set 'the original value' to 0 subtract 'the magnitude'.
+    a number called 'the delta' is 'rng below' of 50 add 1.
+    a number called 'the mutated value' is 'the original value' add 'the delta'.
+    'gen emit' of "A thing called {'the type'} has\n".
+    'gen emit' of "    a number called {'the field'} is {'the original value'}.\n\n".
+    a text called 'the function phrase' is 'gen things a fresh function'.
+    a text called 'the function' is 'gen written name' of 'the function phrase'.
+    a text called 'the parameter phrase' is 'gen fresh parameter phrase'.
+    a text called 'the parameter' is 'gen written name' of 'the parameter phrase'.
+    a text called 'the parameter possessive' is 'gen possessive name' of 'the parameter phrase'.
+    a text called 'the introducer' is 'gen parameter introducer'.
+    'gen emit' of "To {'the function'} {'the introducer'} a {'the type'} called {'the parameter'}.\n".
+    'gen emit' of "    Set {'the parameter possessive'} {'the field'} to {'the parameter possessive'} {'the field'} add {'the delta'}.\n".
+    'gen emit' of "    Return a {'the type'}, {'the parameter'}.\n\n".
+    Set gen_instances to gen_instances add 1.
+    a number called 'the caller instance number' is gen_instances.
+    a text called 'the caller decl' is "a {'the type'} called i{'the caller instance number'}".
+    a text called 'the preposition' is 'gen call preposition'.
+    Set gen_instances to gen_instances add 1.
+    a number called 'the result instance number' is gen_instances.
+    a text called 'the result decl' is "a {'the type'} called i{'the result instance number'} is {'the function'} {'the preposition'} i{'the caller instance number'}".
+    a text called 'the caller subject' is "i{'the caller instance number'}'s {'the field'}".
+    a text called 'the result subject' is "i{'the result instance number'}'s {'the field'}".
+    a text called 'the original shown' is "{'the original value'}".
+    a text called 'the mutated shown' is "{'the mutated value'}".
+    a text called 'the caller assert' is 'gen assert number' of "THG-58" and 'the caller subject' and 'the original shown' and 'the original shown'.
+    a text called 'the result assert' is 'gen assert number' of "THG-58" and 'the result subject' and 'the mutated shown' and 'the mutated shown'.
+    a list called 'the lines' is ['the caller decl', 'the result decl', 'the caller assert', 'the result assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG-64: a whole nested thing read out of a segment is copied the same
+ way - `nudged of span's start` passes a copy and leaves the segment
+ untouched (LANGUAGE.md:1220-1221). A fresh outer thing nests a fresh
+ inner thing; the same mutate-and-return shape as THG-58 above is called
+ with the CHAINED POSSESSIVE `segment's inner-field` as its argument -
+ hand-verified against vox 0.4.14 that this compiles and copies exactly
+ like a flat argument does. The segment's own copy is asserted untouched
+ afterwards while the call's returned copy shows the mutation.)
+
+To 'gen leaf thing nested param copy' with a text called indent and a boolean called nested.
+    a text called 'the inner type phrase' is 'gen things a fresh type'.
+    a text called 'the inner type' is 'gen written name' of 'the inner type phrase'.
+    a text called 'the inner field phrase' is 'gen things a fresh field'.
+    a text called 'the inner field' is 'gen written name' of 'the inner field phrase'.
+    a number called 'the sign draw' is 'rng below' of 2.
+    a number called 'the magnitude' is 'rng below' of 1000.
+    a number called 'the original value' is 'the magnitude'.
+    If 'the sign draw' is 0 then,
+        Set 'the original value' to 0 subtract 'the magnitude'.
+    a number called 'the delta' is 'rng below' of 50 add 1.
+    a number called 'the mutated value' is 'the original value' add 'the delta'.
+    'gen emit' of "A thing called {'the inner type'} has\n".
+    'gen emit' of "    a number called {'the inner field'} is {'the original value'}.\n\n".
+    a text called 'the outer type phrase' is 'gen things a fresh type'.
+    a text called 'the outer type' is 'gen written name' of 'the outer type phrase'.
+    a text called 'the outer field phrase' is 'gen things a fresh field'.
+    a text called 'the outer field' is 'gen written name' of 'the outer field phrase'.
+    a text called 'the outer field possessive' is 'gen possessive name' of 'the outer field phrase'.
+    'gen emit' of "A thing called {'the outer type'} has\n".
+    'gen emit' of "    a {'the inner type'} called {'the outer field'}.\n\n".
+    a text called 'the function phrase' is 'gen things a fresh function'.
+    a text called 'the function' is 'gen written name' of 'the function phrase'.
+    a text called 'the parameter phrase' is 'gen fresh parameter phrase'.
+    a text called 'the parameter' is 'gen written name' of 'the parameter phrase'.
+    a text called 'the parameter possessive' is 'gen possessive name' of 'the parameter phrase'.
+    a text called 'the introducer' is 'gen parameter introducer'.
+    'gen emit' of "To {'the function'} {'the introducer'} a {'the inner type'} called {'the parameter'}.\n".
+    'gen emit' of "    Set {'the parameter possessive'} {'the inner field'} to {'the parameter possessive'} {'the inner field'} add {'the delta'}.\n".
+    'gen emit' of "    Return a {'the inner type'}, {'the parameter'}.\n\n".
+    Set gen_instances to gen_instances add 1.
+    a number called 'the segment instance number' is gen_instances.
+    a text called 'the segment decl' is "a {'the outer type'} called i{'the segment instance number'}".
+    a text called 'the segment field' is "i{'the segment instance number'}'s {'the outer field possessive'} {'the inner field'}".
+    a text called 'the preposition' is 'gen call preposition'.
+    Set gen_instances to gen_instances add 1.
+    a number called 'the result instance number' is gen_instances.
+    a text called 'the result decl' is "a {'the inner type'} called i{'the result instance number'} is {'the function'} {'the preposition'} i{'the segment instance number'}'s {'the outer field'}".
+    a text called 'the result subject' is "i{'the result instance number'}'s {'the inner field'}".
+    a text called 'the original shown' is "{'the original value'}".
+    a text called 'the mutated shown' is "{'the mutated value'}".
+    a text called 'the segment assert' is 'gen assert number' of "THG-64" and 'the segment field' and 'the original shown' and 'the original shown'.
+    a text called 'the result assert' is 'gen assert number' of "THG-64" and 'the result subject' and 'the mutated shown' and 'the mutated shown'.
+    a list called 'the lines' is ['the segment decl', 'the result decl', 'the segment assert', 'the result assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+( ── things leaves, batch A, 2026-08-29 ──
+
+ THG2-06, THG2-08, THG2-09, THG2-10, THG2-21, THG2-27, THG2-30, THG2-32,
+ THG2-70: docs/ledger/things-b.md. A second, smaller manifest alongside
+ gen_manifest.vox's, for the ordinary global functions and predicate
+ function this batch's leaves need - built once per program the same
+ "drawn whether or not it is used" way 'gen build manifest extras'
+ builds the grid sink and flag reader, but living here because nothing
+ outside this file needs to know about it.)
+
+a boolean called gen_thing_function_ready is false.
+
+a number called gen_thing_function_owner is 0.
+
+a number called gen_thing_function_field is 0.
+
+a text called gen_thing_function_squaring_written is "".
+
+a text called gen_thing_function_scaling_written is "".
+
+a boolean called gen_thing_function_nested_ready is false.
+
+a number called gen_thing_function_outer_thing is 0.
+
+a number called gen_thing_function_outer_field is 0.
+
+a boolean called gen_thing_predicate_ready is false.
+
+a text called gen_thing_predicate_written is "".
+
+a list called gen_thing_call_prepositions is ["of", "to", "with", "on"].
+
+(THG2-70 (LANGUAGE.md:1898-1900): the type nouns `is a <type>` recognises
+ are the six builtins - number, text, decimal, boolean, list, map. One
+ dispatch function, built once and unconditionally - even a program with
+ zero things gets one, since it takes only a `value` and depends on
+ nothing else on the page. Its branches are rotated and its float/
+ decimal branch's spelling is drawn, reusing 'gen tag predicate' and
+ 'gen bare tag name' from gen_collections.vox rather than re-deriving
+ VAL-03's own six-way split.)
+
+To 'gen build thing predicate function'.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Set gen_thing_predicate_written to 'gen written name' of 'the phrase'.
+    a text called 'the param phrase' is 'gen fresh parameter phrase'.
+    a text called 'the param' is 'gen written name' of 'the param phrase'.
+    'gen open a function definition'.
+    'gen emit' of "To {gen_thing_predicate_written} with a value called {'the param'}.\n".
+    a number called 'the rotation' is 'rng below' of 6.
+    a number called 'the tag step' is 0.
+    While 'the tag step' is less than 6,
+        a number called 'the raw tag' is 'the tag step' add 'the rotation',
+        a number called 'the tag' is 'the raw tag' modulo 6,
+        a text called 'the predicate' is 'gen tag predicate' of 'the tag',
+        a text called 'the label' is 'gen bare tag name' of 'the tag',
+        a text called opener is "Otherwise if",
+        If 'the tag step' is 0 then,
+            Set opener to "If".
+        'gen emit' of "    {opener} {'the param'} is {'the predicate'} then, Return a text, \"{'the label'}\".\n",
+        Set 'the tag step' to 'the tag step' add 1.
+    (Unreachable by any call this batch's leaves write - all six tags are
+     covered above and none of the callers ever passes `nothing` - but
+     still on the page in every program, so a fixed label here was a
+     100%-present invariant with no citation (measured: the campaign
+     that found it). Drawn from the field-word pool instead, the same
+     one 'gen leaf thing format whole' already reads from.)
+    a text called 'the fallback label' is 'gen word from' of gen_field_words.
+    'gen emit' of "    Otherwise, Return a text, \"{'the fallback label'}\".\n".
+    'gen emit' of "\n".
+    Set gen_thing_predicate_ready to true.
+    Return a number, 0.
+
+(THG2-21, THG2-27, THG2-30, THG2-32 (LANGUAGE.md:1476-1480): a function
+ computing some other type from a thing is an ordinary global function
+ with no manifest entry, reached by the instance possessive - unlike
+ every function 'gen emit prelude functions' already puts on the page
+ (src/gen_core.vox:843-860), which take only numbers and texts. Two such
+ functions, built once and unconditionally on the same thing:
+
+ - the arity-one form (THG2-21): takes the thing, returns its chosen
+   number field squared;
+ - the arity-two form (THG2-27, THG2-30): takes the thing and a number,
+   returns the field multiplied by it.
+
+ Built around a NESTED thing's inner type when one exists, because that
+ is the one shape THG2-32 (a receiver reached through a field) can also
+ drive; a plain thing with a number field otherwise, which is all
+ THG2-21/27/30 need. Names come out of the SAME function-name cycle
+ 'gen build manifest functions' spends from (gen_function_words, via the
+ exposed gen_function_spent/offset/stride), so they can never collide
+ with an ordinary manifest function - the same trick 'gen build manifest
+ extras' uses for the grid sink and flag reader.)
+
+To 'gen build thing functions'.
+    Set gen_thing_function_ready to false.
+    Set gen_thing_function_nested_ready to false.
+    a boolean called 'a nesting is available' is 'gen manifest pick a nested thing'.
+    If 'a nesting is available' then,
+        Set gen_thing_function_owner to gen_pick_inner_thing,
+        Set gen_thing_function_field to gen_pick_inner_field,
+        Set gen_thing_function_nested_ready to true,
+        Set gen_thing_function_outer_thing to gen_pick_thing,
+        Set gen_thing_function_outer_field to gen_pick_field.
+    a boolean called 'a plain thing is available' is false.
+    If 'a nesting is available' is false then,
+        Set 'a plain thing is available' to 'gen manifest pick a plain thing'.
+    If 'a plain thing is available' then,
+        Set gen_thing_function_owner to gen_pick_thing,
+        Set gen_thing_function_field to gen_pick_field.
+    a boolean called 'a thing is available' is false.
+    If 'a nesting is available' then,
+        Set 'a thing is available' to true.
+    If 'a plain thing is available' then,
+        Set 'a thing is available' to true.
+    If 'a thing is available' is false then,
+        Return a number, 0.
+    Set gen_thing_function_ready to true.
+    a text called 'the owner type' is 'gen thing written' of gen_thing_function_owner.
+    a text called 'the field name' is 'gen field written' of gen_thing_function_field.
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the squaring phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Set gen_thing_function_squaring_written to 'gen written name' of 'the squaring phrase'.
+    a text called 'the squaring parameter phrase' is 'gen fresh parameter phrase'.
+    a text called 'the squaring parameter' is 'gen written name' of 'the squaring parameter phrase'.
+    a text called 'the squaring parameter possessive' is 'gen possessive name' of 'the squaring parameter phrase'.
+    a text called 'the squaring introducer' is 'gen parameter introducer'.
+    'gen open a function definition'.
+    'gen emit' of "To {gen_thing_function_squaring_written} {'the squaring introducer'} a {'the owner type'} called {'the squaring parameter'}.\n".
+    'gen emit' of "    Return a number, {'the squaring parameter possessive'} {'the field name'} multiply {'the squaring parameter possessive'} {'the field name'}.\n".
+    'gen emit' of "\n".
+    Set gen_function_spent to gen_function_spent add 1.
+    a text called 'the scaling phrase' is 'gen cycled word' of gen_function_words and gen_function_spent and gen_function_offset and gen_function_stride.
+    Set gen_thing_function_scaling_written to 'gen written name' of 'the scaling phrase'.
+    a text called 'the scaling parameter phrase' is 'gen fresh parameter phrase'.
+    a text called 'the scaling parameter' is 'gen written name' of 'the scaling parameter phrase'.
+    a text called 'the scaling parameter possessive' is 'gen possessive name' of 'the scaling parameter phrase'.
+    a text called 'the factor phrase' is 'gen fresh parameter phrase'.
+    a text called 'the factor parameter' is 'gen written name' of 'the factor phrase'.
+    a text called 'the scaling introducer' is 'gen parameter introducer'.
+    'gen open a function definition'.
+    'gen emit' of "To {gen_thing_function_scaling_written} {'the scaling introducer'} a {'the owner type'} called {'the scaling parameter'} and a number called {'the factor parameter'}.\n".
+    'gen emit' of "    Return a number, {'the scaling parameter possessive'} {'the field name'} multiply {'the factor parameter'}.\n".
+    'gen emit' of "\n".
+    Return a number, 0.
+
+(Reused from gen_buffers.vox: 'gen assert number is'/'gen assert number
+ matches' cover every numeric call-result assertion below (THG2-21,
+ THG2-27, THG2-30, THG2-32). Two more of the same two-statement shape -
+ an If that closes on its own period, then a plain Print to punctuate
+ the join and keep the observed value in the corpus - for the two
+ comparisons buffers never needed: thing equality (THG2-08, THG2-09,
+ THG2-10) and text equality (THG2-70).)
+
+To 'gen assert things equal' with a text called 'the row' and a text called 'the left' and a text called 'the right'.
+    a text called 'the line' is "If {'the left'} is not {'the right'} then, Print \"ASSERT {'the row'}: expected {'the left'} to equal {'the right'}\", Exit 95. Print {'the left'}".
+    Return a text, 'the line'.
+
+To 'gen assert things not equal' with a text called 'the row' and a text called 'the left' and a text called 'the right'.
+    a text called 'the line' is "If {'the left'} is {'the right'} then, Print \"ASSERT {'the row'}: expected {'the left'} to differ from {'the right'}\", Exit 95. Print {'the left'}".
+    Return a text, 'the line'.
+
+To 'gen assert text equals' with a text called 'the row' and a text called 'the subject' and a text called 'the expected'.
+    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is not \"{'the expected'}\" then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the got shown'}\", Exit 95. Print {'the subject'}".
+    Return a text, 'the line'.
+
+(THG2-06 (LANGUAGE.md:1357-1358): a whole thing interpolates into a
+ format string under `Print`, the same rendering `Print p.` produces on
+ its own - the existing leaves ('gen thing flat', 'gen thing nested')
+ already put a bare `Print i{n}.` on the page; this is the first leaf to
+ put the SAME instance inside a `{…}` slot instead. Not assertable from
+ inside: neither rendering can be captured into a comparable value
+ (THG2-01), and interpolating a whole thing into a TEXT initializer is
+ rejected outright rather than merely uncheckable (LANGUAGE.md:1359-
+ 1362, "Interpolate a field instead"), so there is no route to a captured
+ value even in principle. The two Prints below - the bare thing and the
+ same instance inside a format string - are the whole of the check;
+ agreeing with each other is the harness's job, not this program's.)
+
+To 'gen leaf thing format whole' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a list called 'the lines' is ['the instance declaration'].
+    a number called 'the set draw' is 'rng below' of 3.
+    If 'the set draw' is less than 2 then,
+        a text called 'a literal' is 'literal integer',
+        a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'a literal'}",
+        append 'the set line' to 'the lines'.
+    a text called 'the bare print' is "Print {'the instance name'}".
+    append 'the bare print' to 'the lines'.
+    a text called 'the slot' is 'gen buffer slot of' of 'the instance name'.
+    a text called 'a word' is 'gen word from' of gen_field_words.
+    (Not "the {word} shows ..." - gen_field_words mixes bare words with
+     phrases that already open on "the" ("the arc", "the gradient"), and
+     prepending an article assuming the word has none produced "the the
+     arc shows ..." for every phrase entry. This shape reads aloud
+     whichever kind of word is drawn.)
+    a text called 'the sentence' is "{'a word'} reading: {'the slot'}".
+    a text called 'the interpolated print' is "Print \"{'the sentence'}\"".
+    append 'the interpolated print' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-08, THG2-09 (LANGUAGE.md:1376-1377): `is` between two values of
+ the same thing compares those same fields at the same depth, and `is
+ not` is its negation. Two fresh instances start equal by construction -
+ every field takes its type's zero value until this leaf sets one - so
+ the `is` check runs first with no Set at all; then the SAME field on
+ the second instance is set to a value numerically distinct from that
+ default (a redraw loop on the NUMBER rather than a "not 0" text guard,
+ because a signed leading-zero literal like "-0" is textually not "0"
+ while numerically holding the field's own default - a bare string
+ compare would miss it and turn the not-equal assertion into a false
+ finding), and `is not` runs on the pair it produced.)
+
+To 'gen leaf thing equality' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the first name' is "i{gen_instances}".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the second name' is "i{gen_instances}".
+    a text called 'the first declaration' is "a {'the type'} called {'the first name'}".
+    a text called 'the second declaration' is "a {'the type'} called {'the second name'}".
+    a text called 'the equal assert' is 'gen assert things equal' of "THG2-08" and 'the first name' and 'the second name'.
+    a text called 'the differing literal' is 'literal integer'.
+    a number called 'the differing value' is 'the differing literal' as a number.
+    While 'the differing value' is 0,
+        Set 'the differing literal' to 'literal integer',
+        Set 'the differing value' to 'the differing literal' as a number.
+    a text called 'the set line' is "Set {'the second name'}'s {'the field'} to {'the differing literal'}".
+    a text called 'the not equal assert' is 'gen assert things not equal' of "THG2-09" and 'the first name' and 'the second name'.
+    a list called 'the lines' is ['the first declaration', 'the second declaration', 'the equal assert', 'the set line', 'the not equal assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-10 (LANGUAGE.md:1377-1378): the comparison is written out by the
+ compiler, so it recurses into nested things - the difference this time
+ sits two levels down, in the field of a field. Same construction as
+ THG2-08/09: two fresh outer instances start equal (every field
+ defaults, all the way down), diverge in the nested field, then converge
+ back by setting the second to match the first's own drawn literal
+ rather than to a second independent draw - two independent draws could
+ coincide and silently stay unequal.)
+
+To 'gen leaf thing nested equality' with a text called indent and a boolean called nested.
+    a boolean called 'a nesting is available' is 'gen manifest pick a nested thing'.
+    If 'a nesting is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the outer type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the outer field possessive' is 'gen field possessive' of gen_pick_field.
+    a text called 'the inner field' is 'gen field written' of gen_pick_inner_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the first name' is "i{gen_instances}".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the second name' is "i{gen_instances}".
+    a text called 'the first declaration' is "a {'the outer type'} called {'the first name'}".
+    a text called 'the second declaration' is "a {'the outer type'} called {'the second name'}".
+    a text called 'the differing literal' is 'literal integer'.
+    a number called 'the differing value' is 'the differing literal' as a number.
+    While 'the differing value' is 0,
+        Set 'the differing literal' to 'literal integer',
+        Set 'the differing value' to 'the differing literal' as a number.
+    a text called 'the diverge line' is "Set {'the first name'}'s {'the outer field possessive'} {'the inner field'} to {'the differing literal'}".
+    a text called 'the not equal assert' is 'gen assert things not equal' of "THG2-10" and 'the first name' and 'the second name'.
+    a text called 'the converge line' is "Set {'the second name'}'s {'the outer field possessive'} {'the inner field'} to {'the differing literal'}".
+    a text called 'the equal assert' is 'gen assert things equal' of "THG2-10" and 'the first name' and 'the second name'.
+    a list called 'the lines' is ['the first declaration', 'the second declaration', 'the diverge line', 'the not equal assert', 'the converge line', 'the equal assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-21 (LANGUAGE.md:1476-1480): a function computing some other type
+ from a thing is an ordinary global function with no manifest entry,
+ reached by BOTH the free call and the instance possessive - the two
+ built once in 'gen build thing functions' and called here on a fresh
+ instance, each result asserted against the field value the generator
+ just wrote.)
+
+To 'gen leaf thing free function' with a text called indent and a boolean called nested.
+    If gen_thing_function_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_thing_function_owner.
+    a text called 'the field' is 'gen field written' of gen_thing_function_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the field value' is 'the literal' as a number.
+    a number called 'the expected' is 'the field value' multiply 'the field value'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'the literal'}".
+    Set gen_args to gen_args add 1.
+    a text called 'the free result' is "c{gen_args}".
+    a text called 'the free decl' is "a number called {'the free result'} is {gen_thing_function_squaring_written} of {'the instance name'}".
+    a text called 'the free assert' is 'gen assert number is' of "THG2-21" and 'the free result' and 'the expected'.
+    Set gen_args to gen_args add 1.
+    a text called 'the receiver result' is "c{gen_args}".
+    a text called 'the receiver decl' is "a number called {'the receiver result'} is {'the instance name'}'s {gen_thing_function_squaring_written}".
+    a text called 'the receiver assert' is 'gen assert number is' of "THG2-21" and 'the receiver result' and 'the expected'.
+    a list called 'the lines' is ['the instance declaration', 'the set line', 'the free decl', 'the free assert', 'the receiver decl', 'the receiver assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-27 (LANGUAGE.md:1521): `of`, `to`, `with`, and `on` all introduce
+ arguments - covered here in the free-call form, all four every firing
+ (the row's own claim is that all four exist, so testing all four is the
+ citation, not an invariant needing one); THG2-30 covers the instance-
+ possessive form and the extra-argument-after-preposition rule
+ specifically. Which spelling comes first is rotated, the same idiom
+ 'gen leaf value dispatch's branch order and 'gen cycled word' use, so
+ the four are never in the same order twice running.)
+
+To 'gen leaf thing call prepositions' with a text called indent and a boolean called nested.
+    If gen_thing_function_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_thing_function_owner.
+    a text called 'the field' is 'gen field written' of gen_thing_function_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the field value' is 'the literal' as a number.
+    a text called 'the factor' is 'literal integer'.
+    a number called 'the factor value' is 'the factor' as a number.
+    a number called 'the expected' is 'the field value' multiply 'the factor value'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'the literal'}".
+    a list called 'the lines' is ['the instance declaration', 'the set line'].
+    a number called 'the rotation' is 'rng below' of 4.
+    a number called 'the step' is 0.
+    While 'the step' is less than 4,
+        a number called 'the raw slot' is 'the step' add 'the rotation',
+        a number called 'the slot' is 'the raw slot' modulo 4,
+        a number called 'the position' is 'the slot' add 1,
+        a text called 'the preposition' is element 'the position' of gen_thing_call_prepositions,
+        Set gen_args to gen_args add 1,
+        a text called 'the result' is "c{gen_args}",
+        a text called 'the call decl' is "a number called {'the result'} is {gen_thing_function_scaling_written} {'the preposition'} {'the instance name'} and {'the factor'}",
+        append 'the call decl' to 'the lines',
+        a text called 'the call assert' is 'gen assert number is' of "THG2-27" and 'the result' and 'the expected',
+        append 'the call assert' to 'the lines',
+        Set 'the step' to 'the step' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-30 (LANGUAGE.md:1540-1541): the receiver fills the function's
+ first parameter, and any further arguments follow the call preposition
+ - `i's 'name' <prep> factor` puts the instance in the first (thing)
+ parameter and `factor` in the second, through whichever of the four
+ prepositions is drawn.)
+
+To 'gen leaf thing extra argument' with a text called indent and a boolean called nested.
+    If gen_thing_function_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_thing_function_owner.
+    a text called 'the field' is 'gen field written' of gen_thing_function_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the field value' is 'the literal' as a number.
+    a text called 'the factor' is 'literal integer'.
+    a number called 'the factor value' is 'the factor' as a number.
+    a number called 'the expected' is 'the field value' multiply 'the factor value'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'the literal'}".
+    a number called 'the preposition draw' is 'rng below' of gen_thing_call_prepositions's length.
+    a number called 'the preposition slot' is 'the preposition draw' add 1.
+    a text called 'the preposition' is element 'the preposition slot' of gen_thing_call_prepositions.
+    Set gen_args to gen_args add 1.
+    a text called 'the result' is "c{gen_args}".
+    a text called 'the call decl' is "a number called {'the result'} is {'the instance name'}'s {gen_thing_function_scaling_written} {'the preposition'} {'the factor'}".
+    a text called 'the call assert' is 'gen assert number is' of "THG2-30" and 'the result' and 'the expected'.
+    a list called 'the lines' is ['the instance declaration', 'the set line', 'the call decl', 'the call assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-32 (LANGUAGE.md:1544-1545): a receiver is anything that names a
+ whole thing, so a FIELD holding one reads the same way - `outer's
+ inner's 'name'` calls the arity-one function on the thing held in
+ outer's own field, not on a separately-declared instance. Only fires
+ when 'gen build thing functions' found a nested pair to build the
+ squaring/scaling functions around; a program with no nesting at all
+ leaves this row untouched by this leaf, the same eligibility pattern
+ as every other query here.)
+
+To 'gen leaf thing field receiver' with a text called indent and a boolean called nested.
+    If gen_thing_function_nested_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the outer type' is 'gen thing written' of gen_thing_function_outer_thing.
+    a text called 'the outer field possessive' is 'gen field possessive' of gen_thing_function_outer_field.
+    a text called 'the field' is 'gen field written' of gen_thing_function_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the outer type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the field value' is 'the literal' as a number.
+    a number called 'the expected' is 'the field value' multiply 'the field value'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the outer field possessive'} {'the field'} to {'the literal'}".
+    Set gen_args to gen_args add 1.
+    a text called 'the result' is "c{gen_args}".
+    a text called 'the call decl' is "a number called {'the result'} is {'the instance name'}'s {'the outer field possessive'} {gen_thing_function_squaring_written}".
+    a text called 'the call assert' is 'gen assert number is' of "THG2-32" and 'the result' and 'the expected'.
+    a list called 'the lines' is ['the instance declaration', 'the set line', 'the call decl', 'the call assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-70 (LANGUAGE.md:1898-1900): calls 'gen build thing predicate
+ function's dispatch with a drawn payload of one of the six builtin tags
+ (number/text/decimal-or-float/boolean/list/map, reusing 'gen value
+ payload'/'gen value expression' from gen_collections.vox - VAL-03's own
+ machinery for building one), asserting the branch that fired against
+ the tag the generator drew. One call per firing rather than all six -
+ the six-branch dispatch itself is already built once, unconditionally,
+ regardless of which tag any single firing goes on to exercise, so a
+ campaign's many firings put every branch on trial across the corpus.)
+
+To 'gen leaf thing type predicate' with a text called indent and a boolean called nested.
+    If gen_thing_predicate_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a number called 'the tag' is 'rng below' of 6.
+    a text called 'the payload' is 'gen value payload' of 'the tag'.
+    a text called 'the argument' is 'gen value expression' of 'the tag' and 'the payload'.
+    a text called 'the expected' is 'gen bare tag name' of 'the tag'.
+    Set gen_args to gen_args add 1.
+    a text called 'the result' is "c{gen_args}".
+    a text called 'the result declaration' is "a text called {'the result'} is {gen_thing_predicate_written} of {'the argument'}".
+    a text called 'the assertion' is 'gen assert text equals' of "THG2-70" and 'the result' and 'the expected'.
+    a list called 'the lines' is ['the result declaration', 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.

@@ -357,8 +357,8 @@ section justifies**: one line per sameness the report shows that the
 manual actually requires, with the LANGUAGE.md line and the row ID:
 
 ```
-- blank line after every function definition — LANGUAGE.md:736–741, FUN-43
-- buffer byte index never 0 — LANGUAGE.md:3678, BUF-19
+- blank line after every function definition — LANGUAGE.md:743–748, FUN-43
+- buffer byte index never 0 — LANGUAGE.md:3712, BUF-19
 ```
 
 The report's `citation` column is filled from these lines. An invariant

@@ -42,6 +42,25 @@ Every row was hand-run against the real compiler
 (`/home/josj/scr/english/vox/target/release/vox`, `VOX_CORE_PATH` set to
 the sibling `coreasm`) before being written.
 
+**Addition, 2026-08-29 (Vox 0.4.14, `4995394`): KEY-81, and corrections
+to KEY-48–KEY-53.** 0.4.14 (#106) rewrote the Reserved Aliases table
+from 3 rows to 85, machine-generated from the lexer's own
+`RESERVED_ALIASES` const (now at LANGUAGE.md:5167–5250, inside the
+section's current 4993–5215 range per `INDEX.md`'s 2026-08-28 re-pin).
+Re-read KEY-48 through KEY-53 against the new table: KEY-48 (`ms`),
+KEY-49 (`message`), KEY-50 (`string`) and KEY-53 (`length`) already
+cited the correct 0.4.14 lines (the mechanical re-pin in `c7dd9eb` had
+already landed them correctly); KEY-51 and KEY-52 carried a `?`
+placeholder that can now be pinned precisely, both to LANGUAGE.md:5252
+— corrected below. One new row, **KEY-81**: every alias in the table is
+refused as a variable name, hand-verified across eight aliases drawn
+from across the table (not one row per alias — PROCEDURE.md §2 governs
+each *table row* as a claim, but 85 near-identical alias/diagnostic
+pairs are one claim repeated 85 times, not 85 distinct ones; the sample
+tests the general claim). **Discrepancy 4 is marked resolved for the
+aliases half only** — see its own entry; the Statement Starters half is
+unchanged and still open.
+
 ## Probes
 
 One retained probe per hand-verified row, in
@@ -52,9 +71,10 @@ and an `expected output:` block recording what the compiler **actually**
 printed. The eight discrepancies each have a minimal repro at
 `D1.vox`–`D8.vox` in the same directory.
 
-**74 probe files + 8 discrepancy repros = 82.** All 82 were re-run in one
-final pass with `docs/check-probes.sh docs/ledger/probes/keywords`:
-**82 passed, 0 failed, 0 skipped.**
+**74 probe files + 8 discrepancy repros = 82** as of the last full pass;
+**+1 (`KEY-81.vox`), 75 probe files + 8 discrepancy repros = 83, as of
+2026-08-29.** `docs/check-probes.sh docs/ledger/probes/keywords`:
+**83 passed, 0 failed, 0 skipped.**
 
 Rows with no probe file, and why:
 
@@ -91,86 +111,87 @@ after itself.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| KEY-01 | 4999 | `a` and `an` both declare a new variable and carry its type. | declare with both spellings, varying which one appears | yes — the generator chose the value: `If apples is not 3 then, Exit 95.` | every declaring leaf emits `a <type> called …`; **`an` is emitted nowhere** (0 hits in `src/gen_*.vox`, 0 in the corpus) | exercised (`a` only) — `an` is a todo, and its absence is an unjustified invariant | |
-| KEY-02 | 5000 | `the` references an already-declared variable. | emit `the x` as a plain read and as an assignment target | yes — same reasoning | **none as a variable reference.** `the` is emitted only inside two fixed phrases: `the tk{n}'s elapsed …` (`gen leaf timer and clock`, gen_misc.vox:216) and `To do the t4's …` (`gen emit prelude thing methods`, gen_things.vox:124). `Print the x.` / `Set the x to …` never appear | todo | |
-| KEY-03 | 5006 | `Print` is the output statement starter. | — | yes | `gen leaf print` (gen_core.vox:318) and ~20 others | exercised | |
-| KEY-04 | 5007 | `Set` and `Create` both start a variable declaration (`Set a TYPE called N to V.`, `Create a TYPE called N to V.`, bare `Create a TYPE called N.` for the type default). | emit the `Set a … to`, `Create a … to` and bare-`Create` forms | yes — the default value per type is documented and known | **none.** `Set` is emitted only as *assignment* (`Set gen_bufs to …`, `Set plotted's x1 to x1`), never as a declaration; **`Create` is emitted nowhere at all** (the only `Create a` in `src/` is the generator's own `gen_out` buffer) | todo | |
-| KEY-05 | 5008 | `If` and `When` are interchangeable conditional starters. | emit both spellings | yes | `If` everywhere (`gen leaf rich condition` and most others); **`When` never** (0 hits) | exercised (`If` only) — `When` is a todo and an unjustified invariant | |
-| KEY-06 | 5009 | `While` starts a loop. | — | yes — the generator sets the bound, so the iteration count is known | `gen leaf while` (gen_flow.vox:268), `gen leaf loop break while`, `gen leaf loop continue while` | exercised | |
-| KEY-07 | 5010 | `For` starts an iteration (over a range and over a collection). | — | yes | `gen leaf deep grid`, `gen leaf map inrange` (`For each k in m's keys`), `gen leaf list mixed`, `gen leaf loop break foreach` | exercised | |
-| KEY-08 | 5011 | `To` starts a function definition. | — | yes | `gen emit prelude functions` (gen_core.vox:843) emits `To f{n} …` in every program | exercised | |
-| KEY-09 | 5012 | `Return` yields a value from a function. | — | yes — the returned value is generator-chosen | same as KEY-08; every generated `f{n}` returns | exercised | |
-| KEY-10 | 5013 | `Increment` adds 1 to a variable. | — | yes — start value and trip count are both known: `If tally is not 12 then, Exit 95.` | `gen leaf while`, `gen leaf repeat`, `gen leaf loop continue while` (all as loop bumps) | exercised | |
-| KEY-11 | 5014 | `Decrement` subtracts 1 from a variable. | emit `Decrement x.` | yes, exactly as KEY-10 | **none** — `Decrement` is emitted nowhere (0 hits in `src/`, 0 in the corpus). Its twin is emitted 68 times in 120 programs | todo — real gap | |
-| KEY-12 | 5015 | `Break` exits the enclosing loop. | — | yes — which iteration breaks is generator-chosen | `gen leaf loop break foreach`, `gen leaf loop break while` (via `gen leaf loop control`, gen_flow.vox:395) | exercised | |
-| KEY-13 | 5016 | `Continue` skips to the next iteration. | — | yes | `gen leaf loop continue foreach`, `gen leaf loop continue while` | exercised | |
-| KEY-14 | 5017 | `Exit` terminates the program with the given exit code; statements after it do not run. | — | yes — and it already is: the runner compares the exit code it chose | `gen program` (gen_core.vox:1074) ends every program `Exit {code}.` | exercised (the code is checked by the runner, so this is the one row in the section with an oracle already) | |
-| KEY-15 | 5018 | `Append` adds an element to a list. | emit the capitalised spelling too | yes — the resulting length and contents are known | `gen leaf list inrange` (gen_collections.vox:14), `gen leaf butif append`; all emit lowercase `append` | exercised (lowercase only) | |
-| KEY-16 | 5021, 4168 | `Create a directory called "<path>".` is `mkdir(2)`; the article is optional, `called` is required. | emit directory creation into a scratch path | yes — success/failure is knowable if the generator controls the path | **none** — no process/filesystem-control statement is emitted by any leaf | todo | |
-| KEY-17 | 5021, 4178 | `Remove the directory called "<path>".` / `Delete the directory "<path>".` are both `rmdir(2)`; `the` and `called` are optional. | emit both verbs and both optional-word variants | yes | none | todo | |
-| KEY-18 | 5021, 4179 | `Change directory to "<path>".` is `chdir(2)` and really moves the process. | emit a chdir, then a relative open, then chdir back | yes — a relative path resolving against the new directory is a checkable consequence | none | todo | |
-| KEY-19 | 5021, 4215 | `Create a device node called … with type … major … minor ….` is `mknod(2)` and sets the error flag on failure. | emit an unprivileged mknod inside `On error` | yes for the failure path (unprivileged is always EPERM); the success path **needs root** and cannot be generated in a normal campaign | none | todo (failure path only) | |
-| KEY-20 | 5021, 4227 | `Create symbolic link from "<target>" to "<linkpath>".` is `symlink(2)`. | emit a symlink into a scratch path | yes | none | todo | |
-| KEY-21 | 5022, 4205 | `Mount` and `Unmount`/`Umount` start the mount statements (with `lazily` on the unmount), and both set the error flag on failure. | emit all three spellings inside `On error` | yes for the failure path; the success path **needs root** | none | todo (failure path only) | |
-| KEY-22 | 5023, 4239 | `Pivot root to "<new>" with old root "<old>".` is `pivot_root(2)`. | emit the statement | **compile-only.** Executing a successful pivot destroys the runner's own filesystem view; and it needs root anyway. A leaf may emit it only behind a condition that is false at run time | none | todo (compile-only) | |
-| KEY-23 | 5024, 4258 | `Execute` is `execve(2)`: it replaces the process image, so the next statement never runs. | emit an `Execute` of a known program | yes — the executed program's output and exit code are generator-chosen; but the generated program **ends there**, so it can only ever be the last statement | none | todo | |
-| KEY-24 | 5025, 4484 | `Shutdown`/`Poweroff`, `Reboot`/`Restart` and `Halt` lower to `reboot(2)`. | emit the six spellings | **compile-only**, same reason as KEY-22 and more so: under root these power the machine off | none | todo (compile-only) | |
-| KEY-25 | 5026, 4290 | `fork` is an **expression** returning 0 in the child and the child's PID in the parent; the trailing `the process` is optional. | emit a fork whose child exits immediately and whose parent reaps | yes — `If pid is 0` and `If pid is greater than 0` are exhaustive and generator-checkable | **none.** `supervise` in the runner forks, but that is the fuzzer's own harness, not generated code (`docs/FUZZER_DEFECTS.md` defect 7) | todo | |
-| KEY-26 | 5026, 4292 | `reap` is an expression: `reap any child process`, `reap process <pid>`, `reap child <pid>`; a reap of a non-child sets the error flag. | emit all three forms plus the error case | yes — the reaped PID must equal the forked PID | none | todo | |
-| KEY-27 | 5027, 4442 | `Send signal <N> to process <pid>.` is a **statement** performing `kill(2)`; `child` is an accepted alias for `process`. | emit both spellings, plus the ESRCH error case | yes — signal 0 to a live child must succeed, to PID 999999 must fail | none | todo | |
-| KEY-28 | 5033 | `a flag called <n> is "-x" or "--long", it is a <type>.` declares a flag schema. | — | yes — but only if the program is *given* arguments | `gen emit prelude flags` (gen_misc.vox:351) emits three or four flags in every program | exercised | |
-| KEY-29 | 5034 | `Parse flags.` triggers parsing at that point. | — | yes | `gen emit prelude flags` (gen_misc.vox:362) closes the flag block with it, in every program | exercised | |
-| KEY-30 | 5035, 4761 | `required` marks a flag as required at run time. | emit `… and is required` and pass the flag; and emit it and withhold the flag | yes for the satisfied case; the violated case is **exit 1 with no output at all** — see Discrepancy 8 | **none** — `is required` is emitted nowhere. `docs/FUZZER_DEFECTS.md` defect 10 is the reason: generated programs are never given arguments, so a required flag would abort every program | todo — blocked on defect 10 | |
-| KEY-31 | 5036, 4760 | `default` supplies the value a flag holds when it is not passed. | assert the flag reads back as the default | yes — the generator writes the default: `If output is not "out.txt" then, Exit 95.` | `gen emit prelude flags` (gen_misc.vox:353) emits `with default "d{n}"` on the text flag about a third of the time | exercised (never asserted, though the value is known at generation time — the cheapest `verified` row in this ledger) | |
-| KEY-32 | 5042 | `with` introduces function parameters in a definition and arguments at a call site. | — | yes | `gen emit prelude functions` (`To f{n} with a number called p1 …`) | exercised | |
-| KEY-33 | 5043 | `called` and `named` both name a variable being declared. | emit `named` too | yes | `called` everywhere; **`named` never** (0 hits) | exercised (`called` only) — unjustified invariant | |
-| KEY-34 | 5044 | `of`, `to` and `on` all introduce function arguments, interchangeably with `with`. | emit all four call connectors | yes | `of` only (`Print f3 of c1 and c2`, `gen leaf call`); **`to` and `on` as call connectors never** | exercised (`of` only) | |
-| KEY-35 | 5045 | `and` has multiple uses — pointer row to the `and` table below. | — | — | — | folded into KEY-41…KEY-47 | |
-| KEY-36 | 5046 | `or` is the logical OR connector. | — | yes | `gen leaf rich condition` (gen_core.vox:484), `gen leaf butif append` | exercised | |
-| KEY-37 | 5047 | `but` chains a further condition onto a statement (`but if`). | — | yes — which arm fires is generator-chosen | `gen leaf butif print` (gen_flow.vox:127), `gen leaf butif append` (gen_flow.vox:140), `gen leaf deep grid` | exercised | |
-| KEY-38 | 5048 | `then` follows a condition and opens its body — and is **optional**: `If ready,` compiles and behaves the same, as does `When ready,`. | vary whether `then` is present | yes | every conditional leaf, **always with `then`** — 718 of 718 `If` statements in a 120-program corpus carry it | exercised (the `then` spelling only) — the omission is never emitted, an unjustified invariant | |
-| KEY-39 | 5049 | `otherwise` and `else` both introduce the alternative branch, after a conditional and inside a `but if` chain. | emit `else` too | yes | `otherwise` in `gen leaf rich condition`, `gen leaf butif append`, `gen leaf stdin read`; **`else` never** (0 hits) | exercised (`otherwise` only) — unjustified invariant | |
-| KEY-40 | 5050 | `from` and `to` are the range bounds of an iteration. | — | yes — bounds are generator-chosen, so the iteration count is known | `gen leaf deep grid`, `gen leaf timer and clock` (`For each te1 from 1 to 10`) | exercised | |
-| KEY-41 | 5058 | `and` between two conditions is boolean AND. | — | yes — both arms' truth is known | `gen leaf rich condition` joins two comparisons with `and` | exercised | |
-| KEY-42 | 5059 | `and` between parameter declarations separates them. | — | yes — arguments land in declared order, which is checkable | `gen emit prelude functions` (`with a number called p1 and a number called p2`) | exercised | |
-| KEY-43 | 5060 | `and` between argument values at a call site separates them. | — | yes — a non-commutative function (`subtract`) proves the order | `gen leaf call` (`f3 of c1 and c2`) | exercised (only commutative `add` bodies, so argument ORDER is never actually pinned down) | |
-| KEY-44 | 5061 | `and` before the final subject of a comma-separated list terminates the list; the predicate after `are` applies to every subject. | emit `x, y, and z are <predicate>` and the `are not` form | yes — every subject's value is generator-chosen | **none** — no leaf emits a plural `are` comparison at all | todo — real gap | |
-| KEY-45 | 5064 | Disambiguation 1: an `and` after a comma and before `are` is a list terminator, so what follows it is read as a subject. | emit a subject list whose final subject is meaningless as a condition (a bare number) | yes | none | todo | |
-| KEY-46 | 5065 | Disambiguation 2: an `and` between two conditions with no comma is the logical operator. | emit two full comparisons joined by `and` | yes | `gen leaf rich condition` | exercised | |
-| KEY-47 | 5066 | Disambiguation 3: an `and` after `with`/`of`/`to`/`on` separates arguments. | emit a call with two arguments; the compile-error form (arity mismatch) proves the reading but must not be generated into a campaign | yes — proven by a one-parameter function called with `x and y` failing with "expects 1 argument but was called with 2" | `gen leaf call` for the legal half | exercised (legal half); the disambiguation half is a compile-error probe, not a leaf | |
-| KEY-48 | 5121 | `ms` is a reserved alias of `milliseconds` in a duration (`Wait 500 ms.`). | emit `Wait N ms.` and `Wait N milliseconds.` | yes — an elapsed-time lower bound: `If waited is not greater than 350 then, Exit 95.` | **none** — `Wait` is emitted nowhere. `milliseconds` appears only in `the tk{n}'s elapsed in milliseconds` | todo | |
-| KEY-49 | 5147 | `message` is a reserved alias of the type name `text`. | emit `a message called … is "…"` sometimes instead of `a text called` | yes — the declared variable behaves as a text and reports `Text (static)` | none (0 hits) | todo | |
-| KEY-50 | 5148 | `string` is a reserved alias of the type name `text`. | same, third spelling | yes | none (0 hits) | todo | |
-| KEY-51 | ? | A reserved alias cannot be used as a variable name. | — | **no, not from a running program** — the observable is a compile error, so a leaf cannot emit it into a campaign (every generated program must compile). It belongs to a compile-diagnostic harness, not a leaf | n/a | not assertable by a leaf (hand-verified: `KEY-51.vox`) | |
-| KEY-52 | ? | The alias diagnostic names the spelling written and the canonical keyword it aliases (`'ms'` → `'milliseconds'`), not an internal name. | — | no, same reason as KEY-51 | n/a | not assertable by a leaf (hand-verified for `ms`→`milliseconds` and `message`→`text`) | |
-| KEY-53 | 5184–5187 | `length` is no longer a reserved alias — `a number called length is 1.` compiles. | emit a variable actually **named** `length` | yes — it reads back as what was assigned | none — no leaf names a variable after a contextual keyword | todo | |
-| KEY-54 | 5184 | `x's length` still means the same as `x's size`. | emit both accessors on the same object and compare | yes — `If payload's length is not payload's size then, Exit 95.` | `'s size` (`gen leaf file round trip`, `gen leaf stdin read`) and `'s length` (`gen leaf list inrange`, map leaves) are both emitted, but **never on the same object**, so the equality is never put on trial | todo (verification); exercised (both constructs) | |
+| KEY-01 | 5039 | `a` and `an` both declare a new variable and carry its type. | declare with both spellings, varying which one appears | yes — the generator chose the value: `If apples is not 3 then, Exit 95.` | every declaring leaf emits `a <type> called …`; **`an` is emitted nowhere** (0 hits in `src/gen_*.vox`, 0 in the corpus) | exercised (`a` only) — `an` is a todo, and its absence is an unjustified invariant | |
+| KEY-02 | 5040 | `the` references an already-declared variable. | emit `the x` as a plain read and as an assignment target | yes — same reasoning | **none as a variable reference.** `the` is emitted only inside two fixed phrases: `the tk{n}'s elapsed …` (`gen leaf timer and clock`, gen_misc.vox:216) and `To do the t4's …` (`gen emit prelude thing methods`, gen_things.vox:124). `Print the x.` / `Set the x to …` never appear | todo | |
+| KEY-03 | 5046 | `Print` is the output statement starter. | — | yes | `gen leaf print` (gen_core.vox:318) and ~20 others | exercised | |
+| KEY-04 | 5047 | `Set` and `Create` both start a variable declaration (`Set a TYPE called N to V.`, `Create a TYPE called N to V.`, bare `Create a TYPE called N.` for the type default). | emit the `Set a … to`, `Create a … to` and bare-`Create` forms | yes — the default value per type is documented and known | **none.** `Set` is emitted only as *assignment* (`Set gen_bufs to …`, `Set plotted's x1 to x1`), never as a declaration; **`Create` is emitted nowhere at all** (the only `Create a` in `src/` is the generator's own `gen_out` buffer) | todo | |
+| KEY-05 | 5048 | `If` and `When` are interchangeable conditional starters. | emit both spellings | yes | `If` everywhere (`gen leaf rich condition` and most others); **`When` never** (0 hits) | exercised (`If` only) — `When` is a todo and an unjustified invariant | |
+| KEY-06 | 5049 | `While` starts a loop. | — | yes — the generator sets the bound, so the iteration count is known | `gen leaf while` (gen_flow.vox:268), `gen leaf loop break while`, `gen leaf loop continue while` | exercised | |
+| KEY-07 | 5050 | `For` starts an iteration (over a range and over a collection). | — | yes | `gen leaf deep grid`, `gen leaf map inrange` (`For each k in m's keys`), `gen leaf list mixed`, `gen leaf loop break foreach` | exercised | |
+| KEY-08 | 5051 | `To` starts a function definition. | — | yes | `gen emit prelude functions` (gen_core.vox:843) emits `To f{n} …` in every program | exercised | |
+| KEY-09 | 5052 | `Return` yields a value from a function. | — | yes — the returned value is generator-chosen | same as KEY-08; every generated `f{n}` returns | exercised | |
+| KEY-10 | 5053 | `Increment` adds 1 to a variable. | — | yes — start value and trip count are both known: `If tally is not 12 then, Exit 95.` | `gen leaf while`, `gen leaf repeat`, `gen leaf loop continue while` (all as loop bumps) | exercised | |
+| KEY-11 | 5054 | `Decrement` subtracts 1 from a variable. | emit `Decrement x.` | yes, exactly as KEY-10 | **none** — `Decrement` is emitted nowhere (0 hits in `src/`, 0 in the corpus). Its twin is emitted 68 times in 120 programs | todo — real gap | |
+| KEY-12 | 5055 | `Break` exits the enclosing loop. | — | yes — which iteration breaks is generator-chosen | `gen leaf loop break foreach`, `gen leaf loop break while` (via `gen leaf loop control`, gen_flow.vox:395) | exercised | |
+| KEY-13 | 5056 | `Continue` skips to the next iteration. | — | yes | `gen leaf loop continue foreach`, `gen leaf loop continue while` | exercised | |
+| KEY-14 | 5057 | `Exit` terminates the program with the given exit code; statements after it do not run. | — | yes — and it already is: the runner compares the exit code it chose | `gen program` (gen_core.vox:1074) ends every program `Exit {code}.` | exercised (the code is checked by the runner, so this is the one row in the section with an oracle already) | |
+| KEY-15 | 5058 | `Append` adds an element to a list. | emit the capitalised spelling too | yes — the resulting length and contents are known | `gen leaf list inrange` (gen_collections.vox:14), `gen leaf butif append`; all emit lowercase `append` | exercised (lowercase only) | |
+| KEY-16 | 5061, 4208 | `Create a directory called "<path>".` is `mkdir(2)`; the article is optional, `called` is required. | emit directory creation into a scratch path | yes — success/failure is knowable if the generator controls the path | **none** — no process/filesystem-control statement is emitted by any leaf | todo | |
+| KEY-17 | 5061, 4218 | `Remove the directory called "<path>".` / `Delete the directory "<path>".` are both `rmdir(2)`; `the` and `called` are optional. | emit both verbs and both optional-word variants | yes | none | todo | |
+| KEY-18 | 5061, 4219 | `Change directory to "<path>".` is `chdir(2)` and really moves the process. | emit a chdir, then a relative open, then chdir back | yes — a relative path resolving against the new directory is a checkable consequence | none | todo | |
+| KEY-19 | 5061, 4255 | `Create a device node called … with type … major … minor ….` is `mknod(2)` and sets the error flag on failure. | emit an unprivileged mknod inside `On error` | yes for the failure path (unprivileged is always EPERM); the success path **needs root** and cannot be generated in a normal campaign | none | todo (failure path only) | |
+| KEY-20 | 5061, 4267 | `Create symbolic link from "<target>" to "<linkpath>".` is `symlink(2)`. | emit a symlink into a scratch path | yes | none | todo | |
+| KEY-21 | 5062, 4245 | `Mount` and `Unmount`/`Umount` start the mount statements (with `lazily` on the unmount), and both set the error flag on failure. | emit all three spellings inside `On error` | yes for the failure path; the success path **needs root** | none | todo (failure path only) | |
+| KEY-22 | 5063, 4279 | `Pivot root to "<new>" with old root "<old>".` is `pivot_root(2)`. | emit the statement | **compile-only.** Executing a successful pivot destroys the runner's own filesystem view; and it needs root anyway. A leaf may emit it only behind a condition that is false at run time | none | todo (compile-only) | |
+| KEY-23 | 5064, 4298 | `Execute` is `execve(2)`: it replaces the process image, so the next statement never runs. | emit an `Execute` of a known program | yes — the executed program's output and exit code are generator-chosen; but the generated program **ends there**, so it can only ever be the last statement | none | todo | |
+| KEY-24 | 5065, 4524 | `Shutdown`/`Poweroff`, `Reboot`/`Restart` and `Halt` lower to `reboot(2)`. | emit the six spellings | **compile-only**, same reason as KEY-22 and more so: under root these power the machine off | none | todo (compile-only) | |
+| KEY-25 | 5066, 4330 | `fork` is an **expression** returning 0 in the child and the child's PID in the parent; the trailing `the process` is optional. | emit a fork whose child exits immediately and whose parent reaps | yes — `If pid is 0` and `If pid is greater than 0` are exhaustive and generator-checkable | **none.** `supervise` in the runner forks, but that is the fuzzer's own harness, not generated code (`docs/FUZZER_DEFECTS.md` defect 7) | todo | |
+| KEY-26 | 5066, 4332 | `reap` is an expression: `reap any child process`, `reap process <pid>`, `reap child <pid>`; a reap of a non-child sets the error flag. | emit all three forms plus the error case | yes — the reaped PID must equal the forked PID | none | todo | |
+| KEY-27 | 5067, 4482 | `Send signal <N> to process <pid>.` is a **statement** performing `kill(2)`; `child` is an accepted alias for `process`. | emit both spellings, plus the ESRCH error case | yes — signal 0 to a live child must succeed, to PID 999999 must fail | none | todo | |
+| KEY-28 | 5087 | `a flag called <n> is "-x" or "--long", it is a <type>.` declares a flag schema. | — | yes — but only if the program is *given* arguments | `gen emit prelude flags` (gen_misc.vox:351) emits three or four flags in every program | exercised | |
+| KEY-29 | 5088 | `Parse flags.` triggers parsing at that point. | — | yes | `gen emit prelude flags` (gen_misc.vox:362) closes the flag block with it, in every program | exercised | |
+| KEY-30 | 5089, 4801 | `required` marks a flag as required at run time. | emit `… and is required` and pass the flag; and emit it and withhold the flag | yes for the satisfied case; the violated case is **exit 1 with no output at all** — see Discrepancy 8 | **none** — `is required` is emitted nowhere. `docs/FUZZER_DEFECTS.md` defect 10 is the reason: generated programs are never given arguments, so a required flag would abort every program | todo — blocked on defect 10 | |
+| KEY-31 | 5090, 4800 | `default` supplies the value a flag holds when it is not passed. | assert the flag reads back as the default | yes — the generator writes the default: `If output is not "out.txt" then, Exit 95.` | `gen emit prelude flags` (gen_misc.vox:353) emits `with default "d{n}"` on the text flag about a third of the time | exercised (never asserted, though the value is known at generation time — the cheapest `verified` row in this ledger) | |
+| KEY-32 | 5096 | `with` introduces function parameters in a definition and arguments at a call site. | — | yes | `gen emit prelude functions` (`To f{n} with a number called p1 …`) | exercised | |
+| KEY-33 | 5097 | `called` and `named` both name a variable being declared. | emit `named` too | yes | `called` everywhere; **`named` never** (0 hits) | exercised (`called` only) — unjustified invariant | |
+| KEY-34 | 5098 | `of`, `to` and `on` all introduce function arguments, interchangeably with `with`. | emit all four call connectors | yes | `of` only (`Print f3 of c1 and c2`, `gen leaf call`); **`to` and `on` as call connectors never** | exercised (`of` only) | |
+| KEY-35 | 5099 | `and` has multiple uses — pointer row to the `and` table below. | — | — | — | folded into KEY-41…KEY-47 | |
+| KEY-36 | 5100 | `or` is the logical OR connector. | — | yes | `gen leaf rich condition` (gen_core.vox:484), `gen leaf butif append` | exercised | |
+| KEY-37 | 5101 | `but` chains a further condition onto a statement (`but if`). | — | yes — which arm fires is generator-chosen | `gen leaf butif print` (gen_flow.vox:127), `gen leaf butif append` (gen_flow.vox:140), `gen leaf deep grid` | exercised | |
+| KEY-38 | 5102 | `then` follows a condition and opens its body — and is **optional**: `If ready,` compiles and behaves the same, as does `When ready,`. | vary whether `then` is present | yes | every conditional leaf, **always with `then`** — 718 of 718 `If` statements in a 120-program corpus carry it | exercised (the `then` spelling only) — the omission is never emitted, an unjustified invariant | |
+| KEY-39 | 5103 | `otherwise` and `else` both introduce the alternative branch, after a conditional and inside a `but if` chain. | emit `else` too | yes | `otherwise` in `gen leaf rich condition`, `gen leaf butif append`, `gen leaf stdin read`; **`else` never** (0 hits) | exercised (`otherwise` only) — unjustified invariant | |
+| KEY-40 | 5104 | `from` and `to` are the range bounds of an iteration. | — | yes — bounds are generator-chosen, so the iteration count is known | `gen leaf deep grid`, `gen leaf timer and clock` (`For each te1 from 1 to 10`) | exercised | |
+| KEY-41 | 5120 | `and` between two conditions is boolean AND. | — | yes — both arms' truth is known | `gen leaf rich condition` joins two comparisons with `and` | exercised | |
+| KEY-42 | 5121 | `and` between parameter declarations separates them. | — | yes — arguments land in declared order, which is checkable | `gen emit prelude functions` (`with a number called p1 and a number called p2`) | exercised | |
+| KEY-43 | 5122 | `and` between argument values at a call site separates them. | — | yes — a non-commutative function (`subtract`) proves the order | `gen leaf call` (`f3 of c1 and c2`) | exercised (only commutative `add` bodies, so argument ORDER is never actually pinned down) | |
+| KEY-44 | 5123 | `and` before the final subject of a comma-separated list terminates the list; the predicate after `are` applies to every subject. | emit `x, y, and z are <predicate>` and the `are not` form | yes — every subject's value is generator-chosen | **none** — no leaf emits a plural `are` comparison at all | todo — real gap | |
+| KEY-45 | 5126 | Disambiguation 1: an `and` after a comma and before `are` is a list terminator, so what follows it is read as a subject. | emit a subject list whose final subject is meaningless as a condition (a bare number) | yes | none | todo | |
+| KEY-46 | 5127 | Disambiguation 2: an `and` between two conditions with no comma is the logical operator. | emit two full comparisons joined by `and` | yes | `gen leaf rich condition` | exercised | |
+| KEY-47 | 5128 | Disambiguation 3: an `and` after `with`/`of`/`to`/`on` separates arguments. | emit a call with two arguments; the compile-error form (arity mismatch) proves the reading but must not be generated into a campaign | yes — proven by a one-parameter function called with `x and y` failing with "expects 1 argument but was called with 2" | `gen leaf call` for the legal half | exercised (legal half); the disambiguation half is a compile-error probe, not a leaf | |
+| KEY-48 | 5213 | `ms` is a reserved alias of `milliseconds` in a duration (`Wait 500 ms.`). | emit `Wait N ms.` and `Wait N milliseconds.` | yes — an elapsed-time lower bound: `If waited is not greater than 350 then, Exit 95.` | **none** — `Wait` is emitted nowhere. `milliseconds` appears only in `the tk{n}'s elapsed in milliseconds` | todo | |
+| KEY-49 | 5239 | `message` is a reserved alias of the type name `text`. | emit `a message called … is "…"` sometimes instead of `a text called` | yes — the declared variable behaves as a text and reports `Text (static)` | none (0 hits) | todo | |
+| KEY-50 | 5240 | `string` is a reserved alias of the type name `text`. | same, third spelling | yes | none (0 hits) | todo | |
+| KEY-51 | 5252 | **Citation corrected, 2026-08-29 (0.4.14, #106) — was `?`, now pinned.** A reserved alias cannot be used as a variable name ("These cannot be used as variable names."). | — | **no, not from a running program** — the observable is a compile error, so a leaf cannot emit it into a campaign (every generated program must compile). It belongs to a compile-diagnostic harness, not a leaf | n/a | not assertable by a leaf (hand-verified: `KEY-51.vox`) | |
+| KEY-52 | 5252 | **Citation corrected, 2026-08-29 (0.4.14, #106) — was `?`, now pinned.** The alias diagnostic names the spelling written and the canonical keyword it aliases (`'ms'` → `'milliseconds'`), not an internal name. | — | no, same reason as KEY-51 | n/a | not assertable by a leaf (hand-verified for `ms`→`milliseconds` and `message`→`text`) | |
+| KEY-53 | 5310–5313 | `length` is no longer a reserved alias — `a number called length is 1.` compiles. | emit a variable actually **named** `length` | yes — it reads back as what was assigned | none — no leaf names a variable after a contextual keyword | todo | |
+| KEY-54 | 5310 | `x's length` still means the same as `x's size`. | emit both accessors on the same object and compare | yes — `If payload's length is not payload's size then, Exit 95.` | `'s size` (`gen leaf file round trip`, `gen leaf stdin read`) and `'s length` (`gen leaf list inrange`, map leaves) are both emitted, but **never on the same object**, so the equality is never put on trial | todo (verification); exercised (both constructs) | |
 | KEY-55 | ? | Every keyword listed in the tables above is reserved as a variable name. | — | no (compile-error observable, as KEY-51) | n/a | not assertable by a leaf — and **false as written**: hand-verified true for `print` (`KEY-55.vox`), false for thirteen other table words (Discrepancy 1) | |
 | KEY-56 | ? | The flag-schema keyword `flag` is reserved as a variable name. | — | no (compile-error observable) | n/a | not assertable by a leaf (hand-verified: `KEY-56.vox`) | |
 | KEY-57 | ? | The property keyword `empty` is reserved as a variable name. | — | no (compile-error observable) | n/a | not assertable by a leaf (hand-verified: `KEY-57.vox`) | |
 | KEY-58 | ? | Quoting a reserved word makes it usable as a name (`'flag'`, `'empty'`). | emit quoted reserved words as variable names | yes — reads back what was assigned | **none** — every generated name is a made-up token (`v1`, `gb3`, `'the missing value 1'`); no leaf ever quotes a reserved word to reuse it | todo — a cheap, high-value leaf: it exercises the parser's escape hatch | |
-| KEY-59 | 5168–5170 | A **reserved keyword** is banned as a bare name everywhere: statement starters, operators (`times`, `add`), type names, connectors. | — | no (compile-error observable) | n/a | not assertable by a leaf; hand-verified for the operator class (`times`, `KEY-59.vox`) and **contradicted for the statement-starter class** — Discrepancy 1 | |
-| KEY-60 | 5172–5173 | `start`/`begin`/`stop`/`finish` are contextual: timer verbs in front of a timer name, ordinary identifiers everywhere else. | emit a program that uses all four as timer verbs *and* declares variables with those names | yes — the ordinary variables read back, and the timer's elapsed has a known lower bound | `gen leaf timer and clock` emits `Start tk{n}` / `Stop tk{n}` only; **`Begin`/`Finish` never**, and no leaf ever names a variable `start` | exercised (`Start`/`Stop` as verbs); todo (the `Begin`/`Finish` spellings and the whole contextual half) | |
-| KEY-61 | 5173 | `send` is contextual: a signal verb in `Send signal …`, an ordinary identifier elsewhere. | emit both readings in one program | yes | none (neither half) | todo | |
-| KEY-62 | 5173–5174 | `waiting` is contextual: claimed only in the `without waiting` reap suffix. | emit a non-blocking reap and a variable named `waiting` | yes — a non-blocking reap of a still-running child returns exactly 0 | none | todo | |
-| KEY-63 | 5174 | `available` is contextual: claimed in `is available`. | emit `is available` on a path that exists and one that does not, plus a variable named `available` | yes — the generator chooses the paths, so both answers are known | none — `is available` is emitted nowhere | todo | |
+| KEY-59 | 5294–5296 | A **reserved keyword** is banned as a bare name everywhere: statement starters, operators (`times`, `add`), type names, connectors. | — | no (compile-error observable) | n/a | not assertable by a leaf; hand-verified for the operator class (`times`, `KEY-59.vox`) and **contradicted for the statement-starter class** — Discrepancy 1 | |
+| KEY-60 | 5298–5299 | `start`/`begin`/`stop`/`finish` are contextual: timer verbs in front of a timer name, ordinary identifiers everywhere else. | emit a program that uses all four as timer verbs *and* declares variables with those names | yes — the ordinary variables read back, and the timer's elapsed has a known lower bound | `gen leaf timer and clock` emits `Start tk{n}` / `Stop tk{n}` only; **`Begin`/`Finish` never**, and no leaf ever names a variable `start` | exercised (`Start`/`Stop` as verbs); todo (the `Begin`/`Finish` spellings and the whole contextual half) | |
+| KEY-61 | 5299 | `send` is contextual: a signal verb in `Send signal …`, an ordinary identifier elsewhere. | emit both readings in one program | yes | none (neither half) | todo | |
+| KEY-62 | 5299–5300 | `waiting` is contextual: claimed only in the `without waiting` reap suffix. | emit a non-blocking reap and a variable named `waiting` | yes — a non-blocking reap of a still-running child returns exactly 0 | none | todo | |
+| KEY-63 | 5300 | `available` is contextual: claimed in `is available`. | emit `is available` on a path that exists and one that does not, plus a variable named `available` | yes — the generator chooses the paths, so both answers are known | none — `is available` is emitted nowhere | todo | |
 | KEY-64 | ? | The property word `name` is contextual — claimed after a possessive marker. | emit `arguments's name` and a variable named `name` | partly: `arguments's name` is the binary's own path, which **varies per run** — assertable only as "not empty" | none: `arguments's name` was deliberately dropped from `gen leaf arguments inrange` (gen_misc.vox:118) precisely because it is non-deterministic | todo (non-empty form only) | |
-| KEY-65 | 5175–5179 | The property word `count` is contextual — claimed after a possessive and in the `the argument count` / `the environment variable count` phrases — so `a number called count is 0.` compiles while `arguments's count` keeps its meaning. | emit both phrase forms and a variable named `count` | yes: with no user arguments `arguments's count` and `the argument count` are both exactly 1; the environment count is only assertable as positive | `gen leaf arguments inrange` (gen_misc.vox:143) emits `Print arguments's count`; `gen leaf environment inrange` (gen_misc.vox:84) emits `environment's count`. **Neither phrase form (`the argument count`, `the environment variable count`) is emitted anywhere**, and no leaf names a variable `count` | exercised (possessive form); todo (both phrases, and the contextual half) | |
-| KEY-66 | 5180–5181 | `capacity` is contextual — the buffer property after a possessive and the `with capacity N` / `of capacity N` phrase. | emit `Create a buffer called b with capacity N.` and the `of` spelling, plus a variable named `capacity` | yes — the generator picks N: `If b's capacity is not 16 then, Exit 95.` | **none reads `'s capacity` at all** (the buffer ledger's BUF-10 finding), and neither phrase is emitted. Note the phrase works only in the `Create …` form: `a buffer called b with capacity 16.` is a parse error | todo | |
-| KEY-67 | 5181 | `raw` is contextual — `arguments's raw` after a possessive. | emit `arguments's raw` and a variable named `raw` | yes — with no user arguments the raw view is empty, so a loop over it prints nothing | none (0 hits for `'s raw`) | todo | |
-| KEY-68 | 5181–5182 | `all` is contextual — `arguments's all` after a possessive, and the `all the numbers from/between …` range phrase. | emit both, plus a variable named `all` | the possessive half yes; **the range phrase half must not be emitted until Discrepancies 5, 6 and 7 are resolved** — one spelling drops its end bound and two forms segfault | `gen leaf treating print` (gen_flow.vox:189) and `gen leaf butif append` emit `arguments's all`; the range phrase is emitted nowhere | exercised (possessive form); **blocked** (range phrase) | blocked on D5/D6/D7 |
-| KEY-69 | 5182 | `first` is contextual — the first-item property after a possessive. | emit `<list>'s first` and a variable named `first` | yes — the generator writes the list | **none** (0 hits for `'s first`; gen_flow.vox:160 records that the positional argument properties were skipped because generated programs get no arguments — but a **list**'s `first` has no such excuse) | todo | |
-| KEY-70 | 5182 | `last` is contextual — the last-item property after a possessive. | emit `<list>'s last` and a variable named `last` | yes | none (0 hits) | todo | |
-| KEY-71 | 5182–5184 | `second` is contextual three ways: the second-argument property, the `Wait N second(s)` duration unit, and an ordinary identifier — the manual's own example is `Set second to 1. Wait second seconds.` | emit the manual's own example, and `arguments's second` | yes — a one-second wait has a checkable lower bound on elapsed time | none: `Wait` is never emitted, `arguments's second` is never emitted, and no variable is named `second` | todo | |
-| KEY-72 | 5184–5185 | `size` and its synonym `length` are contextual — properties after a possessive and the `with size N` / `N bytes in size` phrases. | emit both phrases and variables named `size` and `length` in one program | yes — the generator picks the sizes | `N bytes in size` is emitted by `gen leaf buffer inrange`/`oob`, `'s size` and `'s length` are read by the file/list/map leaves; **`with size N` is never emitted**, and no variable is named `size` or `length` | exercised (`N bytes in size`, both properties); todo (`with size N`, the contextual half) | |
-| KEY-73 | 5185–5186 | `version` is contextual — claimed in the `Library <name> version "…"` and `see <lib> version "…"` headers. | emit a library-consuming program, plus a variable named `version` | yes for the ordinary-identifier half; the header half needs a second compilation unit and a built `.lib`, which no leaf produces today | **none** — no generated program declares or consumes a library | todo | |
-| KEY-74 | 5187–5189 | The summary claim: each contextual keyword is a bare variable name everywhere except its one fixed grammatical position; `arguments's first` and `a number called first is 0.` work in the same program. | one leaf that names variables after contextual keywords while also using the possessive readings | yes — hand-verified for all 17 words at once (`KEY-74.vox`) | **none** — no generated program ever names a variable after a keyword of either class | todo — the single highest-value leaf in this section: it is one program that puts 17 claims on trial | |
-| KEY-75 | 5191–5193 | The classification test: a word is contextual iff every position where it means something is grammatically identifiable; only an ambiguous-anywhere word is reserved. | — | **no** — a claim about how the manual classifies words, not about the behaviour of any program. Its *consequences* are KEY-55…KEY-74, and those consequences do not all hold (Discrepancies 1–4) | n/a | not assertable | |
-| KEY-76 | 5205 | `thing` is claimed only in `A thing called <name> has …`; an ordinary identifier elsewhere. | emit a thing definition and a variable named `thing` in one program | yes | `gen emit prelude things` (gen_things.vox:105) emits the definitions; no leaf names a variable `thing` | exercised (the claimed position); todo (the elsewhere half) | |
-| KEY-77 | 5206 | `has` is claimed only as the verb of a thing definition. | same shape, for `has` | yes | same as KEY-76 | exercised (claimed position); todo (elsewhere half) | |
-| KEY-78 | 5207 | `do` is claimed only in `To do the <type>'s <member>`; elsewhere an ordinary identifier, including as a function's own name. | emit `To do.` as a plain function and a variable named `do` | yes | `gen emit prelude thing methods` (gen_things.vox:124) emits `To do the t4's 'made at'`; the elsewhere half is emitted nowhere | exercised (claimed position); todo (elsewhere half) | |
-| KEY-79 | 5200–5201 | `a number called thing is 1.` and `To do.` (a function named `do`) both compile. | — | yes | none | covered by KEY-76 and KEY-78 | |
-| KEY-80 | 5209–5212 | `the` gains a second reading in a member definition: `the point's 'placed at'` pairs with a known identifier (the type), while `a point's 'placed at'` calls a maker that brings a new point into being. | emit both readings over the same member name | yes — the maker's arguments are generator-chosen, so the resulting fields are known | `gen emit prelude thing methods` emits `To do the t4's …` (the `the` reading) and `gen leaf thing member` emits the maker call — **both halves exist**, and this is the only contextual-keyword row in the section that is fully exercised today | exercised | |
+| KEY-65 | 5301–5305 | The property word `count` is contextual — claimed after a possessive and in the `the argument count` / `the environment variable count` phrases — so `a number called count is 0.` compiles while `arguments's count` keeps its meaning. | emit both phrase forms and a variable named `count` | yes: with no user arguments `arguments's count` and `the argument count` are both exactly 1; the environment count is only assertable as positive | `gen leaf arguments inrange` (gen_misc.vox:143) emits `Print arguments's count`; `gen leaf environment inrange` (gen_misc.vox:84) emits `environment's count`. **Neither phrase form (`the argument count`, `the environment variable count`) is emitted anywhere**, and no leaf names a variable `count` | exercised (possessive form); todo (both phrases, and the contextual half) | |
+| KEY-66 | 5306–5307 | `capacity` is contextual — the buffer property after a possessive and the `with capacity N` / `of capacity N` phrase. | emit `Create a buffer called b with capacity N.` and the `of` spelling, plus a variable named `capacity` | yes — the generator picks N: `If b's capacity is not 16 then, Exit 95.` | **none reads `'s capacity` at all** (the buffer ledger's BUF-10 finding), and neither phrase is emitted. Note the phrase works only in the `Create …` form: `a buffer called b with capacity 16.` is a parse error | todo | |
+| KEY-67 | 5307 | `raw` is contextual — `arguments's raw` after a possessive. | emit `arguments's raw` and a variable named `raw` | yes — with no user arguments the raw view is empty, so a loop over it prints nothing | none (0 hits for `'s raw`) | todo | |
+| KEY-68 | 5307–5308 | `all` is contextual — `arguments's all` after a possessive, and the `all the numbers from/between …` range phrase. | emit both, plus a variable named `all` | the possessive half yes; **the range phrase half must not be emitted until Discrepancies 5, 6 and 7 are resolved** — one spelling drops its end bound and two forms segfault | `gen leaf treating print` (gen_flow.vox:189) and `gen leaf butif append` emit `arguments's all`; the range phrase is emitted nowhere | exercised (possessive form); **blocked** (range phrase) | blocked on D5/D6/D7 |
+| KEY-69 | 5308 | `first` is contextual — the first-item property after a possessive. | emit `<list>'s first` and a variable named `first` | yes — the generator writes the list | **none** (0 hits for `'s first`; gen_flow.vox:160 records that the positional argument properties were skipped because generated programs get no arguments — but a **list**'s `first` has no such excuse) | todo | |
+| KEY-70 | 5308 | `last` is contextual — the last-item property after a possessive. | emit `<list>'s last` and a variable named `last` | yes | none (0 hits) | todo | |
+| KEY-71 | 5308–5310 | `second` is contextual three ways: the second-argument property, the `Wait N second(s)` duration unit, and an ordinary identifier — the manual's own example is `Set second to 1. Wait second seconds.` | emit the manual's own example, and `arguments's second` | yes — a one-second wait has a checkable lower bound on elapsed time | none: `Wait` is never emitted, `arguments's second` is never emitted, and no variable is named `second` | todo | |
+| KEY-72 | 5310–5311 | `size` and its synonym `length` are contextual — properties after a possessive and the `with size N` / `N bytes in size` phrases. | emit both phrases and variables named `size` and `length` in one program | yes — the generator picks the sizes | `N bytes in size` is emitted by `gen leaf buffer inrange`/`oob`, `'s size` and `'s length` are read by the file/list/map leaves; **`with size N` is never emitted**, and no variable is named `size` or `length` | exercised (`N bytes in size`, both properties); todo (`with size N`, the contextual half) | |
+| KEY-73 | 5311–5312 | `version` is contextual — claimed in the `Library <name> version "…"` and `see <lib> version "…"` headers. | emit a library-consuming program, plus a variable named `version` | yes for the ordinary-identifier half; the header half needs a second compilation unit and a built `.lib`, which no leaf produces today | **none** — no generated program declares or consumes a library | todo | |
+| KEY-74 | 5313–5315 | The summary claim: each contextual keyword is a bare variable name everywhere except its one fixed grammatical position; `arguments's first` and `a number called first is 0.` work in the same program. | one leaf that names variables after contextual keywords while also using the possessive readings | yes — hand-verified for all 17 words at once (`KEY-74.vox`) | **none** — no generated program ever names a variable after a keyword of either class | todo — the single highest-value leaf in this section: it is one program that puts 17 claims on trial | |
+| KEY-75 | 5317–5319 | The classification test: a word is contextual iff every position where it means something is grammatically identifiable; only an ambiguous-anywhere word is reserved. | — | **no** — a claim about how the manual classifies words, not about the behaviour of any program. Its *consequences* are KEY-55…KEY-74, and those consequences do not all hold (Discrepancies 1–4) | n/a | not assertable | |
+| KEY-76 | 5331 | `thing` is claimed only in `A thing called <name> has …`; an ordinary identifier elsewhere. | emit a thing definition and a variable named `thing` in one program | yes | `gen emit prelude things` (gen_things.vox:105) emits the definitions; no leaf names a variable `thing` | exercised (the claimed position); todo (the elsewhere half) | |
+| KEY-77 | 5332 | `has` is claimed only as the verb of a thing definition. | same shape, for `has` | yes | same as KEY-76 | exercised (claimed position); todo (elsewhere half) | |
+| KEY-78 | 5333 | `do` is claimed only in `To do the <type>'s <member>`; elsewhere an ordinary identifier, including as a function's own name. | emit `To do.` as a plain function and a variable named `do` | yes | `gen emit prelude thing methods` (gen_things.vox:124) emits `To do the t4's 'made at'`; the elsewhere half is emitted nowhere | exercised (claimed position); todo (elsewhere half) | |
+| KEY-79 | 5326–5327 | `a number called thing is 1.` and `To do.` (a function named `do`) both compile. | — | yes | none | covered by KEY-76 and KEY-78 | |
+| KEY-80 | 5335–5338 | `the` gains a second reading in a member definition: `the point's 'placed at'` pairs with a known identifier (the type), while `a point's 'placed at'` calls a maker that brings a new point into being. | emit both readings over the same member name | yes — the maker's arguments are generator-chosen, so the resulting fields are known | `gen emit prelude thing methods` emits `To do the t4's …` (the `the` reading) and `gen leaf thing member` emits the maker call — **both halves exist**, and this is the only contextual-keyword row in the section that is fully exercised today | exercised | |
+| KEY-81 | 5167–5250 | **New row, 2026-08-29 (0.4.14, #106); row count corrected 2026-08-29 (0.4.15) — the citation's arithmetic re-pin landed cleanly (no `?`), but the table's own row count silently changed underneath it, which only hand-counting catches.** Every alias listed in the Reserved Aliases table (**82 rows** as of 0.4.15, down from 85 — `auto`/`automatic`, `disable`/`disabled` and `enable`/`enabled` dropped out, owner ruling: those words are no longer reserved at all, see the Keywords chapter addition below — machine-generated from the lexer's own `RESERVED_ALIASES` const) is refused as a variable name, with the diagnostic naming the spelling written and its canonical keyword. | emit a variable declaration using an alias spelling, drawn from across the table, inside a compile-error harness | **no, not from a running program** — same reason as KEY-51: the observable is a compile error, so a leaf cannot emit it into a campaign | n/a | not assertable by a leaf — hand-verified across eight aliases from different parts of the table (`abs`→absolute, `push`→append, `mod`→modulo, `nil`→nothing, `show`→print, `grow`→resize, `stopwatch`→timer, `years`→year — top, upper-middle, middle and last row; none of the three dropped rows was in the sample), all eight still present and following the exact KEY-51/KEY-52 diagnostic template (`KEY-81.vox`) | |
 
 ## Discrepancies
 
@@ -186,7 +207,7 @@ segfaults.
 
 ### 1. Thirteen words from the Statement Starters table are not reserved as variable names
 
-LANGUAGE.md:5162 — "Every keyword listed in the tables above is likewise
+LANGUAGE.md:5254 — "Every keyword listed in the tables above is likewise
 reserved as a variable name" — and 4702–4704, which puts "statement
 starters" in the class "banned as bare names everywhere". Repro (`D1.vox`):
 
@@ -269,7 +290,7 @@ recovering the "you meant a name" intent from there is a real parser
 problem, not an oversight. It is still the worst diagnostic in the
 section, and it is the one a programmer is most likely to hit by accident.
 
-### 4. The chapter's tables under-enumerate both the reserved words and the aliases
+### 4. The chapter's tables under-enumerate both the reserved words and the aliases — PARTIALLY RESOLVED (vox #106 / 0.4.14)
 
 4696 says "the tables above"; 4702–4704 says the reserved class is
 "statement starters, operators, type names, connectors". These words are
@@ -299,6 +320,34 @@ one-way claim, and (D1 aside) that direction mostly holds. The Keywords
 chapter is the only place a programmer can look up what they may not name
 a variable, though, so a list that is silently partial is a trap: `input`
 and `error` are ordinary enough words that a program will hit them.
+
+**Resolution, 2026-08-29: the Reserved Aliases half is RESOLVED by vox
+#106 (0.4.14); the Statement Starters half is still open.** CHANGELOG
+0.4.14 #106: "The alias fold now lives in exactly one place, a
+`RESERVED_ALIASES` const in `src/lexer/tokens.rs`, which
+`string_is_keyword` reads from and LANGUAGE.md's Reserved Aliases table
+(now 85 rows, generated from and checked against the same const) is
+generated from, so the two tables cannot drift apart again." The
+Reserved Aliases table (now LANGUAGE.md:5167–5250, 85 rows — see
+`INDEX.md`'s re-pin note) is machine-generated from the lexer's own
+alias list, so it is definitionally exhaustive; every example this
+discrepancy raised (`up`→`to`, `plus`→`add`, `minus`→`subtract`,
+`bool`→`boolean`) is present in the new table, hand-verified line by
+line. **KEY-81 (new row, below) hand-verifies the general claim across
+an eight-alias sample drawn from across the table.**
+
+Re-checked against the current 0.4.14 Statement Starters table
+(LANGUAGE.md:5044–5067) for the *other* half of this discrepancy: it
+still does not list `read`, `write`, `open`, `close`, `wait`, `input`,
+`standard`, `byte`, `each`, `elapsed`, `without`, `error`, `arguments`
+or `environment` — none of these words gained a table entry in 0.4.14,
+and `D4.vox`'s repro (`read` refused as a variable name with no table
+entry naming it) still reproduces unchanged. So this discrepancy is
+resolved for the half it is *named* for in this ledger's row (the
+aliases table, KEY-48–KEY-53's subject) but not for the Statement
+Starters half raised in the same write-up — flagged for the master
+rather than marked fully resolved, since the brief that requested this
+correction described it as a single "RESOLVED."
 
 ### 5. `all the numbers from A to B` drops the end bound — RESOLVED (vox #56)
 
@@ -386,8 +435,8 @@ now refuses it.
 
 ### 8. A missing required flag ends the program with exit 1 and no message — STILL OPEN, design question for Josj
 
-LANGUAGE.md:5035 (`Required` — "Mark a flag as required") and
-LANGUAGE.md:4761 ("`and is required` requires the flag to be present at
+LANGUAGE.md:5089 (`Required` — "Mark a flag as required") and
+LANGUAGE.md:4801 ("`and is required` requires the flag to be present at
 runtime"). Neither says what a violation looks like. Repro (`D8.vox`):
 
 ```
@@ -424,20 +473,20 @@ few of them, and it condemns rather more.
 **Justified — the manual requires the sameness:**
 
 - flag schema declarations always precede `Parse flags.`, and every flag
-  read follows it — LANGUAGE.md:5033–5034 and 4410–4411 (declaring a
+  read follows it — LANGUAGE.md:5087–5088 and 4410–4411 (declaring a
   schema after the parse point, or reading a flag before it, are both
   compile errors), KEY-28/KEY-29
 - a member definition always spells its receiver `the t4's`, and the maker
-  call always spells it `a t4's` — LANGUAGE.md:5209–5212 (the article
+  call always spells it `a t4's` — LANGUAGE.md:5335–5338 (the article
   rule: `the` pairs with a known identifier, `a` with a value coming into
   being), KEY-80
 - parameters and arguments are always joined by `and`, never by a comma —
-  LANGUAGE.md:5059–5060, KEY-42/KEY-43
-- a thing definition's verb is always `has` — LANGUAGE.md:5206, KEY-77
+  LANGUAGE.md:5121–5122, KEY-42/KEY-43
+- a thing definition's verb is always `has` — LANGUAGE.md:5332, KEY-77
 - every function definition begins with `To` and every value-returning
-  line with `Return` — LANGUAGE.md:5011–5012, KEY-08/KEY-09
+  line with `Return` — LANGUAGE.md:5051–5052, KEY-08/KEY-09
 - no generated variable is ever named with a reserved word —
-  LANGUAGE.md:5162, KEY-55/KEY-56/KEY-57 (but see Discrepancy 1: the true
+  LANGUAGE.md:5254, KEY-55/KEY-56/KEY-57 (but see Discrepancy 1: the true
   reserved set is narrower than the manual's, so this invariant is
   justified for the words that really are reserved and is merely
   *conservative* for the thirteen that are not)
@@ -590,3 +639,41 @@ I have not touched those ledgers — adjudicating another section's rows is
 not a mapping worker's job — but the buffers and values discrepancy lists
 should be re-run and, if the master agrees, closed before the lawyer
 spends any more time on them.
+
+### Addition, 2026-08-29: KEY-81, KEY-48–53 line corrections, D4 (0.4.14, #106)
+
+**One new row and two citation fixes.** Table now runs KEY-01 through
+KEY-81, **81 rows, 75 distinct claims with a retained probe** (KEY-81
+adds one probe, `KEY-81.vox`, without adding a new "compile-error
+claims" category — it joins KEY-51/KEY-52/KEY-55/KEY-56/KEY-57/KEY-59
+as a seventh not-assertable-by-a-leaf row). KEY-51 and KEY-52's `line`
+cells moved from `?` to `5160`, now pinned instead of unlocated; no
+other KEY-48–53 row needed a change — all four of the others (KEY-48,
+KEY-49, KEY-50, KEY-53) already cited the correct 0.4.14 line, landed
+correctly by the mechanical re-pin in `c7dd9eb` before this pass began.
+
+**Discrepancy 4 is marked resolved for its aliases-table half only.**
+The brief that requested this correction described D4 as simply
+"RESOLVED by vox #106 / 0.4.14"; hand-verification (re-running
+`D4.vox`, and reading the current Statement Starters table end to end)
+shows only half of it actually is. The aliases table is now
+machine-generated and exhaustive by construction (85 rows from the
+lexer's own const) — genuinely resolved. The Statement Starters table
+(LANGUAGE.md:5044–5067) is untouched by 0.4.14 and still omits `read`,
+`write`, `open`, `close`, `wait`, `input`, `standard`, `byte`, `each`,
+`elapsed`, `without`, `error`, `arguments`, `environment` — `D4.vox`
+reproduces identically. Recorded as "PARTIALLY RESOLVED" in the
+discrepancy's own heading rather than silently matching the brief's
+wording, per this document's own standing rule that a worker's surprise
+(or, here, a brief's assumption) is not evidence — the probe is. Flagged
+under "Questions for the master" in `REPORT-MAP-0414.md`.
+
+One more citation worth the master's attention, found while reading the
+current Statement Starters table for the check above: it now has its
+own `Free` row (LANGUAGE.md:5059) reading "Release a buffer **or
+list's** memory immediately" — the manual's *summary* table asserts the
+list-Free behavior even more directly than the "Releasing a Buffer"
+subsection's closing sentence does, which strengthens `buffers.md`
+Discrepancy 4 (list `Free` has no observable effect) rather than
+touching anything in this ledger; not acted on here since it is
+`buffers.md`'s row, not a KEY row, but worth the cross-reference.

@@ -1,0 +1,32 @@
+(BUF-47: after `Free`, every write past the buffer — `append`, `Set
+ byte`, `copy`, `Set`, `Read ... into` — is refused with the error
+ flag, and execution continues.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-47.vox -o p && ./p
+ expected output:
+   append refused
+   setbyte refused
+   copy refused
+   set refused
+   read-into refused
+   0
+)
+a buffer called line is "hello".
+Free line.
+
+append "more" to line.
+On error print "append refused".
+
+Set byte 1 of line to 65.
+On error print "setbyte refused".
+
+copy "xyz" to line.
+On error print "copy refused".
+
+set line to "abc".
+On error print "set refused".
+
+open a file for reading called f at "docs/ledger/probes/buffers/fixtures/long.txt".
+Read from f into line.
+On error print "read-into refused".
+print line's size.
+Close f.

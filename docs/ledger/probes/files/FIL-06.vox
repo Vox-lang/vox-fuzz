@@ -1,0 +1,40 @@
+(FIL-06: accessed is a Unix timestamp Number.
+ Also covers: FIL-05 (modified, the same shape).
+ Both bounded on both sides: not less than 1 (never 0/negative), and
+ never after `current time's unix` - the manual DOES give a clock
+ (LANGUAGE.md 4503-4552, "Getting Current Time" / "Inline Time Access"),
+ so "not in the future relative to now" is assertable exactly, not just
+ as a wide fixed floor. `current time's unix` used inline inside an If
+ condition, not stored first - verified to work the same as the
+ documented inline Print form.
+ On SUCCESS this prints a fixed marker, "FIL-0N in range", never the raw
+ timestamp: a first version of this leaf printed the observed value the
+ way every other assertion helper here does, and a live campaign (200
+ programs, seed 5001) caught it as a `nondeterministic` finding within
+ 20 programs - not a compiler bug, but this program's own file's mtime
+ legitimately ticking a wall-clock second between the oracle's two
+ back-to-back runs of the identical binary. The bound-vs-subject checks
+ are exactly as strict either way; only what prints on success changed
+ (the same tradeoff 'gen leaf timer and clock' already makes, src/
+ gen_misc.vox, for the same reason).
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-06.vox -o p && ./p (twice, back to back)
+ actual output (both runs, identical - the point of the fix):
+   FIL-05 in range
+   FIL-06 in range
+ Then with the accessed lower-bound line changed to `is less than
+ 9999999999` (a deliberately wrong expectation, since a real epoch
+ timestamp today is far below ten billion), to prove a failing
+ assertion is classified correctly:
+   FIL-05 in range
+   ASSERT FIL-06: expected at least 9999999999 got 1787989903
+ exit code 95.
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the drawer' at "vf_scratch/files/fil06.txt".
+Write "seed" to 'the drawer'.
+If 'the drawer's modified is less than 1 then, Print "ASSERT FIL-05: expected at least 1 got {'the drawer's modified}", Exit 95. If 'the drawer's modified is greater than current time's unix then, Print "ASSERT FIL-05: expected at most {current time's unix} got {'the drawer's modified}", Exit 95. Print "FIL-05 in range".
+If 'the drawer's accessed is less than 1 then, Print "ASSERT FIL-06: expected at least 1 got {'the drawer's accessed}", Exit 95. If 'the drawer's accessed is greater than current time's unix then, Print "ASSERT FIL-06: expected at most {current time's unix} got {'the drawer's accessed}", Exit 95. Print "FIL-06 in range".
+Close 'the drawer'.

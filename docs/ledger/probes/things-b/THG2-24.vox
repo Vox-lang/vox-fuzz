@@ -1,6 +1,6 @@
 (THG2-24: a declared member that nothing defines errors at the TYPE, where the
  promise was made, and spells out the definition to write.
- LANGUAGE.md:1492-1500, verbatim.
+ LANGUAGE.md:1502-1510, verbatim.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG2-24.vox -o p && ./p
  expected output:
    error: point declares 'never written' but nothing defines it

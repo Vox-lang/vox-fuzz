@@ -1,5 +1,5 @@
 (ARG-13 — `the argument at the <number variable>` reads an argument by a
- computed index (LANGUAGE.md:4724-4729). The manual's own example uses
+ computed index (LANGUAGE.md:4764-4769). The manual's own example uses
  index 2 and calls the result the second user argument, which is what
  index 2 returns here.
  Also covers: ARG-44 — the indexing is over argv, not over the user

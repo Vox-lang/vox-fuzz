@@ -1,4 +1,4 @@
-(Discrepancy 9: LANGUAGE.md:686 gives the bare-identifier set as
+(Discrepancy 9: LANGUAGE.md:693 gives the bare-identifier set as
  [A-Za-z_][A-Za-z0-9_]*, which admits a leading underscore. The compiler
  rejects one, reserving it for the runtime. Underscores elsewhere in the name
  are fine (VAR-53), so only the leading position disagrees.

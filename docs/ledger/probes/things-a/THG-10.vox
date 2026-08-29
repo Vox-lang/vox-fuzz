@@ -1,5 +1,5 @@
 (THG-10: a field default is a LITERAL - anything computed is refused.
- LANGUAGE.md:928-929 writes the default as `is <literal>`; the compiler
+ LANGUAGE.md:935-936 writes the default as `is <literal>`; the compiler
  enforces exactly that.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-10.vox -o p && ./p
  expected output:

@@ -40,7 +40,7 @@ To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
 
 (--- The ledger's buffer leaves, batch A ------------------------------
 
- docs/ledger/buffers.md maps LANGUAGE.md:3490-3761 into numbered claims;
+ docs/ledger/buffers.md maps LANGUAGE.md:3515-3801 into numbered claims;
  everything below puts one of those claims on trial and ASSERTS its
  documented result, so a wrong answer is a finding rather than a line of
  output nobody reads. A failing assertion prints
@@ -70,7 +70,7 @@ To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
  There were thirty. `the parcel` was removed on 2026-08-21: it was also
  in 'the value nouns' (gen_collections.vox), and both pools declare
  TOP-LEVEL names, which share one global identifier space
- (LANGUAGE.md:1678, "Type names, variable names, and function names
+ (LANGUAGE.md:1688, "Type names, variable names, and function names
  share a single global identifier namespace"). A seed that drew it for a
  buffer and for a `value` in the same program wrote the name twice and
  did not compile - a rare, seed-dependent failure that looked like
@@ -106,8 +106,9 @@ To 'gen buffer names reset'.
         append 0 to gen_buffer_word_taken,
         Set 'the word position' to 'the word position' add 1.
 
-(Does this name have to be quoted where it is written? LANGUAGE.md:753
- requires the single quotes only when the name contains a space.)
+(Does this name have to be quoted where it is written? LANGUAGE.md:760
+ requires the single quotes when the name contains a space; as of 0.4.15
+ (#110) a single word may also be quoted, but need not be.)
 
 To 'gen name is one word' with a text called 'the name'.
     clear 'the one-word check view'.
@@ -205,7 +206,7 @@ To 'gen buffer companion' with a text called role.
     a text called 'the companion' is "'{gen_buffer_last_word} {role}'".
     Return a text, 'the companion'.
 
-(Capacities. LANGUAGE.md:3320-3322 fixes only that the capacity IS the
+(Capacities. LANGUAGE.md:3345-3347 fixes only that the capacity IS the
  number written; it says nothing about which numbers may be written, so
  a leaf with a favourite size would be inventing a rule. The named
  values are the boundaries worth landing on deliberately - both sides of
@@ -237,8 +238,8 @@ To 'gen buffer size'.
     Return a number, 'the wide size'.
 
 (BUF-01/BUF-05: the three spellings that declare a buffer of a stated
- capacity. `is N bytes in size` is LANGUAGE.md:3320; `Create ... with
- size N` is the worked example at LANGUAGE.md:3518; `is N bytes` is the
+ capacity. `is N bytes in size` is LANGUAGE.md:3345; `Create ... with
+ size N` is the worked example at LANGUAGE.md:3543; `is N bytes` is the
  spelling the compiler's own no-size warning recommends, and it compiles
  - hand-verified, all three, capacity exactly N. Nothing says one of
  them is canonical, so all three are drawn.)
@@ -252,8 +253,8 @@ To 'gen buffer declaration' with a text called 'the name' and a number called 't
     Return a text, "Create a buffer called {'the name'} with size {'the size'}".
 
 (BUF-01: the other declaration form, with no size at all. Both spellings
- the manual gives - LANGUAGE.md:3490 and the bare `Create` at
- LANGUAGE.md:530, whose annotation now reads "starts with 4096 bytes of capacity, size 0" (vox #93).
+ the manual gives - LANGUAGE.md:3515 and the bare `Create` at
+ LANGUAGE.md:537, whose annotation now reads "starts with 4096 bytes of capacity, size 0" (vox #93).
  The compiler prints a no-size warning for either; a warning is not a
  compile failure and the program runs.)
 
@@ -361,15 +362,15 @@ To 'gen buffer interlude'.
 (BUF-01, BUF-05: the two declaration forms, and the capacity a stated
  size actually buys.
 
- BUF-01 (LANGUAGE.md:3490-3516) says buffers come in two forms, dynamic
+ BUF-01 (LANGUAGE.md:3515-3541) says buffers come in two forms, dynamic
  and fixed. Both are emitted, drawn per buffer, and both are asserted to
- hold nothing yet: LANGUAGE.md:530 annotates the bare `Create` form as
+ hold nothing yet: LANGUAGE.md:537 annotates the bare `Create` form as
  "0 bytes", and a stated capacity is capacity, not content - the fixed
  form starts empty too, hand-verified for all three sized spellings.
  That assertion sits immediately after the declaration, which is the
  only thing about this leaf's ordering that is pinned.
 
- BUF-05 (LANGUAGE.md:3320-3322) says the stated size is allocated
+ BUF-05 (LANGUAGE.md:3345-3347) says the stated size is allocated
  exactly. Asserted against the number the generator wrote, over sizes
  from one byte to seventy thousand - see 'gen buffer size' for why the
  range is not narrower.
@@ -421,16 +422,16 @@ To 'gen leaf buffer declaration' with a text called indent and a boolean called 
  properties report, before and after a write whose length the generator
  chose.
 
- BUF-10 (LANGUAGE.md:3416, 3420): size is bytes stored, capacity is
+ BUF-10 (LANGUAGE.md:3441, 3445): size is bytes stored, capacity is
  bytes holdable. The payload is built to a known length, so both are
  numbers the generator can assert outright.
 
- BUF-11 (LANGUAGE.md:3417): length is the same as size. Asserted twice -
+ BUF-11 (LANGUAGE.md:3442): length is the same as size. Asserted twice -
  against the literal the generator expects, and against `size` itself,
  because a synonym that agreed with the literal while disagreeing with
  its own twin would be a stranger bug and is worth catching separately.
 
- BUF-12 (LANGUAGE.md:3584): empty is true exactly while size is 0.
+ BUF-12 (LANGUAGE.md:3609): empty is true exactly while size is 0.
  Asserted before and after the append. Note this is the PROPERTY
  `X's empty`, not the `is empty` predicate 'gen leaf stdin read'
  already emits - different construct, different code path, and the
@@ -472,7 +473,7 @@ To 'gen leaf buffer properties' with a text called indent and a boolean called n
 
 (BUF-13: full is true exactly when size equals capacity.
 
- LANGUAGE.md:3585 states it "for fixed buffers", so a fixed buffer is
+ LANGUAGE.md:3610 states it "for fixed buffers", so a fixed buffer is
  what gets asserted: the appends are sized to reach the capacity exactly,
  in one to three pieces, and `full` is asserted false after every piece
  but the last and true after it.
@@ -548,7 +549,7 @@ To 'gen leaf buffer fullness' with a text called indent and a boolean called nes
 
 (BUF-03: a dynamic buffer grows without bound.
 
- LANGUAGE.md:3501 promises no overflow and automatic growth; the
+ LANGUAGE.md:3526 promises no overflow and automatic growth; the
  ledger's own probe found the buffer starts with a 4096-byte reserve
  rather than the zero capacity the manual claims (Discrepancy 1, still
  open), so the interesting question is what happens PAST that reserve.
@@ -612,7 +613,7 @@ To 'gen leaf buffer growth' with a text called indent and a boolean called neste
 (BUF-07: a program can tell it was truncated by looking at the size
  afterwards.
 
- LANGUAGE.md:3516 is the claim, and its Features list is the
+ LANGUAGE.md:3541 is the claim, and its Features list is the
  behaviour behind it: a read into a fixed buffer that fills up stops,
  sets the error flag, discards the rest, and carries on. The generator
  writes a payload it sized itself, reads it back into a buffer it made
@@ -671,4 +672,323 @@ To 'gen leaf buffer truncation' with a text called indent and a boolean called n
     a text called 'the capacity check' is 'gen assert number matches' of "BUF-07" and 'the size access' and 'the capacity access'.
     a text called 'the closing read' is "Print {'the size access'}".
     a list called 'the lines' is ['the path line', 'the open write', 'the write line', 'the close write', 'the open read', 'the declaration', 'the flag declaration', 'the read line', 'the handler line', 'the close read', 'the size check', 'the capacity check', 'the closing read'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's buffer leaves, night of 2026-08-28 -------------------
+
+ This batch covers docs/ledger/buffers.md rows BUF-06, BUF-11, BUF-15,
+ BUF-16, BUF-17, BUF-29, BUF-30 and BUF-33 (PROCEDURE.md 6: one batch,
+ at most eight rows). BUF-11 is not a fresh row: the earlier batch above
+ already asserts `X's length is X's size`, but only ever right after an
+ append (see 'gen leaf buffer properties'). That is a sameness CLAUDE.md
+ would flag once the invariant report saw enough programs - the row's
+ own wording lists append, set byte and clear as the mutations to draw
+ between, so 'gen leaf buffer length synonym' below adds the missing
+ randomness instead of asserting the same append case a second time.
+
+ Every claim here was hand-run against the installed vox v0.4.14 before
+ being encoded; the probes and their output are in
+ REPORT-LEAVES-BUFFERS-A.md.)
+
+(A text/buffer equality assertion. 'the expected' is embedded as a
+ quoted literal rather than read back from anywhere, because every
+ caller below builds it from 'gen buffer filler', whose own alphabet is
+ letters and digits only - nothing that would need escaping inside the
+ literal or inside the failure message.
+
+ 'the subject' is read into 'the holder' BEFORE the check, and the
+ failure message shows the holder, never the subject directly - hand-
+ verified against 0.4.14 that a one-word buffer drawn in its quoted
+ spelling ('toolbox', not toolbox - see 'gen buffer name') compiles fine
+ as a bare reference (`Print 'toolbox'.`) but not inside a `{...}`
+ format slot (`Print "{'toolbox'}".` fails to compile: Unknown variable
+ 'toolbox'), while neither the bare spelling nor a multi-word quoted
+ name ('the inbox') has the problem. 'the holder' comes from 'gen
+ buffer companion', which is always multi-word, so it is always safe to
+ interpolate; the comparison itself still runs directly against 'the
+ subject', which is a plain (unbraced) reference and unaffected. Candidate
+ recorded in the batch report - this is the compiler doing something
+ surprising, not a rule this leaf gets to adjudicate.
+
+ Two statements, not one: the capture must be its own line so it runs
+ before the check reads it, so this returns a two-element list rather
+ than the single line 'gen assert true'/'gen assert false' return -
+ callers append both elements to their own 'the lines' in order.)
+
+To 'gen assert text is' with a text called 'the row' and a text called 'the subject' and a text called 'the holder' and a text called 'the expected'.
+    a text called 'the capture line' is "a text called {'the holder'} is {'the subject'} as text".
+    a text called 'the got shown' is 'gen buffer slot of' of 'the holder'.
+    a text called 'the line' is "If {'the subject'} is not \"{'the expected'}\" then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the got shown'}\", Exit 95. Print {'the subject'}".
+    a list called 'the pair' is ['the capture line', 'the line'].
+    Return a list, 'the pair'.
+
+(BUF-15: `resize`, `reallocate`, `grow`, `shrink` are one operation under
+ four names - LANGUAGE.md:3634 lists them with no claim that any one is
+ tied to a direction, and hand-verification confirms it: `grow` shrinks
+ a buffer just as readily as `shrink` grows one, both taking effect
+ exactly like `resize` would. The trailing "bytes" is optional either
+ way - LANGUAGE.md's own two examples at the Buffer Resizing heading
+ differ only in whether they write it, so that is drawn too.)
+
+To 'gen buffer resize statement' with a text called 'the name' and a number called 'the new capacity'.
+    a number called 'the keyword draw' is 'rng below' of 4.
+    a text called 'the keyword' is "resize".
+    If 'the keyword draw' is 1 then,
+        Set 'the keyword' to "reallocate".
+    If 'the keyword draw' is 2 then,
+        Set 'the keyword' to "grow".
+    If 'the keyword draw' is 3 then,
+        Set 'the keyword' to "shrink".
+    a number called 'the units draw' is 'rng below' of 2.
+    a text called 'the units' is "".
+    If 'the units draw' is 0 then,
+        Set 'the units' to " bytes".
+    a text called 'the line' is "{'the keyword'} {'the name'} to {'the new capacity'}{'the units'}".
+    Return a text, 'the line'.
+
+(BUF-06: a fixed buffer does not grow - LANGUAGE.md:3541 says a write
+ past capacity is truncated AT capacity, with the error flag set. The
+ payload is built as two independently-drawn pieces: 'the fitting part'
+ sized to exactly the buffer's capacity, and 'the spilling part' the
+ random overshoot, concatenated once for the append. That keeps 'the
+ fitting part' an INDEPENDENT expected value rather than one derived by
+ re-truncating the same string the leaf is trying to verify was
+ truncated - the same reasoning 'gen leaf buffer resize' below uses for
+ BUF-17. Hand-verified against 0.4.14: the append truncates to exactly
+ the capacity and raises the error flag, whether the buffer started
+ empty or already held a shorter prefix (docs/ledger/probes/buffers/,
+ this batch's report); the empty-start case is what is emitted, so
+ content = 'the fitting part' exactly.
+
+ The stale-error handler fires first and asserts nothing: On error
+ consumes whatever an EARLIER, unrelated statement left pending (the
+ lesson 'gen leaf buffer growth' above already paid for - see its own
+ comment), so the overflow flag this leaf checks was raised by ITS OWN
+ append, not leftover state from three leaves ago.)
+
+To 'gen leaf buffer fixed overflow' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the overflow flag' is 'gen buffer companion' of "overflowed".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the content holder' is 'gen buffer companion' of "captured content".
+    a number called 'the capacity draw' is 'rng below' of 56.
+    a number called 'the capacity' is 'the capacity draw' add 8.
+    a number called 'the overshoot draw' is 'rng below' of 200.
+    a number called 'the overshoot' is 'the overshoot draw' add 1.
+    a text called 'the fitting part' is 'gen buffer filler' of 'the capacity'.
+    a text called 'the spilling part' is 'gen buffer filler' of 'the overshoot'.
+    a text called 'the payload' is "{'the fitting part'}{'the spilling part'}".
+    a text called 'the declaration' is 'gen buffer declaration' of 'the name' and 'the capacity'.
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the flag declaration' is "a boolean called {'the overflow flag'} is false".
+    a text called 'the append line' is "append \"{'the payload'}\" to {'the name'}".
+    a text called 'the handler line' is "On error Set {'the overflow flag'} to true".
+    a text called 'the flag check' is 'gen assert true' of "BUF-06" and 'the overflow flag'.
+    a text called 'the size check' is 'gen assert number is' of "BUF-06" and 'the size access' and 'the capacity'.
+    a list called 'the content check pair' is 'gen assert text is' of "BUF-06" and 'the name' and 'the content holder' and 'the fitting part'.
+    a text called 'the content capture' is element 1 of 'the content check pair'.
+    a text called 'the content check' is element 2 of 'the content check pair'.
+    a list called 'the lines' is ['the declaration', 'the stale declaration', 'the stale handler', 'the flag declaration', 'the append line', 'the handler line', 'the flag check', 'the size check', 'the content capture', 'the content check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-15, BUF-16, BUF-17: one buffer, two resizes, both directions.
+
+ The buffer is built to hold 'the kept part' and 'the shed part'
+ concatenated, with capacity to spare (LANGUAGE.md:3634-3639). Step one
+ resizes to a capacity that can never be below the current data length
+ (old length plus a non-negative draw) - grow, or shrink-above-length,
+ the two branches BUF-16 groups together because the manual gives them
+ one rule: data preserved up to min(old_length, new_capacity), which is
+ all of it either way. Step two resizes down to exactly 'the kept
+ part's length - strictly below the current length as long as 'the shed
+ part' is at least one byte, which it always is - BUF-17's truncation.
+ 'the kept part' is never derived by truncating anything; it is drawn on
+ its own, so the truncation assertion has an oracle independent of the
+ resize it is checking.
+
+ Both resizes draw their own keyword and their own "bytes" independently
+ - BUF-15 twice over, not necessarily the same spelling both times.)
+
+To 'gen leaf buffer resize' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the capacity access' is 'gen buffer property' of 'the stem' and "capacity".
+    a text called 'the grown holder' is 'gen buffer companion' of "grown content".
+    a text called 'the shrunk holder' is 'gen buffer companion' of "shrunk content".
+    a number called 'the kept length draw' is 'rng below' of 40.
+    a number called 'the kept length' is 'the kept length draw' add 1.
+    a number called 'the shed length draw' is 'rng below' of 40.
+    a number called 'the shed length' is 'the shed length draw' add 1.
+    a text called 'the kept part' is 'gen buffer filler' of 'the kept length'.
+    a text called 'the shed part' is 'gen buffer filler' of 'the shed length'.
+    a text called 'the full payload' is "{'the kept part'}{'the shed part'}".
+    a number called 'the full length' is 'the kept length' add 'the shed length'.
+    a number called 'the slack draw' is 'rng below' of 30.
+    a number called 'the initial capacity' is 'the full length' add 'the slack draw'.
+    a text called 'the declaration' is 'gen buffer declaration' of 'the name' and 'the initial capacity'.
+    a text called 'the append line' is "append \"{'the full payload'}\" to {'the name'}".
+    a number called 'the grow extra draw' is 'rng below' of 100.
+    a number called 'the grown capacity' is 'the full length' add 'the grow extra draw'.
+    a text called 'the grow line' is 'gen buffer resize statement' of 'the name' and 'the grown capacity'.
+    a text called 'the grown capacity check' is 'gen assert number is' of "BUF-15" and 'the capacity access' and 'the grown capacity'.
+    a list called 'the grown content pair' is 'gen assert text is' of "BUF-16" and 'the name' and 'the grown holder' and 'the full payload'.
+    a text called 'the grown content capture' is element 1 of 'the grown content pair'.
+    a text called 'the grown content check' is element 2 of 'the grown content pair'.
+    a text called 'the shrink line' is 'gen buffer resize statement' of 'the name' and 'the kept length'.
+    a text called 'the shrunk capacity check' is 'gen assert number is' of "BUF-15" and 'the capacity access' and 'the kept length'.
+    a text called 'the shrunk size check' is 'gen assert number is' of "BUF-17" and 'the size access' and 'the kept length'.
+    a list called 'the shrunk content pair' is 'gen assert text is' of "BUF-17" and 'the name' and 'the shrunk holder' and 'the kept part'.
+    a text called 'the shrunk content capture' is element 1 of 'the shrunk content pair'.
+    a text called 'the shrunk content check' is element 2 of 'the shrunk content pair'.
+    a list called 'the lines' is ['the declaration', 'the append line', 'the grow line', 'the grown capacity check', 'the grown content capture', 'the grown content check', 'the shrink line', 'the shrunk capacity check', 'the shrunk size check', 'the shrunk content capture', 'the shrunk content check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-29, BUF-30: the write bound is capacity, the read bound is size,
+ and they disagree with each other - LANGUAGE.md:3746-3753 (added by vox
+ PR #189; see docs/ledger/buffers.md Discrepancy 3, resolved into the
+ manual text itself rather than left as an undocumented finding). One
+ buffer, one gap: appended to length 'the initial length', then written
+ at 'the write index' somewhere above length and up to capacity, which
+ the manual says succeeds and extends size to that index, zero-filling what it
+ skipped - then read at 'the read index', strictly above the NEW size
+ but still inside capacity, which the manual says errors even though the
+ allocation is there. The arithmetic keeps four bytes of slack between
+ the initial length and capacity so a write index and a strictly higher
+ read index both always exist inside it, with room to spare.
+
+ The stale-error handler is the same defensive pattern as the overflow
+ leaf above, for the same reason: without it, a pending error from
+ something three statements earlier in the program would masquerade as
+ this leaf's own finding.)
+
+To 'gen leaf buffer write read bounds' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the write error flag' is 'gen buffer companion' of "write errored".
+    a text called 'the read error flag' is 'gen buffer companion' of "gap read errored".
+    a text called 'the read result' is 'gen buffer companion' of "gap read".
+    a number called 'the capacity draw' is 'rng below' of 40.
+    a number called 'the capacity' is 'the capacity draw' add 12.
+    a number called 'the gap' is 'the capacity' minus 4.
+    a number called 'the initial length draw' is 'rng below' of 'the gap'.
+    a number called 'the initial length' is 'the initial length draw' add 1.
+    a number called 'the write headroom' is 'the capacity' minus 'the initial length' minus 2.
+    a number called 'the write index draw' is 'rng below' of 'the write headroom'.
+    a number called 'the write index' is 'the initial length' add 'the write index draw' add 1.
+    a number called 'the read headroom' is 'the capacity' minus 'the write index' minus 1.
+    a number called 'the read index draw' is 'rng below' of 'the read headroom'.
+    a number called 'the read index' is 'the write index' add 'the read index draw' add 1.
+    a number called 'the write value' is 'rng below' of 256.
+    a text called 'the payload' is 'gen buffer filler' of 'the initial length'.
+    a text called 'the declaration' is 'gen buffer declaration' of 'the name' and 'the capacity'.
+    a text called 'the append line' is "append \"{'the payload'}\" to {'the name'}".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the write flag declaration' is "a boolean called {'the write error flag'} is false".
+    a text called 'the write line' is "Set byte {'the write index'} of {'the name'} to {'the write value'}".
+    a text called 'the write handler' is "On error Set {'the write error flag'} to true".
+    a text called 'the write error check' is 'gen assert false' of "BUF-29" and 'the write error flag'.
+    a text called 'the write size check' is 'gen assert number is' of "BUF-29" and 'the size access' and 'the write index'.
+    a text called 'the read flag declaration' is "a boolean called {'the read error flag'} is false".
+    a text called 'the read line' is "a number called {'the read result'} is byte {'the read index'} of {'the name'}".
+    a text called 'the read handler' is "On error Set {'the read error flag'} to true".
+    a text called 'the read error check' is 'gen assert true' of "BUF-30" and 'the read error flag'.
+    a text called 'the read value check' is 'gen assert number is' of "BUF-30" and 'the read result' and 0.
+    a list called 'the lines' is ['the declaration', 'the append line', 'the stale declaration', 'the stale handler', 'the write flag declaration', 'the write line', 'the write handler', 'the write error check', 'the write size check', 'the read flag declaration', 'the read line', 'the read handler', 'the read error check', 'the read value check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-33: `clear` sets length to 0 and preserves capacity -
+ LANGUAGE.md:3779. Capacity is captured into a variable BEFORE the clear
+ and compared against ITSELF afterward rather than against a literal, so
+ this works unchanged whichever buffer form is drawn: a fixed buffer's
+ capacity is a number this leaf chose and could assert directly, but a
+ dynamic one's is not - docs/ledger/buffers.md Discrepancy 1 is an open
+ question about exactly what number that is, and this row has nothing to
+ do with settling it. Comparing the property to its own earlier reading
+ sidesteps the question entirely while still holding `clear` to the one
+ thing BUF-33 actually claims.)
+
+To 'gen leaf buffer clear' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the capacity access' is 'gen buffer property' of 'the stem' and "capacity".
+    a text called 'the capacity before' is 'gen buffer companion' of "capacity before clearing".
+    a number called 'the form draw' is 'rng below' of 4.
+    a text called 'the declaration' is "".
+    a number called 'the payload length' is 1.
+    If 'the form draw' is 0 then,
+        Set 'the declaration' to 'gen dynamic buffer declaration' of 'the name',
+        a number called 'the dynamic payload draw' is 'rng below' of 64,
+        Set 'the payload length' to 'the dynamic payload draw' add 1.
+    If 'the form draw' is not 0 then,
+        a number called 'the fixed capacity draw' is 'rng below' of 90,
+        a number called 'the fixed capacity' is 'the fixed capacity draw' add 4,
+        Set 'the declaration' to 'gen buffer declaration' of 'the name' and 'the fixed capacity',
+        a number called 'the fixed payload draw' is 'rng below' of 'the fixed capacity',
+        Set 'the payload length' to 'the fixed payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the append line' is "append \"{'the payload'}\" to {'the name'}".
+    a text called 'the capture line' is "a number called {'the capacity before'} is {'the capacity access'}".
+    a text called 'the clear line' is "clear {'the name'}".
+    a text called 'the size check' is 'gen assert number is' of "BUF-33" and 'the size access' and 0.
+    a text called 'the capacity check' is 'gen assert number matches' of "BUF-33" and 'the capacity access' and 'the capacity before'.
+    a list called 'the lines' is ['the declaration', 'the append line', 'the capture line', 'the clear line', 'the size check', 'the capacity check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-11 (LANGUAGE.md:3607), completing the earlier batch's coverage. The
+ earlier leaf ('gen leaf buffer properties') already asserts `X's
+ length is X's size` - but only ever right after an append, which is a
+ sameness the row's own wording does not license: it names append, set
+ byte and clear as the mutations to draw between, so a program where the
+ check ALWAYS follows an append is an undeclared rule hiding behind an
+ already-`exercised` row. This leaf draws the mutation instead of fixing
+ it, and does not care what length/size actually equal afterward - only
+ that they still agree, which is exactly the "assert agreement" pattern
+ PROCEDURE 6a already recommends, and it holds up whichever of the three
+ mutations lands.
+
+ The set-byte branch writes inside the CURRENT size on purpose - an
+ index at or past size would exercise BUF-29's write-extends-length
+ claim instead, a different row with its own leaf above, and conflating
+ the two would make a failure here ambiguous about which claim actually
+ broke.)
+
+To 'gen leaf buffer length synonym' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a number called 'the capacity draw' is 'rng below' of 56.
+    a number called 'the capacity' is 'the capacity draw' add 8.
+    a number called 'the length room' is 'the capacity' minus 4.
+    a number called 'the initial length draw' is 'rng below' of 'the length room'.
+    a number called 'the initial length' is 'the initial length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the initial length'.
+    a text called 'the declaration' is 'gen buffer declaration' of 'the name' and 'the capacity'.
+    a text called 'the append line' is "append \"{'the payload'}\" to {'the name'}".
+    a text called 'the first check' is 'gen assert number matches' of "BUF-11" and 'the length access' and 'the size access'.
+    a number called 'the mutation draw' is 'rng below' of 3.
+    a text called 'the mutation line' is "".
+    If 'the mutation draw' is 0 then,
+        a number called 'the extra room' is 'the capacity' minus 'the initial length',
+        a number called 'the extra draw' is 'rng below' of 'the extra room',
+        a number called 'the extra length' is 'the extra draw' add 1,
+        a text called 'the extra part' is 'gen buffer filler' of 'the extra length',
+        Set 'the mutation line' to "append \"{'the extra part'}\" to {'the name'}".
+    If 'the mutation draw' is 1 then,
+        a number called 'the byte index draw' is 'rng below' of 'the initial length',
+        a number called 'the byte index' is 'the byte index draw' add 1,
+        a number called 'the byte value' is 'rng below' of 256,
+        Set 'the mutation line' to "Set byte {'the byte index'} of {'the name'} to {'the byte value'}".
+    If 'the mutation draw' is 2 then,
+        Set 'the mutation line' to "clear {'the name'}".
+    a text called 'the second check' is 'gen assert number matches' of "BUF-11" and 'the length access' and 'the size access'.
+    a list called 'the lines' is ['the declaration', 'the append line', 'the first check', 'the mutation line', 'the second check'].
     'gen join lines' of indent and nested and 'the lines'.

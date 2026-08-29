@@ -1,7 +1,7 @@
 (LST2-13 — RESOLVED, 2026-08-22, vox #68. On 0.4.9 and earlier the
  *expression* form of {...} interpolation did not dispatch on a nested
  element's runtime tag; only the *variable* form did. As of 0.4.10 both
- forms dispatch on the runtime tag in every sink (LANGUAGE.md:2942-2946).
+ forms dispatch on the runtime tag in every sink (LANGUAGE.md:2967-2971).
  Written as verdict lines rather than raw prints, kept from the original
  probe, though the hazard that motivated it (a live heap address that
  changed every run) is gone — see Discrepancy 7.

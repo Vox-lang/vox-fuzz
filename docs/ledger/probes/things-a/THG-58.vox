@@ -2,7 +2,7 @@
  cannot reach the caller's point.
  Also covers: THG-59 (the only way out is the `Return`, which copies into
  the caller's own storage), THG-60 (a thing as a parameter type), THG-61 (a
- thing as a return type), THG-62 (the nudged example, LANGUAGE.md:1167-1180,
+ thing as a return type), THG-62 (the nudged example, LANGUAGE.md:1175-1190,
  verbatim - 0 then 1), THG-63 (`The after is nudged of before.` declares
  `after` from what the call returns, so the type is never written twice).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-58.vox -o p && ./p

@@ -1,0 +1,31 @@
+(FIL-40: appending adds to the end of an existing file.
+ Write N bytes, close, reopen for appending, write M bytes, close,
+ reopen for reading: size is N+M throughout, checked on the live open
+ handle each time (a property read AFTER Close reports -1, not the true
+ value - discovered by hand while building this probe, see the note in
+ REPORT-LEAVES-FILES-B.md).
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-40.vox -o p && ./p
+ actual output:
+   5
+   9
+   9
+ Then with the final check changed to `is not 10` (a deliberately wrong
+ expectation), to prove a failing assertion is classified correctly:
+   ASSERT FIL-40: expected 10 got 9
+ exit code 95.
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the loading bay' at "vf_scratch/files/fil40.txt".
+Write "abcde" to 'the loading bay'.
+If 'the loading bay's size is not 5 then, Print "ASSERT FIL-40: expected 5 got {'the loading bay's size}", Exit 95. Print 'the loading bay's size.
+Close 'the loading bay'.
+open a file for appending called 'the loading bay' at "vf_scratch/files/fil40.txt".
+Write "wxyz" to 'the loading bay'.
+If 'the loading bay's size is not 9 then, Print "ASSERT FIL-40: expected 9 got {'the loading bay's size}", Exit 95. Print 'the loading bay's size.
+Close 'the loading bay'.
+open a file for reading called 'the loading bay' at "vf_scratch/files/fil40.txt".
+If 'the loading bay's size is not 9 then, Print "ASSERT FIL-40: expected 9 got {'the loading bay's size}", Exit 95. Print 'the loading bay's size.
+Close 'the loading bay'.

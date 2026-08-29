@@ -1125,3 +1125,86 @@ above closes the hazard class regardless of which it turns out to be:
 even if the true trigger is still out there, the generator can no
 longer emit a path built on an unbound scratch name, and the new tests
 would catch a regression in the binding itself.
+
+## Defect 18 — `'gen leaf cast and break'` leaves its `For each` open, so every later statement nests inside the loop (found by the things batch A campaign, 2026-08-29)
+
+`'gen leaf cast and break'` (`src/gen_misc.vox`) ends its loop with
+
+```
+For each ce4 from 1 to 24,
+    a number called cs4 is ce4 multiply 2,
+    If cs4 is greater than 24 then, Break.
+```
+
+One period closes one level (LANGUAGE.md:154 — "A period closes the most
+recently opened clause … and only that one"), so that period closes the
+`If` and leaves the `For each` open. Everything the generator emits after
+the leaf, at whatever level the leaf sat, is inside that loop:
+
+- an ordinary statement runs once per remaining iteration instead of
+  once — `Break` fires only when `cs > ceiling`, i.e. after about half the
+  iterations, so the tail of the program is executed ~`ceiling / 2` times
+  (the ceiling is drawn), silently; a wrong-value or hang finding from
+  such a program is an artifact of the generator's own punctuation;
+- a top-level-only construct emitted next — a thing definition or a
+  function definition, which the things batch A leaves emit at top level —
+  is now inside a loop body and the program does not compile ("A thing is
+  defined at the top level, like a function … Move the definition above
+  the block it is written in", things batch A campaign seed 5159); the
+  runner buckets a plain compile error as a generator defect, not a
+  finding, so the campaign reported `compiled: 199 findings: 0` and the
+  loss was only visible in the count.
+
+LANGUAGE.md:769 states the fix in the sentence right after that very
+diagnostic: "A period stacks with the one that closes the `if` to close
+the `For each` too, in the same step: `Break..` compiles and runs exactly
+like a blank line ahead of the `To`". The guard line becomes
+`If cs{n} is greater than {'the ceiling'} then, Break..` — one character.
+
+Reach: in the 200-program `main` baseline corpus for this merge
+(`--seed 20260829 --count 200 --layout plain`), the leaf appears at top
+level in **22 of 200 programs (11%)** — kind 35 is top-level-only — each of
+which ran its whole tail inside the loop (`evidence/2026-08-29-leaves-merge/`).
+
+**Status:** fixed in the leaves merge of 2026-08-29 (one character in
+`src/gen_misc.vox`); no golden pinned the faulty shape, so only
+`tests/040_gen.expected` moved, and that file was regenerated for the
+merged draw anyway. A unit row proving the closed clause (a `230_units`
+trial: the statement after the leaf is emitted at the leaf's own level)
+is owed by the misc sweep — the same sweep that owns the open-clause
+review of the rest of `gen_misc.vox`.
+
+## Defect 19 — counter-suffixed instance names (`i<N>`, `l<N>`) and the manifest's small word pools show up as fixed-vocabulary invariants (found by the leaves merge diff, 2026-08-29) — OPEN, tracked
+
+The merged 200-program campaign for the 2026-08-28 leaf batches, diffed by
+finding key against the same-seed `main` baseline, crossed the report's
+50 % line on identifiers no ledger can justify because LANGUAGE.md pins
+none of them:
+
+- `i1` (63 % after the night's four batches; 77 % with things-b, which also lifts `i2` to 59 % and the call-result names `c<gen_args>` — `c1` — to 51 %): every generated thing instance is named `i<gen_instances>`
+  (things surface convention, `gen_things.vox`); the six new things leaves
+  emit instances too, so the share rose above the threshold. Every list
+  the collections surface declares is `l<gen_lists>` the same way, and the
+  flow surface's FLW-21 leaf inherited it. Both shapes are the banned
+  letter-plus-counter names of `vox/docs/STYLE.md` and read badly in the
+  emitted programs.
+- `bearing` (53 %), `run` (52 %): words from the manifest's type/field/
+  function pools (`gen_type_words` / `gen_field_words` /
+  `gen_function_words`, `gen_manifest.vox`); the pools are small enough
+  that with more definitions per program a given word is in more than
+  half the corpus. Baseline shares were 46 % / 46 %; nothing new is
+  emitted, the pools are simply too small for the number of names now
+  drawn from them.
+
+None of these is a template a leaf asserts; they are naming, and the fix
+is the same in each case: draw the name from a vocabulary large enough
+that no single word crosses the threshold (the buffers/files leaves'
+`'gen buffer name'` pool is the working precedent), and widen the manifest
+pools. That is a whole-surface change with its own golden regenerations
+(things: 300-series thing goldens, 350; collections; flow 360; 040), so it
+is queued as one brief rather than patched per batch.
+
+**Status:** open. Not introduced by the 2026-08-28 batches — they raised
+existing shapes over the line — but recorded here because §8 says an
+invariant no ledger justifies is a defect until the generator stops
+producing it.

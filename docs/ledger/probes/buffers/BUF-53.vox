@@ -1,0 +1,27 @@
+(BUF-53: the "Per-iteration use" worked example (LANGUAGE.md:3685-3697)
+ — declaring a buffer inside a loop body and `Free`ing it at the end of
+ each iteration — compiles and runs without crashing. The manual's own
+ fragment omits the `total_lines`/`source` declarations (a `vox
+ fragment`, not a complete program, same convention as other fragments
+ in this manual); supplied here so it compiles. "Keeps memory flat" is
+ an implementation-detail consequence, not observable from inside Vox —
+ see the ledger row's `assertable?` note. `Read line from source into
+ line` past EOF (the fixture is one line long) reads empty and does not
+ error, so the loop runs to completion without an `On error` guard.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-53.vox -o p && ./p
+ expected output:
+   This is a longer line of text than the buffer.
+
+   loop finished
+)
+open a file for reading called source at "docs/ledger/probes/buffers/fixtures/long.txt".
+a number called total_lines is 2.
+a number called n is 0.
+While n is less than total_lines,
+    a buffer called line is 4096 bytes in size,
+    Read line from source into line,
+    print line as text,
+    Free line,
+    increment n.
+Close source.
+print "loop finished".

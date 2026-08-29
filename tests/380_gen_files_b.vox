@@ -1,0 +1,126 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's file leaves, batch B - docs/ledger/files.md rows FIL-01,
+ FIL-02, FIL-03, FIL-04, FIL-05, FIL-06, FIL-07, FIL-40, FIL-46.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself -
+ the same shape as 300_gen_buffers_a.vox. Emitted twice per leaf: at
+ the true top level (nested false) and inside a block (nested true),
+ the two ways 'gen join lines' can render a line.
+
+ These leaves write a file, which interpolates the scratch flag's name -
+ a live program gets that from its manifest; this test names one
+ itself, the same as 300_gen_buffers_a.vox does.)
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- FIL-01: size is live, 0 before a write and the byte count after ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file size' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file size' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-02: descriptor is a Number, at least 3 ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file descriptor' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-03, FIL-04: readable/writable per drawn mode - reading ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file readable writable' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-03, FIL-04: writing ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file readable writable' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-03, FIL-04: appending ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file readable writable' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-05, FIL-06: modified/accessed, bounded both sides ---".
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file times' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-07: permissions is 420 on a fresh file ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file permissions' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-40: appending adds to the end, size is N+M ---".
+'rng seed' of 15.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-46: Read line replaces, not appends ---".
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line replaces' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-46, nested ---".
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line replaces' of "  " and true.
+Print 'gen text'.
+
+(A program that never committed to file I/O was never given a path, so
+ every leaf above must stand aside for the plain-print leaf instead of
+ inventing one - the same guarantee 'gen leaf buffer truncation' gives
+ in 300_gen_buffers_a.vox.)
+Print "--- every leaf above with no file I/O committed ---".
+Set gen_does_file_io to false.
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file size' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 15.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line replaces' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+Set gen_does_file_io to true.

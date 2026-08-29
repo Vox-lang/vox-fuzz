@@ -1,0 +1,87 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+
+(The ledger's control-flow leaves, batch A - docs/ledger/control-flow.md
+ rows FLW-05, FLW-07, FLW-21, FLW-28, FLW-41.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself - the
+ same reason 300_gen_buffers_a does it this way: these leaves exist to
+ emit assertions, and an assertion whose rendered text drifts is an
+ assertion nobody is reading. All five leaves are TOP-LEVEL ONLY (see
+ each one's own comment in src/gen_flow.vox), so every call here passes
+ indent "" and nested false - the only position they are ever actually
+ drawn in.
+
+ FLW-07 is called at two seeds specifically because its whole claim is
+ that BOTH branches are reachable and each is asserted correctly - one
+ seed alone would only show one side. The counters are reset before
+ every call so the golden's names stay small and stable across
+ unrelated test edits; the LAST block below deliberately does not reset
+ between two calls, to prove two draws of the same leaf in one program
+ never collide on a name.)
+
+Print "--- FLW-05: comma-separated actions in the Otherwise arm ---".
+'rng seed' of 2.
+Set gen_flow_branches to 0.
+clear gen_out.
+'gen leaf if comma actions otherwise' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-07: Otherwise on its own line after the period, THEN arm wins ---".
+'rng seed' of 1.
+Set gen_flow_chains to 0.
+clear gen_out.
+'gen leaf if otherwise across newline' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-07 again, a seed where the OTHERWISE arm wins instead ---".
+'rng seed' of 4.
+Set gen_flow_chains to 0.
+clear gen_out.
+'gen leaf if otherwise across newline' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-21: the list form of For each over an empty list ---".
+'rng seed' of 1.
+Set gen_lists to 0.
+Set gen_flow_empties to 0.
+clear gen_out.
+'gen leaf empty list loop' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-28: a Repeat nested in a For each, closed by stacked periods ---".
+'rng seed' of 1.
+Set gen_flow_stacks to 0.
+clear gen_out.
+'gen leaf stacked periods' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-41: terminate, lower case ---".
+'rng seed' of 1.
+clear gen_out.
+'gen leaf terminate' of "" and false.
+Print 'gen text'.
+
+Print "--- FLW-41 again, upper case ---".
+'rng seed' of 8.
+clear gen_out.
+'gen leaf terminate' of "" and false.
+Print 'gen text'.
+
+Print "--- two FLW-05 draws in one program never collide on a name ---".
+'rng seed' of 1.
+Set gen_flow_branches to 0.
+clear gen_out.
+'gen leaf if comma actions otherwise' of "" and false.
+'gen leaf if comma actions otherwise' of "" and false.
+Print 'gen text'.

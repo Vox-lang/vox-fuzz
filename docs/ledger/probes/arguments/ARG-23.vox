@@ -1,6 +1,6 @@
 (ARG-23 — a flag with no `with default` that is not passed holds its
  type's empty value: "" for a text, 0 for a number, false for a boolean
- (LANGUAGE.md:4762-4763).
+ (LANGUAGE.md:4802-4803).
  Also covers: ARG-24 — an unsupplied text flag is safe to READ (this is
  compiler bug #31's crash site before 0.4.6) and answers `is empty`
  correctly, which is compiler bug #33's shape.

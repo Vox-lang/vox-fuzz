@@ -1,0 +1,134 @@
+--- BUF-06: append past a fixed buffer's capacity truncates at capacity ---
+a buffer called cupboard is 25 bytes.
+a boolean called 'cupboard found an error already pending' is false.
+On error Set 'cupboard found an error already pending' to true.
+a boolean called 'cupboard overflowed' is false.
+append "y6p8h43e9dzjrnrst5mbcxielsxvvorkec7tegz47yqesry1br8l1yb2fwk4k9h8hevfcd15ip3er8c8aav1neoqx8uysfot5a4vr75as7kp7z9fruwzef4g8znl8gs2h58y" to cupboard.
+On error Set 'cupboard overflowed' to true.
+If 'cupboard overflowed' is false then, Print "ASSERT BUF-06: expected 1 got {'cupboard overflowed'}", Exit 95. Print 'cupboard overflowed'.
+If cupboard's size is not 25 then, Print "ASSERT BUF-06: expected 25 got {cupboard's size}", Exit 95. Print cupboard's size.
+a text called 'cupboard captured content' is cupboard as text.
+If cupboard is not "y6p8h43e9dzjrnrst5mbcxiel" then, Print "ASSERT BUF-06: expected y6p8h43e9dzjrnrst5mbcxiel got {'cupboard captured content'}", Exit 95. Print cupboard.
+
+--- the same leaf, nested ---
+  a buffer called cupboard is 25 bytes,
+  a boolean called 'cupboard found an error already pending' is false,
+  On error Set 'cupboard found an error already pending' to true,
+  a boolean called 'cupboard overflowed' is false,
+  append "y6p8h43e9dzjrnrst5mbcxielsxvvorkec7tegz47yqesry1br8l1yb2fwk4k9h8hevfcd15ip3er8c8aav1neoqx8uysfot5a4vr75as7kp7z9fruwzef4g8znl8gs2h58y" to cupboard,
+  On error Set 'cupboard overflowed' to true,
+  If 'cupboard overflowed' is false then, Print "ASSERT BUF-06: expected 1 got {'cupboard overflowed'}", Exit 95. Print 'cupboard overflowed',
+  If cupboard's size is not 25 then, Print "ASSERT BUF-06: expected 25 got {cupboard's size}", Exit 95. Print cupboard's size,
+  a text called 'cupboard captured content' is cupboard as text,
+  If cupboard is not "y6p8h43e9dzjrnrst5mbcxiel" then, Print "ASSERT BUF-06: expected y6p8h43e9dzjrnrst5mbcxiel got {'cupboard captured content'}", Exit 95. Print cupboard.
+
+--- BUF-15, BUF-16, BUF-17: resize, grow-preserves, shrink-truncates ---
+a buffer called 'the inbox' is 51 bytes in size.
+append "stwumzsydfbajh2001jwpil3heuyo" to 'the inbox'.
+reallocate 'the inbox' to 89 bytes.
+If 'the inbox's capacity is not 89 then, Print "ASSERT BUF-15: expected 89 got {'the inbox's capacity}", Exit 95. Print 'the inbox's capacity.
+a text called 'the inbox grown content' is 'the inbox' as text.
+If 'the inbox' is not "stwumzsydfbajh2001jwpil3heuyo" then, Print "ASSERT BUF-16: expected stwumzsydfbajh2001jwpil3heuyo got {'the inbox grown content'}", Exit 95. Print 'the inbox'.
+resize 'the inbox' to 13 bytes.
+If 'the inbox's capacity is not 13 then, Print "ASSERT BUF-15: expected 13 got {'the inbox's capacity}", Exit 95. Print 'the inbox's capacity.
+If 'the inbox's size is not 13 then, Print "ASSERT BUF-17: expected 13 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+a text called 'the inbox shrunk content' is 'the inbox' as text.
+If 'the inbox' is not "stwumzsydfbaj" then, Print "ASSERT BUF-17: expected stwumzsydfbaj got {'the inbox shrunk content'}", Exit 95. Print 'the inbox'.
+
+--- the same leaf, nested ---
+  a buffer called 'the inbox' is 51 bytes in size,
+  append "stwumzsydfbajh2001jwpil3heuyo" to 'the inbox',
+  reallocate 'the inbox' to 89 bytes,
+  If 'the inbox's capacity is not 89 then, Print "ASSERT BUF-15: expected 89 got {'the inbox's capacity}", Exit 95. Print 'the inbox's capacity,
+  a text called 'the inbox grown content' is 'the inbox' as text,
+  If 'the inbox' is not "stwumzsydfbajh2001jwpil3heuyo" then, Print "ASSERT BUF-16: expected stwumzsydfbajh2001jwpil3heuyo got {'the inbox grown content'}", Exit 95. Print 'the inbox',
+  resize 'the inbox' to 13 bytes,
+  If 'the inbox's capacity is not 13 then, Print "ASSERT BUF-15: expected 13 got {'the inbox's capacity}", Exit 95. Print 'the inbox's capacity,
+  If 'the inbox's size is not 13 then, Print "ASSERT BUF-17: expected 13 got {'the inbox's size}", Exit 95. Print 'the inbox's size,
+  a text called 'the inbox shrunk content' is 'the inbox' as text,
+  If 'the inbox' is not "stwumzsydfbaj" then, Print "ASSERT BUF-17: expected stwumzsydfbaj got {'the inbox shrunk content'}", Exit 95. Print 'the inbox'.
+
+--- BUF-29, BUF-30: write bound is capacity, read bound is size ---
+a buffer called 'the dispatch note' is 24 bytes.
+append "hquiih" to 'the dispatch note'.
+a boolean called 'the dispatch note found an error already pending' is false.
+On error Set 'the dispatch note found an error already pending' to true.
+a boolean called 'the dispatch note write errored' is false.
+Set byte 17 of 'the dispatch note' to 32.
+On error Set 'the dispatch note write errored' to true.
+If 'the dispatch note write errored' then, Print "ASSERT BUF-29: expected 0 got {'the dispatch note write errored'}", Exit 95. Print 'the dispatch note write errored'.
+If 'the dispatch note's size is not 17 then, Print "ASSERT BUF-29: expected 17 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+a boolean called 'the dispatch note gap read errored' is false.
+a number called 'the dispatch note gap read' is byte 20 of 'the dispatch note'.
+On error Set 'the dispatch note gap read errored' to true.
+If 'the dispatch note gap read errored' is false then, Print "ASSERT BUF-30: expected 1 got {'the dispatch note gap read errored'}", Exit 95. Print 'the dispatch note gap read errored'.
+If 'the dispatch note gap read' is not 0 then, Print "ASSERT BUF-30: expected 0 got {'the dispatch note gap read'}", Exit 95. Print 'the dispatch note gap read'.
+
+--- the same leaf, nested ---
+  a buffer called 'the dispatch note' is 24 bytes,
+  append "hquiih" to 'the dispatch note',
+  a boolean called 'the dispatch note found an error already pending' is false,
+  On error Set 'the dispatch note found an error already pending' to true,
+  a boolean called 'the dispatch note write errored' is false,
+  Set byte 17 of 'the dispatch note' to 32,
+  On error Set 'the dispatch note write errored' to true,
+  If 'the dispatch note write errored' then, Print "ASSERT BUF-29: expected 0 got {'the dispatch note write errored'}", Exit 95. Print 'the dispatch note write errored',
+  If 'the dispatch note's size is not 17 then, Print "ASSERT BUF-29: expected 17 got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size,
+  a boolean called 'the dispatch note gap read errored' is false,
+  a number called 'the dispatch note gap read' is byte 20 of 'the dispatch note',
+  On error Set 'the dispatch note gap read errored' to true,
+  If 'the dispatch note gap read errored' is false then, Print "ASSERT BUF-30: expected 1 got {'the dispatch note gap read errored'}", Exit 95. Print 'the dispatch note gap read errored',
+  If 'the dispatch note gap read' is not 0 then, Print "ASSERT BUF-30: expected 0 got {'the dispatch note gap read'}", Exit 95. Print 'the dispatch note gap read'.
+
+--- BUF-33: clear sets size to 0 and preserves capacity - fixed form ---
+a buffer called 'scratch' is 14 bytes.
+append "c3" to 'scratch'.
+a number called 'scratch capacity before clearing' is 'scratch's capacity.
+clear 'scratch'.
+If 'scratch's size is not 0 then, Print "ASSERT BUF-33: expected 0 got {'scratch's size}", Exit 95. Print 'scratch's size.
+If 'scratch's capacity is not 'scratch capacity before clearing' then, Print "ASSERT BUF-33: expected {'scratch capacity before clearing'} got {'scratch's capacity}", Exit 95. Print 'scratch's capacity.
+
+--- BUF-33 again - dynamic form draws too ---
+Create a buffer called 'the register' with size 9.
+append "zkdzrdc" to 'the register'.
+a number called 'the register capacity before clearing' is 'the register's capacity.
+clear 'the register'.
+If 'the register's size is not 0 then, Print "ASSERT BUF-33: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+If 'the register's capacity is not 'the register capacity before clearing' then, Print "ASSERT BUF-33: expected {'the register capacity before clearing'} got {'the register's capacity}", Exit 95. Print 'the register's capacity.
+
+--- the same leaf, nested ---
+  a buffer called 'scratch' is 14 bytes,
+  append "c3" to 'scratch',
+  a number called 'scratch capacity before clearing' is 'scratch's capacity,
+  clear 'scratch',
+  If 'scratch's size is not 0 then, Print "ASSERT BUF-33: expected 0 got {'scratch's size}", Exit 95. Print 'scratch's size,
+  If 'scratch's capacity is not 'scratch capacity before clearing' then, Print "ASSERT BUF-33: expected {'scratch capacity before clearing'} got {'scratch's capacity}", Exit 95. Print 'scratch's capacity.
+
+--- BUF-11: length is size, mutation drawn - append branch ---
+Create a buffer called 'the register' with size 26.
+append "bsjqzlxnpnciv1zqmrbpt9" to 'the register'.
+If 'the register's length is not 'the register's size then, Print "ASSERT BUF-11: expected {'the register's size} got {'the register's length}", Exit 95. Print 'the register's length.
+append "8" to 'the register'.
+If 'the register's length is not 'the register's size then, Print "ASSERT BUF-11: expected {'the register's size} got {'the register's length}", Exit 95. Print 'the register's length.
+
+--- BUF-11 again - set-byte branch ---
+a buffer called pantry is 26 bytes in size.
+append "z3zy8bcrws00fpl8" to pantry.
+If pantry's length is not pantry's size then, Print "ASSERT BUF-11: expected {pantry's size} got {pantry's length}", Exit 95. Print pantry's length.
+Set byte 3 of pantry to 231.
+If pantry's length is not pantry's size then, Print "ASSERT BUF-11: expected {pantry's size} got {pantry's length}", Exit 95. Print pantry's length.
+
+--- BUF-11 again - clear branch ---
+a buffer called 'scratch' is 25 bytes in size.
+append "g4c" to 'scratch'.
+If 'scratch's length is not 'scratch's size then, Print "ASSERT BUF-11: expected {'scratch's size} got {'scratch's length}", Exit 95. Print 'scratch's length.
+clear 'scratch'.
+If 'scratch's length is not 'scratch's size then, Print "ASSERT BUF-11: expected {'scratch's size} got {'scratch's length}", Exit 95. Print 'scratch's length.
+
+--- the same leaf, nested ---
+  Create a buffer called 'the register' with size 26,
+  append "bsjqzlxnpnciv1zqmrbpt9" to 'the register',
+  If 'the register's length is not 'the register's size then, Print "ASSERT BUF-11: expected {'the register's size} got {'the register's length}", Exit 95. Print 'the register's length,
+  append "8" to 'the register',
+  If 'the register's length is not 'the register's size then, Print "ASSERT BUF-11: expected {'the register's size} got {'the register's length}", Exit 95. Print 'the register's length.
+

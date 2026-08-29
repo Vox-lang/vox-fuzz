@@ -1,4 +1,4 @@
-(TIM-45 - LANGUAGE.md:4605-4606 marks `duration` and `elapsed` "requires
+(TIM-45 - LANGUAGE.md:4645-4646 marks `duration` and `elapsed` "requires
  cast", but both read fine with no cast at all, and the uncast reading is
  the seconds one. See Discrepancy 2.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox TIM-45.vox -o p && ./p

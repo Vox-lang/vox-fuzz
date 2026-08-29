@@ -1,0 +1,29 @@
+(FIL-07: permissions returns the file's permission bits as a Number.
+ LANGUAGE.md:3812's table entry, "File permission bits (e.g., 0644)", is
+ an EXAMPLE value, not a promise - the mode a fresh file lands at is
+ umask-dependent (0644/420 under umask 022, 0600/384 under a stricter
+ 077), so asserting the literal 420 would be a false-finding factory on
+ any machine or container with a different umask (master review round
+ 1, files batch B: caught before this shipped). What the manual DOES
+ promise is the shape: a Number whose mode bits fit within three octal
+ digits, 0..0777 = 0..511 decimal. This probe is the ASSERTION shape
+ (a two-sided range, not a bare print), on a file the program itself
+ created, per the ledger's note under FIL-07.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-07.vox -o p && ./p
+ actual output:
+   FIL-07 in range
+ (420 is the value OBSERVED on this run, under this machine's umask 022
+ - not asserted, and not the claim; see the header above.)
+ Then with the upper bound changed to `is greater than 100` (a
+ deliberately wrong expectation - 420 is not within 0..100), to prove a
+ failing assertion is classified correctly:
+   ASSERT FIL-07: expected at most 100 got 420
+ exit code 95.
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+open a file for writing called 'the crate' at "vf_scratch/files/fil07.txt".
+If 'the crate's permissions is less than 0 then, Print "ASSERT FIL-07: expected at least 0 got {'the crate's permissions}", Exit 95. If 'the crate's permissions is greater than 511 then, Print "ASSERT FIL-07: expected at most 511 got {'the crate's permissions}", Exit 95. Print "FIL-07 in range".
+Close 'the crate'.

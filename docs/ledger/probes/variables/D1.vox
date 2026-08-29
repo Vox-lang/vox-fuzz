@@ -1,5 +1,5 @@
 (Discrepancy 1 — RESOLVED (vox #54), re-recorded 2026-08-22 against vox
- 0.4.10. Used to be: LANGUAGE.md:658–661 says the check rejects a mismatch
+ 0.4.10. Used to be: LANGUAGE.md:665–668 says the check rejects a mismatch
  it can prove from the value's own shape, naming "a read from a list/map
  whose element type is provably uniform". A map read WAS checked. A list
  read was not, and assigning a number element to a text name compiled

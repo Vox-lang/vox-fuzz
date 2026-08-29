@@ -1,4 +1,4 @@
-(OPR-17: `is greater than or equal to` admits the equal case (LANGUAGE.md:4939).
+(OPR-17: `is greater than or equal to` admits the equal case (LANGUAGE.md:4979).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox OPR-17.vox -o p && ./p
  expected output:
    ge fired on equal

@@ -1,5 +1,5 @@
 (FUN-22 — "a typed parameter supports the same properties and operations
- as a top-level variable of that type" (LANGUAGE.md:798-799). Each pair of
+ as a top-level variable of that type" (LANGUAGE.md:805-806). Each pair of
  lines below reads one property twice: once from the top-level variable,
  once from the parameter it was passed to. Every pair matches here.
  It does NOT hold for three of the eleven types, each with its own repro:

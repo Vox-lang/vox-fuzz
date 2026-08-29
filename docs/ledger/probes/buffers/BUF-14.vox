@@ -1,4 +1,4 @@
-(BUF-14 (updated after vox #42 fixed the property — see buffers.md D2): universal `type` property should report `Buffer (static)` for a buffer variable, per LANGUAGE.md:3569-3573.)
+(BUF-14 (updated after vox #42 fixed the property — see buffers.md D2): universal `type` property should report `Buffer (static)` for a buffer variable, per LANGUAGE.md:3594-3598.)
 (expected output:
 Buffer (static)
 Buffer (static)
