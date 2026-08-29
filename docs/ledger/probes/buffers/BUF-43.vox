@@ -1,0 +1,21 @@
+(BUF-43: after `Free`, the buffer's `size`/`length` read 0.
+ Also covers: BUF-44 (`capacity` also reads 0, `empty` is true, `full` is
+ true — the freed buffer behaves exactly like a fixed buffer of capacity
+ 0, LANGUAGE.md:3632-3634), BUF-45 (`as text` reads back "").
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-43.vox -o p && ./p
+ expected output:
+   0
+   0
+   0
+   1
+   1
+   []
+)
+a buffer called line is "hello".
+Free line.
+print line's size.
+print line's length.
+print line's capacity.
+print line's empty.
+print line's full.
+print "[{line as text}]".

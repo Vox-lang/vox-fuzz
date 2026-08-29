@@ -1,0 +1,14 @@
+(BUF-46: after `Free`, a byte read on the buffer (`byte 1 of X`) is
+ refused with the error flag and — per the OOB-read contract elsewhere
+ in this section (BUF-26) — returns 0, since a freed buffer's size is 0
+ and every position is now out of bounds.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-46.vox -o p && ./p
+ expected output:
+   byte-read refused
+   0
+)
+a buffer called line is "hello".
+Free line.
+a number called b is byte 1 of line.
+On error print "byte-read refused".
+print b.

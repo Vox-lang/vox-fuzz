@@ -42,6 +42,25 @@ Every row was hand-run against the real compiler
 (`/home/josj/scr/english/vox/target/release/vox`, `VOX_CORE_PATH` set to
 the sibling `coreasm`) before being written.
 
+**Addition, 2026-08-29 (Vox 0.4.14, `4995394`): KEY-81, and corrections
+to KEY-48–KEY-53.** 0.4.14 (#106) rewrote the Reserved Aliases table
+from 3 rows to 85, machine-generated from the lexer's own
+`RESERVED_ALIASES` const (now at LANGUAGE.md:5072–5158, inside the
+section's current 4993–5215 range per `INDEX.md`'s 2026-08-28 re-pin).
+Re-read KEY-48 through KEY-53 against the new table: KEY-48 (`ms`),
+KEY-49 (`message`), KEY-50 (`string`) and KEY-53 (`length`) already
+cited the correct 0.4.14 lines (the mechanical re-pin in `c7dd9eb` had
+already landed them correctly); KEY-51 and KEY-52 carried a `?`
+placeholder that can now be pinned precisely, both to LANGUAGE.md:5160
+— corrected below. One new row, **KEY-81**: every alias in the table is
+refused as a variable name, hand-verified across eight aliases drawn
+from across the table (not one row per alias — PROCEDURE.md §2 governs
+each *table row* as a claim, but 85 near-identical alias/diagnostic
+pairs are one claim repeated 85 times, not 85 distinct ones; the sample
+tests the general claim). **Discrepancy 4 is marked resolved for the
+aliases half only** — see its own entry; the Statement Starters half is
+unchanged and still open.
+
 ## Probes
 
 One retained probe per hand-verified row, in
@@ -52,9 +71,10 @@ and an `expected output:` block recording what the compiler **actually**
 printed. The eight discrepancies each have a minimal repro at
 `D1.vox`–`D8.vox` in the same directory.
 
-**74 probe files + 8 discrepancy repros = 82.** All 82 were re-run in one
-final pass with `docs/check-probes.sh docs/ledger/probes/keywords`:
-**82 passed, 0 failed, 0 skipped.**
+**74 probe files + 8 discrepancy repros = 82** as of the last full pass;
+**+1 (`KEY-81.vox`), 75 probe files + 8 discrepancy repros = 83, as of
+2026-08-29.** `docs/check-probes.sh docs/ledger/probes/keywords`:
+**83 passed, 0 failed, 0 skipped.**
 
 Rows with no probe file, and why:
 
@@ -141,8 +161,8 @@ after itself.
 | KEY-48 | 5121 | `ms` is a reserved alias of `milliseconds` in a duration (`Wait 500 ms.`). | emit `Wait N ms.` and `Wait N milliseconds.` | yes — an elapsed-time lower bound: `If waited is not greater than 350 then, Exit 95.` | **none** — `Wait` is emitted nowhere. `milliseconds` appears only in `the tk{n}'s elapsed in milliseconds` | todo | |
 | KEY-49 | 5147 | `message` is a reserved alias of the type name `text`. | emit `a message called … is "…"` sometimes instead of `a text called` | yes — the declared variable behaves as a text and reports `Text (static)` | none (0 hits) | todo | |
 | KEY-50 | 5148 | `string` is a reserved alias of the type name `text`. | same, third spelling | yes | none (0 hits) | todo | |
-| KEY-51 | ? | A reserved alias cannot be used as a variable name. | — | **no, not from a running program** — the observable is a compile error, so a leaf cannot emit it into a campaign (every generated program must compile). It belongs to a compile-diagnostic harness, not a leaf | n/a | not assertable by a leaf (hand-verified: `KEY-51.vox`) | |
-| KEY-52 | ? | The alias diagnostic names the spelling written and the canonical keyword it aliases (`'ms'` → `'milliseconds'`), not an internal name. | — | no, same reason as KEY-51 | n/a | not assertable by a leaf (hand-verified for `ms`→`milliseconds` and `message`→`text`) | |
+| KEY-51 | 5160 | **Citation corrected, 2026-08-29 (0.4.14, #106) — was `?`, now pinned.** A reserved alias cannot be used as a variable name ("These cannot be used as variable names."). | — | **no, not from a running program** — the observable is a compile error, so a leaf cannot emit it into a campaign (every generated program must compile). It belongs to a compile-diagnostic harness, not a leaf | n/a | not assertable by a leaf (hand-verified: `KEY-51.vox`) | |
+| KEY-52 | 5160 | **Citation corrected, 2026-08-29 (0.4.14, #106) — was `?`, now pinned.** The alias diagnostic names the spelling written and the canonical keyword it aliases (`'ms'` → `'milliseconds'`), not an internal name. | — | no, same reason as KEY-51 | n/a | not assertable by a leaf (hand-verified for `ms`→`milliseconds` and `message`→`text`) | |
 | KEY-53 | 5184–5187 | `length` is no longer a reserved alias — `a number called length is 1.` compiles. | emit a variable actually **named** `length` | yes — it reads back as what was assigned | none — no leaf names a variable after a contextual keyword | todo | |
 | KEY-54 | 5184 | `x's length` still means the same as `x's size`. | emit both accessors on the same object and compare | yes — `If payload's length is not payload's size then, Exit 95.` | `'s size` (`gen leaf file round trip`, `gen leaf stdin read`) and `'s length` (`gen leaf list inrange`, map leaves) are both emitted, but **never on the same object**, so the equality is never put on trial | todo (verification); exercised (both constructs) | |
 | KEY-55 | ? | Every keyword listed in the tables above is reserved as a variable name. | — | no (compile-error observable, as KEY-51) | n/a | not assertable by a leaf — and **false as written**: hand-verified true for `print` (`KEY-55.vox`), false for thirteen other table words (Discrepancy 1) | |
@@ -171,6 +191,7 @@ after itself.
 | KEY-78 | 5207 | `do` is claimed only in `To do the <type>'s <member>`; elsewhere an ordinary identifier, including as a function's own name. | emit `To do.` as a plain function and a variable named `do` | yes | `gen emit prelude thing methods` (gen_things.vox:124) emits `To do the t4's 'made at'`; the elsewhere half is emitted nowhere | exercised (claimed position); todo (elsewhere half) | |
 | KEY-79 | 5200–5201 | `a number called thing is 1.` and `To do.` (a function named `do`) both compile. | — | yes | none | covered by KEY-76 and KEY-78 | |
 | KEY-80 | 5209–5212 | `the` gains a second reading in a member definition: `the point's 'placed at'` pairs with a known identifier (the type), while `a point's 'placed at'` calls a maker that brings a new point into being. | emit both readings over the same member name | yes — the maker's arguments are generator-chosen, so the resulting fields are known | `gen emit prelude thing methods` emits `To do the t4's …` (the `the` reading) and `gen leaf thing member` emits the maker call — **both halves exist**, and this is the only contextual-keyword row in the section that is fully exercised today | exercised | |
+| KEY-81 | 5072–5158 | **New row, 2026-08-29 (0.4.14, #106).** Every alias listed in the Reserved Aliases table (now 85 rows, machine-generated from the lexer's own `RESERVED_ALIASES` const) is refused as a variable name, with the diagnostic naming the spelling written and its canonical keyword. | emit a variable declaration using an alias spelling, drawn from across the table, inside a compile-error harness | **no, not from a running program** — same reason as KEY-51: the observable is a compile error, so a leaf cannot emit it into a campaign | n/a | not assertable by a leaf — hand-verified across eight aliases from different parts of the table (`abs`→absolute, `push`→append, `mod`→modulo, `nil`→nothing, `show`→print, `grow`→resize, `stopwatch`→timer, `years`→year — top, upper-middle, middle and last row), all eight following the exact KEY-51/KEY-52 diagnostic template (`KEY-81.vox`) | |
 
 ## Discrepancies
 
@@ -269,7 +290,7 @@ recovering the "you meant a name" intent from there is a real parser
 problem, not an oversight. It is still the worst diagnostic in the
 section, and it is the one a programmer is most likely to hit by accident.
 
-### 4. The chapter's tables under-enumerate both the reserved words and the aliases
+### 4. The chapter's tables under-enumerate both the reserved words and the aliases — PARTIALLY RESOLVED (vox #106 / 0.4.14)
 
 4696 says "the tables above"; 4702–4704 says the reserved class is
 "statement starters, operators, type names, connectors". These words are
@@ -299,6 +320,34 @@ one-way claim, and (D1 aside) that direction mostly holds. The Keywords
 chapter is the only place a programmer can look up what they may not name
 a variable, though, so a list that is silently partial is a trap: `input`
 and `error` are ordinary enough words that a program will hit them.
+
+**Resolution, 2026-08-29: the Reserved Aliases half is RESOLVED by vox
+#106 (0.4.14); the Statement Starters half is still open.** CHANGELOG
+0.4.14 #106: "The alias fold now lives in exactly one place, a
+`RESERVED_ALIASES` const in `src/lexer/tokens.rs`, which
+`string_is_keyword` reads from and LANGUAGE.md's Reserved Aliases table
+(now 85 rows, generated from and checked against the same const) is
+generated from, so the two tables cannot drift apart again." The
+Reserved Aliases table (now LANGUAGE.md:5072–5158, 85 rows — see
+`INDEX.md`'s re-pin note) is machine-generated from the lexer's own
+alias list, so it is definitionally exhaustive; every example this
+discrepancy raised (`up`→`to`, `plus`→`add`, `minus`→`subtract`,
+`bool`→`boolean`) is present in the new table, hand-verified line by
+line. **KEY-81 (new row, below) hand-verifies the general claim across
+an eight-alias sample drawn from across the table.**
+
+Re-checked against the current 0.4.14 Statement Starters table
+(LANGUAGE.md:5004–5027) for the *other* half of this discrepancy: it
+still does not list `read`, `write`, `open`, `close`, `wait`, `input`,
+`standard`, `byte`, `each`, `elapsed`, `without`, `error`, `arguments`
+or `environment` — none of these words gained a table entry in 0.4.14,
+and `D4.vox`'s repro (`read` refused as a variable name with no table
+entry naming it) still reproduces unchanged. So this discrepancy is
+resolved for the half it is *named* for in this ledger's row (the
+aliases table, KEY-48–KEY-53's subject) but not for the Statement
+Starters half raised in the same write-up — flagged for the master
+rather than marked fully resolved, since the brief that requested this
+correction described it as a single "RESOLVED."
 
 ### 5. `all the numbers from A to B` drops the end bound — RESOLVED (vox #56)
 
@@ -590,3 +639,41 @@ I have not touched those ledgers — adjudicating another section's rows is
 not a mapping worker's job — but the buffers and values discrepancy lists
 should be re-run and, if the master agrees, closed before the lawyer
 spends any more time on them.
+
+### Addition, 2026-08-29: KEY-81, KEY-48–53 line corrections, D4 (0.4.14, #106)
+
+**One new row and two citation fixes.** Table now runs KEY-01 through
+KEY-81, **81 rows, 75 distinct claims with a retained probe** (KEY-81
+adds one probe, `KEY-81.vox`, without adding a new "compile-error
+claims" category — it joins KEY-51/KEY-52/KEY-55/KEY-56/KEY-57/KEY-59
+as a seventh not-assertable-by-a-leaf row). KEY-51 and KEY-52's `line`
+cells moved from `?` to `5160`, now pinned instead of unlocated; no
+other KEY-48–53 row needed a change — all four of the others (KEY-48,
+KEY-49, KEY-50, KEY-53) already cited the correct 0.4.14 line, landed
+correctly by the mechanical re-pin in `c7dd9eb` before this pass began.
+
+**Discrepancy 4 is marked resolved for its aliases-table half only.**
+The brief that requested this correction described D4 as simply
+"RESOLVED by vox #106 / 0.4.14"; hand-verification (re-running
+`D4.vox`, and reading the current Statement Starters table end to end)
+shows only half of it actually is. The aliases table is now
+machine-generated and exhaustive by construction (85 rows from the
+lexer's own const) — genuinely resolved. The Statement Starters table
+(LANGUAGE.md:5004–5027) is untouched by 0.4.14 and still omits `read`,
+`write`, `open`, `close`, `wait`, `input`, `standard`, `byte`, `each`,
+`elapsed`, `without`, `error`, `arguments`, `environment` — `D4.vox`
+reproduces identically. Recorded as "PARTIALLY RESOLVED" in the
+discrepancy's own heading rather than silently matching the brief's
+wording, per this document's own standing rule that a worker's surprise
+(or, here, a brief's assumption) is not evidence — the probe is. Flagged
+under "Questions for the master" in `REPORT-MAP-0414.md`.
+
+One more citation worth the master's attention, found while reading the
+current Statement Starters table for the check above: it now has its
+own `Free` row (LANGUAGE.md:5019) reading "Release a buffer **or
+list's** memory immediately" — the manual's *summary* table asserts the
+list-Free behavior even more directly than the "Releasing a Buffer"
+subsection's closing sentence does, which strengthens `buffers.md`
+Discrepancy 4 (list `Free` has no observable effect) rather than
+touching anything in this ledger; not acted on here since it is
+`buffers.md`'s row, not a KEY row, but worth the cross-reference.

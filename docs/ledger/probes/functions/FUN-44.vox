@@ -1,0 +1,19 @@
+(FUN-44 — LANGUAGE.md:878. "Writing an argument right after the
+ function name with none of these words is an error naming the missing
+ preposition, not a call with that argument dropped." Hand-verified: the
+ diagnostic names the dropped-in token and the four accepted
+ prepositions, and is anchored at the token itself, not at the call.
+ Also hand-verified with a bare (unquoted) single-word function name
+ (`announce count.` -> the same shape of diagnostic, token `count`) —
+ the rule is not specific to quoted multi-word names.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox FUN-44.vox -o p
+ expected output:
+   error: 'first' follows the call with no preposition — arguments are introduced with 'of', 'to', 'with', or 'on'.
+   (a compile error — the program is refused, and never runs)
+)
+To 'add numbers' with a number called x and a number called y.
+Return a number, x add y.
+
+a number called first is 3.
+a number called second is 5.
+'add numbers' first and second.

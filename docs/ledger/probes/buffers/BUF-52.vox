@@ -1,0 +1,18 @@
+(BUF-52: a `buffer` function parameter is the caller's buffer, so `Free`
+ inside the function releases the same block the caller sees, and the
+ caller's own variable is left empty too (LANGUAGE.md:3655-3658).
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-52.vox -o p && ./p
+ expected output:
+   0
+   1
+   caller buffer refused after callee free
+)
+To 'release it' with a buffer called payload.
+    Free payload.
+
+a buffer called mine is "caller data".
+'release it' of mine.
+print mine's size.
+print mine's empty.
+append "x" to mine.
+On error print "caller buffer refused after callee free".

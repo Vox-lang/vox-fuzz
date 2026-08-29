@@ -1,0 +1,32 @@
+(BUF-48: after `Free`, all four resize spellings — `resize`,
+ `reallocate`, `grow`, `shrink` — are also refused with the error flag.
+ Not itself enumerated by the "Releasing a Buffer" prose (LANGUAGE.md
+ 3630-3634 names reads/writes generally, not the resize keywords by
+ name); hand-verified to hold, consistent with the general
+ read-or-write-refused contract.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-48.vox -o p && ./p
+ expected output:
+   resize refused
+   reallocate refused
+   grow refused
+   shrink refused
+)
+a buffer called buf1 is "one".
+Free buf1.
+resize buf1 to 16.
+On error print "resize refused".
+
+a buffer called buf2 is "two".
+Free buf2.
+reallocate buf2 to 16.
+On error print "reallocate refused".
+
+a buffer called buf3 is "three".
+Free buf3.
+grow buf3 to 16.
+On error print "grow refused".
+
+a buffer called buf4 is "four".
+Free buf4.
+shrink buf4 to 16.
+On error print "shrink refused".

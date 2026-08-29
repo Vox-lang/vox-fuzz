@@ -76,9 +76,11 @@ Each opens with a `(...)` comment naming the claim, the exact `Ran:`
 command, and an `expected output:` block recording what the compiler
 **actually** printed.
 
-**53 probe files. `docs/check-probes.sh docs/ledger/probes/input-output`
-reports 53 passed, 0 failed, 0 skipped.** Three of them record a refusal
-rather than an output (FMT-18, D4, D5 are compile-error probes).
+**55 probe files (updated 2026-08-29 — FMT-56 and FMT-57 were added
+after this count was last written; see `## Report` for FMT-57 itself).
+`docs/check-probes.sh docs/ledger/probes/input-output` reports 55
+passed, 0 failed, 0 skipped.** Three of them record a refusal rather
+than an output (FMT-18, D4, D5 are compile-error probes).
 
 **Refreshed 2026-08-21 against vox 0.4.8 + #52.** `D1.vox` used to record
 `exit 139`; vox #52 fixed the crash, so it was rewritten to record the
@@ -89,7 +91,10 @@ Rows with no probe file: FMT-23 and FMT-30 (nothing to run — see each
 row), and FMT-24, FMT-44, FMT-46, FMT-48, FMT-49, each covered by a
 sibling's probe that names it in its own header (FMT-22 covers FMT-24;
 FMT-41 covers FMT-44; FMT-45 covers FMT-46; FMT-47 covers FMT-48 and
-FMT-49).
+FMT-49). FMT-57 *does* have a retained probe (`FMT-57.vox`) even though
+its own release claim is not assertable — the probe hand-verifies the
+one observable proxy, the accumulate idiom's correctness, not the
+release itself.
 
 Three probes deliberately assert rather than print, because their honest
 output is not stable across runs: FMT-37 (the clock), D2 and D3 (raw
@@ -130,6 +135,7 @@ over an existing directory exits 0 silently).
 | FMT-27 | 3398 | `a text called path is "/bin/{tok}".` builds a text from **another text** that itself came from a format string. | the chained case | yes | `gen leaf format value` (`path decl`) | exercised | |
 | FMT-28 | 3393–3403 | The whole worked example compiles and runs. | the example end to end | yes | every line but the last: `Execute` is unreached (FMT-25) | todo (composite) — sub-claims FMT-24/26/27 exercised, FMT-25 todo | |
 | FMT-29 | 3405 | Each evaluation allocates a **new** string: the source buffer can be cleared and refilled without disturbing a text already made from it. | make a text from a buffer, `clear` and refill the buffer, make a second text, assert the first is unchanged | yes — both strings are known at generation time; this is a clean exit-95 assertion | **none** — no leaf clears or refills a buffer after making a text from it, and `clear` on a *user* buffer appears in no leaf at all (`gen_core.vox:987`'s `clear gen_out` is the generator's own accumulator, never part of a generated program — the same finding buffers.md records as BUF-33) | todo — real gap | |
+| FMT-57 | 3418 | **New row, 2026-08-29 (0.4.14, #108).** A text variable reassigned from a format string releases the string it no longer holds — `Set <text> to "<format>"` now frees the old string instead of leaking one buffer per evaluation, so the natural accumulate idiom (`Set acc to "{acc}x"` in a loop) is no longer quadratic. | — | **no** — memory release/leak is not observable from inside Vox, same category as FMT-23 (NUL-termination); no leak-detection channel. The one thing a leaf *can* observe is that the accumulate idiom still produces the correct value after repeated reassignment, which is what the retained probe checks | none — `grep` for `Set <text> to "{` across all leaves finds nothing, the same gap FMT-24 already records for the plain assignment form | not assertable (the release claim itself); the assignment-form gap is FMT-24's, unchanged by this row | |
 | FMT-30 | 3408–3409 | *(parenthetical)* Before v0.1.17 a format string outside `Print` compiled to a NULL pointer that printed empty and corrupted `execve` argv arrays. | — | **no** — a claim about a version of the compiler that no longer exists; not testable against the pinned binary. Its live content ("today it does not") is FMT-23/FMT-25 | n/a | withdrawn (historical note, manual 0.4.8) | |
 | FMT-31 | 3413 | The umbrella claim: **every** statement taking a string value accepts a format string. | one sink the manual does not name, so "every" is tested rather than the five listed | yes | the named sinks are FMT-32–FMT-36; the unnamed sink probed here (`Open a file … at "{…}"`) is emitted by `gen leaf format value` (`open line` uses a fixed `/dev/stdout`, **not** a format string) | todo for an unnamed sink; the named ones are covered per-row below | |
 | FMT-32 | 3414 | The `write` sink accepts a format string. | `write "{…}" to <handle>` | yes — read the file back and assert the bytes | `gen leaf format value` (`write line`), `gen leaf file write`, `gen leaf file round trip` | exercised | |
@@ -503,3 +509,26 @@ reporting it — so it is a real drift, and it is exactly what
 entry all need updating, and D2 needs a `Resolution:` line. Worth doing
 before the next buffer leaf batch is scoped, since BUF-14 is currently
 recorded as `todo` on the strength of a bug that no longer exists.
+
+### Addition, 2026-08-29: FMT-57 (0.4.14, #108)
+
+**One new row**, and the section's counts above (last written at "55
+rows, FMT-01 through FMT-55") were already one row stale before this
+pass — FMT-56 (0.4.10, width+precision composition) exists in the table
+and its probe directory but was never folded into this Report. With
+FMT-57 added, the table now runs **FMT-01 through FMT-57, 57 rows**.
+
+FMT-57 is LANGUAGE.md:3418, the sentence 0.4.14 added directly after
+FMT-29's own sentence in the same paragraph: a text variable reassigned
+from a format string releases the string it no longer holds (fixing a
+one-buffer-per-evaluation leak that made the natural `Set acc to
+"{acc}x"` accumulate idiom quadratic). Like FMT-23 (NUL-termination),
+the release itself is a memory claim with no observation channel from
+inside Vox — this row is `not assertable` for that reason, per
+PROCEDURE.md §2's rule for implementation-detail claims. The retained
+probe (`FMT-57.vox`) instead hand-verifies the one thing a leaf *can*
+check: the accumulate idiom still produces the correct value across
+five reassignments, i.e. the allocator change underneath did not
+corrupt the assignment path. No discrepancy found — hand-verified
+against the installed 0.4.14 binary and it behaves exactly as the
+CHANGELOG describes.

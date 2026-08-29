@@ -163,6 +163,7 @@ segfault.
 | FUN-34 | 875 | (Call site) the function name is a bare single word or a single-quoted multi-word name. | — | — | — | folded into FUN-05 (the same rule, restated for the call site; both forms are exercised) | |
 | FUN-35 | 876 | For calls with arguments, use `of`, `to`, `with`, or `on`. | — | — | — | folded into FUN-32 | |
 | FUN-36 | 877 | Multiple arguments are separated by `and`. | emit a call with two or more arguments | yes | `Print f3 of c{a} and c{b}` (`src/gen_core.vox:387`), `'grid sink N' of ...` with 3–17 clauses (`src/gen_flow.vox:105`) | exercised | |
+| FUN-44 | 878 | **New row, 2026-08-29 (0.4.14, #105).** Writing an argument right after the function name with none of `of`/`to`/`with`/`on` is an error naming the missing preposition, not a call with that argument silently dropped. Before #105 this used to be silently split into two statements — the call reporting the wrong arity and the dropped argument a second, unrelated "Unknown function" error; now one diagnostic, anchored at the token itself. Hand-verified with both a quoted multi-word name and a bare single-word name. | — | **no, from a runtime leaf** — this is now a compile-error claim, same category as FUN-41/FUN-42 | none — the generator never omits a connector before an argument (`gen call one`/`gen call two` always emit `of`) | not assertable (compile-error claim) — hand-verified against 0.4.14: `'add numbers' first and second.` → `error: 'first' follows the call with no preposition — arguments are introduced with 'of', 'to', 'with', or 'on'.`, caret on `first` | |
 | FUN-37 | 880–885 | Calls with no arguments can be written directly, as a bare sentence (`'show version'.`, `ping.`). | emit a bare no-argument call statement | yes — assert what the callee printed or changed | `'read flags {n}'` as its own line (`src/gen_misc.vox:415`); the expression-position variant of the same form, `Print f1` (`src/gen_core.vox:366`), is also emitted | exercised | |
 | FUN-38 | 887–891 | A call with arguments used inside a `Print` statement: `Print 'add numbers' of x and y.` — the whole of the "Calling as Statement" section. | emit it | yes — `Exit 95` if the printed sum is wrong (needs the value captured first, since `Print` discards it) | `Print f2 of c{n}`, `Print f3 of c{a} and c{b}` (`src/gen_core.vox:374,387`) | exercised | |
 | FUN-39 | 887–891 *(gap)* | *(gap)* A call **with arguments** is also legal as a bare statement, its result discarded. The section is headed "Calling as Statement" but its only example is a `Print`, and :772–777 promises the bare form only for calls with **no** arguments. | emit a bare call-with-arguments statement | yes — assert a side effect the callee had | `f4 of "..."` (`src/gen_text.vox:408`) is exactly this shape | exercised — the manual should say so | |
@@ -701,3 +702,17 @@ not touch `src/`.
 `probes/functions/THG-NN.vox`. `THG` is the Things prefix; `INDEX.md`
 fixes this section's prefix as `FUN`, and PROCEDURE.md §1 says row IDs
 carry the section's prefix, so the probes are named `FUN-NN.vox`.
+
+### Addition, 2026-08-29: FUN-44 (0.4.14, #105)
+
+**One new row.** LANGUAGE.md:878, the sentence 0.4.14 added right after
+FUN-36's bullet in the same list: writing an argument directly after
+the function name, with none of `of`/`to`/`with`/`on`, is a compile
+error naming the missing preposition — not a call with that argument
+silently dropped. Hand-verified against the installed 0.4.14 binary
+with both a quoted multi-word function name and a bare single-word one;
+both produce the same diagnostic shape, anchored at the dropped token.
+Not assertable by a leaf, same category as FUN-41/FUN-42 (a compile-error
+claim), so **44 rows total, 38 assertable, 14 exercised, 0 verified** —
+the assertable/exercised counts above are otherwise unchanged by this
+addition.

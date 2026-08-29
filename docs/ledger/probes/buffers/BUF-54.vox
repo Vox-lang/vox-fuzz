@@ -1,0 +1,21 @@
+(BUF-54: "A list also accepts `Free`." (LANGUAGE.md:3674). Hand-verified:
+ the statement compiles and runs, but has NO observable effect on the
+ list — length, emptiness and contents are all unchanged, and a
+ subsequent `append` is not refused. See Discrepancy 4.
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-54.vox -o p && ./p
+ expected output:
+   3
+   0
+   [1, 2, 3]
+   4
+   [1, 2, 3, 9]
+)
+a list called nums is [1, 2, 3].
+Free nums.
+print nums's length.
+print nums's empty.
+print nums.
+append 9 to nums.
+On error print "append to freed list refused".
+print nums's length.
+print nums.

@@ -1,0 +1,34 @@
+(BUF-41: `Release <buffer>.` and `Deallocate <buffer>.` are accepted as
+ the same statement as `Free <buffer>.` — three interchangeable
+ spellings, each emptying the buffer identically.
+ Also covers: BUF-42 (all three accept an optional article `the`).
+ Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox BUF-41.vox -o p && ./p
+ expected output:
+   0
+   0
+   0
+   0
+   0
+   0
+)
+a buffer called buf1 is "one".
+a buffer called buf2 is "two".
+a buffer called buf3 is "three".
+Free buf1.
+Release buf2.
+Deallocate buf3.
+print buf1's size.
+print buf2's size.
+print buf3's size.
+
+a buffer called buf4 is "four".
+Free the buf4.
+print buf4's size.
+
+a buffer called buf5 is "five".
+Release the buf5.
+print buf5's size.
+
+a buffer called buf6 is "six".
+Deallocate the buf6.
+print buf6's size.
