@@ -1,0 +1,138 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_basics.vox".
+
+(basics leaves, batch A - docs/ledger/basics.md rows BAS-07, 09, 10, 11,
+ 12, 13, 14, 16, 17, 24, 41, 43, 46. Kinds 310-319.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/300_gen_buffers_a.vox and tests/450_gen_process_a.vox
+ use. Every leaf here is top-level-only (the reserved span is drawn only
+ at depth 3 in 'gen statement'), so each is driven with indent "" and
+ nested false only - there is no nested rendering to check.)
+
+Print "--- BAS-07, 09, 10: comment placement, standalone position ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment placement' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws the trailing position ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment placement' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-11: comment mid-declaration ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment mid statement' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, mid-expression ---".
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment mid statement' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, mid-condition ---".
+'rng seed' of 95.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment mid statement' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-12, 13: comment spanning lines and nested parens ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment multiline nested' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-14: parens inside a string literal ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment lookalike in string' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-24: comment-only line does not close ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf comment only line does not close' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-16: blank line count invariant ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line count invariant' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-17: blank line closes a nested loop, Repeat ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line closes nested loop' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws For each ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line closes nested loop' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws While ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line closes nested loop' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-41: blank line closes a loop and its enclosing function ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line closes function too' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-43: blank line closes an On error block ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line closes on error' of "" and false.
+Print 'gen text'.
+
+Print "--- BAS-46: blank line after a comma is cosmetic ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf blank line after comma is cosmetic' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 310-319 all dispatch without error ---".
+a number called 'the kind' is 310.
+While 'the kind' is less than 320,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

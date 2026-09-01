@@ -81,6 +81,1061 @@ To 'gen leaf list mixed' with a text called indent and a boolean called nested.
     a list called 'the lines' is [decl, 'iterate line'].
     'gen join lines' of indent and nested and 'the lines'.
 
+(collections-b, batch A (evening) - list properties. docs/ledger/collections-b.md
+ LST2-14, LST2-15, LST2-16, LST2-17, LST2-18, LST2-19, LST2-23
+ (LANGUAGE.md:2975-2993, LANGUAGE.md:3004-3005). No leaf anywhere read a property off
+ a LIST before this one - `'s length`/`'s empty` were only ever emitted
+ on a map or a buffer. The naming helpers are 'gen buffer name' and kin
+ (gen_buffers.vox): a generic word-pool allocator, not buffer-specific,
+ and the brief for tonight's batch says to reuse it rather than spend a
+ second pool on the same shape of witness.
+
+ The element count (1..7) and every value are drawn fresh each call,
+ never fixed, so a one-element list - where `'s first` and `'s last` are
+ the same reading - turns up in the corpus alongside longer ones without
+ being special-cased. LST2-23's agreement half is checked against
+ `element 1 of`/`element N of` rather than against a second literal, so
+ it is really comparing two INDEPENDENT reads of the list, not the
+ generator's own arithmetic against itself.)
+
+To 'gen leaf list length and ends' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the empty access' is 'gen buffer property' of 'the stem' and "empty".
+    a text called 'the first access' is 'gen buffer property' of 'the stem' and "first".
+    a text called 'the last access' is 'gen buffer property' of 'the stem' and "last".
+    a number called 'the count draw' is 'rng below' of 7.
+    a number called 'the count' is 'the count draw' add 1.
+    a number called 'the first value' is 'rng below' of 1000.
+    a number called 'the last value' is 'the first value'.
+    If 'the count' is greater than 1 then,
+        a number called 'the last draw' is 'rng below' of 1000,
+        Set 'the last value' to 'the last draw'.
+    a number called 'the middle count' is 0.
+    If 'the count' is greater than 2 then,
+        Set 'the middle count' to 'the count' minus 2.
+    a text called 'the elements text' is "{'the first value'}".
+    a number called 'the middles built' is 0.
+    While 'the middles built' is less than 'the middle count',
+        a number called 'the middle value' is 'rng below' of 1000,
+        Set 'the elements text' to "{'the elements text'}, {'the middle value'}",
+        Set 'the middles built' to 'the middles built' add 1.
+    If 'the count' is greater than 1 then,
+        Set 'the elements text' to "{'the elements text'}, {'the last value'}".
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a text called 'the length check' is 'gen assert number is' of "LST2-15" and 'the length access' and 'the count'.
+    a text called 'the size check' is 'gen assert number matches' of "LST2-16" and 'the size access' and 'the length access'.
+    a text called 'the empty check' is 'gen assert false' of "LST2-17" and 'the empty access'.
+    a text called 'the first check' is 'gen assert number is' of "LST2-18" and 'the first access' and 'the first value'.
+    a text called 'the last check' is 'gen assert number is' of "LST2-19" and 'the last access' and 'the last value'.
+    a text called 'the first agreement target' is "element 1 of {'the name'}".
+    a text called 'the first agreement check' is 'gen assert number matches' of "LST2-23" and 'the first access' and 'the first agreement target'.
+    a text called 'the last agreement target' is "element {'the count'} of {'the name'}".
+    a text called 'the last agreement check' is 'gen assert number matches' of "LST2-23" and 'the last access' and 'the last agreement target'.
+    a list called 'the lines' is ['the declaration', 'the length check', 'the size check', 'the empty check', 'the first check', 'the last check', 'the first agreement check', 'the last agreement check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST2-20 (gap in the manual, LANGUAGE.md:2987-2993, hand-verified against
+ both compilers - see probes/collections-b/LST2-20.vox): on an EMPTY
+ list, `first` and `last` each read 0 AND set the error flag, the same
+ contract the manual states only for an out-of-range `element N of`;
+ `length`/`size` stay 0 and `empty` stays true, none of the three raising
+ the flag. A stale-error drain (a flag declared false, then `On error Set
+ it to true` with nothing erroring in between) sits before the first
+ read under test, so a flag some earlier, unrelated leaf left standing
+ in the same program cannot be mistaken for this leaf's own finding -
+ the same defensive shape gen_buffers.vox's growth/bounds leaves use.
+
+ Top level only (see the reservation note above 'gen dispatch leaf'):
+ two `On error` handlers, unsafe as a block's mandatory closer
+ (PROCEDURE.md 6a).)
+
+To 'gen leaf list empty properties' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the empty access' is 'gen buffer property' of 'the stem' and "empty".
+    a text called 'the first access' is 'gen buffer property' of 'the stem' and "first".
+    a text called 'the last access' is 'gen buffer property' of 'the stem' and "last".
+    a text called 'the declaration' is "a list called {'the name'} is []".
+    a text called 'the length check' is 'gen assert number is' of "LST2-20" and 'the length access' and 0.
+    a text called 'the size check' is 'gen assert number is' of "LST2-20" and 'the size access' and 0.
+    a text called 'the empty check' is 'gen assert true' of "LST2-20" and 'the empty access'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the first flag' is 'gen buffer companion' of "empty first read errored".
+    a text called 'the first result' is 'gen buffer companion' of "empty first read".
+    a text called 'the first flag declaration' is "a boolean called {'the first flag'} is false".
+    a text called 'the first line' is "a number called {'the first result'} is {'the first access'}".
+    a text called 'the first handler' is "On error Set {'the first flag'} to true".
+    a text called 'the first error check' is 'gen assert true' of "LST2-20" and 'the first flag'.
+    a text called 'the first value check' is 'gen assert number is' of "LST2-20" and 'the first result' and 0.
+    a text called 'the last flag' is 'gen buffer companion' of "empty last read errored".
+    a text called 'the last result' is 'gen buffer companion' of "empty last read".
+    a text called 'the last flag declaration' is "a boolean called {'the last flag'} is false".
+    a text called 'the last line' is "a number called {'the last result'} is {'the last access'}".
+    a text called 'the last handler' is "On error Set {'the last flag'} to true".
+    a text called 'the last error check' is 'gen assert true' of "LST2-20" and 'the last flag'.
+    a text called 'the last value check' is 'gen assert number is' of "LST2-20" and 'the last result' and 0.
+    a list called 'the lines' is ['the declaration', 'the length check', 'the size check', 'the empty check', 'the stale declaration', 'the stale handler', 'the first flag declaration', 'the first line', 'the first handler', 'the first error check', 'the first value check', 'the last flag declaration', 'the last line', 'the last handler', 'the last error check', 'the last value check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST2-21, LST2-22, LST2-24 (LANGUAGE.md:2997-3009): `element N of <list>`
+ is 1-indexed, works with a LITERAL index at any in-range position, and
+ works with a runtime VARIABLE index reading the same slot a literal
+ would. `element 1 of` is asserted every call - LST2-21's own claim is
+ the 1-indexing itself, not merely that access works - while a SECOND,
+ randomly positioned read alternates between the literal and the
+ variable form, so 'gen leaf list inrange' no longer being the only leaf
+ that reads a list by index also stops being the only leaf that reads
+ index 1 every single time (its own row notes that as an unjustified
+ invariant).)
+
+To 'gen leaf list element index' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the count draw' is 'rng below' of 5.
+    a number called 'the count' is 'the count draw' add 2.
+    a number called 'the index draw' is 'rng below' of 'the count'.
+    a number called 'the chosen index' is 'the index draw' add 1.
+    a number called 'the first stored value' is 0.
+    a number called 'the chosen value' is 0.
+    a text called 'the elements text' is "".
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the count',
+        a number called 'the value' is 'rng below' of 1000,
+        If 'the position' is 1 then,
+            Set 'the first stored value' to 'the value'.
+        If 'the position' is 'the chosen index' then,
+            Set 'the chosen value' to 'the value'.
+        If 'the position' is 1 then,
+            Set 'the elements text' to "{'the value'}".
+        If 'the position' is greater than 1 then,
+            Set 'the elements text' to "{'the elements text'}, {'the value'}".
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a text called 'the first subject' is "element 1 of {'the name'}".
+    a text called 'the first check' is 'gen assert number is' of "LST2-21" and 'the first subject' and 'the first stored value'.
+    a list called 'the lines' is ['the declaration', 'the first check'].
+    a number called 'the form draw' is 'rng below' of 2.
+    If 'the form draw' is 0 then,
+        a text called 'the subject' is "element {'the chosen index'} of {'the name'}",
+        a text called 'the check' is 'gen assert number is' of "LST2-22" and 'the subject' and 'the chosen value',
+        append 'the check' to 'the lines'.
+    If 'the form draw' is 1 then,
+        a text called 'the index holder' is 'gen buffer companion' of "chosen position",
+        a text called 'the holder declaration' is "a number called {'the index holder'} is {'the chosen index'}",
+        a text called 'the subject' is "element {'the index holder'} of {'the name'}",
+        a text called 'the check' is 'gen assert number is' of "LST2-24" and 'the subject' and 'the chosen value',
+        append 'the holder declaration' to 'the lines',
+        append 'the check' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+( ── collections leaves, batch C, 2026-08-30 night ──
+
+ Ten rows of docs/ledger/collections-a.md (LST-*) and collections-b.md
+ (LST2-*) that hold on BOTH the installed 0.4.14 and the 0.4.15 stack -
+ every 0.4.15-only claim (nested collections as copies, `Free` on a
+ list/map, `element N of` returning a copy, self-append) is excluded per
+ tonight's common brief and left for after the release. All ten assert;
+ none only exercises.
+
+ Two small helpers, alongside 'gen noun other than' above, for drawing
+ more than one distinct map key from 'the value nouns' without a nested
+ retry loop (PROCEDURE 6a: a While whose body ends on a bare nested If
+ leaves the While itself open for whatever is drawn next).)
+
+To 'gen noun other than either' with a text called 'the first word' and a text called 'the second word'.
+    a text called 'a word' is 'gen word from' of 'the value nouns'.
+    While 'a word' is equal to 'the first word' or 'a word' is equal to 'the second word',
+        Set 'a word' to 'gen word from' of 'the value nouns'.
+    Return a text, 'a word'.
+
+To 'gen noun other than any of three' with a text called 'the first word' and a text called 'the second word' and a text called 'the third word'.
+    a text called 'a word' is 'gen word from' of 'the value nouns'.
+    While 'a word' is equal to 'the first word' or 'a word' is equal to 'the second word' or 'a word' is equal to 'the third word',
+        Set 'a word' to 'gen word from' of 'the value nouns'.
+    Return a text, 'a word'.
+
+(LST-43, LST-45 (LANGUAGE.md:2548, 2555-2558): `Set map's "key" to value`
+ both INSERTS a new entry and REPLACES an existing one - a replace
+ leaves `length` unchanged, an insert grows it by exactly one. `gen leaf
+ map inrange` only ever replaces its own one starting key; no leaf
+ before this one ever inserted a second key into a map.
+
+ A map-key read (`m's "key"`) cannot be handed straight to 'gen assert
+ number is' as its subject: the read's own text already contains a
+ literal `"`, and interpolating that inside an ASSERT's quoted message
+ would need the escaping doubled. Captured into a plain number holder
+ first - the same shape 'gen assert text is' uses for buffer content -
+ the holder is then a bare identifier, safe anywhere.)
+
+To 'gen leaf map insert and replace' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the starting key' is 'gen word from' of 'the value nouns'.
+    a text called 'the inserted key' is 'gen noun other than' of 'the starting key'.
+    a number called 'the starting value' is 'rng below' of 1000.
+    a number called 'the replaced value' is 'rng below' of 1000.
+    a number called 'the inserted value' is 'rng below' of 1000.
+    a text called 'the declaration' is "a map called {'the name'} is {{\"{'the starting key'}\": {'the starting value'}}}".
+    (A map-key access built off 'the name' (the CLOSED reference form)
+     would double its own closing quote when 's is appended after it -
+     'the message slip''s, not 'the message slip's. 'gen buffer
+     property' builds the possessive off 'the stem' instead, the same
+     way it does for a plain property; the quoted key is just handed to
+     it as the "property" text.)
+    a text called 'the starting key quoted' is "\"{'the starting key'}\"".
+    a text called 'the starting key access' is 'gen buffer property' of 'the stem' and 'the starting key quoted'.
+    a text called 'the inserted key quoted' is "\"{'the inserted key'}\"".
+    a text called 'the inserted key access' is 'gen buffer property' of 'the stem' and 'the inserted key quoted'.
+    a text called 'the replace line' is "Set {'the starting key access'} to {'the replaced value'}".
+    a text called 'the replace holder' is 'gen buffer companion' of "replaced value seen".
+    a text called 'the replace capture' is "a number called {'the replace holder'} is {'the starting key access'}".
+    a text called 'the replace value check' is 'gen assert number is' of "LST-45" and 'the replace holder' and 'the replaced value'.
+    a text called 'the replace length check' is 'gen assert number is' of "LST-45" and 'the length access' and 1.
+    a text called 'the insert line' is "Set {'the inserted key access'} to {'the inserted value'}".
+    a text called 'the insert holder' is 'gen buffer companion' of "inserted value seen".
+    a text called 'the insert capture' is "a number called {'the insert holder'} is {'the inserted key access'}".
+    a text called 'the insert value check' is 'gen assert number is' of "LST-43" and 'the insert holder' and 'the inserted value'.
+    a text called 'the insert length check' is 'gen assert number is' of "LST-43" and 'the length access' and 2.
+    a list called 'the lines' is ['the declaration', 'the replace line', 'the replace capture', 'the replace value check', 'the replace length check', 'the insert line', 'the insert capture', 'the insert value check', 'the insert length check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-46 (LANGUAGE.md:2561): `length` is the live entry count and `empty`
+ is true only at zero entries, exactly as for lists - checked on an
+ EMPTY map (declared `{}`, never written into) and a POPULATED one
+ side by side, which is the contrast the row's own claim needs. The
+ populated map's entry count (1-3) is drawn, never fixed, so the leaf
+ does not assert its own favourite count.)
+
+To 'gen leaf map length and empty' with a text called indent and a boolean called nested.
+    a text called 'the empty stem' is 'gen buffer name'.
+    a text called 'the empty name' is 'gen buffer reference' of 'the empty stem'.
+    a text called 'the empty length access' is 'gen buffer property' of 'the empty stem' and "length".
+    a text called 'the empty empty access' is 'gen buffer property' of 'the empty stem' and "empty".
+    a text called 'the empty declaration' is "a map called {'the empty name'} is {{}}".
+    a text called 'the empty length check' is 'gen assert number is' of "LST-46" and 'the empty length access' and 0.
+    a text called 'the empty empty check' is 'gen assert true' of "LST-46" and 'the empty empty access'.
+    a text called 'the full stem' is 'gen buffer name'.
+    a text called 'the full name' is 'gen buffer reference' of 'the full stem'.
+    a text called 'the full length access' is 'gen buffer property' of 'the full stem' and "length".
+    a text called 'the full empty access' is 'gen buffer property' of 'the full stem' and "empty".
+    a number called 'the count draw' is 'rng below' of 3.
+    a number called 'the count' is 'the count draw' add 1.
+    a text called 'the first key' is 'gen word from' of 'the value nouns'.
+    a number called 'the first value' is 'rng below' of 1000.
+    a text called 'the entries' is "\"{'the first key'}\": {'the first value'}".
+    a text called 'the second key' is "".
+    a text called 'the third key' is "".
+    If 'the count' is greater than 1 then,
+        Set 'the second key' to 'gen noun other than' of 'the first key',
+        a number called 'the second value' is 'rng below' of 1000,
+        Set 'the entries' to "{'the entries'}, \"{'the second key'}\": {'the second value'}".
+    If 'the count' is greater than 2 then,
+        Set 'the third key' to 'gen noun other than either' of 'the first key' and 'the second key',
+        a number called 'the third value' is 'rng below' of 1000,
+        Set 'the entries' to "{'the entries'}, \"{'the third key'}\": {'the third value'}".
+    a text called 'the full declaration' is "a map called {'the full name'} is {{{'the entries'}}}".
+    a text called 'the full length check' is 'gen assert number is' of "LST-46" and 'the full length access' and 'the count'.
+    a text called 'the full empty check' is 'gen assert false' of "LST-46" and 'the full empty access'.
+    a list called 'the lines' is ['the empty declaration', 'the empty length check', 'the empty empty check', 'the full declaration', 'the full length check', 'the full empty check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-04 (LANGUAGE.md:2388): an empty list `[]` is legal, and its
+ `length` is 0 and `empty` is true from the moment of declaration - the
+ row's own claim is that nothing asserts this BEFORE a first append,
+ which every existing list leaf reaches only after one.)
+
+To 'gen leaf list empty state' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the empty access' is 'gen buffer property' of 'the stem' and "empty".
+    a text called 'the declaration' is "a list called {'the name'} is []".
+    a text called 'the length check' is 'gen assert number is' of "LST-04" and 'the length access' and 0.
+    a text called 'the empty check' is 'gen assert true' of "LST-04" and 'the empty access'.
+    a list called 'the lines' is ['the declaration', 'the length check', 'the empty check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-47 (LANGUAGE.md:2562-2563, folds LST-48): `keys` and `values` each
+ yield a FRESH list, in insertion order - checked four ways: the order
+ itself (element N of the keys/values list matches the Nth entry
+ written); that mutating the returned keys list does not touch the
+ map's own length, and a second, independent read still shows the
+ original first key untouched (freshness); that a fresh read after a
+ REPLACE still shows the same order; and that a fresh read after an
+ INSERT shows the new key landing LAST. The entry count (2 or 3) is
+ drawn; 'the third key' defaults to 'the second key' when it is not
+ used, which lets 'gen noun other than any of three' double as a
+ two-word exclusion for free.)
+
+To 'gen leaf map keys values fresh' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the keys possessive' is 'gen buffer property' of 'the stem' and "keys".
+    a number called 'the count draw' is 'rng below' of 2.
+    a number called 'the count' is 'the count draw' add 2.
+    a text called 'the first key' is 'gen word from' of 'the value nouns'.
+    a number called 'the first value' is 'rng below' of 1000.
+    a text called 'the second key' is 'gen noun other than' of 'the first key'.
+    a number called 'the second value' is 'rng below' of 1000.
+    a text called 'the third key' is 'the second key'.
+    a number called 'the third value' is 0.
+    a text called 'the entries' is "\"{'the first key'}\": {'the first value'}, \"{'the second key'}\": {'the second value'}".
+    If 'the count' is greater than 2 then,
+        Set 'the third key' to 'gen noun other than either' of 'the first key' and 'the second key',
+        Set 'the third value' to 'rng below' of 1000,
+        Set 'the entries' to "{'the entries'}, \"{'the third key'}\": {'the third value'}".
+    a text called 'the declaration' is "a map called {'the name'} is {{{'the entries'}}}".
+    a text called 'the keys stem' is 'gen buffer name'.
+    a text called 'the keys name' is 'gen buffer reference' of 'the keys stem'.
+    a text called 'the keys line' is "a list called {'the keys name'} is {'the keys possessive'}".
+    a text called 'the values stem' is 'gen buffer name'.
+    a text called 'the values name' is 'gen buffer reference' of 'the values stem'.
+    a text called 'the values possessive' is 'gen buffer property' of 'the stem' and "values".
+    a text called 'the values line' is "a list called {'the values name'} is {'the values possessive'}".
+    a text called 'the first key subject' is "element 1 of {'the keys name'}".
+    a text called 'the first key check' is 'gen assert text equals' of "LST-47" and 'the first key subject' and 'the first key'.
+    a text called 'the second key subject' is "element 2 of {'the keys name'}".
+    a text called 'the second key check' is 'gen assert text equals' of "LST-47" and 'the second key subject' and 'the second key'.
+    a text called 'the first value subject' is "element 1 of {'the values name'}".
+    a text called 'the first value check' is 'gen assert number is' of "LST-47" and 'the first value subject' and 'the first value'.
+    a text called 'the second value subject' is "element 2 of {'the values name'}".
+    a text called 'the second value check' is 'gen assert number is' of "LST-47" and 'the second value subject' and 'the second value'.
+    a list called 'the lines' is ['the declaration', 'the keys line', 'the values line', 'the first key check', 'the second key check', 'the first value check', 'the second value check'].
+    If 'the count' is greater than 2 then,
+        a text called 'the third key subject' is "element 3 of {'the keys name'}",
+        a text called 'the third key check' is 'gen assert text equals' of "LST-47" and 'the third key subject' and 'the third key',
+        a text called 'the third value subject' is "element 3 of {'the values name'}",
+        a text called 'the third value check' is 'gen assert number is' of "LST-47" and 'the third value subject' and 'the third value',
+        append 'the third key check' to 'the lines',
+        append 'the third value check' to 'the lines'.
+    a text called 'the mutation target' is "element 1 of {'the keys name'}".
+    a text called 'the mutation line' is "Set {'the mutation target'} to \"mutated\"".
+    append 'the mutation line' to 'the lines'.
+    a text called 'the length after mutation check' is 'gen assert number is' of "LST-47" and 'the length access' and 'the count'.
+    append 'the length after mutation check' to 'the lines'.
+    a text called 'the resurvey stem' is 'gen buffer name'.
+    a text called 'the resurvey name' is 'gen buffer reference' of 'the resurvey stem'.
+    a text called 'the resurvey line' is "a list called {'the resurvey name'} is {'the keys possessive'}".
+    append 'the resurvey line' to 'the lines'.
+    a text called 'the resurvey subject' is "element 1 of {'the resurvey name'}".
+    a text called 'the resurvey check' is 'gen assert text equals' of "LST-47" and 'the resurvey subject' and 'the first key'.
+    append 'the resurvey check' to 'the lines'.
+    a number called 'the replaced value' is 'rng below' of 1000.
+    (Built off 'the stem', not 'the name' - see 'gen leaf map insert and
+     replace's own comment on why the closed reference form would
+     double its closing quote here.)
+    a text called 'the first key quoted' is "\"{'the first key'}\"".
+    a text called 'the first key access' is 'gen buffer property' of 'the stem' and 'the first key quoted'.
+    a text called 'the replace line' is "Set {'the first key access'} to {'the replaced value'}".
+    append 'the replace line' to 'the lines'.
+    a text called 'the post replace stem' is 'gen buffer name'.
+    a text called 'the post replace name' is 'gen buffer reference' of 'the post replace stem'.
+    a text called 'the post replace line' is "a list called {'the post replace name'} is {'the keys possessive'}".
+    append 'the post replace line' to 'the lines'.
+    a text called 'the post replace subject' is "element 1 of {'the post replace name'}".
+    a text called 'the post replace check' is 'gen assert text equals' of "LST-47" and 'the post replace subject' and 'the first key'.
+    append 'the post replace check' to 'the lines'.
+    a text called 'the appended key' is 'gen noun other than any of three' of 'the first key' and 'the second key' and 'the third key'.
+    a number called 'the appended value' is 'rng below' of 1000.
+    a text called 'the appended key quoted' is "\"{'the appended key'}\"".
+    a text called 'the appended key access' is 'gen buffer property' of 'the stem' and 'the appended key quoted'.
+    a text called 'the insert line' is "Set {'the appended key access'} to {'the appended value'}".
+    append 'the insert line' to 'the lines'.
+    a number called 'the count after insert' is 'the count' add 1.
+    a text called 'the post insert stem' is 'gen buffer name'.
+    a text called 'the post insert name' is 'gen buffer reference' of 'the post insert stem'.
+    a text called 'the post insert line' is "a list called {'the post insert name'} is {'the keys possessive'}".
+    append 'the post insert line' to 'the lines'.
+    a text called 'the post insert subject' is "element {'the count after insert'} of {'the post insert name'}".
+    a text called 'the post insert check' is 'gen assert text equals' of "LST-47" and 'the post insert subject' and 'the appended key'.
+    append 'the post insert check' to 'the lines'.
+    a text called 'the closing read' is "Print {'the length access'}".
+    append 'the closing read' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-49 (LANGUAGE.md:2570-2581): a missing key does not crash - it sets
+ the error flag - and the value handed to the destination SPLITS: where
+ the compiler can PROVE the key absent from a literal map it can see
+ whole, the read is the untyped NUMBER 0 regardless of destination
+ type; where it cannot (a map grown through `Set`), the read yields the
+ destination's own TYPED default instead - checked here on a text, a
+ list and a map destination, none of which any leaf tried before.
+ `gen leaf map oob` catches the error but never captures or checks what
+ came back.
+
+ Same shape as `gen leaf absent key` (VAL-27, values.md) - a map, a
+ missing key, a stale-flag drain before the first risky read - but a
+ different claim: VAL-27 is "is nothing" versus "raises an error"; this
+ is the provable/unprovable SPLIT and what each destination type
+ actually receives. Reuses that leaf's naming idiom ('gen fresh noun' /
+ 'gen written name' / 'gen possessive name') rather than 'gen buffer
+ name': a possessive built from an already-quoted companion name would
+ double its closing quote (see 'gen buffer property's own comment), and
+ the possessive is needed here on four different holders.)
+
+To 'gen leaf map missing key typed default' with a text called indent and a boolean called nested.
+    a text called 'the provable phrase' is 'gen fresh noun'.
+    a text called 'the provable name' is 'gen written name' of 'the provable phrase'.
+    a text called 'the provable possessive' is 'gen possessive name' of 'the provable phrase'.
+    a text called 'the provable key' is 'gen word from' of 'the value nouns'.
+    a text called 'the provable missing key' is 'gen word from' of 'the absent keys'.
+    a number called 'the provable value' is 'rng below' of 1000.
+    a text called 'the provable holder phrase' is 'gen fresh noun'.
+    a text called 'the provable holder name' is 'gen written name' of 'the provable holder phrase'.
+    a text called 'the stale witness phrase' is 'gen fresh noun'.
+    a text called 'the stale witness name' is 'gen written name' of 'the stale witness phrase'.
+    a text called 'the provable witness phrase' is 'gen fresh noun'.
+    a text called 'the provable witness name' is 'gen written name' of 'the provable witness phrase'.
+    'gen emit' of "{indent}a map called {'the provable name'} is {{\"{'the provable key'}\": {'the provable value'}}}.\n".
+    'gen emit' of "{indent}a boolean called {'the stale witness name'} is false.\n".
+    'gen emit' of "{indent}On error Set {'the stale witness name'} to true.\n".
+    'gen emit' of "{indent}a number called {'the provable witness name'} is 0.\n".
+    a text called 'the provable read' is "{indent}a number called {'the provable holder name'} is {'the provable possessive'} \"{'the provable missing key'}\".\n".
+    'gen emit' of 'the provable read'.
+    'gen emit' of "{indent}On error Set {'the provable witness name'} to 1.\n".
+    a text called 'the provable flag check' is "{indent}If {'the provable witness name'} is not 1 then, Print \"ASSERT LST-49: expected the provable missing read to raise the error flag got {'the provable witness name'}\", Exit 95.\n".
+    'gen emit' of 'the provable flag check'.
+    a text called 'the provable value check' is "{indent}If {'the provable holder name'} is not 0 then, Print \"ASSERT LST-49: expected the provable missing read to be 0 got {'the provable holder name'}\", Exit 95.\n".
+    'gen emit' of 'the provable value check'.
+    a text called 'the grown phrase' is 'gen fresh noun'.
+    a text called 'the grown name' is 'gen written name' of 'the grown phrase'.
+    a text called 'the grown possessive' is 'gen possessive name' of 'the grown phrase'.
+    a text called 'the grown key' is 'gen noun other than' of 'the provable key'.
+    a text called 'the grown missing key' is 'gen noun other than' of 'the provable missing key'.
+    a number called 'the grown value' is 'rng below' of 1000.
+    'gen emit' of "{indent}a map called {'the grown name'} is {{}}.\n".
+    'gen emit' of "{indent}Set {'the grown possessive'} \"{'the grown key'}\" to {'the grown value'}.\n".
+    a text called 'the text holder phrase' is 'gen fresh noun'.
+    a text called 'the text holder name' is 'gen written name' of 'the text holder phrase'.
+    a text called 'the text witness phrase' is 'gen fresh noun'.
+    a text called 'the text witness name' is 'gen written name' of 'the text witness phrase'.
+    'gen emit' of "{indent}a number called {'the text witness name'} is 0.\n".
+    a text called 'the text read' is "{indent}a text called {'the text holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
+    'gen emit' of 'the text read'.
+    'gen emit' of "{indent}On error Set {'the text witness name'} to 1.\n".
+    a text called 'the text flag check' is "{indent}If {'the text witness name'} is not 1 then, Print \"ASSERT LST-49: expected the text-typed missing read to raise the error flag got {'the text witness name'}\", Exit 95.\n".
+    'gen emit' of 'the text flag check'.
+    a text called 'the text view phrase' is 'gen fresh noun'.
+    a text called 'the text view name' is 'gen written name' of 'the text view phrase'.
+    a text called 'the text view possessive' is 'gen possessive name' of 'the text view phrase'.
+    'gen emit' of "{indent}a buffer called {'the text view name'} is {'the text holder name'}.\n".
+    a text called 'the text size check' is "{indent}If {'the text view possessive'} size is not 0 then, Print \"ASSERT LST-49: expected the empty-text default to be 0 bytes got {'the text view possessive'} size\", Exit 95.\n".
+    'gen emit' of 'the text size check'.
+    a text called 'the list holder phrase' is 'gen fresh noun'.
+    a text called 'the list holder name' is 'gen written name' of 'the list holder phrase'.
+    a text called 'the list holder possessive' is 'gen possessive name' of 'the list holder phrase'.
+    a text called 'the list witness phrase' is 'gen fresh noun'.
+    a text called 'the list witness name' is 'gen written name' of 'the list witness phrase'.
+    'gen emit' of "{indent}a number called {'the list witness name'} is 0.\n".
+    a text called 'the list read' is "{indent}a list called {'the list holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
+    'gen emit' of 'the list read'.
+    'gen emit' of "{indent}On error Set {'the list witness name'} to 1.\n".
+    a text called 'the list flag check' is "{indent}If {'the list witness name'} is not 1 then, Print \"ASSERT LST-49: expected the list-typed missing read to raise the error flag got {'the list witness name'}\", Exit 95.\n".
+    'gen emit' of 'the list flag check'.
+    a text called 'the list size check' is "{indent}If {'the list holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-list default to have length 0 got {'the list holder possessive'} length\", Exit 95.\n".
+    'gen emit' of 'the list size check'.
+    a text called 'the map holder phrase' is 'gen fresh noun'.
+    a text called 'the map holder name' is 'gen written name' of 'the map holder phrase'.
+    a text called 'the map holder possessive' is 'gen possessive name' of 'the map holder phrase'.
+    a text called 'the map witness phrase' is 'gen fresh noun'.
+    a text called 'the map witness name' is 'gen written name' of 'the map witness phrase'.
+    'gen emit' of "{indent}a number called {'the map witness name'} is 0.\n".
+    a text called 'the map read' is "{indent}a map called {'the map holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
+    'gen emit' of 'the map read'.
+    'gen emit' of "{indent}On error Set {'the map witness name'} to 1.\n".
+    a text called 'the map flag check' is "{indent}If {'the map witness name'} is not 1 then, Print \"ASSERT LST-49: expected the map-typed missing read to raise the error flag got {'the map witness name'}\", Exit 95.\n".
+    'gen emit' of 'the map flag check'.
+    a text called 'the map size check' is "{indent}If {'the map holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-map default to have length 0 got {'the map holder possessive'} length\", Exit 95.\n".
+    'gen emit' of 'the map size check'.
+    'gen emit' of "{indent}Print {'the map holder name'}.\n".
+
+(LST2-30 (LANGUAGE.md:3025-3035): the worked example - two appends onto
+ an already-populated list grow its length by exactly two. `gen leaf
+ list inrange` appends once and never reads the length back; this leaf
+ is the missing length read, over a starting count that is drawn (1-5),
+ not fixed at the worked example's three.)
+
+To 'gen leaf list append length worked example' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a number called 'the starting count draw' is 'rng below' of 5.
+    a number called 'the starting count' is 'the starting count draw' add 1.
+    a text called 'the elements text' is "".
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the starting count',
+        a number called 'the value' is 'rng below' of 1000,
+        If 'the built' is 0 then,
+            Set 'the elements text' to "{'the value'}".
+        If 'the built' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the value'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a number called 'the first appended' is 'rng below' of 1000.
+    a text called 'the first append line' is "append {'the first appended'} to {'the name'}".
+    a number called 'the second appended' is 'rng below' of 1000.
+    a text called 'the second append line' is "append {'the second appended'} to {'the name'}".
+    a number called 'the final count' is 'the starting count' add 2.
+    a text called 'the length check' is 'gen assert number is' of "LST2-30" and 'the length access' and 'the final count'.
+    a text called 'the last subject' is "element {'the final count'} of {'the name'}".
+    a text called 'the last check' is 'gen assert number is' of "LST2-30" and 'the last subject' and 'the second appended'.
+    a list called 'the lines' is ['the declaration', 'the first append line', 'the second append line', 'the length check', 'the last check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST2-41 (LANGUAGE.md:3080-3085): the append-in-loop example - a
+ `While` loop appending `counter multiply counter` builds the list of
+ squares one iteration at a time. `gen leaf butif append' appends an
+ expression, but never inside a loop; the bound (2-6) is drawn, not
+ fixed at the worked example's five, so the final length and the last
+ element vary with it - both checked against arithmetic the generator
+ itself did, not against the worked example's own literal digits.)
+
+To 'gen leaf list append in loop' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the counter name' is 'gen buffer companion' of "running count".
+    a number called 'the bound draw' is 'rng below' of 5.
+    a number called 'the bound' is 'the bound draw' add 2.
+    a text called 'the declaration' is "a list called {'the name'} is []".
+    a text called 'the counter declaration' is "a number called {'the counter name'} is 1".
+    a text called 'the loop line' is "While {'the counter name'} is less than or equal to {'the bound'}, append {'the counter name'} multiply {'the counter name'} to {'the name'}, increment {'the counter name'}".
+    a text called 'the length check' is 'gen assert number is' of "LST2-41" and 'the length access' and 'the bound'.
+    a number called 'the last square' is 'the bound' multiply 'the bound'.
+    a text called 'the last subject' is "element {'the bound'} of {'the name'}".
+    a text called 'the last check' is 'gen assert number is' of "LST2-41" and 'the last subject' and 'the last square'.
+    a list called 'the lines' is ['the declaration', 'the counter declaration', 'the loop line', 'the length check', 'the last check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST2-46, LST2-53 (LANGUAGE.md:3102-3105, 3118): `append each X from Y
+ to Z` copies every element of one list onto the end of another, in
+ order - both rows cite the same construct from two different places in
+ the manual (the general worked example and the action-table summary),
+ so one leaf puts both on trial: the destination's final length matches
+ the source's, and every position was copied over correctly, not merely
+ to the right COUNT.)
+
+To 'gen leaf list append each' with a text called indent and a boolean called nested.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source name' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the source length access' is 'gen buffer property' of 'the source stem' and "length".
+    a text called 'the dest stem' is 'gen buffer name'.
+    a text called 'the dest name' is 'gen buffer reference' of 'the dest stem'.
+    a text called 'the dest length access' is 'gen buffer property' of 'the dest stem' and "length".
+    a text called 'the loop stem' is 'gen buffer name'.
+    a text called 'the loop name' is 'gen buffer reference' of 'the loop stem'.
+    a number called 'the count draw' is 'rng below' of 4.
+    a number called 'the count' is 'the count draw' add 1.
+    a text called 'the elements text' is "".
+    a list called 'the values' is [].
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a number called 'the value' is 'rng below' of 1000,
+        append 'the value' to 'the values',
+        If 'the built' is 0 then,
+            Set 'the elements text' to "{'the value'}".
+        If 'the built' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the value'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the source declaration' is "a list called {'the source name'} is [{'the elements text'}]".
+    a text called 'the dest declaration' is "a list called {'the dest name'} is []".
+    a text called 'the append line' is "append each {'the loop name'} from {'the source name'} to {'the dest name'}".
+    a text called 'the length check' is 'gen assert number matches' of "LST2-46" and 'the dest length access' and 'the source length access'.
+    a list called 'the lines' is ['the source declaration', 'the dest declaration', 'the append line', 'the length check'].
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the count',
+        a number called 'the expected' is element 'the position' of 'the values',
+        a text called 'the subject' is "element {'the position'} of {'the dest name'}",
+        a text called 'the check' is 'gen assert number is' of "LST2-53" and 'the subject' and 'the expected',
+        append 'the check' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST2-94 (LANGUAGE.md:3300-3302): a `treating X as Y` clause on a loop
+ expansion replaces the loop variable with Y for exactly the iterations
+ where it equals X - `gen leaf treating print`/`treating grid` draw the
+ match and the collection from the same range, so a hit is possible but
+ never guaranteed. Here the match is PLANTED at a random position, so
+ the substitution is certain to fire at least once; the expected value
+ at every position is computed from the ORIGINAL element, not from the
+ planted position, so an accidental second collision (the source drew
+ the match value again by chance elsewhere) is asserted correctly too.
+ `append each ... treating ... to` is the sink, since `print each` gives
+ no way to capture what the loop actually did.)
+
+To 'gen leaf treating append guaranteed hit' with a text called indent and a boolean called nested.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source name' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the dest stem' is 'gen buffer name'.
+    a text called 'the dest name' is 'gen buffer reference' of 'the dest stem'.
+    a text called 'the loop stem' is 'gen buffer name'.
+    a text called 'the loop name' is 'gen buffer reference' of 'the loop stem'.
+    a number called 'the count draw' is 'rng below' of 3.
+    a number called 'the count' is 'the count draw' add 2.
+    a number called 'the position draw' is 'rng below' of 'the count'.
+    a number called 'the match position' is 'the position draw' add 1.
+    a number called 'the match value' is 'rng below' of 100.
+    a number called 'the replacement draw' is 'rng below' of 100.
+    a number called 'the replacement value' is 'the replacement draw' add 100.
+    a text called 'the elements text' is "".
+    a list called 'the values' is [].
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a number called 'the position number' is 'the built' add 1,
+        a number called 'the value' is 'rng below' of 100,
+        If 'the position number' is 'the match position' then,
+            Set 'the value' to 'the match value'.
+        append 'the value' to 'the values',
+        If 'the built' is 0 then,
+            Set 'the elements text' to "{'the value'}".
+        If 'the built' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the value'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the source declaration' is "a list called {'the source name'} is [{'the elements text'}]".
+    a text called 'the dest declaration' is "a list called {'the dest name'} is []".
+    a text called 'the append line' is "append each {'the loop name'} from {'the source name'} treating {'the match value'} as {'the replacement value'} to {'the dest name'}".
+    a list called 'the lines' is ['the source declaration', 'the dest declaration', 'the append line'].
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the count',
+        a number called 'the original' is element 'the position' of 'the values',
+        a number called 'the expected' is 'the original',
+        If 'the original' is 'the match value' then,
+            Set 'the expected' to 'the replacement value'.
+        a text called 'the subject' is "element {'the position'} of {'the dest name'}",
+        a text called 'the check' is 'gen assert number is' of "LST2-94" and 'the subject' and 'the expected',
+        append 'the check' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+( ── collections leaves, batch D, 2026-08-30 night ──
+
+ docs/ledger/collections-a.md LST-52, LST-55, LST-60 (folds LST-61),
+ LST-62, LST-63, LST-64, LST-65, LST-66, LST-67, LST-69 - ten rows in
+ the Maps and Type Predicates sections (LANGUAGE.md:2590-2687), the
+ 240-259 reservation's last span (249-258; 240-248 are batch C's).
+ Every 0.4.15-only claim (nested collections as copies, `Free` on a
+ list/map, `element N of` returning a copy, self-append) is excluded per
+ tonight's common brief and left for after the release - none of these
+ ten touch that ground, since Type Predicates and the map-value-nested
+ claim both predate it.
+
+ Six of the ten reuse the runtime-tag vocabulary values.md already built
+ for the `value` ABI ('gen tag predicate', 'gen bare tag name', 'gen
+ value payload', 'gen value expression', 'gen taggable other than',
+ further down this file) rather than inventing a second one - the same
+ six/seven tags, the same predicate nouns, just applied to a plain list
+ element instead of a `value`-typed one.
+
+ Hand-reduced while building this batch: a `For each` whose single-line
+ body contains its own `If` needs TWO closing periods where more program
+ text follows, not one - the first closes the If (PROCEDURE 6a's "one
+ period closes one level"), and the For-each itself is a second, separate
+ level. 'gen tag list has' below already carries this (`Set 'the tag
+ appears' to true..`); it just was not yet written down as a load-bearing
+ reason to avoid For-each+If in a LEAF's own emitted lines. Every leaf
+ here sidesteps the question entirely by asserting on `element N of` a
+ list rather than iterating it with `For each`, which is why LST-60's
+ worked-example dispatch chain is proven by direct per-position checks,
+ not by reproducing the manual's own loop.)
+
+To 'gen assert predicate' with a text called 'the row' and a text called 'the subject' and a text called 'the predicate' and a boolean called 'the expected' and a text called 'the role'.
+    a text called 'the holder' is 'gen buffer companion' of 'the role'.
+    a text called 'the reset line' is "a boolean called {'the holder'} is false".
+    a text called 'the capture line' is "If {'the subject'} is {'the predicate'} then, Set {'the holder'} to true. Print {'the holder'}".
+    a text called 'the check' is "".
+    If 'the expected' then,
+        Set 'the check' to 'gen assert true' of 'the row' and 'the holder'.
+    If 'the expected' is false then,
+        Set 'the check' to 'gen assert false' of 'the row' and 'the holder'.
+    a list called 'the trio' is ['the reset line', 'the capture line', 'the check'].
+    Return a list, 'the trio'.
+
+(A random ORDERING of a fixed set of tags - "vary everything no rule
+ pins" applied to which type-noun sits where, not just to the payload
+ inside each slot. Plain rejection redraw: the candidate lists here never
+ exceed six entries, so the average retry count stays small.)
+
+To 'gen tag permutation' with a list called 'the candidate tags'.
+    a number called 'how many' is 'the candidate tags's length.
+    a list called 'the order' is [].
+    a number called 'the picked' is 0.
+    While 'the picked' is less than 'how many',
+        a number called 'the index' is 'rng below' of 'how many',
+        a number called 'the slot' is 'the index' add 1,
+        a number called 'the tag' is element 'the slot' of 'the candidate tags',
+        a boolean called 'the tag is used' is false,
+        a number called 'the scan' is 0,
+        While 'the scan' is less than 'the order's length,
+            a number called 'the scan slot' is 'the scan' add 1,
+            a number called 'the seen tag' is element 'the scan slot' of 'the order',
+            If 'the seen tag' is 'the tag' then,
+                Set 'the tag is used' to true.
+            Set 'the scan' to 'the scan' add 1.
+        If 'the tag is used' is false then,
+            append 'the tag' to 'the order',
+            Set 'the picked' to 'the picked' add 1.
+    Return a list, 'the order'.
+
+(The five declaration synonyms LANGUAGE.md:2643-2644 lists - list has
+ none, so this is never called with tag 4. `float`/`real` are drawn
+ between, the same way 'gen tag predicate' already draws between
+ `decimal`/`float` for the canonical noun.)
+
+To 'gen tag synonym predicate' with a number called tag.
+    If tag is 0 then,
+        Return a text, "an integer".
+    If tag is 1 then,
+        Return a text, "a string".
+    If tag is 2 then,
+        a number called 'the spelling' is 'rng below' of 2,
+        If 'the spelling' is 0 then,
+            Return a text, "a float".
+        Return a text, "a real".
+    If tag is 3 then,
+        Return a text, "a bool".
+    Return a text, "a dictionary".
+
+(LST-52 (LANGUAGE.md:2590): a map value may itself be a list or another
+ map. Discrepancy 8 rules out asserting a collection whole (`is equal
+ to`/print comparison both silently mean pointer identity or drift), so
+ both nested values are read back out with `'s "key"` and checked
+ ENTRY-WISE - the list's two elements by position, the inner map's one
+ entry through a captured holder (a quoted map-key access can't be
+ interpolated directly into an ASSERT message without doubling its own
+ quotes, the same reason 'gen leaf map insert and replace' captures
+ first).
+
+ Rework, 2026-08-30 (owner directive): the three stored payloads were a
+ tame `'rng below' of 1000` - fixed here to 'gen extreme number', so a
+ nested value can land on 0, i64::MIN/MAX-adjacent, or any drawn-length
+ magnitude in between. Only equality is asserted (never arithmetic), and
+ list/map storage was hand-verified to round-trip i64::MAX and an
+ 18-digit value exactly on both compilers before this leaf was widened
+ to draw them.)
+
+To 'gen leaf map value nested' with a text called indent and a boolean called nested.
+    a text called 'the outer stem' is 'gen buffer name'.
+    a text called 'the outer name' is 'gen buffer reference' of 'the outer stem'.
+    a text called 'the list key' is 'gen word from' of 'the value nouns'.
+    a text called 'the map key' is 'gen noun other than' of 'the list key'.
+    a text called 'the inner key' is 'gen noun other than either' of 'the list key' and 'the map key'.
+    a text called 'the list value one literal' is 'gen extreme number'.
+    a number called 'the list value one' is 'the list value one literal' as a number.
+    a text called 'the list value two literal' is 'gen extreme number'.
+    a number called 'the list value two' is 'the list value two literal' as a number.
+    a text called 'the inner value literal' is 'gen extreme number'.
+    a number called 'the inner value' is 'the inner value literal' as a number.
+    a text called 'the list literal' is "[{'the list value one'}, {'the list value two'}]".
+    a text called 'the map literal' is "{{\"{'the inner key'}\": {'the inner value'}}}".
+    a text called 'the declaration' is "a map called {'the outer name'} is {{\"{'the list key'}\": {'the list literal'}, \"{'the map key'}\": {'the map literal'}}}".
+    a text called 'the list key quoted' is "\"{'the list key'}\"".
+    a text called 'the outer list access' is 'gen buffer property' of 'the outer stem' and 'the list key quoted'.
+    a text called 'the map key quoted' is "\"{'the map key'}\"".
+    a text called 'the outer map access' is 'gen buffer property' of 'the outer stem' and 'the map key quoted'.
+    a text called 'the got list stem' is 'gen buffer name'.
+    a text called 'the got list name' is 'gen buffer reference' of 'the got list stem'.
+    a text called 'the got list line' is "a list called {'the got list name'} is {'the outer list access'}".
+    a text called 'the got list length access' is 'gen buffer property' of 'the got list stem' and "length".
+    a text called 'the got list length check' is 'gen assert number is' of "LST-52" and 'the got list length access' and 2.
+    a text called 'the got list first' is "element 1 of {'the got list name'}".
+    a text called 'the got list first check' is 'gen assert number is' of "LST-52" and 'the got list first' and 'the list value one'.
+    a text called 'the got list second' is "element 2 of {'the got list name'}".
+    a text called 'the got list second check' is 'gen assert number is' of "LST-52" and 'the got list second' and 'the list value two'.
+    a text called 'the got map stem' is 'gen buffer name'.
+    a text called 'the got map name' is 'gen buffer reference' of 'the got map stem'.
+    a text called 'the got map line' is "a map called {'the got map name'} is {'the outer map access'}".
+    a text called 'the got map length access' is 'gen buffer property' of 'the got map stem' and "length".
+    a text called 'the got map length check' is 'gen assert number is' of "LST-52" and 'the got map length access' and 1.
+    a text called 'the inner key quoted' is "\"{'the inner key'}\"".
+    a text called 'the got map inner access' is 'gen buffer property' of 'the got map stem' and 'the inner key quoted'.
+    a text called 'the inner holder' is 'gen buffer companion' of "inner value seen".
+    a text called 'the inner capture' is "a number called {'the inner holder'} is {'the got map inner access'}".
+    a text called 'the inner check' is 'gen assert number is' of "LST-52" and 'the inner holder' and 'the inner value'.
+    a list called 'the lines' is ['the declaration', 'the got list line', 'the got list length check', 'the got list first check', 'the got list second check', 'the got map line', 'the got map length check', 'the inner capture', 'the inner check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-55 (static half), LST-66 (LANGUAGE.md:2599-2601, 2653-2656): on a
+ statically-typed value the predicate folds to compile-time true, on ANY
+ of the six types, not just number/text - checked across all six, one
+ declared variable per tag, using the runtime-tag vocabulary the `value`
+ leaves already built.)
+
+To 'gen leaf predicate static fold' with a text called indent and a boolean called nested.
+    a list called 'the lines' is [].
+    a number called tag is 0.
+    While tag is less than 6,
+        a text called 'the stem' is 'gen buffer name',
+        a text called 'the name' is 'gen buffer reference' of 'the stem',
+        a text called 'the payload' is 'gen value payload' of tag,
+        a text called 'the literal' is 'gen value expression' of tag and 'the payload',
+        a text called 'the type keyword' is 'gen bare tag name' of tag,
+        a text called 'the declaration' is "a {'the type keyword'} called {'the name'} is {'the literal'}",
+        a text called 'the predicate' is 'gen tag predicate' of tag,
+        a list called 'the trio' is 'gen assert predicate' of "LST-66" and 'the name' and 'the predicate' and true and "static fold held",
+        a list called 'the entry' is ['the declaration'],
+        a list called 'the whole' is 'gen concat two blocks' of 'the entry' and 'the trio',
+        Set 'the lines' to 'gen concat two blocks' of 'the lines' and 'the whole',
+        Set tag to tag add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-60, folds LST-61 (LANGUAGE.md:2628-2640): the predicate compares the
+ runtime tag, so it works on a mixed-list element whose type is only
+ known at run time - the manual's own dispatch example, put on trial by
+ asserting each position's OWN type noun directly rather than by
+ reproducing the `For each`/`otherwise if` chain (see the batch banner
+ above). The four scalar tags land in a random order, not the manual's
+ own number/text/decimal/boolean sequence - nothing pins that ordering.)
+
+To 'gen leaf predicate mixed dispatch' with a text called indent and a boolean called nested.
+    a list called 'the scalar tags' is [0, 1, 2, 3].
+    a list called 'the order' is 'gen tag permutation' of 'the scalar tags'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the elements text' is "".
+    a list called 'the assertions' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 4,
+        a number called 'the slot' is 'the position' add 1,
+        a number called 'the tag' is element 'the slot' of 'the order',
+        a text called 'the payload' is 'gen value payload' of 'the tag',
+        a text called 'the element' is 'gen value expression' of 'the tag' and 'the payload',
+        If 'the position' is 0 then,
+            Set 'the elements text' to 'the element'.
+        If 'the position' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the element'}".
+        a text called 'the predicate' is 'gen tag predicate' of 'the tag',
+        a text called 'the subject' is "element {'the slot'} of {'the name'}",
+        a list called 'the trio' is 'gen assert predicate' of "LST-60" and 'the subject' and 'the predicate' and true and "slot matched",
+        Set 'the assertions' to 'gen concat two blocks' of 'the assertions' and 'the trio',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a list called 'the preamble' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the assertions'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-62, LST-55's dynamic half (LANGUAGE.md:2599-2601, 2642): all six
+ type nouns work as predicates and each matches exactly ONE slot of a
+ list holding one of each - map's slot is what puts LST-55's dynamic half
+ on trial, guaranteed present because "one of each" is by construction,
+ not a draw. A random slot order, same reasoning as LST-60 above.)
+
+To 'gen leaf predicate all six match' with a text called indent and a boolean called nested.
+    a list called 'the all tags' is [0, 1, 2, 3, 4, 5].
+    a list called 'the order' is 'gen tag permutation' of 'the all tags'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the elements text' is "".
+    a list called 'the assertions' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 6,
+        a number called 'the slot' is 'the position' add 1,
+        a number called 'the tag' is element 'the slot' of 'the order',
+        a text called 'the payload' is 'gen value payload' of 'the tag',
+        a text called 'the element' is 'gen value expression' of 'the tag' and 'the payload',
+        If 'the position' is 0 then,
+            Set 'the elements text' to 'the element'.
+        If 'the position' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the element'}".
+        a text called 'the predicate' is 'gen tag predicate' of 'the tag',
+        a text called 'the subject' is "element {'the slot'} of {'the name'}",
+        a list called 'the trio' is 'gen assert predicate' of "LST-62" and 'the subject' and 'the predicate' and true and "tag confirmed",
+        Set 'the assertions' to 'gen concat two blocks' of 'the assertions' and 'the trio',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a list called 'the preamble' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the assertions'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-63 (LANGUAGE.md:2643-2644): the declaration synonyms work as
+ predicate nouns too - integer, string, float/real, bool, dictionary.
+ List has no synonym, so the permutation draws from the other five only.)
+
+To 'gen leaf predicate synonyms' with a text called indent and a boolean called nested.
+    a list called 'the synonym tags' is [0, 1, 2, 3, 5].
+    a list called 'the order' is 'gen tag permutation' of 'the synonym tags'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the elements text' is "".
+    a list called 'the assertions' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 5,
+        a number called 'the slot' is 'the position' add 1,
+        a number called 'the tag' is element 'the slot' of 'the order',
+        a text called 'the payload' is 'gen value payload' of 'the tag',
+        a text called 'the element' is 'gen value expression' of 'the tag' and 'the payload',
+        If 'the position' is 0 then,
+            Set 'the elements text' to 'the element'.
+        If 'the position' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the element'}".
+        a text called 'the predicate' is 'gen tag synonym predicate' of 'the tag',
+        a text called 'the subject' is "element {'the slot'} of {'the name'}",
+        a list called 'the trio' is 'gen assert predicate' of "LST-63" and 'the subject' and 'the predicate' and true and "synonym accepted",
+        Set 'the assertions' to 'gen concat two blocks' of 'the assertions' and 'the trio',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a list called 'the preamble' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the assertions'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-64 (LANGUAGE.md:2644-2649): `is not a` negates. Each of 2-4 mixed
+ slots is checked against a WRONG type noun - drawn distinct from its own
+ tag by 'gen taggable other than', which values.md's leaves already use
+ for the same purpose - and the negated predicate must hold.)
+
+To 'gen leaf predicate negate' with a text called indent and a boolean called nested.
+    a list called 'the all tags' is [0, 1, 2, 3, 4, 5].
+    a list called 'the order' is 'gen tag permutation' of 'the all tags'.
+    a number called 'the count draw' is 'rng below' of 3.
+    a number called 'the count' is 'the count draw' add 2.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the elements text' is "".
+    a list called 'the assertions' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 'the count',
+        a number called 'the slot' is 'the position' add 1,
+        a number called 'the tag' is element 'the slot' of 'the order',
+        a text called 'the payload' is 'gen value payload' of 'the tag',
+        a text called 'the element' is 'gen value expression' of 'the tag' and 'the payload',
+        If 'the position' is 0 then,
+            Set 'the elements text' to 'the element'.
+        If 'the position' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the element'}".
+        a number called 'the wrong tag' is 'gen taggable other than' of 'the tag',
+        a text called 'the wrong predicate' is 'gen tag predicate' of 'the wrong tag',
+        a text called 'the negated predicate' is "not {'the wrong predicate'}",
+        a text called 'the subject' is "element {'the slot'} of {'the name'}",
+        a list called 'the trio' is 'gen assert predicate' of "LST-64" and 'the subject' and 'the negated predicate' and true and "negation held",
+        Set 'the assertions' to 'gen concat two blocks' of 'the assertions' and 'the trio',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a list called 'the preamble' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the assertions'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-65 (LANGUAGE.md:2651-2653): `is a boolean` and `is a number` are
+ distinct even though both print as numbers - `is a number` is tested at
+ BOTH a number slot and a boolean slot of the same two-element list,
+ expected true at the first and false at the second, which is the tag-
+ collision the row exists to catch. Random which slot holds which.)
+
+To 'gen leaf predicate number boolean order' with a text called indent and a boolean called nested.
+    a list called 'the pair tags' is [0, 3].
+    a list called 'the order' is 'gen tag permutation' of 'the pair tags'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the elements text' is "".
+    a list called 'the assertions' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 2,
+        a number called 'the slot' is 'the position' add 1,
+        a number called 'the tag' is element 'the slot' of 'the order',
+        a text called 'the payload' is 'gen value payload' of 'the tag',
+        a text called 'the element' is 'gen value expression' of 'the tag' and 'the payload',
+        If 'the position' is 0 then,
+            Set 'the elements text' to 'the element'.
+        If 'the position' is greater than 0 then,
+            Set 'the elements text' to "{'the elements text'}, {'the element'}".
+        a text called 'the subject' is "element {'the slot'} of {'the name'}",
+        a boolean called 'the number expected' is false,
+        If 'the tag' is 0 then,
+            Set 'the number expected' to true.
+        a list called 'the trio' is 'gen assert predicate' of "LST-65" and 'the subject' and "a number" and 'the number expected' and "number check read",
+        Set 'the assertions' to 'gen concat two blocks' of 'the assertions' and 'the trio',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a list called 'the preamble' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the assertions'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-67 (LANGUAGE.md:2658-2676): the guard idiom. `is a number` on a
+ `For each` loop variable does not narrow its static type, so arithmetic
+ on it is refused inside the guard exactly as outside - getting the
+ element into a DECLARED variable via `element N of` is what makes
+ `got add 1` legal. The number's position among the three elements is
+ drawn, not fixed, so the leaf never always guards the same slot.
+
+ Rework, 2026-08-30 (owner directive): the guarded number was a tame
+ `'rng below' of 1000`; the arithmetic this row exists to prove legal
+ means the magnitude cannot stay tame without missing the i64 boundary
+ the row's own claim is meant to stress. 'gen extreme number' can draw
+ exactly i64::MAX, in which case `add 1` wraps to i64::MIN - hand-
+ verified (both compilers) that a Vox `add` wraps identically whether
+ computed here, at generator time, or in the emitted program, so the
+ computed 'the expected' and the runtime `got` always agree, wrapped
+ value included; nothing here needed a clamp. The filler decimal moved
+ from a hand-rolled `whole.frac` to 'gen extreme float' for the same
+ reason, secondary since no assertion reads it.)
+
+To 'gen leaf predicate guard idiom' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the number literal' is 'gen extreme number'.
+    a number called 'the number value' is 'the number literal' as a number.
+    a text called 'the text payload' is 'gen text payload'.
+    a text called 'the text element' is "\"{'the text payload'}\"".
+    a text called 'the decimal element' is 'gen extreme float'.
+    a number called 'the number position draw' is 'rng below' of 3.
+    a number called 'the number position' is 'the number position draw' add 1.
+    a text called 'the elements text' is "".
+    If 'the number position' is 1 then,
+        Set 'the elements text' to "{'the number value'}, {'the text element'}, {'the decimal element'}".
+    If 'the number position' is 2 then,
+        Set 'the elements text' to "{'the text element'}, {'the number value'}, {'the decimal element'}".
+    If 'the number position' is 3 then,
+        Set 'the elements text' to "{'the text element'}, {'the decimal element'}, {'the number value'}".
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements text'}]".
+    a text called 'the got holder' is 'gen buffer companion' of "guarded value".
+    a text called 'the reset line' is "a number called {'the got holder'} is 0".
+    a text called 'the guard line' is "If element {'the number position'} of {'the name'} is a number then, Set {'the got holder'} to element {'the number position'} of {'the name'} add 1".
+    a number called 'the expected' is 'the number value' add 1.
+    a text called 'the check' is 'gen assert number is' of "LST-67" and 'the got holder' and 'the expected'.
+    a list called 'the lines' is ['the declaration', 'the reset line', 'the guard line', 'the check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(LST-69 (LANGUAGE.md:2685-2687): a predicate result is itself a boolean
+ value, storable in a list, and each stored slot carries the boolean
+ tag. ONE predicate is tested against two different-tagged elements - it
+ must read true against its own matching tag and false against the
+ other - so both a true-valued and a false-valued stored slot are on
+ trial, and both still answer `is a boolean` afterward.)
+
+To 'gen leaf predicate stored boolean' with a text called indent and a boolean called nested.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source name' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the flags stem' is 'gen buffer name'.
+    a text called 'the flags name' is 'gen buffer reference' of 'the flags stem'.
+    a number called 'the matching tag' is 'rng below' of 6.
+    a number called 'the other tag' is 'gen taggable other than' of 'the matching tag'.
+    a text called 'the matching payload' is 'gen value payload' of 'the matching tag'.
+    a text called 'the matching element' is 'gen value expression' of 'the matching tag' and 'the matching payload'.
+    a text called 'the other payload' is 'gen value payload' of 'the other tag'.
+    a text called 'the other element' is 'gen value expression' of 'the other tag' and 'the other payload'.
+    a text called 'the tested predicate' is 'gen tag predicate' of 'the matching tag'.
+    a text called 'the source declaration' is "a list called {'the source name'} is [{'the matching element'}, {'the other element'}]".
+    a text called 'the flags declaration' is "a list called {'the flags name'} is []".
+    a text called 'the append match' is "append element 1 of {'the source name'} is {'the tested predicate'} to {'the flags name'}".
+    a text called 'the append other' is "append element 2 of {'the source name'} is {'the tested predicate'} to {'the flags name'}".
+    a text called 'the match subject' is "element 1 of {'the flags name'}".
+    a text called 'the other subject' is "element 2 of {'the flags name'}".
+    a text called 'the match value check' is 'gen assert true' of "LST-69" and 'the match subject'.
+    a text called 'the other value check' is 'gen assert false' of "LST-69" and 'the other subject'.
+    a list called 'the match tag trio' is 'gen assert predicate' of "LST-69" and 'the match subject' and "a boolean" and true and "stored tag matched".
+    a list called 'the other tag trio' is 'gen assert predicate' of "LST-69" and 'the other subject' and "a boolean" and true and "stored tag also matched".
+    a list called 'the preamble' is ['the source declaration', 'the flags declaration', 'the append match', 'the append other', 'the match value check', 'the other value check'].
+    a list called 'the tag checks' is 'gen concat two blocks' of 'the match tag trio' and 'the other tag trio'.
+    a list called 'the lines' is 'gen concat two blocks' of 'the preamble' and 'the tag checks'.
+    'gen join lines' of indent and nested and 'the lines'.
+
 (--- Dynamic values: the `value` type --------------------------------
 
  Ledger docs/ledger/values.md; LANGUAGE.md 2436-2578. Rows VAL-03,

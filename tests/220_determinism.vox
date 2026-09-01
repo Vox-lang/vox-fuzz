@@ -9,6 +9,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (The deterministic gate. A fuzzer whose output is not reproducible cannot
  produce a usable repro.sh, so determinism is a correctness property worth

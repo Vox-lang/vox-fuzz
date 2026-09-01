@@ -1,0 +1,17 @@
+(LST-67 — the position-loop guard idiom (LANGUAGE.md:2664-2676, the fix
+ Discrepancy 3 called for): the predicate reads the runtime tag but does not
+ narrow the static type, so `item add 1` on a `For each` loop variable is
+ still refused inside the guard (see D3.vox). Getting the guarded element
+ into a DECLARED variable via a position loop, instead, lets arithmetic run.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST-67.vox -o p && ./p
+ expected output:
+   12
+   guarded away
+   guarded away
+)
+a list called mixedbag is [11, "two", 3.5].
+For each position from 1 to mixedbag's length,
+  if element position of mixedbag is a number,
+    a number called got is element position of mixedbag,
+    print got add 1.
+  otherwise print "guarded away".

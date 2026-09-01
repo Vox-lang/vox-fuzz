@@ -1,0 +1,159 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's buffer leaves, batch B, 2026-08-29 evening -
+ docs/ledger/buffers.md rows BUF-41, BUF-42, BUF-43, BUF-44, BUF-45,
+ BUF-46, BUF-47, BUF-48, BUF-51, BUF-52 - the "Releasing a Buffer"
+ subsection. Same shape as 300_gen_buffers_a.vox and 330_gen_buffers_b.vox
+ (that file's own name already belongs to the night-of-08-28 kinds
+ 105-109, so this batch's tests are 430_gen_buffers_c): each leaf is
+ called directly off a pinned rng seed and its emitted source printed in
+ full, the golden is the generated Vox itself, at the true top level
+ (nested false) and inside a block (nested true) both.
+
+ 'gen leaf buffer freed write refused' (BUF-47) gets two seeds: one with
+ gen_does_file_io left false, so the fifth ("Read ... into") form stands
+ aside and only the other four render, and one with it (and
+ gen_scratch_flag) turned on, the same way 380_gen_files_b.vox does it,
+ so the fifth form's golden is on record too.
+
+ 'gen leaf buffer free spellings' and 'gen leaf buffer freed resize
+ refused' loop 1-3 times, so each gets two seeds to show more than one
+ iteration count in the golden.)
+
+Print "--- BUF-41, BUF-42: Free/Release/Deallocate, with or without the article ---".
+'rng seed' of 110.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer free spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (a different buffer count) ---".
+'rng seed' of 111.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer free spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 110.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer free spellings' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-43, BUF-44, BUF-45: size/length/capacity/empty/full/as-text after Free ---".
+'rng seed' of 112.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed state' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 112.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed state' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-46: a byte read past a freed buffer is refused and reads 0 ---".
+'rng seed' of 113.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed read refused' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 113.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed read refused' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-47: append/Set byte/copy/set refused after Free (no file I/O this run) ---".
+'rng seed' of 114.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed write refused' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 114.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed write refused' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-47 again, with file I/O available - the fifth form (Read ... into) ---".
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+'rng seed' of 114.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed write refused' of "" and false.
+Print 'gen text'.
+Set gen_does_file_io to false.
+
+Print "--- BUF-48: resize/reallocate/grow/shrink refused after Free ---".
+'rng seed' of 115.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed resize refused' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (a different buffer count) ---".
+'rng seed' of 116.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed resize refused' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 115.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer freed resize refused' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-51: a second Free is a no-op that flags rather than crashing ---".
+'rng seed' of 117.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer double free' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 117.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer double free' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-52: freeing a buffer through a parameter frees the caller's own variable ---".
+'rng seed' of 118.
+'gen buffer names reset'.
+'gen reset value names'.
+clear gen_out.
+'gen leaf buffer free via parameter' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 118.
+'gen buffer names reset'.
+'gen reset value names'.
+clear gen_out.
+'gen leaf buffer free via parameter' of "  " and true.
+Print 'gen text'.

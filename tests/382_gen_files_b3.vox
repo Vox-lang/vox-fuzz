@@ -1,0 +1,109 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's file leaves, batch B3 - docs/ledger/files.md rows FIL-57,
+ FIL-58, FIL-59, FIL-60, FIL-61, FIL-62, FIL-63, FIL-89, FIL-100,
+ FIL-102 - the Seek family (emitted by no leaf anywhere before this
+ batch) plus the two resource-safety rows.
+
+ Same shape as 380_gen_files_b.vox/381_gen_files_b2.vox: each leaf
+ called directly off a pinned rng seed, its emitted source printed in
+ full as the golden, rendered both at the true top level (nested false)
+ and inside a block (nested true).)
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- FIL-58, FIL-59, FIL-60, FIL-62: seek by byte, both keywords, both directions ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by byte' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by byte' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-57, FIL-61, FIL-102, FIL-63 (line past EOF): seek by line ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by line' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by line' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-63 (position below 1, invalid descriptor): seek invalid targets ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek invalid targets' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-100: closing an already-closed handle ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file double close' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-89: a forgotten Close still reaches disk ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file forgotten close' of "" and false.
+Print 'gen text'.
+
+(A program that never committed to file I/O was never given a path, so
+ every leaf above must stand aside for the plain-print leaf instead of
+ inventing one - the same guarantee 381_gen_files_b2.vox already checks
+ for batch B2's own leaves.)
+Print "--- every leaf above with no file I/O committed ---".
+Set gen_does_file_io to false.
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by byte' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek by line' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file seek invalid targets' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file double close' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file forgotten close' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+Set gen_does_file_io to true.

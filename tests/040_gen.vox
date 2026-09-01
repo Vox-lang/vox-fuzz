@@ -9,6 +9,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (Plain layout: this test's golden file is a full dump of one generated
  program, and its job is to record what the generator WRITES. Under the

@@ -1,0 +1,135 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's file leaves, batch B2 - docs/ledger/files.md rows FIL-45,
+ FIL-52, FIL-53, FIL-54, FIL-55, FIL-56, FIL-70, FIL-75, FIL-80, FIL-93.
+
+ Same shape as 380_gen_files_b.vox: each leaf called directly off a
+ pinned rng seed, its emitted source printed in full as the golden,
+ rendered both at the true top level (nested false) and inside a block
+ (nested true) - the two ways 'gen join lines' can render a line.
+
+ These leaves write files, which interpolate the scratch flag's name -
+ a live program gets that from its manifest; this test names one
+ itself, the same as 380_gen_files_b.vox does.)
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- FIL-45: Read replaces the buffer, not appends ---".
+'rng seed' of 31.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file read replaces' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 31.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file read replaces' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-52, FIL-53, FIL-54, FIL-55: Read line mechanics ---".
+'rng seed' of 17.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line mechanics' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 17.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line mechanics' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-56: Read line truncates a fixed buffer, sets the error flag ---".
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line truncation' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-70: is available, both directions ---".
+'rng seed' of 13.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf path available' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-75: Delete the file, then confirm gone ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file delete' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-80: an open of a path that cannot exist is catchable ---".
+'rng seed' of 19.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file open error' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-93: descriptors strictly increase while every handle stays open ---".
+'rng seed' of 27.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file descriptor tracking' of "" and false.
+Print 'gen text'.
+
+(A program that never committed to file I/O was never given a path, so
+ every leaf above must stand aside for the plain-print leaf instead of
+ inventing one - the same guarantee 380_gen_files_b.vox already checks
+ for batch B's own leaves.)
+Print "--- every leaf above with no file I/O committed ---".
+Set gen_does_file_io to false.
+'rng seed' of 31.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file read replaces' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 17.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line mechanics' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line truncation' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 13.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf path available' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file delete' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 19.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file open error' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 27.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file descriptor tracking' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+Set gen_does_file_io to true.

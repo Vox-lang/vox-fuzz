@@ -586,3 +586,269 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
     append 'clock buffer' to 'the lines'.
     append 'clock check' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
+
+( ── input-output leaves, batch A, 2026-08-29 evening ──
+
+ 'gen assert text equals' (a text compared against a literal expected
+ value, no buffer-capture step) already exists in gen_things.vox
+ (THG2-70) with this exact signature - reused here rather than copied,
+ per 6a's "assertion helpers are generic" rule; grepped for before
+ naming, per the 08-29 evening brief's own naming rule.)
+
+(FMT-45, FMT-46, FMT-47, FMT-48, FMT-49: the escape table's five rows,
+ each VERIFIED rather than merely printed — grep-confirmed absent before
+ this leaf (buffers.md's byte-access idiom applied to the text side of
+ the table for the first time). LANGUAGE.md:3478-3484. `{{`/`}}` render
+ one literal brace each, `\n` a newline, `\t` a tab, `\\` one literal
+ backslash — every one of the five decodes to exactly ONE byte, so with a
+ P-byte prefix and an S-byte suffix (both plain letters/digits off 'gen
+ buffer filler', so nothing here needs escaping of its own) the total
+ size is always P+1+S and the escaped byte always sits at P+1: arithmetic
+ the generator does at generation time, never read back at run time. A
+ `text` has no size property (PROCEDURE.md 6a), so each escaped text is
+ captured into a buffer declared straight from it (`gen_misc.vox`'s own
+ "a buffer called X is Y" idiom) and read back by byte position.
+
+ Two layers of escaping meet here, since this is a generator writing a
+ generator's own escape test: to leave ONE literal `{`/`}` standing in
+ the EMITTED program's string, `'open brace token'`/`'close brace
+ token'` are written as their own STANDALONE Vox literals below
+ (`"{{{{"`/`"}}}}"`, four characters each) — the same doubling
+ `'gen leaf format types'`'s `'print escapes'` line already relies on,
+ isolated here into its own name so the adjacent `{prefix}`/`{suffix}`
+ slots never sit brace-to-brace with the escape token in one literal
+ (which would leave the SCANNER — not just a human reader — guessing
+ where the slot ends). `\n`/`\t`/`\\` follow the same two-hop shape with
+ backslash doubling instead of brace doubling.
+
+ FMT-50 (the escape table's own worked example) rides along at the end,
+ emitted verbatim rather than asserted: it is three bare `Print`
+ statements, and Print's own rendering has no in-program readback (see
+ the report — same limit that leaves FMT-04/05/06 exercised only).
+
+ Hand-verified against vox 0.4.14 and the 0.4.15 stack, byte for byte —
+ docs/ledger/probes/input-output/FMT-45.vox, REPORT-LEAVES-FMT-A.md.)
+
+To 'gen escape row' with a text called 'the row' and a text called 'the token' and a number called 'the expected byte'.
+    a number called 'the prefix length' is 'rng below' of 5 add 1.
+    a number called 'the suffix length' is 'rng below' of 5 add 1.
+    a text called 'the prefix' is 'gen buffer filler' of 'the prefix length'.
+    a text called 'the suffix' is 'gen buffer filler' of 'the suffix length'.
+    a text called 'the content' is "{'the prefix'}{'the token'}{'the suffix'}".
+    a number called 'the size' is 'the prefix length' add 1 add 'the suffix length'.
+    a number called 'the position' is 'the prefix length' add 1.
+    a text called 'the text stem' is 'gen flow witness name'.
+    a text called 'the text name' is 'the text stem'.
+    a text called 'the buffer stem' is 'gen flow witness name'.
+    a text called 'the buffer name' is 'the buffer stem'.
+    a text called 'the declaration' is "a text called {'the text name'} is \"{'the content'}\"".
+    a text called 'the buffer declaration' is "a buffer called {'the buffer name'} is {'the text name'}".
+    a text called 'the size property' is 'gen buffer property' of 'the buffer stem' and "size".
+    a text called 'the size check' is 'gen assert number is' of 'the row' and 'the size property' and 'the size'.
+    a text called 'the byte expression' is "byte {'the position'} of {'the buffer name'}".
+    a text called 'the byte check' is 'gen assert number is' of 'the row' and 'the byte expression' and 'the expected byte'.
+    a list called 'the block' is ['the declaration', 'the buffer declaration', 'the size check', 'the byte check'].
+    Return a list, 'the block'.
+
+To 'gen leaf escape table verified' with a text called indent and a boolean called nested.
+    a text called 'open brace token' is "{{{{".
+    a text called 'close brace token' is "}}}}".
+    a text called 'newline token' is "\\n".
+    a text called 'tab token' is "\\t".
+    a text called 'backslash token' is "\\\\".
+    a list called 'open block' is 'gen escape row' of "FMT-45" and 'open brace token' and 123.
+    a text called 'open decl' is element 1 of 'open block'.
+    a text called 'open buffer decl' is element 2 of 'open block'.
+    a text called 'open size check' is element 3 of 'open block'.
+    a text called 'open byte check' is element 4 of 'open block'.
+    a list called 'close block' is 'gen escape row' of "FMT-46" and 'close brace token' and 125.
+    a text called 'close decl' is element 1 of 'close block'.
+    a text called 'close buffer decl' is element 2 of 'close block'.
+    a text called 'close size check' is element 3 of 'close block'.
+    a text called 'close byte check' is element 4 of 'close block'.
+    a list called 'newline block' is 'gen escape row' of "FMT-47" and 'newline token' and 10.
+    a text called 'newline decl' is element 1 of 'newline block'.
+    a text called 'newline buffer decl' is element 2 of 'newline block'.
+    a text called 'newline size check' is element 3 of 'newline block'.
+    a text called 'newline byte check' is element 4 of 'newline block'.
+    a list called 'tab block' is 'gen escape row' of "FMT-48" and 'tab token' and 9.
+    a text called 'tab decl' is element 1 of 'tab block'.
+    a text called 'tab buffer decl' is element 2 of 'tab block'.
+    a text called 'tab size check' is element 3 of 'tab block'.
+    a text called 'tab byte check' is element 4 of 'tab block'.
+    a list called 'backslash block' is 'gen escape row' of "FMT-49" and 'backslash token' and 92.
+    a text called 'backslash decl' is element 1 of 'backslash block'.
+    a text called 'backslash buffer decl' is element 2 of 'backslash block'.
+    a text called 'backslash size check' is element 3 of 'backslash block'.
+    a text called 'backslash byte check' is element 4 of 'backslash block'.
+    a text called 'worked example braces' is "Print \"Use {'open brace token'}braces{'close brace token'} for literal braces.\"".
+    a text called 'worked example tab' is "Print \"Tab:{'tab token'}here\"".
+    a text called 'worked example newline' is "Print \"Line1{'newline token'}Line2\"".
+    a list called 'the lines' is ['open decl', 'open buffer decl', 'open size check', 'open byte check', 'close decl', 'close buffer decl', 'close size check', 'close byte check', 'newline decl', 'newline buffer decl', 'newline size check', 'newline byte check', 'tab decl', 'tab buffer decl', 'tab size check', 'tab byte check', 'backslash decl', 'backslash buffer decl', 'backslash size check', 'backslash byte check', 'worked example braces', 'worked example tab', 'worked example newline'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-24: the ASSIGNMENT half of "Format Strings as Values" —
+ LANGUAGE.md:3424-3427 says a format string works as a text initializer
+ AND an assignment; every existing leaf only ever exercises the
+ initializer ('gen leaf format value's 'token decl'/'path decl') — grep
+ for `Set <text> to "{` across every src/gen_*.vox file finds nothing
+ before this. Verified, not merely emitted: the second `Set` reads the
+ counter's value AFTER it changed, so the assertion would catch a
+ compiler that quietly kept the format string's ORIGINAL value on
+ reassignment. Hand-verified against vox 0.4.14 and the 0.4.15 stack —
+ docs/ledger/probes/input-output/FMT-24.vox, REPORT-LEAVES-FMT-A.md.)
+
+To 'gen leaf format text reassignment' with a text called indent and a boolean called nested.
+    a number called 'the first value' is 'rng below' of 1000.
+    a number called 'the second value' is 'rng below' of 1000.
+    a text called 'the counter name' is 'gen flow witness name'.
+    a text called 'the label name' is 'gen flow witness name'.
+    a text called 'the counter slot' is 'gen format slot' of 'the counter name' and "".
+    a text called 'the counter declaration' is "a number called {'the counter name'} is {'the first value'}".
+    a text called 'the first label' is "a text called {'the label name'} is \"first {'the first value'}\"".
+    a text called 'the reassign counter' is "Set {'the counter name'} to {'the second value'}".
+    a text called 'the reassign label' is "Set {'the label name'} to \"second {'the counter slot'}\"".
+    a text called 'the expected' is "second {'the second value'}".
+    a text called 'the label check' is 'gen assert text equals' of "FMT-24" and 'the label name' and 'the expected'.
+    a list called 'the lines' is ['the counter declaration', 'the first label', 'the reassign counter', 'the reassign label', 'the label check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-29: LANGUAGE.md:3441-3442 — each format-string evaluation
+ allocates a NEW string, so the source buffer can be cleared and
+ refilled without disturbing a text already made from it. No existing
+ leaf clears a USER buffer after making a text from it before this (grep-
+ confirmed: `clear` on a user buffer appears in no leaf; buffers.md's own
+ BUF-33 records the same absence for the generator's own accumulator,
+ `gen_out`). Two texts made from the SAME buffer, one before and one
+ after a clear-and-refill, each asserted against its own generation-
+ time-known content — if the first text were secretly aliased to the
+ buffer instead of an independent copy, the refill would corrupt it and
+ the first assertion would catch it. Hand-verified against vox 0.4.14
+ and the 0.4.15 stack — docs/ledger/probes/input-output/FMT-29.vox,
+ REPORT-LEAVES-FMT-A.md.)
+
+To 'gen leaf format value isolation' with a text called indent and a boolean called nested.
+    a number called 'the first length' is 'rng below' of 8 add 1.
+    a number called 'the second length' is 'rng below' of 8 add 1.
+    a text called 'the first payload' is 'gen buffer filler' of 'the first length'.
+    a text called 'the second payload' is 'gen buffer filler' of 'the second length'.
+    a text called 'the source' is 'gen flow witness name'.
+    a text called 'the before name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the source slot' is 'gen format slot' of 'the source' and "".
+    a text called 'the source declaration' is "a buffer called {'the source'} is 64 bytes in size".
+    a text called 'the first copy' is "copy \"{'the first payload'}\" to {'the source'}".
+    a text called 'the before declaration' is "a text called {'the before name'} is \"{'the source slot'}\"".
+    a text called 'the clear line' is "clear {'the source'}".
+    a text called 'the second copy' is "copy \"{'the second payload'}\" to {'the source'}".
+    a text called 'the after declaration' is "a text called {'the after name'} is \"{'the source slot'}\"".
+    a text called 'the before check' is 'gen assert text equals' of "FMT-29" and 'the before name' and 'the first payload'.
+    a text called 'the after check' is 'gen assert text equals' of "FMT-29" and 'the after name' and 'the second payload'.
+    a list called 'the lines' is ['the source declaration', 'the first copy', 'the before declaration', 'the clear line', 'the second copy', 'the after declaration', 'the before check', 'the after check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-41: the "or file handle" half of Declarations in Branches —
+ LANGUAGE.md:3460-3464. The manual's own worked example (3466-3474) opens
+ the SAME handle name on both arms of an if/otherwise and writes to it
+ afterward, and never closes it; this leaf emits that shape with the
+ target varying instead of the manual's flag-conditioned path, so the
+ branch that runs varies with the draw instead of always being the same
+ one. No assertion: there is nothing to read back (a generated program
+ cannot read its own stdout), so this leaf's proof is that the program
+ COMPILES and runs to exit 0 — if the "every branch" scoping ever
+ regressed for a file handle, that would surface as a parser-reject
+ finding, not silence.
+
+ The `If` arm opens at fd 1; the `Otherwise` arm opens a path inside the
+ program's own confined scratch directory (the same `gen_scratch_flag`/
+ `gen_does_file_io` machinery every file leaf in gen_files.vox uses,
+ including its Defect-16 guard — stand aside via `gen leaf print` when
+ the binding isn't there rather than build a path from an empty flag).
+ NOT fd 2: an earlier version of this leaf opened the `Otherwise` arm at
+ fd 2 (stderr), which is the harness's own channel, not the generated
+ program's — `tests/270_layout` folds a run's stderr into its captured
+ output, so every one of its 64 programs that happened to draw this leaf
+ and take the `Otherwise` branch failed that test's golden diff. Master
+ review round 3 caught it; fixed by moving the second target off any
+ standard stream entirely, onto the same sandboxed-path pattern the FILES
+ surface already established.
+
+ Deliberately NEVER `Close`s the handle, matching the manual's own
+ example: hand-reduced during this batch's own campaign that `Close` on
+ a handle opened at a numeric fd (`at 1`, also confirmed at `at 2`)
+ closes the real underlying descriptor, not an independent copy — every
+ `Print` for the rest of that PROCESS then goes nowhere, silently, exit
+ 0. Three of this batch's own campaign findings were an unrelated leaf's
+ assertion firing correctly but its message vanishing into this hole.
+ Recorded as a candidate in REPORT-LEAVES-FMT-A.md, not adjudicated here
+ — this leaf works around it by simply never closing what it opens,
+ the same restraint the manual's own worked example already shows.
+
+ FMT-40 (the plain-VARIABLE half of this same claim) and FMT-42
+ (functions reading such a variable) are deliberately NOT here:
+ hand-verification found the plain-variable case does not compile
+ ('outcome' is used before it is declared, on both compilers) even
+ though this file-handle case does. Recorded as a candidate in
+ REPORT-LEAVES-FMT-A.md, not adjudicated here — those two rows stay
+ `todo`, blocked on that finding.
+
+ Hand-verified against vox 0.4.14 and the 0.4.15 stack —
+ docs/ledger/probes/input-output/FMT-41.vox already covers the manual's
+ own shape; REPORT-LEAVES-FMT-A.md has this leaf's own repro.)
+
+To 'gen leaf branch file handle' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    (PROBE g3 / FUZZER_DEFECTS.md Defect 16: same guard every file leaf in
+     gen_files.vox uses — never build a path from gen_scratch_flag without
+     checking the binding actually landed. Stand aside instead, loudly.)
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the marker name' is 'gen flow witness name'.
+    a number called 'the marker draw' is 'rng below' of 2.
+    a text called 'the marker value' is "true".
+    If 'the marker draw' is 0 then,
+        Set 'the marker value' to "false".
+    a text called 'the handle name' is 'gen flow witness name'.
+    a text called 'the path name' is 'gen flow witness name'.
+    a text called 'the marker declaration' is "a boolean called {'the marker name'} is {'the marker value'}".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}branch\"".
+    a text called 'the branch' is "If {'the marker name'} then, Open a file for writing called {'the handle name'} at 1. Otherwise, Open a file for writing called {'the handle name'} at {'the path name'}".
+    a text called 'the write' is "Write \"fmt41\\n\" to {'the handle name'}".
+    a list called 'the lines' is ['the marker declaration', 'the path line', 'the branch', 'the write'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-52, FMT-54: LANGUAGE.md:3499-3506's own chain shape — clauses after
+ the first carry NO leading comma, and the chain may continue with
+ `and if` as well as `but if`. `gen leaf butif print` (gen_flow.vox, out
+ of this surface's own scope to edit) puts a comma before EVERY clause
+ and never emits `and if` at all — grep-confirmed zero `and if`
+ occurrences across all eight src/gen_*.vox files before this leaf.
+
+ No assertion: like FMT-51/53/55 already exercised elsewhere, WHICH
+ clause of a conditional print fired is only observable in Print's own
+ stdout, and a generated program has no way to read that back (the same
+ limit that leaves FMT-04/05/06 exercised only — see the report). Three
+ clauses, an operand and two bounds all drawn per program, so first-
+ match-wins and default-fallthrough both vary which line the campaign
+ sees, even though nothing here asserts which one it was.
+
+ Hand-verified against vox 0.4.14 and the 0.4.15 stack that the comma-
+ less/and-if chain compiles and that first-match-wins and default-
+ fallthrough both still hold, by eye — docs/ledger/probes/input-output/
+ FMT-52.vox and FMT-54.vox already cover the underlying grammar;
+ REPORT-LEAVES-FMT-A.md has this leaf's own repro.)
+
+To 'gen leaf conditional print chain' with a text called indent and a boolean called nested.
+    a number called 'the operand value' is 'rng below' of 1000.
+    a text called 'the operand name' is 'gen flow witness name'.
+    a number called 'the low bound' is 'rng below' of 500.
+    a number called 'the high bound' is 'the low bound' add 'rng below' of 500 add 1.
+    a text called 'the declaration' is "a number called {'the operand name'} is {'the operand value'}".
+    a text called 'the chain' is "Print {'the operand name'}, but if {'the operand name'} is less than {'the low bound'} print \"low\" but if {'the operand name'} is greater than {'the high bound'} print \"high\" and if {'the operand name'} is greater than or equal to {'the low bound'} print \"mid\"".
+    a list called 'the lines' is ['the declaration', 'the chain'].
+    'gen join lines' of indent and nested and 'the lines'.

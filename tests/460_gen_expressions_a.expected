@@ -1,0 +1,119 @@
+--- EXP-05, EXP-14: hex literal, initializer and operand position ---
+a number called 'the inbox hex value' is 0x58.
+If 'the inbox hex value' is not 88 then, Print "ASSERT EXP-05: expected 88 got {'the inbox hex value'}", Exit 95. Print 'the inbox hex value'.
+a number called 'the crate hex sum' is 'the inbox hex value' add 0xc661c295982b62e.
+If 'the crate hex sum' is not 893432540000597638 then, Print "ASSERT EXP-14: expected 893432540000597638 got {'the crate hex sum'}", Exit 95. Print 'the crate hex sum'.
+
+--- the same leaf, nested ---
+  a number called 'the inbox hex value' is 0x58,
+  If 'the inbox hex value' is not 88 then, Print "ASSERT EXP-05: expected 88 got {'the inbox hex value'}", Exit 95. Print 'the inbox hex value',
+  a number called 'the crate hex sum' is 'the inbox hex value' add 0xc661c295982b62e,
+  If 'the crate hex sum' is not 893432540000597638 then, Print "ASSERT EXP-14: expected 893432540000597638 got {'the crate hex sum'}", Exit 95. Print 'the crate hex sum'.
+
+--- EXP-06, EXP-15: binary literal, initializer and operand position ---
+a number called 'the dispatch note binary value' is 0b110.
+If 'the dispatch note binary value' is not 6 then, Print "ASSERT EXP-06: expected 6 got {'the dispatch note binary value'}", Exit 95. Print 'the dispatch note binary value'.
+a number called 'the tray binary sum' is 'the dispatch note binary value' add 0b10011011100110110100011010011000111100011000110.
+If 'the tray binary sum' is not 85545603332300 then, Print "ASSERT EXP-15: expected 85545603332300 got {'the tray binary sum'}", Exit 95. Print 'the tray binary sum'.
+
+--- EXP-07, EXP-16: character literal, initializer and operand position ---
+a number called 'the drawer letter code' is 'E'.
+If 'the drawer letter code' is not 69 then, Print "ASSERT EXP-07: expected 69 got {'the drawer letter code'}", Exit 95. Print 'the drawer letter code'.
+a number called 'the tray letter sum' is 'the drawer letter code' add 'K'.
+If 'the tray letter sum' is not 144 then, Print "ASSERT EXP-16: expected 144 got {'the tray letter sum'}", Exit 95. Print 'the tray letter sum'.
+
+--- EXP-10: boolean arithmetic, the drawn literal is false ---
+a boolean called 'cupboard ready flag' is false.
+a number called 'the sketchpad tally' is 'cupboard ready flag' add 272410323957677816.
+If 'the sketchpad tally' is not 272410323957677816 then, Print "ASSERT EXP-10: expected 272410323957677816 got {'the sketchpad tally'}", Exit 95. Print 'the sketchpad tally'.
+
+--- the same leaf, a seed that draws true ---
+a boolean called 'satchel ready flag' is true.
+a number called 'the mailbag tally' is 'satchel ready flag' add 934755558986998627.
+If 'the mailbag tally' is not 934755558986998628 then, Print "ASSERT EXP-10: expected 934755558986998628 got {'the mailbag tally'}", Exit 95. Print 'the mailbag tally'.
+
+--- EXP-46: not <condition>, the raw comparison holds (not-branch must not fire) ---
+a number called 'cupboard left reading' is 7241.
+a number called 'workbench right reading' is 0.
+If not 'cupboard left reading' is greater than 'workbench right reading' then, Print "ASSERT EXP-46: expected the not-branch to disagree with the raw comparison", Exit 95. Otherwise, Print "EXP-46 ok".
+
+--- the same leaf, the raw comparison does not hold (not-branch must fire) ---
+a number called 'scratch left reading' is 408.
+a number called 'the sketchpad right reading' is 1550.
+If not 'scratch left reading' is greater than 'the sketchpad right reading' then, Print "EXP-46 ok". Otherwise, Print "ASSERT EXP-46: expected the not-branch to disagree with the raw comparison", Exit 95.
+
+--- EXP-27, EXP-36: the optional article, arithmetic and comparison agreement ---
+a number called v1 is 3591.
+If the v1 add 51032 is not v1 add 51032 then, Print "ASSERT EXP-27: expected the articled and bare readings of v1 to add the same way", Exit 95. Print v1 add 51032.
+a boolean called 'the postbag articled reading' is false.
+If the v1 is greater than 51032 then, Set 'the postbag articled reading' to true.
+a boolean called 'the postbag bare reading' is false.
+If v1 is greater than 51032 then, Set 'the postbag bare reading' to true.
+If 'the postbag articled reading' is not 'the postbag bare reading' then, Print "ASSERT EXP-36: expected the articled and bare readings of v1 to compare the same way", Exit 95. Print 'the postbag articled reading'.
+
+--- EXP-51: plural are-form vs written-out conjunction ---
+a boolean called 'the pigeonhole witness' is true.
+a boolean called 'storeroom witness' is true.
+a boolean called 'satchel witness' is false.
+a boolean called 'the greeting witness' is false.
+a boolean called 'the postbag plural result' is false.
+If 'the pigeonhole witness', 'storeroom witness', 'satchel witness', and 'the greeting witness' are true then, Set 'the postbag plural result' to true.
+a boolean called 'the postbag expanded result' is false.
+If 'the pigeonhole witness' is true and 'storeroom witness' is true and 'satchel witness' is true and 'the greeting witness' is true then, Set 'the postbag expanded result' to true.
+If 'the postbag plural result' is not 'the postbag expanded result' then, Print "ASSERT EXP-51: expected the plural are-form and the written-out conjunction to agree", Exit 95. Print 'the postbag plural result'.
+
+--- the same leaf, a seed that draws a different subject count ---
+a boolean called 'the waybill witness' is true.
+a boolean called 'outgoing post witness' is true.
+a boolean called 'the postbag plural result' is false.
+If 'the waybill witness', and 'outgoing post witness' are true then, Set 'the postbag plural result' to true.
+a boolean called 'the postbag expanded result' is false.
+If 'the waybill witness' is true and 'outgoing post witness' is true then, Set 'the postbag expanded result' to true.
+If 'the postbag plural result' is not 'the postbag expanded result' then, Print "ASSERT EXP-51: expected the plural are-form and the written-out conjunction to agree", Exit 95. Print 'the postbag plural result'.
+
+--- EXP-94: round half up, fraction below .50 (truncates down) ---
+a float called 'the dispatch note reading' is 232641478.50.
+a number called 'cupboard rounded reading' is {'the dispatch note reading' add 0.5} as a number.
+If 'cupboard rounded reading' is not 232641479 then, Print "ASSERT EXP-94: expected 232641479 got {'cupboard rounded reading'}", Exit 95. Print 'cupboard rounded reading'.
+
+--- the same leaf, a seed with fraction at or above .50 (rounds up) ---
+a float called 'notebook reading' is 7.31.
+a number called 'the message slip rounded reading' is {'notebook reading' add 0.5} as a number.
+If 'the message slip rounded reading' is not 7 then, Print "ASSERT EXP-94: expected 7 got {'the message slip rounded reading'}", Exit 95. Print 'the message slip rounded reading'.
+
+--- the same leaf, the extreme-value cliff: whole part is i64::MAX, float64 cannot represent it exactly, the naive oracle diverges (documented candidate, see report) ---
+a float called 'storeroom reading' is 14.35.
+a number called 'scratch rounded reading' is {'storeroom reading' add 0.5} as a number.
+If 'scratch rounded reading' is not 14 then, Print "ASSERT EXP-94: expected 14 got {'scratch rounded reading'}", Exit 95. Print 'scratch rounded reading'.
+
+--- EXP-98: a bare number in condition position, zero ---
+a number called 'the tray reading' is 0.
+a boolean called 'loading bay truthy flag' is false.
+If 'the tray reading' then, Set 'loading bay truthy flag' to true.
+a number called 'the dispatch note truthy number' is 'loading bay truthy flag' as a number.
+If 'the dispatch note truthy number' is not 0 then, Print "ASSERT EXP-98: expected 0 got {'the dispatch note truthy number'}", Exit 95. Print 'the dispatch note truthy number'.
+
+--- the same leaf, negative ---
+a number called 'satchel reading' is 0 subtract 3591.
+a boolean called 'ledger truthy flag' is false.
+If 'satchel reading' then, Set 'ledger truthy flag' to true.
+a number called 'notebook truthy number' is 'ledger truthy flag' as a number.
+If 'notebook truthy number' is not 1 then, Print "ASSERT EXP-98: expected 1 got {'notebook truthy number'}", Exit 95. Print 'notebook truthy number'.
+
+--- the same leaf, positive ---
+a number called 'outgoing post reading' is 48002795.
+a boolean called 'satchel truthy flag' is false.
+If 'outgoing post reading' then, Set 'satchel truthy flag' to true.
+a number called 'cupboard truthy number' is 'satchel truthy flag' as a number.
+If 'cupboard truthy number' is not 1 then, Print "ASSERT EXP-98: expected 1 got {'cupboard truthy number'}", Exit 95. Print 'cupboard truthy number'.
+
+--- registration reachable: kinds 280-288 all dispatch without error ---
+kind 280: 466 bytes emitted
+kind 281: 495 bytes emitted
+kind 282: 437 bytes emitted
+kind 283: 290 bytes emitted
+kind 284: 315 bytes emitted
+kind 285: 667 bytes emitted
+kind 286: 632 bytes emitted
+kind 287: 312 bytes emitted
+kind 288: 421 bytes emitted

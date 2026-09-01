@@ -1,0 +1,98 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's time leaves, batch B - docs/ledger/time.md rows TIM-32,
+ TIM-42, TIM-43, TIM-44, TIM-45, TIM-46, TIM-47, TIM-51, TIM-54, TIM-57.
+ Same convention as 410_gen_time_a: each leaf called directly off a
+ pinned seed, its emitted source printed in full, golden is the
+ generated Vox itself.)
+
+Print "--- TIM-32: elapsed reads while the timer is still running ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer elapsed while running' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-42: formatted clock string, direct three-slot form ---".
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf formatted clock direct' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-43: formatted clock string, named-parts staged form ---".
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf formatted clock staged' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-44: current time's UTC agreement with unix ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf current time utc agreement' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-45: duration/elapsed uncast agrees with the seconds cast ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer uncast agreement' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-46: a timer that was never started ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer never started' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-47: starting an already-run timer restarts it ---".
+'rng seed' of 15.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer restart resets' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-51: a negative duration in seconds returns at once ---".
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer negative seconds wait' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-54: a time renders as its unix seconds ---".
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf current time renders as unix' of "" and false.
+Print 'gen text'.
+
+Print "--- TIM-57: a time property read from a plain number ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf time property from number' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaves, nested ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer elapsed while running' of "  " and true.
+Print 'gen text'.

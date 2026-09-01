@@ -1,0 +1,458 @@
+(--- The ledger's basics leaves, batch A -----------------------------
+
+ docs/ledger/basics.md maps LANGUAGE.md's Basics section, lines 38
+ through 291 (Vox 0.4.15 pin, commit
+ c013105, 5882 lines) into numbered claims about program SHAPE rather
+ than values: which statement belongs to which clause, and whether a
+ given piece of source text is even part of the program's meaning at
+ all. The oracle for every leaf below is therefore an EXECUTION COUNT -
+ the generator knows how many times a witness statement should run, so
+ it emits a counter and asserts it, the same 'ASSERT <ID>: expected <x>
+ got <y>' / exit 95 convention every other surface uses.
+
+ Rows covered here: BAS-07, BAS-09, BAS-10 (comment placement), BAS-11
+ (comment mid-statement), BAS-12, BAS-13 (comment spanning lines and
+ nesting), BAS-14 (parens inside a string literal), BAS-16 (blank-line
+ count between top-level statements), BAS-17 (blank line force-closes a
+ single open loop), BAS-24 (a comment-only line is not a paragraph
+ break), BAS-41 (the same blank line force-closes a loop and its
+ enclosing function together), BAS-43 (the rule applies uniformly to
+ On error too), BAS-46 (a blank line right after a comma stays
+ cosmetic). Every claim was hand-verified against both vox 0.4.14
+ (installed) and the 0.4.15 stack before being encoded; the retained
+ probes are docs/ledger/probes/basics/BAS-07.vox, BAS-11.vox, BAS-12.vox,
+ BAS-14.vox, BAS-16.vox, BAS-17.vox, BAS-24.vox, BAS-41.vox, BAS-43.vox
+ and BAS-46.vox.
+
+ BAS-50 (indentation width has no effect) is NOT a leaf here - see the
+ batch report: 'layout put indent' (this file's own neighbour above,
+ driven under --layout random) already draws 0-16 columns per line with
+ no rule pinning any particular width, which is the row's exact claim,
+ predating this batch. BAS-51 (nested-if Otherwise attachment) and the
+ rest of the ledger's remaining todo rows are left for the next batch;
+ BAS-57 is excluded on purpose - INDEX.md already carries it as an open
+ discrepancy (D2, an Otherwise across a blank line), so a leaf asserting
+ either reading would be asserting one side of an unresolved question.)
+
+(Scratch view, program level and 'clear'ed per call (the same Defect 17
+ shape every other surface's scratch buffer avoids): used only to
+ measure a text's byte length, since a text has no size property of its
+ own (PROCEDURE.md 6a) - declare a buffer from it and read the buffer's
+ size instead.)
+
+a buffer called 'the basics scratch view' is "".
+
+(A short, varied piece of English filler for a comment's own TEXT.
+ LANGUAGE.md constrains where a comment may sit and how it nests, never
+ what it says, so a single fixed wording would be an undeclared rule
+ (CLAUDE.md) the moment it showed up in every program. Five phrase
+ shapes, crossed with a word drawn from the buffers surface's shared
+ vocabulary (reused here purely as English words, the same way
+ 'gen flow witness name' reuses it for witness names) - full range, no
+ ruling constrains either draw.)
+
+To 'gen basics remark'.
+    a number called 'how many words' is gen_buffer_words's length.
+    a number called 'the word pick' is 'rng below' of 'how many words'.
+    a number called 'the word index' is 'the word pick' add 1.
+    a text called word is element 'the word index' of gen_buffer_words.
+    a number called 'the shape' is 'rng below' of 5.
+    If 'the shape' is 0 then,
+        Return a text, "a note about {word}".
+    If 'the shape' is 1 then,
+        Return a text, "see {word} for details".
+    If 'the shape' is 2 then,
+        Return a text, "{word}, checked".
+    If 'the shape' is 3 then,
+        Return a text, "double-checked against {word}".
+    Return a text, "nothing unusual here, just {word}".
+
+(A comment spanning 'the line count' physical lines, LANGUAGE.md:77
+ (BAS-12) - each line its own remark, so the whole comment does not read
+ as one word repeated.)
+
+To 'gen basics spanning comment' with a number called 'the line count'.
+    a text called 'the first remark' is 'gen basics remark'.
+    a text called body is "({'the first remark'}".
+    a number called 'lines built' is 1.
+    While 'lines built' is less than 'the line count',
+        a text called 'the next remark' is 'gen basics remark',
+        Set body to "{body}\n{'the next remark'}",
+        Set 'lines built' to 'lines built' add 1.
+    a text called 'the closed comment' is "{body})".
+    Return a text, 'the closed comment'.
+
+(A comment nested 'the depth' parenthesis-pairs deep, LANGUAGE.md:70
+ (BAS-13) - hand-verified to six levels, so the depth drawn never
+ exceeds that.)
+
+To 'gen basics nested comment' with a number called 'the depth'.
+    a text called 'the remark' is 'gen basics remark'.
+    a text called opening is "".
+    a number called 'parens placed' is 0.
+    While 'parens placed' is less than 'the depth',
+        Set opening to "{opening}(",
+        Set 'parens placed' to 'parens placed' add 1.
+    a text called closing is "".
+    Set 'parens placed' to 0.
+    While 'parens placed' is less than 'the depth',
+        Set closing to "{closing})",
+        Set 'parens placed' to 'parens placed' add 1.
+    a text called whole is "{opening}{'the remark'}{closing}".
+    Return a text, whole.
+
+(BAS-07, BAS-09, BAS-10 (LANGUAGE.md:56, 74, 75): a comment changes
+ nothing, tried in the two positions that do not touch an existing
+ statement's own tokens - standing alone on its own line between two
+ statements, or sitting at the end of one, after its period. Which
+ position appears is drawn at random, and so is the comment's own
+ wording, so neither the position nor the words repeat identically
+ across a corpus. Also covers BAS-08's worked example (the same shape,
+ reproduced by hand at docs/ledger/probes/basics/BAS-07.vox).)
+
+To 'gen leaf comment placement' with a text called indent and a boolean called nested.
+    a text called 'the tally name' is 'gen flow witness name'.
+    a text called 'the remark' is 'gen basics remark'.
+    a text called 'the tally declaration' is "{indent}a number called {'the tally name'} is 0.\n".
+    'gen emit' of 'the tally declaration'.
+    a number called 'the position' is 'rng below' of 2.
+    If 'the position' is 0 then,
+        a text called 'the standalone comment' is "{indent}({'the remark'})\n",
+        'gen emit' of 'the standalone comment'.
+    a text called 'the first action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n".
+    'gen emit' of 'the first action'.
+    If 'the position' is 0 then,
+        a text called 'the second action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n",
+        'gen emit' of 'the second action'.
+    If 'the position' is 1 then,
+        a text called 'the trailing action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1. ({'the remark'})\n",
+        'gen emit' of 'the trailing action'.
+    a text called 'the assertion' is 'gen assert number is' of "BAS-07" and 'the tally name' and 2.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(BAS-11 (LANGUAGE.md:76): a comment can sit in the MIDDLE of a
+ statement, between two tokens - inside a declaration, an expression, or
+ an If condition. One position is drawn per emission; docs/ledger/
+ probes/basics/BAS-11.vox hand-verifies all three in one program.)
+
+To 'gen leaf comment mid statement' with a text called indent and a boolean called nested.
+    a text called 'the remark' is 'gen basics remark'.
+    a number called 'the position' is 'rng below' of 3.
+    If 'the position' is 0 then,
+        'gen leaf comment mid declaration' of indent and 'the remark'.
+    If 'the position' is 1 then,
+        'gen leaf comment mid expression' of indent and 'the remark'.
+    If 'the position' is 2 then,
+        'gen leaf comment mid condition' of indent and 'the remark'.
+
+(The value a mid-declaration comment sits beside is pure filler with
+ respect to BAS-11's claim - any number would put the comment on trial
+ equally well - so its MAGNITUDE is free, drawn from 'gen extreme
+ number' (gen_core.vox:88) rather than a tame 'rng below' of 1000
+ (Josj, 2026-08-20: "instead of always setting values to things like
+ 32.8 I wanna see 1243626351836374761..."). Asserted with 'gen assert
+ number matches' rather than 'gen assert number is', since the value is
+ TEXT (up to 18-19 digits, beyond what needs converting to a Vox
+ `number` in the generator itself) - it is embedded directly as the
+ expected EXPRESSION rather than round-tripped through a meta-generator
+ number, so the check holds at any magnitude the helper can draw. Hand-
+ verified against vox 0.4.14 and the 0.4.15 stack that a comment sitting
+ between the type noun and `called` survives i64::MAX unchanged.)
+
+To 'gen leaf comment mid declaration' with a text called indent and a text called remark.
+    a text called 'the value name' is 'gen flow witness name'.
+    a text called 'the value' is 'gen extreme number'.
+    a text called 'the value declaration' is "{indent}a number ({remark}) called {'the value name'} is {'the value'}.\n".
+    'gen emit' of 'the value declaration'.
+    (Calls 'gen assert number' directly, NOT the 'matches' wrapper: that
+     wrapper wraps its expected-expression argument in a `{…}` format
+     slot for the failure message, correct when the argument is a
+     variable reference whose live value should be shown, wrong here -
+     'the value' is a bare LITERAL, and wrapping "9223372036854775807"
+     in braces turns the printed message into an OUTPUT-PROGRAM format
+     slot referencing a variable of that name, which does not exist
+     ("Unknown variable: 9223372036854775807" - caught compiling 60
+     samples off seeds 1-60, all failing this way, before this line
+     existed). A bare literal is its own "shown" text - the same
+     pattern 'gen assert number is' uses for an ordinary small number.)
+    a text called 'the assertion' is 'gen assert number' of "BAS-11" and 'the value name' and 'the value' and 'the value'.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(Both operands are drawn from 'gen extreme number' too - LANGUAGE.md's
+ own claim is about the comment's position, not the arithmetic, so the
+ oracle here is AGREEMENT rather than a pre-computed sum: the same
+ `left add right` is declared once with the comment spliced in and once
+ without, and the two declared numbers must read identically. This
+ sidesteps the generator needing to do i64 addition on up-to-18-digit
+ operands itself (a wrong hand-computed expectation would be exactly
+ the false-finding-factory risk CLAUDE.md warns about) and still
+ exercises the boundary: hand-verified against vox 0.4.14 and the
+ 0.4.15 stack that `9223372036854775807 add 9223372036854775807`
+ silently wraps to -2 on both compilers, identically whether the
+ comment is there or not - overflow is real and reachable here, and the
+ leaf is deliberately built so a genuine divergence between the two
+ declarations (comment vs. no comment) would still be caught rather
+ than one leaf's own wrong arithmetic masquerading as one.)
+
+To 'gen leaf comment mid expression' with a text called indent and a text called remark.
+    a text called 'the with comment name' is 'gen flow witness name'.
+    a text called 'the without comment name' is 'gen flow witness name'.
+    a text called 'the left' is 'gen extreme number'.
+    a text called 'the right' is 'gen extreme number'.
+    a text called 'the with comment declaration' is "{indent}a number called {'the with comment name'} is {'the left'} ({remark}) add {'the right'}.\n".
+    'gen emit' of 'the with comment declaration'.
+    a text called 'the without comment declaration' is "{indent}a number called {'the without comment name'} is {'the left'} add {'the right'}.\n".
+    'gen emit' of 'the without comment declaration'.
+    a text called 'the assertion' is 'gen assert number matches' of "BAS-11" and 'the with comment name' and 'the without comment name'.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(The tested value in an If condition, same reasoning as the declaration
+ leaf above: 'gen extreme number' never draws negative (no minus sign
+ anywhere in it or in 'gen random digits'), so "is greater than or
+ equal to 0" still fires deterministically at every magnitude the
+ helper can draw, and the comment's position is what is actually on
+ trial. Hand-verified against vox 0.4.14 and the 0.4.15 stack with
+ i64::MAX in this exact position.)
+
+To 'gen leaf comment mid condition' with a text called indent and a text called remark.
+    a text called 'the outcome name' is 'gen flow witness name'.
+    a text called 'the probe value' is 'gen extreme number'.
+    a text called 'the outcome declaration' is "{indent}a number called {'the outcome name'} is 0.\n".
+    'gen emit' of 'the outcome declaration'.
+    a text called 'the if line' is "{indent}If {'the probe value'} ({remark}) is greater than or equal to 0 then, Set {'the outcome name'} to 1.\n".
+    'gen emit' of 'the if line'.
+    a text called 'the assertion' is 'gen assert number is' of "BAS-11" and 'the outcome name' and 1.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(BAS-12, BAS-13 (LANGUAGE.md:66-70): a comment can span several physical
+ lines, and parentheses can nest inside one, to at least six levels -
+ both varied per emission, both proven cosmetic by the same tally the
+ rest of this file's comment leaves use.)
+
+To 'gen leaf comment multiline nested' with a text called indent and a boolean called nested.
+    a text called 'the tally name' is 'gen flow witness name'.
+    a text called 'the tally declaration' is "{indent}a number called {'the tally name'} is 0.\n".
+    'gen emit' of 'the tally declaration'.
+    a number called 'the line count' is 'rng below' of 3 add 2.
+    a text called 'the spanning comment' is 'gen basics spanning comment' of 'the line count'.
+    'gen emit' of "{indent}{'the spanning comment'}\n".
+    a text called 'the first action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n".
+    'gen emit' of 'the first action'.
+    a number called 'the depth' is 'rng below' of 5 add 2.
+    a text called 'the nested comment' is 'gen basics nested comment' of 'the depth'.
+    'gen emit' of "{indent}{'the nested comment'}\n".
+    a text called 'the second action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n".
+    'gen emit' of 'the second action'.
+    a text called 'the assertion' is 'gen assert number is' of "BAS-12" and 'the tally name' and 2.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(BAS-14 (undocumented precision, LANGUAGE.md's Comments section says
+ nothing about string literals either way): parentheses inside a STRING
+ LITERAL are ordinary text, not a comment. The generator built the
+ literal, so it knows its exact byte length; declaring a buffer from the
+ printed copy and reading the buffer's size is how that gets checked -
+ if the parens had instead been read as a comment opener, the compiler
+ would refuse the unterminated string outright rather than hand back a
+ shorter value, so this assertion is belt-and-braces with a compile-time
+ check that never runs: either the program fails to build at all, or
+ the length matches exactly.)
+
+To 'gen leaf comment lookalike in string' with a text called indent and a boolean called nested.
+    a text called 'the remark' is 'gen basics remark'.
+    a text called literal is "the ({'the remark'}) reads fine".
+    clear 'the basics scratch view'.
+    append literal to 'the basics scratch view'.
+    a number called 'the expected length' is 'the basics scratch view's size.
+    a text called 'the copy name' is 'gen flow witness name'.
+    a text called 'the length name' is 'gen flow witness name'.
+    a text called 'the copy declaration' is "{indent}a text called {'the copy name'} is \"{literal}\".\n".
+    'gen emit' of 'the copy declaration'.
+    a text called 'the buffer declaration' is "{indent}a buffer called {'the length name'} is {'the copy name'}.\n".
+    'gen emit' of 'the buffer declaration'.
+    a text called 'the size access' is "{'the length name'}'s size".
+    a text called 'the assertion' is 'gen assert number is' of "BAS-14" and 'the size access' and 'the expected length'.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(BAS-24 (undocumented precision, LANGUAGE.md:81-83): a line of nothing
+ but whitespace is a paragraph break; a COMMENT-only line, in the exact
+ same position, is not. Placed right after a nested If's own closing
+ period - the same trap the blank-line-closes leaves below use - so the
+ loop keeps absorbing statements straight through the comment: the lap
+ tally must reach the full trip count, proving the comment did not
+ eject anything.)
+
+To 'gen leaf comment only line does not close' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called 'the lap name' is 'gen flow witness name'.
+    a text called 'the inner name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the remark' is 'gen basics remark'.
+    a text called 'the setup' is "{indent}a number called u{gen_whiles} is 0.\n{indent}a number called {'the lap name'} is 0.\n{indent}a number called {'the inner name'} is 0.\n{indent}a number called {'the after name'} is 0.\n".
+    'gen emit' of 'the setup'.
+    a text called body is "{indent}While u{gen_whiles} is less than {'the trips'},\n{indent}  Increment u{gen_whiles},\n{indent}  If u{gen_whiles} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n{indent}  ({'the remark'})\n{indent}  Set {'the lap name'} to {'the lap name'} add 1.\n\n".
+    'gen emit' of body.
+    a text called 'the after action' is "{indent}Set {'the after name'} to {'the after name'} add 1.\n".
+    'gen emit' of 'the after action'.
+    a text called 'the lap assertion' is 'gen assert number is' of "BAS-24" and 'the lap name' and 'the trips'.
+    'gen emit' of "{indent}{'the lap assertion'}.\n".
+    a text called 'the inner assertion' is 'gen assert number is' of "BAS-24" and 'the inner name' and 1.
+    'gen emit' of "{indent}{'the inner assertion'}.\n".
+    a text called 'the after assertion' is 'gen assert number is' of "BAS-24" and 'the after name' and 1.
+    'gen emit' of "{indent}{'the after assertion'}.\n".
+
+(BAS-16 (LANGUAGE.md:81): blank lines between two fully-terminated
+ TOP-LEVEL statements are optional and change nothing. The manual names
+ no upper bound, so the count drawn spans 0 (no blank line at all) up
+ to several; the ceiling here is an implementation bound on program
+ size, not a reading of the manual, the same way 'gen buffer size's wide
+ draw stops at a large number rather than running unbounded.)
+
+To 'gen leaf blank line count invariant' with a text called indent and a boolean called nested.
+    a text called 'the tally name' is 'gen flow witness name'.
+    a text called 'the tally declaration' is "{indent}a number called {'the tally name'} is 0.\n".
+    'gen emit' of 'the tally declaration'.
+    a text called 'the first action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n".
+    'gen emit' of 'the first action'.
+    a number called 'how many blank lines' is 'rng below' of 6.
+    a number called 'blank lines placed' is 0.
+    While 'blank lines placed' is less than 'how many blank lines',
+        'gen emit' of "\n",
+        Set 'blank lines placed' to 'blank lines placed' add 1.
+    a text called 'the second action' is "{indent}Set {'the tally name'} to {'the tally name'} add 1.\n".
+    'gen emit' of 'the second action'.
+    a text called 'the assertion' is 'gen assert number is' of "BAS-16" and 'the tally name' and 2.
+    a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
+    'gen emit' of 'the assertion line'.
+
+(BAS-17 (LANGUAGE.md:83, 150-155): inside an open clause a blank line is
+ not cosmetic - it force-closes the clause even when the last body
+ action is a nested If already closed by its OWN period (rule 1 only
+ pops the If; rule 2's blank line is what pops the loop). The outer
+ construct is drawn among the three that iterate; On error gets its own
+ leaf below since it does not.)
+
+To 'gen leaf blank line closes nested loop' with a text called indent and a boolean called nested.
+    a text called 'the inner name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the setup' is "{indent}a number called {'the inner name'} is 0.\n{indent}a number called {'the after name'} is 0.\n".
+    'gen emit' of 'the setup'.
+    a number called 'the kind' is 'rng below' of 3.
+    If 'the kind' is 0 then,
+        'gen leaf blank line closes nested loop while' of indent and 'the inner name'.
+    If 'the kind' is 1 then,
+        'gen leaf blank line closes nested loop foreach' of indent and 'the inner name'.
+    If 'the kind' is 2 then,
+        'gen leaf blank line closes nested loop repeat' of indent and 'the inner name'.
+    a text called 'the after action' is "{indent}Set {'the after name'} to {'the after name'} add 1.\n".
+    'gen emit' of 'the after action'.
+    a text called 'the inner assertion' is 'gen assert number is' of "BAS-17" and 'the inner name' and 1.
+    'gen emit' of "{indent}{'the inner assertion'}.\n".
+    a text called 'the after assertion' is 'gen assert number is' of "BAS-17" and 'the after name' and 1.
+    'gen emit' of "{indent}{'the after assertion'}.\n".
+
+To 'gen leaf blank line closes nested loop while' with a text called indent and a text called 'the inner name'.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called 'the loop counter declaration' is "{indent}a number called u{gen_whiles} is 0.\n".
+    'gen emit' of 'the loop counter declaration'.
+    a text called body is "{indent}While u{gen_whiles} is less than {'the trips'},\n{indent}  Increment u{gen_whiles},\n{indent}  If u{gen_whiles} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
+    'gen emit' of body.
+
+To 'gen leaf blank line closes nested loop foreach' with a text called indent and a text called 'the inner name'.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called body is "{indent}For each number from 1 to {'the trips'},\n{indent}  If number is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
+    'gen emit' of body.
+
+To 'gen leaf blank line closes nested loop repeat' with a text called indent and a text called 'the inner name'.
+    Set gen_repeats to gen_repeats add 1.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called 'the loop counter declaration' is "{indent}a number called r{gen_repeats} is 0.\n".
+    'gen emit' of 'the loop counter declaration'.
+    a text called body is "{indent}Repeat {'the trips'} times,\n{indent}  Set r{gen_repeats} to r{gen_repeats} add 1,\n{indent}  If r{gen_repeats} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
+    'gen emit' of body.
+
+(BAS-41 (LANGUAGE.md:91, 155): the SAME blank line that force-closes an
+ open loop also force-closes an enclosing function definition, two
+ levels at once. The loop's own state has to live in globals set from
+ inside the function and read from outside it - nothing can follow the
+ blank line and still count as part of the function's body, which is
+ exactly the thing under test: the call and the after-statement below
+ only compile at all, at the top level, because the blank line reached
+ both clauses together.)
+
+To 'gen leaf blank line closes function too' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a text called 'the function name' is 'gen flow witness name'.
+    a text called 'the inner name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called 'the setup' is "{indent}a number called {'the inner name'} is 0.\n{indent}a number called {'the after name'} is 0.\n".
+    'gen emit' of 'the setup'.
+    a text called definition is "{indent}To {'the function name'}.\n{indent}    a number called u{gen_whiles} is 0.\n{indent}    While u{gen_whiles} is less than {'the trips'},\n{indent}        Increment u{gen_whiles},\n{indent}        If u{gen_whiles} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
+    'gen emit' of definition.
+    a text called call is "{indent}{'the function name'}.\n".
+    'gen emit' of call.
+    a text called 'the after action' is "{indent}Set {'the after name'} to {'the after name'} add 1.\n".
+    'gen emit' of 'the after action'.
+    a text called 'the inner assertion' is 'gen assert number is' of "BAS-41" and 'the inner name' and 1.
+    'gen emit' of "{indent}{'the inner assertion'}.\n".
+    a text called 'the after assertion' is 'gen assert number is' of "BAS-41" and 'the after name' and 1.
+    'gen emit' of "{indent}{'the after assertion'}.\n".
+
+(BAS-43 (LANGUAGE.md:169): the blank-line rule applies uniformly across
+ while/for each/repeat (the leaf above) and On error too - its body
+ force-closes on a blank line the same way, even when its last action is
+ a nested If already closed by its own period. The failure is engineered
+ (a buffer read past its own size, LANGUAGE.md's own documented
+ out-of-range condition) so the handler is guaranteed to fire.)
+
+To 'gen leaf blank line closes on error' with a text called indent and a boolean called nested.
+    Set gen_bufs to gen_bufs add 1.
+    a number called 'the buffer size' is 'rng below' of 32 add 4.
+    a number called 'the overshoot' is 'rng below' of 100 add 1.
+    a number called 'the out-of-range index' is 'the buffer size' add 'the overshoot'.
+    a text called 'the caught name' is 'gen flow witness name'.
+    a text called 'the inner name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the setup' is "{indent}a buffer called b{gen_bufs} is {'the buffer size'} bytes in size.\n{indent}a number called {'the caught name'} is 0.\n{indent}a number called {'the inner name'} is 0.\n{indent}a number called {'the after name'} is 0.\n".
+    'gen emit' of 'the setup'.
+    a text called trigger is "{indent}Print byte {'the out-of-range index'} of b{gen_bufs}.\n".
+    'gen emit' of trigger.
+    a text called body is "{indent}On error\n{indent}  Set {'the caught name'} to {'the caught name'} add 1,\n{indent}  If {'the caught name'} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
+    'gen emit' of body.
+    a text called 'the after action' is "{indent}Set {'the after name'} to {'the after name'} add 1.\n".
+    'gen emit' of 'the after action'.
+    a text called 'the caught assertion' is 'gen assert number is' of "BAS-43" and 'the caught name' and 1.
+    'gen emit' of "{indent}{'the caught assertion'}.\n".
+    a text called 'the inner assertion' is 'gen assert number is' of "BAS-43" and 'the inner name' and 1.
+    'gen emit' of "{indent}{'the inner assertion'}.\n".
+    a text called 'the after assertion' is 'gen assert number is' of "BAS-43" and 'the after name' and 1.
+    'gen emit' of "{indent}{'the after assertion'}.\n".
+
+(BAS-46 (LANGUAGE.md:201-209): the one exception - a blank line placed
+ right after a COMMA, with more actions still to come in the same
+ sentence, stays purely cosmetic, because the sentence is explicitly
+ still open. The lap tally must still reach the full trip count.)
+
+To 'gen leaf blank line after comma is cosmetic' with a text called indent and a boolean called nested.
+    Set gen_whiles to gen_whiles add 1.
+    a number called 'the trips' is 'rng below' of 4 add 2.
+    a text called 'the lap name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the setup' is "{indent}a number called u{gen_whiles} is 0.\n{indent}a number called {'the lap name'} is 0.\n{indent}a number called {'the after name'} is 0.\n".
+    'gen emit' of 'the setup'.
+    a text called body is "{indent}While u{gen_whiles} is less than {'the trips'},\n{indent}  Set {'the lap name'} to {'the lap name'} add 1,\n\n{indent}  Increment u{gen_whiles}.\n".
+    'gen emit' of body.
+    a text called 'the after action' is "{indent}Set {'the after name'} to {'the after name'} add 1.\n".
+    'gen emit' of 'the after action'.
+    a text called 'the lap assertion' is 'gen assert number is' of "BAS-46" and 'the lap name' and 'the trips'.
+    'gen emit' of "{indent}{'the lap assertion'}.\n".
+    a text called 'the after assertion' is 'gen assert number is' of "BAS-46" and 'the after name' and 1.
+    'gen emit' of "{indent}{'the after assertion'}.\n".

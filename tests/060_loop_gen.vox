@@ -11,6 +11,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 see "../src/findings.vox".
 see "../src/loop_gen.vox".
 

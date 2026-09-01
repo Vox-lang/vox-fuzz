@@ -9,34 +9,45 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (The safety guard, plan 323 T1.
 
  Vox can Shutdown/Poweroff, Reboot/Restart, Halt, Mount/Unmount/umount,
  Pivot root, and create device nodes (LANGUAGE.md "Directories,
  Mounting, and Process Control" and "System Control"). This fuzzer runs
- unconfined on Josj's workstation - a generated program that reached the
- real compiler and actually ran one of these would be a genuine
- incident, not a test failure. src/gen.vox does not emit any of them
- today (grep-confirmed, and plan 323's own coverage audit agrees); this
- test is the safeguard that survives someone later "improving" the
- generator and adding one back carelessly.
+ unconfined on Josj's workstation, so most of this family would be a
+ genuine incident rather than a test failure if a generated program
+ reached the real compiler and actually ran one - this test is the
+ safeguard that survives someone later "improving" the generator and
+ adding one back carelessly.
 
- Scope - Tier NEVER only. Plan 323 also lists directory create/remove,
- Execute, fork, and Send signal, but those are Tier CONFINE: legitimate
- once T2's sandbox confines them (T4/T5, not this test), and src/gen.vox
- emits none of them either today. Banning them here outright would make
- this test fail the moment T4/T5 correctly add confined versions of
- them, so they are deliberately absent from the list below.
+ NARROWED 2026-08-30 night (process leaves, batch A; surface brief
+ vf-leaves-proca): `Mount`/`Unmount`/`umount`, `Reboot` and `Shutdown`
+ are no longer banned. PROCEDURE.md sect.6 already ruled these
+ "safe to emit as-is" (Josj, 2026-08-20) - an unprivileged process gets
+ EPERM from the kernel before touching anything, hand-verified this
+ session under both pinned compilers (see docs/ledger/process-control.md
+ and the report) - and this guard had simply never caught up to that
+ ruling before src/gen_process.vox became the first leaf file to try to
+ emit them. `Poweroff`/`Restart`/`Halt` and their own aliases, `Pivot
+ root`/`pivot_root`, and device-node creation are NOT part of tonight's
+ ruling - the surface brief names only `mount`, `reboot` and `shutdown` -
+ so those five needles stay exactly as they were.
+
+ Scope - Tier NEVER only, now five needles instead of nine. Plan 323
+ also lists directory create/remove, Execute, fork, and Send signal, but
+ those are Tier CONFINE: legitimate once confined (src/gen_process.vox
+ now does, alongside src/gen_files.vox's file-I/O leaves), so they were
+ always deliberately absent from the list below and still are.
 
  Case-insensitive - LANGUAGE.md "Case Sensitivity" says keywords are
  case-insensitive, so the scan runs against a lowercased copy of the
  generated text; a stray "SHUTDOWN" or "ShutDown" cannot slip past a
  scan that only ever tried the exact template casing.
-
- "mount" alone is the needle for the whole Mount/Unmount/umount family -
- "unmount" and "umount" both contain "mount" as a substring, so one
- needle covers the construct and both aliases.
 
  Generation only, no compiling or running - the guard's job is done the
  moment the SOURCE TEXT contains the word; waiting on a compile (or on
@@ -56,14 +67,12 @@ a number called 'the failing seed' is 0.
 a text called 'the failing word' is "".
 a number called 'the failing budget' is 0.
 
-(Needle buffers, built once rather than on every one of the 9 checks
- times 2,000 programs.)
-a buffer called needle_shutdown is "shutdown".
+(Needle buffers, built once rather than on every one of the 5 checks
+ times 2,000 programs. `mount`/`reboot`/`shutdown` were removed from
+ this list 2026-08-30 night - see the header comment.)
 a buffer called needle_poweroff is "poweroff".
-a buffer called needle_reboot is "reboot".
 a buffer called needle_restart is "restart".
 a buffer called needle_halt is "halt".
-a buffer called needle_mount is "mount".
 a buffer called needle_pivotroot is "pivot root".
 a buffer called needle_pivotroot_us is "pivot_root".
 a buffer called needle_devicenode is "device node".
@@ -109,17 +118,14 @@ To 'text has' with a buffer called haystack and a buffer called needle.
 
 (The Tier NEVER vocabulary, derived from plan 323's Tier NEVER table and
  LANGUAGE.md's "Directories, Mounting, and Process Control" / "System
- Control" sections - every spelling and alias: shutdown/poweroff,
- reboot/restart, halt, Mount/unmount/umount, pivot_root, device-node
- creation. Returns the matched word, or "" if the source is clean.)
+ Control" sections, narrowed 2026-08-30 night per the header comment:
+ poweroff/restart, halt, pivot_root, device-node creation. Returns the
+ matched word, or "" if the source is clean.)
 To 'find banned construct' with a text called source.
     a buffer called hay is 'lower text' of source.
-    If 'text has' of hay and needle_shutdown then, Return a text, "shutdown".
     If 'text has' of hay and needle_poweroff then, Return a text, "poweroff".
-    If 'text has' of hay and needle_reboot then, Return a text, "reboot".
     If 'text has' of hay and needle_restart then, Return a text, "restart".
     If 'text has' of hay and needle_halt then, Return a text, "halt".
-    If 'text has' of hay and needle_mount then, Return a text, "mount".
     If 'text has' of hay and needle_pivotroot then, Return a text, "pivot root".
     If 'text has' of hay and needle_pivotroot_us then, Return a text, "pivot_root".
     If 'text has' of hay and needle_devicenode then, Return a text, "device node".

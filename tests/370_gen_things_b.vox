@@ -9,6 +9,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (Things (part B), batch A - docs/ledger/things-b.md rows THG2-06,
  THG2-08, THG2-09, THG2-10, THG2-21, THG2-27, THG2-30, THG2-32, THG2-70.

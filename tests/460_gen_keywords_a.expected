@@ -1,0 +1,70 @@
+--- KEY-02: the article `the` references an existing variable ---
+a number called cupboard is 91.
+Set the cupboard to 51032.
+If the cupboard is not 51032 then, Print "ASSERT KEY-02: expected 51032 got {the cupboard}", Exit 95. Print the cupboard.
+
+--- the same leaf, nested ---
+  a number called cupboard is 91,
+  Set the cupboard to 51032,
+  If the cupboard is not 51032 then, Print "ASSERT KEY-02: expected 51032 got {the cupboard}", Exit 95. Print the cupboard.
+
+--- KEY-04: Set/Create declaration forms ---
+Set a number called 'the inbox' to 6979343254000059.
+If 'the inbox' is not 6979343254000059 then, Print "ASSERT KEY-04: expected 6979343254000059 got {'the inbox'}", Exit 95. Print 'the inbox'.
+Create a text called 'the sketchpad' to "the returned thing the outturn the tally".
+If 'the sketchpad' is not "the returned thing the outturn the tally" then, Print "ASSERT KEY-04: expected the returned thing the outturn the tally got {'the sketchpad'}", Exit 95. Print 'the sketchpad'.
+Create a number called 'the waybill'.
+If 'the waybill' is not 0 then, Print "ASSERT KEY-04: expected 0 got {'the waybill'}", Exit 95. Print 'the waybill'.
+
+--- KEY-11: Decrement, bare and `the`-prefixed ---
+a number called 'the dispatch note' is 6.
+Decrement 'the dispatch note'.
+Decrement the 'the dispatch note'.
+If 'the dispatch note' is not 4 then, Print "ASSERT KEY-11: expected 4 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+
+--- KEY-44, KEY-45: the `and` subject-list terminator ---
+a boolean called scratch is true.
+a boolean called 'the sketchpad' is true.
+a boolean called 'the tray' is true.
+a boolean called 'the postbag' is false.
+If scratch, 'the sketchpad', and 'the tray' are true then, Set 'the postbag' to true.
+If 'the postbag' is false then, Print "ASSERT KEY-44: expected 1 got {'the postbag'}", Exit 95. Print 'the postbag'.
+a boolean called 'the pallet' is false.
+If scratch, 'the sketchpad', and 'the tray' are not false then, Set 'the pallet' to true.
+If 'the pallet' is false then, Print "ASSERT KEY-44: expected 1 got {'the pallet'}", Exit 95. Print 'the pallet'.
+a number called pantry is 2147483648.
+a number called 'the inbox' is 2147483648.
+a number called 'the greeting' is 0.
+a boolean called 'the shipping label' is false.
+If pantry, 'the inbox', and 'the greeting' are 2147483648 then, Set 'the shipping label' to true.
+If 'the shipping label' then, Print "ASSERT KEY-45: expected 0 got {'the shipping label'}", Exit 95. Print 'the shipping label'.
+
+--- KEY-49, KEY-50: message/string as reserved aliases of text ---
+a message called 'the register' is "the tally taken".
+a string called 'the sketchpad' is "the pouch the reading taken".
+If 'the register's type is not "Text (static)" then, Print "ASSERT KEY-49: expected Text (static) got {'the register's type}", Exit 95. Print 'the register's type.
+If 'the register' is not "the tally taken" then, Print "ASSERT KEY-49: expected the tally taken got {'the register'}", Exit 95. Print 'the register'.
+If 'the sketchpad's type is not "Text (static)" then, Print "ASSERT KEY-50: expected Text (static) got {'the sketchpad's type}", Exit 95. Print 'the sketchpad's type.
+If 'the sketchpad' is not "the pouch the reading taken" then, Print "ASSERT KEY-50: expected the pouch the reading taken got {'the sketchpad'}", Exit 95. Print 'the sketchpad'.
+
+--- KEY-53, KEY-54: length as a contextual keyword ---
+a number called length is 0.
+a buffer called 'the waybill' is 34 bytes in size.
+append "" to 'the waybill'.
+If 'the waybill's length is not 'the waybill's size then, Print "ASSERT KEY-54: expected {'the waybill's size} got {'the waybill's length}", Exit 95. Print 'the waybill's length.
+a list called 'the envelope' is [5, 8762, 3986231888985390].
+If 'the envelope's length is not 'the envelope's size then, Print "ASSERT KEY-54: expected {'the envelope's size} got {'the envelope's length}", Exit 95. Print 'the envelope's length.
+If length is not 0 then, Print "ASSERT KEY-53: expected 0 got {length}", Exit 95. Print length.
+
+--- KEY-73: version as a contextual keyword (ordinary-identifier half) ---
+a number called version is 369199.
+If version is not 369199 then, Print "ASSERT KEY-73: expected 369199 got {version}", Exit 95. Print version.
+
+--- registration reachable: kinds 300-306 all dispatch without error ---
+kind 300: 195 bytes emitted
+kind 301: 585 bytes emitted
+kind 302: 255 bytes emitted
+kind 303: 962 bytes emitted
+kind 304: 730 bytes emitted
+kind 305: 681 bytes emitted
+kind 306: 165 bytes emitted

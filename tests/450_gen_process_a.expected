@@ -1,0 +1,205 @@
+--- PRC-02, PRC-04: directory create ---
+a text called cupboard is "{'the workspace'}/procdir1".
+Create a directory called cupboard.
+If cupboard is not available then, Print "ASSERT PRC-02: expected available got missing", Exit 95. Print "created".
+Remove the directory called cupboard.
+
+--- the same leaf, nested ---
+  a text called cupboard is "{'the workspace'}/procdir1",
+  Create a directory called cupboard,
+  If cupboard is not available then, Print "ASSERT PRC-02: expected available got missing", Exit 95. Print "created",
+  Remove the directory called cupboard.
+
+--- PRC-02 with no file I/O committed: stands aside ---
+emits a directory statement: 0
+--- PRC-06, 07, 08, 09: directory remove, nonrecursive refusal ---
+a text called 'the inbox' is "{'the workspace'}/procouter1".
+a text called 'the inbox inner path' is "{'the workspace'}/procouter1/inner".
+Create a directory called 'the inbox'.
+Create a directory called 'the inbox inner path'.
+a boolean called 'the inbox refused' is false.
+Remove the directory called 'the inbox'.
+On error Set 'the inbox refused' to true.
+If 'the inbox refused' is false then, Print "ASSERT PRC-09: expected 1 got {'the inbox refused'}", Exit 95. Print 'the inbox refused'.
+If 'the inbox inner path' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
+Remove the directory called 'the inbox inner path'.
+Remove the directory called 'the inbox'.
+If 'the inbox' is not available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+
+--- the same leaf, a different seed ---
+a text called 'the register' is "{'the workspace'}/procouter1".
+a text called 'the register inner path' is "{'the workspace'}/procouter1/inner".
+Create a directory called 'the register'.
+Create a directory called 'the register inner path'.
+a boolean called 'the register refused' is false.
+Remove the directory called 'the register'.
+On error Set 'the register refused' to true.
+If 'the register refused' is false then, Print "ASSERT PRC-09: expected 1 got {'the register refused'}", Exit 95. Print 'the register refused'.
+If 'the register inner path' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
+Delete directory called 'the register inner path'.
+Delete directory called 'the register'.
+If 'the register' is not available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+
+--- PRC-12, 13, 21: mount/unmount refusal ---
+a text called 'the dispatch note' is "{'the workspace'}/procmount1".
+Create a directory called 'the dispatch note'.
+a boolean called 'the dispatch note mount refused' is false.
+Mount 'the dispatch note' at 'the dispatch note' with type "tmpfs".
+On error Set 'the dispatch note mount refused' to true.
+If 'the dispatch note mount refused' is false then, Print "ASSERT PRC-12: expected 1 got {'the dispatch note mount refused'}", Exit 95. Print 'the dispatch note mount refused'.
+a boolean called 'the dispatch note unmount refused' is false.
+Unmount 'the dispatch note'.
+On error Set 'the dispatch note unmount refused' to true.
+If 'the dispatch note unmount refused' is false then, Print "ASSERT PRC-21: expected 1 got {'the dispatch note unmount refused'}", Exit 95. Print 'the dispatch note unmount refused'.
+Remove the directory called 'the dispatch note'.
+
+--- the same leaf, nested ---
+  a text called 'the dispatch note' is "{'the workspace'}/procmount1",
+  Create a directory called 'the dispatch note',
+  a boolean called 'the dispatch note mount refused' is false,
+  Mount 'the dispatch note' at 'the dispatch note' with type "tmpfs",
+  On error Set 'the dispatch note mount refused' to true,
+  If 'the dispatch note mount refused' is false then, Print "ASSERT PRC-12: expected 1 got {'the dispatch note mount refused'}", Exit 95. Print 'the dispatch note mount refused',
+  a boolean called 'the dispatch note unmount refused' is false,
+  Unmount 'the dispatch note',
+  On error Set 'the dispatch note unmount refused' to true,
+  If 'the dispatch note unmount refused' is false then, Print "ASSERT PRC-21: expected 1 got {'the dispatch note unmount refused'}", Exit 95. Print 'the dispatch note unmount refused',
+  Remove the directory called 'the dispatch note'.
+
+--- PRC-27, 28: symbolic link ---
+a text called scratch is "{'the workspace'}/procpayload1".
+open a file for writing called 'scratch scribe' at scratch.
+Write "payload" to 'scratch scribe'.
+Close 'scratch scribe'.
+a text called 'scratch link path' is "{'the workspace'}/proclink1".
+Create symbolic link from "procpayload1" to 'scratch link path'.
+If 'scratch link path' is not available then, Print "ASSERT PRC-27: expected available got missing", Exit 95. Print "resolves".
+a text called 'scratch dangling path' is "{'the workspace'}/procdangling1".
+Create symbolic link from "procmissing1" to 'scratch dangling path'.
+If 'scratch dangling path' is available then, Print "ASSERT PRC-27: expected missing got available", Exit 95. Print "dangling".
+a boolean called 'scratch already exists' is false.
+Create symbolic link from "procmissing1" to 'scratch dangling path'.
+On error Set 'scratch already exists' to true.
+If 'scratch already exists' is false then, Print "ASSERT PRC-28: expected 1 got {'scratch already exists'}", Exit 95. Print 'scratch already exists'.
+Delete the file 'scratch link path'.
+Delete the file 'scratch dangling path'.
+Delete the file scratch.
+
+--- PRC-42, 43, 44, 46: fork/reap basic ---
+a number called 'loading bay' is fork.
+If 'loading bay' is 0 then, Exit 29.
+a number called 'loading bay reaped pid' is reap any child process.
+a boolean called 'loading bay reap matched' is false.
+If 'loading bay reaped pid' is 'loading bay' then, Set 'loading bay reap matched' to true.
+If 'loading bay reap matched' is false then, Print "ASSERT PRC-46: expected 1 got {'loading bay reap matched'}", Exit 95. Print 'loading bay reap matched'.
+
+--- the same leaf, a seed that draws the direct If-condition shape ---
+If fork the process is 0 then, Exit 29.
+a number called toolbox is reap any child process.
+a boolean called 'toolbox reap succeeded' is false.
+If toolbox is greater than 0 then, Set 'toolbox reap succeeded' to true.
+If 'toolbox reap succeeded' is false then, Print "ASSERT PRC-42: expected 1 got {'toolbox reap succeeded'}", Exit 95. Print 'toolbox reap succeeded'.
+
+--- PRC-56, 57, 58: reaped status decode, first reap in program ---
+If the reaped status is not -1 then, Print "ASSERT PRC-58: expected -1 got {the reaped status}", Exit 95. Print the reaped status.
+a number called 'the message slip' is fork the process.
+If 'the message slip' is 0 then, Exit 9.
+a number called 'the message slip reap result' is reap child 'the message slip'.
+a number called 'the message slip decoded exit' is the reaped status divide 256 modulo 256.
+If 'the message slip decoded exit' is not 9 then, Print "ASSERT PRC-56: expected 9 got {'the message slip decoded exit'}", Exit 95. Print 'the message slip decoded exit'.
+a boolean called 'the message slip reap failed' is false.
+a number called 'the message slip foreign reap' is reap process 9496391.
+On error Set 'the message slip reap failed' to true.
+If 'the message slip reap failed' is false then, Print "ASSERT PRC-49: expected 1 got {'the message slip reap failed'}", Exit 95. Print 'the message slip reap failed'.
+a number called 'the message slip still decoded' is the reaped status divide 256 modulo 256.
+If 'the message slip still decoded' is not 9 then, Print "ASSERT PRC-57: expected 9 got {'the message slip still decoded'}", Exit 95. Print 'the message slip still decoded'.
+
+--- the same leaf, NOT the first reap: no sentinel claim ---
+claims the -1 sentinel: 0
+--- PRC-62, 63: status decode functions, first declaration ---
+To 'exit code of' with a number called status.
+    Return a number, status divide 256 modulo 256.
+
+To 'signal of' with a number called status.
+    Return a number, status bit-and 127.
+
+a number called 'the sketchpad' is fork the process.
+If 'the sketchpad' is 0 then, Exit 56.
+a number called 'the sketchpad decode reap' is reap child 'the sketchpad'.
+a number called 'the sketchpad status word' is the reaped status.
+a number called 'the sketchpad manual exit' is 'the sketchpad status word' divide 256 modulo 256.
+a number called 'the sketchpad function exit' is 'exit code of' of 'the sketchpad status word'.
+If 'the sketchpad function exit' is not 'the sketchpad manual exit' then, Print "ASSERT PRC-63: expected {'the sketchpad manual exit'} got {'the sketchpad function exit'}", Exit 95. Print 'the sketchpad function exit'.
+If 'the sketchpad manual exit' is not 56 then, Print "ASSERT PRC-62: expected 56 got {'the sketchpad manual exit'}", Exit 95. Print 'the sketchpad manual exit'.
+a number called 'the sketchpad manual signal' is 'the sketchpad status word' bit-and 127.
+a number called 'the sketchpad function signal' is 'signal of' of 'the sketchpad status word'.
+If 'the sketchpad function signal' is not 'the sketchpad manual signal' then, Print "ASSERT PRC-63: expected {'the sketchpad manual signal'} got {'the sketchpad function signal'}", Exit 95. Print 'the sketchpad function signal'.
+If 'the sketchpad manual signal' is not 0 then, Print "ASSERT PRC-62: expected 0 got {'the sketchpad manual signal'}", Exit 95. Print 'the sketchpad manual signal'.
+
+--- the same leaf again: decoders already declared, no redeclaration ---
+redeclares 'exit code of': 0
+a number called 'the sketchpad' is fork the process.
+If 'the sketchpad' is 0 then, Exit 56.
+a number called 'the sketchpad decode reap' is reap child 'the sketchpad'.
+a number called 'the sketchpad status word' is the reaped status.
+a number called 'the sketchpad manual exit' is 'the sketchpad status word' divide 256 modulo 256.
+a number called 'the sketchpad function exit' is 'exit code of' of 'the sketchpad status word'.
+If 'the sketchpad function exit' is not 'the sketchpad manual exit' then, Print "ASSERT PRC-63: expected {'the sketchpad manual exit'} got {'the sketchpad function exit'}", Exit 95. Print 'the sketchpad function exit'.
+If 'the sketchpad manual exit' is not 56 then, Print "ASSERT PRC-62: expected 56 got {'the sketchpad manual exit'}", Exit 95. Print 'the sketchpad manual exit'.
+a number called 'the sketchpad manual signal' is 'the sketchpad status word' bit-and 127.
+a number called 'the sketchpad function signal' is 'signal of' of 'the sketchpad status word'.
+If 'the sketchpad function signal' is not 'the sketchpad manual signal' then, Print "ASSERT PRC-63: expected {'the sketchpad manual signal'} got {'the sketchpad function signal'}", Exit 95. Print 'the sketchpad function signal'.
+If 'the sketchpad manual signal' is not 0 then, Print "ASSERT PRC-62: expected 0 got {'the sketchpad manual signal'}", Exit 95. Print 'the sketchpad manual signal'.
+
+--- PRC-33: Execute, allowlisted true/false ---
+a number called 'loading bay' is fork the process.
+If 'loading bay' is 0 then, Execute "/usr/bin/true".
+a number called 'loading bay exec reaped' is reap child 'loading bay'.
+a number called 'loading bay exec exit code' is the reaped status divide 256 modulo 256.
+If 'loading bay exec exit code' is not 0 then, Print "ASSERT PRC-33: expected 0 got {'loading bay exec exit code'}", Exit 95. Print 'loading bay exec exit code'.
+
+--- the same leaf, a different seed ---
+a number called 'the crate' is fork the process.
+If 'the crate' is 0 then, Execute "/usr/bin/true".
+a number called 'the crate exec reaped' is reap child 'the crate'.
+a number called 'the crate exec exit code' is the reaped status divide 256 modulo 256.
+If 'the crate exec exit code' is not 0 then, Print "ASSERT PRC-33: expected 0 got {'the crate exec exit code'}", Exit 95. Print 'the crate exec exit code'.
+
+--- PRC-72, 73, 75: signal existence check ---
+a number called 'the envelope' is fork the process.
+If 'the envelope' is 0 then, Execute "/usr/bin/false".
+a boolean called 'the envelope stale reap failed' is false.
+a number called 'the envelope stale reap' is reap process 9034147.
+On error Set 'the envelope stale reap failed' to true.
+If 'the envelope stale reap failed' is false then, Print "ASSERT PRC-49: expected 1 got {'the envelope stale reap failed'}", Exit 95. Print 'the envelope stale reap failed'.
+a boolean called 'the envelope signal failed' is false.
+Send signal 0 to child 'the envelope'.
+On error Set 'the envelope signal failed' to true.
+If 'the envelope signal failed' then, Print "ASSERT PRC-75: expected 0 got {'the envelope signal failed'}", Exit 95. Print 'the envelope signal failed'.
+a number called 'the envelope signal reaped' is reap child 'the envelope'.
+
+--- PRC-79: system control refusal (Reboot only - see gen_process.vox's kind 269 comment; PRC-78/Shutdown is held out) ---
+a boolean called 'the pigeonhole' is false.
+Reboot.
+On error Set 'the pigeonhole' to true.
+If 'the pigeonhole' is false then, Print "ASSERT PRC-79: expected 1 got {'the pigeonhole'}", Exit 95. Print 'the pigeonhole'.
+Print "execution continued".
+
+--- the same leaf, a different seed ---
+a boolean called satchel is false.
+Reboot.
+On error Set satchel to true.
+If satchel is false then, Print "ASSERT PRC-79: expected 1 got {satchel}", Exit 95. Print satchel.
+Print "execution continued".
+
+--- registration reachable: kinds 260-269 all dispatch without error ---
+kind 260: 264 bytes emitted
+kind 261: 0 bytes emitted
+kind 262: 851 bytes emitted
+kind 263: 1155 bytes emitted
+kind 264: 405 bytes emitted
+kind 265: 921 bytes emitted
+kind 266: 1328 bytes emitted
+kind 267: 404 bytes emitted
+kind 268: 837 bytes emitted
+kind 269: 266 bytes emitted

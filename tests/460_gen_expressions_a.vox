@@ -1,0 +1,151 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_basics.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+
+(expressions leaves, batch A - docs/ledger/expressions.md rows EXP-05,
+ 06, 07, 10, 14, 15, 16, 27, 36, 46, 51, 94, 98. Kinds 280-288.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/300_gen_buffers_a.vox and tests/450_gen_process_a.vox
+ use. Seeds are hand-picked to show both sides of every branch a leaf
+ draws, not just the first seed that compiles.)
+
+Print "--- EXP-05, EXP-14: hex literal, initializer and operand position ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf hex literal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf hex literal' of "  " and true.
+Print 'gen text'.
+
+Print "--- EXP-06, EXP-15: binary literal, initializer and operand position ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf binary literal' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-07, EXP-16: character literal, initializer and operand position ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf character literal' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-10: boolean arithmetic, the drawn literal is false ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf boolean arithmetic' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws true ---".
+'rng seed' of 51.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf boolean arithmetic' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-46: not <condition>, the raw comparison holds (not-branch must not fire) ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf not condition' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, the raw comparison does not hold (not-branch must fire) ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf not condition' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-27, EXP-36: the optional article, arithmetic and comparison agreement ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf optional article agreement' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-51: plural are-form vs written-out conjunction ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf plural are expansion' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws a different subject count ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf plural are expansion' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-94: round half up, fraction below .50 (truncates down) ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf round half up' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed with fraction at or above .50 (rounds up) ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf round half up' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, the extreme-value cliff: whole part is i64::MAX, float64 cannot represent it exactly, the naive oracle diverges (documented candidate, see report) ---".
+'rng seed' of 45.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf round half up' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-98: a bare number in condition position, zero ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf bare number condition' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, negative ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf bare number condition' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, positive ---".
+'rng seed' of 13.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf bare number condition' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 280-288 all dispatch without error ---".
+a number called 'the kind' is 280.
+While 'the kind' is less than 289,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

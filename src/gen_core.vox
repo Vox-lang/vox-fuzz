@@ -820,6 +820,315 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf absent test' of indent and nested.
     If kind is 154 then,
         'gen leaf absent key' of indent and nested.
+    If kind is 155 then,
+        'gen leaf list length and ends' of indent and nested.
+    If kind is 156 then,
+        'gen leaf list empty properties' of indent and nested.
+    If kind is 157 then,
+        'gen leaf list element index' of indent and nested.
+    ( ── things leaves, batch B, 2026-08-29 evening ── )
+    If kind is 193 then,
+        'gen leaf thing member print' of indent and nested.
+    If kind is 194 then,
+        'gen leaf thing member equality' of indent and nested.
+    If kind is 195 then,
+        'gen leaf thing free call agreement' of indent and nested.
+    If kind is 198 then,
+        'gen leaf thing shared field name' of indent and nested.
+    ( ── buffers leaves, batch B, 2026-08-29 evening ── )
+    If kind is 110 then,
+        'gen leaf buffer free spellings' of indent and nested.
+    If kind is 111 then,
+        'gen leaf buffer freed state' of indent and nested.
+    If kind is 112 then,
+        'gen leaf buffer freed read refused' of indent and nested.
+    If kind is 113 then,
+        'gen leaf buffer freed write refused' of indent and nested.
+    If kind is 114 then,
+        'gen leaf buffer freed resize refused' of indent and nested.
+    If kind is 115 then,
+        'gen leaf buffer double free' of indent and nested.
+    If kind is 116 then,
+        'gen leaf buffer free via parameter' of indent and nested.
+    ( ── time leaves, batch A, 2026-08-29 evening ── )
+    If kind is 220 then,
+        'gen leaf current time shape' of indent and nested.
+    If kind is 221 then,
+        'gen leaf timer duration and running' of indent and nested.
+    ( ── input-output leaves, batch A, 2026-08-29 evening ── )
+    If kind is 160 then,
+        'gen leaf escape table verified' of indent and nested.
+    If kind is 161 then,
+        'gen leaf format text reassignment' of indent and nested.
+    If kind is 162 then,
+        'gen leaf format value isolation' of indent and nested.
+    If kind is 163 then,
+        'gen leaf branch file handle' of indent and nested.
+    If kind is 164 then,
+        'gen leaf conditional print chain' of indent and nested.
+    ( ── files leaves, batch B2, 2026-08-30 night ── )
+    (FIL-45, FIL-52, FIL-53, FIL-54, FIL-55, FIL-56, FIL-70, FIL-75,
+     FIL-80, FIL-93, in the 120-139 span the reservation above set
+     aside for this surface - continuing from 129, since 120-128
+     belong to batches A and B. Drawn only at depth 3, the same as
+     the buffer and value bands nearby - see 'gen statement's
+     depth-3-only remap. Kinds 136-138 are left free within this
+     batch's own 129-138 reservation - seven leaves covered the ten
+     rows without needing an eighth, ninth or tenth kind.)
+    If kind is 129 then,
+        'gen leaf file read replaces' of indent and nested.
+    If kind is 130 then,
+        'gen leaf read line mechanics' of indent and nested.
+    If kind is 131 then,
+        'gen leaf read line truncation' of indent and nested.
+    If kind is 132 then,
+        'gen leaf path available' of indent and nested.
+    If kind is 133 then,
+        'gen leaf file delete' of indent and nested.
+    If kind is 134 then,
+        'gen leaf file open error' of indent and nested.
+    If kind is 135 then,
+        'gen leaf file descriptor tracking' of indent and nested.
+    ( ── time leaves, batch B, 2026-08-30 night ── )
+    If kind is 222 then,
+        'gen leaf timer elapsed while running' of indent and nested.
+    If kind is 223 then,
+        'gen leaf formatted clock direct' of indent and nested.
+    If kind is 224 then,
+        'gen leaf formatted clock staged' of indent and nested.
+    If kind is 225 then,
+        'gen leaf current time utc agreement' of indent and nested.
+    If kind is 226 then,
+        'gen leaf timer uncast agreement' of indent and nested.
+    If kind is 227 then,
+        'gen leaf timer never started' of indent and nested.
+    If kind is 228 then,
+        'gen leaf timer restart resets' of indent and nested.
+    If kind is 229 then,
+        'gen leaf timer negative seconds wait' of indent and nested.
+    If kind is 230 then,
+        'gen leaf current time renders as unix' of indent and nested.
+    If kind is 231 then,
+        'gen leaf time property from number' of indent and nested.
+    ( ── collections leaves, batch C, 2026-08-30 night ──
+     docs/ledger/collections-a.md LST-04, LST-43, LST-45, LST-46, LST-47
+     and collections-b.md LST2-30, LST2-41, LST2-46, LST2-53, LST2-94, in
+     the 240-259 span the reservation table sets aside as a NEW block for
+     this surface (the 140-159 band above is full to 157; 158-159 stay
+     spare). Kind 249 is spare too - nine leaves claimed nine of the ten
+     raw slots this batch's remap reserves; see 'gen statement's own
+     remap comment for the raw span. Drawn only at depth 3, the same
+     reasoning as the values and 140-159 bands above.)
+    If kind is 240 then,
+        'gen leaf map insert and replace' of indent and nested.
+    If kind is 241 then,
+        'gen leaf map length and empty' of indent and nested.
+    If kind is 242 then,
+        'gen leaf list empty state' of indent and nested.
+    If kind is 243 then,
+        'gen leaf map keys values fresh' of indent and nested.
+    If kind is 244 then,
+        'gen leaf map missing key typed default' of indent and nested.
+    If kind is 245 then,
+        'gen leaf list append length worked example' of indent and nested.
+    If kind is 246 then,
+        'gen leaf list append in loop' of indent and nested.
+    If kind is 247 then,
+        'gen leaf list append each' of indent and nested.
+    If kind is 248 then,
+        'gen leaf treating append guaranteed hit' of indent and nested.
+    ( ── process leaves, batch A, 2026-08-30 night ── )
+    If kind is 260 then,
+        'gen leaf process directory create' of indent and nested.
+    If kind is 262 then,
+        'gen leaf process mount unmount refusal' of indent and nested.
+    If kind is 263 then,
+        'gen leaf process symbolic link' of indent and nested.
+    If kind is 264 then,
+        'gen leaf process fork reap basic' of indent and nested.
+    If kind is 265 then,
+        'gen leaf process reaped status decode' of indent and nested.
+    If kind is 266 then,
+        'gen leaf process status decode functions' of indent and nested.
+    If kind is 267 then,
+        'gen leaf process execute' of indent and nested.
+    If kind is 268 then,
+        'gen leaf process signal existence check' of indent and nested.
+    ( ── expressions leaves, batch A, 2026-08-30 ──
+     docs/ledger/expressions.md EXP-05, 06, 07, 10, 14, 15, 16, 27, 36,
+     46, 51, 94, 98, in the 280-299 span the reservation table sets
+     aside as a NEW block for this surface. Kind 289 is spare - nine
+     leaves claimed nine of the ten raw slots this batch's remap
+     reserves; see 'gen statement's own remap comment for the raw span.
+     Drawn only at depth 3, the same reasoning as the values/things-B/
+     process bands above.)
+    If kind is 280 then,
+        'gen leaf hex literal' of indent and nested.
+    If kind is 281 then,
+        'gen leaf binary literal' of indent and nested.
+    If kind is 282 then,
+        'gen leaf character literal' of indent and nested.
+    If kind is 283 then,
+        'gen leaf boolean arithmetic' of indent and nested.
+    If kind is 284 then,
+        'gen leaf not condition' of indent and nested.
+    If kind is 285 then,
+        'gen leaf optional article agreement' of indent and nested.
+    If kind is 286 then,
+        'gen leaf plural are expansion' of indent and nested.
+    If kind is 287 then,
+        'gen leaf round half up' of indent and nested.
+    If kind is 288 then,
+        'gen leaf bare number condition' of indent and nested.
+    ( ── collections leaves, batch D, 2026-08-30 night ──
+     docs/ledger/collections-a.md LST-52, LST-55, LST-60 (folds LST-61),
+     LST-62, LST-63, LST-64, LST-65, LST-66, LST-67, LST-69, finishing
+     the 240-259 span (249-258; 240-248 are batch C's kind 249 spare
+     slot plus the ten new ones this batch's remap reserves). Drawn only
+     at depth 3, the same reasoning as the values and 140-159 bands
+     above.)
+    If kind is 249 then,
+        'gen leaf map value nested' of indent and nested.
+    If kind is 250 then,
+        'gen leaf predicate static fold' of indent and nested.
+    If kind is 251 then,
+        'gen leaf predicate mixed dispatch' of indent and nested.
+    If kind is 252 then,
+        'gen leaf predicate all six match' of indent and nested.
+    If kind is 253 then,
+        'gen leaf predicate synonyms' of indent and nested.
+    If kind is 254 then,
+        'gen leaf predicate negate' of indent and nested.
+    If kind is 255 then,
+        'gen leaf predicate number boolean order' of indent and nested.
+    If kind is 256 then,
+        'gen leaf predicate guard idiom' of indent and nested.
+    If kind is 257 then,
+        'gen leaf predicate stored boolean' of indent and nested.
+    ( ── keywords leaves, batch A, 2026-08-30 ── )
+    If kind is 300 then,
+        'gen leaf article the reference' of indent and nested.
+    If kind is 301 then,
+        'gen leaf set create declaration forms' of indent and nested.
+    If kind is 302 then,
+        'gen leaf decrement' of indent and nested.
+    If kind is 303 then,
+        'gen leaf and subject list' of indent and nested.
+    If kind is 304 then,
+        'gen leaf reserved alias text types' of indent and nested.
+    If kind is 305 then,
+        'gen leaf contextual keyword length' of indent and nested.
+    If kind is 306 then,
+        'gen leaf contextual keyword version' of indent and nested.
+    ( ── basics leaves, batch A, 2026-08-30 ── )
+    If kind is 310 then,
+        'gen leaf comment placement' of indent and nested.
+    If kind is 311 then,
+        'gen leaf comment mid statement' of indent and nested.
+    If kind is 312 then,
+        'gen leaf comment multiline nested' of indent and nested.
+    If kind is 313 then,
+        'gen leaf comment lookalike in string' of indent and nested.
+    If kind is 314 then,
+        'gen leaf comment only line does not close' of indent and nested.
+    If kind is 315 then,
+        'gen leaf blank line count invariant' of indent and nested.
+    If kind is 316 then,
+        'gen leaf blank line closes nested loop' of indent and nested.
+    If kind is 317 then,
+        'gen leaf blank line closes function too' of indent and nested.
+    If kind is 318 then,
+        'gen leaf blank line closes on error' of indent and nested.
+    If kind is 319 then,
+        'gen leaf blank line after comma is cosmetic' of indent and nested.
+    ( ── files leaves, batch B3, 2026-08-30 ── )
+    (FIL-57, FIL-58, FIL-59, FIL-60, FIL-61, FIL-62, FIL-63, FIL-89,
+     FIL-100, FIL-102, in the 330-339 span the reservation table sets
+     aside as a NEW block for this batch - files' own 120-139 span is
+     full through 135, so this round's ten rows get a second band rather
+     than crowding the first. Drawn only at depth 3, the same as every
+     other files kind - see 'gen statement's depth-3-only remap. Kinds
+     335-339 are left free within this batch's own 330-339 reservation -
+     five leaves covered the ten rows without needing a sixth through
+     tenth kind.)
+    If kind is 330 then,
+        'gen leaf file seek by byte' of indent and nested.
+    If kind is 331 then,
+        'gen leaf file seek by line' of indent and nested.
+    If kind is 332 then,
+        'gen leaf file seek invalid targets' of indent and nested.
+    If kind is 333 then,
+        'gen leaf file double close' of indent and nested.
+    If kind is 334 then,
+        'gen leaf file forgotten close' of indent and nested.
+    ( ── buffers leaves, batch C, round four, 2026-08-30 ──
+     docs/ledger/buffers.md BUF-19, BUF-21, BUF-23, BUF-24, BUF-25, BUF-26,
+     BUF-31, BUF-32, BUF-36, BUF-38, in the 340-349 span the reservation
+     table sets aside as a NEW block for this surface (the 100-119 band
+     above is not full - 117-119 are free - but this round's brief
+     reserves a fresh block anyway). Kinds 346-349 are spare - six leaves
+     claimed six of the ten raw slots this batch's remap reserves. Drawn
+     only at depth 3, the same reasoning as every other kind in this file.)
+    If kind is 340 then,
+        'gen leaf buffer byte index' of indent and nested.
+    If kind is 341 then,
+        'gen leaf buffer byte literals' of indent and nested.
+    If kind is 342 then,
+        'gen leaf buffer content mutation' of indent and nested.
+    If kind is 343 then,
+        'gen leaf buffer oob value' of indent and nested.
+    If kind is 344 then,
+        'gen leaf buffer append copy sources' of indent and nested.
+    If kind is 345 then,
+        'gen leaf buffer dynamic destination growth' of indent and nested.
+    If kind is 269 then,
+        'gen leaf process system control refusal' of indent and nested.
+    ( ── process leaves, batch B, 2026-08-31 -
+     docs/ledger/process-control.md PRC-11, 47, 48, 55, 60, 61, 87, in
+     the 350-359 span this batch's surface brief reserves as a NEW block
+     (the 260-279 block above is batch A's, now full: 261 stays
+     unregistered pending the PRC-08 stale-read candidate
+     REPORT-LEAVES-PROCESS-A.md flags; 269 is claimed by the fix just
+     above). Kind 352 is written in gen_process.vox but LEFT
+     UNREGISTERED - PRC-50/51/52/53/54 (the `without waiting` family) hit
+     a compiler candidate this batch's report records in full: the layout
+     randomiser can put a single newline between a reap expression and
+     the `without waiting` suffix, and the compiler then refuses the
+     program that produced it - `Expected a statement, got Without` -
+     even though the language's own stated rule is that only a period
+     closes a clause. Four of the ten raw slots this batch's remap
+     reserves are claimed - 352, 355-359 stay spare; see 'gen statement's
+     own remap comment for the raw span.)
+    If kind is 350 then,
+        'gen leaf process directory failure paths' of indent and nested.
+    If kind is 351 then,
+        'gen leaf process reap by pid' of indent and nested.
+    If kind is 353 then,
+        'gen leaf process reaped ordinary identifier' of indent and nested.
+    If kind is 354 then,
+        'gen leaf process empty path refusal' of indent and nested.
+    ( ── expressions leaves, batch B, 2026-08-31 ──
+     docs/ledger/expressions.md EXP-18, 29, 30, 35, 39, 41, 43, 73, 83,
+     84, in the 360-369 span the reservation table sets aside as a NEW
+     block for this surface. Kinds 367-369 are spare - seven leaves
+     claimed seven of the ten raw slots this batch's remap reserves; see
+     'gen statement's own remap comment for the raw span. Drawn only at
+     depth 3, the same reasoning as the values/things-B/process/
+     expressions-A bands above.)
+    If kind is 360 then,
+        'gen leaf article the number iterator' of indent and nested.
+    If kind is 361 then,
+        'gen leaf cast tight and braced' of indent and nested.
+    If kind is 362 then,
+        'gen leaf bare zero comparison' of indent and nested.
+    If kind is 363 then,
+        'gen leaf odd and negative predicates' of indent and nested.
+    If kind is 364 then,
+        'gen leaf list emptiness check' of indent and nested.
+    If kind is 365 then,
+        'gen leaf buffer text independent copy' of indent and nested.
+    If kind is 366 then,
+        'gen leaf base conversion partial and total parse' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1003,7 +1312,11 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          reserved span keeps every leaf reachable and no raw value remapped
          twice - each If tests the RAW draw range, and every remapped value
          lands above 100, outside every later test.)
-        Set kind to 'rng below' of 97.
+        (Salvaged onto main by the master, 2026-09-01: parked delta batches, one draw
+         of 216; raw 187..215 remap to the spans below - each If tests the RAW
+         value, bounded both sides; the master derived every span from the kinds
+         each batch actually registered.)
+        Set kind to 'rng below' of 210.
         If kind is greater than 49 and kind is less than 65 then,
             Set kind to kind add 90.
         If kind is greater than 64 and kind is less than 70 then,
@@ -1018,6 +1331,48 @@ To 'gen statement' with a number called depth and a text called indent and a boo
             Set kind to kind add 40.
         If kind is greater than 88 and kind is less than 97 then,
             Set kind to kind add 96.
+        If kind is greater than 96 and kind is less than 104 then,
+            Set kind to kind add 13.
+        If kind is greater than 103 and kind is less than 107 then,
+            Set kind to kind add 51.
+        If kind is greater than 106 and kind is less than 112 then,
+            Set kind to kind add 53.
+        If kind is greater than 111 and kind is less than 115 then,
+            Set kind to kind add 81.
+        If kind is greater than 114 and kind is less than 116 then,
+            Set kind to kind add 83.
+        If kind is greater than 115 and kind is less than 118 then,
+            Set kind to kind add 104.
+        If kind is greater than 117 and kind is less than 125 then,
+            Set kind to kind add 11.
+        If kind is greater than 124 and kind is less than 135 then,
+            Set kind to kind add 97.
+        If kind is greater than 134 and kind is less than 144 then,
+            Set kind to kind add 105.
+        If kind is greater than 143 and kind is less than 145 then,
+            Set kind to kind add 116.
+        If kind is greater than 144 and kind is less than 152 then,
+            Set kind to kind add 117.
+        If kind is greater than 151 and kind is less than 161 then,
+            Set kind to kind add 97.
+        If kind is greater than 160 and kind is less than 170 then,
+            Set kind to kind add 119.
+        If kind is greater than 169 and kind is less than 177 then,
+            Set kind to kind add 130.
+        If kind is greater than 176 and kind is less than 187 then,
+            Set kind to kind add 133.
+        If kind is greater than 186 and kind is less than 188 then,
+            Set kind to kind add 82.
+        If kind is greater than 187 and kind is less than 193 then,
+            Set kind to kind add 142.
+        If kind is greater than 192 and kind is less than 199 then,
+            Set kind to kind add 147.
+        If kind is greater than 198 and kind is less than 201 then,
+            Set kind to kind add 151.
+        If kind is greater than 200 and kind is less than 203 then,
+            Set kind to kind add 152.
+        If kind is greater than 202 and kind is less than 210 then,
+            Set kind to kind add 157.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 32.
     If depth is equal to 1 then,
@@ -1422,6 +1777,7 @@ To 'gen program' with a number called seed and a number called budget.
     Set gen_repeats to 0.
     Set gen_envs to 0.
     'gen environment names reset'.
+    'gen reset process state'.
     Set gen_flags to 0.
     'rng seed' of seed.
     (The value leaves spend names out of a vocabulary on a per-program
@@ -1976,6 +2332,16 @@ To 'layout apostrophe opens a name' with a number called 'the apostrophe positio
     If 'the third position' is greater than n then,
         Return a boolean, false.
     a number called 'the third byte' is byte 'the third position' of layout_src.
+    (The character literal 's' is apostrophe, s, apostrophe - the same three
+     bytes a possessive 's would start with. Read as a possessive, the pass
+     copies one byte and then mistakes the CLOSING apostrophe for a name
+     opening, desynchronising the token scan and rewriting whitespace inside
+     the real quoted names that follow, which puts a newline inside a name
+     and the program stops compiling. A closing apostrophe here means a
+     character literal, so the token is copied verbatim like any other
+     quoted run.)
+    If 'the third byte' is 39 then,
+        Return a boolean, true.
     a boolean called 'the third continues a name' is 'layout byte is name character' of 'the third byte'.
     If 'the third continues a name' then,
         Return a boolean, true.

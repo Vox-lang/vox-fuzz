@@ -1,0 +1,129 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(Things (part B), batch B - docs/ledger/things-b.md rows THG2-04, THG2-19,
+ THG2-29, THG2-34, THG2-38, THG2-44, continuing from batch A's
+ THG2-06/08/09/10/21/27/30/32/70 (370_gen_things_b).
+
+ Every leaf here reads the same manifest batch A's own leaves read
+ (gen_pick_thing/gen_pick_maker/gen_pick_receiver/gen_pick_field, or the
+ gen_thing_function_* pair THG2-21/27/30/32 already build), except
+ THG2-44, which hand-builds its own fresh, unregistered pair of types -
+ see its own leaf comment in src/gen_things.vox.
+
+ Seed 1 draws a manifest with a thing that has BOTH a maker and a
+ receiver (checked by hand against this seed before pinning it, the same
+ way 370's own header pins seed 1 for its plain/nested queries), so
+ THG2-04/19/34/38 all have something to fire on. THG2-29 needs
+ gen_thing_function_ready, built unconditionally by 'gen build thing
+ functions' whenever the manifest has any thing with a number field, which
+ seed 1 also has.)
+
+To 'gen things thg2b setup' with a number called seed.
+    'rng seed' of seed.
+    Set gen_does_file_io to false.
+    'gen build manifest'.
+    'gen build thing predicate function'.
+    'gen build thing functions'.
+
+Print "--- THG2-04: a whole instance of a member-declaring type prints ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing member print' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-19: copy, print, compare, mutate, compare again on a member-declaring type ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing member equality' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-29: free call and instance possessive agree on the same ordinary function ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing free call agreement' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-34: the type possessive maker call, field read back ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing maker call' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-38: a receiver reached by both the instance and type possessive agree ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing receiver call forms' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-44: two different types sharing a field name do not collide ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing shared field name' of "" and false.
+Print 'gen text'.
+
+Print "--- a program with no things at all: the manifest-dependent leaves stand aside ---".
+'gen things thg2b setup' of 4.
+clear gen_out.
+'gen leaf thing member print' of "" and false.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing member equality' of "" and false.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing free call agreement' of "" and false.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing maker call' of "" and false.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing receiver call forms' of "" and false.
+Print 'gen text'.
+
+Print "--- THG2-44 stays available even with zero things (it never reads the manifest) ---".
+clear gen_out.
+'gen leaf thing shared field name' of "" and false.
+Print 'gen text'.
+
+Print "--- nested forms (indent, nested=true) ---".
+'gen things thg2b setup' of 1.
+clear gen_out.
+'gen leaf thing member print' of "  " and true.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing member equality' of "  " and true.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing free call agreement' of "  " and true.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing maker call' of "  " and true.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing receiver call forms' of "  " and true.
+Print 'gen text'.
+
+clear gen_out.
+'gen leaf thing shared field name' of "  " and true.
+Print 'gen text'.

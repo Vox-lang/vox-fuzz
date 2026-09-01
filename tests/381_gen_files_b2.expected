@@ -1,0 +1,131 @@
+--- FIL-45: Read replaces the buffer, not appends ---
+a text called 'the crate path' is "{'the workspace'}/1replace".
+open a file for writing called 'the crate' at 'the crate path'.
+Write "h6w30u0q799dkq6m5ehmz5cl3q9e77vwk3gphjyww102tscl76rpcp1sztxfhky8y7mi406qhxe9j4ewzt8v715093wgjsmlj1quirxzo0ob14mlwo03f4jgmwtz" to 'the crate'.
+Close 'the crate'.
+open a file for reading called 'the crate' at 'the crate path'.
+a buffer called 'the envelope' is 163 bytes in size.
+append "t2y85db" to 'the envelope'.
+If 'the envelope's size is not 7 then, Print "ASSERT FIL-45: expected 7 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
+Read from 'the crate' into 'the envelope'.
+If 'the envelope's size is not 124 then, Print "ASSERT FIL-45: expected 124 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
+Close 'the crate'.
+
+--- the same leaf, nested ---
+  a text called 'the crate path' is "{'the workspace'}/2replace",
+  open a file for writing called 'the crate' at 'the crate path',
+  Write "h6w30u0q799dkq6m5ehmz5cl3q9e77vwk3gphjyww102tscl76rpcp1sztxfhky8y7mi406qhxe9j4ewzt8v715093wgjsmlj1quirxzo0ob14mlwo03f4jgmwtz" to 'the crate',
+  Close 'the crate',
+  open a file for reading called 'the crate' at 'the crate path',
+  a buffer called 'the envelope' is 163 bytes in size,
+  append "t2y85db" to 'the envelope',
+  If 'the envelope's size is not 7 then, Print "ASSERT FIL-45: expected 7 got {'the envelope's size}", Exit 95. Print 'the envelope's size,
+  Read from 'the crate' into 'the envelope',
+  If 'the envelope's size is not 124 then, Print "ASSERT FIL-45: expected 124 got {'the envelope's size}", Exit 95. Print 'the envelope's size,
+  Close 'the crate'.
+
+--- FIL-52, FIL-53, FIL-54, FIL-55: Read line mechanics ---
+a text called 'the drawer path' is "{'the workspace'}/3lines".
+open a file for writing called 'the drawer' at 'the drawer path'.
+Write "n37h0feyhfg76mnzkdw8bphhl\n92wyzdohql03sd0j8hos43zv0zaimnecvbhl" to 'the drawer'.
+Close 'the drawer'.
+open a file for reading called 'the drawer' at 'the drawer path'.
+a buffer called 'the postbag' is 93 bytes in size.
+Read line from 'the drawer' into 'the postbag'.
+If 'the postbag's size is not 26 then, Print "ASSERT FIL-53: expected 26 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+Read line from 'the drawer' into 'the postbag'.
+If 'the postbag's size is not 36 then, Print "ASSERT FIL-52: expected 36 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+a boolean called 'the postbag found an error already pending' is false.
+On error Set 'the postbag found an error already pending' to true.
+a boolean called 'the postbag eof read errored' is false.
+Read line from 'the drawer' into 'the postbag'.
+On error Set 'the postbag eof read errored' to true.
+If 'the postbag eof read errored' then, Print "ASSERT FIL-54: expected 0 got {'the postbag eof read errored'}", Exit 95. Print 'the postbag eof read errored'.
+If 'the postbag's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
+Close 'the drawer'.
+
+--- the same leaf, nested ---
+  a text called 'the drawer path' is "{'the workspace'}/4lines",
+  open a file for writing called 'the drawer' at 'the drawer path',
+  Write "n37h0feyhfg76mnzkdw8bphhl\n92wyzdohql03sd0j8hos43zv0zaimnecvbhl" to 'the drawer',
+  Close 'the drawer',
+  open a file for reading called 'the drawer' at 'the drawer path',
+  a buffer called 'the postbag' is 93 bytes in size,
+  Read line from 'the drawer' into 'the postbag',
+  If 'the postbag's size is not 26 then, Print "ASSERT FIL-53: expected 26 got {'the postbag's size}", Exit 95. Print 'the postbag's size,
+  Read line from 'the drawer' into 'the postbag',
+  If 'the postbag's size is not 36 then, Print "ASSERT FIL-52: expected 36 got {'the postbag's size}", Exit 95. Print 'the postbag's size,
+  a boolean called 'the postbag found an error already pending' is false,
+  On error Set 'the postbag found an error already pending' to true,
+  a boolean called 'the postbag eof read errored' is false,
+  Read line from 'the drawer' into 'the postbag',
+  On error Set 'the postbag eof read errored' to true,
+  If 'the postbag eof read errored' then, Print "ASSERT FIL-54: expected 0 got {'the postbag eof read errored'}", Exit 95. Print 'the postbag eof read errored',
+  If 'the postbag's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size,
+  Close 'the drawer'.
+
+--- FIL-56: Read line truncates a fixed buffer, sets the error flag ---
+a text called 'ledger path' is "{'the workspace'}/5trunc".
+open a file for writing called 'ledger' at 'ledger path'.
+Write "6ld71c0udr7kvg7g2ix119o2chn7cri2b3bk16yq00e5bgqqt3kqyfwtzk96j942tr0fs87f13qpp03jqcz2g4868mvdcz\n" to 'ledger'.
+Close 'ledger'.
+open a file for reading called 'ledger' at 'ledger path'.
+a buffer called 'the sketchpad' is 18 bytes in size.
+a boolean called 'the sketchpad found an error already pending' is false.
+On error Set 'the sketchpad found an error already pending' to true.
+a boolean called 'the sketchpad line was truncated' is false.
+Read line from 'ledger' into 'the sketchpad'.
+On error Set 'the sketchpad line was truncated' to true.
+If 'the sketchpad line was truncated' is false then, Print "ASSERT FIL-56: expected 1 got {'the sketchpad line was truncated'}", Exit 95. Print 'the sketchpad line was truncated'.
+If 'the sketchpad's size is not 18 then, Print "ASSERT FIL-56: expected 18 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+Close 'ledger'.
+
+--- FIL-70: is available, both directions ---
+a text called 'the shipping label present path' is "{'the workspace'}/6present".
+a text called 'the shipping label absent path' is "{'the workspace'}/6absent".
+open a file for writing called 'the shipping label' at 'the shipping label present path'.
+Write "u119pzjl5j72h3s" to 'the shipping label'.
+Close 'the shipping label'.
+If 'the shipping label present path' is not available then, Print "ASSERT FIL-70: expected available got missing", Exit 95. Print "available".
+If 'the shipping label absent path' is available then, Print "ASSERT FIL-70: expected missing got available", Exit 95. Print "missing".
+
+--- FIL-75: Delete the file, then confirm gone ---
+a text called 'the register path' is "{'the workspace'}/7doomed".
+open a file for writing called 'the register' at 'the register path'.
+Write "zbsjqzlxnpnci" to 'the register'.
+Close 'the register'.
+If 'the register path' is not available then, Print "ASSERT FIL-75: expected available got missing", Exit 95. Print "available".
+Delete the file 'the register path'.
+If 'the register path' is available then, Print "ASSERT FIL-75: expected missing got available", Exit 95. Print "missing".
+a boolean called 'the register found an error already pending' is false.
+On error Set 'the register found an error already pending' to true.
+a boolean called 'the register deleting a missing file errored' is false.
+Delete the file 'the register path'.
+On error Set 'the register deleting a missing file errored' to true.
+If 'the register deleting a missing file errored' is false then, Print "ASSERT FIL-75: expected 1 got {'the register deleting a missing file errored'}", Exit 95. Print 'the register deleting a missing file errored'.
+
+--- FIL-80: an open of a path that cannot exist is catchable ---
+a text called 'the waybill missing path' is "{'the workspace'}/8missing".
+a boolean called 'the waybill found an error already pending' is false.
+On error Set 'the waybill found an error already pending' to true.
+a boolean called 'the waybill open failed' is false.
+open a file for reading called 'the waybill' at 'the waybill missing path'.
+On error Set 'the waybill open failed' to true.
+If 'the waybill open failed' is false then, Print "ASSERT FIL-80: expected 1 got {'the waybill open failed'}", Exit 95. Print 'the waybill open failed'.
+
+--- FIL-93: descriptors strictly increase while every handle stays open ---
+a text called 'the pallet path' is "{'the workspace'}/9many".
+open a file for writing called 'the pallet' at 'the pallet path'.
+Write "tracked" to 'the pallet'.
+Close 'the pallet'.
+a number called 'the message slip descriptor floor' is 0.
+For each 'notebook' from 1 to 8, open a file for reading called 'the message slip' at 'the pallet path', If 'the message slip's descriptor is less than or equal to 'the message slip descriptor floor' then, Print "ASSERT FIL-93: expected greater than {'the message slip descriptor floor'} got {'the message slip's descriptor}", Exit 95. Set 'the message slip descriptor floor' to 'the message slip's descriptor.
+
+--- every leaf above with no file I/O committed ---
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0

@@ -44,6 +44,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 see "../src/loop_gen.vox".
 
 (shell quote: hoisted to locals because the format string cannot nest a
@@ -474,3 +478,57 @@ While 'the float draw count' is less than 1000,
         Set 'too wide' to 'too wide' add 1.
     Set 'the float draw count' to 'the float draw count' add 1.
 Print "round-trip float: max-sig-digits={'the most significant digits'} too-wide={'too wide'} (max<=17 and too-wide=0 means every drawn literal round-trips through both parse routes)".
+
+(FUZZER_DEFECTS.md Defect 20: 'gen leaf thing equality' (gen_things.vox)
+ forces two thing instances' shared field apart by drawing two literals
+ and redrawing the second one while it numerically equals the first -
+ not while either equals a hardcoded 0, and not by comparing the
+ literals' TEXT. A signed leading-zero literal like "-00008" is
+ textually distinct from "-8" while numerically identical - exactly the
+ collision that turned a thing's own declared field default ("depth"
+ defaults to -8) into a false THG2-09 finding at seed 20260856: the old
+ guard only redrew a literal that parsed to 0, so a redraw landing on
+ any OTHER nonzero default slipped through untouched.
+
+ This does not drive the leaf itself - that needs a thing/field
+ manifest, which the targeted campaign re-probe (seed 20260856,
+ `./build/vox-fuzz gen --seed 20260856 --count 1 --layout plain`, 0
+ findings) and the rest of test.sh already exercise end to end. It pins
+ the mechanism the fix depends on, at the same grain as the round-trip
+ float check above: draw 'literal integer' - the exact routine the leaf
+ calls - many times, counting how often two independent draws collide on
+ the same NUMBER despite different TEXT (proving the collision is a real
+ rate in this literal space, not a hypothetical), then runs the fix's
+ own redraw loop and confirms it always leaves the pair numerically
+ distinct. A regression that goes back to comparing text, or back to
+ comparing against a hardcoded 0, fails here before it ever reaches a
+ campaign.)
+
+'rng seed' of 20260856.
+a number called 'the equality trial' is 0.
+a number called 'the same-number collisions' is 0.
+a number called 'the same-number different-text collisions' is 0.
+a number called 'the redraws spent' is 0.
+a number called 'the most redraws in one trial' is 0.
+a number called 'the trials that ended equal' is 0.
+While 'the equality trial' is less than 5000,
+    a text called 'the first literal' is 'literal integer',
+    a number called 'the first value' is 'the first literal' as a number,
+    a text called 'the second literal' is 'literal integer',
+    a number called 'the second value' is 'the second literal' as a number,
+    If 'the second value' is 'the first value' then,
+        Set 'the same-number collisions' to 'the same-number collisions' add 1.
+    If 'the second value' is 'the first value' and 'the second literal' is not 'the first literal' then,
+        Set 'the same-number different-text collisions' to 'the same-number different-text collisions' add 1.
+    a number called 'the redraws this trial' is 0,
+    While 'the second value' is 'the first value',
+        Set 'the second literal' to 'literal integer',
+        Set 'the second value' to 'the second literal' as a number,
+        Set 'the redraws this trial' to 'the redraws this trial' add 1.
+    If 'the redraws this trial' is greater than 'the most redraws in one trial' then,
+        Set 'the most redraws in one trial' to 'the redraws this trial'.
+    Set 'the redraws spent' to 'the redraws spent' add 'the redraws this trial',
+    If 'the second value' is 'the first value' then,
+        Set 'the trials that ended equal' to 'the trials that ended equal' add 1.
+    Set 'the equality trial' to 'the equality trial' add 1.
+Print "thing-equality literal pairs: {'the equality trial'} same-number-collisions={'the same-number collisions'} same-number-different-text={'the same-number different-text collisions'} redraws-spent={'the redraws spent'} max-redraws-one-trial={'the most redraws in one trial'} ended-equal={'the trials that ended equal'} (ended-equal must be 0 - that is the redraw loop's whole job)".

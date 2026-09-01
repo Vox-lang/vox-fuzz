@@ -1,0 +1,18 @@
+(FMT-24 — the ASSIGNMENT half of "Format Strings as Values": a format
+ string works as `Set <text> to "{...}"`, not just as an initializer.
+ LANGUAGE.md:3424-3427. Verified rather than merely emitted: the second
+ Set reads the counter's value AFTER it changed, so a leaf that only
+ exercised the initializer form (the existing gap) could not catch a
+ compiler that quietly kept the ORIGINAL format-string value on
+ reassignment.
+ Ran (0.4.14): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox FMT-24.vox -o p && ./p
+ Ran (0.4.15 stack): VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FMT-24.vox -o p && ./p
+ Both compilers agree.
+ expected output:
+   second 99
+)
+a number called 'the counter' is 7.
+a text called 'the label' is "first 7".
+Set 'the counter' to 99.
+Set 'the label' to "second {'the counter'}".
+If 'the label' is not "second 99" then, Print "ASSERT FMT-24: expected second 99", Exit 95. Print 'the label'.

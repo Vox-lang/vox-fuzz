@@ -1,0 +1,83 @@
+--- LST2-15/16/17/18/19/23: list properties, a three-element list ---
+a list called cupboard is [534, 171, 947].
+If cupboard's length is not 3 then, Print "ASSERT LST2-15: expected 3 got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's size is not cupboard's length then, Print "ASSERT LST2-16: expected {cupboard's length} got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard's empty then, Print "ASSERT LST2-17: expected 0 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+If cupboard's first is not 534 then, Print "ASSERT LST2-18: expected 534 got {cupboard's first}", Exit 95. Print cupboard's first.
+If cupboard's last is not 947 then, Print "ASSERT LST2-19: expected 947 got {cupboard's last}", Exit 95. Print cupboard's last.
+If cupboard's first is not element 1 of cupboard then, Print "ASSERT LST2-23: expected {element 1 of cupboard} got {cupboard's first}", Exit 95. Print cupboard's first.
+If cupboard's last is not element 3 of cupboard then, Print "ASSERT LST2-23: expected {element 3 of cupboard} got {cupboard's last}", Exit 95. Print cupboard's last.
+
+--- the same leaf, nested ---
+  a list called cupboard is [534, 171, 947],
+  If cupboard's length is not 3 then, Print "ASSERT LST2-15: expected 3 got {cupboard's length}", Exit 95. Print cupboard's length,
+  If cupboard's size is not cupboard's length then, Print "ASSERT LST2-16: expected {cupboard's length} got {cupboard's size}", Exit 95. Print cupboard's size,
+  If cupboard's empty then, Print "ASSERT LST2-17: expected 0 got {cupboard's empty}", Exit 95. Print cupboard's empty,
+  If cupboard's first is not 534 then, Print "ASSERT LST2-18: expected 534 got {cupboard's first}", Exit 95. Print cupboard's first,
+  If cupboard's last is not 947 then, Print "ASSERT LST2-19: expected 947 got {cupboard's last}", Exit 95. Print cupboard's last,
+  If cupboard's first is not element 1 of cupboard then, Print "ASSERT LST2-23: expected {element 1 of cupboard} got {cupboard's first}", Exit 95. Print cupboard's first,
+  If cupboard's last is not element 3 of cupboard then, Print "ASSERT LST2-23: expected {element 3 of cupboard} got {cupboard's last}", Exit 95. Print cupboard's last.
+
+--- the same leaf, a single-element list (first, last and element 1 all agree) ---
+a list called 'the dispatch note' is [117].
+If 'the dispatch note's length is not 1 then, Print "ASSERT LST2-15: expected 1 got {'the dispatch note's length}", Exit 95. Print 'the dispatch note's length.
+If 'the dispatch note's size is not 'the dispatch note's length then, Print "ASSERT LST2-16: expected {'the dispatch note's length} got {'the dispatch note's size}", Exit 95. Print 'the dispatch note's size.
+If 'the dispatch note's empty then, Print "ASSERT LST2-17: expected 0 got {'the dispatch note's empty}", Exit 95. Print 'the dispatch note's empty.
+If 'the dispatch note's first is not 117 then, Print "ASSERT LST2-18: expected 117 got {'the dispatch note's first}", Exit 95. Print 'the dispatch note's first.
+If 'the dispatch note's last is not 117 then, Print "ASSERT LST2-19: expected 117 got {'the dispatch note's last}", Exit 95. Print 'the dispatch note's last.
+If 'the dispatch note's first is not element 1 of 'the dispatch note' then, Print "ASSERT LST2-23: expected {element 1 of 'the dispatch note'} got {'the dispatch note's first}", Exit 95. Print 'the dispatch note's first.
+If 'the dispatch note's last is not element 1 of 'the dispatch note' then, Print "ASSERT LST2-23: expected {element 1 of 'the dispatch note'} got {'the dispatch note's last}", Exit 95. Print 'the dispatch note's last.
+
+--- LST2-20: an empty list - length/size/empty without a flag, first/last with one ---
+a list called 'the inbox' is [].
+If 'the inbox's length is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox's length}", Exit 95. Print 'the inbox's length.
+If 'the inbox's size is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+If 'the inbox's empty is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox's empty}", Exit 95. Print 'the inbox's empty.
+a boolean called 'the inbox found an error already pending' is false.
+On error Set 'the inbox found an error already pending' to true.
+a boolean called 'the inbox empty first read errored' is false.
+a number called 'the inbox empty first read' is 'the inbox's first.
+On error Set 'the inbox empty first read errored' to true.
+If 'the inbox empty first read errored' is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox empty first read errored'}", Exit 95. Print 'the inbox empty first read errored'.
+If 'the inbox empty first read' is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox empty first read'}", Exit 95. Print 'the inbox empty first read'.
+a boolean called 'the inbox empty last read errored' is false.
+a number called 'the inbox empty last read' is 'the inbox's last.
+On error Set 'the inbox empty last read errored' to true.
+If 'the inbox empty last read errored' is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox empty last read errored'}", Exit 95. Print 'the inbox empty last read errored'.
+If 'the inbox empty last read' is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox empty last read'}", Exit 95. Print 'the inbox empty last read'.
+
+--- the same leaf, nested ---
+  a list called 'the inbox' is [],
+  If 'the inbox's length is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox's length}", Exit 95. Print 'the inbox's length,
+  If 'the inbox's size is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox's size}", Exit 95. Print 'the inbox's size,
+  If 'the inbox's empty is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox's empty}", Exit 95. Print 'the inbox's empty,
+  a boolean called 'the inbox found an error already pending' is false,
+  On error Set 'the inbox found an error already pending' to true,
+  a boolean called 'the inbox empty first read errored' is false,
+  a number called 'the inbox empty first read' is 'the inbox's first,
+  On error Set 'the inbox empty first read errored' to true,
+  If 'the inbox empty first read errored' is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox empty first read errored'}", Exit 95. Print 'the inbox empty first read errored',
+  If 'the inbox empty first read' is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox empty first read'}", Exit 95. Print 'the inbox empty first read',
+  a boolean called 'the inbox empty last read errored' is false,
+  a number called 'the inbox empty last read' is 'the inbox's last,
+  On error Set 'the inbox empty last read errored' to true,
+  If 'the inbox empty last read errored' is false then, Print "ASSERT LST2-20: expected 1 got {'the inbox empty last read errored'}", Exit 95. Print 'the inbox empty last read errored',
+  If 'the inbox empty last read' is not 0 then, Print "ASSERT LST2-20: expected 0 got {'the inbox empty last read'}", Exit 95. Print 'the inbox empty last read'.
+
+--- LST2-21/22: element 1, plus a literal index at another position ---
+a list called 'the greeting' is [151, 447, 765].
+If element 1 of 'the greeting' is not 151 then, Print "ASSERT LST2-21: expected 151 got {element 1 of 'the greeting'}", Exit 95. Print element 1 of 'the greeting'.
+If element 3 of 'the greeting' is not 765 then, Print "ASSERT LST2-22: expected 765 got {element 3 of 'the greeting'}", Exit 95. Print element 3 of 'the greeting'.
+
+--- LST2-21/24: element 1, plus a variable-index read ---
+a list called 'the inbox' is [788, 826, 914].
+If element 1 of 'the inbox' is not 788 then, Print "ASSERT LST2-21: expected 788 got {element 1 of 'the inbox'}", Exit 95. Print element 1 of 'the inbox'.
+a number called 'the inbox chosen position' is 2.
+If element 'the inbox chosen position' of 'the inbox' is not 826 then, Print "ASSERT LST2-24: expected 826 got {element 'the inbox chosen position' of 'the inbox'}", Exit 95. Print element 'the inbox chosen position' of 'the inbox'.
+
+--- the same leaf, nested ---
+  a list called 'the inbox' is [788, 826, 914],
+  If element 1 of 'the inbox' is not 788 then, Print "ASSERT LST2-21: expected 788 got {element 1 of 'the inbox'}", Exit 95. Print element 1 of 'the inbox',
+  a number called 'the inbox chosen position' is 2,
+  If element 'the inbox chosen position' of 'the inbox' is not 826 then, Print "ASSERT LST2-24: expected 826 got {element 'the inbox chosen position' of 'the inbox'}", Exit 95. Print element 'the inbox chosen position' of 'the inbox'.
+
