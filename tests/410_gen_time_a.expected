@@ -1,0 +1,82 @@
+--- TIM-01, TIM-02, TIM-03, TIM-05..TIM-11, TIM-13: current time shape ---
+a time called 'the register' is current time.
+If 'the register's type is not "Time (static)" then, Print "ASSERT TIM-03: expected Time (static) got {'the register's type}", Exit 95. Print "TIM-03 ok".
+If 'the register's year is less than 2026 then, Print "ASSERT TIM-10: expected at least 2026 got {'the register's year}", Exit 95. Print "TIM-10 ok".
+If 'the register's month is less than 1 or 'the register's month is greater than 12 then, Print "ASSERT TIM-09: expected 1..12 got {'the register's month}", Exit 95. Print "TIM-09 ok".
+If 'the register's day is less than 1 or 'the register's day is greater than 31 then, Print "ASSERT TIM-08: expected 1..31 got {'the register's day}", Exit 95. Print "TIM-08 ok".
+If 'the register's hour is less than 0 or 'the register's hour is greater than 23 then, Print "ASSERT TIM-05: expected 0..23 got {'the register's hour}", Exit 95. Print "TIM-05 ok".
+If 'the register's minute is less than 0 or 'the register's minute is greater than 59 then, Print "ASSERT TIM-06: expected 0..59 got {'the register's minute}", Exit 95. Print "TIM-06 ok".
+If 'the register's second is less than 0 or 'the register's second is greater than 59 then, Print "ASSERT TIM-07: expected 0..59 got {'the register's second}", Exit 95. Print "TIM-07 ok".
+If 'the register's unix is less than 1 then, Print "ASSERT TIM-11: expected at least 1 got {'the register's unix}", Exit 95. Print "TIM-11 ok".
+Get current time into 'the tally sheet'.
+If 'the tally sheet's unix is less than 'the register's unix then, Print "ASSERT TIM-11: expected at least {'the register's unix} got {'the tally sheet's unix}", Exit 95. Print "TIM-11 ok".
+If current time's hour is less than 0 or current time's hour is greater than 23 then, Print "ASSERT TIM-13: expected 0..23 got {current time's hour}", Exit 95. Print "TIM-13 ok".
+
+--- the same leaf, nested ---
+  a time called 'the register' is current time,
+  If 'the register's type is not "Time (static)" then, Print "ASSERT TIM-03: expected Time (static) got {'the register's type}", Exit 95. Print "TIM-03 ok",
+  If 'the register's year is less than 2026 then, Print "ASSERT TIM-10: expected at least 2026 got {'the register's year}", Exit 95. Print "TIM-10 ok",
+  If 'the register's month is less than 1 or 'the register's month is greater than 12 then, Print "ASSERT TIM-09: expected 1..12 got {'the register's month}", Exit 95. Print "TIM-09 ok",
+  If 'the register's day is less than 1 or 'the register's day is greater than 31 then, Print "ASSERT TIM-08: expected 1..31 got {'the register's day}", Exit 95. Print "TIM-08 ok",
+  If 'the register's hour is less than 0 or 'the register's hour is greater than 23 then, Print "ASSERT TIM-05: expected 0..23 got {'the register's hour}", Exit 95. Print "TIM-05 ok",
+  If 'the register's minute is less than 0 or 'the register's minute is greater than 59 then, Print "ASSERT TIM-06: expected 0..59 got {'the register's minute}", Exit 95. Print "TIM-06 ok",
+  If 'the register's second is less than 0 or 'the register's second is greater than 59 then, Print "ASSERT TIM-07: expected 0..59 got {'the register's second}", Exit 95. Print "TIM-07 ok",
+  If 'the register's unix is less than 1 then, Print "ASSERT TIM-11: expected at least 1 got {'the register's unix}", Exit 95. Print "TIM-11 ok".
+  Get current time into 'the tally sheet',
+  If 'the tally sheet's unix is less than 'the register's unix then, Print "ASSERT TIM-11: expected at least {'the register's unix} got {'the tally sheet's unix}", Exit 95. Print "TIM-11 ok",
+  If current time's hour is less than 0 or current time's hour is greater than 23 then, Print "ASSERT TIM-13: expected 0..23 got {current time's hour}", Exit 95. Print "TIM-13 ok".
+
+--- TIM-22, TIM-23, TIM-24..TIM-27, TIM-31, TIM-33..TIM-38: timer lifecycle, bare creation, milliseconds wait ---
+Get current time into pantry.
+a timer called 'the sketchpad'.
+If 'the sketchpad's running then, Print "ASSERT TIM-35: expected 0 got {'the sketchpad's running}", Exit 95. Print 'the sketchpad's running.
+Start 'the sketchpad'.
+If 'the sketchpad's running is false then, Print "ASSERT TIM-35: expected 1 got {'the sketchpad's running}", Exit 95. Print 'the sketchpad's running.
+Wait 49 milliseconds.
+finish 'the sketchpad'.
+If 'the sketchpad's running then, Print "ASSERT TIM-35: expected 0 got {'the sketchpad's running}", Exit 95. Print 'the sketchpad's running.
+Get current time into 'the inbox'.
+If 'the sketchpad's duration in milliseconds is less than 49 then, Print "ASSERT TIM-15: expected at least 49 got {'the sketchpad's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'the sketchpad's duration in milliseconds is greater than 5049 then, Print "ASSERT TIM-15: expected at most 5049 got {'the sketchpad's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'the sketchpad's duration in milliseconds is less than 'the sketchpad's duration in seconds multiply 1000 then, Print "ASSERT TIM-36: expected at least {'the sketchpad's duration in seconds multiply 1000} got {'the sketchpad's duration in milliseconds}", Exit 95. Print "TIM-36 ok".
+If 'the sketchpad's duration in milliseconds is greater than 'the sketchpad's duration in seconds multiply 1000 add 1000 then, Print "ASSERT TIM-37: expected at most {'the sketchpad's duration in seconds multiply 1000 add 1000} got {'the sketchpad's duration in milliseconds}", Exit 95. Print "TIM-37 ok".
+If 'the sketchpad's start time is less than pantry's unix then, Print "ASSERT TIM-33: expected at least {pantry's unix} got {'the sketchpad's start time}", Exit 95. Print "TIM-33 ok".
+If 'the sketchpad's end time is less than 'the sketchpad's start time then, Print "ASSERT TIM-34: expected at least {'the sketchpad's start time} got {'the sketchpad's end time}", Exit 95. Print "TIM-34 ok".
+If 'the sketchpad's end time is greater than 'the inbox's unix then, Print "ASSERT TIM-38: expected at most {'the inbox's unix} got {'the sketchpad's end time}", Exit 95. Print "TIM-38 ok".
+
+--- the same leaf, seed 12: Create form, seconds-flavour wait ---
+Get current time into 'outgoing post'.
+Create a timer called 'the postbag'.
+If 'the postbag's running then, Print "ASSERT TIM-35: expected 0 got {'the postbag's running}", Exit 95. Print 'the postbag's running.
+start the 'the postbag'.
+If 'the postbag's running is false then, Print "ASSERT TIM-35: expected 1 got {'the postbag's running}", Exit 95. Print 'the postbag's running.
+Sleep for 0 seconds.
+Finish the 'the postbag'.
+If 'the postbag's running then, Print "ASSERT TIM-35: expected 0 got {'the postbag's running}", Exit 95. Print 'the postbag's running.
+Get current time into 'the pigeonhole'.
+If 'the postbag's duration in milliseconds is less than 0 then, Print "ASSERT TIM-15: expected at least 0 got {'the postbag's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'the postbag's duration in milliseconds is greater than 5000 then, Print "ASSERT TIM-15: expected at most 5000 got {'the postbag's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'the postbag's duration in milliseconds is less than 'the postbag's duration in seconds multiply 1000 then, Print "ASSERT TIM-36: expected at least {'the postbag's duration in seconds multiply 1000} got {'the postbag's duration in milliseconds}", Exit 95. Print "TIM-36 ok".
+If 'the postbag's duration in milliseconds is greater than 'the postbag's duration in seconds multiply 1000 add 1000 then, Print "ASSERT TIM-37: expected at most {'the postbag's duration in seconds multiply 1000 add 1000} got {'the postbag's duration in milliseconds}", Exit 95. Print "TIM-37 ok".
+If 'the postbag's start time is less than 'outgoing post's unix then, Print "ASSERT TIM-33: expected at least {'outgoing post's unix} got {'the postbag's start time}", Exit 95. Print "TIM-33 ok".
+If 'the postbag's end time is less than 'the postbag's start time then, Print "ASSERT TIM-34: expected at least {'the postbag's start time} got {'the postbag's end time}", Exit 95. Print "TIM-34 ok".
+If 'the postbag's end time is greater than 'the pigeonhole's unix then, Print "ASSERT TIM-38: expected at most {'the pigeonhole's unix} got {'the postbag's end time}", Exit 95. Print "TIM-38 ok".
+
+--- the same leaf, seed 834: the wait-flavour bug's own repro seed ---
+Get current time into 'the register'.
+Create a timer called 'cupboard'.
+If 'cupboard's running then, Print "ASSERT TIM-35: expected 0 got {'cupboard's running}", Exit 95. Print 'cupboard's running.
+begin 'cupboard'.
+If 'cupboard's running is false then, Print "ASSERT TIM-35: expected 1 got {'cupboard's running}", Exit 95. Print 'cupboard's running.
+Wait 94 millisecond.
+stop 'cupboard'.
+If 'cupboard's running then, Print "ASSERT TIM-35: expected 0 got {'cupboard's running}", Exit 95. Print 'cupboard's running.
+Get current time into 'ledger'.
+If 'cupboard's duration in milliseconds is less than 94 then, Print "ASSERT TIM-15: expected at least 94 got {'cupboard's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'cupboard's duration in milliseconds is greater than 5094 then, Print "ASSERT TIM-15: expected at most 5094 got {'cupboard's duration in milliseconds}", Exit 95. Print "TIM-15 ok".
+If 'cupboard's duration in milliseconds is less than 'cupboard's duration in seconds multiply 1000 then, Print "ASSERT TIM-36: expected at least {'cupboard's duration in seconds multiply 1000} got {'cupboard's duration in milliseconds}", Exit 95. Print "TIM-36 ok".
+If 'cupboard's duration in milliseconds is greater than 'cupboard's duration in seconds multiply 1000 add 1000 then, Print "ASSERT TIM-37: expected at most {'cupboard's duration in seconds multiply 1000 add 1000} got {'cupboard's duration in milliseconds}", Exit 95. Print "TIM-37 ok".
+If 'cupboard's start time is less than 'the register's unix then, Print "ASSERT TIM-33: expected at least {'the register's unix} got {'cupboard's start time}", Exit 95. Print "TIM-33 ok".
+If 'cupboard's end time is less than 'cupboard's start time then, Print "ASSERT TIM-34: expected at least {'cupboard's start time} got {'cupboard's end time}", Exit 95. Print "TIM-34 ok".
+If 'cupboard's end time is greater than 'ledger's unix then, Print "ASSERT TIM-38: expected at most {'ledger's unix} got {'cupboard's end time}", Exit 95. Print "TIM-38 ok".
+

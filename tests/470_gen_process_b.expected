@@ -1,0 +1,173 @@
+--- PRC-79: system control refusal, Reboot only now ---
+a boolean called 'the pigeonhole' is false.
+Reboot.
+On error Set 'the pigeonhole' to true.
+If 'the pigeonhole' is false then, Print "ASSERT PRC-79: expected 1 got {'the pigeonhole'}", Exit 95. Print 'the pigeonhole'.
+Print "execution continued".
+
+--- PRC-11: directory create/remove/change-directory failure paths ---
+a text called workbench is "{'the workspace'}/procmissingparent1/child".
+a boolean called 'workbench create refused' is false.
+Create a directory called workbench.
+On error Set 'workbench create refused' to true.
+If 'workbench create refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench create refused'}", Exit 95. Print 'workbench create refused'.
+a text called 'workbench never created' is "{'the workspace'}/procabsent1".
+a boolean called 'workbench remove refused' is false.
+Remove the directory called 'workbench never created'.
+On error Set 'workbench remove refused' to true.
+If 'workbench remove refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench remove refused'}", Exit 95. Print 'workbench remove refused'.
+a boolean called 'workbench change directory refused' is false.
+Change directory to 'workbench never created'.
+On error Set 'workbench change directory refused' to true.
+If 'workbench change directory refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench change directory refused'}", Exit 95. Print 'workbench change directory refused'.
+Print "execution continued".
+
+--- the same leaf, nested ---
+  a text called workbench is "{'the workspace'}/procmissingparent1/child",
+  a boolean called 'workbench create refused' is false,
+  Create a directory called workbench,
+  On error Set 'workbench create refused' to true,
+  If 'workbench create refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench create refused'}", Exit 95. Print 'workbench create refused',
+  a text called 'workbench never created' is "{'the workspace'}/procabsent1",
+  a boolean called 'workbench remove refused' is false,
+  Remove the directory called 'workbench never created',
+  On error Set 'workbench remove refused' to true,
+  If 'workbench remove refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench remove refused'}", Exit 95. Print 'workbench remove refused',
+  a boolean called 'workbench change directory refused' is false,
+  Change directory to 'workbench never created',
+  On error Set 'workbench change directory refused' to true,
+  If 'workbench change directory refused' is false then, Print "ASSERT PRC-11: expected 1 got {'workbench change directory refused'}", Exit 95. Print 'workbench change directory refused',
+  Print "execution continued".
+
+--- PRC-11 with no file I/O committed: stands aside ---
+emits a directory statement: 0
+--- PRC-47, 48: reap by a specific pid, real child and foreign pid ---
+a number called pantry is fork the process.
+If pantry is 0 then, Exit 71.
+a number called 'pantry specific reap' is reap child pantry.
+a boolean called 'pantry specific reap matched' is false.
+If 'pantry specific reap' is pantry then, Set 'pantry specific reap matched' to true.
+If 'pantry specific reap matched' is false then, Print "ASSERT PRC-48: expected 1 got {'pantry specific reap matched'}", Exit 95. Print 'pantry specific reap matched'.
+a number called 'pantry specific exit' is the reaped status divide 256 modulo 256.
+If 'pantry specific exit' is not 71 then, Print "ASSERT PRC-48: expected 71 got {'pantry specific exit'}", Exit 95. Print 'pantry specific exit'.
+a boolean called 'pantry foreign specific refused' is false.
+a number called 'pantry foreign specific reap' is reap process 9688335.
+On error Set 'pantry foreign specific refused' to true.
+If 'pantry foreign specific reap' is not less than 0 then, Print "ASSERT PRC-47: expected negative got {'pantry foreign specific reap'}", Exit 95. Print 'pantry foreign specific reap'.
+If 'pantry foreign specific refused' is false then, Print "ASSERT PRC-47: expected 1 got {'pantry foreign specific refused'}", Exit 95. Print 'pantry foreign specific refused'.
+
+--- the same leaf, a different seed (other spelling draws) ---
+a number called ledger is fork the process.
+If ledger is 0 then, Exit 27.
+a number called 'ledger specific reap' is reap child ledger.
+a boolean called 'ledger specific reap matched' is false.
+If 'ledger specific reap' is ledger then, Set 'ledger specific reap matched' to true.
+If 'ledger specific reap matched' is false then, Print "ASSERT PRC-48: expected 1 got {'ledger specific reap matched'}", Exit 95. Print 'ledger specific reap matched'.
+a number called 'ledger specific exit' is the reaped status divide 256 modulo 256.
+If 'ledger specific exit' is not 27 then, Print "ASSERT PRC-48: expected 27 got {'ledger specific exit'}", Exit 95. Print 'ledger specific exit'.
+a boolean called 'ledger foreign specific refused' is false.
+a number called 'ledger foreign specific reap' is reap child 9545108.
+On error Set 'ledger foreign specific refused' to true.
+If 'ledger foreign specific reap' is not less than 0 then, Print "ASSERT PRC-47: expected negative got {'ledger foreign specific reap'}", Exit 95. Print 'ledger foreign specific reap'.
+If 'ledger foreign specific refused' is false then, Print "ASSERT PRC-47: expected 1 got {'ledger foreign specific refused'}", Exit 95. Print 'ledger foreign specific refused'.
+
+--- PRC-50, 51, 52, 53, 54: non-blocking reap without waiting (HELD OUT of dispatch - direct call only, see the leaf's own comment) ---
+a number called waiting is 444539226759.
+a boolean called 'ledger echild refused' is false.
+a number called 'ledger echild poll' is reap child 9415242 without waiting.
+On error Set 'ledger echild refused' to true.
+If 'ledger echild poll' is not less than 0 then, Print "ASSERT PRC-53: expected negative got {'ledger echild poll'}", Exit 95. Print 'ledger echild poll'.
+If 'ledger echild refused' is false then, Print "ASSERT PRC-53: expected 1 got {'ledger echild refused'}", Exit 95. Print 'ledger echild refused'.
+a number called 'the envelope' is fork the process.
+If 'the envelope' is 0 then, Wait 176 milliseconds, Exit 79.
+a number called 'the envelope status before poll' is the reaped status.
+a boolean called 'the envelope immediate refused' is false.
+a number called 'the envelope immediate poll' is reap any child process without waiting.
+On error Set 'the envelope immediate refused' to true.
+If 'the envelope immediate poll' is not 0 then, Print "ASSERT PRC-52: expected 0 got {'the envelope immediate poll'}", Exit 95. Print 'the envelope immediate poll'.
+If 'the envelope immediate refused' then, Print "ASSERT PRC-52: expected 0 got {'the envelope immediate refused'}", Exit 95. Print 'the envelope immediate refused'.
+a number called 'the envelope status after poll' is the reaped status.
+If 'the envelope status after poll' is not 'the envelope status before poll' then, Print "ASSERT PRC-54: expected {'the envelope status before poll'} got {'the envelope status after poll'}", Exit 95. Print 'the envelope status after poll'.
+Wait 676 milliseconds.
+a boolean called 'the envelope later refused' is false.
+a number called 'the envelope later poll' is reap any child process without waiting.
+On error Set 'the envelope later refused' to true.
+a boolean called 'the envelope later poll matched' is false.
+If 'the envelope later poll' is 'the envelope' then, Set 'the envelope later poll matched' to true.
+If 'the envelope later poll matched' is false then, Print "ASSERT PRC-51: expected 1 got {'the envelope later poll matched'}", Exit 95. Print 'the envelope later poll matched'.
+If 'the envelope later refused' then, Print "ASSERT PRC-51: expected 0 got {'the envelope later refused'}", Exit 95. Print 'the envelope later refused'.
+If waiting is not 444539226759 then, Print "ASSERT PRC-55: expected 444539226759 got {waiting}", Exit 95. Print waiting.
+
+--- the same leaf, a different seed (other spelling draws) ---
+a number called waiting is 4.
+a boolean called 'the envelope echild refused' is false.
+a number called 'the envelope echild poll' is reap process 9274246 without waiting.
+On error Set 'the envelope echild refused' to true.
+If 'the envelope echild poll' is not less than 0 then, Print "ASSERT PRC-53: expected negative got {'the envelope echild poll'}", Exit 95. Print 'the envelope echild poll'.
+If 'the envelope echild refused' is false then, Print "ASSERT PRC-53: expected 1 got {'the envelope echild refused'}", Exit 95. Print 'the envelope echild refused'.
+a number called 'the register' is fork the process.
+If 'the register' is 0 then, Wait 277 milliseconds, Exit 21.
+a number called 'the register status before poll' is the reaped status.
+a boolean called 'the register immediate refused' is false.
+a number called 'the register immediate poll' is reap any child process without waiting.
+On error Set 'the register immediate refused' to true.
+If 'the register immediate poll' is not 0 then, Print "ASSERT PRC-52: expected 0 got {'the register immediate poll'}", Exit 95. Print 'the register immediate poll'.
+If 'the register immediate refused' then, Print "ASSERT PRC-52: expected 0 got {'the register immediate refused'}", Exit 95. Print 'the register immediate refused'.
+a number called 'the register status after poll' is the reaped status.
+If 'the register status after poll' is not 'the register status before poll' then, Print "ASSERT PRC-54: expected {'the register status before poll'} got {'the register status after poll'}", Exit 95. Print 'the register status after poll'.
+Wait 777 milliseconds.
+a boolean called 'the register later refused' is false.
+a number called 'the register later poll' is reap any child process without waiting.
+On error Set 'the register later refused' to true.
+a boolean called 'the register later poll matched' is false.
+If 'the register later poll' is 'the register' then, Set 'the register later poll matched' to true.
+If 'the register later poll matched' is false then, Print "ASSERT PRC-51: expected 1 got {'the register later poll matched'}", Exit 95. Print 'the register later poll matched'.
+If 'the register later refused' then, Print "ASSERT PRC-51: expected 0 got {'the register later refused'}", Exit 95. Print 'the register later refused'.
+If waiting is not 4 then, Print "ASSERT PRC-55: expected 4 got {waiting}", Exit 95. Print waiting.
+
+--- PRC-60, 61, 55: reaped and waiting stay ordinary identifiers ---
+a number called 'the shipping label' is fork the process.
+If 'the shipping label' is 0 then, Exit 76.
+Set reaped to reap any child process.
+a boolean called 'the shipping label reap matched' is false.
+If reaped is 'the shipping label' then, Set 'the shipping label reap matched' to true.
+If 'the shipping label reap matched' is false then, Print "ASSERT PRC-61: expected 1 got {'the shipping label reap matched'}", Exit 95. Print 'the shipping label reap matched'.
+a number called 'the shipping label reproduced exit' is the reaped status divide 256 modulo 256.
+If 'the shipping label reproduced exit' is not 76 then, Print "ASSERT PRC-60: expected 76 got {'the shipping label reproduced exit'}", Exit 95. Print 'the shipping label reproduced exit'.
+a text called 'the reaped' is "the measurement".
+If 'the reaped' is not "the measurement" then, Print "ASSERT PRC-60: expected the measurement got {'the reaped'}", Exit 95. Print 'the reaped'.
+a number called waiting is 9223372036854775807.
+If waiting is not 9223372036854775807 then, Print "ASSERT PRC-55: expected 9223372036854775807 got {waiting}", Exit 95. Print waiting.
+
+--- PRC-87: empty-path degenerate input, one construct per draw ---
+a boolean called 'the pigeonhole' is false.
+Remove the directory called "".
+On error Set 'the pigeonhole' to true.
+If 'the pigeonhole' is false then, Print "ASSERT PRC-87: expected 1 got {'the pigeonhole'}", Exit 95. Print 'the pigeonhole'.
+Print "execution continued".
+
+--- the same leaf, a different seed ---
+a boolean called toolbox is false.
+Create symbolic link from "" to "".
+On error Set toolbox to true.
+If toolbox is false then, Print "ASSERT PRC-87: expected 1 got {toolbox}", Exit 95. Print toolbox.
+Print "execution continued".
+
+--- the same leaf, a third seed ---
+a boolean called satchel is false.
+Remove the directory called "".
+On error Set satchel to true.
+If satchel is false then, Print "ASSERT PRC-87: expected 1 got {satchel}", Exit 95. Print satchel.
+Print "execution continued".
+
+--- registration reachable: kinds 350-359 all dispatch without error ---
+kind 350: 1168 bytes emitted
+kind 351: 1377 bytes emitted
+kind 352: 0 bytes emitted
+kind 353: 985 bytes emitted
+kind 354: 243 bytes emitted
+kind 355: 0 bytes emitted
+kind 356: 0 bytes emitted
+kind 357: 0 bytes emitted
+kind 358: 0 bytes emitted
+kind 359: 0 bytes emitted

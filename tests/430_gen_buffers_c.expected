@@ -1,0 +1,227 @@
+--- BUF-41, BUF-42: Free/Release/Deallocate, with or without the article ---
+a buffer called 'the crate' is "llv83qfvo01tjus".
+Free the 'the crate'.
+If 'the crate's size is not 0 then, Print "ASSERT BUF-41: expected 0 got {'the crate's size}", Exit 95. Print 'the crate's size.
+a buffer called 'the tray' is "e1mw3kret2ncns4jnqtxvlfqy2ptcuyzu3r".
+Free the 'the tray'.
+If 'the tray's size is not 0 then, Print "ASSERT BUF-41: expected 0 got {'the tray's size}", Exit 95. Print 'the tray's size.
+Print 'the tray's size.
+
+--- the same leaf, a different seed (a different buffer count) ---
+a buffer called 'the envelope' is "f83v8l".
+Free the 'the envelope'.
+If 'the envelope's size is not 0 then, Print "ASSERT BUF-41: expected 0 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
+Print 'the envelope's size.
+
+--- the same leaf, nested ---
+  a buffer called 'the crate' is "llv83qfvo01tjus",
+  Free the 'the crate',
+  If 'the crate's size is not 0 then, Print "ASSERT BUF-41: expected 0 got {'the crate's size}", Exit 95. Print 'the crate's size,
+  a buffer called 'the tray' is "e1mw3kret2ncns4jnqtxvlfqy2ptcuyzu3r",
+  Free the 'the tray',
+  If 'the tray's size is not 0 then, Print "ASSERT BUF-41: expected 0 got {'the tray's size}", Exit 95. Print 'the tray's size,
+  Print 'the tray's size.
+
+--- BUF-43, BUF-44, BUF-45: size/length/capacity/empty/full/as-text after Free ---
+a buffer called 'the register' is "yawahchv0v6pb3jdkq9xq47ratslkh8oeep5w12tji3ncf7t".
+Free the 'the register'.
+If 'the register's size is not 0 then, Print "ASSERT BUF-43: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+If 'the register's length is not 0 then, Print "ASSERT BUF-43: expected 0 got {'the register's length}", Exit 95. Print 'the register's length.
+If 'the register's capacity is not 0 then, Print "ASSERT BUF-44: expected 0 got {'the register's capacity}", Exit 95. Print 'the register's capacity.
+If 'the register's empty is false then, Print "ASSERT BUF-44: expected 1 got {'the register's empty}", Exit 95. Print 'the register's empty.
+If 'the register's full is false then, Print "ASSERT BUF-44: expected 1 got {'the register's full}", Exit 95. Print 'the register's full.
+a text called 'the register text after free' is 'the register' as text.
+If 'the register' is not "" then, Print "ASSERT BUF-45: expected  got {'the register text after free'}", Exit 95. Print 'the register'.
+
+--- the same leaf, nested ---
+  a buffer called 'the register' is "yawahchv0v6pb3jdkq9xq47ratslkh8oeep5w12tji3ncf7t",
+  Free the 'the register',
+  If 'the register's size is not 0 then, Print "ASSERT BUF-43: expected 0 got {'the register's size}", Exit 95. Print 'the register's size,
+  If 'the register's length is not 0 then, Print "ASSERT BUF-43: expected 0 got {'the register's length}", Exit 95. Print 'the register's length,
+  If 'the register's capacity is not 0 then, Print "ASSERT BUF-44: expected 0 got {'the register's capacity}", Exit 95. Print 'the register's capacity,
+  If 'the register's empty is false then, Print "ASSERT BUF-44: expected 1 got {'the register's empty}", Exit 95. Print 'the register's empty,
+  If 'the register's full is false then, Print "ASSERT BUF-44: expected 1 got {'the register's full}", Exit 95. Print 'the register's full,
+  a text called 'the register text after free' is 'the register' as text,
+  If 'the register' is not "" then, Print "ASSERT BUF-45: expected  got {'the register text after free'}", Exit 95. Print 'the register'.
+
+--- BUF-46: a byte read past a freed buffer is refused and reads 0 ---
+a buffer called 'scratch' is "t4ji3hckkz812vdosx6uchsuzpeinab6fao63q8utcc95n9v".
+Deallocate 'scratch'.
+a boolean called 'scratch found an error already pending' is false.
+On error Set 'scratch found an error already pending' to true.
+a boolean called 'scratch byte read refused' is false.
+a number called 'scratch byte read result' is byte 1 of 'scratch'.
+On error Set 'scratch byte read refused' to true.
+If 'scratch byte read refused' is false then, Print "ASSERT BUF-46: expected 1 got {'scratch byte read refused'}", Exit 95. Print 'scratch byte read refused'.
+If 'scratch byte read result' is not 0 then, Print "ASSERT BUF-46: expected 0 got {'scratch byte read result'}", Exit 95. Print 'scratch byte read result'.
+
+--- the same leaf, nested ---
+  a buffer called 'scratch' is "t4ji3hckkz812vdosx6uchsuzpeinab6fao63q8utcc95n9v",
+  Deallocate 'scratch',
+  a boolean called 'scratch found an error already pending' is false,
+  On error Set 'scratch found an error already pending' to true,
+  a boolean called 'scratch byte read refused' is false,
+  a number called 'scratch byte read result' is byte 1 of 'scratch',
+  On error Set 'scratch byte read refused' to true,
+  If 'scratch byte read refused' is false then, Print "ASSERT BUF-46: expected 1 got {'scratch byte read refused'}", Exit 95. Print 'scratch byte read refused',
+  If 'scratch byte read result' is not 0 then, Print "ASSERT BUF-46: expected 0 got {'scratch byte read result'}", Exit 95. Print 'scratch byte read result'.
+
+--- BUF-47: append/Set byte/copy/set refused after Free (no file I/O this run) ---
+a buffer called 'the register' is "ny7pql7a43besn8z142rxvdwok0fq4dog5m69fdu45mvyvbx".
+Release the 'the register'.
+a boolean called 'the register found an error already pending' is false.
+On error Set 'the register found an error already pending' to true.
+a boolean called 'the register append refused' is false.
+append "vukojtk5jafoa" to 'the register'.
+On error Set 'the register append refused' to true.
+If 'the register append refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register append refused'}", Exit 95. Print 'the register append refused'.
+a boolean called 'the register byte set refused' is false.
+Set byte 1 of 'the register' to 120.
+On error Set 'the register byte set refused' to true.
+If 'the register byte set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register byte set refused'}", Exit 95. Print 'the register byte set refused'.
+a boolean called 'the register copy refused' is false.
+copy "2n2" to 'the register'.
+On error Set 'the register copy refused' to true.
+If 'the register copy refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register copy refused'}", Exit 95. Print 'the register copy refused'.
+a boolean called 'the register value set refused' is false.
+set 'the register' to "pf8n0knqbp79s86sbp1hbcf1leymo0ie".
+On error Set 'the register value set refused' to true.
+If 'the register value set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register value set refused'}", Exit 95. Print 'the register value set refused'.
+If 'the register's size is not 0 then, Print "ASSERT BUF-47: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+
+--- the same leaf, nested ---
+  a buffer called 'the register' is "ny7pql7a43besn8z142rxvdwok0fq4dog5m69fdu45mvyvbx",
+  Release the 'the register',
+  a boolean called 'the register found an error already pending' is false,
+  On error Set 'the register found an error already pending' to true,
+  a boolean called 'the register append refused' is false,
+  append "vukojtk5jafoa" to 'the register',
+  On error Set 'the register append refused' to true,
+  If 'the register append refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register append refused'}", Exit 95. Print 'the register append refused',
+  a boolean called 'the register byte set refused' is false,
+  Set byte 1 of 'the register' to 120,
+  On error Set 'the register byte set refused' to true,
+  If 'the register byte set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register byte set refused'}", Exit 95. Print 'the register byte set refused',
+  a boolean called 'the register copy refused' is false,
+  copy "2n2" to 'the register',
+  On error Set 'the register copy refused' to true,
+  If 'the register copy refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register copy refused'}", Exit 95. Print 'the register copy refused',
+  a boolean called 'the register value set refused' is false,
+  set 'the register' to "pf8n0knqbp79s86sbp1hbcf1leymo0ie",
+  On error Set 'the register value set refused' to true,
+  If 'the register value set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register value set refused'}", Exit 95. Print 'the register value set refused',
+  If 'the register's size is not 0 then, Print "ASSERT BUF-47: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+
+--- BUF-47 again, with file I/O available - the fifth form (Read ... into) ---
+a buffer called 'the register' is "ny7pql7a43besn8z142rxvdwok0fq4dog5m69fdu45mvyvbx".
+Release the 'the register'.
+a boolean called 'the register found an error already pending' is false.
+On error Set 'the register found an error already pending' to true.
+a boolean called 'the register append refused' is false.
+append "vukojtk5jafoa" to 'the register'.
+On error Set 'the register append refused' to true.
+If 'the register append refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register append refused'}", Exit 95. Print 'the register append refused'.
+a boolean called 'the register byte set refused' is false.
+Set byte 1 of 'the register' to 120.
+On error Set 'the register byte set refused' to true.
+If 'the register byte set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register byte set refused'}", Exit 95. Print 'the register byte set refused'.
+a boolean called 'the register copy refused' is false.
+copy "2n2" to 'the register'.
+On error Set 'the register copy refused' to true.
+If 'the register copy refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register copy refused'}", Exit 95. Print 'the register copy refused'.
+a boolean called 'the register value set refused' is false.
+set 'the register' to "pf8n0knqbp79s86sbp1hbcf1leymo0ie".
+On error Set 'the register value set refused' to true.
+If 'the register value set refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register value set refused'}", Exit 95. Print 'the register value set refused'.
+a text called 'the register path' is "{'the workspace'}/1freed".
+open a file for writing called 'the register being written' at 'the register path'.
+Write "br" to 'the register being written'.
+Close 'the register being written'.
+open a file for reading called 'the register being read' at 'the register path'.
+a boolean called 'the register read into refused' is false.
+Read from 'the register being read' into 'the register'.
+On error Set 'the register read into refused' to true.
+If 'the register read into refused' is false then, Print "ASSERT BUF-47: expected 1 got {'the register read into refused'}", Exit 95. Print 'the register read into refused'.
+Close 'the register being read'.
+If 'the register's size is not 0 then, Print "ASSERT BUF-47: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+
+--- BUF-48: resize/reallocate/grow/shrink refused after Free ---
+a buffer called 'the dispatch note' is "tuxcq2zo6dqjf2aabzoj8yzdfmctyg7h1l".
+Free the 'the dispatch note'.
+a boolean called 'the dispatch note resize refused' is false.
+grow 'the dispatch note' to 12.
+On error Set 'the dispatch note resize refused' to true.
+If 'the dispatch note resize refused' is false then, Print "ASSERT BUF-48: expected 1 got {'the dispatch note resize refused'}", Exit 95. Print 'the dispatch note resize refused'.
+
+--- the same leaf, a different seed (a different buffer count) ---
+a buffer called 'scratch' is "ni5zuyp9ag2a7xlijvl4lk22a".
+Free the 'scratch'.
+a boolean called 'scratch resize refused' is false.
+shrink 'scratch' to 58.
+On error Set 'scratch resize refused' to true.
+If 'scratch resize refused' is false then, Print "ASSERT BUF-48: expected 1 got {'scratch resize refused'}", Exit 95. Print 'scratch resize refused'.
+a buffer called 'toolbox' is "j8mupvps44kcf1m9ob9fggntui4s2a6uys5glxokdt5kayzizw91s259ar".
+Free 'toolbox'.
+a boolean called 'toolbox resize refused' is false.
+resize 'toolbox' to 39.
+On error Set 'toolbox resize refused' to true.
+If 'toolbox resize refused' is false then, Print "ASSERT BUF-48: expected 1 got {'toolbox resize refused'}", Exit 95. Print 'toolbox resize refused'.
+
+--- the same leaf, nested ---
+  a buffer called 'the dispatch note' is "tuxcq2zo6dqjf2aabzoj8yzdfmctyg7h1l",
+  Free the 'the dispatch note',
+  a boolean called 'the dispatch note resize refused' is false,
+  grow 'the dispatch note' to 12,
+  On error Set 'the dispatch note resize refused' to true,
+  If 'the dispatch note resize refused' is false then, Print "ASSERT BUF-48: expected 1 got {'the dispatch note resize refused'}", Exit 95. Print 'the dispatch note resize refused'.
+
+--- BUF-51: a second Free is a no-op that flags rather than crashing ---
+a buffer called 'ledger' is "8h6clzteteie1zrwrqrjqy54r5u50lm8jri8tjuvzmdqckh38".
+Deallocate 'ledger'.
+a boolean called 'ledger found an error already pending' is false.
+On error Set 'ledger found an error already pending' to true.
+a boolean called 'ledger second free refused' is false.
+Release the 'ledger'.
+On error Set 'ledger second free refused' to true.
+If 'ledger second free refused' is false then, Print "ASSERT BUF-51: expected 1 got {'ledger second free refused'}", Exit 95. Print 'ledger second free refused'.
+
+--- the same leaf, nested ---
+  a buffer called 'ledger' is "8h6clzteteie1zrwrqrjqy54r5u50lm8jri8tjuvzmdqckh38",
+  Deallocate 'ledger',
+  a boolean called 'ledger found an error already pending' is false,
+  On error Set 'ledger found an error already pending' to true,
+  a boolean called 'ledger second free refused' is false,
+  Release the 'ledger',
+  On error Set 'ledger second free refused' to true,
+  If 'ledger second free refused' is false then, Print "ASSERT BUF-51: expected 1 got {'ledger second free refused'}", Exit 95. Print 'ledger second free refused'.
+
+--- BUF-52: freeing a buffer through a parameter frees the caller's own variable ---
+
+To deliver with a buffer called 'the sketchpad'. Free 'the sketchpad'.
+
+a buffer called 'the register' is "o4dilrs".
+deliver of 'the register'.
+If 'the register's size is not 0 then, Print "ASSERT BUF-52: expected 0 got {'the register's size}", Exit 95. Print 'the register's size.
+If 'the register's empty is false then, Print "ASSERT BUF-52: expected 1 got {'the register's empty}", Exit 95. Print 'the register's empty.
+a boolean called 'the register found an error already pending' is false.
+On error Set 'the register found an error already pending' to true.
+a boolean called 'the register refused after the call freed it' is false.
+append "m70xogbbq7g1g23foqkng9080" to 'the register'.
+On error Set 'the register refused after the call freed it' to true.
+If 'the register refused after the call freed it' is false then, Print "ASSERT BUF-52: expected 1 got {'the register refused after the call freed it'}", Exit 95. Print 'the register refused after the call freed it'.
+
+--- the same leaf, nested ---
+
+  To deliver with a buffer called 'the sketchpad'. Free 'the sketchpad'.
+
+  a buffer called 'the register' is "o4dilrs",
+  deliver of 'the register',
+  If 'the register's size is not 0 then, Print "ASSERT BUF-52: expected 0 got {'the register's size}", Exit 95. Print 'the register's size,
+  If 'the register's empty is false then, Print "ASSERT BUF-52: expected 1 got {'the register's empty}", Exit 95. Print 'the register's empty,
+  a boolean called 'the register found an error already pending' is false,
+  On error Set 'the register found an error already pending' to true,
+  a boolean called 'the register refused after the call freed it' is false,
+  append "m70xogbbq7g1g23foqkng9080" to 'the register',
+  On error Set 'the register refused after the call freed it' to true,
+  If 'the register refused after the call freed it' is false then, Print "ASSERT BUF-52: expected 1 got {'the register refused after the call freed it'}", Exit 95. Print 'the register refused after the call freed it'.
+

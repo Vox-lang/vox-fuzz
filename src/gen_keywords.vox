@@ -1,0 +1,287 @@
+(Keywords leaves: docs/ledger/keywords.md, kinds 300-306, a NEW reserved
+ block (surface brief vf-leaves-keya, round three, 2026-08-30 - see the
+ reservation table above 'gen dispatch leaf' in gen_core.vox, which the
+ master extends at merge). Ten rows across five of the ledger's own
+ categories - articles, statement starters, the `and` keyword, reserved
+ aliases, and two classes of special word / contextual keywords:
+ KEY-02, KEY-04, KEY-11, KEY-44, KEY-45, KEY-49, KEY-50, KEY-53, KEY-54,
+ KEY-73. Every claim hand-verified this session against BOTH pinned
+ compilers (installed 0.4.14 and the 0.4.15 stack) before being written
+ here - see REPORT-LEAVES-KEYWORDS-A.md for the transcripts.
+
+ KEY-16 through KEY-27 (the process-control rows sharing this ledger's
+ Statement Starters table - Create/Remove/Change a directory, symlink,
+ Mount/Unmount, Pivot root, Execute, fork/reap, Send signal) are NOT in
+ this batch: they are docs/ledger/process-control.md's own PRC-* rows,
+ already carrying leaves in src/gen_process.vox (kinds 260-268,
+ tonight's "process leaves, batch A"), and this surface brief's own
+ category list (articles, starters, connectors, reserved aliases,
+ contextual keywords) does not name process control. KEY-30, KEY-61,
+ KEY-62, KEY-63, KEY-64, KEY-66, KEY-67, KEY-69, KEY-70, KEY-71, KEY-74,
+ KEY-88 remain `todo` too - not attempted this batch; KEY-88 in
+ particular is 0.4.15-only (auto/enable/disable's un-reservation) and
+ excluded by this round's standing rule for such rows.
+
+ KEY-58 was ALSO selected initially and DROPPED after hand-verification
+ found it 0.4.15-only: quoting a single-word RESERVED word as a name
+ (`'flag'`, `'empty'`) is refused by the installed 0.4.14
+ ("Unknown identifier ''empty''" / "Unknown variable: 'flag'") and
+ accepted by the 0.4.15 stack - not documented anywhere in the ledger's
+ own KEY-58 row, which cites no compiler version. KEY-73 was drawn in
+ as the tenth row instead. See the report's Discrepancies-adjacent
+ section for the transcript; not added to keywords.md's own
+ Discrepancies section by this worker, per PROCEDURE.md's "record, do
+ not adjudicate" - flagged for the master.
+
+ A second, narrower discrepancy surfaced while building these leaves and
+ shapes every name choice below: a quoted ONE-WORD name does not resolve
+ inside a generated program's own `{...}` format slot on the installed
+ 0.4.14 (`Print "value: {'pantry'}".` -> "Unknown variable: 'pantry'";
+ the 0.4.15 stack prints "value: 42") when the name carries no
+ possessive property - WITH a property (`'pantry's size`) it resolves
+ correctly on both compilers, bare or in a slot. This matches the
+ caution already on file in briefs/brief-leaves-common-2026-08-29.md
+ point 4 ("a quoted one-word name does NOT resolve inside a `{...}`
+ format slot on 0.4.14"); this session's contribution is confirming it
+ is specifically the NO-PROPERTY case, and confirming the general
+ assert helpers ('gen assert number'/'gen assert true'/'gen assert
+ false'/'gen assert text equals', via 'gen buffer slot of') embed their
+ bare SUBJECT inside exactly such a slot for the failure message - so
+ any of THOSE helpers, called with a bare quoted-one-word pool name as
+ subject, would silently fail to compile on 0.4.14 roughly a sixth of
+ the time (one third one-word, just over half of those quoted). Every
+ leaf below routes its bare (no-property) assert subjects through
+ 'gen flow witness name' (gen_flow.vox) or this file's own 'gen
+ keywords safe name', both of which return the bare spelling whenever
+ the drawn name is one word - always legal, since quoting a one-word
+ name is optional either way (LANGUAGE.md:760) - so the slot-unsafe
+ branch is never reached. Not filed as a new ledger discrepancy by this
+ worker - PROCEDURE.md 5's "record, do not adjudicate" - candidate
+ recorded in the report for the master.)
+
+(A declarable, bare-Print-safe, and format-slot-safe rendering of a pool
+ stem THIS FILE ALSO NEEDS FOR A POSSESSIVE ACCESS - the same rule 'gen
+ flow witness name' applies to a freshly drawn name, reapplied here to a
+ stem already held for a second purpose ('gen buffer property', which
+ works on the raw stem regardless of quoting - see its own comment).
+ Call immediately after 'gen buffer name', before any further draw
+ overwrites gen_buffer_last_word.)
+
+To 'gen keywords safe name' with a text called stem and a text called 'the raw word'.
+    a boolean called 'is one word' is 'gen name is one word' of 'the raw word'.
+    If 'is one word' then,
+        Return a text, 'the raw word'.
+    a text called 'the closed reference' is 'gen buffer reference' of stem.
+    Return a text, 'the closed reference'.
+
+(Rework, owner directive 2026-08-30 (steer-1788090031): every number
+ literal below whose MAGNITUDE the row's claim does not pin now draws
+ from 'gen extreme number' (gen_core.vox:88) rather than a tame 'rng
+ below' - full i64 range, including 0, exactly i64::MAX, 2^31, and
+ random lengths up to 18 digits - so a huge, boundary-hugging literal
+ reaches the compiler as often as a small one. Left tame on purpose:
+ anything sizing an allocation (a buffer's declared capacity) - an
+ extreme value there risks a real OOM/hang, which is what "not a value
+ the claim pins, like a list length of 3" rules out in the owner's own
+ words - and the bare-Create default (0), which the claim itself pins,
+ not filler.
+
+ Two independent 'gen extreme number' draws collide often enough to
+ matter (~3-5%, dominated by the three fixed-value branches landing on
+ the same one twice) for the one row here that needs a GUARANTEED
+ difference (KEY-45's mismatched trailing subject). This helper makes
+ that guarantee without generator-side arithmetic on a possibly-i64::MAX
+ text - a text add is not defined, and casting a fresh draw to a number
+ just to add 1 risks silently wrapping in the GENERATOR's own
+ computation, which would write a wrong expectation into the emitted
+ assertion (the "false-finding factory" CLAUDE.md warns about) rather
+ than into anything the compiler is being tested on. Two string
+ comparisons are enough: if the draw collides, fall back to "1"; if
+ THAT also collides (only possible when the other side already was
+ "1"), fall back to "2" - "2" cannot equal "1", so this always
+ terminates.)
+
+To 'gen extreme number distinct from' with a text called 'the other'.
+    a text called candidate is 'gen extreme number'.
+    If candidate is 'the other' then,
+        Set candidate to "1".
+    If candidate is 'the other' then,
+        Set candidate to "2".
+    Return a text, candidate.
+
+(A second discovery from the same rework: a BARE number literal alone
+ inside a generated program's own `{...}` format slot does not parse -
+ `Print "{93918697}".` fails "Unknown variable: 93918697", though the
+ identical literal used directly as a comparison operand
+ (`If x is not 93918697 then`) or combined with an operator inside the
+ slot (`{93918697 add 0}`) both work fine - hand-verified this session.
+ 'gen assert number matches' wraps its "expected expression" argument in
+ exactly such a slot for the failure message ('gen buffer slot of'),
+ which is correct when that argument is a RUNTIME property expression
+ (`x's size`) but wrong when it is already a compile-time literal, as
+ every extreme-number draw below is. 'gen assert number is' does not
+ have this problem - it interpolates the NUMBER at the GENERATOR level
+ into plain text, with no second-level slot around it in the emitted
+ source - so every extreme-literal assertion below casts the drawn text
+ to a number (`... as a number`, the same idiom 'gen leaf value retype
+ sum' in gen_collections.vox already uses) and calls 'gen assert number
+ is', reserving 'gen assert number matches' for the buffer/list `'s
+ length` vs `'s size` checks, which really are runtime property
+ expressions.)
+
+(KEY-02 - LANGUAGE.md:5039-5040: `a`/`an` declare, `the` references an
+ already-declared variable, both as a plain read and as an assignment
+ target. Retained probe (KEY-02.vox) hand-verifies one bare name;
+ hand-verified further this session, both compilers: `the` also resolves
+ a quoted MULTI-WORD name the same way, in a plain statement and inside
+ a `{...}` slot. The quoted ONE-WORD shape is deliberately excluded here
+ - see this file's header comment - so the name is drawn through 'gen
+ flow witness name', which never returns that shape.)
+
+To 'gen leaf article the reference' with a text called indent and a boolean called nested.
+    a text called name is 'gen flow witness name'.
+    a text called 'the first value' is 'gen extreme number'.
+    a text called 'the second text' is 'gen extreme number distinct from' of 'the first value'.
+    a number called 'the second value' is 'the second text' as a number.
+    a text called 'the subject' is "the {name}".
+    a text called 'the assertion' is 'gen assert number is' of "KEY-02" and 'the subject' and 'the second value'.
+    a list called 'the lines' is ["a number called {name} is {'the first value'}", "Set the {name} to {'the second text'}", 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-04 - LANGUAGE.md:5047: `Set` and `Create` both start a variable
+ declaration - `Set a TYPE called NAME to VALUE.`, `Create a TYPE called
+ NAME to VALUE.`, and bare `Create a TYPE called NAME.` for the type's
+ default. Retained probe (KEY-04.vox) hand-verifies all three shapes for
+ `number`/`text`; the bare form's default (0) is claimed here for
+ `number` only - other types' defaults are not probed and this leaf does
+ not assert them.)
+
+To 'gen leaf set create declaration forms' with a text called indent and a boolean called nested.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the text name' is 'gen flow witness name'.
+    a text called 'the default name' is 'gen flow witness name'.
+    a text called 'the set text' is 'gen extreme number'.
+    a number called 'the set value' is 'the set text' as a number.
+    a text called 'the text payload' is 'gen text payload'.
+    a text called 'the set assertion' is 'gen assert number is' of "KEY-04" and 'the number name' and 'the set value'.
+    a text called 'the create assertion' is 'gen assert text equals' of "KEY-04" and 'the text name' and 'the text payload'.
+    a text called 'the default assertion' is 'gen assert number is' of "KEY-04" and 'the default name' and 0.
+    a list called 'the lines' is ["Set a number called {'the number name'} to {'the set text'}", 'the set assertion', "Create a text called {'the text name'} to \"{'the text payload'}\"", 'the create assertion', "Create a number called {'the default name'}", 'the default assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-11 - LANGUAGE.md:5054: `Decrement` subtracts 1 from a variable.
+ Retained probe (KEY-11.vox) already exercises the bare name and the
+ `the`-prefixed form together on one variable; this leaf follows the
+ same shape with a random name and starting value.)
+
+To 'gen leaf decrement' with a text called indent and a boolean called nested.
+    a text called name is 'gen flow witness name'.
+    a text called 'the start text' is 'gen extreme number'.
+    a number called 'the start value' is 'the start text' as a number.
+    a number called 'the expected value' is 'the start value' minus 2.
+    a text called 'the assertion' is 'gen assert number is' of "KEY-11" and name and 'the expected value'.
+    a list called 'the lines' is ["a number called {name} is {'the start text'}", "Decrement {name}", "Decrement the {name}", 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-44, KEY-45 - LANGUAGE.md:5121-5123 and 5126: `and` before the final
+ subject of a comma-separated subject list terminates the list, and the
+ predicate after `are` applies to every subject (KEY-44); disambiguation
+ 1 says the word after that `and` is read as a SUBJECT, not a condition
+ (KEY-45), proven with a bare number as the trailing subject - a
+ differing final subject correctly breaks the "are" match, which it
+ could not do if it were silently dropped or misread as a boolean
+ operand. Retained probes KEY-44.vox and KEY-45.vox hand-verify both
+ halves; re-verified this session, both compilers.)
+
+To 'gen leaf and subject list' with a text called indent and a boolean called nested.
+    a text called 'the first flag' is 'gen flow witness name'.
+    a text called 'the second flag' is 'gen flow witness name'.
+    a text called 'the third flag' is 'gen flow witness name'.
+    a text called 'the true witness' is 'gen flow witness name'.
+    a text called 'the negated witness' is 'gen flow witness name'.
+    a text called 'the true check' is "If {'the first flag'}, {'the second flag'}, and {'the third flag'} are true then, Set {'the true witness'} to true".
+    a text called 'the true assertion' is 'gen assert true' of "KEY-44" and 'the true witness'.
+    a text called 'the negated check' is "If {'the first flag'}, {'the second flag'}, and {'the third flag'} are not false then, Set {'the negated witness'} to true".
+    a text called 'the negated assertion' is 'gen assert true' of "KEY-44" and 'the negated witness'.
+    a text called 'the matching value' is 'gen extreme number'.
+    a text called 'the differing value' is 'gen extreme number distinct from' of 'the matching value'.
+    a text called 'the first number' is 'gen flow witness name'.
+    a text called 'the second number' is 'gen flow witness name'.
+    a text called 'the third number' is 'gen flow witness name'.
+    a text called 'the subject witness' is 'gen flow witness name'.
+    a text called 'the subject check' is "If {'the first number'}, {'the second number'}, and {'the third number'} are {'the matching value'} then, Set {'the subject witness'} to true".
+    a text called 'the subject assertion' is 'gen assert false' of "KEY-45" and 'the subject witness'.
+    a list called 'the lines' is ["a boolean called {'the first flag'} is true", "a boolean called {'the second flag'} is true", "a boolean called {'the third flag'} is true", "a boolean called {'the true witness'} is false", 'the true check', 'the true assertion', "a boolean called {'the negated witness'} is false", 'the negated check', 'the negated assertion', "a number called {'the first number'} is {'the matching value'}", "a number called {'the second number'} is {'the matching value'}", "a number called {'the third number'} is {'the differing value'}", "a boolean called {'the subject witness'} is false", 'the subject check', 'the subject assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-49, KEY-50 - LANGUAGE.md:5239-5240: `message` and `string` are
+ reserved aliases of the type name `text`. A variable declared with
+ either spelling is a text: same reported type, same content. Retained
+ probes KEY-49.vox and KEY-50.vox hand-verify both against a bare
+ one-word name; re-verified this session, both compilers, including the
+ `'s type` possessive on a quoted stem.)
+
+To 'gen leaf reserved alias text types' with a text called indent and a boolean called nested.
+    a text called 'the message stem' is 'gen buffer name'.
+    a text called 'the message raw' is gen_buffer_last_word.
+    a text called 'the message name' is 'gen keywords safe name' of 'the message stem' and 'the message raw'.
+    a text called 'the string stem' is 'gen buffer name'.
+    a text called 'the string raw' is gen_buffer_last_word.
+    a text called 'the string name' is 'gen keywords safe name' of 'the string stem' and 'the string raw'.
+    a text called 'the message payload' is 'gen text payload'.
+    a text called 'the string payload' is 'gen text payload'.
+    a text called 'the message type subject' is 'gen buffer property' of 'the message stem' and "type".
+    a text called 'the message type assertion' is 'gen assert text equals' of "KEY-49" and 'the message type subject' and "Text (static)".
+    a text called 'the message content assertion' is 'gen assert text equals' of "KEY-49" and 'the message name' and 'the message payload'.
+    a text called 'the string type subject' is 'gen buffer property' of 'the string stem' and "type".
+    a text called 'the string type assertion' is 'gen assert text equals' of "KEY-50" and 'the string type subject' and "Text (static)".
+    a text called 'the string content assertion' is 'gen assert text equals' of "KEY-50" and 'the string name' and 'the string payload'.
+    a list called 'the lines' is ["a message called {'the message name'} is \"{'the message payload'}\"", "a string called {'the string name'} is \"{'the string payload'}\"", 'the message type assertion', 'the message content assertion', 'the string type assertion', 'the string content assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-53, KEY-54 - LANGUAGE.md:5310-5314: `size` and its synonym `length`
+ are contextual keywords - the property after a possessive, but also a
+ legal bare variable name, both in the same program; `x's length` still
+ means the same as `x's size`. Retained probes KEY-53.vox and KEY-54.vox
+ hand-verify a variable literally named `length` alongside a buffer's
+ and a list's `'s length`/`'s size` agreement; re-verified this session,
+ both compilers. `length` is the contextual keyword itself, not a pool
+ draw - the row's claim is specifically about that spelling.)
+
+To 'gen leaf contextual keyword length' with a text called indent and a boolean called nested.
+    a text called 'the length text' is 'gen extreme number'.
+    a number called 'the length value' is 'the length text' as a number.
+    a text called 'the buffer stem' is 'gen buffer name'.
+    a text called 'the buffer name' is 'gen buffer reference' of 'the buffer stem'.
+    a number called 'the buffer capacity' is 'rng below' of 32 add 8.
+    a text called 'the buffer payload' is 'gen text payload'.
+    a text called 'the list stem' is 'gen buffer name'.
+    a text called 'the list name' is 'gen buffer reference' of 'the list stem'.
+    a text called 'the list first' is 'gen extreme number'.
+    a text called 'the list second' is 'gen extreme number'.
+    a text called 'the list third' is 'gen extreme number'.
+    a text called 'the buffer length subject' is 'gen buffer property' of 'the buffer stem' and "length".
+    a text called 'the buffer size expression' is 'gen buffer property' of 'the buffer stem' and "size".
+    a text called 'the buffer assertion' is 'gen assert number matches' of "KEY-54" and 'the buffer length subject' and 'the buffer size expression'.
+    a text called 'the list length subject' is 'gen buffer property' of 'the list stem' and "length".
+    a text called 'the list size expression' is 'gen buffer property' of 'the list stem' and "size".
+    a text called 'the list assertion' is 'gen assert number matches' of "KEY-54" and 'the list length subject' and 'the list size expression'.
+    a text called 'the length variable assertion' is 'gen assert number is' of "KEY-53" and "length" and 'the length value'.
+    a list called 'the lines' is ["a number called length is {'the length text'}", "a buffer called {'the buffer name'} is {'the buffer capacity'} bytes in size", "append \"{'the buffer payload'}\" to {'the buffer name'}", 'the buffer assertion', "a list called {'the list name'} is [{'the list first'}, {'the list second'}, {'the list third'}]", 'the list assertion', 'the length variable assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(KEY-73 - LANGUAGE.md:5311-5312: `version` is contextual - claimed only
+ in the `Library <name> version "..."` and `see <lib> version "..."`
+ headers, an ordinary identifier everywhere else. Only the
+ ordinary-identifier half is a leaf: the header half needs a second
+ compilation unit and a built `.lib`, which no leaf produces today - the
+ ledger's own KEY-73 row says so, and its retained probe carries only
+ this half for the same reason. `version` is the contextual keyword
+ itself, not a pool draw.)
+
+To 'gen leaf contextual keyword version' with a text called indent and a boolean called nested.
+    a text called 'the version text' is 'gen extreme number'.
+    a number called 'the version value' is 'the version text' as a number.
+    a text called 'the assertion' is 'gen assert number is' of "KEY-73" and "version" and 'the version value'.
+    a list called 'the lines' is ["a number called version is {'the version text'}", 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.

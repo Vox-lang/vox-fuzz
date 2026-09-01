@@ -1,0 +1,77 @@
+--- FMT-45..50: the escape table, verified byte for byte ---
+a text called toolbox is "bjy{{6".
+a buffer called cupboard is toolbox.
+If cupboard's size is not 5 then, Print "ASSERT FMT-45: expected 5 got {cupboard's size}", Exit 95. Print cupboard's size.
+If byte 4 of cupboard is not 123 then, Print "ASSERT FMT-45: expected 123 got {byte 4 of cupboard}", Exit 95. Print byte 4 of cupboard.
+a text called 'the dispatch note' is "9}}dz".
+a buffer called 'the manifest' is 'the dispatch note'.
+If 'the manifest''s size is not 4 then, Print "ASSERT FMT-46: expected 4 got {'the manifest''s size}", Exit 95. Print 'the manifest''s size.
+If byte 2 of 'the manifest' is not 125 then, Print "ASSERT FMT-46: expected 125 got {byte 2 of 'the manifest'}", Exit 95. Print byte 2 of 'the manifest'.
+a text called storeroom is "5mbc\nxiels".
+a buffer called 'the pallet' is storeroom.
+If 'the pallet''s size is not 10 then, Print "ASSERT FMT-47: expected 10 got {'the pallet''s size}", Exit 95. Print 'the pallet''s size.
+If byte 5 of 'the pallet' is not 10 then, Print "ASSERT FMT-47: expected 10 got {byte 5 of 'the pallet'}", Exit 95. Print byte 5 of 'the pallet'.
+a text called ledger is "ec7t\tegz".
+a buffer called 'the tally sheet' is ledger.
+If 'the tally sheet''s size is not 8 then, Print "ASSERT FMT-48: expected 8 got {'the tally sheet''s size}", Exit 95. Print 'the tally sheet''s size.
+If byte 5 of 'the tally sheet' is not 9 then, Print "ASSERT FMT-48: expected 9 got {byte 5 of 'the tally sheet'}", Exit 95. Print byte 5 of 'the tally sheet'.
+a text called scratch is "ry1\\br8l".
+a buffer called 'the sketchpad' is scratch.
+If 'the sketchpad''s size is not 8 then, Print "ASSERT FMT-49: expected 8 got {'the sketchpad''s size}", Exit 95. Print 'the sketchpad''s size.
+If byte 4 of 'the sketchpad' is not 92 then, Print "ASSERT FMT-49: expected 92 got {byte 4 of 'the sketchpad'}", Exit 95. Print byte 4 of 'the sketchpad'.
+Print "Use {{braces}} for literal braces.".
+Print "Tab:\there".
+Print "Line1\nLine2".
+
+--- the same leaf, nested ---
+  a text called toolbox is "bjy{{6",
+  a buffer called cupboard is toolbox,
+  If cupboard's size is not 5 then, Print "ASSERT FMT-45: expected 5 got {cupboard's size}", Exit 95. Print cupboard's size,
+  If byte 4 of cupboard is not 123 then, Print "ASSERT FMT-45: expected 123 got {byte 4 of cupboard}", Exit 95. Print byte 4 of cupboard,
+  a text called 'the dispatch note' is "9}}dz",
+  a buffer called 'the manifest' is 'the dispatch note',
+  If 'the manifest''s size is not 4 then, Print "ASSERT FMT-46: expected 4 got {'the manifest''s size}", Exit 95. Print 'the manifest''s size,
+  If byte 2 of 'the manifest' is not 125 then, Print "ASSERT FMT-46: expected 125 got {byte 2 of 'the manifest'}", Exit 95. Print byte 2 of 'the manifest',
+  a text called storeroom is "5mbc\nxiels",
+  a buffer called 'the pallet' is storeroom,
+  If 'the pallet''s size is not 10 then, Print "ASSERT FMT-47: expected 10 got {'the pallet''s size}", Exit 95. Print 'the pallet''s size,
+  If byte 5 of 'the pallet' is not 10 then, Print "ASSERT FMT-47: expected 10 got {byte 5 of 'the pallet'}", Exit 95. Print byte 5 of 'the pallet',
+  a text called ledger is "ec7t\tegz",
+  a buffer called 'the tally sheet' is ledger,
+  If 'the tally sheet''s size is not 8 then, Print "ASSERT FMT-48: expected 8 got {'the tally sheet''s size}", Exit 95. Print 'the tally sheet''s size,
+  If byte 5 of 'the tally sheet' is not 9 then, Print "ASSERT FMT-48: expected 9 got {byte 5 of 'the tally sheet'}", Exit 95. Print byte 5 of 'the tally sheet',
+  a text called scratch is "ry1\\br8l",
+  a buffer called 'the sketchpad' is scratch,
+  If 'the sketchpad''s size is not 8 then, Print "ASSERT FMT-49: expected 8 got {'the sketchpad''s size}", Exit 95. Print 'the sketchpad''s size,
+  If byte 4 of 'the sketchpad' is not 92 then, Print "ASSERT FMT-49: expected 92 got {byte 4 of 'the sketchpad'}", Exit 95. Print byte 4 of 'the sketchpad',
+  Print "Use {{braces}} for literal braces.",
+  Print "Tab:\there",
+  Print "Line1\nLine2".
+
+--- FMT-24: a text reassigned from a format string ---
+a number called 'the sketchpad' is 27.
+a text called 'the waybill' is "first 27".
+Set 'the sketchpad' to 696.
+Set 'the waybill' to "second {'the sketchpad'}".
+If 'the waybill' is not "second 696" then, Print "ASSERT FMT-24: expected second 696 got {'the waybill'}", Exit 95. Print 'the waybill'.
+
+--- FMT-29: buffer clear-and-refill leaves an earlier text alone ---
+a buffer called 'loading bay' is 64 bytes in size.
+copy "b9mh4" to 'loading bay'.
+a text called 'the dispatch note' is "{'loading bay'}".
+clear 'loading bay'.
+copy "hq" to 'loading bay'.
+a text called cupboard is "{'loading bay'}".
+If 'the dispatch note' is not "b9mh4" then, Print "ASSERT FMT-29: expected b9mh4 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+If cupboard is not "hq" then, Print "ASSERT FMT-29: expected hq got {cupboard}", Exit 95. Print cupboard.
+
+--- FMT-41: a file handle declared in every branch ---
+a boolean called scratch is false.
+a text called 'outgoing post' is "{'the workspace'}/1branch".
+If scratch then, Open a file for writing called ledger at 1. Otherwise, Open a file for writing called ledger at 'outgoing post'.
+Write "fmt41\n" to ledger.
+
+--- FMT-52, FMT-54: a comma-less but-if/and-if chain ---
+a number called 'the mailbag' is 569.
+Print 'the mailbag', but if 'the mailbag' is less than 486 print "low" but if 'the mailbag' is greater than 642 print "high" and if 'the mailbag' is greater than or equal to 486 print "mid".
+

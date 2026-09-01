@@ -98,90 +98,105 @@ If 'the byline' is not "the survey plot 47215" then, Exit 91.
 If endnote is not 1118016078 then, Exit 92.
 If 'the callsign' is false then, Exit 93.
 
-Print v1 minus v1, but if v1 is equal to v2 print v1 add v1.
-a number called xn1 is 265.
-a number called xy1 is 44.
-Print "sum {xn1 add xy1}".
-Print "product {xn1 multiply xy1}".
-Print "chain {xn1 multiply xy1 modulo 2:03x}".
-Print "deep {v2 minus v2 minus v2 times v1 times v1 multiply v1 modulo 10 minus v2 add v1:02x}".
-Print "arguments {arguments's count}".
-a text called xt1 is "held {xn1 add xy1} {xn1 multiply xy1 modulo 2:03x}".
-Print xt1.
-a text called 'the postbag path' is "{annotation}/1size".
-open a file for writing called 'the postbag' at 'the postbag path'.
-If 'the postbag's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
-Write "xx8zt0acfdxnia3pxdjnzkpdosy09lrogkiqtj7tcocs02mn384875dys2810stztla01q3gecz84x2tbbdslvx72bh2atw4f8e0s0jbfzkdvl8bifkmpj4xccay0ajfswh0vjl0afijxkbqqmqxpp4fm12kikkqh828r7il0r83" to 'the postbag'.
-If 'the postbag's size is not 172 then, Print "ASSERT FIL-01: expected 172 got {'the postbag's size}", Exit 95. Print 'the postbag's size.
-Close 'the postbag'.
-a buffer called 'the tally sheet'.
-a number called 'the tally sheet appends made' is 0.
-a boolean called 'the tally sheet overflowed' is false.
-a boolean called 'the tally sheet found an error already pending' is false.
-On error Set 'the tally sheet found an error already pending' to true.
-While 'the tally sheet appends made' is less than 261, append "54uvbkgiwm2pvo798" to 'the tally sheet', On error Set 'the tally sheet overflowed' to true. Set 'the tally sheet appends made' to 'the tally sheet appends made' add 1.
-If 'the tally sheet's size is not 4437 then, Print "ASSERT BUF-03: expected 4437 got {'the tally sheet's size}", Exit 95. Print 'the tally sheet's size.
-If 'the tally sheet overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the tally sheet overflowed'}", Exit 95. Print 'the tally sheet overflowed'.
-Print 'the tally sheet's size.
-a number called 'the dispatch note' is 0.
-If 23 is not equal to 23 then, Print "unreachable". Otherwise, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 1, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 2, Set 'the dispatch note' to 'the dispatch note' multiply 10 add 3.
-If 'the dispatch note' is not 123 then, Print "ASSERT FLW-05: expected 123 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
-a text called 'workbench path' is "{annotation}/2size".
-open a file for writing called workbench at 'workbench path'.
-If workbench's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {workbench's size}", Exit 95. Print workbench's size.
-Write "tszdnox4yebhe4pd0ssivwr13whfff0jbyk3qef1ru37zk75wh2tblqk31ozspeoxyb6l6cpg0lnns7723zip08yrxmvpc47mqqrh2v9vj7vzf1g4oncq7po2ytaogewlmh5k3ni9kg4i5rjzx78y56xgytj480ahj8wu9005owvikxuywwdsu9lm99abrcl8rst4jv2gybv79pfl435h94copvba4dq321w2vrnexf0jtw3wm754aki1hio0bndpqzc86phmj4gervc5xt6ov06fd4l8ebv2gpkxbfz1bfjgjjfzzhcwue3zkpllc7bhhc9e47aw6ewaniaf60uf0ct4qdbk2lkle79ofwavi6a9jwmsg46q7zkp1eoeh" to workbench.
-If workbench's size is not 382 then, Print "ASSERT FIL-01: expected 382 got {workbench's size}", Exit 95. Print workbench's size.
-Close workbench.
-a buffer called ledger is 4097 bytes in size.
-If ledger's empty is false then, Print "ASSERT BUF-12: expected 1 got {ledger's empty}", Exit 95. Print ledger's empty.
-append "on10kv62qlkgrr5s24748s01taic7b24t1nke9kdhc" to ledger.
-If ledger's size is not 42 then, Print "ASSERT BUF-10: expected 42 got {ledger's size}", Exit 95. Print ledger's size.
-If ledger's capacity is not 4097 then, Print "ASSERT BUF-10: expected 4097 got {ledger's capacity}", Exit 95. Print ledger's capacity.
-If ledger's length is not 42 then, Print "ASSERT BUF-11: expected 42 got {ledger's length}", Exit 95. Print ledger's length.
-If ledger's length is not ledger's size then, Print "ASSERT BUF-11: expected {ledger's size} got {ledger's length}", Exit 95. Print ledger's length.
-If ledger's empty then, Print "ASSERT BUF-12: expected 0 got {ledger's empty}", Exit 95. Print ledger's empty.
-Print ledger's length.
-a text called 'the sketchpad path' is "{annotation}/3mode".
-open a file for writing called 'the sketchpad' at 'the sketchpad path'.
-Write "f" to 'the sketchpad'.
-Close 'the sketchpad'.
-open a file for appending called 'the sketchpad' at 'the sketchpad path'.
-If 'the sketchpad's readable then, Print "ASSERT FIL-03: expected 0 got {'the sketchpad's readable}", Exit 95. Print 'the sketchpad's readable.
-If 'the sketchpad's writable is false then, Print "ASSERT FIL-04: expected 1 got {'the sketchpad's writable}", Exit 95. Print 'the sketchpad's writable.
-Close 'the sketchpad'.
-Create a buffer called 'the greeting' with size 77.
-append "80duzh57" to 'the greeting'.
-a number called 'the greeting capacity before clearing' is 'the greeting's capacity.
-clear 'the greeting'.
-If 'the greeting's size is not 0 then, Print "ASSERT BUF-33: expected 0 got {'the greeting's size}", Exit 95. Print 'the greeting's size.
-If 'the greeting's capacity is not 'the greeting capacity before clearing' then, Print "ASSERT BUF-33: expected {'the greeting capacity before clearing'} got {'the greeting's capacity}", Exit 95. Print 'the greeting's capacity.
-a text called fp2 is "{annotation}/out2".
-open a file for writing called fw2 at fp2.
-Write "payload 2545\n" to fw2.
-Close fw2.
-open a file for reading called fr2 at fp2.
-a buffer called fb2 is 21 bytes in size.
-Read from fr2 into fb2.
-Print fb2's size.
-Print fr2's readable.
-Close fr2.
-Print "reached the terminate statement".
-Terminate 168.
-a value called 'the tally' is "false".
-'the tally' is a boolean.
-If 'the tally' is not false then, Print "ASSERT VAL-09: expected false got {'the tally'}", Exit 95.
-Print 'the tally'.
-open a file for reading called sin3 at 0.
-a buffer called sb3 is 37 bytes.
-Read from sin3 into sb3.
-Print sb3's size.
-If sb3 is empty then, Print "sb3 empty". Otherwise, Print "sb3 filled".
-a buffer called sc3 is 8 bytes.
-Read from sin3 into sc3.
-Print sc3's size.
-Close sin3.
-'the reckoning' of each q1s1 from 6 to 6 and each q1s2 from 5 to 5 and each q1s3 from 3 to 3 and each q1s4 from 3 to 3 and each q1s5 from 7 to 7 and each q1s6 from 8 to 8 and each q1s7 from 0 to 1 and each q1s8 from 6 to 6 and each q1s9 from 6 to 6.
+a text called fp1 is "{annotation}/out1".
+open a file for writing called fw1 at fp1.
+Write "payload 45516\n" to fw1.
+Close fw1.
+open a file for reading called fr1 at fp1.
+a buffer called fb1 is 9 bytes in size.
+Read from fr1 into fb1.
+Print fb1's size.
+Print fr1's readable.
+Close fr1.
+a number called workbench is 726645.
+If workbench's hour is not workbench's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-57: expected {workbench's unix modulo 86400 divide 3600} got {workbench's hour}", Exit 95. Print "TIM-57 ok".
+If workbench's unix is not 726645 then, Print "ASSERT TIM-57: expected 726645 got {workbench's unix}", Exit 95. Print "TIM-57 ok".
+If workbench's year is less than 1970 or workbench's year is greater than 1970 then, Print "ASSERT TIM-57: expected 1970..1970 got {workbench's year}", Exit 95. Print "TIM-57 ok".
+a number called 'the drawer' is 0.
+a number called 'the postbag' is 0.
+a number called u1 is 0.
+While u1 is less than 3,
+  Increment u1,
+  If u1 is equal to 1 then, Set 'the drawer' to 'the drawer' add 1.
+
+Set 'the postbag' to 'the postbag' add 1.
+If 'the drawer' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the drawer'}", Exit 95. Print 'the drawer'.
+If 'the postbag' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the postbag'}", Exit 95. Print 'the postbag'.
+a text called notebook is "{annotation}/procmount4".
+Create a directory called notebook.
+a boolean called 'notebook mount refused' is false.
+Mount notebook at notebook with type "tmpfs" with options "size=1m".
+On error Set 'notebook mount refused' to true.
+If 'notebook mount refused' is false then, Print "ASSERT PRC-12: expected 1 got {'notebook mount refused'}", Exit 95. Print 'notebook mount refused'.
+a boolean called 'notebook unmount refused' is false.
+Unmount notebook.
+On error Set 'notebook unmount refused' to true.
+If 'notebook unmount refused' is false then, Print "ASSERT PRC-21: expected 1 got {'notebook unmount refused'}", Exit 95. Print 'notebook unmount refused'.
+Remove the directory called notebook.
+a number called 'the crate' is fork the process.
+If 'the crate' is 0 then, Exit 53.
+Set reaped to reap any child process.
+a boolean called 'the crate reap matched' is false.
+If reaped is 'the crate' then, Set 'the crate reap matched' to true.
+If 'the crate reap matched' is false then, Print "ASSERT PRC-61: expected 1 got {'the crate reap matched'}", Exit 95. Print 'the crate reap matched'.
+a number called 'the crate reproduced exit' is the reaped status divide 256 modulo 256.
+If 'the crate reproduced exit' is not 53 then, Print "ASSERT PRC-60: expected 53 got {'the crate reproduced exit'}", Exit 95. Print 'the crate reproduced exit'.
+a text called 'the reaped' is "the milestone".
+If 'the reaped' is not "the milestone" then, Print "ASSERT PRC-60: expected the milestone got {'the reaped'}", Exit 95. Print 'the reaped'.
+a number called waiting is 4039994.
+If waiting is not 4039994 then, Print "ASSERT PRC-55: expected 4039994 got {waiting}", Exit 95. Print waiting.
+open a file for reading called sin2 at 0.
+a buffer called sb2 is 34 bytes.
+Read from sin2 into sb2.
+Print sb2's size.
+If sb2 is empty then, Print "sb2 empty". Otherwise, Print "sb2 filled".
+a buffer called sc2 is 8 bytes.
+Read from sin2 into sc2.
+Print sc2's size.
+Close sin2.
+a number called 'storeroom binary value' is 0b10000000000000000000000000000000.
+If 'storeroom binary value' is not 2147483648 then, Print "ASSERT EXP-06: expected 2147483648 got {'storeroom binary value'}", Exit 95. Print 'storeroom binary value'.
+a number called 'the message slip binary sum' is 'storeroom binary value' add 0b0.
+If 'the message slip binary sum' is not 2147483648 then, Print "ASSERT EXP-15: expected 2147483648 got {'the message slip binary sum'}", Exit 95. Print 'the message slip binary sum'.
+a number called 'scratch' is 16893.
+If 'scratch's hour is not 'scratch's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-57: expected {'scratch's unix modulo 86400 divide 3600} got {'scratch's hour}", Exit 95. Print "TIM-57 ok".
+If 'scratch's unix is not 16893 then, Print "ASSERT TIM-57: expected 16893 got {'scratch's unix}", Exit 95. Print "TIM-57 ok".
+If 'scratch's year is less than 1970 or 'scratch's year is greater than 1970 then, Print "ASSERT TIM-57: expected 1970..1970 got {'scratch's year}", Exit 95. Print "TIM-57 ok".
+a buffer called 'ledger' is "kcxx8z".
+Set byte 1 of 'ledger' to 0x01.
+a number called 'ledger byte written by a hex literal' is byte 1 of 'ledger'.
+If 'ledger byte written by a hex literal' is not 1 then, Print "ASSERT BUF-23: expected 1 got {'ledger byte written by a hex literal'}", Exit 95. Print 'ledger byte written by a hex literal'.
+Set byte 6 of 'ledger' to 'a'.
+a number called 'ledger byte written by a character literal' is byte 6 of 'ledger'.
+If 'ledger byte written by a character literal' is not 97 then, Print "ASSERT BUF-24: expected 97 got {'ledger byte written by a character literal'}", Exit 95. Print 'ledger byte written by a character literal'.
+Print 'ledger byte written by a character literal'.
+a number called 'the envelope' is 0.
+a number called 'the tally sheet' is 0.
+For each number from 1 to 3,
+  If number is equal to 1 then, Set 'the envelope' to 'the envelope' add 1.
+
+Set 'the tally sheet' to 'the tally sheet' add 1.
+If 'the envelope' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the envelope'}", Exit 95. Print 'the envelope'.
+If 'the tally sheet' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the tally sheet'}", Exit 95. Print 'the tally sheet'.
+Print v2 minus v2, but if v2 is not equal to v2 and v2 modulo 5 is equal to 0 print v2, but if v1 is not equal to v1 or v1 modulo 5 is equal to 0 print v1 multiply v2.
+a list called 'the greeting' is [{"the token": 9223372036854775807, "offering": 9223372036854775807}, 120078986200704439.3190833375892034, "the noted figure", true, 9223372036854775807].
+a boolean called 'the greeting synonym accepted' is false.
+If element 1 of 'the greeting' is a dictionary then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
+If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
+a boolean called 'the greeting synonym accepted' is false.
+If element 2 of 'the greeting' is a float then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
+If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
+a boolean called 'the greeting synonym accepted' is false.
+If element 3 of 'the greeting' is a string then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
+If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
+a boolean called 'the greeting synonym accepted' is false.
+If element 4 of 'the greeting' is a bool then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
+If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
+a boolean called 'the greeting synonym accepted' is false.
+If element 5 of 'the greeting' is an integer then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
+If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
+'the reckoning' of each q1s1 from 3 to 4 and each q1s2 from 3 to 4 and each q1s3 from 7 to 8 and each q1s4 from 4 to 4 and each q1s5 from 3 to 3 and each q1s6 from 5 to 5 and each q1s7 from 7 to 7 and each q1s8 from 2 to 2 and each q1s9 from 4 to 4.
 'the summed parts'.
-quit 34.
+Terminate.
 
 reproducible: 1

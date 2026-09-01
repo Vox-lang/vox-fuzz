@@ -72,3 +72,4 @@ banned needles in environment: 0
 banned needles in loop words: 0
 banned needles in spoken words: 0
 round-trip float: max-sig-digits=17 too-wide=0 (max<=17 and too-wide=0 means every drawn literal round-trips through both parse routes)
+thing-equality literal pairs: 5000 same-number-collisions=64 same-number-different-text=58 redraws-spent=68 max-redraws-one-trial=2 ended-equal=0 (ended-equal must be 0 - that is the redraw loop's whole job)

@@ -9,6 +9,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (The ledger's file leaves, batch B - docs/ledger/files.md rows FIL-01,
  FIL-02, FIL-03, FIL-04, FIL-05, FIL-06, FIL-07, FIL-40, FIL-46.

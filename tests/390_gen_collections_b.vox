@@ -1,0 +1,87 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(collections-b, batch A (evening) - docs/ledger/collections-b.md rows
+ LST2-15, LST2-16, LST2-17, LST2-18, LST2-19, LST2-20, LST2-21, LST2-22,
+ LST2-23, LST2-24.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself - the
+ same convention tests/300_gen_buffers_a.vox uses. Each leaf is also
+ emitted nested at least once, since 'gen join lines' renders a nested
+ body (comma-joined) differently from a top-level one (period-joined)
+ and that difference is exactly what a leaf's own gate has to prove
+ survives rendering, not just "the idea" of the leaf (PROCEDURE.md 6a).
+
+ The name allocator is 'gen buffer name'/'gen buffer reference'/'gen
+ buffer property'/'gen buffer companion' from gen_buffers.vox - reused
+ rather than re-spent, per tonight's brief.)
+
+Print "--- LST2-15/16/17/18/19/23: list properties, a three-element list ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list length and ends' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list length and ends' of "  " and true.
+Print 'gen text'.
+
+Print "--- the same leaf, a single-element list (first, last and element 1 all agree) ---".
+'rng seed' of 182.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list length and ends' of "" and false.
+Print 'gen text'.
+
+Print "--- LST2-20: an empty list - length/size/empty without a flag, first/last with one ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty properties' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty properties' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST2-21/22: element 1, plus a literal index at another position ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list element index' of "" and false.
+Print 'gen text'.
+
+Print "--- LST2-21/24: element 1, plus a variable-index read ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list element index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list element index' of "  " and true.
+Print 'gen text'.

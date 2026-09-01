@@ -9,6 +9,10 @@ see "../src/gen_text.vox".
 see "../src/gen_things.vox".
 see "../src/gen_flow.vox".
 see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
 
 (The ledger's buffer leaves, night of 2026-08-28 - docs/ledger/buffers.md
  rows BUF-06, BUF-11, BUF-15, BUF-16, BUF-17, BUF-29, BUF-30, BUF-33.

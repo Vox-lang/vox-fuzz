@@ -1055,3 +1055,633 @@ To 'gen leaf predicate probe' with a text called indent and a boolean called nes
     a text called 'zero probe' is "If pn{n} is zero then, Print \"pn{n} zero\". Otherwise, Print \"pn{n} nonzero\"".
     a list called 'the lines' is ['blank decl', 'blank probe', 'number decl', 'even probe', 'sign probe', 'zero probe'].
     'gen join lines' of indent and nested and 'the lines'.
+
+( ── time leaves, batch A, 2026-08-29 evening ──
+
+ docs/ledger/time.md, TIM-01 through TIM-38 and TIM-49 (below names which
+ assertion covers which row). Both leaves are depth-3/top-level only,
+ like every other surface's batch-A kinds this week (the reservation
+ comment above 'gen dispatch leaf' marks 220-239 as misc's T3 band) -
+ neither opens a loop or an If with more than its own self-closed
+ assertion line, so nothing here actually NEEDS that restriction, but
+ the kind numbers were reserved as top-level-only and this keeps every
+ worker's widening arithmetic simple.
+
+ Every assertion below is a SHAPE or ORDERING check, never equality on a
+ wall-clock value (the surface brief's own caution) - a program cannot
+ know what the clock will read, but it can know `hour` fits 0..23 and
+ that a later reading's `unix` is never less than an earlier one's, `>=`
+ not `>`, since two reads can land in the same second.
+
+ On the PASSING path every assert below prints a fixed `"<ID> ok"`
+ verdict, never the subject's own value - a first version printed the
+ subject the way 'gen assert number' does in gen_buffers.vox, and a
+ 200-program campaign caught it within minutes: `duration in
+ milliseconds` read as 0 on one run of a compiled binary and 1 on
+ another, identical argv, same seed - real scheduler jitter around a
+ sub-millisecond `Sleep for 0 milliseconds.`, not a compiler bug, but a
+ raw clock-derived value in the corpus is a `nondeterministic` finding
+ either way. `docs/ledger/time.md`'s own probes learned this first
+ ("Nothing prints a clock value... each one checks the clock-dependent
+ value and prints a fixed verdict") and this batch re-learned it the
+ same way.)
+
+(A runtime format-slot rendering of a generated-program EXPRESSION - `x`
+ becomes the text `{x}`, which the assert lines below splice into a
+ message string so the finding shows the value the generated program
+ actually read, not the source text of the expression. `'gen buffer slot
+ of'` (gen_buffers.vox) already does exactly this via doubled-brace
+ escaping (Vox has no other literal-brace escape) - reused here rather
+ than re-declared, per PROCEDURE.md 6a. Its own bare-witness gotcha
+ (a quoted one-word NAME with no property does not resolve in a
+ generated-program slot) never applies below: every subject here is a
+ possessive off a name, never a bare witness. A LITERAL bound (already
+ known at generation time, like the hour ceiling 23) is spliced in
+ directly instead and never passed through it - `Print "{23}"` does not
+ parse, a bare literal is not a runtime name (hand-verified).)
+
+(Range checks. `'the low'`/`'the high'` are always generation-time-known
+ literals here (0..23, 1..31, ...), so they are spliced straight into
+ both the comparison and the message with no runtime slot needed - the
+ generator already knows them.)
+
+To 'gen assert time bounded' with a text called 'the row' and a text called 'the subject' and a text called 'the low' and a text called 'the high'.
+    a text called 'the shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is less than {'the low'} or {'the subject'} is greater than {'the high'} then, Print \"ASSERT {'the row'}: expected {'the low'}..{'the high'} got {'the shown'}\", Exit 95. Print \"{'the row'} ok\"".
+    Return a text, 'the line'.
+
+(A floor/ceiling that may be a literal (pass it twice, plain) or a
+ generated-program expression the message must show at runtime (pass the
+ shown form built by 'gen buffer slot of') - the same split
+ 'gen assert number'/'gen assert number matches' already draw in
+ gen_buffers.vox, generalised to an inequality instead of `is not`.)
+
+To 'gen assert time at least' with a text called 'the row' and a text called 'the subject' and a text called 'the floor' and a text called 'the floor shown'.
+    a text called 'the shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is less than {'the floor'} then, Print \"ASSERT {'the row'}: expected at least {'the floor shown'} got {'the shown'}\", Exit 95. Print \"{'the row'} ok\"".
+    Return a text, 'the line'.
+
+To 'gen assert time at most' with a text called 'the row' and a text called 'the subject' and a text called 'the ceiling' and a text called 'the ceiling shown'.
+    a text called 'the shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is greater than {'the ceiling'} then, Print \"ASSERT {'the row'}: expected at most {'the ceiling shown'} got {'the shown'}\", Exit 95. Print \"{'the row'} ok\"".
+    Return a text, 'the line'.
+
+To 'gen assert time text is' with a text called 'the row' and a text called 'the subject' and a text called 'the expected'.
+    a text called 'the shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the line' is "If {'the subject'} is not \"{'the expected'}\" then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the shown'}\", Exit 95. Print \"{'the row'} ok\"".
+    Return a text, 'the line'.
+
+(TIM-01, TIM-02, TIM-03, TIM-04, TIM-05, TIM-06, TIM-07, TIM-08, TIM-09,
+ TIM-10, TIM-11, TIM-13: `current time`'s shape - LANGUAGE.md:4545-4564.
+ `Get current time into <name>.` and `a time called <name> is current
+ time.` (TIM-02, LANGUAGE.md:4548-4549) are drawn evenly; every property
+ read uses the `'s` possessive either way (TIM-04). `type` reads
+ `"Time (static)"` (TIM-03) - bare `{name}'s type` only, `the {name}'s
+ type` does not parse (hand-verified, see PROCEDURE.md 6a's own note on
+ this exact trap). `year`, `month`, `day`, `hour`, `minute`, `second` are
+ bounded (TIM-05...TIM-10, `year`'s floor is the manual's own example
+ year, 2026) - these are shape checks, not exact values, because nothing
+ in the generator knows the wall clock. A second `Get current time`
+ reading proves `unix` never runs backward (TIM-11's other half, `>=`
+ never `>` per the surface brief); `current time's hour` read inline
+ with no name stored is bounded the same way (TIM-13,
+ LANGUAGE.md:4589-4591).
+
+ Hand-verified against both compilers (vox 0.4.14 and the 0.4.15 stack):
+ `moment's type` reads `Time (static)`, `moment's year/month/day` read
+ today's date, `the moment's hour` (article form) parses though `the
+ moment's type` does not, and two consecutive `Get current time` reads
+ in one program gave the same unix second both times - `>=` is the only
+ safe comparison.)
+
+To 'gen leaf current time shape' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the form draw' is 'rng below' of 2.
+    a text called 'the first line' is "Get current time into {handle}".
+    If 'the form draw' is 0 then,
+        Set 'the first line' to "a time called {handle} is current time".
+    a text called 'the type check' is 'gen assert time text is' of "TIM-03" and "{stem}'s type" and "Time (static)".
+    a text called 'the year check' is 'gen assert time at least' of "TIM-10" and "{stem}'s year" and "2026" and "2026".
+    a text called 'the month check' is 'gen assert time bounded' of "TIM-09" and "{stem}'s month" and "1" and "12".
+    a text called 'the day check' is 'gen assert time bounded' of "TIM-08" and "{stem}'s day" and "1" and "31".
+    a text called 'the hour check' is 'gen assert time bounded' of "TIM-05" and "{stem}'s hour" and "0" and "23".
+    a text called 'the minute check' is 'gen assert time bounded' of "TIM-06" and "{stem}'s minute" and "0" and "59".
+    a text called 'the second check' is 'gen assert time bounded' of "TIM-07" and "{stem}'s second" and "0" and "59".
+    a text called 'the unix check' is 'gen assert time at least' of "TIM-11" and "{stem}'s unix" and "1" and "1".
+    a list called 'the lines' is ['the first line', 'the type check', 'the year check', 'the month check', 'the day check', 'the hour check', 'the minute check', 'the second check', 'the unix check'].
+    'gen join lines' of indent and nested and 'the lines'.
+    a text called 'later stem' is 'gen buffer name'.
+    a text called 'later handle' is 'gen buffer reference' of 'later stem'.
+    a text called 'the second line' is "Get current time into {'later handle'}".
+    a text called 'the earlier unix shown' is 'gen buffer slot of' of "{stem}'s unix".
+    a text called 'the monotonic check' is 'gen assert time at least' of "TIM-11" and "{'later stem'}'s unix" and "{stem}'s unix" and 'the earlier unix shown'.
+    a text called 'the inline hour check' is 'gen assert time bounded' of "TIM-13" and "current time's hour" and "0" and "23".
+    a list called 'the tail lines' is ['the second line', 'the monotonic check', 'the inline hour check'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(One phrasing of `Start`/`Stop`, drawn from all four contextual forms the
+ manual documents as equal (TIM-24, TIM-25, TIM-26, TIM-27,
+ LANGUAGE.md:4625, 4631-4636): canonical or alternate spelling, with or
+ without the article, in any capitalisation the two spellings actually
+ use. All eight combinations hand-verified to parse and behave the same
+ (`Start the crank.`, `stop crank.`, `Begin the 'job clock'.`, `finish
+ 'job clock'.` among them) - the manual's own claim is that these are
+ ordinary contextual words, not that any one spelling is special, and
+ today's corpus emits exactly one shape of each, which is the "always
+ capitalised, always article-less" invariant the ledger already flags as
+ unjustified.)
+
+To 'gen timer statement' with a text called handle and a list called verbs.
+    a number called 'how many verbs' is verbs's length.
+    a number called 'the pick' is 'rng below' of 'how many verbs'.
+    a number called 'the index' is 'the pick' add 1.
+    a text called verb is element 'the index' of verbs.
+    a number called 'the article draw' is 'rng below' of 2.
+    a text called 'the line' is "{verb} {handle}".
+    If 'the article draw' is 0 then,
+        Set 'the line' to "{verb} the {handle}".
+    Return a text, 'the line'.
+
+(TIM-15, TIM-16, TIM-17, TIM-18, TIM-19, TIM-49: every accepted
+ Wait/Sleep spelling, `for` included or not (LANGUAGE.md:4599-4609). The
+ "seconds" flavour always waits 0 (hand-verified: `Wait 5 second.` really
+ does wait five real seconds - singular/plural is cosmetic, the compiler
+ does not check agreement - so a non-zero seconds draw is not an option
+ in a campaign that runs thousands of these and the surface brief caps
+ any wait at 200ms); the "milliseconds" flavour carries the real
+ magnitude the leaf measures against. Returns the requested duration
+ in milliseconds alongside the line so the caller can build the bound
+ without re-deriving it.)
+
+(`'seconds flavour'` is the CALLER's decision, not redrawn here - it also
+ decided whether `'the requested milliseconds'` is 0 or a real magnitude, and the
+ assertion built from that same value has to match what this function
+ actually renders. A second, independent coin flip in here for the same
+ choice was the bug that shipped first: it could pick "seconds" (amount
+ forced to 0) while the caller's own draw had already set `'the
+ requested milliseconds'` to a real magnitude, rendering `Wait 0
+ seconds.` next to an assertion that expected the magnitude the
+ STATEMENT never used - a
+ campaign of 200 caught it inside twenty minutes (TIM-15, seed 20260833:
+ "expected at least 21 got 0"). One flag, drawn once, is the fix.)
+
+To 'gen timer wait line' with a number called 'the requested milliseconds' and a boolean called 'seconds flavour'.
+    a number called 'the verb draw' is 'rng below' of 2.
+    a number called 'the for draw' is 'rng below' of 2.
+    a number called 'the plural draw' is 'rng below' of 2.
+    a text called verb is "Wait".
+    If 'the verb draw' is 1 then,
+        Set verb to "Sleep".
+    a text called 'the for word' is "".
+    If 'the for draw' is 1 then,
+        Set 'the for word' to "for ".
+    a text called unit is "millisecond".
+    If 'the plural draw' is 1 then,
+        Set unit to "milliseconds".
+    a number called amount is 'the requested milliseconds'.
+    If 'seconds flavour' then,
+        Set amount to 0.
+    If 'seconds flavour' and 'the plural draw' is 0 then,
+        Set unit to "second".
+    If 'seconds flavour' and 'the plural draw' is 1 then,
+        Set unit to "seconds".
+    a text called 'the line' is "{verb} {'the for word'}{amount} {unit}".
+    Return a text, 'the line'.
+
+(TIM-22, TIM-23, TIM-31, TIM-33, TIM-34, TIM-35, TIM-36, TIM-37, TIM-38:
+ a timer's whole lifecycle. Creation is `a timer called <name>.` or
+ `Create a timer called <name>.` (TIM-22, TIM-23, LANGUAGE.md:4618-4619),
+ name quoting decided by the shared word pool rather than this leaf.
+ `running` reads false before Start and after Stop and (checked, not
+ asserted here to avoid a third read racing the wait) true between
+ (TIM-35, reusing 'gen assert true'/'gen assert false' from
+ gen_buffers.vox per PROCEDURE.md 6a - generic despite the name).
+ `duration in milliseconds` after the wait is bounded below by what was
+ requested and above by a generous cap (5000 ms - a starved box, not a
+ hang, is what this leaf tolerates; TIM-15's own bound, and TIM-31's
+ "assert the total") - `duration in seconds` is cross-checked against it
+ within 1000, which is `floor(ms/1000)`, hand-verified (a 150ms timer
+ read `duration in seconds` as 0) (TIM-36, TIM-37, TIM-38). `start time`
+ is bracketed below by a `unix` reading taken before Start and `end
+ time` above by one taken after Stop, with `end time >= start time`
+ between them (TIM-33, TIM-34) - hand-verified exactly this bracket on
+ vox 0.4.14 and the 0.4.15 stack.)
+
+To 'gen leaf timer duration and running' with a text called indent and a boolean called nested.
+    a text called 'before stem' is 'gen buffer name'.
+    a text called 'before handle' is 'gen buffer reference' of 'before stem'.
+    a text called 'before line' is "Get current time into {'before handle'}".
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a text called 'the running before check' is 'gen assert false' of "TIM-35" and "{stem}'s running".
+    a list called 'the start verbs' is ["Start", "start", "Begin", "begin"].
+    a text called 'the start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a text called 'the running during check' is 'gen assert true' of "TIM-35" and "{stem}'s running".
+    a number called 'the flavour draw' is 'rng below' of 2.
+    a boolean called 'seconds flavour' is false.
+    If 'the flavour draw' is 0 then,
+        Set 'seconds flavour' to true.
+    a number called 'the requested milliseconds' is 0.
+    If 'seconds flavour' is false then,
+        Set 'the requested milliseconds' to 'rng below' of 200 add 1.
+    a text called 'the wait line' is 'gen timer wait line' of 'the requested milliseconds' and 'seconds flavour'.
+    a list called 'the head lines' is ['before line', 'the creation line', 'the running before check', 'the start line', 'the running during check', 'the wait line'].
+    'gen join lines' of indent and nested and 'the head lines'.
+    a list called 'the stop verbs' is ["Stop", "stop", "Finish", "finish"].
+    a text called 'the stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'the running after check' is 'gen assert false' of "TIM-35" and "{stem}'s running".
+    a text called 'after stem' is 'gen buffer name'.
+    a text called 'after handle' is 'gen buffer reference' of 'after stem'.
+    a text called 'after line' is "Get current time into {'after handle'}".
+    a text called 'the requested milliseconds shown' is "{'the requested milliseconds'}".
+    a text called 'the milliseconds floor check' is 'gen assert time at least' of "TIM-15" and "{stem}'s duration in milliseconds" and 'the requested milliseconds shown' and 'the requested milliseconds shown'.
+    a number called 'the milliseconds ceiling' is 'the requested milliseconds' add 5000.
+    a text called 'the milliseconds ceiling shown' is "{'the milliseconds ceiling'}".
+    a text called 'the milliseconds ceiling check' is 'gen assert time at most' of "TIM-15" and "{stem}'s duration in milliseconds" and 'the milliseconds ceiling shown' and 'the milliseconds ceiling shown'.
+    a text called 'the seconds floor' is "{stem}'s duration in seconds multiply 1000".
+    a text called 'the seconds floor shown' is 'gen buffer slot of' of 'the seconds floor'.
+    a text called 'the cast floor check' is 'gen assert time at least' of "TIM-36" and "{stem}'s duration in milliseconds" and 'the seconds floor' and 'the seconds floor shown'.
+    a text called 'the seconds ceiling' is "{stem}'s duration in seconds multiply 1000 add 1000".
+    a text called 'the seconds ceiling shown' is 'gen buffer slot of' of 'the seconds ceiling'.
+    a text called 'the cast ceiling check' is 'gen assert time at most' of "TIM-37" and "{stem}'s duration in milliseconds" and 'the seconds ceiling' and 'the seconds ceiling shown'.
+    a text called 'the before unix shown' is 'gen buffer slot of' of "{'before stem'}'s unix".
+    a text called 'the start time check' is 'gen assert time at least' of "TIM-33" and "{stem}'s start time" and "{'before stem'}'s unix" and 'the before unix shown'.
+    a text called 'the start time shown' is 'gen buffer slot of' of "{stem}'s start time".
+    a text called 'the end time low check' is 'gen assert time at least' of "TIM-34" and "{stem}'s end time" and "{stem}'s start time" and 'the start time shown'.
+    a list called 'the tail lines' is ['the stop line', 'the running after check', 'after line', 'the milliseconds floor check', 'the milliseconds ceiling check', 'the cast floor check', 'the cast ceiling check', 'the start time check', 'the end time low check'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+    a text called 'the after unix shown' is 'gen buffer slot of' of "{'after stem'}'s unix".
+    a text called 'the end time high check' is 'gen assert time at most' of "TIM-38" and "{stem}'s end time" and "{'after stem'}'s unix" and 'the after unix shown'.
+    a list called 'the last lines' is ['the end time high check'].
+    'gen join lines' of indent and nested and 'the last lines'.
+
+( ── time leaves, batch B, 2026-08-30 night ──
+
+ docs/ledger/time.md, TIM-32, TIM-42, TIM-43, TIM-44, TIM-45, TIM-46,
+ TIM-47, TIM-51, TIM-54, TIM-57 - ten of the 21 rows batch A left `todo`,
+ picked for being assertable on both vox 0.4.14 (installed) and the
+ 0.4.15 stack with no reference clock. Kinds 222-231, misc's own
+ 220-239 band; RAW span 128-137 remaps `kind add 94` (the widening hunk
+ that does this lives apart from the registration block below, per the
+ common brief, and is discarded at merge).
+
+ Skipped, and why: TIM-12/TIM-14/TIM-20/TIM-40 are composites that sum
+ rows already verified above and add little of their own; TIM-28/TIM-29
+ need the shared name pool itself to emit a reserved-context word
+ (`stop`, `start`, `begin`, `finish`, `end`) as a variable/function name,
+ which is a pool change, not one leaf; TIM-31 duplicates TIM-37/TIM-38's
+ already-verified cast reads; TIM-39 (`elapsed in seconds`) is the
+ cheapest row left over and was cut only to hold this batch at exactly
+ ten; TIM-52 (undocumented aliases: `retrieve`/`fetch`, `stopwatch`,
+ `pause`, `delay`, `timestamp`/`unixtime`, the plural property spellings)
+ needs a spelling pool of its own to vary properly, too big for one
+ row's slot here. TIM-44 and TIM-45 below assert exactly the
+ relationship Discrepancies 5 and 2 already recorded - the discrepancy
+ record says what the compiler DOES, the leaf checks it keeps doing it,
+ which is not the same thing as depending on an open discrepancy the way
+ TIM-30 (still skipped, still blocked on D1) does.
+
+ Every assertion below prints a fixed verdict on the passing path
+ (`"<ID> ok"`) and never a clock-derived value - batch A's own rule
+ above, and PROCEDURE.md 6a's lesson about a first version of this
+ surface that printed the raw subject and let real scheduler jitter
+ through as a `nondeterministic` finding. Every wait below is drawn far
+ enough from its neighbour that ordinary jitter cannot flip an
+ inequality (each leaf that needs this says so); nothing here waits
+ longer than 700 ms.
+
+ New trap this batch found: a plain NUMBER/TEXT compared or printed
+ BARE, with no property attached, must be named through 'gen flow
+ witness name' (src/gen_flow.vox), not 'gen buffer reference'. Hand-
+ verified both ways (this batch's SYN-3 scratch probe): `Print
+ "{'pantry'}"` - a bare, single-quoted, single-word name with nothing
+ after it - fails to compile on vox 0.4.14 ("Unknown variable:
+ 'pantry'") and succeeds on the 0.4.15 stack; the shared word pool
+ quotes a one-word draw on roughly half its calls (LANGUAGE.md:760 makes
+ the quoting optional, not required), and 'gen assert time at
+ least'/'at most'/'matches' all wrap their subject in exactly this bare
+ slot for the failure message. 'gen flow witness name' writes a
+ one-word draw bare instead of quoting it, which is safe on both
+ compilers; a name used only WITH a property attached (`{stem}'s hour`,
+ `byte 3 of {handle}`) never hits this trap and keeps using 'gen buffer
+ name'/'gen buffer reference' exactly as every existing leaf on this
+ surface already does.)
+
+(The fourth member of the `gen assert time ...` family: `bounded`/`at
+ least`/`at most` compare against a LITERAL or a floor/ceiling shown
+ separately; this one compares two RUNTIME expressions for exact
+ equality, the shape 'gen assert number matches' and 'gen assert things
+ equal' already give the buffer and things surfaces, generalised to this
+ surface's own printed-verdict convention instead of printing the raw
+ value on the passing path.)
+
+To 'gen assert time matches' with a text called 'the row' and a text called 'the left' and a text called 'the right' and a text called 'the right shown'.
+    a text called 'the left shown' is 'gen buffer slot of' of 'the left'.
+    a text called 'the line' is "If {'the left'} is not {'the right'} then, Print \"ASSERT {'the row'}: expected {'the right shown'} got {'the left shown'}\", Exit 95. Print \"{'the row'} ok\"".
+    Return a text, 'the line'.
+
+(TIM-32 (LANGUAGE.md:4646): `elapsed` reads WHILE the timer is still
+ running, not only after `Stop`. Every existing timer leaf (`gen leaf
+ timer duration and running`, kind 221) reads `elapsed`/`duration` only
+ after `Stop` - that shape is TIM-48's claim, not this one - so this is
+ a genuinely new read: twice, with a wait between, timer never stopped.
+ Hand-verified on both vox 0.4.14 and the 0.4.15 stack: `elapsed in
+ milliseconds` read mid-run cleared its own wait's floor, `running`
+ stayed true throughout, and a second read after a further wait was
+ always strictly greater than the first. The two stored readings are
+ named through 'gen flow witness name' - both are asserted bare, with no
+ property attached, the trap documented above.)
+
+To 'gen leaf timer elapsed while running' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a list called 'the start verbs' is ["Start", "start", "Begin", "begin"].
+    a text called 'the start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a number called 'the early wait' is 'rng below' of 150 add 50.
+    a text called 'the early wait line' is "Wait {'the early wait'} milliseconds".
+    a text called 'early reading' is 'gen flow witness name'.
+    a text called 'the early read line' is "a number called {'early reading'} is {stem}'s elapsed in milliseconds".
+    a text called 'the running check' is 'gen assert true' of "TIM-32" and "{stem}'s running".
+    a text called 'the early wait shown' is "{'the early wait'}".
+    a text called 'the early floor check' is 'gen assert time at least' of "TIM-32" and 'early reading' and 'the early wait shown' and 'the early wait shown'.
+    a list called 'the head lines' is ['the creation line', 'the start line', 'the early wait line', 'the early read line', 'the running check', 'the early floor check'].
+    'gen join lines' of indent and nested and 'the head lines'.
+    a number called 'the later wait' is 'rng below' of 150 add 50.
+    a text called 'the later wait line' is "Wait {'the later wait'} milliseconds".
+    a text called 'later reading' is 'gen flow witness name'.
+    a text called 'the later read line' is "a number called {'later reading'} is {stem}'s elapsed in milliseconds".
+    a text called 'the growth floor shown' is 'gen buffer slot of' of "{'early reading'} add 1".
+    a text called 'the growth check' is 'gen assert time at least' of "TIM-32" and 'later reading' and "{'early reading'} add 1" and 'the growth floor shown'.
+    a list called 'the tail lines' is ['the later wait line', 'the later read line', 'the growth check'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(TIM-42 (LANGUAGE.md:4695-4697): the Formatted Time Output example -
+ three time properties read straight out of format slots with the `:02`
+ zero-pad specifier, combined `hh:mm:ss`. Clock-dependent, so this leaf
+ checks the SHAPE the zero-pad guarantees rather than any value: a
+ `{X:02}:{Y:02}:{Z:02}` string is always exactly 8 bytes with a colon at
+ byte 3 and byte 6, whatever the clock reads (hand-verified on both vox
+ 0.4.14 and the 0.4.15 stack). TIM-41 (`gen leaf format types`,
+ gen_text.vox) already checks one slot this way; this is the first leaf
+ to combine all three the way the worked example does. A `text` has no
+ `size` (PROCEDURE.md 6a), so the rendered clock string is copied into a
+ buffer before its length and bytes are read, the same move `gen leaf
+ format types` makes.)
+
+To 'gen leaf formatted clock direct' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a text called 'the get line' is "Get current time into {handle}".
+    a text called 'clock stem' is 'gen buffer name'.
+    a text called 'clock handle' is 'gen buffer reference' of 'clock stem'.
+    a text called 'the clock line' is "a text called {'clock handle'} is \"{{{stem}'s hour:02}}:{{{stem}'s minute:02}}:{{{stem}'s second:02}}\"".
+    a text called 'bytes stem' is 'gen buffer name'.
+    a text called 'bytes handle' is 'gen buffer reference' of 'bytes stem'.
+    a text called 'the bytes line' is "a buffer called {'bytes handle'} is {'clock handle'}".
+    a text called 'the size check' is 'gen assert time bounded' of "TIM-42" and "{'bytes stem'}'s size" and "8" and "8".
+    a text called 'the first colon check' is 'gen assert time bounded' of "TIM-42" and "byte 3 of {'bytes handle'}" and "58" and "58".
+    a text called 'the second colon check' is 'gen assert time bounded' of "TIM-42" and "byte 6 of {'bytes handle'}" and "58" and "58".
+    a list called 'the lines' is ['the get line', 'the clock line', 'the bytes line', 'the size check', 'the first colon check', 'the second colon check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-43 (LANGUAGE.md:4703-4709): the named-parts variant of the same
+ example - each zero-padded property stored in its own `text` first,
+ then the three combined in one more format string. Same 8-byte,
+ colon-at-3-and-6 shape as TIM-42, reached through three intermediate
+ declarations instead of one. The three holder names are drawn through
+ 'gen flow witness name': each is interpolated bare, with no property,
+ into the combining format string, exactly the trap documented at the
+ top of this batch.)
+
+To 'gen leaf formatted clock staged' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a text called 'the get line' is "Get current time into {handle}".
+    a text called 'hour name' is 'gen flow witness name'.
+    a text called 'the hour line' is "a text called {'hour name'} is \"{{{stem}'s hour:02}}\"".
+    a text called 'minute name' is 'gen flow witness name'.
+    a text called 'the minute line' is "a text called {'minute name'} is \"{{{stem}'s minute:02}}\"".
+    a text called 'second name' is 'gen flow witness name'.
+    a text called 'the second line' is "a text called {'second name'} is \"{{{stem}'s second:02}}\"".
+    a text called 'clock stem' is 'gen buffer name'.
+    a text called 'clock handle' is 'gen buffer reference' of 'clock stem'.
+    a text called 'the clock line' is "a text called {'clock handle'} is \"{{{'hour name'}}}:{{{'minute name'}}}:{{{'second name'}}}\"".
+    a text called 'bytes stem' is 'gen buffer name'.
+    a text called 'bytes handle' is 'gen buffer reference' of 'bytes stem'.
+    a text called 'the bytes line' is "a buffer called {'bytes handle'} is {'clock handle'}".
+    a text called 'the size check' is 'gen assert time bounded' of "TIM-43" and "{'bytes stem'}'s size" and "8" and "8".
+    a text called 'the first colon check' is 'gen assert time bounded' of "TIM-43" and "byte 3 of {'bytes handle'}" and "58" and "58".
+    a text called 'the second colon check' is 'gen assert time bounded' of "TIM-43" and "byte 6 of {'bytes handle'}" and "58" and "58".
+    a list called 'the lines' is ['the get line', 'the hour line', 'the minute line', 'the second line', 'the clock line', 'the bytes line', 'the size check', 'the first colon check', 'the second colon check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-44 (LANGUAGE.md:4556-4564, undocumented - Discrepancy 5): the time
+ components are UTC. `hour`, `minute` and `second` agree exactly with
+ the UTC decomposition of `unix` - the strongest oracle in this section,
+ needing no reference clock at all. D5.vox (mapping worker) checked only
+ `hour`; this leaf checks all three in one reading.)
+
+To 'gen leaf current time utc agreement' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a text called 'the get line' is "Get current time into {handle}".
+    a text called 'the hour expr' is "{stem}'s unix modulo 86400 divide 3600".
+    a text called 'the hour shown' is 'gen buffer slot of' of 'the hour expr'.
+    a text called 'the hour check' is 'gen assert time matches' of "TIM-44" and "{stem}'s hour" and 'the hour expr' and 'the hour shown'.
+    a text called 'the minute expr' is "{stem}'s unix modulo 3600 divide 60".
+    a text called 'the minute shown' is 'gen buffer slot of' of 'the minute expr'.
+    a text called 'the minute check' is 'gen assert time matches' of "TIM-44" and "{stem}'s minute" and 'the minute expr' and 'the minute shown'.
+    a text called 'the second expr' is "{stem}'s unix modulo 60".
+    a text called 'the second shown' is 'gen buffer slot of' of 'the second expr'.
+    a text called 'the second check' is 'gen assert time matches' of "TIM-44" and "{stem}'s second" and 'the second expr' and 'the second shown'.
+    a list called 'the lines' is ['the get line', 'the hour check', 'the minute check', 'the second check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-45 (LANGUAGE.md:4645-4646, undocumented - Discrepancy 2): `duration`
+ and `elapsed` are marked "requires cast" but neither does; the uncast
+ reading is exactly the `in seconds` one. D2.vox showed this on a
+ stopped timer reading 0/0; this leaf uses a real, non-zero interval so
+ the equality is checked on a value that could plausibly disagree.)
+
+To 'gen leaf timer uncast agreement' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a list called 'the start verbs' is ["Start", "start", "Begin", "begin"].
+    a text called 'the start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a number called 'the wait' is 'rng below' of 300 add 1.
+    a text called 'the wait line' is "Wait {'the wait'} milliseconds".
+    a list called 'the stop verbs' is ["Stop", "stop", "Finish", "finish"].
+    a text called 'the stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'the cast expr' is "{stem}'s duration in seconds".
+    a text called 'the cast shown' is 'gen buffer slot of' of 'the cast expr'.
+    a text called 'the duration check' is 'gen assert time matches' of "TIM-45" and "{stem}'s duration" and 'the cast expr' and 'the cast shown'.
+    a text called 'the elapsed check' is 'gen assert time matches' of "TIM-45" and "{stem}'s elapsed" and 'the cast expr' and 'the cast shown'.
+    a list called 'the lines' is ['the creation line', 'the start line', 'the wait line', 'the stop line', 'the duration check', 'the elapsed check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-46 (LANGUAGE.md:4645-4649, undocumented): a timer that was never
+ started reads 0 for every property and reports itself not running;
+ `Stop` before any `Start` is not an error, but leaves `duration` reading
+ the whole monotonic clock the timer measures with - the machine's
+ uptime, not any interval this program asked for. The uptime number is
+ machine- and boot-dependent, so only "absurdly larger than anything
+ this program could have waited" is assertable; the floor below (60000
+ ms, one minute) was comfortably clear of every uptime seen while
+ hand-verifying this batch.)
+
+To 'gen leaf timer never started' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a text called 'the start time check' is 'gen assert time bounded' of "TIM-46" and "{stem}'s start time" and "0" and "0".
+    a text called 'the end time check' is 'gen assert time bounded' of "TIM-46" and "{stem}'s end time" and "0" and "0".
+    a text called 'the duration check' is 'gen assert time bounded' of "TIM-46" and "{stem}'s duration in milliseconds" and "0" and "0".
+    a text called 'the running before check' is 'gen assert false' of "TIM-46" and "{stem}'s running".
+    a list called 'the head lines' is ['the creation line', 'the start time check', 'the end time check', 'the duration check', 'the running before check'].
+    'gen join lines' of indent and nested and 'the head lines'.
+    a list called 'the stop verbs' is ["Stop", "stop", "Finish", "finish"].
+    a text called 'the stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'the running after check' is 'gen assert false' of "TIM-46" and "{stem}'s running".
+    a text called 'the absurd floor check' is 'gen assert time at least' of "TIM-46" and "{stem}'s duration in milliseconds" and "60000" and "60000".
+    a list called 'the tail lines' is ['the stop line', 'the running after check', 'the absurd floor check'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(TIM-47 (LANGUAGE.md:4625, undocumented): starting a timer that has
+ already run RESTARTS it - the second `duration` measures only the
+ second job, never the sum. The manual says nothing about a second
+ Start; this is the shape that shows the reset rather than an
+ accumulation. Waits are drawn far enough apart (500-699 ms vs 50-149 ms)
+ that ordinary scheduler jitter cannot close the gap between them. The
+ two stored readings are named through 'gen flow witness name' - both
+ are asserted bare, with no property attached.)
+
+To 'gen leaf timer restart resets' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a list called 'the start verbs' is ["Start", "start", "Begin", "begin"].
+    a list called 'the stop verbs' is ["Stop", "stop", "Finish", "finish"].
+    a text called 'the first start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a number called 'the first wait' is 'rng below' of 200 add 500.
+    a text called 'the first wait line' is "Wait {'the first wait'} milliseconds".
+    a text called 'the first stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'first run' is 'gen flow witness name'.
+    a text called 'the first read line' is "a number called {'first run'} is {stem}'s duration in milliseconds".
+    a text called 'the first wait shown' is "{'the first wait'}".
+    a text called 'the first floor check' is 'gen assert time at least' of "TIM-47" and 'first run' and 'the first wait shown' and 'the first wait shown'.
+    a list called 'the head lines' is ['the creation line', 'the first start line', 'the first wait line', 'the first stop line', 'the first read line', 'the first floor check'].
+    'gen join lines' of indent and nested and 'the head lines'.
+    a text called 'the second start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a number called 'the second wait' is 'rng below' of 100 add 50.
+    a text called 'the second wait line' is "Wait {'the second wait'} milliseconds".
+    a text called 'the second stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'second run' is 'gen flow witness name'.
+    a text called 'the second read line' is "a number called {'second run'} is {stem}'s duration in milliseconds".
+    a text called 'the second wait shown' is "{'the second wait'}".
+    a text called 'the second floor check' is 'gen assert time at least' of "TIM-47" and 'second run' and 'the second wait shown' and 'the second wait shown'.
+    a text called 'the restart expr' is "{'first run'} minus 1".
+    a text called 'the restart shown' is 'gen buffer slot of' of 'the restart expr'.
+    a text called 'the restart check' is 'gen assert time at most' of "TIM-47" and 'second run' and 'the restart expr' and 'the restart shown'.
+    a list called 'the tail lines' is ['the second start line', 'the second wait line', 'the second stop line', 'the second read line', 'the second floor check', 'the restart check'].
+    'gen join lines' of indent and nested and 'the tail lines'.
+
+(TIM-51 (LANGUAGE.md:4606-4609, undocumented - the other half of
+ Discrepancy 3): a negative duration in SECONDS returns at once - the
+ kernel rejects a negative `tv_sec` outright. This is the safe half; the
+ milliseconds half never returns at all (an unsigned divide turns a
+ negative count into roughly 585 million years, D3.vox), which is why no
+ leaf on this surface emits a millisecond `Wait`/`Sleep` with a negative
+ operand and this one never will either - only the word
+ `second`/`seconds` appears below, hand-verified on both compilers to
+ return in well under the assertion's own 3-second ceiling.)
+
+To 'gen timer negative wait line' with a number called 'the magnitude'.
+    a number called 'the verb draw' is 'rng below' of 2.
+    a number called 'the for draw' is 'rng below' of 2.
+    a number called 'the plural draw' is 'rng below' of 2.
+    a text called verb is "Wait".
+    If 'the verb draw' is 1 then,
+        Set verb to "Sleep".
+    a text called 'the for word' is "".
+    If 'the for draw' is 1 then,
+        Set 'the for word' to "for ".
+    a text called unit is "second".
+    If 'the plural draw' is 1 then,
+        Set unit to "seconds".
+    a number called 'the negative magnitude' is 0 minus 'the magnitude'.
+    a text called 'the line' is "{verb} {'the for word'}{'the negative magnitude'} {unit}".
+    Return a text, 'the line'.
+
+To 'gen leaf timer negative seconds wait' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the creation draw' is 'rng below' of 2.
+    a text called 'the creation line' is "a timer called {handle}".
+    If 'the creation draw' is 0 then,
+        Set 'the creation line' to "Create a timer called {handle}".
+    a list called 'the start verbs' is ["Start", "start", "Begin", "begin"].
+    a text called 'the start line' is 'gen timer statement' of handle and 'the start verbs'.
+    a number called 'the magnitude' is 'rng below' of 10 add 1.
+    a text called 'the wait line' is 'gen timer negative wait line' of 'the magnitude'.
+    a list called 'the stop verbs' is ["Stop", "stop", "Finish", "finish"].
+    a text called 'the stop line' is 'gen timer statement' of handle and 'the stop verbs'.
+    a text called 'the prompt check' is 'gen assert time at most' of "TIM-51" and "{stem}'s duration in milliseconds" and "3000" and "3000".
+    a list called 'the lines' is ['the creation line', 'the start line', 'the wait line', 'the stop line', 'the prompt check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-54 (LANGUAGE.md:4545, undocumented): a `time` value printed, or put
+ in a format slot, renders as its own unix second count - a `time` IS
+ that count. The variable holding the reading is named through 'gen flow
+ witness name': it is interpolated bare, with no property, on the left
+ side of the check.)
+
+To 'gen leaf current time renders as unix' with a text called indent and a boolean called nested.
+    a text called 'the reading' is 'gen flow witness name'.
+    a text called 'the get line' is "Get current time into {'the reading'}".
+    a text called 'the unix expr' is "{'the reading'}'s unix".
+    a text called 'the unix shown' is 'gen buffer slot of' of 'the unix expr'.
+    a text called 'the render check' is 'gen assert time matches' of "TIM-54" and 'the reading' and 'the unix expr' and 'the unix shown'.
+    a list called 'the lines' is ['the get line', 'the render check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(TIM-57 (LANGUAGE.md:4556-4564, undocumented): a time property read from
+ a plain NUMBER is accepted - a `time` IS a number, its own unix second
+ count - so the compiler needs only a numeric operand and decomposes it
+ as an epoch second count. Also a memory-safety row: nothing here may
+ crash. The literal stays inside 0..999999 (well under one calendar
+ year, 31536000) so `hour` doubles as the UTC oracle TIM-44 already
+ established and `year` stays the fixed, safely-assertable 1970 the
+ manual's own worked example uses.)
+
+To 'gen leaf time property from number' with a text called indent and a boolean called nested.
+    a text called stem is 'gen buffer name'.
+    a text called handle is 'gen buffer reference' of stem.
+    a number called 'the literal' is 'rng below' of 1000000.
+    a text called 'the decl line' is "a number called {handle} is {'the literal'}".
+    a text called 'the hour expr' is "{stem}'s unix modulo 86400 divide 3600".
+    a text called 'the hour shown' is 'gen buffer slot of' of 'the hour expr'.
+    a text called 'the hour check' is 'gen assert time matches' of "TIM-57" and "{stem}'s hour" and 'the hour expr' and 'the hour shown'.
+    a text called 'the literal shown' is "{'the literal'}".
+    a text called 'the unix check' is 'gen assert time matches' of "TIM-57" and "{stem}'s unix" and 'the literal shown' and 'the literal shown'.
+    a text called 'the year check' is 'gen assert time bounded' of "TIM-57" and "{stem}'s year" and "1970" and "1970".
+    a list called 'the lines' is ['the decl line', 'the hour check', 'the unix check', 'the year check'].
+    'gen join lines' of indent and nested and 'the lines'.

@@ -1,0 +1,115 @@
+--- EXP-18: the number, the documented for-each iterator spelling ---
+a number called 'the pigeonhole running total' is 0.
+For each number from 1 to 16, Set 'the pigeonhole running total' to 'the pigeonhole running total' add the number.
+If 'the pigeonhole running total' is not 136 then, Print "ASSERT EXP-18: expected 136 got {'the pigeonhole running total'}", Exit 95. Print 'the pigeonhole running total'.
+
+--- the same leaf, nested ---
+  a number called 'the pigeonhole running total' is 0,
+  For each number from 1 to 16, Set 'the pigeonhole running total' to 'the pigeonhole running total' add the number,
+  If 'the pigeonhole running total' is not 136 then, Print "ASSERT EXP-18: expected 136 got {'the pigeonhole running total'}", Exit 95. Print 'the pigeonhole running total'.
+
+--- EXP-29, EXP-30: tight-bound cast and braced-whole cast, no fraction carry ---
+a text called 'the postbag digit text' is "3591".
+a number called 'the dispatch note tight cast result' is 'the postbag digit text' as a number add 51032.
+If 'the dispatch note tight cast result' is not 54623 then, Print "ASSERT EXP-29: expected 54623 got {'the dispatch note tight cast result'}", Exit 95. Print 'the dispatch note tight cast result'.
+a float called 'notebook first braced reading' is 77816339.51.
+a float called 'the tray second braced reading' is 9886753328.41.
+a number called 'ledger braced cast result' is {'notebook first braced reading' add 'the tray second braced reading'} as a number.
+If 'ledger braced cast result' is not 9964569667 then, Print "ASSERT EXP-30: expected 9964569667 got {'ledger braced cast result'}", Exit 95. Print 'ledger braced cast result'.
+
+--- the same leaf, a seed whose fractions carry the braced sum's whole part ---
+a text called 'the tray digit text' is "9223372036854775807".
+a number called 'satchel tight cast result' is 'the tray digit text' as a number add 3506869.
+If 'satchel tight cast result' is not -9223372036851268940 then, Print "ASSERT EXP-29: expected -9223372036851268940 got {'satchel tight cast result'}", Exit 95. Print 'satchel tight cast result'.
+a float called 'the mailbag first braced reading' is 3.76.
+a float called 'the postbag second braced reading' is 629762164216.29.
+a number called 'the message slip braced cast result' is {'the mailbag first braced reading' add 'the postbag second braced reading'} as a number.
+If 'the message slip braced cast result' is not 629762164220 then, Print "ASSERT EXP-30: expected 629762164220 got {'the message slip braced cast result'}", Exit 95. Print 'the message slip braced cast result'.
+
+--- EXP-35: bare x is 0, a nonzero subject ---
+a number called 'workbench bare check value' is 9223372036854775807.
+a boolean called 'workbench bare zero flag' is false.
+If 'workbench bare check value' is 0 then, Set 'workbench bare zero flag' to true. Print 'workbench bare zero flag'.
+If 'workbench bare zero flag' then, Print "ASSERT EXP-35: expected 0 got {'workbench bare zero flag'}", Exit 95. Print 'workbench bare zero flag'.
+
+--- the same leaf, the zero subject ---
+a number called 'loading bay bare check value' is 0.
+a boolean called 'loading bay bare zero flag' is false.
+If 'loading bay bare check value' is 0 then, Set 'loading bay bare zero flag' to true. Print 'loading bay bare zero flag'.
+If 'loading bay bare zero flag' is false then, Print "ASSERT EXP-35: expected 1 got {'loading bay bare zero flag'}", Exit 95. Print 'loading bay bare zero flag'.
+
+--- EXP-39, EXP-41: odd, and negative (this seed: odd true, negative false) ---
+a number called 'loading bay oddness subject' is 9223372036854775807.
+a boolean called 'loading bay odd flag' is false.
+If 'loading bay oddness subject' is odd then, Set 'loading bay odd flag' to true. Print 'loading bay odd flag'.
+If 'loading bay odd flag' is false then, Print "ASSERT EXP-39: expected 1 got {'loading bay odd flag'}", Exit 95. Print 'loading bay odd flag'.
+a number called 'scratch sign subject' is 2147483648.
+a boolean called 'scratch negative flag' is false.
+If 'scratch sign subject' is negative then, Set 'scratch negative flag' to true. Print 'scratch negative flag'.
+If 'scratch negative flag' then, Print "ASSERT EXP-41: expected 0 got {'scratch negative flag'}", Exit 95. Print 'scratch negative flag'.
+
+--- the same leaf, a seed with odd false ---
+a number called 'workbench oddness subject' is 457369220.
+a boolean called 'workbench odd flag' is false.
+If 'workbench oddness subject' is odd then, Set 'workbench odd flag' to true. Print 'workbench odd flag'.
+If 'workbench odd flag' then, Print "ASSERT EXP-39: expected 0 got {'workbench odd flag'}", Exit 95. Print 'workbench odd flag'.
+a number called 'outgoing post sign subject' is 0 subtract 964.
+a boolean called 'outgoing post negative flag' is false.
+If 'outgoing post sign subject' is negative then, Set 'outgoing post negative flag' to true. Print 'outgoing post negative flag'.
+If 'outgoing post negative flag' is false then, Print "ASSERT EXP-41: expected 1 got {'outgoing post negative flag'}", Exit 95. Print 'outgoing post negative flag'.
+
+--- the same leaf, a seed with negative true ---
+a number called 'the message slip oddness subject' is 4137847.
+a boolean called 'the message slip odd flag' is false.
+If 'the message slip oddness subject' is odd then, Set 'the message slip odd flag' to true. Print 'the message slip odd flag'.
+If 'the message slip odd flag' is false then, Print "ASSERT EXP-39: expected 1 got {'the message slip odd flag'}", Exit 95. Print 'the message slip odd flag'.
+a number called 'the greeting sign subject' is 0 subtract 1.
+a boolean called 'the greeting negative flag' is false.
+If 'the greeting sign subject' is negative then, Set 'the greeting negative flag' to true. Print 'the greeting negative flag'.
+If 'the greeting negative flag' is false then, Print "ASSERT EXP-41: expected 1 got {'the greeting negative flag'}", Exit 95. Print 'the greeting negative flag'.
+
+--- EXP-43: list is empty, a nonempty list ---
+a list called 'the postbag roster' is [9223372036854775807, 91, 51032].
+a boolean called 'the postbag roster emptiness flag' is false.
+If 'the postbag roster' is empty then, Set 'the postbag roster emptiness flag' to true. Print 'the postbag roster emptiness flag'.
+If 'the postbag roster emptiness flag' then, Print "ASSERT EXP-43: expected 0 got {'the postbag roster emptiness flag'}", Exit 95. Print 'the postbag roster emptiness flag'.
+
+--- the same leaf, the empty list ---
+a list called 'loading bay roster' is [].
+a boolean called 'loading bay roster emptiness flag' is false.
+If 'loading bay roster' is empty then, Set 'loading bay roster emptiness flag' to true. Print 'loading bay roster emptiness flag'.
+If 'loading bay roster emptiness flag' is false then, Print "ASSERT EXP-43: expected 1 got {'loading bay roster emptiness flag'}", Exit 95. Print 'loading bay roster emptiness flag'.
+
+--- EXP-73: a text made from a buffer is an independent copy ---
+a buffer called 'the dispatch note' is "KTh6KrOeH".
+a text called 'the manifest kept snapshot' is 'the dispatch note' as text.
+clear 'the dispatch note'.
+append "YRW8" to 'the dispatch note'.
+If 'the manifest kept snapshot' is not "KTh6KrOeH" then, Print "ASSERT EXP-73: expected KTh6KrOeH got {'the manifest kept snapshot'}", Exit 95. Print 'the manifest kept snapshot'.
+a text called 'the waybill after snapshot' is 'the dispatch note' as text.
+If 'the waybill after snapshot' is not "YRW8" then, Print "ASSERT EXP-73: expected YRW8 got {'the waybill after snapshot'}", Exit 95. Print 'the waybill after snapshot'.
+
+--- EXP-83, EXP-84: base-conversion partial parse, and total failure from a non-empty invalid string ---
+a text called 'the tray partial numeral' is "213035ox".
+a number called 'the inbox partial value' is 'the tray partial numeral' as a base 6 number.
+If 'the inbox partial value' is not 17519 then, Print "ASSERT EXP-83: expected 17519 got {'the inbox partial value'}", Exit 95. Print 'the inbox partial value'.
+a text called 'pantry total failure numeral' is "gh".
+a number called 'the crate total failure value' is 'pantry total failure numeral' as a base 10 number.
+If 'the crate total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'the crate total failure value'}", Exit 95. Print 'the crate total failure value'.
+
+--- the same leaf, a seed whose total-failure numeral is the empty string ---
+a text called 'the drawer partial numeral' is "838wt".
+a number called 'the pigeonhole partial value' is 'the drawer partial numeral' as a base 24 number.
+If 'the pigeonhole partial value' is not 4688 then, Print "ASSERT EXP-83: expected 4688 got {'the pigeonhole partial value'}", Exit 95. Print 'the pigeonhole partial value'.
+a text called 'the tally sheet total failure numeral' is "".
+a number called 'ledger total failure value' is 'the tally sheet total failure numeral' as a base 12 number.
+If 'ledger total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'ledger total failure value'}", Exit 95. Print 'ledger total failure value'.
+
+--- registration reachable: kinds 360-366 all dispatch without error ---
+kind 360: 349 bytes emitted
+kind 361: 800 bytes emitted
+kind 362: 393 bytes emitted
+kind 363: 728 bytes emitted
+kind 364: 452 bytes emitted
+kind 365: 619 bytes emitted
+kind 366: 696 bytes emitted

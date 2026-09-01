@@ -1,0 +1,864 @@
+(Process-control leaves: directories, symbolic links, mount/unmount,
+ fork/reap, the reaped status, its decoders, `Execute` and `Send signal`.
+ docs/ledger/process-control.md, kinds 260-269, the first slots of the
+ new 260-279 "process" reserved block (see the reservation table above
+ 'gen dispatch leaf' in gen_core.vox, which the master extends at merge).
+
+ THE GENERATION POLICY THIS FILE ENCODES (surface brief
+ vf-leaves-proca, night 2026-08-29->30; cf. PROCEDURE.md sect.6's
+ pre-existing "Process-control and privileged syscalls" carve-out,
+ Josj 2026-08-20):
+
+ - `Mount`/`Unmount`, `Reboot` and `Shutdown` are SAFE TO EMIT AS-IS: the
+   campaign always runs unprivileged, so the kernel refuses every one of
+   them with EPERM before touching anything, and asserting the refusal
+   is itself a real memory-safety-relevant test of the syscall codegen
+   and the error-flag path. Hand-verified this session against both
+   pinned compilers: real reboot(2)/mount(2) calls, the machine still
+   here, execution continuing past all of them (see the report).
+   `Poweroff`/`Restart`/`Halt` and their aliases are NOT part of this
+   ruling - the brief names only `mount`, `reboot` and `shutdown` - and
+   stay out of scope, and out of tests/200_never_emitted.vox's guard,
+   pending a wider one.
+ - `Execute` draws its program from a FIXED two-element allowlist,
+   `/usr/bin/true` and `/usr/bin/false`, and nothing else, ever - never a
+   generated command line, never a path built from a variable.
+ - `Send signal` sends ONLY signal 0 (the existence check, which
+   delivers nothing), and ONLY to the pid a `fork` in the SAME leaf just
+   returned - never a drawn number, never a reserved-invalid constant,
+   never the program's own process group. The forked pid stays valid
+   (running, or a zombie awaiting reap) until the same leaf reaps it, so
+   the existence check always succeeds regardless of how fast the
+   exec'd program finished.
+ - Directory create/remove and symbolic links are Tier CONFINE
+   (plan 323): every path lives under the program's own per-run scratch
+   directory, `gen_scratch_flag` (gen_manifest.vox) - the same mechanism
+   `src/gen_files.vox`'s file-I/O leaves already use, guarded by the
+   same `gen_does_file_io`/`gen_scratch_flag` eligibility check, standing
+   aside for a plain print leaf when the program drew no file I/O at
+   all. Mount/Unmount are confined the same way even though an EPERM
+   refusal never actually reaches the path.
+
+ Two pieces of shared per-program state this file owns (reset once per
+ program by gen_core.vox's 'gen program', alongside gen_does_file_io and
+ friends - see the reset lines there):
+
+ - gen_process_decoders_declared: the manual's own `'exit code of'`/
+   `'signal of'` functions (LANGUAGE.md:4397-4401) can be declared only
+   ONCE per program - a second `To 'exit code of' ...` is a duplicate-
+   label NASM assembly error, hand-verified this session (see the
+   report) - and kind 266 can be drawn more than once in a program with
+   budget > 1, since every kind in this file is top-level-only and
+   therefore redrawable at every remaining top-level statement slot.
+ - gen_process_has_reaped: PRC-58's `-1` sentinel is only true BEFORE
+   the first successful reap anywhere in the whole program, and five
+   different kinds in this file (264-268) can each perform one. Kind 265
+   checks this flag before deciding whether it may still claim the
+   sentinel value; every reaping kind sets it afterwards.
+
+ Confinement and allowlisting are safety CONSTRUCTIONS, not language
+ rules - CLAUDE.md's "three deliberate, declared invariants" the ledger
+ already names for this section (docs/ledger/process-control.md,
+ "Invariants this section justifies"). Everything else - which
+ directory-remove spelling, which fork spelling, which of the two
+ allowed programs, the exit code a forked child reports, the pid holder
+ and companion names - is drawn, per PRC-07/08/43/72 and CLAUDE.md's
+ "make everything random unless there is a rule to say otherwise".)
+
+a boolean called gen_process_decoders_declared is false.
+a boolean called gen_process_has_reaped is false.
+
+(D21 (master chain, 2026-08-30): both flags above are per-PROGRAM state
+ and must be reset every time 'gen program' runs, or a second call in the
+ same process (exactly what tests/220_determinism.vox and
+ tests/270_layout.vox both do) inherits the first call's leftover values -
+ kind 266 silently stops declaring the decoder functions and kind 265
+ silently stops claiming the -1 sentinel on the SAME seed's second run,
+ which is a real behaviour difference, not layout noise. Neither flag is
+ draw-dependent (unlike the value-name cycle 'gen reset value names'
+ restarts, which has to sit AFTER the reseed for exactly the opposite
+ reason - see the comment above that call in gen_core.vox), so this reset
+ belongs before it, grouped with the other plain per-program counters
+ gen_core.vox resets at the top of 'gen program'.)
+To 'gen reset process state'.
+    Set gen_process_decoders_declared to false.
+    Set gen_process_has_reaped to false.
+
+(A generic per-program-unique identifier for a witness this file
+ introduces - delegates to 'gen flow witness name' (gen_flow.vox) rather
+ than calling 'gen buffer name'/'gen buffer reference' directly, per
+ PROCEDURE.md sect.6a ("name allocators are generic - reuse, do not
+ copy") and this surface brief's night-3 common brief. That indirection
+ matters here, not just style: night-3's common brief records that a
+ quoted ONE-WORD pool name (`'pantry'`) does not resolve inside a `{…}`
+ format slot on 0.4.14, and every witness this file allocates is
+ interpolated into one (an assertion message, an `On error Set {name}
+ to true`) - hand-verified this session, compile-fails with "Unknown
+ variable" exactly the way the brief predicts. 'gen flow witness name'
+ is the existing fix: a one-word stem is returned bare, never quoted,
+ since only the quoted spelling is broken; a multi-word stem still gets
+ its closing quote from 'gen buffer reference' as normal.)
+To 'gen process witness'.
+    a text called 'the reference' is 'gen flow witness name'.
+    Return a text, 'the reference'.
+
+(An Exit code a forked child may safely report: wide and varied, but
+ clear of 90-99, which PROCEDURE.md sect.6 reserves for the argv
+ assertions (91-94) and the ledger's own wrong-value exits (95) -
+ nothing generated may exit 90-99 for any other reason.)
+To 'gen process safe exit code'.
+    a number called 'the code' is 'rng below' of 90.
+    Return a number, 'the code'.
+
+(PRC-02, PRC-04: `Create a directory called '<path>'.` performs
+ mkdir(2), mode 0755 (LANGUAGE.md:4215-4216; PRC-03's mode claim is not
+ assertable - Vox has no stat/mode accessor). The leading article `a`
+ is optional - both spellings are drawn, varying which. Confined to the
+ per-run scratch directory; stands aside for a plain print leaf when
+ the program drew no file I/O, the same eligibility gate
+ 'gen leaf file round trip' (gen_files.vox) uses.)
+To 'gen leaf process directory create' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-02: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the path name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/procdir{'the path number'}\"".
+    a number called 'the article draw' is 'rng below' of 2.
+    a text called 'the create line' is "Create a directory called {'the path name'}".
+    If 'the article draw' is 1 then,
+        Set 'the create line' to "Create directory called {'the path name'}".
+    a text called 'the assert line' is "If {'the path name'} is not available then, Print \"ASSERT PRC-02: expected available got missing\", Exit 95. Print \"created\"".
+    a text called 'the cleanup line' is "Remove the directory called {'the path name'}".
+    a list called 'the lines' is ['the path line', 'the create line', 'the assert line', 'the cleanup line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-06, PRC-07, PRC-08: `Remove the directory called '<path>'.` /
+ `Delete the directory "<path>".` both perform rmdir(2)
+ (LANGUAGE.md:4217-4218); `Remove`/`Delete`, `the` and `called` are each
+ independently optional - all eight combinations (2 verbs x 2 articles x
+ 2 called-words) hand-verified this session to compile and behave
+ identically, four of them matching the retained PRC-06 probe. PRC-09
+ (undocumented precision - rmdir(2)'s own semantics, not a sentence in
+ the manual): the removal is not recursive, so removing a directory
+ that still holds a child fails, the child survives, and only emptying
+ it first lets the removal succeed. Confined to the per-run scratch
+ directory; stands aside the same way as the create leaf above.)
+To 'gen leaf process directory remove' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-06: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the outer name' is 'gen process witness'.
+    a number called 'the outer number' is gen_buffer_names.
+    a text called 'the outer line' is "a text called {'the outer name'} is \"{{{gen_scratch_flag}}}/procouter{'the outer number'}\"".
+    a text called 'the inner name' is 'gen buffer companion' of "inner path".
+    a text called 'the inner line' is "a text called {'the inner name'} is \"{{{gen_scratch_flag}}}/procouter{'the outer number'}/inner\"".
+    a text called 'the make outer' is "Create a directory called {'the outer name'}".
+    a text called 'the make inner' is "Create a directory called {'the inner name'}".
+    a text called 'the refused' is 'gen buffer companion' of "refused".
+    a text called 'the refused init' is "a boolean called {'the refused'} is false".
+    a number called 'the failing verb draw' is 'rng below' of 2.
+    a text called 'the failing remove' is "Remove the directory called {'the outer name'}".
+    If 'the failing verb draw' is 1 then,
+        Set 'the failing remove' to "Delete the directory called {'the outer name'}".
+    a text called 'the refused handler' is "On error Set {'the refused'} to true".
+    a text called 'the refused assert' is 'gen assert true' of "PRC-09" and 'the refused'.
+    a text called 'the survive assert' is "If {'the inner name'} is not available then, Print \"ASSERT PRC-09: expected available got missing\", Exit 95. Print \"survived\"".
+    a number called 'the cleanup verb draw' is 'rng below' of 2.
+    a number called 'the article draw' is 'rng below' of 2.
+    a number called 'the called draw' is 'rng below' of 2.
+    a text called 'the verb' is "Remove".
+    If 'the cleanup verb draw' is 1 then,
+        Set 'the verb' to "Delete".
+    a text called 'the article' is "".
+    If 'the article draw' is 1 then,
+        Set 'the article' to "the ".
+    a text called 'the called word' is "".
+    If 'the called draw' is 1 then,
+        Set 'the called word' to "called ".
+    a text called 'the empty inner' is "{'the verb'} {'the article'}directory {'the called word'}{'the inner name'}".
+    a text called 'the empty outer' is "{'the verb'} {'the article'}directory {'the called word'}{'the outer name'}".
+    a text called 'the gone assert' is "If {'the outer name'} is not available then, Print \"ASSERT PRC-08: expected missing got available\", Exit 95. Print \"removed\"".
+    a list called 'the lines' is ['the outer line', 'the inner line', 'the make outer', 'the make inner', 'the refused init', 'the failing remove', 'the refused handler', 'the refused assert', 'the survive assert', 'the empty inner', 'the empty outer', 'the gone assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-12, PRC-13, PRC-21: `Mount "<source>" at "<target>" with type
+ "<fstype>" [with options "<options>"].` lowers directly to mount(2)
+ (LANGUAGE.md:4235-4238); the `with options` clause is optional
+ (LANGUAGE.md:4226, 4235); `Unmount "<target>".` lowers to umount2(2)
+ (LANGUAGE.md:4245); both set the error flag on failure
+ (LANGUAGE.md:4250). SAFE TO EMIT under this surface brief's ruling -
+ see the file header - because the campaign is always unprivileged and
+ mount(2)/umount2(2) refuse with EPERM before doing anything;
+ hand-verified this session under both pinned compilers (see the
+ report). Confined to the per-run scratch directory anyway, on the same
+ belt-and-braces rule the file-I/O leaves use, even though an EPERM
+ refusal never actually reaches the path; stands aside the same way as
+ the two leaves above.)
+To 'gen leaf process mount unmount refusal' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-12: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the path name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/procmount{'the path number'}\"".
+    a text called 'the mkdir line' is "Create a directory called {'the path name'}".
+    a number called 'the options draw' is 'rng below' of 2.
+    a text called 'the mount line' is "Mount {'the path name'} at {'the path name'} with type \"tmpfs\"".
+    If 'the options draw' is 1 then,
+        Set 'the mount line' to "Mount {'the path name'} at {'the path name'} with type \"tmpfs\" with options \"size=1m\"".
+    a text called 'the mount refused' is 'gen buffer companion' of "mount refused".
+    a text called 'the mount refused init' is "a boolean called {'the mount refused'} is false".
+    a text called 'the mount handler' is "On error Set {'the mount refused'} to true".
+    a text called 'the mount assert' is 'gen assert true' of "PRC-12" and 'the mount refused'.
+    a text called 'the unmount refused' is 'gen buffer companion' of "unmount refused".
+    a text called 'the unmount refused init' is "a boolean called {'the unmount refused'} is false".
+    a text called 'the unmount line' is "Unmount {'the path name'}".
+    a text called 'the unmount handler' is "On error Set {'the unmount refused'} to true".
+    a text called 'the unmount assert' is 'gen assert true' of "PRC-21" and 'the unmount refused'.
+    a text called 'the rmdir line' is "Remove the directory called {'the path name'}".
+    a list called 'the lines' is ['the path line', 'the mkdir line', 'the mount refused init', 'the mount line', 'the mount handler', 'the mount assert', 'the unmount refused init', 'the unmount line', 'the unmount handler', 'the unmount assert', 'the rmdir line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-27, PRC-28: `Create symbolic link from '<target>' to "<linkpath>".`
+ performs symlink(2) - the SECOND path is the link created, and it
+ points at the FIRST (LANGUAGE.md:4270); sets the error flag on failure
+ (LANGUAGE.md:4271). Hand-verified gotcha this session, not in the
+ manual: a relative TARGET resolves relative to the LINK's own
+ directory, not the process's cwd, so writing the target as a full
+ scratch-relative path double-prefixes and dangles. The retained probe
+ (docs/ledger/probes/process-control/PRC-27.vox) already avoids this by
+ giving `target` as a bare filename, sibling to the link in the same
+ scratch directory; this leaf does the same. Confined to the per-run
+ scratch directory; stands aside the same way as the directory leaves
+ above.)
+To 'gen leaf process symbolic link' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-27: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the payload path' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the bare payload name' is "procpayload{'the path number'}".
+    a text called 'the payload line' is "a text called {'the payload path'} is \"{{{gen_scratch_flag}}}/{'the bare payload name'}\"".
+    a text called 'the handle name' is 'gen buffer companion' of "scribe".
+    a text called 'the open line' is "open a file for writing called {'the handle name'} at {'the payload path'}".
+    a text called 'the write line' is "Write \"payload\" to {'the handle name'}".
+    a text called 'the close line' is "Close {'the handle name'}".
+    a text called 'the link path name' is 'gen buffer companion' of "link path".
+    a text called 'the link path line' is "a text called {'the link path name'} is \"{{{gen_scratch_flag}}}/proclink{'the path number'}\"".
+    a text called 'the create link' is "Create symbolic link from \"{'the bare payload name'}\" to {'the link path name'}".
+    a text called 'the resolves assert' is "If {'the link path name'} is not available then, Print \"ASSERT PRC-27: expected available got missing\", Exit 95. Print \"resolves\"".
+    a text called 'the missing target name' is "procmissing{'the path number'}".
+    a text called 'the dangling path name' is 'gen buffer companion' of "dangling path".
+    a text called 'the dangling path line' is "a text called {'the dangling path name'} is \"{{{gen_scratch_flag}}}/procdangling{'the path number'}\"".
+    a text called 'the create dangling' is "Create symbolic link from \"{'the missing target name'}\" to {'the dangling path name'}".
+    a text called 'the dangles assert' is "If {'the dangling path name'} is available then, Print \"ASSERT PRC-27: expected missing got available\", Exit 95. Print \"dangling\"".
+    a text called 'the duplicate flag' is 'gen buffer companion' of "already exists".
+    a text called 'the duplicate flag init' is "a boolean called {'the duplicate flag'} is false".
+    a text called 'the create duplicate' is "Create symbolic link from \"{'the missing target name'}\" to {'the dangling path name'}".
+    a text called 'the duplicate handler' is "On error Set {'the duplicate flag'} to true".
+    a text called 'the duplicate assert' is 'gen assert true' of "PRC-28" and 'the duplicate flag'.
+    a text called 'the cleanup link' is "Delete the file {'the link path name'}".
+    a text called 'the cleanup dangling' is "Delete the file {'the dangling path name'}".
+    a text called 'the cleanup payload' is "Delete the file {'the payload path'}".
+    a list called 'the lines' is ['the payload line', 'the open line', 'the write line', 'the close line', 'the link path line', 'the create link', 'the resolves assert', 'the dangling path line', 'the create dangling', 'the dangles assert', 'the duplicate flag init', 'the create duplicate', 'the duplicate handler', 'the duplicate assert', 'the cleanup link', 'the cleanup dangling', 'the cleanup payload'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-42, PRC-43, PRC-44, PRC-46: fork/reap are EXPRESSIONS, not
+ statements - usable anywhere an expression is valid, not only after
+ `Set` (LANGUAGE.md:4326-4327). `fork the process`/bare `fork` both work
+ (LANGUAGE.md:4329-4330, the trailing `the process` is optional); fork
+ returns 0 in the child, the child's real pid in the parent
+ (LANGUAGE.md:4330-4331); `reap any child process` (wait4 pid -1)
+ returns the reaped child's pid (LANGUAGE.md:4332-4333). Two shapes are
+ drawn: the ordinary `a number called ... is fork ...` form (varying the
+ fork spelling, asserting the reaped pid equals the forked one), and
+ fork used DIRECTLY as an If-condition with no intermediate `Set` at
+ all, hand-verified this session to fork correctly there too (the
+ child's branch still runs, the parent's does not) - the
+ expression-position claim at the boundary the manual actually names.
+ The second shape has no captured pid to compare against, so it asserts
+ the weaker but still real property PRC-44 documents: the parent
+ successfully reaps a positive pid.)
+To 'gen leaf process fork reap basic' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a number called 'the shape draw' is 'rng below' of 2.
+    a number called 'the spelling draw' is 'rng below' of 2.
+    a text called 'the fork expr' is "fork the process".
+    If 'the spelling draw' is 1 then,
+        Set 'the fork expr' to "fork".
+    a number called 'the exit code' is 'gen process safe exit code'.
+    If 'the shape draw' is 0 then,
+        a text called 'the child name' is 'gen process witness',
+        a text called 'the reaped name' is 'gen buffer companion' of "reaped pid",
+        a text called 'the fork line' is "a number called {'the child name'} is {'the fork expr'}",
+        a text called 'the child branch' is "If {'the child name'} is 0 then, Exit {'the exit code'}",
+        a text called 'the reap line' is "a number called {'the reaped name'} is reap any child process",
+        a text called 'the matched name' is 'gen buffer companion' of "reap matched",
+        a text called 'the matched init' is "a boolean called {'the matched name'} is false",
+        a text called 'the matched set' is "If {'the reaped name'} is {'the child name'} then, Set {'the matched name'} to true",
+        a text called 'the assert line' is 'gen assert true' of "PRC-46" and 'the matched name',
+        a list called 'the lines set form' is ['the fork line', 'the child branch', 'the reap line', 'the matched init', 'the matched set', 'the assert line'],
+        'gen join lines' of indent and nested and 'the lines set form'.
+    If 'the shape draw' is 1 then,
+        a text called 'the reaped name' is 'gen process witness',
+        a text called 'the condition line' is "If fork the process is 0 then, Exit {'the exit code'}",
+        a text called 'the reap line' is "a number called {'the reaped name'} is reap any child process",
+        a text called 'the flag name' is 'gen buffer companion' of "reap succeeded",
+        a text called 'the flag init' is "a boolean called {'the flag name'} is false",
+        a text called 'the flag set' is "If {'the reaped name'} is greater than 0 then, Set {'the flag name'} to true",
+        a text called 'the assert line' is 'gen assert true' of "PRC-42" and 'the flag name',
+        a list called 'the lines expr form' is ['the condition line', 'the reap line', 'the flag init', 'the flag set', 'the assert line'],
+        'gen join lines' of indent and nested and 'the lines expr form'.
+
+(PRC-56, PRC-57, PRC-58: `the reaped status` yields the raw wait4
+ status word, undecoded (LANGUAGE.md:4374-4375) - an exit code times
+ 256, hand-verified. It reflects only the most recent SUCCESSFUL reap:
+ a reap that fails (ECHILD, on a pid this program never forked) leaves
+ it exactly where it was (LANGUAGE.md:4376). Before any successful reap
+ anywhere in the whole program it is the sentinel `-1`
+ (LANGUAGE.md:4377-4378) - but that claim is only true the FIRST time a
+ program reaps, and four other kinds in this file (264, 266, 267, 268)
+ can each reap too, so this leaf only claims the sentinel when
+ gen_process_has_reaped says nothing has reaped yet; otherwise it still
+ exercises the decode-then-fails-to-disturb-it half, just without the
+ specific `-1` claim.)
+To 'gen leaf process reaped status decode' with a text called indent and a boolean called nested.
+    a boolean called 'the is first reap' is false.
+    If gen_process_has_reaped is false then,
+        Set 'the is first reap' to true.
+    Set gen_process_has_reaped to true.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the child branch' is "If {'the child name'} is 0 then, Exit {'the exit code'}".
+    a text called 'the reap name' is 'gen buffer companion' of "reap result".
+    a text called 'the reap line' is "a number called {'the reap name'} is reap child {'the child name'}".
+    a text called 'the decoded name' is 'gen buffer companion' of "decoded exit".
+    a text called 'the decode line' is "a number called {'the decoded name'} is the reaped status divide 256 modulo 256".
+    a text called 'the decode assert' is 'gen assert number is' of "PRC-56" and 'the decoded name' and 'the exit code'.
+    a number called 'the foreign pid' is 'rng below' of 900000 add 9000000.
+    a text called 'the foreign reap name' is 'gen buffer companion' of "foreign reap".
+    a text called 'the foreign reap line' is "a number called {'the foreign reap name'} is reap process {'the foreign pid'}".
+    a text called 'the foreign flag name' is 'gen buffer companion' of "reap failed".
+    a text called 'the foreign flag init' is "a boolean called {'the foreign flag name'} is false".
+    a text called 'the foreign handler' is "On error Set {'the foreign flag name'} to true".
+    a text called 'the foreign flag assert' is 'gen assert true' of "PRC-49" and 'the foreign flag name'.
+    a text called 'the still decoded name' is 'gen buffer companion' of "still decoded".
+    a text called 'the redecode line' is "a number called {'the still decoded name'} is the reaped status divide 256 modulo 256".
+    a text called 'the redecode assert' is 'gen assert number is' of "PRC-57" and 'the still decoded name' and 'the exit code'.
+    If 'the is first reap' then,
+        a text called 'the sentinel assert' is 'gen assert number is' of "PRC-58" and "the reaped status" and -1,
+        a list called 'the lines with sentinel' is ['the sentinel assert', 'the child line', 'the child branch', 'the reap line', 'the decode line', 'the decode assert', 'the foreign flag init', 'the foreign reap line', 'the foreign handler', 'the foreign flag assert', 'the redecode line', 'the redecode assert'],
+        'gen join lines' of indent and nested and 'the lines with sentinel'.
+    If 'the is first reap' is false then,
+        a list called 'the lines plain' is ['the child line', 'the child branch', 'the reap line', 'the decode line', 'the decode assert', 'the foreign flag init', 'the foreign reap line', 'the foreign handler', 'the foreign flag assert', 'the redecode line', 'the redecode assert'],
+        'gen join lines' of indent and nested and 'the lines plain'.
+
+(PRC-62, PRC-63: the compiler has no wait-status decoding built in - a
+ program decodes the raw word with `divide`, `modulo` and `bit-and`,
+ with nothing installed (LANGUAGE.md:4391-4394). The manual's own worked
+ decoder functions, `'exit code of'` and `'signal of'`
+ (LANGUAGE.md:4397-4401), compile and return the exit code and
+ terminating signal; this leaf declares them ONCE per program (a second
+ declaration is a duplicate-label assembly error, hand-verified this
+ session) and cross-checks their output against the same divide/modulo/
+ bit-and the manual shows underneath them - two ways of reading the same
+ word must agree, and both must agree with the exit code the generator
+ actually chose.)
+To 'gen leaf process status decode functions' with a text called indent and a boolean called nested.
+    If gen_process_decoders_declared is false then,
+        a text called 'the exit decoder' is "{indent}To 'exit code of' with a number called status.\n{indent}    Return a number, status divide 256 modulo 256.\n\n",
+        a text called 'the signal decoder' is "{indent}To 'signal of' with a number called status.\n{indent}    Return a number, status bit-and 127.\n\n",
+        'gen emit' of 'the exit decoder',
+        'gen emit' of 'the signal decoder',
+        Set gen_process_decoders_declared to true.
+    Set gen_process_has_reaped to true.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the child branch' is "If {'the child name'} is 0 then, Exit {'the exit code'}".
+    a text called 'the reap name' is 'gen buffer companion' of "decode reap".
+    a text called 'the reap line' is "a number called {'the reap name'} is reap child {'the child name'}".
+    a text called 'the status name' is 'gen buffer companion' of "status word".
+    a text called 'the status line' is "a number called {'the status name'} is the reaped status".
+    a text called 'the manual exit name' is 'gen buffer companion' of "manual exit".
+    a text called 'the manual exit line' is "a number called {'the manual exit name'} is {'the status name'} divide 256 modulo 256".
+    a text called 'the function exit name' is 'gen buffer companion' of "function exit".
+    a text called 'the function exit line' is "a number called {'the function exit name'} is 'exit code of' of {'the status name'}".
+    a text called 'the exit agree assert' is 'gen assert number matches' of "PRC-63" and 'the function exit name' and 'the manual exit name'.
+    a text called 'the exit value assert' is 'gen assert number is' of "PRC-62" and 'the manual exit name' and 'the exit code'.
+    a text called 'the manual signal name' is 'gen buffer companion' of "manual signal".
+    a text called 'the manual signal line' is "a number called {'the manual signal name'} is {'the status name'} bit-and 127".
+    a text called 'the function signal name' is 'gen buffer companion' of "function signal".
+    a text called 'the function signal line' is "a number called {'the function signal name'} is 'signal of' of {'the status name'}".
+    a text called 'the signal agree assert' is 'gen assert number matches' of "PRC-63" and 'the function signal name' and 'the manual signal name'.
+    a text called 'the signal zero assert' is 'gen assert number is' of "PRC-62" and 'the manual signal name' and 0.
+    a list called 'the lines' is ['the child line', 'the child branch', 'the reap line', 'the status line', 'the manual exit line', 'the function exit line', 'the exit agree assert', 'the exit value assert', 'the manual signal line', 'the function signal line', 'the signal agree assert', 'the signal zero assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-33: `Execute "<path>".` performs execve(2), replacing the current
+ process image entirely - the manual's own example shows the line after
+ it never running (LANGUAGE.md:4298-4312). SAFETY (this surface brief;
+ PROCEDURE.md sect.6's Execute carve-out): the target is drawn from a
+ FIXED two-element allowlist, /usr/bin/true and /usr/bin/false, and
+ nothing else, ever - no generated command line, no path built from a
+ variable. The child forks, execs one of the two, and the parent reaps
+ it and decodes the exit code the manual's own decoder predicts (0 for
+ true, 1 for false) - an oracle the generator can check because it
+ chose which binary ran.)
+To 'gen leaf process execute' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a number called 'the program draw' is 'rng below' of 2.
+    a text called 'the program' is "/usr/bin/true".
+    a number called 'the expected exit' is 0.
+    If 'the program draw' is 1 then,
+        Set 'the program' to "/usr/bin/false".
+    If 'the program draw' is 1 then,
+        Set 'the expected exit' to 1.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the exec branch' is "If {'the child name'} is 0 then, Execute \"{'the program'}\"".
+    a text called 'the reap name' is 'gen buffer companion' of "exec reaped".
+    a text called 'the reap line' is "a number called {'the reap name'} is reap child {'the child name'}".
+    a text called 'the exit name' is 'gen buffer companion' of "exec exit code".
+    a text called 'the exit line' is "a number called {'the exit name'} is the reaped status divide 256 modulo 256".
+    a text called 'the assert line' is 'gen assert number is' of "PRC-33" and 'the exit name' and 'the expected exit'.
+    a list called 'the lines' is ['the child line', 'the exec branch', 'the reap line', 'the exit line', 'the assert line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-72, PRC-73, PRC-75: `Send signal <N> to process <pid>.` performs
+ kill(2) (LANGUAGE.md:4482-4483); `child` is an accepted alias for
+ `process` (LANGUAGE.md:4484); signal 0 delivers nothing but errors only
+ if no process has that pid, the standard existence check
+ (LANGUAGE.md:4499-4500), and a successful send clears the error flag
+ (LANGUAGE.md:4490). SAFETY (this surface brief): the target is ALWAYS
+ signal 0, and ALWAYS the pid this leaf's own `fork` just returned -
+ never a drawn number, never the process's own group. The pid stays
+ valid (a live child, or a zombie awaiting reap) until this leaf reaps
+ it, so the existence check always succeeds regardless of how fast the
+ exec'd program finished. A foreign, deliberately-failing reap first
+ sets the error flag, so the successful signal right after it proves
+ PRC-73's "clears the flag" rather than merely "does not set a fresh
+ one".)
+To 'gen leaf process signal existence check' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a number called 'the program draw' is 'rng below' of 2.
+    a text called 'the program' is "/usr/bin/true".
+    If 'the program draw' is 1 then,
+        Set 'the program' to "/usr/bin/false".
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the exec branch' is "If {'the child name'} is 0 then, Execute \"{'the program'}\"".
+    a number called 'the alias draw' is 'rng below' of 2.
+    a text called 'the target word' is "process".
+    If 'the alias draw' is 1 then,
+        Set 'the target word' to "child".
+    a number called 'the foreign pid' is 'rng below' of 900000 add 9000000.
+    a text called 'the stale reap name' is 'gen buffer companion' of "stale reap".
+    a text called 'the stale reap line' is "a number called {'the stale reap name'} is reap process {'the foreign pid'}".
+    a text called 'the stale flag name' is 'gen buffer companion' of "stale reap failed".
+    a text called 'the stale flag init' is "a boolean called {'the stale flag name'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag name'} to true".
+    a text called 'the stale assert' is 'gen assert true' of "PRC-49" and 'the stale flag name'.
+    a text called 'the signal flag name' is 'gen buffer companion' of "signal failed".
+    a text called 'the signal flag init' is "a boolean called {'the signal flag name'} is false".
+    a text called 'the signal line' is "Send signal 0 to {'the target word'} {'the child name'}".
+    a text called 'the signal handler' is "On error Set {'the signal flag name'} to true".
+    a text called 'the signal assert' is 'gen assert false' of "PRC-75" and 'the signal flag name'.
+    a text called 'the reap name' is 'gen buffer companion' of "signal reaped".
+    a text called 'the reap line' is "a number called {'the reap name'} is reap child {'the child name'}".
+    a list called 'the lines' is ['the child line', 'the exec branch', 'the stale flag init', 'the stale reap line', 'the stale handler', 'the stale assert', 'the signal flag init', 'the signal line', 'the signal handler', 'the signal assert', 'the reap line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-79, PRC-86: `Reboot.` lowers to reboot(2), requiring CAP_SYS_BOOT
+ (LANGUAGE.md:4520, 4530-4531); on failure (not root, no CAP_SYS_BOOT)
+ the error flag is set instead of crashing, `On error` catches it and
+ execution continues (LANGUAGE.md:4533-4537) - the exact safety property
+ this surface brief's ruling leans on: the campaign runs unprivileged, so
+ the kernel refuses the call with EPERM before doing anything, and
+ asserting the refusal is itself a memory-safety-relevant test of the
+ syscall codegen and the error-flag path, hand-verified this session
+ under both pinned compilers.
+
+ REGISTERED THIS BATCH (process batch B, 2026-08-31), `Reboot` ONLY -
+ `Shutdown` stays OUT, permanently until Josj rules otherwise. This leaf
+ originally drew between `Shutdown` and `Reboot` (process batch A) and
+ was left UNREGISTERED because of a master-verified candidate: `Shutdown`
+ intermittently BLOCKS INDEFINITELY instead of setting the error flag,
+ in an interactive-session context that looks like an authorization
+ round-trip (polkit/logind-style) rather than a plain kernel EPERM -
+ `/home/josj/scr/english/vox-notes/VERIFIED-SHUTDOWN-BLOCKS-TTY.md`. That
+ candidate does not touch `Reboot`, which "always refuses" in the same
+ verification matrix, so this batch's surface brief carries the
+ corrected policy forward explicitly: "mount/reboot/shutdown emit-safe
+ EXCEPT Shutdown (candidate, do not emit Shutdown; Reboot ok)." Dropping
+ the `Shutdown` branch entirely (rather than drawing it and hoping the
+ hang does not land in a campaign) is what makes this kind safe to
+ register at last. `Poweroff`/`Restart`/`Halt` and their own aliases stay
+ out of scope and out of the never-emitted guard's narrowing
+ (tests/200_never_emitted.vox), pending a wider ruling.)
+To 'gen leaf process system control refusal' with a text called indent and a boolean called nested.
+    a text called 'the flag name' is 'gen process witness'.
+    a text called 'the flag init' is "a boolean called {'the flag name'} is false".
+    a text called 'the handler' is "On error Set {'the flag name'} to true".
+    a text called 'the assert line' is 'gen assert true' of "PRC-79" and 'the flag name'.
+    a text called 'the continued' is "Print \"execution continued\"".
+    a list called 'the lines' is ['the flag init', "Reboot", 'the handler', 'the assert line', 'the continued'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Process leaves, batch B (2026-08-31), kinds 350-359 - the SECOND
+ reservation for this surface, docs/ledger/process-control.md. The
+ 260-279 block above is process batch A's; this batch opens a NEW block
+ rather than filling that one's two remaining spares (261, 269 was
+ spare and is now claimed by the fix above) because the surface brief
+ reserved a fresh RAW span for it - see 'gen statement's own remap
+ comment in gen_core.vox for the raw span this batch widened the draw
+ by. Same safety posture as batch A's leaves in this file: Execute stays
+ limited to the fixed /usr/bin/true / /usr/bin/false allowlist, `Send
+ signal` stays limited to signal 0 on a program's own live child, and
+ `Shutdown` stays out entirely (see the fix above this comment) - this
+ batch's surface brief restates all three explicitly, so none of the
+ leaves below touch any of them differently.)
+
+(PRC-11: all three directory statements - `Create`, `Remove`/`Delete`,
+ `Change directory` - set the error flag on failure and `On error`
+ catches it, execution continuing past all three (LANGUAGE.md:4220).
+ Every failure here is engineered, not incidental, and stays inside the
+ program's own scratch directory throughout: the create targets a path
+ whose PARENT does not exist (mkdir(2) refuses ENOENT without the real
+ filesystem outside scratch ever being touched); the remove/delete and
+ the change-directory both target that same never-created path, so
+ change-directory's failure is the safe way to exercise the construct at
+ all - chdir(2) leaves the calling process's cwd untouched on failure,
+ hand-verified this session under both pinned compilers, so this leaf
+ can never do to a sibling leaf in the same generated program what
+ PRC-10's own ledger row warns a SUCCESSFUL chdir would (move the cwd out
+ from under every gen_scratch_flag-relative path built afterwards) -
+ which is also why this leaf never attempts a successful chdir at all.
+ (The ledger's own retained probe, docs/ledger/probes/process-control/
+ PRC-11.vox, forces the CREATE failure with a real /proc path instead;
+ this leaf stays scratch-confined throughout instead, per this file's
+ Tier CONFINE convention, and still proves the identical claim.) Stands
+ aside for a plain print leaf when the program drew no file I/O, the
+ same eligibility gate the other confined leaves in this file use.)
+To 'gen leaf process directory failure paths' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-11: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the missing name' is 'gen process witness'.
+    a number called 'the missing number' is gen_buffer_names.
+    a text called 'the missing line' is "a text called {'the missing name'} is \"{{{gen_scratch_flag}}}/procmissingparent{'the missing number'}/child\"".
+    a text called 'the create flag' is 'gen buffer companion' of "create refused".
+    a text called 'the create flag init' is "a boolean called {'the create flag'} is false".
+    a text called 'the create line' is "Create a directory called {'the missing name'}".
+    a text called 'the create handler' is "On error Set {'the create flag'} to true".
+    a text called 'the create assert' is 'gen assert true' of "PRC-11" and 'the create flag'.
+    a text called 'the absent name' is 'gen buffer companion' of "never created".
+    a text called 'the absent line' is "a text called {'the absent name'} is \"{{{gen_scratch_flag}}}/procabsent{'the missing number'}\"".
+    a number called 'the verb draw' is 'rng below' of 2.
+    a text called 'the remove verb' is "Remove".
+    If 'the verb draw' is 1 then,
+        Set 'the remove verb' to "Delete".
+    a text called 'the remove flag' is 'gen buffer companion' of "remove refused".
+    a text called 'the remove flag init' is "a boolean called {'the remove flag'} is false".
+    a text called 'the remove line' is "{'the remove verb'} the directory called {'the absent name'}".
+    a text called 'the remove handler' is "On error Set {'the remove flag'} to true".
+    a text called 'the remove assert' is 'gen assert true' of "PRC-11" and 'the remove flag'.
+    a text called 'the chdir flag' is 'gen buffer companion' of "change directory refused".
+    a text called 'the chdir flag init' is "a boolean called {'the chdir flag'} is false".
+    a text called 'the chdir line' is "Change directory to {'the absent name'}".
+    a text called 'the chdir handler' is "On error Set {'the chdir flag'} to true".
+    a text called 'the chdir assert' is 'gen assert true' of "PRC-11" and 'the chdir flag'.
+    a text called 'the continued' is "Print \"execution continued\"".
+    a list called 'the lines' is ['the missing line', 'the create flag init', 'the create line', 'the create handler', 'the create assert', 'the absent line', 'the remove flag init', 'the remove line', 'the remove handler', 'the remove assert', 'the chdir flag init', 'the chdir line', 'the chdir handler', 'the chdir assert', 'the continued'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-47, PRC-48: `reap process <pid-expr>` / `reap child <pid-expr>` both
+ `wait4(2)` a SPECIFIC pid, both spellings (LANGUAGE.md:4334-4335); reap
+ returns a negative value on error, on any reap form (LANGUAGE.md:4333)
+ - one leaf reaps a REAL forked
+ child this way (drawn spelling, asserted the returned pid equals the
+ forked one and the decoded exit code matches what the child was told to
+ report) and the other reaps a reserved-invalid pid the same way,
+ asserting only what the manual documents: negative, not a specific
+ value (PRC-47 is hand-verified as exactly -10, but only "negative" is a
+ claim the manual makes - see docs/ledger/process-control.md's own note
+ on this row). The reserved-invalid pid reuses the exact "past any real
+ pid_max" idiom PRC-49 already established in this file (kind 265)
+ rather than inventing a second one - that range is PINNED by the
+ requirement that it can never collide with a live pid, not a magnitude
+ CLAUDE.md's extreme-literal rule asks this leaf to widen.)
+To 'gen leaf process reap by pid' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the child branch' is "If {'the child name'} is 0 then, Exit {'the exit code'}".
+    a number called 'the real spelling draw' is 'rng below' of 2.
+    a text called 'the real reap expr' is "reap process {'the child name'}".
+    If 'the real spelling draw' is 1 then,
+        Set 'the real reap expr' to "reap child {'the child name'}".
+    a text called 'the real reap name' is 'gen buffer companion' of "specific reap".
+    a text called 'the real reap line' is "a number called {'the real reap name'} is {'the real reap expr'}".
+    (Asserted as a BOOLEAN, never by printing the reap result directly -
+     that number IS the real OS pid the kernel assigned this run, which
+     varies seed-for-seed even with every input held fixed, and printing
+     it would make this leaf's own output nondeterministic - exactly the
+     "no clock/pid/address in output" rule this batch's surface brief
+     states. Hand-caught this session: the campaign harness's own
+     nondeterminism check flagged it the first time this leaf reached a
+     real compiled run.)
+    a text called 'the real matched name' is 'gen buffer companion' of "specific reap matched".
+    a text called 'the real matched init' is "a boolean called {'the real matched name'} is false".
+    a text called 'the real matched set' is "If {'the real reap name'} is {'the child name'} then, Set {'the real matched name'} to true".
+    a text called 'the real match assert' is 'gen assert true' of "PRC-48" and 'the real matched name'.
+    a text called 'the decoded name' is 'gen buffer companion' of "specific exit".
+    a text called 'the decoded line' is "a number called {'the decoded name'} is the reaped status divide 256 modulo 256".
+    a text called 'the decoded assert' is 'gen assert number is' of "PRC-48" and 'the decoded name' and 'the exit code'.
+    a number called 'the foreign pid' is 'rng below' of 900000 add 9000000.
+    a number called 'the foreign spelling draw' is 'rng below' of 2.
+    a text called 'the foreign reap expr' is "reap process {'the foreign pid'}".
+    If 'the foreign spelling draw' is 1 then,
+        Set 'the foreign reap expr' to "reap child {'the foreign pid'}".
+    a text called 'the foreign reap name' is 'gen buffer companion' of "foreign specific reap".
+    a text called 'the foreign flag name' is 'gen buffer companion' of "foreign specific refused".
+    a text called 'the foreign flag init' is "a boolean called {'the foreign flag name'} is false".
+    a text called 'the foreign reap line' is "a number called {'the foreign reap name'} is {'the foreign reap expr'}".
+    a text called 'the foreign handler' is "On error Set {'the foreign flag name'} to true".
+    a text called 'the foreign got shown' is 'gen buffer slot of' of 'the foreign reap name'.
+    a text called 'the foreign negative assert' is "If {'the foreign reap name'} is not less than 0 then, Print \"ASSERT PRC-47: expected negative got {'the foreign got shown'}\", Exit 95. Print {'the foreign reap name'}".
+    a text called 'the foreign flag assert' is 'gen assert true' of "PRC-47" and 'the foreign flag name'.
+    a list called 'the lines' is ['the child line', 'the child branch', 'the real reap line', 'the real matched init', 'the real matched set', 'the real match assert', 'the decoded line', 'the decoded assert', 'the foreign flag init', 'the foreign reap line', 'the foreign handler', 'the foreign negative assert', 'the foreign flag assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(HELD OUT, kind 352, unregistered - candidate found this batch, reported
+ in full in REPORT-LEAVES-PROCESS-B.md: under RANDOM layout, seed 1006
+ (budget 12) puts a single newline between a reap expression and the
+ `without waiting` suffix, and the compiler then refuses the program -
+ `Expected a statement, got Without` - even on the SAME construct that
+ compiles cleanly on one line, hand-verified repeatedly this session.
+ Minimal repro (3 lines, no leaf involved):
+   a number called r is reap process 5
+   without waiting.
+   Print r.
+ fails; the same two lines joined ("...reap process 5 without waiting.")
+ compiles and runs. `print ... without newline` - the OTHER `without`
+ suffix in the language - tolerates the identical newline split fine, so
+ this looks narrow to the reap-suffix's own grammar production rather
+ than a general newline rule; LANGUAGE.md:226 states plainly that only a
+ period closes a clause, which this appears to contradict. This is a
+ layout-randomiser interaction (docs/ledger/PROCEDURE.md sect.5): the
+ leaf below is complete, correct Vox and hand-verifies clean under both
+ pinned compilers with ordinary formatting; it is left UNREGISTERED
+ because the campaign's own layout pass can turn its output into this.
+ PRC-55 (the one sub-claim here that does not need the suffix at all) is
+ salvaged into 'gen leaf process reaped ordinary identifier' below
+ instead, so it is not lost to this same hold.
+
+ PRC-50, PRC-51, PRC-52, PRC-53, PRC-54, PRC-55: any reap form takes a
+ `without waiting` suffix (WNOHANG) (LANGUAGE.md:4342-4349); the three
+ outcomes are told apart by the return value alone - a child that
+ finished returns its pid with the flag clear (LANGUAGE.md:4354), a
+ child that exists but has not finished returns exactly 0 with the flag
+ clear, NOT an error (LANGUAGE.md:4355-4356), and a genuine error (no
+ such child) returns negative with the flag set (LANGUAGE.md:4357-4358).
+ A poll that returns 0 reaps nothing and so does not disturb `the reaped
+ status` (LANGUAGE.md:4360-4362). `without` is already reserved (the
+ `print ... without newline` token) so the suffix cannot be confused
+ with a call argument, and `waiting` remains an ordinary identifier
+ everywhere it is not this exact suffix (LANGUAGE.md:4362-4365).
+
+ SAFETY DEVIATION from the ledger's own retained probe
+ (docs/ledger/probes/process-control/PRC-50.vox): that probe forces the
+ "still running" observation with `Send signal 9` to the slow child
+ before reaping it. This surface brief's standing policy restricts `Send
+ signal` to signal 0 on a program's own live child ONLY, so this leaf
+ gets the same observation a different way instead: the forked child
+ `Wait`s a drawn interval before exiting, and the parent's FIRST poll
+ (issued with no delay at all, right after the fork) is guaranteed to
+ land before that interval elapses; a second poll, issued after the
+ parent itself has waited comfortably longer than the child's interval,
+ is then guaranteed to land after the child exited. Hand-verified this
+ session, five back-to-back runs plus a deliberately-broken run, both
+ pinned compilers, no flake: the child's own wait is drawn 100-399ms and
+ the parent's second wait is that same draw plus a fixed 500ms margin,
+ so the ordering is deterministic BY CONSTRUCTION, not by luck, even
+ though the exact millisecond values vary every time this leaf is drawn
+ - only the 500ms MARGIN is a fixed implementation detail (not a manual
+ claim), the same way the retained probe's own fixed 300ms margin is
+ documented as "not a claim about scheduling".
+
+ The genuine-ECHILD probe (PRC-53) needs no live child at all - a
+ reserved-invalid pid can never be this program's child - so it runs
+ first, standalone, reusing the same "past any real pid_max" idiom
+ PRC-47/48 above and PRC-49 (kind 265) already established. Every reap
+ here also updates gen_process_has_reaped, the same shared per-program
+ flag every other reaping kind in this file maintains, for PRC-58's
+ sentinel claim elsewhere.)
+To 'gen leaf process reap without waiting' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a text called 'the waiting value' is 'gen extreme number'.
+    a text called 'the waiting line' is "a number called waiting is {'the waiting value'}".
+    a number called 'the foreign pid' is 'rng below' of 900000 add 9000000.
+    a number called 'the echild spelling draw' is 'rng below' of 2.
+    a text called 'the echild expr' is "reap process {'the foreign pid'} without waiting".
+    If 'the echild spelling draw' is 1 then,
+        Set 'the echild expr' to "reap child {'the foreign pid'} without waiting".
+    a text called 'the echild result' is 'gen buffer companion' of "echild poll".
+    a text called 'the echild flag' is 'gen buffer companion' of "echild refused".
+    a text called 'the echild flag init' is "a boolean called {'the echild flag'} is false".
+    a text called 'the echild line' is "a number called {'the echild result'} is {'the echild expr'}".
+    a text called 'the echild handler' is "On error Set {'the echild flag'} to true".
+    a text called 'the echild got shown' is 'gen buffer slot of' of 'the echild result'.
+    a text called 'the echild negative assert' is "If {'the echild result'} is not less than 0 then, Print \"ASSERT PRC-53: expected negative got {'the echild got shown'}\", Exit 95. Print {'the echild result'}".
+    a text called 'the echild flag assert' is 'gen assert true' of "PRC-53" and 'the echild flag'.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a number called 'the child wait' is 'rng below' of 300 add 100.
+    a number called 'the parent wait' is 'the child wait' add 500.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the child branch' is "If {'the child name'} is 0 then, Wait {'the child wait'} milliseconds, Exit {'the exit code'}".
+    a text called 'the before status' is 'gen buffer companion' of "status before poll".
+    a text called 'the before status line' is "a number called {'the before status'} is the reaped status".
+    a number called 'the poll spelling draw' is 'rng below' of 3.
+    a text called 'the poll expr' is "reap any child process without waiting".
+    If 'the poll spelling draw' is 1 then,
+        Set 'the poll expr' to "reap child {'the child name'} without waiting".
+    If 'the poll spelling draw' is 2 then,
+        Set 'the poll expr' to "reap process {'the child name'} without waiting".
+    a text called 'the immediate result' is 'gen buffer companion' of "immediate poll".
+    a text called 'the immediate flag' is 'gen buffer companion' of "immediate refused".
+    a text called 'the immediate flag init' is "a boolean called {'the immediate flag'} is false".
+    a text called 'the immediate line' is "a number called {'the immediate result'} is {'the poll expr'}".
+    a text called 'the immediate handler' is "On error Set {'the immediate flag'} to true".
+    a text called 'the immediate zero assert' is 'gen assert number is' of "PRC-52" and 'the immediate result' and 0.
+    a text called 'the immediate flag assert' is 'gen assert false' of "PRC-52" and 'the immediate flag'.
+    a text called 'the after status' is 'gen buffer companion' of "status after poll".
+    a text called 'the after status line' is "a number called {'the after status'} is the reaped status".
+    a text called 'the unchanged assert' is 'gen assert number matches' of "PRC-54" and 'the after status' and 'the before status'.
+    a text called 'the wait line' is "Wait {'the parent wait'} milliseconds".
+    a text called 'the later result' is 'gen buffer companion' of "later poll".
+    a text called 'the later flag' is 'gen buffer companion' of "later refused".
+    a text called 'the later flag init' is "a boolean called {'the later flag'} is false".
+    a text called 'the later line' is "a number called {'the later result'} is {'the poll expr'}".
+    a text called 'the later handler' is "On error Set {'the later flag'} to true".
+    (Asserted as a BOOLEAN, not by printing the poll result - see the same
+     note above 'the real match assert' in 'gen leaf process reap by pid':
+     that result IS the real OS pid, and printing it would make this
+     leaf's output vary run to run even at a fixed seed.)
+    a text called 'the later matched name' is 'gen buffer companion' of "later poll matched".
+    a text called 'the later matched init' is "a boolean called {'the later matched name'} is false".
+    a text called 'the later matched set' is "If {'the later result'} is {'the child name'} then, Set {'the later matched name'} to true".
+    a text called 'the later match assert' is 'gen assert true' of "PRC-51" and 'the later matched name'.
+    a text called 'the later flag assert' is 'gen assert false' of "PRC-51" and 'the later flag'.
+    a number called 'the waiting expected' is 'the waiting value' as a number.
+    a text called 'the waiting assert' is 'gen assert number is' of "PRC-55" and "waiting" and 'the waiting expected'.
+    a list called 'the lines' is ['the waiting line', 'the echild flag init', 'the echild line', 'the echild handler', 'the echild negative assert', 'the echild flag assert', 'the child line', 'the child branch', 'the before status line', 'the immediate flag init', 'the immediate line', 'the immediate handler', 'the immediate zero assert', 'the immediate flag assert', 'the after status line', 'the unchanged assert', 'the wait line', 'the later flag init', 'the later line', 'the later handler', 'the later matched init', 'the later matched set', 'the later match assert', 'the later flag assert', 'the waiting assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-60, PRC-61: `reaped` stays an ordinary identifier everywhere it is
+ not the exact phrase `the reaped status` - `the reaped` followed by
+ anything else is an ordinary variable reference too
+ (LANGUAGE.md:4384-4386). `tests/102_fork_reap.vox` does `Set reaped to
+ reap any child process.` and keeps passing (LANGUAGE.md:4386-4387); this
+ leaf reproduces that exact body (a bare, undeclared `reaped` receiving a
+ reap result via `Set ... to ...`, which the manual's own retained test
+ relies on working) rather than merely declaring `reaped` unused, and
+ then reads the REAL `the reaped status` phrase alongside a `'the
+ reaped'` quoted two-word variable holding unrelated text, proving all
+ three coexist without the parser confusing any of them.
+
+ PRC-55 folded in here rather than living with the `without waiting`
+ family above: its own claim ("`waiting` remains an ordinary identifier
+ everywhere it is not this suffix", LANGUAGE.md:4362-4365) needs no reap
+ call at all to test - only a plain declaration and a read-back - so it
+ is not affected by that family's held-out candidate and does not need
+ to wait on it.)
+To 'gen leaf process reaped ordinary identifier' with a text called indent and a boolean called nested.
+    Set gen_process_has_reaped to true.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a text called 'the child name' is 'gen process witness'.
+    a text called 'the child line' is "a number called {'the child name'} is fork the process".
+    a text called 'the child branch' is "If {'the child name'} is 0 then, Exit {'the exit code'}".
+    a text called 'the bare set line' is "Set reaped to reap any child process".
+    (Asserted as a BOOLEAN, not by printing `reaped` directly - see the
+     same note above 'the real match assert' in
+     'gen leaf process reap by pid': `reaped` here holds the real OS pid
+     the fork returned, and printing it would make this leaf's own
+     output vary run to run even at a fixed seed.)
+    a text called 'the matched name' is 'gen buffer companion' of "reap matched".
+    a text called 'the matched init' is "a boolean called {'the matched name'} is false".
+    a text called 'the matched set' is "If reaped is {'the child name'} then, Set {'the matched name'} to true".
+    a text called 'the match assert' is 'gen assert true' of "PRC-61" and 'the matched name'.
+    a text called 'the decoded name' is 'gen buffer companion' of "reproduced exit".
+    a text called 'the decoded line' is "a number called {'the decoded name'} is the reaped status divide 256 modulo 256".
+    a text called 'the decoded assert' is 'gen assert number is' of "PRC-60" and 'the decoded name' and 'the exit code'.
+    a text called 'the quoted phrase word' is 'gen word from' of gen_type_words.
+    a text called 'the quoted phrase line' is "a text called 'the reaped' is \"{'the quoted phrase word'}\"".
+    a text called 'the quoted phrase assert' is "If 'the reaped' is not \"{'the quoted phrase word'}\" then, Print \"ASSERT PRC-60: expected {'the quoted phrase word'} got {{'the reaped'}}\", Exit 95. Print 'the reaped'".
+    a text called 'the waiting value' is 'gen extreme number'.
+    a number called 'the waiting expected' is 'the waiting value' as a number.
+    a text called 'the waiting line' is "a number called waiting is {'the waiting value'}".
+    a text called 'the waiting assert' is 'gen assert number is' of "PRC-55" and "waiting" and 'the waiting expected'.
+    a list called 'the lines' is ['the child line', 'the child branch', 'the bare set line', 'the matched init', 'the matched set', 'the match assert', 'the decoded line', 'the decoded assert', 'the quoted phrase line', 'the quoted phrase assert', 'the waiting line', 'the waiting assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-87: undocumented precision, not a manual sentence - every
+ path-taking statement in this section accepts an empty path and fails
+ cleanly through the error flag rather than crashing; the memory-safety
+ floor for the whole section, and the first degenerate input a leaf will
+ produce by accident. This leaf sticks to the three unbanned, non-policy-
+ restricted constructs already registered elsewhere in this file - create
+ directory, remove directory, symbolic link - and draws which one gets
+ the empty path this call, rather than emitting all three every time,
+ since the OTHER two still get their ordinary confined exercise from
+ kinds 260/263 in the same campaign. `Mount`/`Unmount` (emit-safe but
+ covered by kind 262 already) and `Execute` (locked to the fixed
+ true/false allowlist by this surface brief's policy, so an empty path is
+ not a value this leaf is allowed to hand it) are left out; `Pivot root`
+ stays banned. The ledger's own retained probe,
+ docs/ledger/probes/process-control/PRC-87.vox, sweeps all eight
+ constructs the manual lists in one hand-verification pass; this leaf
+ draws one of the three per call so the corpus varies which construct is
+ exercised, rather than repeating a fixed eight-statement shape every
+ time it is drawn.)
+To 'gen leaf process empty path refusal' with a text called indent and a boolean called nested.
+    a number called 'the construct draw' is 'rng below' of 3.
+    a text called 'the flag name' is 'gen process witness'.
+    a text called 'the flag init' is "a boolean called {'the flag name'} is false".
+    a text called 'the handler' is "On error Set {'the flag name'} to true".
+    a text called 'the assert line' is 'gen assert true' of "PRC-87" and 'the flag name'.
+    a text called 'the continued' is "Print \"execution continued\"".
+    a text called 'the statement' is "Create a directory called \"\"".
+    If 'the construct draw' is 1 then,
+        Set 'the statement' to "Remove the directory called \"\"".
+    If 'the construct draw' is 2 then,
+        Set 'the statement' to "Create symbolic link from \"\" to \"\"".
+    a list called 'the lines' is ['the flag init', 'the statement', 'the handler', 'the assert line', 'the continued'].
+    'gen join lines' of indent and nested and 'the lines'.

@@ -1,0 +1,258 @@
+--- LST-52: a map value that is itself a list and a map ---
+a map called cupboard is {"the contents": [9223372036854775807, 51032], "the reply": {"leftover": 576}}.
+a list called 'the waybill' is cupboard's "the contents".
+If 'the waybill's length is not 2 then, Print "ASSERT LST-52: expected 2 got {'the waybill's length}", Exit 95. Print 'the waybill's length.
+If element 1 of 'the waybill' is not 9223372036854775807 then, Print "ASSERT LST-52: expected 9223372036854775807 got {element 1 of 'the waybill'}", Exit 95. Print element 1 of 'the waybill'.
+If element 2 of 'the waybill' is not 51032 then, Print "ASSERT LST-52: expected 51032 got {element 2 of 'the waybill'}", Exit 95. Print element 2 of 'the waybill'.
+a map called 'the message slip' is cupboard's "the reply".
+If 'the message slip's length is not 1 then, Print "ASSERT LST-52: expected 1 got {'the message slip's length}", Exit 95. Print 'the message slip's length.
+a number called 'the message slip inner value seen' is 'the message slip's "leftover".
+If 'the message slip inner value seen' is not 576 then, Print "ASSERT LST-52: expected 576 got {'the message slip inner value seen'}", Exit 95. Print 'the message slip inner value seen'.
+
+--- the same leaf, nested ---
+  a map called cupboard is {"the contents": [9223372036854775807, 51032], "the reply": {"leftover": 576}},
+  a list called 'the waybill' is cupboard's "the contents",
+  If 'the waybill's length is not 2 then, Print "ASSERT LST-52: expected 2 got {'the waybill's length}", Exit 95. Print 'the waybill's length,
+  If element 1 of 'the waybill' is not 9223372036854775807 then, Print "ASSERT LST-52: expected 9223372036854775807 got {element 1 of 'the waybill'}", Exit 95. Print element 1 of 'the waybill',
+  If element 2 of 'the waybill' is not 51032 then, Print "ASSERT LST-52: expected 51032 got {element 2 of 'the waybill'}", Exit 95. Print element 2 of 'the waybill',
+  a map called 'the message slip' is cupboard's "the reply",
+  If 'the message slip's length is not 1 then, Print "ASSERT LST-52: expected 1 got {'the message slip's length}", Exit 95. Print 'the message slip's length,
+  a number called 'the message slip inner value seen' is 'the message slip's "leftover",
+  If 'the message slip inner value seen' is not 576 then, Print "ASSERT LST-52: expected 576 got {'the message slip inner value seen'}", Exit 95. Print 'the message slip inner value seen'.
+
+--- LST-55 (static half), LST-66: the predicate folds true on all six declared types ---
+a number called cupboard is 91.
+a boolean called 'cupboard static fold held' is false.
+If cupboard is a number then, Set 'cupboard static fold held' to true. Print 'cupboard static fold held'.
+If 'cupboard static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'cupboard static fold held'}", Exit 95. Print 'cupboard static fold held'.
+a text called toolbox is "the slot the reading".
+a boolean called 'toolbox static fold held' is false.
+If toolbox is a text then, Set 'toolbox static fold held' to true. Print 'toolbox static fold held'.
+If 'toolbox static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'toolbox static fold held'}", Exit 95. Print 'toolbox static fold held'.
+a float called notebook is 767781633954679886.75332844912.
+a boolean called 'notebook static fold held' is false.
+If notebook is a float then, Set 'notebook static fold held' to true. Print 'notebook static fold held'.
+If 'notebook static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'notebook static fold held'}", Exit 95. Print 'notebook static fold held'.
+a boolean called 'the drawer' is true.
+a boolean called 'the drawer static fold held' is false.
+If 'the drawer' is a boolean then, Set 'the drawer static fold held' to true. Print 'the drawer static fold held'.
+If 'the drawer static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the drawer static fold held'}", Exit 95. Print 'the drawer static fold held'.
+a list called 'the waybill' is [].
+a boolean called 'the waybill static fold held' is false.
+If 'the waybill' is a list then, Set 'the waybill static fold held' to true. Print 'the waybill static fold held'.
+If 'the waybill static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the waybill static fold held'}", Exit 95. Print 'the waybill static fold held'.
+a map called 'the sketchpad' is {}.
+a boolean called 'the sketchpad static fold held' is false.
+If 'the sketchpad' is a map then, Set 'the sketchpad static fold held' to true. Print 'the sketchpad static fold held'.
+If 'the sketchpad static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the sketchpad static fold held'}", Exit 95. Print 'the sketchpad static fold held'.
+
+--- the same leaf, nested ---
+  a number called cupboard is 91,
+  a boolean called 'cupboard static fold held' is false,
+  If cupboard is a number then, Set 'cupboard static fold held' to true. Print 'cupboard static fold held',
+  If 'cupboard static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'cupboard static fold held'}", Exit 95. Print 'cupboard static fold held',
+  a text called toolbox is "the slot the reading",
+  a boolean called 'toolbox static fold held' is false,
+  If toolbox is a text then, Set 'toolbox static fold held' to true. Print 'toolbox static fold held',
+  If 'toolbox static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'toolbox static fold held'}", Exit 95. Print 'toolbox static fold held',
+  a float called notebook is 767781633954679886.75332844912,
+  a boolean called 'notebook static fold held' is false,
+  If notebook is a float then, Set 'notebook static fold held' to true. Print 'notebook static fold held',
+  If 'notebook static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'notebook static fold held'}", Exit 95. Print 'notebook static fold held',
+  a boolean called 'the drawer' is true,
+  a boolean called 'the drawer static fold held' is false,
+  If 'the drawer' is a boolean then, Set 'the drawer static fold held' to true. Print 'the drawer static fold held',
+  If 'the drawer static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the drawer static fold held'}", Exit 95. Print 'the drawer static fold held',
+  a list called 'the waybill' is [],
+  a boolean called 'the waybill static fold held' is false,
+  If 'the waybill' is a list then, Set 'the waybill static fold held' to true. Print 'the waybill static fold held',
+  If 'the waybill static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the waybill static fold held'}", Exit 95. Print 'the waybill static fold held',
+  a map called 'the sketchpad' is {},
+  a boolean called 'the sketchpad static fold held' is false,
+  If 'the sketchpad' is a map then, Set 'the sketchpad static fold held' to true. Print 'the sketchpad static fold held',
+  If 'the sketchpad static fold held' is false then, Print "ASSERT LST-66: expected 1 got {'the sketchpad static fold held'}", Exit 95. Print 'the sketchpad static fold held'.
+
+--- LST-60, folds LST-61: the four scalar type nouns on a mixed list, random order ---
+a list called 'outgoing post' is [132395767.881, 95, "the upshot the jar", true].
+a boolean called 'outgoing post slot matched' is false.
+If element 1 of 'outgoing post' is a float then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched'.
+If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched'.
+a boolean called 'outgoing post slot matched' is false.
+If element 2 of 'outgoing post' is a number then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched'.
+If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched'.
+a boolean called 'outgoing post slot matched' is false.
+If element 3 of 'outgoing post' is a text then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched'.
+If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched'.
+a boolean called 'outgoing post slot matched' is false.
+If element 4 of 'outgoing post' is a boolean then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched'.
+If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched'.
+
+--- the same leaf, nested ---
+  a list called 'outgoing post' is [132395767.881, 95, "the upshot the jar", true],
+  a boolean called 'outgoing post slot matched' is false,
+  If element 1 of 'outgoing post' is a float then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched',
+  If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched',
+  a boolean called 'outgoing post slot matched' is false,
+  If element 2 of 'outgoing post' is a number then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched',
+  If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched',
+  a boolean called 'outgoing post slot matched' is false,
+  If element 3 of 'outgoing post' is a text then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched',
+  If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched',
+  a boolean called 'outgoing post slot matched' is false,
+  If element 4 of 'outgoing post' is a boolean then, Set 'outgoing post slot matched' to true. Print 'outgoing post slot matched',
+  If 'outgoing post slot matched' is false then, Print "ASSERT LST-60: expected 1 got {'outgoing post slot matched'}", Exit 95. Print 'outgoing post slot matched'.
+
+--- LST-62, LST-55 (dynamic half): all six type nouns, one of each, random order ---
+a list called 'the greeting' is [false, "the freight note", {"the tin": 263395467988675.43284491297477903, "sachet": 9}, [61524244843301560], 42238063679289.84681, 9223372036854775807].
+a boolean called 'the greeting tag confirmed' is false.
+If element 1 of 'the greeting' is a boolean then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+a boolean called 'the greeting tag confirmed' is false.
+If element 2 of 'the greeting' is a text then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+a boolean called 'the greeting tag confirmed' is false.
+If element 3 of 'the greeting' is a map then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+a boolean called 'the greeting tag confirmed' is false.
+If element 4 of 'the greeting' is a list then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+a boolean called 'the greeting tag confirmed' is false.
+If element 5 of 'the greeting' is a decimal then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+a boolean called 'the greeting tag confirmed' is false.
+If element 6 of 'the greeting' is a number then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed'.
+If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+
+--- the same leaf, nested ---
+  a list called 'the greeting' is [false, "the freight note", {"the tin": 263395467988675.43284491297477903, "sachet": 9}, [61524244843301560], 42238063679289.84681, 9223372036854775807],
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 1 of 'the greeting' is a boolean then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed',
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 2 of 'the greeting' is a text then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed',
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 3 of 'the greeting' is a map then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed',
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 4 of 'the greeting' is a list then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed',
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 5 of 'the greeting' is a decimal then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed',
+  a boolean called 'the greeting tag confirmed' is false,
+  If element 6 of 'the greeting' is a number then, Set 'the greeting tag confirmed' to true. Print 'the greeting tag confirmed',
+  If 'the greeting tag confirmed' is false then, Print "ASSERT LST-62: expected 1 got {'the greeting tag confirmed'}", Exit 95. Print 'the greeting tag confirmed'.
+
+--- LST-63: the five declaration synonyms as predicate nouns ---
+a list called 'satchel' is [9223372036854775807.5, 4, "the reply 765", {"the tin": true, "what came back": 5467988.7753328449129747790}, false].
+a boolean called 'satchel synonym accepted' is false.
+If element 1 of 'satchel' is a float then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted'.
+If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+a boolean called 'satchel synonym accepted' is false.
+If element 2 of 'satchel' is an integer then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted'.
+If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+a boolean called 'satchel synonym accepted' is false.
+If element 3 of 'satchel' is a string then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted'.
+If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+a boolean called 'satchel synonym accepted' is false.
+If element 4 of 'satchel' is a dictionary then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted'.
+If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+a boolean called 'satchel synonym accepted' is false.
+If element 5 of 'satchel' is a bool then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted'.
+If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+
+--- the same leaf, nested ---
+  a list called 'satchel' is [9223372036854775807.5, 4, "the reply 765", {"the tin": true, "what came back": 5467988.7753328449129747790}, false],
+  a boolean called 'satchel synonym accepted' is false,
+  If element 1 of 'satchel' is a float then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted',
+  If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted',
+  a boolean called 'satchel synonym accepted' is false,
+  If element 2 of 'satchel' is an integer then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted',
+  If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted',
+  a boolean called 'satchel synonym accepted' is false,
+  If element 3 of 'satchel' is a string then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted',
+  If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted',
+  a boolean called 'satchel synonym accepted' is false,
+  If element 4 of 'satchel' is a dictionary then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted',
+  If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted',
+  a boolean called 'satchel synonym accepted' is false,
+  If element 5 of 'satchel' is a bool then, Set 'satchel synonym accepted' to true. Print 'satchel synonym accepted',
+  If 'satchel synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'satchel synonym accepted'}", Exit 95. Print 'satchel synonym accepted'.
+
+--- LST-64: is not a, against a wrong type noun per slot ---
+a list called notebook is [false, "the tin result"].
+a boolean called 'notebook negation held' is false.
+If element 1 of notebook is not a map then, Set 'notebook negation held' to true. Print 'notebook negation held'.
+If 'notebook negation held' is false then, Print "ASSERT LST-64: expected 1 got {'notebook negation held'}", Exit 95. Print 'notebook negation held'.
+a boolean called 'notebook negation held' is false.
+If element 2 of notebook is not a list then, Set 'notebook negation held' to true. Print 'notebook negation held'.
+If 'notebook negation held' is false then, Print "ASSERT LST-64: expected 1 got {'notebook negation held'}", Exit 95. Print 'notebook negation held'.
+
+--- the same leaf, nested ---
+  a list called notebook is [false, "the tin result"],
+  a boolean called 'notebook negation held' is false,
+  If element 1 of notebook is not a map then, Set 'notebook negation held' to true. Print 'notebook negation held',
+  If 'notebook negation held' is false then, Print "ASSERT LST-64: expected 1 got {'notebook negation held'}", Exit 95. Print 'notebook negation held',
+  a boolean called 'notebook negation held' is false,
+  If element 2 of notebook is not a list then, Set 'notebook negation held' to true. Print 'notebook negation held',
+  If 'notebook negation held' is false then, Print "ASSERT LST-64: expected 1 got {'notebook negation held'}", Exit 95. Print 'notebook negation held'.
+
+--- LST-65: is a number does not fire on the boolean slot ---
+a list called 'workbench' is [true, 9223372036854775807].
+a boolean called 'workbench number check read' is false.
+If element 1 of 'workbench' is a number then, Set 'workbench number check read' to true. Print 'workbench number check read'.
+If 'workbench number check read' then, Print "ASSERT LST-65: expected 0 got {'workbench number check read'}", Exit 95. Print 'workbench number check read'.
+a boolean called 'workbench number check read' is false.
+If element 2 of 'workbench' is a number then, Set 'workbench number check read' to true. Print 'workbench number check read'.
+If 'workbench number check read' is false then, Print "ASSERT LST-65: expected 1 got {'workbench number check read'}", Exit 95. Print 'workbench number check read'.
+
+--- the same leaf, nested ---
+  a list called 'workbench' is [true, 9223372036854775807],
+  a boolean called 'workbench number check read' is false,
+  If element 1 of 'workbench' is a number then, Set 'workbench number check read' to true. Print 'workbench number check read',
+  If 'workbench number check read' then, Print "ASSERT LST-65: expected 0 got {'workbench number check read'}", Exit 95. Print 'workbench number check read',
+  a boolean called 'workbench number check read' is false,
+  If element 2 of 'workbench' is a number then, Set 'workbench number check read' to true. Print 'workbench number check read',
+  If 'workbench number check read' is false then, Print "ASSERT LST-65: expected 1 got {'workbench number check read'}", Exit 95. Print 'workbench number check read'.
+
+--- LST-67: the position-loop guard idiom, arithmetic on the guarded element ---
+a list called cupboard is ["the receipt the returned thing the slot", 91, 0.000000000000000000001].
+a number called 'cupboard guarded value' is 0.
+If element 2 of cupboard is a number then, Set 'cupboard guarded value' to element 2 of cupboard add 1.
+If 'cupboard guarded value' is not 92 then, Print "ASSERT LST-67: expected 92 got {'cupboard guarded value'}", Exit 95. Print 'cupboard guarded value'.
+
+--- the same leaf, nested ---
+  a list called cupboard is ["the receipt the returned thing the slot", 91, 0.000000000000000000001],
+  a number called 'cupboard guarded value' is 0,
+  If element 2 of cupboard is a number then, Set 'cupboard guarded value' to element 2 of cupboard add 1,
+  If 'cupboard guarded value' is not 92 then, Print "ASSERT LST-67: expected 92 got {'cupboard guarded value'}", Exit 95. Print 'cupboard guarded value'.
+
+--- LST-69: a predicate result stored in a list, tag and value both checked ---
+a list called cupboard is [{"the receipt": "", "the reading": "ticket"}, "the reply 765"].
+a list called 'workbench' is [].
+append element 1 of cupboard is a map to 'workbench'.
+append element 2 of cupboard is a map to 'workbench'.
+If element 1 of 'workbench' is false then, Print "ASSERT LST-69: expected 1 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench'.
+If element 2 of 'workbench' then, Print "ASSERT LST-69: expected 0 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench'.
+a boolean called 'workbench stored tag matched' is false.
+If element 1 of 'workbench' is a boolean then, Set 'workbench stored tag matched' to true. Print 'workbench stored tag matched'.
+If 'workbench stored tag matched' is false then, Print "ASSERT LST-69: expected 1 got {'workbench stored tag matched'}", Exit 95. Print 'workbench stored tag matched'.
+a boolean called 'workbench stored tag also matched' is false.
+If element 2 of 'workbench' is a boolean then, Set 'workbench stored tag also matched' to true. Print 'workbench stored tag also matched'.
+If 'workbench stored tag also matched' is false then, Print "ASSERT LST-69: expected 1 got {'workbench stored tag also matched'}", Exit 95. Print 'workbench stored tag also matched'.
+
+--- the same leaf, nested ---
+  a list called cupboard is [{"the receipt": "", "the reading": "ticket"}, "the reply 765"],
+  a list called 'workbench' is [],
+  append element 1 of cupboard is a map to 'workbench',
+  append element 2 of cupboard is a map to 'workbench',
+  If element 1 of 'workbench' is false then, Print "ASSERT LST-69: expected 1 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench',
+  If element 2 of 'workbench' then, Print "ASSERT LST-69: expected 0 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench',
+  a boolean called 'workbench stored tag matched' is false,
+  If element 1 of 'workbench' is a boolean then, Set 'workbench stored tag matched' to true. Print 'workbench stored tag matched',
+  If 'workbench stored tag matched' is false then, Print "ASSERT LST-69: expected 1 got {'workbench stored tag matched'}", Exit 95. Print 'workbench stored tag matched',
+  a boolean called 'workbench stored tag also matched' is false,
+  If element 2 of 'workbench' is a boolean then, Set 'workbench stored tag also matched' to true. Print 'workbench stored tag also matched',
+  If 'workbench stored tag also matched' is false then, Print "ASSERT LST-69: expected 1 got {'workbench stored tag also matched'}", Exit 95. Print 'workbench stored tag also matched'.
+

@@ -1,0 +1,110 @@
+--- THG2-04: a whole instance of a member-declaring type prints ---
+a milestone called i1.
+Set i1's 'the bearing in degrees' to 027.
+Print i1.
+
+--- THG2-19: copy, print, compare, mutate, compare again on a member-declaring type ---
+a milestone called i2.
+Set i2's 'the bearing in degrees' to 027.
+a milestone called i3 is i2.
+Print i3.
+If i2 is not i3 then, Print "ASSERT THG2-19: expected i2 to equal i3", Exit 95. Print i2.
+Set i3's 'the bearing in degrees' to 378.
+If i2 is i3 then, Print "ASSERT THG2-19: expected i2 to differ from i3", Exit 95. Print i2.
+
+--- THG2-29: free call and instance possessive agree on the same ordinary function ---
+a cairn called i4.
+Set i4's 'the chain length' to -000027.
+a number called c1 is 'the balance so far' of i4.
+a number called c2 is i4's 'the balance so far'.
+If c1 is not c2 then, Print "ASSERT THG2-29: expected {c2} got {c1}", Exit 95. Print c1.
+
+--- THG2-34: the type possessive maker call, field read back ---
+a milestone called i5 is a milestone's 'planted deep' with 027.
+If i5's 'the margin' is not 27 then, Print "ASSERT THG2-34: expected 27 got {i5's 'the margin'}", Exit 95. Print i5's 'the margin'.
+
+--- THG2-38: a receiver reached by both the instance and type possessive agree ---
+a milestone called i6.
+a milestone called i7 is i6's 'inverted through'.
+a milestone called i8 is a milestone's 'inverted through' on i6.
+If i7 is not i8 then, Print "ASSERT THG2-38: expected i7 to equal i8", Exit 95. Print i7.
+
+--- THG2-44: two different types sharing a field name do not collide ---
+A thing called 'the fix' has
+    a number called drift is -00027.
+
+A thing called 'the boundary stone' has
+    a number called drift is -00931.
+
+a 'the fix' called i9.
+a 'the boundary stone' called i10.
+Set i9's drift to -077651.
+Set i10's drift to 0006.
+If i9's drift is not -77651 then, Print "ASSERT THG2-44: expected -77651 got {i9's drift}", Exit 95. Print i9's drift.
+If i10's drift is not 6 then, Print "ASSERT THG2-44: expected 6 got {i10's drift}", Exit 95. Print i10's drift.
+
+--- a program with no things at all: the manifest-dependent leaves stand aside ---
+Print 0 minus 0.
+
+Print 0 times 0.
+
+Print 0 times 0.
+
+Print 0 add 0.
+
+Print 0 minus 0.
+
+--- THG2-44 stays available even with zero things (it never reads the manifest) ---
+A thing called 'the station' has
+    a number called 'the bearing in degrees'.
+
+A thing called 'the anchorage' has
+    a number called 'the bearing in degrees' is -0273511210.
+
+a 'the station' called i11.
+a 'the anchorage' called i12.
+Set i11's 'the bearing in degrees' to 09469.
+Set i12's 'the bearing in degrees' to 8.
+If i11's 'the bearing in degrees' is not 9469 then, Print "ASSERT THG2-44: expected 9469 got {i11's 'the bearing in degrees'}", Exit 95. Print i11's 'the bearing in degrees'.
+If i12's 'the bearing in degrees' is not 8 then, Print "ASSERT THG2-44: expected 8 got {i12's 'the bearing in degrees'}", Exit 95. Print i12's 'the bearing in degrees'.
+
+--- nested forms (indent, nested=true) ---
+  a milestone called i13,
+  Set i13's 'the bearing in degrees' to 027,
+  Print i13.
+
+  a milestone called i14,
+  Set i14's 'the run' to 931,
+  a milestone called i15 is i14,
+  Print i15,
+  If i14 is not i15 then, Print "ASSERT THG2-19: expected i14 to equal i15", Exit 95. Print i14,
+  Set i15's 'the run' to -077651,
+  If i14 is i15 then, Print "ASSERT THG2-19: expected i14 to differ from i15", Exit 95. Print i14.
+
+  a cairn called i16,
+  Set i16's 'the chain length' to 0006,
+  a number called c3 is 'the balance so far' of i16,
+  a number called c4 is i16's 'the balance so far',
+  If c3 is not c4 then, Print "ASSERT THG2-29: expected {c4} got {c3}", Exit 95. Print c3.
+
+  a milestone called i17 is a milestone's 'planted deep' with 9,
+  If i17's 'the margin' is not 9 then, Print "ASSERT THG2-34: expected 9 got {i17's 'the margin'}", Exit 95. Print i17's 'the margin'.
+
+  a milestone called i18,
+  a milestone called i19 is i18's 'inverted through',
+  a milestone called i20 is a milestone's 'inverted through' to i18,
+  If i19 is not i20 then, Print "ASSERT THG2-38: expected i19 to equal i20", Exit 95. Print i19.
+
+A thing called 'the fix' has
+    a number called drift.
+
+A thing called 'the boundary stone' has
+    a number called drift.
+
+  a 'the fix' called i21,
+  a 'the boundary stone' called i22,
+  Set i21's drift to 0000077,
+  Set i22's drift to -0000504453,
+  If i21's drift is not 77 then, Print "ASSERT THG2-44: expected 77 got {i21's drift}", Exit 95. Print i21's drift,
+  If i22's drift is not -504453 then, Print "ASSERT THG2-44: expected -504453 got {i22's drift}", Exit 95. Print i22's drift.
+

@@ -14,7 +14,8 @@ Print "the north offset reading: {i1}".
 a cairn called i3.
 a cairn called i4.
 If i3 is not i4 then, Print "ASSERT THG2-08: expected i3 to equal i4", Exit 95. Print i3.
-Set i4's 'the chain length' to -00027.
+Set i3's 'the chain length' to -00027.
+Set i4's 'the chain length' to 378.
 If i3 is i4 then, Print "ASSERT THG2-09: expected i3 to differ from i4", Exit 95. Print i3.
 
 --- THG2-10: the comparison recurses into a nested field ---

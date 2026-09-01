@@ -1,0 +1,156 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_basics.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+
+(collections-d, batch D (night) - docs/ledger/collections-a.md rows
+ LST-52, LST-55, LST-60 (folds LST-61), LST-62, LST-63, LST-64, LST-65,
+ LST-66, LST-67, LST-69.
+
+ Same convention as tests/440_gen_collections_c.vox: each leaf is called
+ directly off a pinned rng seed with its emitted source printed in full,
+ and each leaf is also emitted nested once, since 'gen join lines'
+ renders a nested body (comma-joined) differently from a top-level one
+ (period-joined) and that is exactly what a leaf's own gate has to prove
+ survives rendering, not just "the idea" of the leaf (PROCEDURE.md 6a).
+
+ The naming allocator is 'gen buffer name'/'gen buffer reference'/'gen
+ buffer property'/'gen buffer companion' from gen_buffers.vox, the same
+ pool batch C's own leaves use.)
+
+Print "--- LST-52: a map value that is itself a list and a map ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map value nested' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map value nested' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-55 (static half), LST-66: the predicate folds true on all six declared types ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate static fold' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate static fold' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-60, folds LST-61: the four scalar type nouns on a mixed list, random order ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate mixed dispatch' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate mixed dispatch' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-62, LST-55 (dynamic half): all six type nouns, one of each, random order ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate all six match' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate all six match' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-63: the five declaration synonyms as predicate nouns ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate synonyms' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate synonyms' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-64: is not a, against a wrong type noun per slot ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate negate' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate negate' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-65: is a number does not fire on the boolean slot ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate number boolean order' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate number boolean order' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-67: the position-loop guard idiom, arithmetic on the guarded element ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate guard idiom' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate guard idiom' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-69: a predicate result stored in a list, tag and value both checked ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate stored boolean' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf predicate stored boolean' of "  " and true.
+Print 'gen text'.

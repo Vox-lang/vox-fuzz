@@ -1,0 +1,230 @@
+--- LST-43, LST-45: insert and replace, same map ---
+a map called cupboard is {"the contents": 947}.
+Set cupboard's "the contents" to 171.
+a number called 'cupboard replaced value seen' is cupboard's "the contents".
+If 'cupboard replaced value seen' is not 171 then, Print "ASSERT LST-45: expected 171 got {'cupboard replaced value seen'}", Exit 95. Print 'cupboard replaced value seen'.
+If cupboard's length is not 1 then, Print "ASSERT LST-45: expected 1 got {cupboard's length}", Exit 95. Print cupboard's length.
+Set cupboard's "the reply" to 702.
+a number called 'cupboard inserted value seen' is cupboard's "the reply".
+If 'cupboard inserted value seen' is not 702 then, Print "ASSERT LST-43: expected 702 got {'cupboard inserted value seen'}", Exit 95. Print 'cupboard inserted value seen'.
+If cupboard's length is not 2 then, Print "ASSERT LST-43: expected 2 got {cupboard's length}", Exit 95. Print cupboard's length.
+
+--- the same leaf, nested ---
+  a map called cupboard is {"the contents": 947},
+  Set cupboard's "the contents" to 171,
+  a number called 'cupboard replaced value seen' is cupboard's "the contents",
+  If 'cupboard replaced value seen' is not 171 then, Print "ASSERT LST-45: expected 171 got {'cupboard replaced value seen'}", Exit 95. Print 'cupboard replaced value seen',
+  If cupboard's length is not 1 then, Print "ASSERT LST-45: expected 1 got {cupboard's length}", Exit 95. Print cupboard's length,
+  Set cupboard's "the reply" to 702,
+  a number called 'cupboard inserted value seen' is cupboard's "the reply",
+  If 'cupboard inserted value seen' is not 702 then, Print "ASSERT LST-43: expected 702 got {'cupboard inserted value seen'}", Exit 95. Print 'cupboard inserted value seen',
+  If cupboard's length is not 2 then, Print "ASSERT LST-43: expected 2 got {cupboard's length}", Exit 95. Print cupboard's length.
+
+--- LST-46: length and empty, an empty map and a populated one ---
+a map called cupboard is {}.
+If cupboard's length is not 0 then, Print "ASSERT LST-46: expected 0 got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's empty is false then, Print "ASSERT LST-46: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+a map called 'workbench' is {"numeral": 702, "the receipt": 494, "the slot": 83}.
+If 'workbench's length is not 3 then, Print "ASSERT LST-46: expected 3 got {'workbench's length}", Exit 95. Print 'workbench's length.
+If 'workbench's empty then, Print "ASSERT LST-46: expected 0 got {'workbench's empty}", Exit 95. Print 'workbench's empty.
+
+--- the same leaf, nested ---
+  a map called cupboard is {},
+  If cupboard's length is not 0 then, Print "ASSERT LST-46: expected 0 got {cupboard's length}", Exit 95. Print cupboard's length,
+  If cupboard's empty is false then, Print "ASSERT LST-46: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty,
+  a map called 'workbench' is {"numeral": 702, "the receipt": 494, "the slot": 83},
+  If 'workbench's length is not 3 then, Print "ASSERT LST-46: expected 3 got {'workbench's length}", Exit 95. Print 'workbench's length,
+  If 'workbench's empty then, Print "ASSERT LST-46: expected 0 got {'workbench's empty}", Exit 95. Print 'workbench's empty.
+
+--- LST-04: an empty list, length 0 and empty true before any append ---
+a list called cupboard is [].
+If cupboard's length is not 0 then, Print "ASSERT LST-04: expected 0 got {cupboard's length}", Exit 95. Print cupboard's length.
+If cupboard's empty is false then, Print "ASSERT LST-04: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+
+--- the same leaf, nested ---
+  a list called cupboard is [],
+  If cupboard's length is not 0 then, Print "ASSERT LST-04: expected 0 got {cupboard's length}", Exit 95. Print cupboard's length,
+  If cupboard's empty is false then, Print "ASSERT LST-04: expected 1 got {cupboard's empty}", Exit 95. Print cupboard's empty.
+
+--- LST-47: keys/values order and freshness, a two-key map ---
+a map called cupboard is {"the reply": 947, "numeral": 702}.
+a list called 'satchel' is cupboard's keys.
+a list called ledger is cupboard's values.
+If element 1 of 'satchel' is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of 'satchel'}", Exit 95. Print element 1 of 'satchel'.
+If element 2 of 'satchel' is not "numeral" then, Print "ASSERT LST-47: expected numeral got {element 2 of 'satchel'}", Exit 95. Print element 2 of 'satchel'.
+If element 1 of ledger is not 947 then, Print "ASSERT LST-47: expected 947 got {element 1 of ledger}", Exit 95. Print element 1 of ledger.
+If element 2 of ledger is not 702 then, Print "ASSERT LST-47: expected 702 got {element 2 of ledger}", Exit 95. Print element 2 of ledger.
+Set element 1 of 'satchel' to "mutated".
+If cupboard's length is not 2 then, Print "ASSERT LST-47: expected 2 got {cupboard's length}", Exit 95. Print cupboard's length.
+a list called notebook is cupboard's keys.
+If element 1 of notebook is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of notebook}", Exit 95. Print element 1 of notebook.
+Set cupboard's "the reply" to 368.
+a list called 'the tally sheet' is cupboard's keys.
+If element 1 of 'the tally sheet' is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of 'the tally sheet'}", Exit 95. Print element 1 of 'the tally sheet'.
+Set cupboard's "the tin" to 646.
+a list called 'the waybill' is cupboard's keys.
+If element 3 of 'the waybill' is not "the tin" then, Print "ASSERT LST-47: expected the tin got {element 3 of 'the waybill'}", Exit 95. Print element 3 of 'the waybill'.
+Print cupboard's length.
+
+--- the same leaf, a three-key map ---
+a map called pantry is {"freight": 992, "the token": 977}.
+a list called 'the tally sheet' is pantry's keys.
+a list called 'the sketchpad' is pantry's values.
+If element 1 of 'the tally sheet' is not "freight" then, Print "ASSERT LST-47: expected freight got {element 1 of 'the tally sheet'}", Exit 95. Print element 1 of 'the tally sheet'.
+If element 2 of 'the tally sheet' is not "the token" then, Print "ASSERT LST-47: expected the token got {element 2 of 'the tally sheet'}", Exit 95. Print element 2 of 'the tally sheet'.
+If element 1 of 'the sketchpad' is not 992 then, Print "ASSERT LST-47: expected 992 got {element 1 of 'the sketchpad'}", Exit 95. Print element 1 of 'the sketchpad'.
+If element 2 of 'the sketchpad' is not 977 then, Print "ASSERT LST-47: expected 977 got {element 2 of 'the sketchpad'}", Exit 95. Print element 2 of 'the sketchpad'.
+Set element 1 of 'the tally sheet' to "mutated".
+If pantry's length is not 2 then, Print "ASSERT LST-47: expected 2 got {pantry's length}", Exit 95. Print pantry's length.
+a list called 'the waybill' is pantry's keys.
+If element 1 of 'the waybill' is not "freight" then, Print "ASSERT LST-47: expected freight got {element 1 of 'the waybill'}", Exit 95. Print element 1 of 'the waybill'.
+Set pantry's "freight" to 789.
+a list called 'the inbox' is pantry's keys.
+If element 1 of 'the inbox' is not "freight" then, Print "ASSERT LST-47: expected freight got {element 1 of 'the inbox'}", Exit 95. Print element 1 of 'the inbox'.
+Set pantry's "the delivery" to 721.
+a list called 'the register' is pantry's keys.
+If element 3 of 'the register' is not "the delivery" then, Print "ASSERT LST-47: expected the delivery got {element 3 of 'the register'}", Exit 95. Print element 3 of 'the register'.
+Print pantry's length.
+
+--- the same leaf, nested ---
+  a map called cupboard is {"the reply": 947, "numeral": 702},
+  a list called 'satchel' is cupboard's keys,
+  a list called ledger is cupboard's values,
+  If element 1 of 'satchel' is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of 'satchel'}", Exit 95. Print element 1 of 'satchel',
+  If element 2 of 'satchel' is not "numeral" then, Print "ASSERT LST-47: expected numeral got {element 2 of 'satchel'}", Exit 95. Print element 2 of 'satchel',
+  If element 1 of ledger is not 947 then, Print "ASSERT LST-47: expected 947 got {element 1 of ledger}", Exit 95. Print element 1 of ledger,
+  If element 2 of ledger is not 702 then, Print "ASSERT LST-47: expected 702 got {element 2 of ledger}", Exit 95. Print element 2 of ledger,
+  Set element 1 of 'satchel' to "mutated",
+  If cupboard's length is not 2 then, Print "ASSERT LST-47: expected 2 got {cupboard's length}", Exit 95. Print cupboard's length,
+  a list called notebook is cupboard's keys,
+  If element 1 of notebook is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of notebook}", Exit 95. Print element 1 of notebook,
+  Set cupboard's "the reply" to 368,
+  a list called 'the tally sheet' is cupboard's keys,
+  If element 1 of 'the tally sheet' is not "the reply" then, Print "ASSERT LST-47: expected the reply got {element 1 of 'the tally sheet'}", Exit 95. Print element 1 of 'the tally sheet',
+  Set cupboard's "the tin" to 646,
+  a list called 'the waybill' is cupboard's keys,
+  If element 3 of 'the waybill' is not "the tin" then, Print "ASSERT LST-47: expected the tin got {element 3 of 'the waybill'}", Exit 95. Print element 3 of 'the waybill',
+  Print cupboard's length.
+
+--- LST-49: a missing key, the provable and the Set-grown/typed-default halves ---
+a map called whatever is {"the handout": 308}.
+a boolean called payload is false.
+On error Set payload to true.
+a number called 'what arrived' is 0.
+a number called 'the answer' is whatever's "no such entry".
+On error Set 'what arrived' to 1.
+If 'what arrived' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got 'what arrived'", Exit 95.
+If 'the answer' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got 'the answer'", Exit 95.
+a map called 'the cargo' is {}.
+Set 'the cargo's "the reply" to 171.
+a number called 'the reading' is 0.
+a text called cargo is 'the cargo's "leftover".
+On error Set 'the reading' to 1.
+If 'the reading' is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got 'the reading'", Exit 95.
+a buffer called 'the tally' is cargo.
+If 'the tally's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got 'the tally's size", Exit 95.
+a number called token is 0.
+a list called 'the token' is 'the cargo's "leftover".
+On error Set token to 1.
+If token is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got token", Exit 95.
+If 'the token's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got 'the token's length", Exit 95.
+a number called 'the label' is 0.
+a map called 'the slot' is 'the cargo's "leftover".
+On error Set 'the label' to 1.
+If 'the label' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got 'the label'", Exit 95.
+If 'the slot's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got 'the slot's length", Exit 95.
+Print 'the slot'.
+
+--- the same leaf, nested ---
+  a map called 'what came back' is {"the handout": 308}.
+  a boolean called numeral is false.
+  On error Set numeral to true.
+  a number called 'the guess' is 0.
+  a number called 'the numeral' is 'what came back's "no such entry".
+  On error Set 'the guess' to 1.
+  If 'the guess' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got 'the guess'", Exit 95.
+  If 'the numeral' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got 'the numeral'", Exit 95.
+  a map called guess is {}.
+  Set guess's "the reply" to 171.
+  a number called offering is 0.
+  a text called 'the offering' is guess's "leftover".
+  On error Set offering to 1.
+  If offering is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got offering", Exit 95.
+  a buffer called 'the receipt' is 'the offering'.
+  If 'the receipt's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got 'the receipt's size", Exit 95.
+  a number called 'the sample' is 0.
+  a list called receipt is guess's "leftover".
+  On error Set 'the sample' to 1.
+  If 'the sample' is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got 'the sample'", Exit 95.
+  If receipt's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got receipt's length", Exit 95.
+  a number called 'the shipment' is 0.
+  a map called sample is guess's "leftover".
+  On error Set 'the shipment' to 1.
+  If 'the shipment' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got 'the shipment'", Exit 95.
+  If sample's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got sample's length", Exit 95.
+  Print sample.
+
+--- LST2-30: two appends onto a populated list, length +2 ---
+a list called cupboard is [534, 947].
+append 171 to cupboard.
+append 702 to cupboard.
+If cupboard's length is not 4 then, Print "ASSERT LST2-30: expected 4 got {cupboard's length}", Exit 95. Print cupboard's length.
+If element 4 of cupboard is not 702 then, Print "ASSERT LST2-30: expected 702 got {element 4 of cupboard}", Exit 95. Print element 4 of cupboard.
+
+--- the same leaf, nested ---
+  a list called cupboard is [534, 947],
+  append 171 to cupboard,
+  append 702 to cupboard,
+  If cupboard's length is not 4 then, Print "ASSERT LST2-30: expected 4 got {cupboard's length}", Exit 95. Print cupboard's length,
+  If element 4 of cupboard is not 702 then, Print "ASSERT LST2-30: expected 702 got {element 4 of cupboard}", Exit 95. Print element 4 of cupboard.
+
+--- LST2-41: append inside a While loop, a drawn bound ---
+a list called cupboard is [].
+a number called 'cupboard running count' is 1.
+While 'cupboard running count' is less than or equal to 3, append 'cupboard running count' multiply 'cupboard running count' to cupboard, increment 'cupboard running count'.
+If cupboard's length is not 3 then, Print "ASSERT LST2-41: expected 3 got {cupboard's length}", Exit 95. Print cupboard's length.
+If element 3 of cupboard is not 9 then, Print "ASSERT LST2-41: expected 9 got {element 3 of cupboard}", Exit 95. Print element 3 of cupboard.
+
+--- the same leaf, nested ---
+  a list called cupboard is [],
+  a number called 'cupboard running count' is 1,
+  While 'cupboard running count' is less than or equal to 3, append 'cupboard running count' multiply 'cupboard running count' to cupboard, increment 'cupboard running count',
+  If cupboard's length is not 3 then, Print "ASSERT LST2-41: expected 3 got {cupboard's length}", Exit 95. Print cupboard's length,
+  If element 3 of cupboard is not 9 then, Print "ASSERT LST2-41: expected 9 got {element 3 of cupboard}", Exit 95. Print element 3 of cupboard.
+
+--- LST2-46, LST2-53: append each X from Y to Z, element by element ---
+a list called cupboard is [226, 494, 124].
+a list called 'workbench' is [].
+append each storeroom from cupboard to 'workbench'.
+If 'workbench's length is not cupboard's length then, Print "ASSERT LST2-46: expected {cupboard's length} got {'workbench's length}", Exit 95. Print 'workbench's length.
+If element 1 of 'workbench' is not 226 then, Print "ASSERT LST2-53: expected 226 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench'.
+If element 2 of 'workbench' is not 494 then, Print "ASSERT LST2-53: expected 494 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench'.
+If element 3 of 'workbench' is not 124 then, Print "ASSERT LST2-53: expected 124 got {element 3 of 'workbench'}", Exit 95. Print element 3 of 'workbench'.
+
+--- the same leaf, nested ---
+  a list called cupboard is [226, 494, 124],
+  a list called 'workbench' is [],
+  append each storeroom from cupboard to 'workbench',
+  If 'workbench's length is not cupboard's length then, Print "ASSERT LST2-46: expected {cupboard's length} got {'workbench's length}", Exit 95. Print 'workbench's length,
+  If element 1 of 'workbench' is not 226 then, Print "ASSERT LST2-53: expected 226 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench',
+  If element 2 of 'workbench' is not 494 then, Print "ASSERT LST2-53: expected 494 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench',
+  If element 3 of 'workbench' is not 124 then, Print "ASSERT LST2-53: expected 124 got {element 3 of 'workbench'}", Exit 95. Print element 3 of 'workbench'.
+
+--- LST2-94: a treating clause with a guaranteed hit ---
+a list called cupboard is [49, 38, 27, 36].
+a list called 'workbench' is [].
+append each storeroom from cupboard treating 49 as 112 to 'workbench'.
+If element 1 of 'workbench' is not 112 then, Print "ASSERT LST2-94: expected 112 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench'.
+If element 2 of 'workbench' is not 38 then, Print "ASSERT LST2-94: expected 38 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench'.
+If element 3 of 'workbench' is not 27 then, Print "ASSERT LST2-94: expected 27 got {element 3 of 'workbench'}", Exit 95. Print element 3 of 'workbench'.
+If element 4 of 'workbench' is not 36 then, Print "ASSERT LST2-94: expected 36 got {element 4 of 'workbench'}", Exit 95. Print element 4 of 'workbench'.
+
+--- the same leaf, nested ---
+  a list called cupboard is [49, 38, 27, 36],
+  a list called 'workbench' is [],
+  append each storeroom from cupboard treating 49 as 112 to 'workbench',
+  If element 1 of 'workbench' is not 112 then, Print "ASSERT LST2-94: expected 112 got {element 1 of 'workbench'}", Exit 95. Print element 1 of 'workbench',
+  If element 2 of 'workbench' is not 38 then, Print "ASSERT LST2-94: expected 38 got {element 2 of 'workbench'}", Exit 95. Print element 2 of 'workbench',
+  If element 3 of 'workbench' is not 27 then, Print "ASSERT LST2-94: expected 27 got {element 3 of 'workbench'}", Exit 95. Print element 3 of 'workbench',
+  If element 4 of 'workbench' is not 36 then, Print "ASSERT LST2-94: expected 36 got {element 4 of 'workbench'}", Exit 95. Print element 4 of 'workbench'.
+

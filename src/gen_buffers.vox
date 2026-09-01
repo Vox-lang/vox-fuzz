@@ -11,6 +11,8 @@ a buffer called 'the buffer reference view' is "".
 
 a buffer called 'the buffer filler bytes' is "".
 
+a buffer called 'the mutated content view' is "".
+
 (Buffers: declaration, a write, and a read - the language's own claim
  is that out-of-bounds access sets the error flag and returns 0 rather
  than crashing, so the oob variant is what actually puts that claim on
@@ -93,6 +95,15 @@ a number called gen_buffer_names is 0.
  too and stay unique for the same reason the buffer's own name does.)
 
 a text called gen_buffer_last_word is "".
+
+(Out-parameters for 'gen buffer known filler'/'gen buffer known filler
+ mutated' (batch C, below): the ascii value of whichever position each
+ call was asked to remember, since a Vox function returns one value and
+ the payload text is the one those two callers actually want back.)
+
+a number called gen_buffer_marked_value is 0.
+
+a number called gen_buffer_second_marked_value is 0.
 
 (Called once per program from 'gen program', beside the other counter
  resets: the claimed-word marks are per program, not per campaign.)
@@ -383,9 +394,9 @@ To 'gen buffer interlude'.
 To 'gen leaf buffer declaration' with a text called indent and a boolean called nested.
     a number called 'how many buffers' is 'rng below' of 3 add 1.
     a list called 'the lines' is [].
-    a number called 'the made' is 0.
+    a number called 'the buffers made' is 0.
     a text called 'the last name' is "".
-    While 'the made' is less than 'how many buffers',
+    While 'the buffers made' is less than 'how many buffers',
         a text called 'the stem' is 'gen buffer name',
         a text called 'the name' is 'gen buffer reference' of 'the stem',
         a text called 'the size access' is 'gen buffer property' of 'the stem' and "size",
@@ -409,7 +420,7 @@ To 'gen leaf buffer declaration' with a text called indent and a boolean called 
             a text called 'the capacity assertion' is 'gen assert number is' of "BUF-05" and 'the capacity access' and 'the size',
             append 'the capacity assertion' to 'the lines'.
         Set 'the last name' to 'the size access',
-        Set 'the made' to 'the made' add 1.
+        Set 'the buffers made' to 'the buffers made' add 1.
     (A plain read closes the group. An If/Otherwise as a block's last
      statement traps whatever follows it - hand-reduced, and the reason
      'gen leaf rich condition' stays out of the closer pool - so every
@@ -991,4 +1002,753 @@ To 'gen leaf buffer length synonym' with a text called indent and a boolean call
         Set 'the mutation line' to "clear {'the name'}".
     a text called 'the second check' is 'gen assert number matches' of "BUF-11" and 'the length access' and 'the size access'.
     a list called 'the lines' is ['the declaration', 'the append line', 'the first check', 'the mutation line', 'the second check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's buffer leaves, batch B, 2026-08-29 evening -----------
+
+ docs/ledger/buffers.md rows BUF-40 through BUF-54, the 0.4.14 "Releasing
+ a Buffer" subsection (LANGUAGE.md:3645-3754, `Free`/`Release`/
+ `Deallocate`). BUF-40 stays `not assertable` (an implementation-timing
+ claim - "immediately" - with no observable half of its own beyond what
+ BUF-43 onward already test) and BUF-49 is not a separate leaf need (it
+ names `On error` catching the refusal, already exercised by every row
+ below). BUF-54 ("a list also accepts Free") is a 0.4.15-only claim
+ (vox #109) - not this batch's, per the evening brief's rule that a row
+ whose claim is new in the stack is not built until after the release;
+ skipped, said here rather than silently. BUF-50 (the worked example,
+ reproduced verbatim) and BUF-53 (the per-iteration idiom, half not
+ assertable) are lower-priority composites whose sub-claims this batch
+ already covers piecemeal, so with a ten-row budget they are left for a
+ later batch rather than spent on a second telling of BUF-43/45/47's own
+ claims.
+
+ Ten rows, seven leaves: BUF-41+BUF-42 (kind 110), BUF-43+BUF-44+BUF-45
+ (111), BUF-46 (112), BUF-47 (113), BUF-48 (114), BUF-51 (115), BUF-52
+ (116). Every claim was hand-run against BOTH compilers before being
+ encoded - the installed 0.4.14 (`/usr/bin/vox`) and the pre-merge 0.4.15
+ stack (`vox-notes/stack-0415/vox-stack`) - and printed identically on
+ both; retained probes are docs/ledger/probes/buffers/BUF-41.vox,
+ BUF-43.vox, BUF-46.vox, BUF-47.vox, BUF-48.vox, BUF-51.vox, BUF-52.vox.
+ Reuses this file's own name allocator and assert helpers throughout,
+ including 'gen assert text is' (already BUF-06/BUF-16/BUF-17's own
+ helper) for BUF-45's `as text` check - it captures `X as text` into a
+ holder before comparing, which is BUF-45's actual claim; gen_things.vox's
+ 'gen assert text equals' compares the SUBJECT directly against the
+ literal with no `as text` step, which is a different (undocumented)
+ comparison for a buffer and was the wrong helper for this row.
+
+ Kind 110-119 is buffers' own second reservation half (100-109 is batch
+ A); every kind here is drawn only at depth 3 - the primary raw draw in
+ 'gen statement' widens only for depth 3 - so nothing below ever has to
+ be a safe block closer, and every leaf is free to use `On error`
+ without the depth-2/1/0 remap batch A's growth/fixed-overflow leaves
+ needed to avoid.)
+
+(One statement, one buffer: the three spellings `Free`/`Release`/
+ `Deallocate` and the optional `the` article are drawn together rather
+ than as two separate choices, per the surface brief - LANGUAGE.md:3646
+ gives all three spellings equal standing and 3647 makes the article
+ optional on any of them, so there is no rule pinning either draw and no
+ reason to keep them apart.)
+
+To 'gen buffer free statement' with a text called 'the name'.
+    a number called 'the spelling draw' is 'rng below' of 3.
+    a text called 'the keyword' is "Free".
+    If 'the spelling draw' is 1 then,
+        Set 'the keyword' to "Release".
+    If 'the spelling draw' is 2 then,
+        Set 'the keyword' to "Deallocate".
+    a number called 'the article draw' is 'rng below' of 2.
+    a text called 'the article' is "".
+    If 'the article draw' is 0 then,
+        Set 'the article' to "the ".
+    a text called 'the line' is "{'the keyword'} {'the article'}{'the name'}".
+    Return a text, 'the line'.
+
+(A buffer declared straight from a string literal - LANGUAGE.md:3662's
+ own worked example uses this form (`a buffer called line is "hello".`),
+ and BUF-25 already records that the generator has no single shared
+ helper for it despite using the shape inline in a few places
+ (gen_text.vox). Collected here as one helper because every leaf below
+ wants a buffer that already holds something, to make the after-Free
+ state a real change rather than a buffer that was empty regardless.)
+
+To 'gen buffer string declaration' with a text called 'the name' and a text called 'the payload'.
+    a text called 'the line' is "a buffer called {'the name'} is \"{'the payload'}\"".
+    Return a text, 'the line'.
+
+(BUF-41, BUF-42: `Free`, `Release` and `Deallocate` empty a buffer
+ identically, article or not - LANGUAGE.md:3645-3647. One to three
+ buffers, each with its own random payload and its own independent
+ spelling/article draw, each asserted empty right after.)
+
+To 'gen leaf buffer free spellings' with a text called indent and a boolean called nested.
+    a number called 'how many buffers' is 'rng below' of 3 add 1.
+    a list called 'the lines' is [].
+    a number called 'the buffers made' is 0.
+    a text called 'the last size access' is "".
+    While 'the buffers made' is less than 'how many buffers',
+        a text called 'the stem' is 'gen buffer name',
+        a text called 'the name' is 'gen buffer reference' of 'the stem',
+        a text called 'the size access' is 'gen buffer property' of 'the stem' and "size",
+        a number called 'the payload length draw' is 'rng below' of 64,
+        a number called 'the payload length' is 'the payload length draw' add 1,
+        a text called 'the payload' is 'gen buffer filler' of 'the payload length',
+        a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload',
+        append 'the declaration' to 'the lines',
+        a text called 'the free line' is 'gen buffer free statement' of 'the name',
+        append 'the free line' to 'the lines',
+        a text called 'the size check' is 'gen assert number is' of "BUF-41" and 'the size access' and 0,
+        append 'the size check' to 'the lines',
+        Set 'the last size access' to 'the size access',
+        Set 'the buffers made' to 'the buffers made' add 1.
+    a text called 'the closing read' is "Print {'the last size access'}".
+    append 'the closing read' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-43, BUF-44, BUF-45: the after-`Free` state, everything the
+ subsection actually names for it and nothing this leaf invents past
+ that (surface brief caution) - size 0, length 0 (3655-3656), capacity 0,
+ `empty` true, `full` true (3657-3659, the hand-verified "behaves exactly
+ like a fixed buffer of capacity 0" extra BUF-44 records), and `as text`
+ reads back `""` (3656). `full` reading true here is 0 == 0, not a second
+ rule - BUF-13 already established `full` as `size equals capacity`.)
+
+To 'gen leaf buffer freed state' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the capacity access' is 'gen buffer property' of 'the stem' and "capacity".
+    a text called 'the empty access' is 'gen buffer property' of 'the stem' and "empty".
+    a text called 'the full access' is 'gen buffer property' of 'the stem' and "full".
+    a text called 'the text holder' is 'gen buffer companion' of "text after free".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the free line' is 'gen buffer free statement' of 'the name'.
+    a text called 'the size check' is 'gen assert number is' of "BUF-43" and 'the size access' and 0.
+    a text called 'the length check' is 'gen assert number is' of "BUF-43" and 'the length access' and 0.
+    a text called 'the capacity check' is 'gen assert number is' of "BUF-44" and 'the capacity access' and 0.
+    a text called 'the empty check' is 'gen assert true' of "BUF-44" and 'the empty access'.
+    a text called 'the full check' is 'gen assert true' of "BUF-44" and 'the full access'.
+    a list called 'the text check pair' is 'gen assert text is' of "BUF-45" and 'the name' and 'the text holder' and "".
+    a text called 'the text capture' is element 1 of 'the text check pair'.
+    a text called 'the text check' is element 2 of 'the text check pair'.
+    a list called 'the lines' is ['the declaration', 'the free line', 'the size check', 'the length check', 'the capacity check', 'the empty check', 'the full check', 'the text capture', 'the text check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-46: a byte read past a freed buffer is refused with the error flag
+ and, per the OOB-read contract 'gen leaf buffer write read bounds'
+ already exercises (BUF-30), returns 0 - a freed buffer's size is 0, so
+ position 1 is out of bounds the same way any read past size is.
+
+ The stale-flag clear is the same defensive pattern 'gen leaf buffer
+ growth' and 'gen leaf buffer write read bounds' already use: without
+ it, a pending error from an unrelated statement three leaves earlier in
+ the same program would masquerade as this row's own finding.)
+
+To 'gen leaf buffer freed read refused' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the read flag' is 'gen buffer companion' of "byte read refused".
+    a text called 'the read result' is 'gen buffer companion' of "byte read result".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the free line' is 'gen buffer free statement' of 'the name'.
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the flag declaration' is "a boolean called {'the read flag'} is false".
+    a text called 'the read line' is "a number called {'the read result'} is byte 1 of {'the name'}".
+    a text called 'the read handler' is "On error Set {'the read flag'} to true".
+    a text called 'the flag check' is 'gen assert true' of "BUF-46" and 'the read flag'.
+    a text called 'the value check' is 'gen assert number is' of "BUF-46" and 'the read result' and 0.
+    a list called 'the lines' is ['the declaration', 'the free line', 'the stale declaration', 'the stale handler', 'the flag declaration', 'the read line', 'the read handler', 'the flag check', 'the value check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-47: every write past a freed buffer - `append`, `Set byte`, `copy`,
+ `set`, `Read ... into` - is refused with the error flag and execution
+ continues; the buffer stays empty throughout (the surface brief's
+ extension of the row, and the trivial consequence of every write being
+ refused). The first four need nothing but the buffer itself; `Read ...
+ into` needs an open file, so it only runs when this program committed
+ to file I/O and the harness actually bound gen_scratch_flag to a
+ per-run scratch directory - the same guard gen_files.vox and 'gen leaf
+ buffer truncation' use, so this leaf is never the one that assembles a
+ path outside it. The other four forms are unconditional: a program with
+ no file I/O still gets four fifths of the row rather than none of it.)
+
+To 'gen leaf buffer freed write refused' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the free line' is 'gen buffer free statement' of 'the name'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a list called 'the lines' is ['the declaration', 'the free line', 'the stale declaration', 'the stale handler'].
+    a number called 'the append payload length draw' is 'rng below' of 32.
+    a number called 'the append payload length' is 'the append payload length draw' add 1.
+    a text called 'the append payload' is 'gen buffer filler' of 'the append payload length'.
+    a text called 'the append flag' is 'gen buffer companion' of "append refused".
+    a text called 'the append flag declaration' is "a boolean called {'the append flag'} is false".
+    a text called 'the append line' is "append \"{'the append payload'}\" to {'the name'}".
+    a text called 'the append handler' is "On error Set {'the append flag'} to true".
+    a text called 'the append check' is 'gen assert true' of "BUF-47" and 'the append flag'.
+    append 'the append flag declaration' to 'the lines'.
+    append 'the append line' to 'the lines'.
+    append 'the append handler' to 'the lines'.
+    append 'the append check' to 'the lines'.
+    a number called 'the byte value' is 'rng below' of 256.
+    a text called 'the byte flag' is 'gen buffer companion' of "byte set refused".
+    a text called 'the byte flag declaration' is "a boolean called {'the byte flag'} is false".
+    a text called 'the byte line' is "Set byte 1 of {'the name'} to {'the byte value'}".
+    a text called 'the byte handler' is "On error Set {'the byte flag'} to true".
+    a text called 'the byte check' is 'gen assert true' of "BUF-47" and 'the byte flag'.
+    append 'the byte flag declaration' to 'the lines'.
+    append 'the byte line' to 'the lines'.
+    append 'the byte handler' to 'the lines'.
+    append 'the byte check' to 'the lines'.
+    a number called 'the copy payload length draw' is 'rng below' of 32.
+    a number called 'the copy payload length' is 'the copy payload length draw' add 1.
+    a text called 'the copy payload' is 'gen buffer filler' of 'the copy payload length'.
+    a text called 'the copy flag' is 'gen buffer companion' of "copy refused".
+    a text called 'the copy flag declaration' is "a boolean called {'the copy flag'} is false".
+    a text called 'the copy line' is "copy \"{'the copy payload'}\" to {'the name'}".
+    a text called 'the copy handler' is "On error Set {'the copy flag'} to true".
+    a text called 'the copy check' is 'gen assert true' of "BUF-47" and 'the copy flag'.
+    append 'the copy flag declaration' to 'the lines'.
+    append 'the copy line' to 'the lines'.
+    append 'the copy handler' to 'the lines'.
+    append 'the copy check' to 'the lines'.
+    a number called 'the set payload length draw' is 'rng below' of 32.
+    a number called 'the set payload length' is 'the set payload length draw' add 1.
+    a text called 'the set payload' is 'gen buffer filler' of 'the set payload length'.
+    a text called 'the set flag' is 'gen buffer companion' of "value set refused".
+    a text called 'the set flag declaration' is "a boolean called {'the set flag'} is false".
+    a text called 'the set line' is "set {'the name'} to \"{'the set payload'}\"".
+    a text called 'the set handler' is "On error Set {'the set flag'} to true".
+    a text called 'the set check' is 'gen assert true' of "BUF-47" and 'the set flag'.
+    append 'the set flag declaration' to 'the lines'.
+    append 'the set line' to 'the lines'.
+    append 'the set handler' to 'the lines'.
+    append 'the set check' to 'the lines'.
+    If gen_does_file_io and gen_scratch_flag is not empty then,
+        Set gen_file_ios to gen_file_ios add 1,
+        a text called 'the path name' is 'gen buffer companion' of "path",
+        a text called 'the write handle' is 'gen buffer companion' of "being written",
+        a text called 'the read handle' is 'gen buffer companion' of "being read",
+        a number called 'the source length draw' is 'rng below' of 32,
+        a number called 'the source length' is 'the source length draw' add 1,
+        a text called 'the source payload' is 'gen buffer filler' of 'the source length',
+        a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}freed\"",
+        a text called 'the open write' is "open a file for writing called {'the write handle'} at {'the path name'}",
+        a text called 'the write line' is "Write \"{'the source payload'}\" to {'the write handle'}",
+        a text called 'the close write' is "Close {'the write handle'}",
+        a text called 'the open read' is "open a file for reading called {'the read handle'} at {'the path name'}",
+        a text called 'the readinto flag' is 'gen buffer companion' of "read into refused",
+        a text called 'the readinto flag declaration' is "a boolean called {'the readinto flag'} is false",
+        a text called 'the readinto line' is "Read from {'the read handle'} into {'the name'}",
+        a text called 'the readinto handler' is "On error Set {'the readinto flag'} to true",
+        a text called 'the readinto check' is 'gen assert true' of "BUF-47" and 'the readinto flag',
+        a text called 'the close read' is "Close {'the read handle'}",
+        append 'the path line' to 'the lines',
+        append 'the open write' to 'the lines',
+        append 'the write line' to 'the lines',
+        append 'the close write' to 'the lines',
+        append 'the open read' to 'the lines',
+        append 'the readinto flag declaration' to 'the lines',
+        append 'the readinto line' to 'the lines',
+        append 'the readinto handler' to 'the lines',
+        append 'the readinto check' to 'the lines',
+        append 'the close read' to 'the lines'.
+    a text called 'the empty check' is 'gen assert number is' of "BUF-47" and 'the size access' and 0.
+    append 'the empty check' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-48: `resize`, `reallocate`, `grow` and `shrink` are refused on a
+ freed buffer the same as any other write, even though the subsection's
+ own prose only names "read or write" and not the resize keywords by
+ name (LANGUAGE.md 3645-3647 vs. the sibling Buffer Resizing
+ subsection) - hand-verified against both compilers to hold anyway.
+ Reuses 'gen buffer resize statement' (BUF-15) rather than hand-coding
+ the four spellings again, so which keyword and whether "bytes" appears
+ are drawn exactly as they already are for a buffer that was never
+ freed - one to three buffers, each with its own independent draw.)
+
+To 'gen leaf buffer freed resize refused' with a text called indent and a boolean called nested.
+    a number called 'how many buffers' is 'rng below' of 3 add 1.
+    a list called 'the lines' is [].
+    a number called 'the buffers made' is 0.
+    While 'the buffers made' is less than 'how many buffers',
+        a text called 'the stem' is 'gen buffer name',
+        a text called 'the name' is 'gen buffer reference' of 'the stem',
+        a number called 'the payload length draw' is 'rng below' of 64,
+        a number called 'the payload length' is 'the payload length draw' add 1,
+        a text called 'the payload' is 'gen buffer filler' of 'the payload length',
+        a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload',
+        append 'the declaration' to 'the lines',
+        a text called 'the free line' is 'gen buffer free statement' of 'the name',
+        append 'the free line' to 'the lines',
+        a text called 'the resize flag' is 'gen buffer companion' of "resize refused",
+        a text called 'the flag declaration' is "a boolean called {'the resize flag'} is false",
+        append 'the flag declaration' to 'the lines',
+        a number called 'the new capacity draw' is 'rng below' of 60,
+        a number called 'the new capacity' is 'the new capacity draw' add 4,
+        a text called 'the resize line' is 'gen buffer resize statement' of 'the name' and 'the new capacity',
+        append 'the resize line' to 'the lines',
+        a text called 'the resize handler' is "On error Set {'the resize flag'} to true",
+        append 'the resize handler' to 'the lines',
+        a text called 'the resize check' is 'gen assert true' of "BUF-48" and 'the resize flag',
+        append 'the resize check' to 'the lines',
+        Set 'the buffers made' to 'the buffers made' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-51: freeing an already-freed buffer is a no-op that sets the error
+ flag rather than releasing anything a second time - LANGUAGE.md:3671-
+ 3678's worked example. Both spellings are drawn independently, so the
+ second `Free` need not match the first's.)
+
+To 'gen leaf buffer double free' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the double flag' is 'gen buffer companion' of "second free refused".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the first free' is 'gen buffer free statement' of 'the name'.
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the flag declaration' is "a boolean called {'the double flag'} is false".
+    a text called 'the second free' is 'gen buffer free statement' of 'the name'.
+    a text called 'the second handler' is "On error Set {'the double flag'} to true".
+    a text called 'the flag check' is 'gen assert true' of "BUF-51" and 'the double flag'.
+    a list called 'the lines' is ['the declaration', 'the first free', 'the stale declaration', 'the stale handler', 'the flag declaration', 'the second free', 'the second handler', 'the flag check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-52: a `buffer` function parameter is the caller's buffer, so `Free`
+ inside the function releases the same block the caller sees -
+ LANGUAGE.md:3680-3683, the same aliasing FUN-26 already establishes for
+ a resize. The function name comes from the value surface's word cycler
+ ('gen fresh verb'/'gen written name', gen_collections.vox) rather than a
+ fixed phrase - generic despite living in that file, PROCEDURE.md 6a -
+ and the parameter and the caller's own variable are two independent
+ draws from this file's own buffer-name allocator, so they are never the
+ same word.
+
+ A function's body closes on a BLANK LINE, not on its own last period -
+ LANGUAGE.md:91, and the collections surface's own 'gen open a function
+ definition'/'gen emit' pair already carries the scar tissue (a value
+ leaf drawn straight after one that left a clause open, "A function is
+ defined at the top level, like a thing" x8 in one campaign, gen_
+ collections.vox's note above that helper). This leaf hand-reduced the
+ same failure the other way around: written through 'gen join lines'
+ like every other leaf here, the function's closing period only closes
+ the SIGNATURE clause it opens, leaving `Free {param}.` unclosed at EOF
+ rather than at the next statement, and the FIRST campaign this leaf ran
+ in turned that into "Unknown variable" a few seeds in - the declaration
+ the caller expected was still inside the still-open function body. Fixed
+ by borrowing the exact two-blank-line shape ('gen open a function
+ definition' before, a bare `'gen emit' of "\n"` after) rather than
+ inventing a second one; 'gen join lines' only rejoins for the ordinary
+ statements once the function is closed.)
+
+To 'gen leaf buffer free via parameter' with a text called indent and a boolean called nested.
+    a text called 'the function phrase' is 'gen fresh verb'.
+    a text called 'the function name' is 'gen written name' of 'the function phrase'.
+    a text called 'the parameter stem' is 'gen buffer name'.
+    a text called 'the parameter name' is 'gen buffer reference' of 'the parameter stem'.
+    a text called 'the definition line' is "{indent}To {'the function name'} with a buffer called {'the parameter name'}. Free {'the parameter name'}.\n".
+    'gen open a function definition'.
+    'gen emit' of 'the definition line'.
+    'gen emit' of "\n".
+    a text called 'the caller stem' is 'gen buffer name'.
+    a text called 'the caller name' is 'gen buffer reference' of 'the caller stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the caller stem' and "size".
+    a text called 'the empty access' is 'gen buffer property' of 'the caller stem' and "empty".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the caller name' and 'the payload'.
+    a text called 'the call line' is "{'the function name'} of {'the caller name'}".
+    a text called 'the size check' is 'gen assert number is' of "BUF-52" and 'the size access' and 0.
+    a text called 'the empty check' is 'gen assert true' of "BUF-52" and 'the empty access'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the after flag' is 'gen buffer companion' of "refused after the call freed it".
+    a text called 'the after flag declaration' is "a boolean called {'the after flag'} is false".
+    a number called 'the after payload length draw' is 'rng below' of 32.
+    a number called 'the after payload length' is 'the after payload length draw' add 1.
+    a text called 'the after payload' is 'gen buffer filler' of 'the after payload length'.
+    a text called 'the after append' is "append \"{'the after payload'}\" to {'the caller name'}".
+    a text called 'the after handler' is "On error Set {'the after flag'} to true".
+    a text called 'the after check' is 'gen assert true' of "BUF-52" and 'the after flag'.
+    a list called 'the lines' is ['the declaration', 'the call line', 'the size check', 'the empty check', 'the stale declaration', 'the stale handler', 'the after flag declaration', 'the after append', 'the after handler', 'the after check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's buffer leaves, batch C, round four, 2026-08-30 --------
+
+ docs/ledger/buffers.md rows BUF-19, BUF-21, BUF-23, BUF-24, BUF-25,
+ BUF-26, BUF-31, BUF-32, BUF-36, BUF-38 - ten rows, six leaves. The
+ ledger table still shows several rows this batch does NOT touch as
+ `todo` (BUF-03, BUF-05, BUF-10, BUF-12, BUF-13, BUF-48) even though
+ `gen leaf buffer growth`/`declaration`/`properties`/`fullness`/`freed
+ resize refused` above already assert them - those rows are done, the
+ ledger's status column just has not been flipped yet (PROCEDURE.md 7:
+ that happens at merge, not by a leaf worker), and this batch does not
+ spend its own budget re-covering them. BUF-37 (fixed-destination
+ truncation under append/copy) is a real gap too but is left for a later
+ batch - BUF-06 already covers the append half and the leaf below spends
+ its ten-row budget on the untouched byte-access/append-copy claims the
+ ledger's own Report section names first.
+
+ Kinds 340-349 (NEW block, this round's reservation) - six kinds used,
+ 340-345; 346-349 spare, the same way 249 and 289 were spare for other
+ surfaces' ten-row remaps. Drawn only at depth 3, the same as every
+ other kind in this file: the raw draw only widens for depth 3, and the
+ remap that lands on 340-349 lives inside that branch alone.
+
+ Every claim here was hand-run against BOTH compilers before being
+ encoded - the installed 0.4.14 (`/usr/bin/vox`) and the 0.4.15 stack
+ (`vox-notes/stack-0415/vox-stack`) - and printed identically on both;
+ see this batch's report for the transcripts. Retained probes are
+ docs/ledger/probes/buffers/BUF-19.vox, BUF-21.vox, BUF-23.vox,
+ BUF-24.vox, BUF-25.vox, BUF-26.vox, BUF-31.vox, BUF-32.vox, BUF-38.vox,
+ and a rewritten BUF-36.vox (the row's earlier retained probe reused
+ BUF-03's LOOP shape to show the construct works at all; the leaf below
+ renders a single large copy/append instead, so the probe was rewritten
+ to the shape it actually renders - PROCEDURE.md 6a, "probe the exact
+ line shape you will render, not the idea of it" - and re-run clean
+ under `docs/check-probes.sh`).
+
+ Chaos-aware (brief -2026-08-30c, point 3): every leaf below declares
+ every variable it uses, closes every clause on its own period, and
+ emits nothing but declarations, one-line On-error handlers and the
+ established assert shape - the same closed-block idiom every leaf
+ above already uses - so dropping one into a deeper composed context
+ changes nothing about how it closes.)
+
+(BUF-19, BUF-21: byte positions are 1-indexed (LANGUAGE.md:3712), and a
+ byte access whose position is a runtime VARIABLE rather than a numeral
+ baked into the generated source takes the same values (LANGUAGE.md:3717)
+ - every leaf above interpolates the position as a literal number
+ straight into `byte N of buf`, so the variable-indexed path has never
+ actually been exercised. The two helpers below build a payload
+ character by character from the same safe letters-and-digits alphabet
+ 'gen buffer filler' already uses, so BOTH the character text and its
+ known ascii VALUE are available at each position - something 'gen
+ buffer filler' itself never exposes, because it only ever returns the
+ finished text. 'gen buffer known filler' marks two positions in one
+ pass and hands their values back through the two globals declared
+ above, the same out-parameter idiom 'gen buffer name' already uses for
+ gen_buffer_last_word.)
+
+To 'gen buffer known char' with a number called 'the pick'.
+    a list called 'the known alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"].
+    a number called 'the position' is 'the pick' add 1.
+    a text called 'the character' is element 'the position' of 'the known alphabet'.
+    Return a text, 'the character'.
+
+To 'gen buffer known char value' with a number called 'the pick'.
+    If 'the pick' is less than 10 then,
+        Return a number, 'the pick' add 48.
+    a number called 'the letter offset' is 'the pick' minus 10.
+    a number called 'the letter value' is 'the letter offset' add 97.
+    Return a number, 'the letter value'.
+
+To 'gen buffer known filler' with a number called 'how many bytes' and a number called 'the marked position' and a number called 'the second marked position'.
+    clear 'the buffer filler bytes'.
+    Set gen_buffer_marked_value to 0.
+    Set gen_buffer_second_marked_value to 0.
+    a number called 'the written' is 0.
+    While 'the written' is less than 'how many bytes',
+        a number called 'the pick' is 'rng below' of 36,
+        append "{'gen buffer known char' of 'the pick'}" to 'the buffer filler bytes',
+        a number called 'the this position' is 'the written' add 1,
+        If 'the this position' is 'the marked position' then,
+            Set gen_buffer_marked_value to 'gen buffer known char value' of 'the pick'.
+        If 'the this position' is 'the second marked position' then,
+            Set gen_buffer_second_marked_value to 'gen buffer known char value' of 'the pick'.
+        Set 'the written' to 'the written' add 1.
+    Return a text, 'the buffer filler bytes' as text.
+
+To 'gen leaf buffer byte index' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the length draw' is 'rng below' of 20.
+    a number called 'the length' is 'the length draw' add 5.
+    a number called 'the position room' is 'the length' minus 1.
+    a number called 'the variable position draw' is 'rng below' of 'the position room'.
+    a number called 'the variable position' is 'the variable position draw' add 2.
+    a text called 'the payload' is 'gen buffer known filler' of 'the length' and 1 and 'the variable position'.
+    a number called 'the first value' is gen_buffer_marked_value.
+    a number called 'the variable value' is gen_buffer_second_marked_value.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the first result' is 'gen buffer companion' of "first byte".
+    a text called 'the first read' is "a number called {'the first result'} is byte 1 of {'the name'}".
+    a text called 'the first check' is 'gen assert number is' of "BUF-19" and 'the first result' and 'the first value'.
+    a text called 'the position holder' is 'gen buffer companion' of "read position".
+    a text called 'the position declaration' is "a number called {'the position holder'} is {'the variable position'}".
+    a text called 'the variable result' is 'gen buffer companion' of "byte at the variable position".
+    a text called 'the variable read' is "a number called {'the variable result'} is byte {'the position holder'} of {'the name'}".
+    a text called 'the variable check' is 'gen assert number is' of "BUF-21" and 'the variable result' and 'the variable value'.
+    a number called 'the write value' is 'rng below' of 256.
+    a text called 'the write line' is "Set byte {'the position holder'} of {'the name'} to {'the write value'}".
+    a text called 'the reread result' is 'gen buffer companion' of "byte after the variable write".
+    a text called 'the reread line' is "a number called {'the reread result'} is byte {'the position holder'} of {'the name'}".
+    a text called 'the reread check' is 'gen assert number is' of "BUF-21" and 'the reread result' and 'the write value'.
+    a list called 'the lines' is ['the declaration', 'the first read', 'the first check', 'the position declaration', 'the variable read', 'the variable check', 'the write line', 'the reread line', 'the reread check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-23, BUF-24: `Set byte N of buf to 0x4A` (a hex literal) and
+ `Set byte N of buf to 'q'` (a character literal) are both accepted
+ spellings for the VALUE half of a byte write - LANGUAGE.md:3722-3723,
+ alongside the plain decimal `gen leaf buffer inrange` already exercises.
+ A character literal stores its ascii code (hand-verified: 'q' writes
+ 113). The hex literal is built from the same value 'gen buffer known
+ char value' would have produced for the matching letter/digit pick, so
+ both writes land on a value this leaf can predict exactly - hex digits
+ are drawn independently of the digit-and-letter alphabet the rest of
+ this file uses, because 0-9/A-F is what the manual's own spelling
+ requires, not a stand-in for it.)
+
+To 'gen buffer hex digit char' with a number called 'the pick'.
+    a list called 'the hex alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"].
+    a number called 'the position' is 'the pick' add 1.
+    a text called 'the character' is element 'the position' of 'the hex alphabet'.
+    Return a text, 'the character'.
+
+To 'gen buffer hex literal' with a number called 'the byte value'.
+    a number called 'the high nibble' is 'the byte value' divide 16.
+    a number called 'the low nibble' is 'the byte value' modulo 16.
+    a text called 'the high char' is 'gen buffer hex digit char' of 'the high nibble'.
+    a text called 'the low char' is 'gen buffer hex digit char' of 'the low nibble'.
+    a text called 'the literal' is "0x{'the high char'}{'the low char'}".
+    Return a text, 'the literal'.
+
+To 'gen leaf buffer byte literals' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the length draw' is 'rng below' of 8.
+    a number called 'the length' is 'the length draw' add 4.
+    a text called 'the payload' is 'gen buffer filler' of 'the length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a number called 'the char position room' is 'the length' minus 1.
+    a number called 'the char position draw' is 'rng below' of 'the char position room'.
+    a number called 'the char position' is 'the char position draw' add 2.
+    a number called 'the hex value' is 'rng below' of 256.
+    a text called 'the hex literal' is 'gen buffer hex literal' of 'the hex value'.
+    a text called 'the hex write' is "Set byte 1 of {'the name'} to {'the hex literal'}".
+    a text called 'the hex result' is 'gen buffer companion' of "byte written by a hex literal".
+    a text called 'the hex read' is "a number called {'the hex result'} is byte 1 of {'the name'}".
+    a text called 'the hex check' is 'gen assert number is' of "BUF-23" and 'the hex result' and 'the hex value'.
+    a number called 'the char pick' is 'rng below' of 36.
+    a text called 'the char literal text' is 'gen buffer known char' of 'the char pick'.
+    a number called 'the char value' is 'gen buffer known char value' of 'the char pick'.
+    a text called 'the char write' is "Set byte {'the char position'} of {'the name'} to '{'the char literal text'}'".
+    a text called 'the char result' is 'gen buffer companion' of "byte written by a character literal".
+    a text called 'the char read' is "a number called {'the char result'} is byte {'the char position'} of {'the name'}".
+    a text called 'the char check' is 'gen assert number is' of "BUF-24" and 'the char result' and 'the char value'.
+    a text called 'the closing read' is "Print {'the char result'}".
+    a list called 'the lines' is ['the declaration', 'the hex write', 'the hex read', 'the hex check', 'the char write', 'the char read', 'the char check', 'the closing read'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-25: the worked example - declare a buffer from a string literal,
+ mutate one byte with a character literal, print shows the mutation
+ (LANGUAGE.md:3727-3732's own "Hello" -> "Jello"). 'gen buffer known
+ filler mutated' below builds the ORIGINAL payload and its post-mutation
+ twin in one pass, substituting the replacement character in at the
+ marked position as it goes, so the expected printed content is
+ something the generator computed rather than something re-derived by
+ truncating/re-slicing the same string the leaf is trying to verify - the
+ same reasoning 'gen leaf buffer resize' uses for BUF-17's independent
+ oracle. Reuses 'gen assert text is' (already BUF-06/16/17/45's own
+ helper) for the `as text` capture-then-compare BUF-25 itself needs.)
+
+To 'gen buffer known filler mutated' with a number called 'how many bytes' and a number called 'the marked position' and a text called 'the replacement char'.
+    clear 'the buffer filler bytes'.
+    clear 'the mutated content view'.
+    a number called 'the written' is 0.
+    While 'the written' is less than 'how many bytes',
+        a number called 'the pick' is 'rng below' of 36,
+        append "{'gen buffer known char' of 'the pick'}" to 'the buffer filler bytes',
+        a number called 'the this position' is 'the written' add 1,
+        If 'the this position' is 'the marked position' then,
+            append "{'the replacement char'}" to 'the mutated content view'.
+        If 'the this position' is not 'the marked position' then,
+            append "{'gen buffer known char' of 'the pick'}" to 'the mutated content view'.
+        Set 'the written' to 'the written' add 1.
+    Return a text, 'the buffer filler bytes' as text.
+
+To 'gen leaf buffer content mutation' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the length draw' is 'rng below' of 20.
+    a number called 'the length' is 'the length draw' add 3.
+    a number called 'the position draw' is 'rng below' of 'the length'.
+    a number called 'the position' is 'the position draw' add 1.
+    a number called 'the replacement pick' is 'rng below' of 36.
+    a text called 'the replacement char' is 'gen buffer known char' of 'the replacement pick'.
+    a text called 'the payload' is 'gen buffer known filler mutated' of 'the length' and 'the position' and 'the replacement char'.
+    a text called 'the expected content' is 'the mutated content view' as text.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the mutate line' is "Set byte {'the position'} of {'the name'} to '{'the replacement char'}'".
+    a text called 'the content holder' is 'gen buffer companion' of "content after the mutation".
+    a list called 'the content check pair' is 'gen assert text is' of "BUF-25" and 'the name' and 'the content holder' and 'the expected content'.
+    a text called 'the content capture' is element 1 of 'the content check pair'.
+    a text called 'the content check' is element 2 of 'the content check pair'.
+    a list called 'the lines' is ['the declaration', 'the mutate line', 'the content capture', 'the content check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-26: an out-of-bounds READ sets the error flag AND the read
+ expression itself evaluates to 0, not merely "something unspecified" -
+ LANGUAGE.md:3742. `gen leaf buffer oob` (kind 101, night of 2026-08-28)
+ already exercises the On-error half; nothing captures and asserts the
+ VALUE the read produced, which is the half BUF-26's own row calls out
+ as missing. Same stale-flag guard every other On-error leaf here uses,
+ for the same reason: without it, a pending error three statements back
+ would masquerade as this row's own finding.)
+
+To 'gen leaf buffer oob value' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the oob flag' is 'gen buffer companion' of "out of range read refused".
+    a text called 'the oob result' is 'gen buffer companion' of "out of range value".
+    a number called 'the payload length draw' is 'rng below' of 64.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the declaration' is 'gen buffer string declaration' of 'the name' and 'the payload'.
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a number called 'the overshoot draw' is 'rng below' of 500.
+    a number called 'the overshoot' is 'the overshoot draw' add 1.
+    a number called 'the oob index' is 'the payload length' add 'the overshoot'.
+    a text called 'the flag declaration' is "a boolean called {'the oob flag'} is false".
+    a text called 'the read line' is "a number called {'the oob result'} is byte {'the oob index'} of {'the name'}".
+    a text called 'the read handler' is "On error Set {'the oob flag'} to true".
+    a text called 'the flag check' is 'gen assert true' of "BUF-26" and 'the oob flag'.
+    a text called 'the value check' is 'gen assert number is' of "BUF-26" and 'the oob result' and 0.
+    a list called 'the lines' is ['the declaration', 'the stale declaration', 'the stale handler', 'the flag declaration', 'the read line', 'the read handler', 'the flag check', 'the value check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-31, BUF-32, BUF-38: `append` and `copy` between two BUFFERS -
+ LANGUAGE.md:3777-3784. Every existing append/copy leaf in this file
+ sources from a TEXT literal or a format string; none has ever used a
+ buffer as the source, which is the construct these three rows actually
+ name. One source buffer, two independent destinations - append grows
+ the first (asserted against ITS OWN earlier content, captured before
+ the append, rather than an assumed empty start - the same reasoning
+ 'gen leaf buffer clear' uses for capacity), copy replaces the second
+ outright. The source is read back and asserted unchanged after EACH
+ verb - BUF-38 is the row that specifically claims neither one mutates
+ it, so it is checked twice, not once.)
+
+To 'gen leaf buffer append copy sources' with a text called indent and a boolean called nested.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source name' is 'gen buffer reference' of 'the source stem'.
+    a number called 'the source length draw' is 'rng below' of 40.
+    a number called 'the source length' is 'the source length draw' add 1.
+    a text called 'the source payload' is 'gen buffer filler' of 'the source length'.
+    a text called 'the source declaration' is 'gen buffer string declaration' of 'the source name' and 'the source payload'.
+    a text called 'the append stem' is 'gen buffer name'.
+    a text called 'the append name' is 'gen buffer reference' of 'the append stem'.
+    a number called 'the append base length draw' is 'rng below' of 40.
+    a number called 'the append base length' is 'the append base length draw' add 1.
+    a text called 'the append base' is 'gen buffer filler' of 'the append base length'.
+    a text called 'the append declaration' is 'gen buffer string declaration' of 'the append name' and 'the append base'.
+    a text called 'the append line' is "append {'the source name'} to {'the append name'}".
+    a text called 'the append expected' is "{'the append base'}{'the source payload'}".
+    a text called 'the append holder' is 'gen buffer companion' of "content after the append".
+    a list called 'the append check pair' is 'gen assert text is' of "BUF-31" and 'the append name' and 'the append holder' and 'the append expected'.
+    a text called 'the append capture' is element 1 of 'the append check pair'.
+    a text called 'the append check' is element 2 of 'the append check pair'.
+    a text called 'the source after append holder' is 'gen buffer companion' of "unchanged after the append".
+    a list called 'the source after append pair' is 'gen assert text is' of "BUF-38" and 'the source name' and 'the source after append holder' and 'the source payload'.
+    a text called 'the source after append capture' is element 1 of 'the source after append pair'.
+    a text called 'the source after append check' is element 2 of 'the source after append pair'.
+    a text called 'the copy stem' is 'gen buffer name'.
+    a text called 'the copy name' is 'gen buffer reference' of 'the copy stem'.
+    a number called 'the copy base length draw' is 'rng below' of 40.
+    a number called 'the copy base length' is 'the copy base length draw' add 1.
+    a text called 'the copy base' is 'gen buffer filler' of 'the copy base length'.
+    a text called 'the copy declaration' is 'gen buffer string declaration' of 'the copy name' and 'the copy base'.
+    a text called 'the copy line' is "copy {'the source name'} to {'the copy name'}".
+    a text called 'the copy holder' is 'gen buffer companion' of "content after the copy".
+    a list called 'the copy check pair' is 'gen assert text is' of "BUF-32" and 'the copy name' and 'the copy holder' and 'the source payload'.
+    a text called 'the copy capture' is element 1 of 'the copy check pair'.
+    a text called 'the copy check' is element 2 of 'the copy check pair'.
+    a text called 'the source after copy holder' is 'gen buffer companion' of "unchanged after the copy".
+    a list called 'the source after copy pair' is 'gen assert text is' of "BUF-38" and 'the source name' and 'the source after copy holder' and 'the source payload'.
+    a text called 'the source after copy capture' is element 1 of 'the source after copy pair'.
+    a text called 'the source after copy check' is element 2 of 'the source after copy pair'.
+    a list called 'the lines' is ['the source declaration', 'the append declaration', 'the append line', 'the append capture', 'the append check', 'the source after append capture', 'the source after append check', 'the copy declaration', 'the copy line', 'the copy capture', 'the copy check', 'the source after copy capture', 'the source after copy check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(BUF-36: a dynamic (unsized) DESTINATION buffer grows past whatever small
+ initial reserve it started with, whether the growth comes from `append`
+ or from `copy`, in a single large write rather than the accumulated
+ small-append loop `gen leaf buffer growth` already covers for BUF-03 -
+ LANGUAGE.md:3782. Capacity is PRINTED but not asserted: what capacity a
+ dynamic buffer actually reports past its initial reserve is exactly
+ docs/ledger/buffers.md Discrepancy 1's open question, and encoding this
+ leaf's own reading of that dispute as the row's expected answer is the
+ false-finding factory CLAUDE.md warns against - the same restraint 'gen
+ leaf buffer fullness' already shows for a dynamic buffer's `full`. Only
+ `size` (exact, from the payload the generator wrote) and the error flag
+ (must stay clear - growth that raised it would itself be the finding)
+ are asserted. Top level only: it carries an On error, so it cannot be
+ the statement that closes an enclosing block.
+
+ The payload is DIGITS ONLY ('gen random digits', gen_core.vox:78),
+ unlike every other leaf here's letters-and-digits 'gen buffer filler' -
+ deliberately, not for readability. This is the one leaf in the file
+ whose single literal runs to thousands of characters (crossing the
+ 4096-byte reserve takes that much), and at that length a
+ letters-and-digits draw has a real, non-token chance of spelling a
+ substring tests/200_never_emitted.vox's guard bans (`halt` is four
+ letters over a 36-symbol alphabet - about a 1-in-270 shot per ~6000-byte
+ payload, which a 2000-seed sweep of ~600 depth-3 statements each turns
+ into odds-on; see this batch's report for the seed 200_never_emitted
+ actually caught it at). A pure-digit payload can never contain a
+ lowercase-letter needle, so the row's actual claim - size growth - is
+ untouched while the coincidence is impossible instead
+ of merely unlikely.)
+
+To 'gen leaf buffer dynamic destination growth' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the capacity access' is 'gen buffer property' of 'the stem' and "capacity".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the overflow flag' is 'gen buffer companion' of "overflowed".
+    a text called 'the declaration' is 'gen dynamic buffer declaration' of 'the name'.
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a number called 'the payload length draw' is 'rng below' of 2000.
+    a number called 'the payload length' is 'the payload length draw' add 4200.
+    a text called 'the payload' is 'gen random digits' of 'the payload length'.
+    a number called 'the verb draw' is 'rng below' of 2.
+    a text called 'the verb line' is "".
+    If 'the verb draw' is 0 then,
+        Set 'the verb line' to "append \"{'the payload'}\" to {'the name'}".
+    If 'the verb draw' is 1 then,
+        Set 'the verb line' to "copy \"{'the payload'}\" to {'the name'}".
+    a text called 'the flag declaration' is "a boolean called {'the overflow flag'} is false".
+    a text called 'the handler line' is "On error Set {'the overflow flag'} to true".
+    a text called 'the flag check' is 'gen assert false' of "BUF-36" and 'the overflow flag'.
+    a text called 'the size check' is 'gen assert number is' of "BUF-36" and 'the size access' and 'the payload length'.
+    a text called 'the capacity read' is "Print {'the capacity access'}".
+    a list called 'the lines' is ['the declaration', 'the stale declaration', 'the stale handler', 'the flag declaration', 'the verb line', 'the handler line', 'the flag check', 'the size check', 'the capacity read'].
     'gen join lines' of indent and nested and 'the lines'.

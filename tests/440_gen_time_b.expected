@@ -1,0 +1,96 @@
+--- TIM-32: elapsed reads while the timer is still running ---
+Create a timer called 'the dispatch note'.
+start 'the dispatch note'.
+Wait 122 milliseconds.
+a number called ledger is 'the dispatch note's elapsed in milliseconds.
+If 'the dispatch note's running is false then, Print "ASSERT TIM-32: expected 1 got {'the dispatch note's running}", Exit 95. Print 'the dispatch note's running.
+If ledger is less than 122 then, Print "ASSERT TIM-32: expected at least 122 got {ledger}", Exit 95. Print "TIM-32 ok".
+Wait 161 milliseconds.
+a number called 'loading bay' is 'the dispatch note's elapsed in milliseconds.
+If 'loading bay' is less than ledger add 1 then, Print "ASSERT TIM-32: expected at least {ledger add 1} got {'loading bay'}", Exit 95. Print "TIM-32 ok".
+
+--- TIM-42: formatted clock string, direct three-slot form ---
+Get current time into 'the manifest'.
+a text called 'the sketchpad' is "{'the manifest's hour:02}:{'the manifest's minute:02}:{'the manifest's second:02}".
+a buffer called 'the shipping label' is 'the sketchpad'.
+If 'the shipping label's size is less than 8 or 'the shipping label's size is greater than 8 then, Print "ASSERT TIM-42: expected 8..8 got {'the shipping label's size}", Exit 95. Print "TIM-42 ok".
+If byte 3 of 'the shipping label' is less than 58 or byte 3 of 'the shipping label' is greater than 58 then, Print "ASSERT TIM-42: expected 58..58 got {byte 3 of 'the shipping label'}", Exit 95. Print "TIM-42 ok".
+If byte 6 of 'the shipping label' is less than 58 or byte 6 of 'the shipping label' is greater than 58 then, Print "ASSERT TIM-42: expected 58..58 got {byte 6 of 'the shipping label'}", Exit 95. Print "TIM-42 ok".
+
+--- TIM-43: formatted clock string, named-parts staged form ---
+Get current time into 'the manifest'.
+a text called 'the sketchpad' is "{'the manifest's hour:02}".
+a text called 'the shipping label' is "{'the manifest's minute:02}".
+a text called notebook is "{'the manifest's second:02}".
+a text called cupboard is "{'the sketchpad'}:{'the shipping label'}:{notebook}".
+a buffer called 'the waybill' is cupboard.
+If 'the waybill's size is less than 8 or 'the waybill's size is greater than 8 then, Print "ASSERT TIM-43: expected 8..8 got {'the waybill's size}", Exit 95. Print "TIM-43 ok".
+If byte 3 of 'the waybill' is less than 58 or byte 3 of 'the waybill' is greater than 58 then, Print "ASSERT TIM-43: expected 58..58 got {byte 3 of 'the waybill'}", Exit 95. Print "TIM-43 ok".
+If byte 6 of 'the waybill' is less than 58 or byte 6 of 'the waybill' is greater than 58 then, Print "ASSERT TIM-43: expected 58..58 got {byte 6 of 'the waybill'}", Exit 95. Print "TIM-43 ok".
+
+--- TIM-44: current time's UTC agreement with unix ---
+Get current time into 'scratch'.
+If 'scratch's hour is not 'scratch's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-44: expected {'scratch's unix modulo 86400 divide 3600} got {'scratch's hour}", Exit 95. Print "TIM-44 ok".
+If 'scratch's minute is not 'scratch's unix modulo 3600 divide 60 then, Print "ASSERT TIM-44: expected {'scratch's unix modulo 3600 divide 60} got {'scratch's minute}", Exit 95. Print "TIM-44 ok".
+If 'scratch's second is not 'scratch's unix modulo 60 then, Print "ASSERT TIM-44: expected {'scratch's unix modulo 60} got {'scratch's second}", Exit 95. Print "TIM-44 ok".
+
+--- TIM-45: duration/elapsed uncast agrees with the seconds cast ---
+Create a timer called 'the greeting'.
+begin the 'the greeting'.
+Wait 135 milliseconds.
+finish the 'the greeting'.
+If 'the greeting's duration is not 'the greeting's duration in seconds then, Print "ASSERT TIM-45: expected {'the greeting's duration in seconds} got {'the greeting's duration}", Exit 95. Print "TIM-45 ok".
+If 'the greeting's elapsed is not 'the greeting's duration in seconds then, Print "ASSERT TIM-45: expected {'the greeting's duration in seconds} got {'the greeting's elapsed}", Exit 95. Print "TIM-45 ok".
+
+--- TIM-46: a timer that was never started ---
+Create a timer called 'the inbox'.
+If 'the inbox's start time is less than 0 or 'the inbox's start time is greater than 0 then, Print "ASSERT TIM-46: expected 0..0 got {'the inbox's start time}", Exit 95. Print "TIM-46 ok".
+If 'the inbox's end time is less than 0 or 'the inbox's end time is greater than 0 then, Print "ASSERT TIM-46: expected 0..0 got {'the inbox's end time}", Exit 95. Print "TIM-46 ok".
+If 'the inbox's duration in milliseconds is less than 0 or 'the inbox's duration in milliseconds is greater than 0 then, Print "ASSERT TIM-46: expected 0..0 got {'the inbox's duration in milliseconds}", Exit 95. Print "TIM-46 ok".
+If 'the inbox's running then, Print "ASSERT TIM-46: expected 0 got {'the inbox's running}", Exit 95. Print 'the inbox's running.
+stop 'the inbox'.
+If 'the inbox's running then, Print "ASSERT TIM-46: expected 0 got {'the inbox's running}", Exit 95. Print 'the inbox's running.
+If 'the inbox's duration in milliseconds is less than 60000 then, Print "ASSERT TIM-46: expected at least 60000 got {'the inbox's duration in milliseconds}", Exit 95. Print "TIM-46 ok".
+
+--- TIM-47: starting an already-run timer restarts it ---
+Create a timer called 'toolbox'.
+Begin 'toolbox'.
+Wait 568 milliseconds.
+Finish 'toolbox'.
+a number called 'the mailbag' is 'toolbox's duration in milliseconds.
+If 'the mailbag' is less than 568 then, Print "ASSERT TIM-47: expected at least 568 got {'the mailbag'}", Exit 95. Print "TIM-47 ok".
+Start the 'toolbox'.
+Wait 124 milliseconds.
+stop 'toolbox'.
+a number called 'the tally sheet' is 'toolbox's duration in milliseconds.
+If 'the tally sheet' is less than 124 then, Print "ASSERT TIM-47: expected at least 124 got {'the tally sheet'}", Exit 95. Print "TIM-47 ok".
+If 'the tally sheet' is greater than 'the mailbag' minus 1 then, Print "ASSERT TIM-47: expected at most {'the mailbag' minus 1} got {'the tally sheet'}", Exit 95. Print "TIM-47 ok".
+
+--- TIM-51: a negative duration in seconds returns at once ---
+Create a timer called 'the waybill'.
+Begin 'the waybill'.
+Sleep for -3 seconds.
+stop the 'the waybill'.
+If 'the waybill's duration in milliseconds is greater than 3000 then, Print "ASSERT TIM-51: expected at most 3000 got {'the waybill's duration in milliseconds}", Exit 95. Print "TIM-51 ok".
+
+--- TIM-54: a time renders as its unix seconds ---
+Get current time into ledger.
+If ledger is not ledger's unix then, Print "ASSERT TIM-54: expected {ledger's unix} got {ledger}", Exit 95. Print "TIM-54 ok".
+
+--- TIM-57: a time property read from a plain number ---
+a number called 'the manifest' is 347023.
+If 'the manifest's hour is not 'the manifest's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-57: expected {'the manifest's unix modulo 86400 divide 3600} got {'the manifest's hour}", Exit 95. Print "TIM-57 ok".
+If 'the manifest's unix is not 347023 then, Print "ASSERT TIM-57: expected 347023 got {'the manifest's unix}", Exit 95. Print "TIM-57 ok".
+If 'the manifest's year is less than 1970 or 'the manifest's year is greater than 1970 then, Print "ASSERT TIM-57: expected 1970..1970 got {'the manifest's year}", Exit 95. Print "TIM-57 ok".
+
+--- the same leaves, nested ---
+  Create a timer called 'the dispatch note',
+  start 'the dispatch note',
+  Wait 122 milliseconds,
+  a number called ledger is 'the dispatch note's elapsed in milliseconds,
+  If 'the dispatch note's running is false then, Print "ASSERT TIM-32: expected 1 got {'the dispatch note's running}", Exit 95. Print 'the dispatch note's running,
+  If ledger is less than 122 then, Print "ASSERT TIM-32: expected at least 122 got {ledger}", Exit 95. Print "TIM-32 ok".
+  Wait 161 milliseconds,
+  a number called 'loading bay' is 'the dispatch note's elapsed in milliseconds,
+  If 'loading bay' is less than ledger add 1 then, Print "ASSERT TIM-32: expected at least {ledger add 1} got {'loading bay'}", Exit 95. Print "TIM-32 ok".
+

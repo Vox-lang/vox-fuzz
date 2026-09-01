@@ -1,0 +1,819 @@
+(Expression leaves: non-decimal literals, boolean arithmetic, the `not`
+ operator, the optional `the` article, plural `are` comparisons, the
+ round-half-up idiom, and a bare number in condition position.
+ docs/ledger/expressions.md, kinds 280-288, the first slots of the new
+ 280-299 "expressions" reserved block (see the reservation table above
+ 'gen dispatch leaf' in gen_core.vox, which the master extends at merge).
+ Kind 289 is spare - nine leaves claimed nine of the ten raw slots this
+ batch's remap reserves.
+
+ Drawn only at depth 3, the same as the values/things-B/process bands in
+ gen_core.vox: 'gen statement's own remap is the only place these kinds
+ are reachable, so nothing here needs to be safe as a nested block's
+ mandatory closer.
+
+ Two lessons from PROCEDURE.md 6a apply throughout this file, not just to
+ emitted code: a boolean can never be declared directly from a comparison
+ or a plural `are`/`is` condition (`a boolean called x is n is 0.` does
+ not parse - here in THIS generator's own source, not only in what it
+ emits, since the generator is Vox too) - always declare `false` and
+ flip it inside an `If`; and an `If` on its own line closes ITSELF, so a
+ sequence of flat, independently-conditioned `If`s in one loop body is
+ the safe replacement for nesting one `If` inside another's branch
+ (hand-verified in the scratch probes this batch's report cites).
+
+ Every declared witness in this file is named either from the v-pool
+ ('gen new var'/'gen var ref', bare and safe to interpolate at any word
+ count) or from 'gen buffer companion' off a fresh 'gen buffer name'
+ draw, which always yields at least two words and is therefore always
+ quoted - never a bare one-word quoted stem. A one-word quoted name
+ resolves fine as a statement reference but not inside a `{...}` slot on
+ the installed 0.4.14 (docs/ledger/buffers.md's own finding, batch A);
+ 0.4.15 fixes it (vox #110), but this batch's leaves must pass on both,
+ so the companion convention sidesteps the question entirely rather than
+ relying on the fix.
+
+ Every value asserted against a compound expression (a cast, an
+ arithmetic subexpression) is first captured into its own named
+ variable and THAT bare name is what 'gen assert number is' receives -
+ never the compound expression text itself. Nesting `{...}` inside a
+ slot 'gen buffer slot of' has already re-escaped is documented not to
+ group (LANGUAGE.md's own worked example, `{{x add y} multiply z}`
+ prints `{13 multiply z}`, not the arithmetic result) - the capture
+ step is what keeps every assertion message clear of that trap.)
+
+To 'gen expr digits of' with a number called v and a number called base.
+    a number called remaining is v.
+    a text called digits is "".
+    While remaining is greater than 0,
+        a number called 'the digit value' is remaining modulo base,
+        a text called 'the digit char' is 'gen digit for value' of 'the digit value',
+        Set digits to "{'the digit char'}{digits}",
+        Set remaining to remaining divide base.
+    If digits is "" then,
+        Return a text, "0".
+    Return a text, digits.
+
+(RUTHLESS REWORK, owner directive, 2026-08-30: every "magnitude is
+ free" number in this file now comes from `gen_core.vox`'s own
+ `'gen extreme number'` (short digit runs, a wide 1-18-digit uniform
+ span, and the i64 boundaries `9223372036854775807`/`2147483648`
+ weighted in deliberately - the generator-wide helper Josj built for
+ exactly this, not a leaf-local reinvention). It returns TEXT; every
+ leaf below that needs the drawn magnitude as a NUMBER (to compute its
+ own expected value, or to render hex/binary digits from it) goes
+ through this one-line wrapper.
+
+ i64 arithmetic WRAPS on overflow, hand-verified identically on both
+ compilers (`9223372036854775807 add 1` gives `-9223372036854775808`,
+ `MAX add MAX` gives `-2`, `0x7fffffffffffffff add 0x7fffffffffffffff`
+ the same) - so a generator-side `add` computing an expected value
+ wraps exactly the way the emitted program's own `add` will, and the
+ oracle holds straight through an overflow instead of needing to dodge
+ one. `'gen extreme number'` never returns negative, so two drawn
+ values can only ever wrap the sum, never the individual literal.)
+
+To 'gen expr extreme value'.
+    a text called 'the extreme text' is 'gen extreme number'.
+    a number called 'the extreme value' is 'the extreme text' as a number.
+    Return a number, 'the extreme value'.
+
+(EXP-05, EXP-14: a hex literal in initializer position (recognised as a
+ literal form, EXP-05's own claim) and a second one in operand position,
+ added to the first (EXP-14's "assert the value" claim, demonstrated the
+ way a leaf would actually emit it rather than as a bare declaration).
+ Two independently-drawn values, EACH from the full `'gen extreme
+ number'` span, so the operand-position check is not just re-checking
+ the initializer's own arithmetic AND regularly lands two 16-hex-digit
+ (0x7fffffffffffffff-scale) literals whose SUM wraps i64 - hand-verified
+ the wrap is identical to the generator's own `add` (see this file's
+ header note), so the assertion still holds straight through it. Probe:
+ docs/ledger/probes/expressions/EXP-05.vox.)
+
+To 'gen leaf hex literal' with a text called indent and a boolean called nested.
+    'gen buffer name'.
+    a text called 'the first name' is 'gen buffer companion' of "hex value".
+    a number called 'the first value' is 'gen expr extreme value'.
+    a text called 'the first digits' is 'gen expr digits of' of 'the first value' and 16.
+    a text called 'the declaration' is "a number called {'the first name'} is 0x{'the first digits'}".
+    a text called 'the initializer check' is 'gen assert number is' of "EXP-05" and 'the first name' and 'the first value'.
+    'gen buffer name'.
+    a text called 'the sum name' is 'gen buffer companion' of "hex sum".
+    a number called 'the second value' is 'gen expr extreme value'.
+    a text called 'the second digits' is 'gen expr digits of' of 'the second value' and 16.
+    a number called 'the expected sum' is 'the first value' add 'the second value'.
+    a text called 'the operand declaration' is "a number called {'the sum name'} is {'the first name'} add 0x{'the second digits'}".
+    a text called 'the operand check' is 'gen assert number is' of "EXP-14" and 'the sum name' and 'the expected sum'.
+    a list called 'the lines' is ['the declaration', 'the initializer check', 'the operand declaration', 'the operand check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-06, EXP-15: the same shape as the hex leaf above, `0b` prefix,
+ base 2 - and the same extreme draw, so a binary literal now regularly
+ renders up to 63 `0`/`1` digits (`'gen extreme number'` never exceeds
+ i64::MAX, so the rendered literal never needs the 64th/sign bit and
+ never risks the "Integer literal out of range" compile error a wider
+ literal would hit - hand-verified). Probe:
+ docs/ledger/probes/expressions/EXP-05.vox, "Also covers".)
+
+To 'gen leaf binary literal' with a text called indent and a boolean called nested.
+    'gen buffer name'.
+    a text called 'the first name' is 'gen buffer companion' of "binary value".
+    a number called 'the first value' is 'gen expr extreme value'.
+    a text called 'the first digits' is 'gen expr digits of' of 'the first value' and 2.
+    a text called 'the declaration' is "a number called {'the first name'} is 0b{'the first digits'}".
+    a text called 'the initializer check' is 'gen assert number is' of "EXP-06" and 'the first name' and 'the first value'.
+    'gen buffer name'.
+    a text called 'the sum name' is 'gen buffer companion' of "binary sum".
+    a number called 'the second value' is 'gen expr extreme value'.
+    a text called 'the second digits' is 'gen expr digits of' of 'the second value' and 2.
+    a number called 'the expected sum' is 'the first value' add 'the second value'.
+    a text called 'the operand declaration' is "a number called {'the sum name'} is {'the first name'} add 0b{'the second digits'}".
+    a text called 'the operand check' is 'gen assert number is' of "EXP-15" and 'the sum name' and 'the expected sum'.
+    a list called 'the lines' is ['the declaration', 'the initializer check', 'the operand declaration', 'the operand check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Ninety printable-ASCII characters, letters/digits/punctuation, paired
+ position-for-position with their own byte codes - the pairing is
+ computed once, by hand, not derived at generation time, so there is no
+ code-to-character conversion to get wrong. `'`, `\` and `"` are left out
+ for the same renderer-safety reason 'gen buffer filler' restricts its
+ own alphabet (a quote or backslash would end the literal it is inside
+ rather than staying data) - not a language limitation, so it earns no
+ "invariant" citation, exactly the buffer filler's own precedent.)
+
+a list called gen_expr_safe_chars is ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "^", "_", "{{", "|", "}}", "~"].
+
+a list called gen_expr_safe_char_codes is [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 33, 35, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 93, 94, 95, 123, 124, 125, 126].
+
+(EXP-07, EXP-16: a character literal in initializer position and a
+ second one added in operand position, the same two-position shape as
+ the hex and binary leaves. RUTHLESS REWORK reviewed, not reworked: a
+ character literal's value is not a free magnitude - it is pinned to a
+ single byte by the construct itself (LANGUAGE.md:1927), the same
+ category as a byte index or a list length the rework directive itself
+ names as exempt. Making the SUM of two bytes "extreme" would mean
+ drawing bytes outside gen_expr_safe_chars, which is a renderer-safety
+ boundary (see that list's own comment), not a magnitude to widen.
+ Probe: docs/ledger/probes/expressions/EXP-05.vox, "Also covers".)
+
+To 'gen leaf character literal' with a text called indent and a boolean called nested.
+    a number called 'how many chars' is gen_expr_safe_chars's length.
+    a number called 'the first position' is 'rng below' of 'how many chars' add 1.
+    a text called 'the first char' is element 'the first position' of gen_expr_safe_chars.
+    a number called 'the first code' is element 'the first position' of gen_expr_safe_char_codes.
+    'gen buffer name'.
+    a text called 'the first name' is 'gen buffer companion' of "letter code".
+    a text called 'the declaration' is "a number called {'the first name'} is '{'the first char'}'".
+    a text called 'the initializer check' is 'gen assert number is' of "EXP-07" and 'the first name' and 'the first code'.
+    a number called 'the second position' is 'rng below' of 'how many chars' add 1.
+    a text called 'the second char' is element 'the second position' of gen_expr_safe_chars.
+    a number called 'the second code' is element 'the second position' of gen_expr_safe_char_codes.
+    'gen buffer name'.
+    a text called 'the sum name' is 'gen buffer companion' of "letter sum".
+    a number called 'the expected sum' is 'the first code' add 'the second code'.
+    a text called 'the operand declaration' is "a number called {'the sum name'} is {'the first name'} add '{'the second char'}'".
+    a text called 'the operand check' is 'gen assert number is' of "EXP-16" and 'the sum name' and 'the expected sum'.
+    a list called 'the lines' is ['the declaration', 'the initializer check', 'the operand declaration', 'the operand check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-10: a boolean reaching an arithmetic operator counts as 1 (true) or
+ 0 (false) - the drawn boolean value varies, so `false` reaches an
+ arithmetic operator here as often as `true` does, closing the "every
+ emitted boolean literal is true" gap docs/ledger/expressions.md's
+ Invariants section names. RUTHLESS REWORK: the added number is now the
+ full extreme span, so the sum regularly sits right next to an i64
+ boundary (`true add 9223372036854775807` wraps to
+ `-9223372036854775808`, hand-verified consistent with the generator's
+ own `add`) - the boolean-counts-as-0/1 rule holds through the wrap the
+ same way plain arithmetic does. Probe:
+ docs/ledger/probes/expressions/EXP-10.vox.)
+
+To 'gen leaf boolean arithmetic' with a text called indent and a boolean called nested.
+    'gen buffer name'.
+    a text called 'the flag name' is 'gen buffer companion' of "ready flag".
+    a number called 'the truth draw' is 'rng below' of 2.
+    a text called 'the truth literal' is "false".
+    a number called 'the truth value' is 0.
+    If 'the truth draw' is 1 then,
+        Set 'the truth literal' to "true",
+        Set 'the truth value' to 1.
+    a text called 'the flag declaration' is "a boolean called {'the flag name'} is {'the truth literal'}".
+    a number called 'the offset' is 'gen expr extreme value'.
+    'gen buffer name'.
+    a text called 'the sum name' is 'gen buffer companion' of "tally".
+    a number called 'the expected sum' is 'the truth value' add 'the offset'.
+    a text called 'the sum declaration' is "a number called {'the sum name'} is {'the flag name'} add {'the offset'}".
+    a text called 'the sum check' is 'gen assert number is' of "EXP-10" and 'the sum name' and 'the expected sum'.
+    a list called 'the lines' is ['the flag declaration', 'the sum declaration', 'the sum check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-46: `not <condition>` is true iff the condition is false, put
+ directly in front of a comparison the way LANGUAGE.md:1980's fragment
+ shows it (not a separately-declared boolean first - that is a different
+ leaf, EXP-27/EXP-36 below). Which branch is the "should never run" one
+ is decided here, at generation time, from the same two numbers the
+ emitted comparison itself will read - the generator already knows the
+ answer, so it writes the failure message into whichever branch its own
+ `is greater than` says cannot be reached. This is the same
+ Otherwise-after-a-closed-If continuation `gen_misc.vox`'s predicate
+ probe leaf already uses (hand-verified again in this batch's own
+ scratch probes: a mid-string period on the If's own then-clause does
+ not swallow the Otherwise that follows it). RUTHLESS REWORK: both
+ compared numbers are now the full extreme span rather than a tame
+ 1,000,000 cap, so `is greater than` is regularly exercised right at
+ the i64::MAX boundary; comparison carries no overflow risk (unlike
+ arithmetic), so this needed no further check beyond the usual
+ direct-call re-verification. Probe:
+ docs/ledger/probes/expressions/EXP-32.vox.)
+
+To 'gen leaf not condition' with a text called indent and a boolean called nested.
+    'gen buffer name'.
+    a text called 'the left name' is 'gen buffer companion' of "left reading".
+    'gen buffer name'.
+    a text called 'the right name' is 'gen buffer companion' of "right reading".
+    a number called 'the left value' is 'gen expr extreme value'.
+    a number called 'the right value' is 'gen expr extreme value'.
+    a text called 'the left declaration' is "a number called {'the left name'} is {'the left value'}".
+    a text called 'the right declaration' is "a number called {'the right name'} is {'the right value'}".
+    a boolean called 'the raw comparison holds' is false.
+    If 'the left value' is greater than 'the right value' then,
+        Set 'the raw comparison holds' to true.
+    a text called 'the pass action' is "Print \"EXP-46 ok\"".
+    a text called 'the fail action' is "Print \"ASSERT EXP-46: expected the not-branch to disagree with the raw comparison\", Exit 95".
+    a text called 'the then action' is 'the pass action'.
+    a text called 'the else action' is 'the pass action'.
+    If 'the raw comparison holds' then,
+        Set 'the then action' to 'the fail action'.
+    If 'the raw comparison holds' is false then,
+        Set 'the else action' to 'the fail action'.
+    a text called 'the not line' is "If not {'the left name'} is greater than {'the right name'} then, {'the then action'}. Otherwise, {'the else action'}".
+    a list called 'the lines' is ['the left declaration', 'the right declaration', 'the not line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-27, EXP-36: `the` is optional before a variable name, both in an
+ arithmetic expression and in a comparison - a differential check, so
+ the generator never has to know the variable's own value, only that
+ articled and bare readings of it agree. The comparison half needs the
+ two-step boolean-from-condition form (PROCEDURE 6a); the arithmetic
+ half compares two number expressions directly, which is legal inline
+ inside an `If` (Discrepancy 3 only restricts a bare comparison, not an
+ arithmetic one). RUTHLESS REWORK: `'the constant'` is now the full
+ extreme span (the referenced variable `vN` was already extreme-valued
+ - it comes from `'gen new var'`, which has called `'gen extreme
+ number'` since before this batch - so the arithmetic differential now
+ regularly adds two i64-boundary-scale numbers and wraps; the wrap is
+ identical on both sides of the differential by construction, since
+ both sides read the SAME `vN` and the SAME constant, so agreement
+ holds through the wrap with no special handling needed). Probes:
+ docs/ledger/probes/expressions/EXP-27.vox,
+ EXP-32.vox ("Also covers" EXP-36).)
+
+To 'gen leaf optional article agreement' with a text called indent and a boolean called nested.
+    a number called n is 'gen new var'.
+    a text called 'the reference' is "v{n}".
+    a number called 'the constant' is 'gen expr extreme value'.
+    a text called 'the arithmetic check' is "If the {'the reference'} add {'the constant'} is not {'the reference'} add {'the constant'} then, Print \"ASSERT EXP-27: expected the articled and bare readings of {'the reference'} to add the same way\", Exit 95. Print {'the reference'} add {'the constant'}".
+    'gen buffer name'.
+    a text called 'the articled flag' is 'gen buffer companion' of "articled reading".
+    a text called 'the bare flag' is 'gen buffer companion' of "bare reading".
+    a text called 'the articled decl' is "a boolean called {'the articled flag'} is false".
+    a text called 'the articled set' is "If the {'the reference'} is greater than {'the constant'} then, Set {'the articled flag'} to true".
+    a text called 'the bare decl' is "a boolean called {'the bare flag'} is false".
+    a text called 'the bare set' is "If {'the reference'} is greater than {'the constant'} then, Set {'the bare flag'} to true".
+    a text called 'the agreement check' is "If {'the articled flag'} is not {'the bare flag'} then, Print \"ASSERT EXP-36: expected the articled and bare readings of {'the reference'} to compare the same way\", Exit 95. Print {'the articled flag'}".
+    a list called 'the lines' is ['the arithmetic check', 'the articled decl', 'the articled set', 'the bare decl', 'the bare set', 'the agreement check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-51: the plural `are` form and the fully written-out conjunction
+ agree, for a randomly-sized subject list (2-5) built from fresh
+ witnesses - each with its own independently-drawn truth value, so the
+ predicate is exercised against every combination the campaign's seeds
+ land on, not one fixed pattern. This is a genuinely differential
+ assertion: the generator never inspects a subject's own value, only
+ that the two readings of the SAME subjects agree, so it also exercises
+ - without separately CLAIMING as verified - EXP-47 (the plural
+ construct itself), EXP-48 (the canonical `are true` shape), EXP-50 (a
+ witness name is a `gen buffer name` draw, so a run with an odd seed
+ gets a quoted multi-word subject for free), and EXP-52/EXP-53 (the
+ subject count and the comma-before-`and` shape both vary; a parse that
+ dropped or duplicated a subject at some count, or mishandled the count-2
+ no-comma spelling, would show up as a disagreement rather than a
+ coincidence). The subject-list loop is written as a sequence of flat,
+ independently-conditioned `If`s (PROCEDURE 6a) rather than nesting one
+ inside another - hand-verified in this batch's own scratch probes
+ before being written here. RUTHLESS REWORK reviewed, not reworked: no
+ numeric literal anywhere in this leaf - every witness is a boolean,
+ and the subject count (2-5) is a structural shape choice, the same
+ category the rework directive's own "list length of 3" example names
+ as exempt, not a magnitude a compiler computes over. Probe:
+ docs/ledger/probes/expressions/EXP-51.vox.)
+
+To 'gen leaf plural are expansion' with a text called indent and a boolean called nested.
+    a number called 'the subject count draw' is 'rng below' of 4.
+    a number called 'the subject count' is 'the subject count draw' add 2.
+    a list called 'the subject names' is [].
+    a list called 'the declarations' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 'the subject count',
+        'gen buffer name',
+        a text called 'the subject name' is 'gen buffer companion' of "witness",
+        a number called 'the truth draw' is 'rng below' of 2,
+        a text called 'the truth literal' is "false",
+        If 'the truth draw' is 1 then,
+            Set 'the truth literal' to "true".
+        a text called 'the decl' is "a boolean called {'the subject name'} is {'the truth literal'}",
+        append 'the subject name' to 'the subject names',
+        append 'the decl' to 'the declarations',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the plural subjects' is "".
+    a text called 'the expanded clause' is "".
+    Set 'the position' to 0.
+    While 'the position' is less than 'the subject count',
+        a number called 'the index' is 'the position' add 1,
+        a text called 'the subject' is element 'the index' of 'the subject names',
+        a text called 'the expanded piece' is "{'the subject'} is true",
+        If 'the position' is 0 then, Set 'the expanded clause' to 'the expanded piece'.
+        If 'the position' is greater than 0 then, Set 'the expanded clause' to "{'the expanded clause'} and {'the expanded piece'}".
+        If 'the position' is 0 then, Set 'the plural subjects' to 'the subject'.
+        If 'the position' is greater than 0 and 'the index' is less than 'the subject count' then, Set 'the plural subjects' to "{'the plural subjects'}, {'the subject'}".
+        If 'the index' is equal to 'the subject count' and 'the position' is greater than 0 then, Set 'the plural subjects' to "{'the plural subjects'}, and {'the subject'}".
+        Set 'the position' to 'the position' add 1.
+    'gen buffer name'.
+    a text called 'the plural flag' is 'gen buffer companion' of "plural result".
+    a text called 'the expanded flag' is 'gen buffer companion' of "expanded result".
+    a text called 'the plural decl' is "a boolean called {'the plural flag'} is false".
+    a text called 'the plural set' is "If {'the plural subjects'} are true then, Set {'the plural flag'} to true".
+    a text called 'the expanded decl' is "a boolean called {'the expanded flag'} is false".
+    a text called 'the expanded set' is "If {'the expanded clause'} then, Set {'the expanded flag'} to true".
+    a text called 'the agreement check' is "If {'the plural flag'} is not {'the expanded flag'} then, Print \"ASSERT EXP-51: expected the plural are-form and the written-out conjunction to agree\", Exit 95. Print {'the plural flag'}".
+    append 'the plural decl' to 'the declarations'.
+    append 'the plural set' to 'the declarations'.
+    append 'the expanded decl' to 'the declarations'.
+    append 'the expanded set' to 'the declarations'.
+    append 'the agreement check' to 'the declarations'.
+    'gen join lines' of indent and nested and 'the declarations'.
+
+(EXP-94: the documented rounding idiom, add 0.5 before casting to a
+ number - hand-verified to truncate DOWN for a fraction below .50 and
+ round UP at or above it (LANGUAGE.md:2187's own worked example, `3.7`
+ to `4`). The fraction is a two-digit draw, so both directions of the
+ boundary are reachable. The rounded reading is captured into its own
+ variable before the assertion rather than asserted on the bare cast
+ expression, so 'gen assert number is' never has to interpolate a
+ braced subexpression through 'gen buffer slot of' (see this file's
+ header note).
+
+ RUTHLESS REWORK, and the one leaf here where "the oracle still holds"
+ needed real checking rather than trusting i64 wrap-consistency: the
+ whole part is now the full `'gen extreme value'` span, a FLOAT, and
+ float64 has nowhere near i64's 64 bits of exact integer precision.
+ Hand-verified the cliff directly (a 160-line sweep, digit lengths
+ 10-19, fractions 0/1/49/50/99, both compilers): the naive
+ whole-part-plus-maybe-1 prediction holds EXACTLY through 14 significant
+ digits and starts silently drifting at 15 (`...816184.49` rounds to
+ `...816185`, one ULP over, at the boundary this leaf itself decides
+ with - not a rare edge, the FIRST 15-digit case tried), worsening
+ through 19 (`...226916.99` rounds to `...227008`, off by 92). This is
+ float64 physically running out of mantissa bits, not a parser bug, and
+ LANGUAGE.md:2076-2089 already documents a precision ceiling for
+ text-to-float parsing in the same neighbourhood (eighteen significant
+ digits) - this leaf's own arithmetic runs out sooner because it does
+ an ADD on top of the parse, not because the parse itself is wrong.
+
+ Per the rework directive, this is not clamped back down to dodge the
+ cliff: the whole part draws the FULL extreme span, INCLUDING past 14
+ digits, and a run that lands there will assert-fail and be scored a
+ `wrong-value` finding - a real, repeatable, understood-in-advance
+ candidate, recorded in the report rather than engineered away. Probe:
+ docs/ledger/probes/expressions/EXP-94.vox.)
+
+To 'gen leaf round half up' with a text called indent and a boolean called nested.
+    (Master constraint 2026-08-30, owner ruled the float-cliff finding a false alarm:
+     the whole part of THIS float-rounding oracle is capped at 15 digits, inside float64's
+     exact-integer range (2^53). Still random-length and large, but the add-0.5-then-cast
+     oracle is now always-true instead of drifting past ~14 significant digits. Integer-context
+     extremes elsewhere keep the full i64 span - those are exact.)
+    a number called 'the whole digits' is 'rng below' of 15 add 1.
+    a text called 'the whole text' is 'gen random digits' of 'the whole digits'.
+    a number called 'the whole part' is 'the whole text' as a number.
+    a number called 'the fraction draw' is 'rng below' of 100.
+    'gen buffer name'.
+    a text called 'the reading name' is 'gen buffer companion' of "reading".
+    a text called 'the reading declaration' is "a float called {'the reading name'} is {'the whole part'}.{'the fraction draw':02}".
+    a number called 'the expected rounded' is 'the whole part'.
+    If 'the fraction draw' is greater than 49 then,
+        Set 'the expected rounded' to 'the whole part' add 1.
+    'gen buffer name'.
+    a text called 'the rounded name' is 'gen buffer companion' of "rounded reading".
+    a text called 'the rounded declaration' is "a number called {'the rounded name'} is {{{'the reading name'} add 0.5}} as a number".
+    a text called 'the rounded check' is 'gen assert number is' of "EXP-94" and 'the rounded name' and 'the expected rounded'.
+    a list called 'the lines' is ['the reading declaration', 'the rounded declaration', 'the rounded check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-98: zero is false, any non-zero number - negative included - is
+ true, put directly in condition position rather than through a
+ comparison. A negative reading is built as `0 subtract <magnitude>`,
+ since Vox has no negative NUMBER literal (EXP-01's own finding: every
+ negative value in this generator is an arithmetic subtraction, never a
+ leading `-`) - this leaf is what puts a negative value into a bare
+ condition at all. The boolean the `If` sets is cast `as a number`
+ before the assertion (LANGUAGE.md:2396: `Print` alone on a boolean
+ shows 0/1, which is what 'gen assert number is' already expects, so the
+ cast just makes that expectation explicit rather than relying on it).
+
+ RUTHLESS REWORK: the magnitude is now the full extreme span, up to and
+ including i64::MAX itself (`0 subtract 9223372036854775807` stays in
+ range - i64's negative half reaches one further than its positive
+ half - hand-verified no overflow). One deliberate guard, NOT a
+ tameness clamp: `'gen extreme value'` can draw exactly 0, which for
+ the positive/negative branches specifically would silently collapse
+ into the row's ALREADY-COVERED zero case (a "positive" reading of 0 is
+ not positive) rather than testing anything new, so those two branches
+ re-draw a 0 up to 1 - the zero branch itself is untouched and still
+ always literal `0` regardless of what this draws. Probe:
+ docs/ledger/probes/expressions/EXP-98.vox.)
+
+To 'gen leaf bare number condition' with a text called indent and a boolean called nested.
+    a number called 'the magnitude' is 'gen expr extreme value'.
+    If 'the magnitude' is 0 then,
+        Set 'the magnitude' to 1.
+    a number called 'the sign draw' is 'rng below' of 3.
+    a text called 'the literal text' is "{'the magnitude'}".
+    a number called 'the expected truthy' is 1.
+    If 'the sign draw' is 0 then,
+        Set 'the literal text' to "0",
+        Set 'the expected truthy' to 0.
+    If 'the sign draw' is 2 then,
+        Set 'the literal text' to "0 subtract {'the magnitude'}".
+    'gen buffer name'.
+    a text called 'the reading name' is 'gen buffer companion' of "reading".
+    a text called 'the declaration' is "a number called {'the reading name'} is {'the literal text'}".
+    'gen buffer name'.
+    a text called 'the truthy name' is 'gen buffer companion' of "truthy flag".
+    a text called 'the flag decl' is "a boolean called {'the truthy name'} is false".
+    a text called 'the flag set' is "If {'the reading name'} then, Set {'the truthy name'} to true".
+    'gen buffer name'.
+    a text called 'the truthy number name' is 'gen buffer companion' of "truthy number".
+    a text called 'the truthy number decl' is "a number called {'the truthy number name'} is {'the truthy name'} as a number".
+    a text called 'the check' is 'gen assert number is' of "EXP-98" and 'the truthy number name' and 'the expected truthy'.
+    a list called 'the lines' is ['the declaration', 'the flag decl', 'the flag set', 'the truthy number decl', 'the check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Batch B, docs/ledger/expressions.md EXP-18, EXP-29, EXP-30, EXP-35,
+ EXP-39, EXP-41, EXP-43, EXP-73, EXP-83, EXP-84. Kinds 360-366, the
+ first seven slots of this file's second reserved span (360-369; 367-369
+ are spare - ten raw remap slots, seven leaves). Same discipline as
+ batch A throughout: drawn only at depth 3, quoted multi-word companion
+ names off 'gen buffer name'/'gen buffer companion', a value asserted
+ against a compound expression is always captured into its own named
+ variable first, extreme literals wherever the magnitude is genuinely
+ free (integer context: the full i64 span; float context: the EXP-94
+ ruling's 15-digit whole-part cap, or narrower where hand-verification
+ found a construct-specific reason to go narrower - see the cast leaf's
+ own comment). Priority followed CLAUDE.md's own ordering, not row
+ order: EXP-73 (a buffer-backed text staying independent of the buffer
+ that made it) and EXP-83/84 (the base-conversion paths no existing
+ leaf reaches) are the memory-safety- and gap-value-flagged rows the
+ ledger's own Report section names; the cast-precedence and predicate
+ rows round out an even ten without chasing arithmetic for its own
+ sake, which CLAUDE.md is explicit is "nearly worthless" on its own.)
+
+(A restricted draw off the SAME alphabet 'gen leaf character literal'
+ already declares (gen_expr_safe_chars) - positions 1-62 only, which by
+ that list's own fixed ordering (A-Z, a-z, 0-9, then punctuation) is
+ letters and digits alone. Buffer content built from this can be
+ embedded straight into a double-quoted string in an EMITTED program
+ with no escaping question at all - the punctuation tail of that same
+ list holds `{{`/`}}`, which are exactly the two characters a plain
+ interpolated embed would need to double first, so this leaf sidesteps
+ that entirely rather than doubling anything itself.)
+
+To 'gen expr safe text' with a number called 'how many'.
+    a text called built is "".
+    a number called i is 0.
+    While i is less than 'how many',
+        a number called 'the position' is 'rng below' of 62 add 1,
+        a text called 'the char' is element 'the position' of gen_expr_safe_chars,
+        Set built to "{built}{'the char'}",
+        Set i to i add 1.
+    Return a text, built.
+
+(A digit-value LIST evaluated positionally - value = ((d1 * base) + d2)
+ * base + d3 ... - the same rule EXP-83/84's own parser follows, so the
+ leaf below computes its expected value by the identical accumulation
+ rather than a separate formula that could drift from the parser's own.)
+
+To 'gen expr base value' with a number called base and a list called digits.
+    a number called value is 0.
+    a number called i is 0.
+    a number called 'how many' is digits's length.
+    While i is less than 'how many',
+        a number called 'the slot' is i add 1,
+        a number called d is element 'the slot' of digits,
+        Set value to value multiply base add d,
+        Set i to i add 1.
+    Return a number, value.
+
+(EXP-18: `the number` - the documented spelling of the `for each` loop
+ iterator (LANGUAGE.md:1932) - referenced inside the loop body and
+ summed across every iteration, checked against the same sum computed
+ by walking 1..bound in the GENERATOR itself rather than a closed-form
+ N*(N+1)/2, which would need parenthesised grouping to keep the
+ multiply and divide in the right order - and parentheses are Vox
+ comments, not grouping, in this very generator's own source (this
+ ledger's own Discrepancy 5). `gen_flow.vox`'s loop leaves only ever
+ emit the bare `number` spelling (EXP-19, already exercised); this is
+ the only leaf that writes the article in front of it. The bound is a
+ loop COUNT, a structural shape choice like EXP-51's subject count -
+ LANGUAGE.md pins no limit on it either way, so it is a plain
+ 'rng below' draw, not an extreme-number magnitude. One line, top level
+ only, the loop-leaf discipline PROCEDURE.md 6a spells out.)
+
+To 'gen leaf article the number iterator' with a text called indent and a boolean called nested.
+    a number called 'the bound draw' is 'rng below' of 30.
+    a number called 'the bound' is 'the bound draw' add 1.
+    a number called 'the expected total' is 0.
+    a number called 'the tally position' is 1.
+    While 'the tally position' is less than 'the bound' add 1,
+        Set 'the expected total' to 'the expected total' add 'the tally position',
+        Set 'the tally position' to 'the tally position' add 1.
+    'gen buffer name'.
+    a text called 'the total name' is 'gen buffer companion' of "running total".
+    a text called 'the total decl' is "a number called {'the total name'} is 0".
+    a text called 'the loop line' is "For each number from 1 to {'the bound'}, Set {'the total name'} to {'the total name'} add the number".
+    a text called 'the check' is 'gen assert number is' of "EXP-18" and 'the total name' and 'the expected total'.
+    a list called 'the lines' is ['the total decl', 'the loop line', 'the check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-29, EXP-30: a cast binds tighter than arithmetic and applies only
+ to the expression immediately to its left (EXP-29), and bracing the
+ whole expression before the cast overrides that (EXP-30) -
+ LANGUAGE.md:1950, 2174. The tight half is demonstrated the way EXP-11
+ already proves it has to work: a TEXT operand next to `add` only
+ compiles at all under tight binding, since a loose reading would put
+ the text directly in arithmetic, a compile error (this ledger's own
+ EXP-11/EXP-12/EXP-13) - so a program that compiles and gives the right
+ sum is doubly strong evidence. The braced half needs the two readings
+ to genuinely differ to mean anything, so it uses two FLOAT operands
+ whose fractional parts can carry a truncation past a whole-number
+ boundary, the same shape the ledger's own probe uses (2.5/3.5 -> 5.5
+ tight vs 6 braced).
+
+ RUTHLESS REWORK: the text-cast half draws both operands from the full
+ extreme span (integer context, i64 wrap-consistent, same reasoning as
+ every other leaf in this file). The braced half is NOT drawn from the
+ full extreme span - two SUMMED 15-digit-whole floats (EXP-94's own cap)
+ were hand-verified to drift the truncated total by a real unit in the
+ last place (`123456789012345.49 add 111111111111111.50` truncates one
+ low: 234567900123456 expected, 234567900123457 actual on both
+ compilers) - a genuine cliff, but a DIFFERENT one than EXP-94's own
+ (that construct adds an exact 0.5 to ONE imprecise float; this one
+ sums TWO of them), so dragging it into this row would rediscover
+ EXP-94's finding under a different ID instead of testing what EXP-30
+ actually claims. Capped at 12 whole digits a side instead -
+ hand-verified exact through the fraction-carry boundary both directions
+ at that cap on both compilers - which is what the "FLOAT-context
+ values stay <=15 digits" ruling means for a construct that sums two of
+ them rather than adding to one.)
+
+To 'gen leaf cast tight and braced' with a text called indent and a boolean called nested.
+    a number called 'the base number' is 'gen expr extreme value'.
+    a number called 'the addend' is 'gen expr extreme value'.
+    a number called 'the tight expected' is 'the base number' add 'the addend'.
+    'gen buffer name'.
+    a text called 'the digits name' is 'gen buffer companion' of "digit text".
+    a text called 'the digits decl' is "a text called {'the digits name'} is \"{'the base number'}\"".
+    'gen buffer name'.
+    a text called 'the tight result name' is 'gen buffer companion' of "tight cast result".
+    a text called 'the tight decl' is "a number called {'the tight result name'} is {'the digits name'} as a number add {'the addend'}".
+    a text called 'the tight check' is 'gen assert number is' of "EXP-29" and 'the tight result name' and 'the tight expected'.
+    a number called 'the first whole length' is 'rng below' of 12 add 1.
+    a text called 'the first whole text' is 'gen random digits' of 'the first whole length'.
+    a number called 'the first whole' is 'the first whole text' as a number.
+    a number called 'the first frac' is 'rng below' of 100.
+    'gen buffer name'.
+    a text called 'the first float name' is 'gen buffer companion' of "first braced reading".
+    a text called 'the first float decl' is "a float called {'the first float name'} is {'the first whole'}.{'the first frac':02}".
+    a number called 'the second whole length' is 'rng below' of 12 add 1.
+    a text called 'the second whole text' is 'gen random digits' of 'the second whole length'.
+    a number called 'the second whole' is 'the second whole text' as a number.
+    a number called 'the second frac' is 'rng below' of 100.
+    'gen buffer name'.
+    a text called 'the second float name' is 'gen buffer companion' of "second braced reading".
+    a text called 'the second float decl' is "a float called {'the second float name'} is {'the second whole'}.{'the second frac':02}".
+    a number called 'the frac sum' is 'the first frac' add 'the second frac'.
+    a number called 'the braced expected' is 'the first whole' add 'the second whole'.
+    If 'the frac sum' is greater than 99 then,
+        Set 'the braced expected' to 'the braced expected' add 1.
+    'gen buffer name'.
+    a text called 'the braced result name' is 'gen buffer companion' of "braced cast result".
+    a text called 'the braced decl' is "a number called {'the braced result name'} is {{{'the first float name'} add {'the second float name'}}} as a number".
+    a text called 'the braced check' is 'gen assert number is' of "EXP-30" and 'the braced result name' and 'the braced expected'.
+    a list called 'the lines' is ['the digits decl', 'the tight decl', 'the tight check', 'the first float decl', 'the second float decl', 'the braced decl', 'the braced check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-35: `x is 0` - a bare value on the right is an equality comparison
+ (LANGUAGE.md:1958), the shorter spelling of EXP-34's `is equal to`.
+ 'gen assert predicate' with the predicate text "0" writes exactly
+ `If {subject} is 0 then ...`, so no custom condition code is needed -
+ the same helper the collections leaves already use for `is empty`/
+ `is static`/etc. Both branches are reachable: a coin flip decides zero
+ or a redrawn nonzero extreme magnitude.)
+
+To 'gen leaf bare zero comparison' with a text called indent and a boolean called nested.
+    a number called 'the zero draw' is 'rng below' of 4.
+    a number called 'the subject value' is 0.
+    a text called 'the literal text' is "0".
+    If 'the zero draw' is greater than 0 then,
+        a number called 'the nonzero magnitude' is 'gen expr extreme value',
+        If 'the nonzero magnitude' is 0 then, Set 'the nonzero magnitude' to 1.
+        Set 'the subject value' to 'the nonzero magnitude',
+        Set 'the literal text' to "{'the nonzero magnitude'}".
+    'gen buffer name'.
+    a text called 'the subject name' is 'gen buffer companion' of "bare check value".
+    a text called 'the subject decl' is "a number called {'the subject name'} is {'the literal text'}".
+    a boolean called 'the expected zero' is false.
+    If 'the subject value' is 0 then,
+        Set 'the expected zero' to true.
+    a list called 'the trio' is 'gen assert predicate' of "EXP-35" and 'the subject name' and "0" and 'the expected zero' and "bare zero flag".
+    a list called 'the head' is ['the subject decl'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the head' and 'the trio'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-39, EXP-41: `is odd` (LANGUAGE.md:1968) and `is negative`
+ (LANGUAGE.md:1970), two independent predicate checks over two
+ independently-drawn subjects in one program. `'gen expr extreme
+ value'` never returns negative, so oddness is read straight off it by
+ parity; a negative reading is built the same way EXP-98's leaf builds
+ one - `0 subtract <magnitude>`, since Vox has no negative NUMBER
+ literal (EXP-01) - with the same zero-guard EXP-98 uses, since a
+ magnitude of exactly 0 would collapse the "negative" branch into the
+ already-covered "zero is not negative" case rather than testing
+ anything new.)
+
+To 'gen leaf odd and negative predicates' with a text called indent and a boolean called nested.
+    a number called 'the odd magnitude' is 'gen expr extreme value'.
+    a boolean called 'the odd expected' is false.
+    If 'the odd magnitude' modulo 2 is 1 then,
+        Set 'the odd expected' to true.
+    'gen buffer name'.
+    a text called 'the odd subject name' is 'gen buffer companion' of "oddness subject".
+    a text called 'the odd decl' is "a number called {'the odd subject name'} is {'the odd magnitude'}".
+    a list called 'the odd trio' is 'gen assert predicate' of "EXP-39" and 'the odd subject name' and "odd" and 'the odd expected' and "odd flag".
+    a number called 'the negative magnitude' is 'gen expr extreme value'.
+    If 'the negative magnitude' is 0 then,
+        Set 'the negative magnitude' to 1.
+    a number called 'the sign draw' is 'rng below' of 2.
+    a text called 'the negative literal' is "{'the negative magnitude'}".
+    a boolean called 'the negative expected' is false.
+    If 'the sign draw' is 0 then,
+        Set 'the negative literal' to "0 subtract {'the negative magnitude'}",
+        Set 'the negative expected' to true.
+    'gen buffer name'.
+    a text called 'the sign subject name' is 'gen buffer companion' of "sign subject".
+    a text called 'the sign decl' is "a number called {'the sign subject name'} is {'the negative literal'}".
+    a list called 'the sign trio' is 'gen assert predicate' of "EXP-41" and 'the sign subject name' and "negative" and 'the negative expected' and "negative flag".
+    a list called 'the first block' is ['the odd decl'].
+    a list called 'the first whole' is 'gen concat two blocks' of 'the first block' and 'the odd trio'.
+    a list called 'the second block' is ['the sign decl'].
+    a list called 'the second whole' is 'gen concat two blocks' of 'the second block' and 'the sign trio'.
+    a list called 'the lines' is 'gen concat two blocks' of 'the first whole' and 'the second whole'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-43: `<list> is empty` on a real LIST, both states - the manual's
+ own worked example cannot be written as shown (Discrepancy 4: `list`
+ is a reserved word), so this leaf names its list the way the
+ discrepancy's own fix does, a real noun rather than the type name.
+ 'gen buffer companion' already always returns a quoted MULTI-word name
+ (docs/ledger/buffers.md's own finding, this file's header note), so
+ there is no risk of colliding with the one-word-quoted-in-a-slot
+ question either. Element count is 0-5; when nonzero, every element is
+ drawn from the same extreme span used everywhere else in this file -
+ the VALUES inside the list are not what EXP-43 is testing, so varying
+ them is just this file's usual discipline, not a claim of its own.)
+
+To 'gen leaf list emptiness check' with a text called indent and a boolean called nested.
+    a number called 'the count' is 'rng below' of 6.
+    a text called 'the elements text' is "".
+    a number called 'the position' is 0.
+    While 'the position' is less than 'the count',
+        a number called 'the element value' is 'gen expr extreme value',
+        If 'the position' is 0 then,
+            Set 'the elements text' to "{'the element value'}",
+        Otherwise,
+            Set 'the elements text' to "{'the elements text'}, {'the element value'}".
+        Set 'the position' to 'the position' add 1.
+    'gen buffer name'.
+    a text called 'the list name' is 'gen buffer companion' of "roster".
+    a text called 'the list decl' is "a list called {'the list name'} is [{'the elements text'}]".
+    a boolean called 'the expected empty' is false.
+    If 'the count' is 0 then,
+        Set 'the expected empty' to true.
+    a list called 'the trio' is 'gen assert predicate' of "EXP-43" and 'the list name' and "empty" and 'the expected empty' and "roster emptiness flag".
+    a list called 'the head' is ['the list decl'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the head' and 'the trio'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-73: a text made from a buffer is an independent copy, not a
+ window - it keeps its own bytes after the buffer that made it is
+ cleared and refilled (LANGUAGE.md:2051-2057). This is the memory-safety
+ row of the whole section, per the ledger's own Report ("the manual's
+ own stated reason is that a window would read freed memory after a
+ resize") - CLAUDE.md's priority ordering put it first in this batch.
+ The capture happens BEFORE the mutation and the assertion runs AFTER
+ it, so the check actually exercises independence rather than a text
+ trivially equalling itself; a second capture+check right after proves
+ the buffer's own later state is unaffected by the fact that an earlier
+ copy was taken. Content is built from 'gen expr safe text' (letters and
+ digits only - see that helper's own comment) so it drops straight into
+ a double-quoted buffer-content literal with no escaping question.)
+
+To 'gen leaf buffer text independent copy' with a text called indent and a boolean called nested.
+    a number called 'the first length' is 'rng below' of 12 add 3.
+    a text called 'the first content' is 'gen expr safe text' of 'the first length'.
+    a number called 'the second length' is 'rng below' of 12 add 3.
+    a text called 'the second content' is 'gen expr safe text' of 'the second length'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the buffer decl' is "a buffer called {'the name'} is \"{'the first content'}\"".
+    'gen buffer name'.
+    a text called 'the kept name' is 'gen buffer companion' of "kept snapshot".
+    a text called 'the kept decl' is "a text called {'the kept name'} is {'the name'} as text".
+    a text called 'the clear line' is "clear {'the name'}".
+    a text called 'the append line' is "append \"{'the second content'}\" to {'the name'}".
+    a text called 'the kept check' is 'gen assert text equals' of "EXP-73" and 'the kept name' and 'the first content'.
+    'gen buffer name'.
+    a text called 'the after name' is 'gen buffer companion' of "after snapshot".
+    a text called 'the after decl' is "a text called {'the after name'} is {'the name'} as text".
+    a text called 'the after check' is 'gen assert text equals' of "EXP-73" and 'the after name' and 'the second content'.
+    a list called 'the lines' is ['the buffer decl', 'the kept decl', 'the clear line', 'the append line', 'the kept check', 'the after decl', 'the after check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(EXP-83, EXP-84: base-conversion parsing stops at the first character
+ invalid for the chosen base rather than raising (LANGUAGE.md:2116-2118,
+ the manual's own `"12g5" as a hex number` -> 18), and a numeral invalid
+ from its very first character gives 0 (LANGUAGE.md:2118-2120) - the
+ real gap `'gen leaf base conversion'` (gen_text.vox) never reaches,
+ since every digit it emits is drawn from the chosen base's own
+ alphabet on purpose. Neither row touches the D2 discrepancy (still
+ open, blocked) - that one is about the ERROR FLAG; these two are about
+ the VALUE, which both bullets agree on and hand-verification confirms.
+ Base is drawn 2-35, never 36 (base 36 already spans the whole 0-9a-z
+ alphabet, so no invalid digit would exist to append). The partial-parse
+ half also appends one further trailing character after the invalid
+ one, the same "g5" shape the manual's own example uses, to show
+ parsing really stops rather than merely ending. The total-failure half
+ sometimes draws the empty string instead (LANGUAGE.md's own `""` case,
+ hand-verified 0 across four parse-form spellings including two
+ non-default bases) rather than a string with an invalid first
+ character - both are "zero characters consumed".)
+
+To 'gen leaf base conversion partial and total parse' with a text called indent and a boolean called nested.
+    a number called 'the base' is 'rng below' of 34 add 2.
+    a number called 'the valid count' is 'rng below' of 6 add 1.
+    a list called 'the valid digit values' is [].
+    a text called 'the valid text' is "".
+    a number called 'the position' is 0.
+    While 'the position' is less than 'the valid count',
+        a number called 'the digit value' is 'rng below' of 'the base',
+        a text called 'the digit char' is 'gen digit for value' of 'the digit value',
+        append 'the digit value' to 'the valid digit values',
+        Set 'the valid text' to "{'the valid text'}{'the digit char'}",
+        Set 'the position' to 'the position' add 1.
+    a number called 'the invalid span' is 36 minus 'the base'.
+    a number called 'the invalid offset' is 'rng below' of 'the invalid span'.
+    a number called 'the invalid value' is 'the base' add 'the invalid offset'.
+    a text called 'the invalid char' is 'gen digit for value' of 'the invalid value'.
+    a number called 'the trailing value' is 'rng below' of 36.
+    a text called 'the trailing char' is 'gen digit for value' of 'the trailing value'.
+    a text called 'the partial text' is "{'the valid text'}{'the invalid char'}{'the trailing char'}".
+    a number called 'the partial expected' is 'gen expr base value' of 'the base' and 'the valid digit values'.
+    a text called 'the partial parse form' is 'gen pick parse form' of 'the base'.
+    'gen buffer name'.
+    a text called 'the partial text name' is 'gen buffer companion' of "partial numeral".
+    a text called 'the partial decl' is "a text called {'the partial text name'} is \"{'the partial text'}\"".
+    'gen buffer name'.
+    a text called 'the partial result name' is 'gen buffer companion' of "partial value".
+    a text called 'the partial conv' is "a number called {'the partial result name'} is {'the partial text name'} {'the partial parse form'}".
+    a text called 'the partial check' is 'gen assert number is' of "EXP-83" and 'the partial result name' and 'the partial expected'.
+    a number called 'the total base' is 'rng below' of 34 add 2.
+    a number called 'the empty draw' is 'rng below' of 3.
+    a text called 'the total text' is "".
+    If 'the empty draw' is greater than 0 then,
+        a number called 'the total invalid span' is 36 minus 'the total base',
+        a number called 'the total invalid offset' is 'rng below' of 'the total invalid span',
+        a number called 'the total invalid value' is 'the total base' add 'the total invalid offset',
+        a text called 'the total first char' is 'gen digit for value' of 'the total invalid value',
+        a number called 'the total tail value' is 'rng below' of 36,
+        a text called 'the total tail char' is 'gen digit for value' of 'the total tail value',
+        Set 'the total text' to "{'the total first char'}{'the total tail char'}".
+    a text called 'the total parse form' is 'gen pick parse form' of 'the total base'.
+    'gen buffer name'.
+    a text called 'the total text name' is 'gen buffer companion' of "total failure numeral".
+    a text called 'the total decl' is "a text called {'the total text name'} is \"{'the total text'}\"".
+    'gen buffer name'.
+    a text called 'the total result name' is 'gen buffer companion' of "total failure value".
+    a text called 'the total conv' is "a number called {'the total result name'} is {'the total text name'} {'the total parse form'}".
+    a text called 'the total check' is 'gen assert number is' of "EXP-84" and 'the total result name' and 0.
+    a list called 'the lines' is ['the partial decl', 'the partial conv', 'the partial check', 'the total decl', 'the total conv', 'the total check'].
+    'gen join lines' of indent and nested and 'the lines'.

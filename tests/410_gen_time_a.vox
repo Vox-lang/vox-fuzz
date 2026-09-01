@@ -1,0 +1,74 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's time leaves, batch A - docs/ledger/time.md rows TIM-01,
+ TIM-02, TIM-03, TIM-05, TIM-06, TIM-07, TIM-08, TIM-09, TIM-10, TIM-11,
+ TIM-13, TIM-15, TIM-16, TIM-17, TIM-18, TIM-19, TIM-22, TIM-23, TIM-24,
+ TIM-25, TIM-26, TIM-27, TIM-31, TIM-33, TIM-34, TIM-35, TIM-36, TIM-37,
+ TIM-38, TIM-49.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/300 uses for the buffer leaves. This also pins
+ down the fix for the bug the campaign caught in this batch: seed 834
+ below is the exact seed that first surfaced two independent random
+ draws deciding the same "seconds or milliseconds" choice - the
+ assertion built from one draw, the statement rendered from the other -
+ so a compiled 94ms `Wait` printed `Wait 0 seconds.` and asserted
+ "expected at least 21". A single `'seconds flavor'` boolean, drawn once
+ and threaded through, is what this golden now shows staying consistent
+ between the rendered statement and the assertion's own bound.
+
+ 'gen leaf current time shape' is emitted nested and unnested, the same
+ two ways 'gen join lines' can render a line; 'gen leaf timer duration
+ and running' is emitted at three seeds to show the creation-form,
+ verb-spelling, and wait-flavour variance without depending on any one
+ of them landing in a single sample.)
+
+Print "--- TIM-01, TIM-02, TIM-03, TIM-05..TIM-11, TIM-13: current time shape ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf current time shape' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf current time shape' of "  " and true.
+Print 'gen text'.
+
+Print "--- TIM-22, TIM-23, TIM-24..TIM-27, TIM-31, TIM-33..TIM-38: timer lifecycle, bare creation, milliseconds wait ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer duration and running' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 12: Create form, seconds-flavour wait ---".
+'rng seed' of 12.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer duration and running' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 834: the wait-flavour bug's own repro seed ---".
+'rng seed' of 834.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf timer duration and running' of "" and false.
+Print 'gen text'.

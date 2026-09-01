@@ -1,0 +1,140 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(process leaves, batch B - docs/ledger/process-control.md rows PRC-11,
+ 47, 48, 55, 60, 61, 87. Kinds 350, 351, 353, 354 registered (352,
+ 355-359 spare); kind 269 is also registered this batch (Reboot-only fix
+ to a batch-A leaf, see gen_process.vox).
+
+ Kind 352 ('gen leaf process reap without waiting', PRC-50/51/52/53/54)
+ is written but held OUT of the dispatch - a layout-randomiser candidate
+ this batch found, reported in full in REPORT-LEAVES-PROCESS-B.md and in
+ the leaf's own comment. This test still calls it DIRECTLY (as it would
+ any other leaf) to prove the leaf itself is correct, exactly ordinarily
+ laid out; the held-out kind range at the bottom of this file therefore
+ expects 352 to emit 0 bytes THROUGH DISPATCH even though the direct
+ call above it emits plenty.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/450_gen_process_a.vox uses. The scratch-gated
+ leaf (350) needs gen_scratch_flag/gen_does_file_io set by hand, the same
+ way that test's buffer/directory leaves do, since this test drives
+ leaves directly rather than through 'gen program'. gen_process_has_reaped
+ is this file's own per-program state and is reset by hand between cases
+ for the same reason 450 does.)
+
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- PRC-79: system control refusal, Reboot only now ---".
+'rng seed' of 14.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process system control refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-11: directory create/remove/change-directory failure paths ---".
+'rng seed' of 20.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory failure paths' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 20.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory failure paths' of "  " and true.
+Print 'gen text'.
+
+Print "--- PRC-11 with no file I/O committed: stands aside ---".
+Set gen_does_file_io to false.
+'rng seed' of 20.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory failure paths' of "" and false.
+Print "emits a directory statement: {'gen text contains' of \"directory\"}".
+Set gen_does_file_io to true.
+
+Print "--- PRC-47, 48: reap by a specific pid, real child and foreign pid ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reap by pid' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (other spelling draws) ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 22.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reap by pid' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-50, 51, 52, 53, 54: non-blocking reap without waiting (HELD OUT of dispatch - direct call only, see the leaf's own comment) ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 23.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reap without waiting' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (other spelling draws) ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 24.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reap without waiting' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-60, 61, 55: reaped and waiting stay ordinary identifiers ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 25.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reaped ordinary identifier' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-87: empty-path degenerate input, one construct per draw ---".
+'rng seed' of 26.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process empty path refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed ---".
+'rng seed' of 27.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process empty path refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a third seed ---".
+'rng seed' of 28.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process empty path refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 350-359 all dispatch without error ---".
+a number called 'the kind' is 350.
+While 'the kind' is less than 360,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

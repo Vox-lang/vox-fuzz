@@ -1,0 +1,121 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's buffer leaves, batch C, round four, 2026-08-30 -
+ docs/ledger/buffers.md rows BUF-19, BUF-21, BUF-23, BUF-24, BUF-25,
+ BUF-26, BUF-31, BUF-32, BUF-36, BUF-38 - kinds 340-345. Same shape as
+ 300_gen_buffers_a.vox/330_gen_buffers_b.vox/430_gen_buffers_c.vox: each
+ leaf is called directly off a pinned rng seed and its emitted source
+ printed in full, the golden is the generated Vox itself, at the true
+ top level (nested false) and inside a block (nested true) both.)
+
+Print "--- BUF-19, BUF-21: byte 1 is the first byte, and a variable-indexed byte access reads and writes ---".
+'rng seed' of 340.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer byte index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (a different length/position) ---".
+'rng seed' of 341.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer byte index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 340.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer byte index' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-23, BUF-24: a hex literal and a character literal both write the byte they name ---".
+'rng seed' of 342.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer byte literals' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 342.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer byte literals' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-25: declare from a string, mutate one byte with a character literal, the printed content reflects it ---".
+'rng seed' of 343.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer content mutation' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 343.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer content mutation' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-26: an out-of-bounds read is refused and the captured value is 0 ---".
+'rng seed' of 344.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer oob value' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 344.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer oob value' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-31, BUF-32, BUF-38: append/copy between two buffers, source unchanged by either ---".
+'rng seed' of 345.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer append copy sources' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 345.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer append copy sources' of "  " and true.
+Print 'gen text'.
+
+Print "--- BUF-36: a dynamic destination buffer grows past its initial reserve under append or copy ---".
+'rng seed' of 346.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer dynamic destination growth' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed (the other verb) ---".
+'rng seed' of 344.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer dynamic destination growth' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 346.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer dynamic destination growth' of "  " and true.
+Print 'gen text'.

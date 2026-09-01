@@ -1,0 +1,86 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_basics.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_keywords.vox".
+
+(keywords leaves, batch A - docs/ledger/keywords.md rows KEY-02, 04, 11,
+ 44, 45, 49, 50, 53, 54, 73. Kinds 300-306.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/450_gen_process_a.vox uses.)
+
+Print "--- KEY-02: the article `the` references an existing variable ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf article the reference' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf article the reference' of "  " and true.
+Print 'gen text'.
+
+Print "--- KEY-04: Set/Create declaration forms ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf set create declaration forms' of "" and false.
+Print 'gen text'.
+
+Print "--- KEY-11: Decrement, bare and `the`-prefixed ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf decrement' of "" and false.
+Print 'gen text'.
+
+Print "--- KEY-44, KEY-45: the `and` subject-list terminator ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf and subject list' of "" and false.
+Print 'gen text'.
+
+Print "--- KEY-49, KEY-50: message/string as reserved aliases of text ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf reserved alias text types' of "" and false.
+Print 'gen text'.
+
+Print "--- KEY-53, KEY-54: length as a contextual keyword ---".
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf contextual keyword length' of "" and false.
+Print 'gen text'.
+
+Print "--- KEY-73: version as a contextual keyword (ordinary-identifier half) ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf contextual keyword version' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 300-306 all dispatch without error ---".
+a number called 'the kind' is 300.
+While 'the kind' is less than 307,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

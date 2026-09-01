@@ -1,0 +1,134 @@
+--- FIL-58, FIL-59, FIL-60, FIL-62: seek by byte, both keywords, both directions ---
+a text called 'the manifest path' is "{'the workspace'}/1byteseek".
+open a file for writing called 'the manifest' at 'the manifest path'.
+Write "gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme21" to 'the manifest'.
+Close 'the manifest'.
+open a file for reading called 'the manifest' at 'the manifest path'.
+a buffer called 'the postbag' is 34 bytes in size.
+Seek 'the manifest' to byte 1.
+Read from 'the manifest' into 'the postbag'.
+a text called 'notebook prefix capture' is 'the postbag' as text.
+If 'the postbag' is not "gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme" then, Print "ASSERT FIL-60: expected gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme got {'notebook prefix capture'}", Exit 95. Print 'the postbag'.
+a buffer called 'notebook' is 2 bytes in size.
+Seek 'the manifest' to byte 35.
+Read from 'the manifest' into 'notebook'.
+a text called 'notebook suffix capture' is 'notebook' as text.
+If 'notebook' is not "21" then, Print "ASSERT FIL-62: expected 21 got {'notebook suffix capture'}", Exit 95. Print 'notebook'.
+Close 'the manifest'.
+
+--- the same leaf, nested ---
+  a text called 'the manifest path' is "{'the workspace'}/2byteseek",
+  open a file for writing called 'the manifest' at 'the manifest path',
+  Write "gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme21" to 'the manifest',
+  Close 'the manifest',
+  open a file for reading called 'the manifest' at 'the manifest path',
+  a buffer called 'the postbag' is 34 bytes in size,
+  Seek 'the manifest' to byte 1,
+  Read from 'the manifest' into 'the postbag',
+  a text called 'notebook prefix capture' is 'the postbag' as text,
+  If 'the postbag' is not "gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme" then, Print "ASSERT FIL-60: expected gqs61b2dzj3s6s6ua0s9b9w3q4gvu4xdme got {'notebook prefix capture'}", Exit 95. Print 'the postbag',
+  a buffer called 'notebook' is 2 bytes in size,
+  Seek 'the manifest' to byte 35,
+  Read from 'the manifest' into 'notebook',
+  a text called 'notebook suffix capture' is 'notebook' as text,
+  If 'notebook' is not "21" then, Print "ASSERT FIL-62: expected 21 got {'notebook suffix capture'}", Exit 95. Print 'notebook',
+  Close 'the manifest'.
+
+--- FIL-57, FIL-61, FIL-102, FIL-63 (line past EOF): seek by line ---
+a text called 'the greeting path' is "{'the workspace'}/3lineseek".
+open a file for writing called 'the greeting' at 'the greeting path'.
+Write "5grc4gm7sp\n9nvaztn8b\nuwv\n" to 'the greeting'.
+Close 'the greeting'.
+open a file for reading called 'the greeting' at 'the greeting path'.
+a buffer called 'loading bay' is 4 bytes in size.
+Seek 'the greeting' to line 3.
+Read line from 'the greeting' into 'loading bay'.
+a text called 'loading bay chosen line capture' is 'loading bay' as text.
+If 'loading bay' is not "uwv\n" then, Print "ASSERT FIL-61: expected uwv\n got {'loading bay chosen line capture'}", Exit 95. Print 'loading bay'.
+a boolean called 'workbench trailing line errored' is false.
+a buffer called 'workbench' is 8 bytes in size.
+Seek 'the greeting' to line 4.
+Read line from 'the greeting' into 'workbench'.
+On error Set 'workbench trailing line errored' to true.
+If 'workbench trailing line errored' then, Print "ASSERT FIL-102: expected 0 got {'workbench trailing line errored'}", Exit 95. Print 'workbench trailing line errored'.
+If 'workbench's size is not 0 then, Print "ASSERT FIL-102: expected 0 got {'workbench's size}", Exit 95. Print 'workbench's size.
+a boolean called 'scratch past line errored' is false.
+a buffer called scratch is 8 bytes in size.
+Seek 'the greeting' to line 5.
+Read line from 'the greeting' into scratch.
+On error Set 'scratch past line errored' to true.
+If 'scratch past line errored' is false then, Print "ASSERT FIL-63: expected 1 got {'scratch past line errored'}", Exit 95. Print 'scratch past line errored'.
+Close 'the greeting'.
+
+--- the same leaf, nested ---
+  a text called 'the greeting path' is "{'the workspace'}/4lineseek",
+  open a file for writing called 'the greeting' at 'the greeting path',
+  Write "5grc4gm7sp\n9nvaztn8b\nuwv\n" to 'the greeting',
+  Close 'the greeting',
+  open a file for reading called 'the greeting' at 'the greeting path',
+  a buffer called 'loading bay' is 4 bytes in size,
+  Seek 'the greeting' to line 3,
+  Read line from 'the greeting' into 'loading bay',
+  a text called 'loading bay chosen line capture' is 'loading bay' as text,
+  If 'loading bay' is not "uwv\n" then, Print "ASSERT FIL-61: expected uwv\n got {'loading bay chosen line capture'}", Exit 95. Print 'loading bay',
+  a boolean called 'workbench trailing line errored' is false,
+  a buffer called 'workbench' is 8 bytes in size,
+  Seek 'the greeting' to line 4,
+  Read line from 'the greeting' into 'workbench',
+  On error Set 'workbench trailing line errored' to true,
+  If 'workbench trailing line errored' then, Print "ASSERT FIL-102: expected 0 got {'workbench trailing line errored'}", Exit 95. Print 'workbench trailing line errored',
+  If 'workbench's size is not 0 then, Print "ASSERT FIL-102: expected 0 got {'workbench's size}", Exit 95. Print 'workbench's size,
+  a boolean called 'scratch past line errored' is false,
+  a buffer called scratch is 8 bytes in size,
+  Seek 'the greeting' to line 5,
+  Read line from 'the greeting' into scratch,
+  On error Set 'scratch past line errored' to true,
+  If 'scratch past line errored' is false then, Print "ASSERT FIL-63: expected 1 got {'scratch past line errored'}", Exit 95. Print 'scratch past line errored',
+  Close 'the greeting'.
+
+--- FIL-63 (position below 1, invalid descriptor): seek invalid targets ---
+a text called 'the dispatch note path' is "{'the workspace'}/5seekinv".
+open a file for writing called 'the dispatch note' at 'the dispatch note path'.
+Write "9mh4hquiihin0" to 'the dispatch note'.
+Close 'the dispatch note'.
+open a file for reading called 'the dispatch note' at 'the dispatch note path'.
+a boolean called 'the dispatch note below floor errored' is false.
+Seek 'the dispatch note' to byte 0.
+On error Set 'the dispatch note below floor errored' to true.
+If 'the dispatch note below floor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'the dispatch note below floor errored'}", Exit 95. Print 'the dispatch note below floor errored'.
+Close 'the dispatch note'.
+open a file for reading called 'the sketchpad' at 2147483647.
+a boolean called 'the sketchpad borrowed descriptor errored' is false.
+Seek 'the sketchpad' to byte 27.
+On error Set 'the sketchpad borrowed descriptor errored' to true.
+If 'the sketchpad borrowed descriptor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'the sketchpad borrowed descriptor errored'}", Exit 95. Print 'the sketchpad borrowed descriptor errored'.
+
+--- FIL-100: closing an already-closed handle ---
+a text called 'scratch path' is "{'the workspace'}/6dblclose".
+open a file for writing called 'scratch' at 'scratch path'.
+Write "4g4c3vq72lk0r" to 'scratch'.
+Close 'scratch'.
+open a file for reading called 'scratch' at 'scratch path'.
+Close 'scratch'.
+a boolean called 'scratch second close errored' is false.
+Close 'scratch'.
+On error Set 'scratch second close errored' to true.
+If 'scratch second close errored' then, Print "ASSERT FIL-100: expected 0 got {'scratch second close errored'}", Exit 95. Print 'scratch second close errored'.
+
+--- FIL-89: a forgotten Close still reaches disk ---
+a text called 'the waybill path' is "{'the workspace'}/7neverclosed".
+open a file for writing called 'the inbox' at 'the waybill path'.
+Write "umzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nswgszc9y2r" to 'the inbox'.
+open a file for reading called 'the sketchpad' at 'the waybill path'.
+a buffer called 'the waybill' is 55 bytes in size.
+Read from 'the sketchpad' into 'the waybill'.
+a text called 'the waybill durable capture' is 'the waybill' as text.
+If 'the waybill' is not "umzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nswgszc9y2r" then, Print "ASSERT FIL-89: expected umzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nswgszc9y2r got {'the waybill durable capture'}", Exit 95. Print 'the waybill'.
+Close 'the sketchpad'.
+
+--- every leaf above with no file I/O committed ---
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0

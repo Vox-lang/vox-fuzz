@@ -1,0 +1,170 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(collections-c, batch C (night) - docs/ledger/collections-a.md rows
+ LST-04, LST-43, LST-45, LST-46, LST-47 and collections-b.md rows
+ LST2-30, LST2-41, LST2-46, LST2-53, LST2-94.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, the same convention tests/390_gen_collections_b.vox
+ uses. Each leaf is also emitted nested at least once, since 'gen join
+ lines' renders a nested body (comma-joined) differently from a
+ top-level one (period-joined) and that difference is exactly what a
+ leaf's own gate has to prove survives rendering, not just "the idea"
+ of the leaf (PROCEDURE.md 6a).
+
+ The naming allocator for most of these leaves is 'gen buffer
+ name'/'gen buffer reference'/'gen buffer property'/'gen buffer
+ companion' from gen_buffers.vox - reused rather than re-spent, per
+ tonight's brief. 'gen leaf map missing key typed default' is the one
+ exception: it reuses 'gen fresh noun'/'gen written name'/'gen
+ possessive name' instead, the same idiom 'gen leaf absent key' (VAL-27)
+ already uses for this exact shape - a map, a missing key, an `On
+ error` witness - because a possessive built off an already-quoted
+ buffer-companion name would double its own closing quote.)
+
+Print "--- LST-43, LST-45: insert and replace, same map ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map insert and replace' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map insert and replace' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-46: length and empty, an empty map and a populated one ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map length and empty' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map length and empty' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-04: an empty list, length 0 and empty true before any append ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty state' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty state' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-47: keys/values order and freshness, a two-key map ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map keys values fresh' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a three-key map ---".
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map keys values fresh' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map keys values fresh' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST-49: a missing key, the provable and the Set-grown/typed-default halves ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map missing key typed default' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf map missing key typed default' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST2-30: two appends onto a populated list, length +2 ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append length worked example' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append length worked example' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST2-41: append inside a While loop, a drawn bound ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append in loop' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append in loop' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST2-46, LST2-53: append each X from Y to Z, element by element ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append each' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list append each' of "  " and true.
+Print 'gen text'.
+
+Print "--- LST2-94: a treating clause with a guaranteed hit ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf treating append guaranteed hit' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf treating append guaranteed hit' of "  " and true.
+Print 'gen text'.

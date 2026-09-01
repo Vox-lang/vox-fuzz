@@ -1,0 +1,149 @@
+--- BAS-07, 09, 10: comment placement, standalone position ---
+a number called cupboard is 0.
+Set cupboard to cupboard add 1.
+Set cupboard to cupboard add 1. (workbench, checked)
+If cupboard is not 2 then, Print "ASSERT BAS-07: expected 2 got {cupboard}", Exit 95. Print cupboard.
+
+--- the same leaf, a seed that draws the trailing position ---
+a number called 'the inbox' is 0.
+Set 'the inbox' to 'the inbox' add 1.
+Set 'the inbox' to 'the inbox' add 1. (see the sketchpad for details)
+If 'the inbox' is not 2 then, Print "ASSERT BAS-07: expected 2 got {'the inbox'}", Exit 95. Print 'the inbox'.
+
+--- BAS-11: comment mid-declaration ---
+a number (see the dispatch note for details) called 'the mailbag' is 578.
+If 'the mailbag' is not 578 then, Print "ASSERT BAS-11: expected 578 got {'the mailbag'}", Exit 95. Print 'the mailbag'.
+
+--- the same leaf, mid-expression ---
+a number called 'the dispatch note' is 2030837 (nothing unusual here, just ledger) add 2147483648.
+a number called 'the drawer' is 2030837 add 2147483648.
+If 'the dispatch note' is not 'the drawer' then, Print "ASSERT BAS-11: expected {'the drawer'} got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+
+--- the same leaf, mid-condition ---
+a number called 'the sketchpad' is 0.
+If 8277419968124 (a note about the message slip) is greater than or equal to 0 then, Set 'the sketchpad' to 1.
+If 'the sketchpad' is not 1 then, Print "ASSERT BAS-11: expected 1 got {'the sketchpad'}", Exit 95. Print 'the sketchpad'.
+
+--- BAS-12, 13: comment spanning lines and nested parens ---
+a number called cupboard is 0.
+(nothing unusual here, just the dispatch note
+double-checked against outgoing post)
+Set cupboard to cupboard add 1.
+(((a note about cupboard)))
+Set cupboard to cupboard add 1.
+If cupboard is not 2 then, Print "ASSERT BAS-12: expected 2 got {cupboard}", Exit 95. Print cupboard.
+
+--- BAS-14: parens inside a string literal ---
+a text called workbench is "the (a note about cupboard) reads fine".
+a buffer called storeroom is workbench.
+If storeroom's size is not 38 then, Print "ASSERT BAS-14: expected 38 got {storeroom's size}", Exit 95. Print storeroom's size.
+
+--- BAS-24: comment-only line does not close ---
+a number called u1 is 0.
+a number called 'the pigeonhole' is 0.
+a number called 'the dispatch note' is 0.
+a number called 'outgoing post' is 0.
+While u1 is less than 4,
+  Increment u1,
+  If u1 is equal to 1 then, Set 'the dispatch note' to 'the dispatch note' add 1.
+  (satchel, checked)
+  Set 'the pigeonhole' to 'the pigeonhole' add 1.
+
+Set 'outgoing post' to 'outgoing post' add 1.
+If 'the pigeonhole' is not 4 then, Print "ASSERT BAS-24: expected 4 got {'the pigeonhole'}", Exit 95. Print 'the pigeonhole'.
+If 'the dispatch note' is not 1 then, Print "ASSERT BAS-24: expected 1 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+If 'outgoing post' is not 1 then, Print "ASSERT BAS-24: expected 1 got {'outgoing post'}", Exit 95. Print 'outgoing post'.
+
+--- BAS-16: blank line count invariant ---
+a number called cupboard is 0.
+Set cupboard to cupboard add 1.
+
+Set cupboard to cupboard add 1.
+If cupboard is not 2 then, Print "ASSERT BAS-16: expected 2 got {cupboard}", Exit 95. Print cupboard.
+
+--- BAS-17: blank line closes a nested loop, Repeat ---
+a number called cupboard is 0.
+a number called workbench is 0.
+a number called r1 is 0.
+Repeat 2 times,
+  Set r1 to r1 add 1,
+  If r1 is equal to 1 then, Set cupboard to cupboard add 1.
+
+Set workbench to workbench add 1.
+If cupboard is not 1 then, Print "ASSERT BAS-17: expected 1 got {cupboard}", Exit 95. Print cupboard.
+If workbench is not 1 then, Print "ASSERT BAS-17: expected 1 got {workbench}", Exit 95. Print workbench.
+
+--- the same leaf, a seed that draws For each ---
+a number called 'the dispatch note' is 0.
+a number called 'the sketchpad' is 0.
+For each number from 1 to 3,
+  If number is equal to 1 then, Set 'the dispatch note' to 'the dispatch note' add 1.
+
+Set 'the sketchpad' to 'the sketchpad' add 1.
+If 'the dispatch note' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+If 'the sketchpad' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the sketchpad'}", Exit 95. Print 'the sketchpad'.
+
+--- the same leaf, a seed that draws While ---
+a number called 'the register' is 0.
+a number called 'the sketchpad' is 0.
+a number called u2 is 0.
+While u2 is less than 5,
+  Increment u2,
+  If u2 is equal to 1 then, Set 'the register' to 'the register' add 1.
+
+Set 'the sketchpad' to 'the sketchpad' add 1.
+If 'the register' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the register'}", Exit 95. Print 'the register'.
+If 'the sketchpad' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the sketchpad'}", Exit 95. Print 'the sketchpad'.
+
+--- BAS-41: blank line closes a loop and its enclosing function ---
+a number called workbench is 0.
+a number called storeroom is 0.
+To cupboard.
+    a number called u3 is 0.
+    While u3 is less than 4,
+        Increment u3,
+        If u3 is equal to 1 then, Set workbench to workbench add 1.
+
+cupboard.
+Set storeroom to storeroom add 1.
+If workbench is not 1 then, Print "ASSERT BAS-41: expected 1 got {workbench}", Exit 95. Print workbench.
+If storeroom is not 1 then, Print "ASSERT BAS-41: expected 1 got {storeroom}", Exit 95. Print storeroom.
+
+--- BAS-43: blank line closes an On error block ---
+a buffer called b1 is 20 bytes in size.
+a number called workbench is 0.
+a number called storeroom is 0.
+a number called toolbox is 0.
+Print byte 38 of b1.
+On error
+  Set workbench to workbench add 1,
+  If workbench is equal to 1 then, Set storeroom to storeroom add 1.
+
+Set toolbox to toolbox add 1.
+If workbench is not 1 then, Print "ASSERT BAS-43: expected 1 got {workbench}", Exit 95. Print workbench.
+If storeroom is not 1 then, Print "ASSERT BAS-43: expected 1 got {storeroom}", Exit 95. Print storeroom.
+If toolbox is not 1 then, Print "ASSERT BAS-43: expected 1 got {toolbox}", Exit 95. Print toolbox.
+
+--- BAS-46: blank line after a comma is cosmetic ---
+a number called u4 is 0.
+a number called 'the pigeonhole' is 0.
+a number called 'the dispatch note' is 0.
+While u4 is less than 4,
+  Set 'the pigeonhole' to 'the pigeonhole' add 1,
+
+  Increment u4.
+Set 'the dispatch note' to 'the dispatch note' add 1.
+If 'the pigeonhole' is not 4 then, Print "ASSERT BAS-46: expected 4 got {'the pigeonhole'}", Exit 95. Print 'the pigeonhole'.
+If 'the dispatch note' is not 1 then, Print "ASSERT BAS-46: expected 1 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+
+--- registration reachable: kinds 310-319 all dispatch without error ---
+kind 310: 272 bytes emitted
+kind 311: 223 bytes emitted
+kind 312: 375 bytes emitted
+kind 313: 258 bytes emitted
+kind 314: 689 bytes emitted
+kind 315: 248 bytes emitted
+kind 316: 419 bytes emitted
+kind 317: 508 bytes emitted
+kind 318: 662 bytes emitted
+kind 319: 429 bytes emitted

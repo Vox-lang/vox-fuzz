@@ -1,0 +1,129 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_basics.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+
+(expressions leaves, batch B - docs/ledger/expressions.md rows EXP-18,
+ 29, 30, 35, 39, 41, 43, 73, 83, 84. Kinds 360-366.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/460_gen_expressions_a.vox uses. Seeds are
+ hand-picked to show both sides of every branch a leaf draws.)
+
+Print "--- EXP-18: the number, the documented for-each iterator spelling ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf article the number iterator' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf article the number iterator' of "  " and true.
+Print 'gen text'.
+
+Print "--- EXP-29, EXP-30: tight-bound cast and braced-whole cast, no fraction carry ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf cast tight and braced' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed whose fractions carry the braced sum's whole part ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf cast tight and braced' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-35: bare x is 0, a nonzero subject ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf bare zero comparison' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, the zero subject ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf bare zero comparison' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-39, EXP-41: odd, and negative (this seed: odd true, negative false) ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf odd and negative predicates' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed with odd false ---".
+'rng seed' of 15.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf odd and negative predicates' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed with negative true ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf odd and negative predicates' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-43: list is empty, a nonempty list ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list emptiness check' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, the empty list ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list emptiness check' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-73: a text made from a buffer is an independent copy ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf buffer text independent copy' of "" and false.
+Print 'gen text'.
+
+Print "--- EXP-83, EXP-84: base-conversion partial parse, and total failure from a non-empty invalid string ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf base conversion partial and total parse' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed whose total-failure numeral is the empty string ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf base conversion partial and total parse' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 360-366 all dispatch without error ---".
+a number called 'the kind' is 360.
+While 'the kind' is less than 367,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

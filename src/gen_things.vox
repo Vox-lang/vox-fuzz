@@ -917,15 +917,21 @@ To 'gen leaf thing format whole' with a text called indent and a boolean called 
 
 (THG2-08, THG2-09 (LANGUAGE.md:1376-1377): `is` between two values of
  the same thing compares those same fields at the same depth, and `is
- not` is its negation. Two fresh instances start equal by construction -
- every field takes its type's zero value until this leaf sets one - so
- the `is` check runs first with no Set at all; then the SAME field on
- the second instance is set to a value numerically distinct from that
- default (a redraw loop on the NUMBER rather than a "not 0" text guard,
- because a signed leading-zero literal like "-0" is textually not "0"
- while numerically holding the field's own default - a bare string
- compare would miss it and turn the not-equal assertion into a false
- finding), and `is not` runs on the pair it produced.)
+ not` is its negation. Two fresh instances start equal by construction,
+ so the `is` check runs first with no Set at all. Getting the two
+ instances apart afterward cannot lean on "the field's zero value" -
+ drawn thing declarations carry EXPLICIT field defaults (`a number
+ called depth is -8`), so a single Set that happens to redraw that same
+ default leaves the pair equal and turns THG2-09 into a false finding
+ (Defect 20, seed 20260856: the field's default was -8, the redraw drew
+ "-00008", numerically its own default). The fix does not depend on
+ knowing either field's default: BOTH instances get their own Set, to
+ two literals drawn distinct from EACH OTHER (redraw the second while it
+ numerically equals the first - a signed leading-zero literal like
+ "-00008" is textually not "-8" while numerically identical, so the
+ redraw compares the parsed NUMBER, never the text) - two instances with
+ the same field forced to two different values cannot be equal
+ regardless of what either type declares as that field's default.)
 
 To 'gen leaf thing equality' with a text called indent and a boolean called nested.
     a boolean called 'a thing is available' is 'gen manifest pick a plain thing'.
@@ -941,14 +947,17 @@ To 'gen leaf thing equality' with a text called indent and a boolean called nest
     a text called 'the first declaration' is "a {'the type'} called {'the first name'}".
     a text called 'the second declaration' is "a {'the type'} called {'the second name'}".
     a text called 'the equal assert' is 'gen assert things equal' of "THG2-08" and 'the first name' and 'the second name'.
-    a text called 'the differing literal' is 'literal integer'.
-    a number called 'the differing value' is 'the differing literal' as a number.
-    While 'the differing value' is 0,
-        Set 'the differing literal' to 'literal integer',
-        Set 'the differing value' to 'the differing literal' as a number.
-    a text called 'the set line' is "Set {'the second name'}'s {'the field'} to {'the differing literal'}".
+    a text called 'the first literal' is 'literal integer'.
+    a number called 'the first value' is 'the first literal' as a number.
+    a text called 'the first set line' is "Set {'the first name'}'s {'the field'} to {'the first literal'}".
+    a text called 'the second literal' is 'literal integer'.
+    a number called 'the second value' is 'the second literal' as a number.
+    While 'the second value' is 'the first value',
+        Set 'the second literal' to 'literal integer',
+        Set 'the second value' to 'the second literal' as a number.
+    a text called 'the second set line' is "Set {'the second name'}'s {'the field'} to {'the second literal'}".
     a text called 'the not equal assert' is 'gen assert things not equal' of "THG2-09" and 'the first name' and 'the second name'.
-    a list called 'the lines' is ['the first declaration', 'the second declaration', 'the equal assert', 'the set line', 'the not equal assert'].
+    a list called 'the lines' is ['the first declaration', 'the second declaration', 'the equal assert', 'the first set line', 'the second set line', 'the not equal assert'].
     'gen join lines' of indent and nested and 'the lines'.
 
 (THG2-10 (LANGUAGE.md:1377-1378): the comparison is written out by the
@@ -1142,4 +1151,241 @@ To 'gen leaf thing type predicate' with a text called indent and a boolean calle
     a text called 'the result declaration' is "a text called {'the result'} is {gen_thing_predicate_written} of {'the argument'}".
     a text called 'the assertion' is 'gen assert text equals' of "THG2-70" and 'the result' and 'the expected'.
     a list called 'the lines' is ['the result declaration', 'the assertion'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+( ── things leaves, batch B, 2026-08-29 evening ──
+
+ THG2-04, THG2-19, THG2-29, THG2-34, THG2-38, THG2-44: docs/ledger/things-b.md,
+ continuing from batch A's THG2-06/08/09/10/21/27/30/32/70 (Printing,
+ Equality, The manifest, The three call forms, One identifier space).
+ Every leaf below reuses batch A's own machinery - 'gen manifest pick a
+ thing with both members', 'gen assert things equal'/'not equal', 'gen
+ assert number is'/'matches' - or the things-a batch's fresh-type
+ infrastructure ('gen things a fresh type'/'gen things a fresh field'),
+ rather than building either a second manifest or a second word pool.
+ THG2-42/43 (a thing name colliding with a variable or function name) are
+ compile-error claims and stay out of this batch entirely, per the common
+ brief: recorded below, never emitted.)
+
+(THG2-04 (LANGUAGE.md:1317-1318): "a function member takes no part [in
+ printing]; it is the type's API, not its state." The rendering itself is
+ not assertable from inside Vox at all - the same limitation THG2-01 and
+ batch A's own THG2-06 already found, since Print is the only sink that
+ can take a whole thing and nothing captures what it wrote - so the only
+ thing a leaf CAN do is put a whole instance of a MEMBER-DECLARING type on
+ the page and let the harness see the line. Real gap before this leaf: no
+ existing leaf ever prints a thing whose type has a manifest at all -
+ 'gen leaf thing member' calls both members but prints one FIELD of each
+ result, never the whole instance.)
+
+To 'gen leaf thing member print' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a thing with both members'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'the literal'}".
+    a text called 'the print line' is "Print {'the instance name'}".
+    a list called 'the lines' is ['the instance declaration', 'the set line', 'the print line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-19 (LANGUAGE.md:1451-1452): "Function members take no storage, so
+ layout, copy, printing, and equality see only the data fields." Batch A's
+ THG2-08/09/10 already verified field-by-field equality on a PLAIN thing;
+ this row asks for the same guarantee on a thing whose type ALSO declares
+ members, on one instance, across copy-print-compare-mutate-compare - the
+ shape 'gen leaf thing copy' already proves for a member-FREE type, never
+ for one that has them. Copy itself is things-a batch's own verified claim
+ (a thing copies by value); this leaf builds on that rather than
+ re-testing it, and spends it on the equality check a member-declaring
+ type has never had.)
+
+To 'gen leaf thing member equality' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a thing with both members'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the field' is 'gen field written' of gen_pick_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the original name' is "i{gen_instances}".
+    a text called 'the original declaration' is "a {'the type'} called {'the original name'}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the literal value' is 'the literal' as a number.
+    a text called 'the set line' is "Set {'the original name'}'s {'the field'} to {'the literal'}".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the copy name' is "i{gen_instances}".
+    a text called 'the copy declaration' is "a {'the type'} called {'the copy name'} is {'the original name'}".
+    a text called 'the print line' is "Print {'the copy name'}".
+    a text called 'the equal assert' is 'gen assert things equal' of "THG2-19" and 'the original name' and 'the copy name'.
+    a text called 'the mutate literal' is 'literal integer'.
+    a number called 'the mutate value' is 'the mutate literal' as a number.
+    While 'the mutate value' is 'the literal value',
+        Set 'the mutate literal' to 'literal integer',
+        Set 'the mutate value' to 'the mutate literal' as a number.
+    a text called 'the mutate line' is "Set {'the copy name'}'s {'the field'} to {'the mutate literal'}".
+    a text called 'the not equal assert' is 'gen assert things not equal' of "THG2-19" and 'the original name' and 'the copy name'.
+    a list called 'the lines' is ['the original declaration', 'the set line', 'the copy declaration', 'the print line', 'the equal assert', 'the mutate line', 'the not equal assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-29 (LANGUAGE.md:1539-1540): "receiver's 'member' [is] sugar for
+ 'member' of receiver." Batch A's THG2-21 already calls the free form and
+ the instance-possessive form of the SAME ordinary function and asserts
+ EACH against the field value the generator computed - which proves both
+ are individually correct but never puts them face to face. This leaf
+ reuses the exact same prelude ('gen build thing functions', the
+ arity-one squaring function) and instead asserts the free result against
+ the receiver result directly with 'gen assert number matches', which is
+ the row's own claim: not that either answer is right, but that they are
+ the SAME answer.)
+
+To 'gen leaf thing free call agreement' with a text called indent and a boolean called nested.
+    If gen_thing_function_ready is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a text called 'the type' is 'gen thing written' of gen_thing_function_owner.
+    a text called 'the field' is 'gen field written' of gen_thing_function_field.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'}".
+    a text called 'the literal' is 'literal integer'.
+    a text called 'the set line' is "Set {'the instance name'}'s {'the field'} to {'the literal'}".
+    Set gen_args to gen_args add 1.
+    a text called 'the free result' is "c{gen_args}".
+    a text called 'the free decl' is "a number called {'the free result'} is {gen_thing_function_squaring_written} of {'the instance name'}".
+    Set gen_args to gen_args add 1.
+    a text called 'the receiver result' is "c{gen_args}".
+    a text called 'the receiver decl' is "a number called {'the receiver result'} is {'the instance name'}'s {gen_thing_function_squaring_written}".
+    a text called 'the agree assert' is 'gen assert number matches' of "THG2-29" and 'the free result' and 'the receiver result'.
+    a list called 'the lines' is ['the instance declaration', 'the set line', 'the free decl', 'the receiver decl', 'the agree assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-34 (LANGUAGE.md:1579-1580, 1596-1598): the TYPE possessive `a
+ <type>'s 'member'` calls a manifest member and "the article is `a`
+ because a new thing comes into being" - `a point's 'placed at' with 1
+ and 0` in the worked example. 'gen leaf thing member' already emits this
+ exact shape (it needs the maker to build the instance the receiver half
+ goes on to read) but only PRINTS the field the maker set, never asserts
+ it. A maker's Return copies its number parameter straight into the field
+ (LANGUAGE.md:1467-1470 - the receiver's own "reflected" negation is a
+ different kind, not built here), so the generator knows the exact
+ expected field value: the literal it just passed.)
+
+To 'gen leaf thing maker call' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a thing with both members'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a number called 'the maker' is gen_pick_maker.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the type possessive' is 'gen thing possessive' of gen_pick_thing.
+    a text called 'the maker name' is 'gen method written' of 'the maker'.
+    a number called 'the maker field' is element 'the maker' of gen_method_field.
+    a text called 'the maker field name' is 'gen field written' of 'the maker field'.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the literal' is 'literal integer'.
+    a number called 'the expected' is 'the literal' as a number.
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'} is a {'the type possessive'} {'the maker name'} with {'the literal'}".
+    a text called 'the subject' is "{'the instance name'}'s {'the maker field name'}".
+    a text called 'the field assert' is 'gen assert number is' of "THG2-34" and 'the subject' and 'the expected'.
+    a list called 'the lines' is ['the instance declaration', 'the field assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-38 (LANGUAGE.md:1621-1648): "A member whose first parameter IS the
+ thing gets both the type possessive and the instance possessive" -
+ 'reflected through the origin' reached both as `a point's '...' of
+ opposite` and `opposite's '...'` in the worked example, both printing the
+ same x. 'gen leaf thing member' already reaches a receiver by the
+ instance possessive alone; this leaf calls the SAME receiver on the SAME
+ unmutated base instance through BOTH forms and asserts the two resulting
+ things equal - true by construction (one function, one unmutated
+ argument, called twice) regardless of which field the receiver happens
+ to read, so no field arithmetic needs predicting.)
+
+To 'gen leaf thing receiver call forms' with a text called indent and a boolean called nested.
+    a boolean called 'a thing is available' is 'gen manifest pick a thing with both members'.
+    If 'a thing is available' is false then,
+        'gen manifest stand aside' of indent and nested,
+        Return a boolean, false.
+    a number called 'the receiver' is gen_pick_receiver.
+    a text called 'the type' is 'gen thing written' of gen_pick_thing.
+    a text called 'the type possessive' is 'gen thing possessive' of gen_pick_thing.
+    a text called 'the receiver name' is 'gen method written' of 'the receiver'.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the base name' is "i{gen_instances}".
+    a text called 'the base declaration' is "a {'the type'} called {'the base name'}".
+    a text called 'the preposition' is 'gen call preposition'.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the instance name' is "i{gen_instances}".
+    a text called 'the instance declaration' is "a {'the type'} called {'the instance name'} is {'the base name'}'s {'the receiver name'}".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the type call name' is "i{gen_instances}".
+    a text called 'the type call declaration' is "a {'the type'} called {'the type call name'} is a {'the type possessive'} {'the receiver name'} {'the preposition'} {'the base name'}".
+    a text called 'the agree assert' is 'gen assert things equal' of "THG2-38" and 'the instance name' and 'the type call name'.
+    a list called 'the lines' is ['the base declaration', 'the instance declaration', 'the type call declaration', 'the agree assert'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(THG2-44 (LANGUAGE.md:1703-1705): "A thing's own fields... live in a
+ separate per-type member space... so `point's x` and `segment's x` do
+ not collide." Nothing in the running manifest guarantees two DIFFERENT
+ things ever share a field's spelling - the shared word-cycle hands out a
+ fresh phrase per field built, so this row's own shape is a real gap the
+ manifest cannot produce on demand. This leaf hand-builds two fresh,
+ unregistered types (the same infrastructure the things-a batch's
+ fresh-type leaves use, 'gen things a fresh type'/'gen things a fresh
+ field') and deliberately spends ONE field phrase on both of them, then
+ sets each type's instance to a DIFFERENT value and reads both back -
+ proving the two "x" fields are two different storage locations, not one.
+ The field's default spelling (present or omitted, LANGUAGE.md:967) is
+ drawn independently per type rather than fixed to "is 0", which would
+ otherwise be a 100%-present, no-citation invariant every time this leaf
+ fires.)
+
+To 'gen leaf thing shared field name' with a text called indent and a boolean called nested.
+    a text called 'the first type phrase' is 'gen things a fresh type'.
+    a text called 'the first type' is 'gen written name' of 'the first type phrase'.
+    a text called 'the second type phrase' is 'gen things a fresh type'.
+    a text called 'the second type' is 'gen written name' of 'the second type phrase'.
+    a text called 'the field phrase' is 'gen things a fresh field'.
+    a text called 'the field' is 'gen written name' of 'the field phrase'.
+    a number called 'the first default draw' is 'rng below' of 2.
+    a text called 'the first field line' is "    a number called {'the field'}.\n\n".
+    If 'the first default draw' is 0 then,
+        a text called 'the first field default' is 'literal integer',
+        Set 'the first field line' to "    a number called {'the field'} is {'the first field default'}.\n\n".
+    a number called 'the second default draw' is 'rng below' of 2.
+    a text called 'the second field line' is "    a number called {'the field'}.\n\n".
+    If 'the second default draw' is 0 then,
+        a text called 'the second field default' is 'literal integer',
+        Set 'the second field line' to "    a number called {'the field'} is {'the second field default'}.\n\n".
+    'gen emit' of "A thing called {'the first type'} has\n".
+    'gen emit' of 'the first field line'.
+    'gen emit' of "A thing called {'the second type'} has\n".
+    'gen emit' of 'the second field line'.
+    Set gen_instances to gen_instances add 1.
+    a text called 'the first instance' is "i{gen_instances}".
+    Set gen_instances to gen_instances add 1.
+    a text called 'the second instance' is "i{gen_instances}".
+    a text called 'the first declaration' is "a {'the first type'} called {'the first instance'}".
+    a text called 'the second declaration' is "a {'the second type'} called {'the second instance'}".
+    a text called 'the first literal' is 'literal integer'.
+    a number called 'the first value' is 'the first literal' as a number.
+    a text called 'the second literal' is 'literal integer'.
+    a number called 'the second value' is 'the second literal' as a number.
+    While 'the second value' is 'the first value',
+        Set 'the second literal' to 'literal integer',
+        Set 'the second value' to 'the second literal' as a number.
+    a text called 'the first set' is "Set {'the first instance'}'s {'the field'} to {'the first literal'}".
+    a text called 'the second set' is "Set {'the second instance'}'s {'the field'} to {'the second literal'}".
+    a text called 'the first subject' is "{'the first instance'}'s {'the field'}".
+    a text called 'the second subject' is "{'the second instance'}'s {'the field'}".
+    a text called 'the first assert' is 'gen assert number is' of "THG2-44" and 'the first subject' and 'the first value'.
+    a text called 'the second assert' is 'gen assert number is' of "THG2-44" and 'the second subject' and 'the second value'.
+    a list called 'the lines' is ['the first declaration', 'the second declaration', 'the first set', 'the second set', 'the first assert', 'the second assert'].
     'gen join lines' of indent and nested and 'the lines'.

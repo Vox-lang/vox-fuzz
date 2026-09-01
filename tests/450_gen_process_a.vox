@@ -1,0 +1,180 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(process leaves, batch A - docs/ledger/process-control.md rows PRC-02,
+ 04, 06, 07, 08, 09, 12, 13, 21, 27, 28, 42, 43, 44, 46, 49, 56, 57, 58,
+ 62, 63, 72, 73, 75, 78, 79. Kinds 260-269.
+
+ Each leaf is called directly off a pinned rng seed and its emitted
+ source printed in full, so the golden is the generated Vox itself, the
+ same convention tests/300_gen_buffers_a.vox uses. The scratch-gated
+ leaves (260-263) need gen_scratch_flag/gen_does_file_io set by hand,
+ the same way that test's buffer leaves do, since this test drives leaves
+ directly rather than through 'gen program'. gen_process_has_reaped and
+ gen_process_decoders_declared are this file's own per-program state and
+ are reset by hand between cases for the same reason.)
+
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- PRC-02, PRC-04: directory create ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory create' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory create' of "  " and true.
+Print 'gen text'.
+
+Print "--- PRC-02 with no file I/O committed: stands aside ---".
+Set gen_does_file_io to false.
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory create' of "" and false.
+Print "emits a directory statement: {'gen text contains' of \"directory\"}".
+Set gen_does_file_io to true.
+
+Print "--- PRC-06, 07, 08, 09: directory remove, nonrecursive refusal ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory remove' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory remove' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-12, 13, 21: mount/unmount refusal ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount unmount refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount unmount refusal' of "  " and true.
+Print 'gen text'.
+
+Print "--- PRC-27, 28: symbolic link ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process symbolic link' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-42, 43, 44, 46: fork/reap basic ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 6.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process fork reap basic' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a seed that draws the direct If-condition shape ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process fork reap basic' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-56, 57, 58: reaped status decode, first reap in program ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reaped status decode' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, NOT the first reap: no sentinel claim ---".
+Set gen_process_has_reaped to true.
+'rng seed' of 8.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process reaped status decode' of "" and false.
+Print "claims the -1 sentinel: {'gen text contains' of \"PRC-58\"}".
+
+Print "--- PRC-62, 63: status decode functions, first declaration ---".
+Set gen_process_decoders_declared to false.
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process status decode functions' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf again: decoders already declared, no redeclaration ---".
+'rng seed' of 9.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process status decode functions' of "" and false.
+Print "redeclares 'exit code of': {'gen text contains' of \"To 'exit code of'\"}".
+Print 'gen text'.
+
+Print "--- PRC-33: Execute, allowlisted true/false ---".
+'rng seed' of 10.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process execute' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed ---".
+'rng seed' of 12.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process execute' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-72, 73, 75: signal existence check ---".
+'rng seed' of 13.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process signal existence check' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-79: system control refusal (Reboot only - see gen_process.vox's kind 269 comment; PRC-78/Shutdown is held out) ---".
+'rng seed' of 14.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process system control refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, a different seed ---".
+'rng seed' of 16.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process system control refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- registration reachable: kinds 260-269 all dispatch without error ---".
+a number called 'the kind' is 260.
+While 'the kind' is less than 270,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'}: {gen_out's length} bytes emitted",
+    Set 'the kind' to 'the kind' add 1.

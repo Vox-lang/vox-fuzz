@@ -574,6 +574,24 @@ To 'gen file assert range quietly' with a text called 'the row' and a text calle
     a text called 'the line' is "{'the low line'} {'the high line'} Print \"{'the row'} in range\"".
     Return a text, 'the line'.
 
+(`is available` is a PATH PREDICATE (LANGUAGE.md, File Operations), not
+ a property - it reads like `is empty`/`is full` on a buffer, legal only
+ inside an `If`/`While` condition, never as a bare printable value
+ (FIL-15's own row draws exactly this line between a property and a
+ predicate). So neither of these prints the raw check: each prints a
+ FIXED marker on the branch it takes, which also keeps both leaves that
+ use them clear of the nondeterminism trap 'gen file assert range
+ quietly' documents above for an unrelated reason - here there is
+ nothing to print that isn't already fixed by which branch ran.)
+
+To 'gen file assert available' with a text called 'the row' and a text called 'the path'.
+    a text called 'the line' is "If {'the path'} is not available then, Print \"ASSERT {'the row'}: expected available got missing\", Exit 95. Print \"available\"".
+    Return a text, 'the line'.
+
+To 'gen file assert not available' with a text called 'the row' and a text called 'the path'.
+    a text called 'the line' is "If {'the path'} is available then, Print \"ASSERT {'the row'}: expected missing got available\", Exit 95. Print \"missing\"".
+    Return a text, 'the line'.
+
 (FIL-01: size reads 0 immediately after an open for writing, and the
  exact byte count after a write of known length - LANGUAGE.md:3806.
  Probe: docs/ledger/probes/files/FIL-02.vox (also covers this row).)
@@ -841,4 +859,631 @@ To 'gen leaf read line replaces' with a text called indent and a boolean called 
     a text called 'the replaced check' is 'gen assert number is' of "FIL-46" and 'the sink size access' and 'the expected size'.
     a text called 'the read close' is "Close {'the source handle'}".
     a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the sink line', 'the seed line', 'the seed size check', 'the read statement', 'the replaced check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's file leaves, batch B2, 2026-08-29 night -----------------
+
+ docs/ledger/files.md rows FIL-45, FIL-52, FIL-53, FIL-54, FIL-55, FIL-56,
+ FIL-70, FIL-75, FIL-80, FIL-93. Same shared machinery as batch B just
+ above: the name allocator, the D16 guard repeated per leaf rather than
+ shared, every path built from gen_scratch_flag, every assertion read on
+ the still-open handle before any Close. Hand-verified against BOTH
+ compilers before being encoded here (0.4.14 installed, and the 0.4.15
+ stack) - every probe below produced identical output on each.
+
+ Retained probes: docs/ledger/probes/files/FIL-45.vox, FIL-53.vox,
+ FIL-54.vox, FIL-56.vox, FIL-70.vox, FIL-75.vox, FIL-93.vox already
+ existed (hand-verified when their ledger rows were first written) and
+ match the shape below exactly; FIL-52 and FIL-80 gained fresh probes
+ this batch (docs/ledger/probes/files/FIL-52.vox, FIL-80.vox).)
+
+(FIL-45: `Read from ... into ...` REPLACES the buffer's contents rather
+ than appending to them - LANGUAGE.md:3975. Pre-seed the sink with a
+ known length, `Read` a file of a different known length into it, and
+ assert the post-read size is the READ length, not the sum - an
+ appending bug would fail this the same way D2's own probe caught it for
+ the compiler originally. Probe: docs/ledger/probes/files/FIL-45.vox.)
+
+To 'gen leaf file read replaces' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink size access' is 'gen buffer property' of 'the sink stem' and "size".
+    a number called 'the seed length draw' is 'rng below' of 40.
+    a number called 'the seed length' is 'the seed length draw' add 1.
+    a text called 'the seed payload' is 'gen buffer filler' of 'the seed length'.
+    a number called 'the payload length draw' is 'rng below' of 300.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a number called 'the sink capacity' is 'the seed length' add 'the payload length' add 32.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}replace\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the sink capacity'} bytes in size".
+    a text called 'the seed line' is "append \"{'the seed payload'}\" to {'the sink name'}".
+    a text called 'the seed check' is 'gen assert number is' of "FIL-45" and 'the sink size access' and 'the seed length'.
+    a text called 'the read statement' is "Read from {'the source handle'} into {'the sink name'}".
+    a text called 'the replaced check' is 'gen assert number is' of "FIL-45" and 'the sink size access' and 'the payload length'.
+    a text called 'the read close' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the sink line', 'the seed line', 'the seed check', 'the read statement', 'the replaced check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-52, FIL-53, FIL-54, FIL-55: the four rows `Read line` leaves the
+ rest of the section entirely untouched - LANGUAGE.md:3994-3998. One
+ file, two lines: the first ends in a newline, the second does NOT
+ (the final line of the file), which puts both halves of "up to `\n` or
+ EOF" on trial in one probe.
+
+ First `Read line` gets the first line: size == line length + 1 proves
+ the trailing newline is RETAINED (FIL-53). Second `Read line`, into the
+ SAME buffer with no re-seed, gets the second line: size == that line's
+ own length PROVES TWO CLAIMS AT ONCE, the same reasoning FIL-46's own
+ leaf above already uses for a different pair - an appending bug would
+ inflate this size well past the second line's length (FIL-55, replace
+ not append), and the line came back WHOLE with no newline appended
+ (FIL-52, final line with no trailing `\n` reads exactly as written). A
+ third `Read line`, past EOF, must return an empty buffer and must NOT
+ raise the error flag (FIL-54) - guarded by the same stale-flag drain
+ 'gen leaf buffer fixed overflow' (gen_buffers.vox) established, so a
+ pending flag from an earlier, unrelated leaf never masquerades as this
+ read's own outcome. Probes: docs/ledger/probes/files/FIL-52.vox,
+ FIL-53.vox, FIL-54.vox.)
+
+To 'gen leaf read line mechanics' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink size access' is 'gen buffer property' of 'the sink stem' and "size".
+    a number called 'the first length draw' is 'rng below' of 60.
+    a number called 'the first length' is 'the first length draw' add 1.
+    a text called 'the first payload' is 'gen buffer filler' of 'the first length'.
+    a number called 'the second length draw' is 'rng below' of 60.
+    a number called 'the second length' is 'the second length draw' add 1.
+    a text called 'the second payload' is 'gen buffer filler' of 'the second length'.
+    a number called 'the first expected size' is 'the first length' add 1.
+    a number called 'the sink capacity' is 'the first length' add 'the second length' add 32.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}lines\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the first payload'}\\n{'the second payload'}\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the sink capacity'} bytes in size".
+    a text called 'the first read' is "Read line from {'the source handle'} into {'the sink name'}".
+    a text called 'the first check' is 'gen assert number is' of "FIL-53" and 'the sink size access' and 'the first expected size'.
+    a text called 'the second read' is "Read line from {'the source handle'} into {'the sink name'}".
+    a text called 'the second check' is 'gen assert number is' of "FIL-52" and 'the sink size access' and 'the second length'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the eof flag' is 'gen buffer companion' of "eof read errored".
+    a text called 'the eof declaration' is "a boolean called {'the eof flag'} is false".
+    a text called 'the third read' is "Read line from {'the source handle'} into {'the sink name'}".
+    a text called 'the eof handler' is "On error Set {'the eof flag'} to true".
+    a text called 'the eof error check' is 'gen assert false' of "FIL-54" and 'the eof flag'.
+    a text called 'the eof size check' is 'gen assert number is' of "FIL-54" and 'the sink size access' and 0.
+    a text called 'the read close' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the sink line', 'the first read', 'the first check', 'the second read', 'the second check', 'the stale declaration', 'the stale handler', 'the eof declaration', 'the third read', 'the eof handler', 'the eof error check', 'the eof size check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-56: for a fixed-size buffer, an overlong `Read line` is truncated to
+ capacity and the error flag is set - LANGUAGE.md:3997. A capacity
+ strictly below the line's length, so the truncation is never
+ accidental; the size check and the flag check are the same two-part
+ shape 'gen leaf buffer fixed overflow' (gen_buffers.vox) uses for the
+ equivalent buffer-append claim, reused here rather than copied since a
+ file-backed `Read line` truncation and a plain `append` truncation are
+ the same underlying rule (LANGUAGE.md:3541) exercised through a
+ different statement. Probe: docs/ledger/probes/files/FIL-56.vox.)
+
+To 'gen leaf read line truncation' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink size access' is 'gen buffer property' of 'the sink stem' and "size".
+    a number called 'the capacity draw' is 'rng below' of 20.
+    a number called 'the capacity' is 'the capacity draw' add 2.
+    a number called 'the overshoot draw' is 'rng below' of 100.
+    a number called 'the overshoot' is 'the overshoot draw' add 1.
+    a number called 'the line length' is 'the capacity' add 'the overshoot'.
+    a text called 'the line payload' is 'gen buffer filler' of 'the line length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}trunc\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the line payload'}\\n\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the capacity'} bytes in size".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the truncation flag' is 'gen buffer companion' of "line was truncated".
+    a text called 'the truncation declaration' is "a boolean called {'the truncation flag'} is false".
+    a text called 'the read statement' is "Read line from {'the source handle'} into {'the sink name'}".
+    a text called 'the truncation handler' is "On error Set {'the truncation flag'} to true".
+    a text called 'the flag check' is 'gen assert true' of "FIL-56" and 'the truncation flag'.
+    a text called 'the size check' is 'gen assert number is' of "FIL-56" and 'the sink size access' and 'the capacity'.
+    a text called 'the read close' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the sink line', 'the stale declaration', 'the stale handler', 'the truncation declaration', 'the read statement', 'the truncation handler', 'the flag check', 'the size check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-70: `If "<path>" is available then, …` checks whether a path is
+ available - LANGUAGE.md:4071-4075. Both directions from one leaf: a
+ path the generator just created must answer true, and a path in the
+ SAME scratch directory that the generator built but never wrote must
+ answer false - the generator knows both answers because it decided
+ which one to create. Probe: docs/ledger/probes/files/FIL-70.vox.)
+
+To 'gen leaf path available' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the present path name' is 'gen buffer companion' of "present path".
+    a text called 'the absent path name' is 'gen buffer companion' of "absent path".
+    a number called 'the payload draw' is 'rng below' of 40.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the present path line' is "a text called {'the present path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}present\"".
+    a text called 'the absent path line' is "a text called {'the absent path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}absent\"".
+    a text called 'the seed open' is "open a file for writing called {'the handle'} at {'the present path name'}".
+    a text called 'the seed write' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the seed close' is "Close {'the handle'}".
+    a text called 'the present check' is 'gen file assert available' of "FIL-70" and 'the present path name'.
+    a text called 'the absent check' is 'gen file assert not available' of "FIL-70" and 'the absent path name'.
+    a list called 'the lines' is ['the present path line', 'the absent path line', 'the seed open', 'the seed write', 'the seed close', 'the present check', 'the absent check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-75: `Delete the file "<path>".` removes the file - LANGUAGE.md:
+ 4092-4094. Create, confirm available, delete, confirm gone. A bonus
+ second delete of the now-missing path is wrapped in `On error` too:
+ undocumented, but hand-verified (docs/ledger/probes/files/FIL-75.vox)
+ that deleting a file that is not there DOES set the error flag, a
+ failure the generator can guarantee and a good `On error` leaf for
+ exactly that reason. Probe: docs/ledger/probes/files/FIL-75.vox.)
+
+To 'gen leaf file delete' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the payload draw' is 'rng below' of 40.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}doomed\"".
+    a text called 'the seed open' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the seed write' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the seed close' is "Close {'the handle'}".
+    a text called 'the before check' is 'gen file assert available' of "FIL-75" and 'the path name'.
+    a text called 'the delete line' is "Delete the file {'the path name'}".
+    a text called 'the after check' is 'gen file assert not available' of "FIL-75" and 'the path name'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the redelete flag' is 'gen buffer companion' of "deleting a missing file errored".
+    a text called 'the redelete declaration' is "a boolean called {'the redelete flag'} is false".
+    a text called 'the redelete line' is "Delete the file {'the path name'}".
+    a text called 'the redelete handler' is "On error Set {'the redelete flag'} to true".
+    a text called 'the redelete check' is 'gen assert true' of "FIL-75" and 'the redelete flag'.
+    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the before check', 'the delete line', 'the after check', 'the stale declaration', 'the stale handler', 'the redelete declaration', 'the redelete line', 'the redelete handler', 'the redelete check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-80: file operation failures are catchable - LANGUAGE.md:4113-4115.
+ The plainest forced failure a generator can guarantee: open a path
+ inside its own scratch directory that it never created, for READING
+ (writing always succeeds/creates), and confirm `On error` fires. No
+ property is read on the failed-open handle afterward and it is never
+ `Close`d - both a real fd and a well-defined post-failure state are
+ unproven here, and FIL-89/FIL-96 already cover a forgotten `Close`
+ being safe. Probe: docs/ledger/probes/files/FIL-80.vox.)
+
+To 'gen leaf file open error' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the missing path name' is 'gen buffer companion' of "missing path".
+    a text called 'the missing path line' is "a text called {'the missing path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}missing\"".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the open error flag' is 'gen buffer companion' of "open failed".
+    a text called 'the open error declaration' is "a boolean called {'the open error flag'} is false".
+    a text called 'the open line' is "open a file for reading called {'the handle'} at {'the missing path name'}".
+    a text called 'the open handler' is "On error Set {'the open error flag'} to true".
+    a text called 'the open check' is 'gen assert true' of "FIL-80" and 'the open error flag'.
+    a list called 'the lines' is ['the missing path line', 'the stale declaration', 'the stale handler', 'the open error declaration', 'the open line', 'the open handler', 'the open check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-93: on open, the FD is registered in a tracking table, and no
+ descriptor is recycled while a handle stays live - LANGUAGE.md:4174.
+ The retained probe pushes this to 100000 unclosed opens; a leaf embedded
+ among many others in a fuzzed program needs no such scale to put the
+ claim on trial, so this draws a modest 5-19 and checks every descriptor
+ strictly increasing over the previous one - proof none was recycled
+ while all the earlier ones stayed open, the same reasoning at a size
+ that keeps program generation and compilation fast. Every open targets
+ the SAME already-created file (concurrent read-only opens of one path
+ are ordinary and each still gets its own fd), inside a `For each …
+ from 1 to N` loop - one period after the loop's last body statement
+ closes the loop itself, per LANGUAGE.md's "one period closes one
+ level" rule; nothing here needs a stacked period since the inner `If`
+ already closed itself first. Probe: docs/ledger/probes/files/FIL-93.vox.)
+
+To 'gen leaf file descriptor tracking' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the seed stem' is 'gen buffer name'.
+    a text called 'the seed handle' is 'gen buffer reference' of 'the seed stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the loop stem' is 'gen buffer name'.
+    a text called 'the loop variable' is 'gen buffer reference' of 'the loop stem'.
+    a text called 'the handle stem' is 'gen buffer name'.
+    a text called 'the handle variable' is 'gen buffer reference' of 'the handle stem'.
+    a text called 'the descriptor access' is 'gen buffer property' of 'the handle stem' and "descriptor".
+    a text called 'the floor holder' is 'gen buffer companion' of "descriptor floor".
+    a number called 'the count draw' is 'rng below' of 15.
+    a number called 'the count' is 'the count draw' add 5.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}many\"".
+    a text called 'the seed open' is "open a file for writing called {'the seed handle'} at {'the path name'}".
+    a text called 'the seed write' is "Write \"tracked\" to {'the seed handle'}".
+    a text called 'the seed close' is "Close {'the seed handle'}".
+    a text called 'the floor declaration' is "a number called {'the floor holder'} is 0".
+    a text called 'the floor shown' is 'gen buffer slot of' of 'the floor holder'.
+    a text called 'the descriptor shown' is 'gen buffer slot of' of 'the descriptor access'.
+    a text called 'the loop line' is "For each {'the loop variable'} from 1 to {'the count'}, open a file for reading called {'the handle variable'} at {'the path name'}, If {'the descriptor access'} is less than or equal to {'the floor holder'} then, Print \"ASSERT FIL-93: expected greater than {'the floor shown'} got {'the descriptor shown'}\", Exit 95. Set {'the floor holder'} to {'the descriptor access'}".
+    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the floor declaration', 'the loop line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-58, FIL-59, FIL-60, FIL-62: `Seek <file> to byte N` and its plural
+ synonym `to bytes N` are both accepted (LANGUAGE.md:4006-4007), seek
+ positions are 1-indexed so `byte 1` is file offset 0 (LANGUAGE.md:4011),
+ and an arbitrary byte N moves to byte position N (LANGUAGE.md:4013). One
+ file, two known halves - a prefix and a suffix, each a random-length
+ filler the generator wrote - proves all four at once: seeking to byte 1
+ and reading the prefix's own length back must return exactly the
+ prefix (1-indexing), and seeking to the byte right after the prefix and
+ reading the suffix's length must return exactly the suffix (arbitrary
+ offset). Each seek draws its own keyword ("byte"/"bytes")
+ independently, so both spellings appear across the corpus without
+ either being fixed to one half. `Seek` was emitted by no leaf anywhere
+ in `src/` before this batch - a documented invariant defect this
+ ledger's own *Invariants* section names. Probe: docs/ledger/probes/
+ files/FIL-57.vox (re-hand-verified this batch under both compilers).)
+
+To 'gen leaf file seek by byte' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the prefix sink stem' is 'gen buffer name'.
+    a text called 'the prefix sink name' is 'gen buffer reference' of 'the prefix sink stem'.
+    a text called 'the suffix sink stem' is 'gen buffer name'.
+    a text called 'the suffix sink name' is 'gen buffer reference' of 'the suffix sink stem'.
+    a text called 'the prefix holder' is 'gen buffer companion' of "prefix capture".
+    a text called 'the suffix holder' is 'gen buffer companion' of "suffix capture".
+    a number called 'the prefix length draw' is 'rng below' of 40.
+    a number called 'the prefix length' is 'the prefix length draw' add 1.
+    a text called 'the prefix payload' is 'gen buffer filler' of 'the prefix length'.
+    a number called 'the suffix length draw' is 'rng below' of 40.
+    a number called 'the suffix length' is 'the suffix length draw' add 1.
+    a text called 'the suffix payload' is 'gen buffer filler' of 'the suffix length'.
+    a number called 'the suffix start' is 'the prefix length' add 1.
+    a number called 'the first keyword draw' is 'rng below' of 2.
+    a text called 'the first keyword' is "byte".
+    If 'the first keyword draw' is 1 then,
+        Set 'the first keyword' to "bytes".
+    a number called 'the second keyword draw' is 'rng below' of 2.
+    a text called 'the second keyword' is "byte".
+    If 'the second keyword draw' is 1 then,
+        Set 'the second keyword' to "bytes".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}byteseek\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the prefix payload'}{'the suffix payload'}\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the prefix sink line' is "a buffer called {'the prefix sink name'} is {'the prefix length'} bytes in size".
+    a text called 'the first seek' is "Seek {'the source handle'} to {'the first keyword'} 1".
+    a text called 'the first read' is "Read from {'the source handle'} into {'the prefix sink name'}".
+    a list called 'the prefix check pair' is 'gen assert text is' of "FIL-60" and 'the prefix sink name' and 'the prefix holder' and 'the prefix payload'.
+    a text called 'the prefix capture' is element 1 of 'the prefix check pair'.
+    a text called 'the prefix check' is element 2 of 'the prefix check pair'.
+    a text called 'the suffix sink line' is "a buffer called {'the suffix sink name'} is {'the suffix length'} bytes in size".
+    a text called 'the second seek' is "Seek {'the source handle'} to {'the second keyword'} {'the suffix start'}".
+    a text called 'the second read' is "Read from {'the source handle'} into {'the suffix sink name'}".
+    a list called 'the suffix check pair' is 'gen assert text is' of "FIL-62" and 'the suffix sink name' and 'the suffix holder' and 'the suffix payload'.
+    a text called 'the suffix capture' is element 1 of 'the suffix check pair'.
+    a text called 'the suffix check' is element 2 of 'the suffix check pair'.
+    a text called 'the close line' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the prefix sink line', 'the first seek', 'the first read', 'the prefix capture', 'the prefix check', 'the suffix sink line', 'the second seek', 'the second read', 'the suffix capture', 'the suffix check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-57, FIL-61, FIL-102, and FIL-63's line-past-EOF sub-case: `Seek
+ <file> to line N` is accepted (LANGUAGE.md:4005) and lands on the first
+ byte of line N (LANGUAGE.md:4012) - proved by seeking to one drawn line
+ of a file built from K lines of distinct known lengths and asserting
+ `Read line` returns exactly that line, trailing newline included (the
+ same reading FIL-53 already established). A file ending in a newline
+ has exactly K newlines, so line K+1 is the one empty trailing line the
+ manual documents as existing (LANGUAGE.md:4016-4018): seeking there and
+ reading must NOT set the error flag and must return an empty buffer;
+ line K+2 is past that and MUST set the error flag - also FIL-63's third
+ invalid-target case (the other two are in 'gen leaf file seek invalid
+ targets'). Fixed by vox #47 (0.4.8, Discrepancy 3, resolved) - re-hand-
+ verified this batch under both compilers. `Seek` was emitted by no leaf
+ anywhere in `src/` before this batch. Probes: docs/ledger/probes/files/
+ FIL-57.vox, FIL-63.vox, FIL-102.vox, D3.vox.)
+
+To 'gen leaf file seek by line' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the line count draw' is 'rng below' of 5.
+    a number called 'the line count' is 'the line count draw' add 2.
+    a list called 'the line payloads' is [].
+    a list called 'the line lengths' is [].
+    a number called 'the build index' is 0.
+    While 'the build index' is less than 'the line count',
+        a number called 'the line length draw' is 'rng below' of 12,
+        a number called 'the line length' is 'the line length draw' add 1,
+        a text called 'the line payload' is 'gen buffer filler' of 'the line length',
+        append 'the line payload' to 'the line payloads',
+        append 'the line length' to 'the line lengths',
+        Set 'the build index' to 'the build index' add 1.
+    a text called 'the file content' is "".
+    For each 'a payload' in 'the line payloads', Set 'the file content' to "{'the file content'}{'a payload'}\\n".
+    a number called 'the chosen draw' is 'rng below' of 'the line count'.
+    a number called 'the chosen line' is 'the chosen draw' add 1.
+    a text called 'the chosen payload' is element 'the chosen line' of 'the line payloads'.
+    a number called 'the chosen length' is element 'the chosen line' of 'the line lengths'.
+    a text called 'the expected line' is "{'the chosen payload'}\\n".
+    a number called 'the trailing line' is 'the line count' add 1.
+    a number called 'the past line' is 'the line count' add 2.
+    a number called 'the mid capacity' is 'the chosen length' add 1.
+    a text called 'the mid sink stem' is 'gen buffer name'.
+    a text called 'the mid sink name' is 'gen buffer reference' of 'the mid sink stem'.
+    a text called 'the mid holder' is 'gen buffer companion' of "chosen line capture".
+    a text called 'the trailing sink stem' is 'gen buffer name'.
+    a text called 'the trailing sink name' is 'gen buffer reference' of 'the trailing sink stem'.
+    a text called 'the trailing sink size access' is 'gen buffer property' of 'the trailing sink stem' and "size".
+    a text called 'the trailing flag' is 'gen buffer companion' of "trailing line errored".
+    a text called 'the past sink stem' is 'gen buffer name'.
+    a text called 'the past sink name' is 'gen buffer reference' of 'the past sink stem'.
+    a text called 'the past flag' is 'gen buffer companion' of "past line errored".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}lineseek\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the file content'}\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the mid sink line' is "a buffer called {'the mid sink name'} is {'the mid capacity'} bytes in size".
+    a text called 'the mid seek' is "Seek {'the source handle'} to line {'the chosen line'}".
+    a text called 'the mid read' is "Read line from {'the source handle'} into {'the mid sink name'}".
+    a list called 'the mid check pair' is 'gen assert text is' of "FIL-61" and 'the mid sink name' and 'the mid holder' and 'the expected line'.
+    a text called 'the mid capture' is element 1 of 'the mid check pair'.
+    a text called 'the mid check' is element 2 of 'the mid check pair'.
+    a text called 'the trailing declaration' is "a boolean called {'the trailing flag'} is false".
+    a text called 'the trailing sink line' is "a buffer called {'the trailing sink name'} is 8 bytes in size".
+    a text called 'the trailing seek' is "Seek {'the source handle'} to line {'the trailing line'}".
+    a text called 'the trailing read' is "Read line from {'the source handle'} into {'the trailing sink name'}".
+    a text called 'the trailing handler' is "On error Set {'the trailing flag'} to true".
+    a text called 'the trailing flag check' is 'gen assert false' of "FIL-102" and 'the trailing flag'.
+    a text called 'the trailing size check' is 'gen assert number is' of "FIL-102" and 'the trailing sink size access' and 0.
+    a text called 'the past declaration' is "a boolean called {'the past flag'} is false".
+    a text called 'the past sink line' is "a buffer called {'the past sink name'} is 8 bytes in size".
+    a text called 'the past seek' is "Seek {'the source handle'} to line {'the past line'}".
+    a text called 'the past read' is "Read line from {'the source handle'} into {'the past sink name'}".
+    a text called 'the past handler' is "On error Set {'the past flag'} to true".
+    a text called 'the past flag check' is 'gen assert true' of "FIL-63" and 'the past flag'.
+    a text called 'the close line' is "Close {'the source handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the mid sink line', 'the mid seek', 'the mid read', 'the mid capture', 'the mid check', 'the trailing declaration', 'the trailing sink line', 'the trailing seek', 'the trailing read', 'the trailing handler', 'the trailing flag check', 'the trailing size check', 'the past declaration', 'the past sink line', 'the past seek', 'the past read', 'the past handler', 'the past flag check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-63: two of the three invalid Seek targets the manual names set the
+ error flag - a position below 1, and an invalid descriptor
+ (LANGUAGE.md:4014-4015). The third, a line past EOF, is asserted in
+ 'gen leaf file seek by line' alongside FIL-102, which is where the
+ known-newline-count file this needs already lives. The invalid
+ descriptor is the same in-range-but-never-opened literal FIL-43 already
+ established as the compile-safe upper boundary (2147483647) - `open`
+ against it never itself errors, only the first real operation on it
+ does, which the manual is silent about but the compiler is consistent
+ on (Discrepancy 3, resolved by vox #47). Probes: docs/ledger/probes/
+ files/FIL-63.vox, D3.vox (re-hand-verified this batch under both
+ compilers).)
+
+To 'gen leaf file seek invalid targets' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the source stem' is 'gen buffer name'.
+    a text called 'the source handle' is 'gen buffer reference' of 'the source stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the seed length draw' is 'rng below' of 40.
+    a number called 'the seed length' is 'the seed length draw' add 1.
+    a text called 'the seed payload' is 'gen buffer filler' of 'the seed length'.
+    a number called 'the low keyword draw' is 'rng below' of 2.
+    a text called 'the low keyword' is "byte".
+    If 'the low keyword draw' is 1 then,
+        Set 'the low keyword' to "bytes".
+    a text called 'the low flag' is 'gen buffer companion' of "below floor errored".
+    a text called 'the bogus stem' is 'gen buffer name'.
+    a text called 'the bogus handle' is 'gen buffer reference' of 'the bogus stem'.
+    a text called 'the desc flag' is 'gen buffer companion' of "borrowed descriptor errored".
+    a number called 'the desc target draw' is 'rng below' of 100.
+    a number called 'the desc target' is 'the desc target draw' add 1.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}seekinv\"".
+    a text called 'the write open' is "open a file for writing called {'the source handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the seed payload'}\" to {'the source handle'}".
+    a text called 'the write close' is "Close {'the source handle'}".
+    a text called 'the read open' is "open a file for reading called {'the source handle'} at {'the path name'}".
+    a text called 'the low declaration' is "a boolean called {'the low flag'} is false".
+    a text called 'the low seek' is "Seek {'the source handle'} to {'the low keyword'} 0".
+    a text called 'the low handler' is "On error Set {'the low flag'} to true".
+    a text called 'the low check' is 'gen assert true' of "FIL-63" and 'the low flag'.
+    a text called 'the read close' is "Close {'the source handle'}".
+    a text called 'the bogus open' is "open a file for reading called {'the bogus handle'} at 2147483647".
+    a text called 'the desc declaration' is "a boolean called {'the desc flag'} is false".
+    a text called 'the desc seek' is "Seek {'the bogus handle'} to byte {'the desc target'}".
+    a text called 'the desc handler' is "On error Set {'the desc flag'} to true".
+    a text called 'the desc check' is 'gen assert true' of "FIL-63" and 'the desc flag'.
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the low declaration', 'the low seek', 'the low handler', 'the low check', 'the read close', 'the bogus open', 'the desc declaration', 'the desc seek', 'the desc handler', 'the desc check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-100: closing an already-closed file handle neither crashes nor sets
+ the error flag (LANGUAGE.md:4194) - the double-free-is-impossible claim
+ from the file-handle side. Incidentally the same *no-crash* observation
+ FIL-86 needs for its own "no use-after-free" claim (LANGUAGE.md:4142),
+ though this leaf is scoped to FIL-100 alone; FIL-86's tracking-mechanism
+ half stays out of a generator's reach regardless. Probe: docs/ledger/
+ probes/files/FIL-100.vox.)
+
+To 'gen leaf file double close' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the payload draw' is 'rng below' of 40.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the double flag' is 'gen buffer companion' of "second close errored".
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}dblclose\"".
+    a text called 'the write open' is "open a file for writing called {'the handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the write close' is "Close {'the handle'}".
+    a text called 'the read open' is "open a file for reading called {'the handle'} at {'the path name'}".
+    a text called 'the first close' is "Close {'the handle'}".
+    a text called 'the double declaration' is "a boolean called {'the double flag'} is false".
+    a text called 'the second close' is "Close {'the handle'}".
+    a text called 'the double handler' is "On error Set {'the double flag'} to true".
+    a text called 'the double check' is 'gen assert false' of "FIL-100" and 'the double flag'.
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the write close', 'the read open', 'the first close', 'the double declaration', 'the second close', 'the double handler', 'the double check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-89: all resources are cleaned up on exit even when you forget to
+ `Close` (LANGUAGE.md:4146-4154, the manual's own worked example).
+ `Write` is unbuffered (FIL-01/FIL-56's own leaves already lean on this),
+ so a second, independent handle opened on the same path BEFORE the
+ writer is ever closed already sees every byte - proof the bytes reached
+ disk without a `Close`, from inside the program itself, with no
+ dependence on what happens at exit (which nothing inside Vox can
+ observe - FIL-95). The writer is deliberately left open for the rest of
+ the program; that is the claim under test, not an oversight.
+ Incidentally touches the same "no manual cleanup needed" thesis
+ FIL-84/FIL-88/FIL-98/FIL-99 restate in different words, though this
+ leaf is scoped to FIL-89 alone. Probe: docs/ledger/probes/files/
+ FIL-89.vox.)
+
+To 'gen leaf file forgotten close' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the writer stem' is 'gen buffer name'.
+    a text called 'the writer handle' is 'gen buffer reference' of 'the writer stem'.
+    a text called 'the reader stem' is 'gen buffer name'.
+    a text called 'the reader handle' is 'gen buffer reference' of 'the reader stem'.
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink holder' is 'gen buffer companion' of "durable capture".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a number called 'the payload draw' is 'rng below' of 60.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}neverclosed\"".
+    a text called 'the write open' is "open a file for writing called {'the writer handle'} at {'the path name'}".
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the writer handle'}".
+    a text called 'the read open' is "open a file for reading called {'the reader handle'} at {'the path name'}".
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the payload length'} bytes in size".
+    a text called 'the read line' is "Read from {'the reader handle'} into {'the sink name'}".
+    a list called 'the sink check pair' is 'gen assert text is' of "FIL-89" and 'the sink name' and 'the sink holder' and 'the payload'.
+    a text called 'the sink capture' is element 1 of 'the sink check pair'.
+    a text called 'the sink check' is element 2 of 'the sink check pair'.
+    a text called 'the reader close' is "Close {'the reader handle'}".
+    a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the read open', 'the sink line', 'the read line', 'the sink capture', 'the sink check', 'the reader close'].
     'gen join lines' of indent and nested and 'the lines'.

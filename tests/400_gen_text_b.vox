@@ -1,0 +1,77 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's input-output leaves, evening of 2026-08-29 -
+ docs/ledger/input-output.md rows FMT-24, FMT-29, FMT-41, FMT-45,
+ FMT-46, FMT-47, FMT-48, FMT-49, FMT-50, FMT-52, FMT-54. Same shape as
+ tests/330_gen_buffers_b.vox: each leaf called directly off a pinned rng
+ seed, source printed in full, at the true top level (nested false) and
+ inside a block (nested true) both.
+
+ FMT-41 needs the scratch-flag state a live program's manifest would
+ have set - the same reason tests/380_gen_files_b.vox names one itself.
+ Review round 3: 'gen leaf branch file handle' now opens its Otherwise
+ arm inside the program's own confined scratch directory rather than at
+ fd 2, so it stands aside behind 'gen leaf print' unless gen_does_file_io
+ is committed and gen_scratch_flag is bound, exactly like every file leaf
+ in gen_files.vox.)
+
+Print "--- FMT-45..50: the escape table, verified byte for byte ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf escape table verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf escape table verified' of "  " and true.
+Print 'gen text'.
+
+Print "--- FMT-24: a text reassigned from a format string ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format text reassignment' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-29: buffer clear-and-refill leaves an earlier text alone ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format value isolation' of "" and false.
+Print 'gen text'.
+
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- FMT-41: a file handle declared in every branch ---".
+'rng seed' of 4.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf branch file handle' of "" and false.
+Print 'gen text'.
+
+Set gen_does_file_io to false.
+
+Print "--- FMT-52, FMT-54: a comma-less but-if/and-if chain ---".
+'rng seed' of 5.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf conditional print chain' of "" and false.
+Print 'gen text'.
