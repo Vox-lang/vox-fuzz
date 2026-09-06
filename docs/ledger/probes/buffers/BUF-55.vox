@@ -1,5 +1,5 @@
 (BUF-55: after `Free`, a list is empty — length 0, empty true, prints []
- (LANGUAGE.md:3699-3700, 0.4.15, #109).
+ (LANGUAGE.md:3725-3726, 0.4.15, #109).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-55.vox -o p && ./p
  expected output:
    0

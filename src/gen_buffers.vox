@@ -42,7 +42,7 @@ To 'gen leaf buffer oob' with a text called indent and a boolean called nested.
 
 (--- The ledger's buffer leaves, batch A ------------------------------
 
- docs/ledger/buffers.md maps LANGUAGE.md:3515-3801 into numbered claims;
+ docs/ledger/buffers.md maps LANGUAGE.md:3541-3827 into numbered claims;
  everything below puts one of those claims on trial and ASSERTS its
  documented result, so a wrong answer is a finding rather than a line of
  output nobody reads. A failing assertion prints
@@ -217,7 +217,7 @@ To 'gen buffer companion' with a text called role.
     a text called 'the companion' is "'{gen_buffer_last_word} {role}'".
     Return a text, 'the companion'.
 
-(Capacities. LANGUAGE.md:3345-3347 fixes only that the capacity IS the
+(Capacities. LANGUAGE.md:3371-3373 fixes only that the capacity IS the
  number written; it says nothing about which numbers may be written, so
  a leaf with a favourite size would be inventing a rule. The named
  values are the boundaries worth landing on deliberately - both sides of
@@ -249,8 +249,8 @@ To 'gen buffer size'.
     Return a number, 'the wide size'.
 
 (BUF-01/BUF-05: the three spellings that declare a buffer of a stated
- capacity. `is N bytes in size` is LANGUAGE.md:3345; `Create ... with
- size N` is the worked example at LANGUAGE.md:3543; `is N bytes` is the
+ capacity. `is N bytes in size` is LANGUAGE.md:3371; `Create ... with
+ size N` is the worked example at LANGUAGE.md:3569; `is N bytes` is the
  spelling the compiler's own no-size warning recommends, and it compiles
  - hand-verified, all three, capacity exactly N. Nothing says one of
  them is canonical, so all three are drawn.)
@@ -264,7 +264,7 @@ To 'gen buffer declaration' with a text called 'the name' and a number called 't
     Return a text, "Create a buffer called {'the name'} with size {'the size'}".
 
 (BUF-01: the other declaration form, with no size at all. Both spellings
- the manual gives - LANGUAGE.md:3515 and the bare `Create` at
+ the manual gives - LANGUAGE.md:3541 and the bare `Create` at
  LANGUAGE.md:537, whose annotation now reads "starts with 4096 bytes of capacity, size 0" (vox #93).
  The compiler prints a no-size warning for either; a warning is not a
  compile failure and the program runs.)
@@ -373,7 +373,7 @@ To 'gen buffer interlude'.
 (BUF-01, BUF-05: the two declaration forms, and the capacity a stated
  size actually buys.
 
- BUF-01 (LANGUAGE.md:3515-3541) says buffers come in two forms, dynamic
+ BUF-01 (LANGUAGE.md:3541-3567) says buffers come in two forms, dynamic
  and fixed. Both are emitted, drawn per buffer, and both are asserted to
  hold nothing yet: LANGUAGE.md:537 annotates the bare `Create` form as
  "0 bytes", and a stated capacity is capacity, not content - the fixed
@@ -381,7 +381,7 @@ To 'gen buffer interlude'.
  That assertion sits immediately after the declaration, which is the
  only thing about this leaf's ordering that is pinned.
 
- BUF-05 (LANGUAGE.md:3345-3347) says the stated size is allocated
+ BUF-05 (LANGUAGE.md:3371-3373) says the stated size is allocated
  exactly. Asserted against the number the generator wrote, over sizes
  from one byte to seventy thousand - see 'gen buffer size' for why the
  range is not narrower.
@@ -433,16 +433,16 @@ To 'gen leaf buffer declaration' with a text called indent and a boolean called 
  properties report, before and after a write whose length the generator
  chose.
 
- BUF-10 (LANGUAGE.md:3441, 3445): size is bytes stored, capacity is
+ BUF-10 (LANGUAGE.md:3467, 3471): size is bytes stored, capacity is
  bytes holdable. The payload is built to a known length, so both are
  numbers the generator can assert outright.
 
- BUF-11 (LANGUAGE.md:3442): length is the same as size. Asserted twice -
+ BUF-11 (LANGUAGE.md:3468): length is the same as size. Asserted twice -
  against the literal the generator expects, and against `size` itself,
  because a synonym that agreed with the literal while disagreeing with
  its own twin would be a stranger bug and is worth catching separately.
 
- BUF-12 (LANGUAGE.md:3609): empty is true exactly while size is 0.
+ BUF-12 (LANGUAGE.md:3635): empty is true exactly while size is 0.
  Asserted before and after the append. Note this is the PROPERTY
  `X's empty`, not the `is empty` predicate 'gen leaf stdin read'
  already emits - different construct, different code path, and the
@@ -484,7 +484,7 @@ To 'gen leaf buffer properties' with a text called indent and a boolean called n
 
 (BUF-13: full is true exactly when size equals capacity.
 
- LANGUAGE.md:3610 states it "for fixed buffers", so a fixed buffer is
+ LANGUAGE.md:3636 states it "for fixed buffers", so a fixed buffer is
  what gets asserted: the appends are sized to reach the capacity exactly,
  in one to three pieces, and `full` is asserted false after every piece
  but the last and true after it.
@@ -560,7 +560,7 @@ To 'gen leaf buffer fullness' with a text called indent and a boolean called nes
 
 (BUF-03: a dynamic buffer grows without bound.
 
- LANGUAGE.md:3526 promises no overflow and automatic growth; the
+ LANGUAGE.md:3552 promises no overflow and automatic growth; the
  ledger's own probe found the buffer starts with a 4096-byte reserve
  rather than the zero capacity the manual claims (Discrepancy 1, still
  open), so the interesting question is what happens PAST that reserve.
@@ -624,7 +624,7 @@ To 'gen leaf buffer growth' with a text called indent and a boolean called neste
 (BUF-07: a program can tell it was truncated by looking at the size
  afterwards.
 
- LANGUAGE.md:3541 is the claim, and its Features list is the
+ LANGUAGE.md:3567 is the claim, and its Features list is the
  behaviour behind it: a read into a fixed buffer that fills up stops,
  sets the error flag, discards the rest, and carries on. The generator
  writes a payload it sized itself, reads it back into a buffer it made
@@ -734,7 +734,7 @@ To 'gen assert text is' with a text called 'the row' and a text called 'the subj
     Return a list, 'the pair'.
 
 (BUF-15: `resize`, `reallocate`, `grow`, `shrink` are one operation under
- four names - LANGUAGE.md:3634 lists them with no claim that any one is
+ four names - LANGUAGE.md:3660 lists them with no claim that any one is
  tied to a direction, and hand-verification confirms it: `grow` shrinks
  a buffer just as readily as `shrink` grows one, both taking effect
  exactly like `resize` would. The trailing "bytes" is optional either
@@ -757,7 +757,7 @@ To 'gen buffer resize statement' with a text called 'the name' and a number call
     a text called 'the line' is "{'the keyword'} {'the name'} to {'the new capacity'}{'the units'}".
     Return a text, 'the line'.
 
-(BUF-06: a fixed buffer does not grow - LANGUAGE.md:3541 says a write
+(BUF-06: a fixed buffer does not grow - LANGUAGE.md:3567 says a write
  past capacity is truncated AT capacity, with the error flag set. The
  payload is built as two independently-drawn pieces: 'the fitting part'
  sized to exactly the buffer's capacity, and 'the spilling part' the
@@ -808,7 +808,7 @@ To 'gen leaf buffer fixed overflow' with a text called indent and a boolean call
 (BUF-15, BUF-16, BUF-17: one buffer, two resizes, both directions.
 
  The buffer is built to hold 'the kept part' and 'the shed part'
- concatenated, with capacity to spare (LANGUAGE.md:3634-3639). Step one
+ concatenated, with capacity to spare (LANGUAGE.md:3660-3665). Step one
  resizes to a capacity that can never be below the current data length
  (old length plus a non-negative draw) - grow, or shrink-above-length,
  the two branches BUF-16 groups together because the manual gives them
@@ -859,7 +859,7 @@ To 'gen leaf buffer resize' with a text called indent and a boolean called neste
     'gen join lines' of indent and nested and 'the lines'.
 
 (BUF-29, BUF-30: the write bound is capacity, the read bound is size,
- and they disagree with each other - LANGUAGE.md:3746-3753 (added by vox
+ and they disagree with each other - LANGUAGE.md:3772-3779 (added by vox
  PR #189; see docs/ledger/buffers.md Discrepancy 3, resolved into the
  manual text itself rather than left as an undocumented finding). One
  buffer, one gap: appended to length 'the initial length', then written
@@ -915,7 +915,7 @@ To 'gen leaf buffer write read bounds' with a text called indent and a boolean c
     'gen join lines' of indent and nested and 'the lines'.
 
 (BUF-33: `clear` sets length to 0 and preserves capacity -
- LANGUAGE.md:3779. Capacity is captured into a variable BEFORE the clear
+ LANGUAGE.md:3805. Capacity is captured into a variable BEFORE the clear
  and compared against ITSELF afterward rather than against a literal, so
  this works unchanged whichever buffer form is drawn: a fixed buffer's
  capacity is a number this leaf chose and could assert directly, but a
@@ -953,7 +953,7 @@ To 'gen leaf buffer clear' with a text called indent and a boolean called nested
     a list called 'the lines' is ['the declaration', 'the append line', 'the capture line', 'the clear line', 'the size check', 'the capacity check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(BUF-11 (LANGUAGE.md:3607), completing the earlier batch's coverage. The
+(BUF-11 (LANGUAGE.md:3633), completing the earlier batch's coverage. The
  earlier leaf ('gen leaf buffer properties') already asserts `X's
  length is X's size` - but only ever right after an append, which is a
  sameness the row's own wording does not license: it names append, set
@@ -1007,7 +1007,7 @@ To 'gen leaf buffer length synonym' with a text called indent and a boolean call
 (--- The ledger's buffer leaves, batch B, 2026-08-29 evening -----------
 
  docs/ledger/buffers.md rows BUF-40 through BUF-54, the 0.4.14 "Releasing
- a Buffer" subsection (LANGUAGE.md:3645-3754, `Free`/`Release`/
+ a Buffer" subsection (LANGUAGE.md:3671-3780, `Free`/`Release`/
  `Deallocate`). BUF-40 stays `not assertable` (an implementation-timing
  claim - "immediately" - with no observable half of its own beyond what
  BUF-43 onward already test) and BUF-49 is not a separate leaf need (it
@@ -1046,7 +1046,7 @@ To 'gen leaf buffer length synonym' with a text called indent and a boolean call
 
 (One statement, one buffer: the three spellings `Free`/`Release`/
  `Deallocate` and the optional `the` article are drawn together rather
- than as two separate choices, per the surface brief - LANGUAGE.md:3646
+ than as two separate choices, per the surface brief - LANGUAGE.md:3672
  gives all three spellings equal standing and 3647 makes the article
  optional on any of them, so there is no rule pinning either draw and no
  reason to keep them apart.)
@@ -1065,7 +1065,7 @@ To 'gen buffer free statement' with a text called 'the name'.
     a text called 'the line' is "{'the keyword'} {'the article'}{'the name'}".
     Return a text, 'the line'.
 
-(A buffer declared straight from a string literal - LANGUAGE.md:3662's
+(A buffer declared straight from a string literal - LANGUAGE.md:3688's
  own worked example uses this form (`a buffer called line is "hello".`),
  and BUF-25 already records that the generator has no single shared
  helper for it despite using the shape inline in a few places
@@ -1078,7 +1078,7 @@ To 'gen buffer string declaration' with a text called 'the name' and a text call
     Return a text, 'the line'.
 
 (BUF-41, BUF-42: `Free`, `Release` and `Deallocate` empty a buffer
- identically, article or not - LANGUAGE.md:3645-3647. One to three
+ identically, article or not - LANGUAGE.md:3671-3673. One to three
  buffers, each with its own random payload and its own independent
  spelling/article draw, each asserted empty right after.)
 
@@ -1313,7 +1313,7 @@ To 'gen leaf buffer freed resize refused' with a text called indent and a boolea
     'gen join lines' of indent and nested and 'the lines'.
 
 (BUF-51: freeing an already-freed buffer is a no-op that sets the error
- flag rather than releasing anything a second time - LANGUAGE.md:3671-
+ flag rather than releasing anything a second time - LANGUAGE.md:3697-
  3678's worked example. Both spellings are drawn independently, so the
  second `Free` need not match the first's.)
 
@@ -1338,7 +1338,7 @@ To 'gen leaf buffer double free' with a text called indent and a boolean called 
 
 (BUF-52: a `buffer` function parameter is the caller's buffer, so `Free`
  inside the function releases the same block the caller sees -
- LANGUAGE.md:3680-3683, the same aliasing FUN-26 already establishes for
+ LANGUAGE.md:3706-3709, the same aliasing FUN-26 already establishes for
  a resize. The function name comes from the value surface's word cycler
  ('gen fresh verb'/'gen written name', gen_collections.vox) rather than a
  fixed phrase - generic despite living in that file, PROCEDURE.md 6a -
@@ -1439,9 +1439,9 @@ To 'gen leaf buffer free via parameter' with a text called indent and a boolean 
  above already uses - so dropping one into a deeper composed context
  changes nothing about how it closes.)
 
-(BUF-19, BUF-21: byte positions are 1-indexed (LANGUAGE.md:3712), and a
+(BUF-19, BUF-21: byte positions are 1-indexed (LANGUAGE.md:3738), and a
  byte access whose position is a runtime VARIABLE rather than a numeral
- baked into the generated source takes the same values (LANGUAGE.md:3717)
+ baked into the generated source takes the same values (LANGUAGE.md:3743)
  - every leaf above interpolates the position as a literal number
  straight into `byte N of buf`, so the variable-indexed path has never
  actually been exercised. The two helpers below build a payload
@@ -1513,7 +1513,7 @@ To 'gen leaf buffer byte index' with a text called indent and a boolean called n
 
 (BUF-23, BUF-24: `Set byte N of buf to 0x4A` (a hex literal) and
  `Set byte N of buf to 'q'` (a character literal) are both accepted
- spellings for the VALUE half of a byte write - LANGUAGE.md:3722-3723,
+ spellings for the VALUE half of a byte write - LANGUAGE.md:3748-3749,
  alongside the plain decimal `gen leaf buffer inrange` already exercises.
  A character literal stores its ascii code (hand-verified: 'q' writes
  113). The hex literal is built from the same value 'gen buffer known
@@ -1566,7 +1566,7 @@ To 'gen leaf buffer byte literals' with a text called indent and a boolean calle
 
 (BUF-25: the worked example - declare a buffer from a string literal,
  mutate one byte with a character literal, print shows the mutation
- (LANGUAGE.md:3727-3732's own "Hello" -> "Jello"). 'gen buffer known
+ (LANGUAGE.md:3753-3758's own "Hello" -> "Jello"). 'gen buffer known
  filler mutated' below builds the ORIGINAL payload and its post-mutation
  twin in one pass, substituting the replacement character in at the
  marked position as it goes, so the expected printed content is
@@ -1613,7 +1613,7 @@ To 'gen leaf buffer content mutation' with a text called indent and a boolean ca
 
 (BUF-26: an out-of-bounds READ sets the error flag AND the read
  expression itself evaluates to 0, not merely "something unspecified" -
- LANGUAGE.md:3742. `gen leaf buffer oob` (kind 101, night of 2026-08-28)
+ LANGUAGE.md:3768. `gen leaf buffer oob` (kind 101, night of 2026-08-28)
  already exercises the On-error half; nothing captures and asserts the
  VALUE the read produced, which is the half BUF-26's own row calls out
  as missing. Same stale-flag guard every other On-error leaf here uses,
@@ -1644,7 +1644,7 @@ To 'gen leaf buffer oob value' with a text called indent and a boolean called ne
     'gen join lines' of indent and nested and 'the lines'.
 
 (BUF-31, BUF-32, BUF-38: `append` and `copy` between two BUFFERS -
- LANGUAGE.md:3777-3784. Every existing append/copy leaf in this file
+ LANGUAGE.md:3803-3810. Every existing append/copy leaf in this file
  sources from a TEXT literal or a format string; none has ever used a
  buffer as the source, which is the construct these three rows actually
  name. One source buffer, two independent destinations - append grows
@@ -1700,7 +1700,7 @@ To 'gen leaf buffer append copy sources' with a text called indent and a boolean
  initial reserve it started with, whether the growth comes from `append`
  or from `copy`, in a single large write rather than the accumulated
  small-append loop `gen leaf buffer growth` already covers for BUF-03 -
- LANGUAGE.md:3782. Capacity is PRINTED but not asserted: what capacity a
+ LANGUAGE.md:3808. Capacity is PRINTED but not asserted: what capacity a
  dynamic buffer actually reports past its initial reserve is exactly
  docs/ledger/buffers.md Discrepancy 1's open question, and encoding this
  leaf's own reading of that dispute as the row's expected answer is the

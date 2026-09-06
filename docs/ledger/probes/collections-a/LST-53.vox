@@ -7,7 +7,7 @@
  `append root to branch.` both copy now, so this program no longer
  builds any cross-reference at all — it prints `{"kids": []}` and never
  triggers `On error`. LST-53's row is narrowed (the depth cap itself is
- still real, LANGUAGE.md:2590-2593, but only reachable via 64 explicit
+ still real, LANGUAGE.md:2616-2619, but only reachable via 64 explicit
  nested levels now); this probe is retained as the historical record of
  the pre-#111 behavior. LST-54 is withdrawn; see LST-82 for the 0.4.15
  self-referential-map behavior.

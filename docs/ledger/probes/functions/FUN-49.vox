@@ -1,5 +1,5 @@
 (FUN-49: a buffer-returning function that falls off its end hands back
- a real, usable empty buffer (LANGUAGE.md:2849-2855, 0.4.15, #112).
+ a real, usable empty buffer (LANGUAGE.md:2875-2881, 0.4.15, #112).
  Before #112 this segfaulted (CHANGELOG.md, Unreleased). Capacity reads
  4096, not 0 — consistent with buffers.md Discrepancy 1 (dynamic buffer
  capacity), not a new finding.

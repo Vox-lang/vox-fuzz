@@ -1,5 +1,5 @@
 (BUF-57: after `Free`, `Set element N of ...` on a list is refused with
- the error flag (LANGUAGE.md:3700-3701, 0.4.15, #109).
+ the error flag (LANGUAGE.md:3726-3727, 0.4.15, #109).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-57.vox -o p && ./p
  expected output:
    set element on freed list refused
