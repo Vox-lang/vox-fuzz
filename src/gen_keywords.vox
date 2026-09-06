@@ -129,7 +129,7 @@ To 'gen extreme number distinct from' with a text called 'the other'.
  length` vs `'s size` checks, which really are runtime property
  expressions.)
 
-(KEY-02 - LANGUAGE.md:5039-5040: `a`/`an` declare, `the` references an
+(KEY-02 - LANGUAGE.md:5065-5066: `a`/`an` declare, `the` references an
  already-declared variable, both as a plain read and as an assignment
  target. Retained probe (KEY-02.vox) hand-verifies one bare name;
  hand-verified further this session, both compilers: `the` also resolves
@@ -148,7 +148,7 @@ To 'gen leaf article the reference' with a text called indent and a boolean call
     a list called 'the lines' is ["a number called {name} is {'the first value'}", "Set the {name} to {'the second text'}", 'the assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-04 - LANGUAGE.md:5047: `Set` and `Create` both start a variable
+(KEY-04 - LANGUAGE.md:5073: `Set` and `Create` both start a variable
  declaration - `Set a TYPE called NAME to VALUE.`, `Create a TYPE called
  NAME to VALUE.`, and bare `Create a TYPE called NAME.` for the type's
  default. Retained probe (KEY-04.vox) hand-verifies all three shapes for
@@ -169,7 +169,7 @@ To 'gen leaf set create declaration forms' with a text called indent and a boole
     a list called 'the lines' is ["Set a number called {'the number name'} to {'the set text'}", 'the set assertion', "Create a text called {'the text name'} to \"{'the text payload'}\"", 'the create assertion', "Create a number called {'the default name'}", 'the default assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-11 - LANGUAGE.md:5054: `Decrement` subtracts 1 from a variable.
+(KEY-11 - LANGUAGE.md:5080: `Decrement` subtracts 1 from a variable.
  Retained probe (KEY-11.vox) already exercises the bare name and the
  `the`-prefixed form together on one variable; this leaf follows the
  same shape with a random name and starting value.)
@@ -183,7 +183,7 @@ To 'gen leaf decrement' with a text called indent and a boolean called nested.
     a list called 'the lines' is ["a number called {name} is {'the start text'}", "Decrement {name}", "Decrement the {name}", 'the assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-44, KEY-45 - LANGUAGE.md:5121-5123 and 5126: `and` before the final
+(KEY-44, KEY-45 - LANGUAGE.md:5147-5149 and 5126: `and` before the final
  subject of a comma-separated subject list terminates the list, and the
  predicate after `are` applies to every subject (KEY-44); disambiguation
  1 says the word after that `and` is read as a SUBJECT, not a condition
@@ -214,7 +214,7 @@ To 'gen leaf and subject list' with a text called indent and a boolean called ne
     a list called 'the lines' is ["a boolean called {'the first flag'} is true", "a boolean called {'the second flag'} is true", "a boolean called {'the third flag'} is true", "a boolean called {'the true witness'} is false", 'the true check', 'the true assertion', "a boolean called {'the negated witness'} is false", 'the negated check', 'the negated assertion', "a number called {'the first number'} is {'the matching value'}", "a number called {'the second number'} is {'the matching value'}", "a number called {'the third number'} is {'the differing value'}", "a boolean called {'the subject witness'} is false", 'the subject check', 'the subject assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-49, KEY-50 - LANGUAGE.md:5239-5240: `message` and `string` are
+(KEY-49, KEY-50 - LANGUAGE.md:5265-5266: `message` and `string` are
  reserved aliases of the type name `text`. A variable declared with
  either spelling is a text: same reported type, same content. Retained
  probes KEY-49.vox and KEY-50.vox hand-verify both against a bare
@@ -239,7 +239,7 @@ To 'gen leaf reserved alias text types' with a text called indent and a boolean 
     a list called 'the lines' is ["a message called {'the message name'} is \"{'the message payload'}\"", "a string called {'the string name'} is \"{'the string payload'}\"", 'the message type assertion', 'the message content assertion', 'the string type assertion', 'the string content assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-53, KEY-54 - LANGUAGE.md:5310-5314: `size` and its synonym `length`
+(KEY-53, KEY-54 - LANGUAGE.md:5336-5340: `size` and its synonym `length`
  are contextual keywords - the property after a possessive, but also a
  legal bare variable name, both in the same program; `x's length` still
  means the same as `x's size`. Retained probes KEY-53.vox and KEY-54.vox
@@ -270,7 +270,7 @@ To 'gen leaf contextual keyword length' with a text called indent and a boolean 
     a list called 'the lines' is ["a number called length is {'the length text'}", "a buffer called {'the buffer name'} is {'the buffer capacity'} bytes in size", "append \"{'the buffer payload'}\" to {'the buffer name'}", 'the buffer assertion', "a list called {'the list name'} is [{'the list first'}, {'the list second'}, {'the list third'}]", 'the list assertion', 'the length variable assertion'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(KEY-73 - LANGUAGE.md:5311-5312: `version` is contextual - claimed only
+(KEY-73 - LANGUAGE.md:5337-5338: `version` is contextual - claimed only
  in the `Library <name> version "..."` and `see <lib> version "..."`
  headers, an ordinary identifier everywhere else. Only the
  ordinary-identifier half is a leaf: the header half needs a second

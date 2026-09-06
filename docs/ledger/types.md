@@ -83,7 +83,7 @@ So: (a) the fractional value is not rejected, not truncated, and not
 silently converted — it is stored and printed exactly as written,
 directly contradicting "whole numbers"; (b) worse, the `'s type`
 property (which reflects the *static declared* type per
-`LANGUAGE.md:3584–3598`/`BUF-14`'s sibling behavior) says
+`LANGUAGE.md:3610–3624`/`BUF-14`'s sibling behavior) says
 `Number (static)`, while the `is a <noun>` predicate (which
 `LANGUAGE.md:2541–2543`/`LST-62` establish reads a *runtime value tag*,
 not the declared type) says the opposite — `is a number` is **false**

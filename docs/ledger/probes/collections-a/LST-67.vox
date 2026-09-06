@@ -1,4 +1,4 @@
-(LST-67 — the position-loop guard idiom (LANGUAGE.md:2664-2676, the fix
+(LST-67 — the position-loop guard idiom (LANGUAGE.md:2690-2702, the fix
  Discrepancy 3 called for): the predicate reads the runtime tag but does not
  narrow the static type, so `item add 1` on a `For each` loop variable is
  still refused inside the guard (see D3.vox). Getting the guarded element

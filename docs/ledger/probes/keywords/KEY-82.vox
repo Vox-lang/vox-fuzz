@@ -1,4 +1,4 @@
-(KEY-82 — every word in the Statement Starters table (LANGUAGE.md:5044-
+(KEY-82 — every word in the Statement Starters table (LANGUAGE.md:5070-
  5082, 0.4.15, #106 second half / GitHub #239) is reserved as a variable
  name. Hand-verified across eight of the fourteen new words, spread
  across the table, each compiled and run separately since a compile

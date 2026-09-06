@@ -1,5 +1,5 @@
 (FUN-50: a time-returning function that falls off its end hands back
- the zero time (LANGUAGE.md:2849-2855, 0.4.15, #112).
+ the zero time (LANGUAGE.md:2875-2881, 0.4.15, #112).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-50.vox -o p && ./p
  expected output:
    0

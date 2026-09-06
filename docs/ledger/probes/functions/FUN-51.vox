@@ -1,5 +1,5 @@
 (FUN-51: a thing-returning function that falls off its end hands back
- the all-defaults instance for that type (LANGUAGE.md:2849-2855, 0.4.15,
+ the all-defaults instance for that type (LANGUAGE.md:2875-2881, 0.4.15,
  #112). Before #112 this read the caller's leftover stack — a
  wrong-answer, not a crash (CHANGELOG.md, Unreleased). The type's own
  declared field defaults (x is 7, y is 9) are deliberately non-zero, so

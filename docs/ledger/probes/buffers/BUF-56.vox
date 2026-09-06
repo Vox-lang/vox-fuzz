@@ -1,5 +1,5 @@
 (BUF-56: after `Free`, `append` to a list is refused with the error
- flag (LANGUAGE.md:3700-3701, 0.4.15, #109).
+ flag (LANGUAGE.md:3726-3727, 0.4.15, #109).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-56.vox -o p && ./p
  expected output:
    append to freed list refused

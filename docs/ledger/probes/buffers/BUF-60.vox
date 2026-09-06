@@ -1,6 +1,6 @@
 (BUF-60: a `list` function parameter is the caller's list, so `Free`
  inside the function releases the same list the caller sees
- (LANGUAGE.md:3704-3708, 0.4.15, #109).
+ (LANGUAGE.md:3730-3734, 0.4.15, #109).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack BUF-60.vox -o p && ./p
  expected output:
    0

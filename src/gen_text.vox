@@ -48,7 +48,7 @@ To 'gen pick parse form' with a number called base.
     Return a text, 'the spaced form'.
 
 To 'gen pick format spec'.
-    (Number-to-text in a base, LANGUAGE.md:3347-3352 - the other
+    (Number-to-text in a base, LANGUAGE.md:3373-3378 - the other
      direction, and one Josj had to point out was even a thing. `b`
      renders bare while `x`/`X`/`o` carry 0x/0o prefixes, which is what
      the table documents.
@@ -157,7 +157,7 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
    `{13 multiply z}` rather than 52. Documented behaviour, not a defect -
    and the reason 'gen deep expr' grew a `grouped` parameter instead of
    this file growing a second expression builder.
- - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3354-3355
+ - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3380-3381
    says: `{255}` and `{255:x}` both fail with "Unknown variable: 255".
    A literal inside an EXPRESSION is fine - `{v1 add 5}`, `{5 add v1}`
    and `{v1 divide 7}` all compile and run - which is what makes 'gen
@@ -322,7 +322,7 @@ To 'gen leaf format specifiers' with a text called indent and a boolean called n
         append 'print field hex' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(Expressions inside slots - LANGUAGE.md:3215-3223. The two shapes that
+(Expressions inside slots - LANGUAGE.md:3241-3249. The two shapes that
  section names by example (`{x add y}`, `{x multiply y}`) plus its
  `{arguments's count}` line, a chained three-operand form, an arbitrarily
  deep flat chain from 'gen deep expr', and a specifier applied to an
@@ -372,7 +372,7 @@ To 'gen leaf format expression' with a text called indent and a boolean called n
     a list called 'the lines' is ['x decl', 'y decl', 'print sum', 'print product', 'print chain', 'print deep', 'print count', 'held decl', 'print held'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(Format strings as VALUES - LANGUAGE.md:3225-3248 and 3076-3090. Every
+(Format strings as VALUES - LANGUAGE.md:3251-3274 and 3076-3090. Every
  sink those two sections name that this generator can reach safely:
 
  - a text initialized from a format string over a BUFFER's contents,
@@ -484,7 +484,7 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
  of that question.
 
  Also the "Formatted Time Output" capability, in the spelling that
- actually compiles. LANGUAGE.md:4696-4704 shows `now's hour as text
+ actually compiles. LANGUAGE.md:4722-4730 shows `now's hour as text
  padded to 2`, which does not exist ("Unknown function: padded");
  LANGUAGE.md:2179 shows `"{h:02}"` for the same job, which does.
  The result is asserted rather than printed: an hour zero-padded to 2 is
@@ -598,7 +598,7 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
 (FMT-45, FMT-46, FMT-47, FMT-48, FMT-49: the escape table's five rows,
  each VERIFIED rather than merely printed — grep-confirmed absent before
  this leaf (buffers.md's byte-access idiom applied to the text side of
- the table for the first time). LANGUAGE.md:3478-3484. `{{`/`}}` render
+ the table for the first time). LANGUAGE.md:3504-3510. `{{`/`}}` render
  one literal brace each, `\n` a newline, `\t` a tab, `\\` one literal
  backslash — every one of the five decodes to exactly ONE byte, so with a
  P-byte prefix and an S-byte suffix (both plain letters/digits off 'gen
@@ -688,7 +688,7 @@ To 'gen leaf escape table verified' with a text called indent and a boolean call
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-24: the ASSIGNMENT half of "Format Strings as Values" —
- LANGUAGE.md:3424-3427 says a format string works as a text initializer
+ LANGUAGE.md:3450-3453 says a format string works as a text initializer
  AND an assignment; every existing leaf only ever exercises the
  initializer ('gen leaf format value's 'token decl'/'path decl') — grep
  for `Set <text> to "{` across every src/gen_*.vox file finds nothing
@@ -713,7 +713,7 @@ To 'gen leaf format text reassignment' with a text called indent and a boolean c
     a list called 'the lines' is ['the counter declaration', 'the first label', 'the reassign counter', 'the reassign label', 'the label check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-29: LANGUAGE.md:3441-3442 — each format-string evaluation
+(FMT-29: LANGUAGE.md:3467-3468 — each format-string evaluation
  allocates a NEW string, so the source buffer can be cleared and
  refilled without disturbing a text already made from it. No existing
  leaf clears a USER buffer after making a text from it before this (grep-
@@ -748,7 +748,7 @@ To 'gen leaf format value isolation' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-41: the "or file handle" half of Declarations in Branches —
- LANGUAGE.md:3460-3464. The manual's own worked example (3466-3474) opens
+ LANGUAGE.md:3486-3490. The manual's own worked example (3466-3474) opens
  the SAME handle name on both arms of an if/otherwise and writes to it
  afterward, and never closes it; this leaf emits that shape with the
  target varying instead of the manual's flag-conditioned path, so the
@@ -822,7 +822,7 @@ To 'gen leaf branch file handle' with a text called indent and a boolean called 
     a list called 'the lines' is ['the marker declaration', 'the path line', 'the branch', 'the write'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-52, FMT-54: LANGUAGE.md:3499-3506's own chain shape — clauses after
+(FMT-52, FMT-54: LANGUAGE.md:3525-3532's own chain shape — clauses after
  the first carry NO leading comma, and the chain may continue with
  `and if` as well as `but if`. `gen leaf butif print` (gen_flow.vox, out
  of this surface's own scope to edit) puts a comma before EVERY clause
