@@ -1,5 +1,5 @@
 (KEY-86 — every word in the new Reserved Nouns and Properties table
- (LANGUAGE.md:5258-5272, 0.4.15, #106 second half / GitHub #239) is
+ (LANGUAGE.md:5284-5298, 0.4.15, #106 second half / GitHub #239) is
  reserved as a variable name. Resolves the rest of Discrepancy 4 (see
  below). Hand-verified across eight of the ten words:
 

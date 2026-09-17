@@ -1,5 +1,5 @@
 (D4: "A list also accepts `Free`, with the same after-state a buffer
- gets ..." (LANGUAGE.md:3699-3708). RESOLVED, vox #109, 0.4.15 — this
+ gets ..." (LANGUAGE.md:3725-3734). RESOLVED, vox #109, 0.4.15 — this
  was Discrepancy 4 (the compiler used to no-op `Free` on a list; 0.4.14
  output was 3/0/[1, 2, 3]/4/[1, 2, 3, 9], no refusal). Re-verified
  against the 0.4.15 stack: the list is now empty after `Free`, and the

@@ -1,5 +1,5 @@
 (KEY-85 — every non-hyphenated word in the new Operators table
- (LANGUAGE.md:5153-5162, 0.4.15, #106 second half / GitHub #239) is
+ (LANGUAGE.md:5179-5188, 0.4.15, #106 second half / GitHub #239) is
  reserved as a variable name. The six bitwise spellings (`bit-and`,
  `bit-or`, `bit-xor`, `bit-not`, `bit-shift-left`, `bit-shift-right`)
  are hyphenated multi-part tokens, not bare identifiers (LANGUAGE.md

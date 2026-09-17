@@ -1,4 +1,4 @@
-(KEY-83 — every word in the Connectors table (LANGUAGE.md:5094-5113,
+(KEY-83 — every word in the Connectors table (LANGUAGE.md:5120-5139,
  0.4.15, #106 second half / GitHub #239) is reserved as a variable
  name. Hand-verified across all 8 new words, each compiled and run
  separately:

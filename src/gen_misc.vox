@@ -68,7 +68,7 @@ a number called gen_reader_calls is 0.
 
 (--- The ledger's environment leaves, batch A ---------------------------
 
- docs/ledger/environment.md maps LANGUAGE.md:4797-4871 into numbered
+ docs/ledger/environment.md maps LANGUAGE.md:4823-4897 into numbered
  claims; everything below puts one of those claims on trial and ASSERTS
  its documented result, the same way the buffer leaves in gen_buffers.vox
  do: a failing assertion prints
@@ -87,7 +87,7 @@ a number called gen_reader_calls is 0.
  not. The generator does not choose the child's environment - there is
  an argv oracle ('gen build argv', below) but no environment companion -
  so no leaf here asserts WHAT a variable holds. What it can assert is
- agreement: LANGUAGE.md:4803-4809 documents count, empty, first, last and
+ agreement: LANGUAGE.md:4829-4835 documents count, empty, first, last and
  the named lookup as properties of ONE environment, so two readings of
  the same property cannot disagree, and `count` cannot say "none" while
  `empty` says "some". A text value read into a `text` and the same value
@@ -95,10 +95,10 @@ a number called gen_reader_calls is 0.
  text-valued expression - the Variables and File I/O sections' worked
  examples, `a buffer called b is "hello"` and `a buffer called b is
  <text name>`) are two readings of one value, and the buffer's `size`
- and `empty` (LANGUAGE.md:3606-3609) are how a program measures them -
+ and `empty` (LANGUAGE.md:3632-3635) are how a program measures them -
  a `text` has no size property of its own. The one thing the generator
  DOES control is absence: a name it invents under VOXFUZZ_UNSET_ is set
- by nobody, so `exists` (LANGUAGE.md:4838-4843) on it is asserted false.
+ by nobody, so `exists` (LANGUAGE.md:4864-4869) on it is asserted false.
 
  Privacy, inherited from the leaf this block replaces: a generated
  program never prints a raw environment value - the first version of
@@ -184,7 +184,7 @@ To 'gen environment companion' with a text called role.
     a text called 'the companion' is "'{gen_environment_last_word} {role}'".
     Return a text, 'the companion'.
 
-(Which variable a named lookup asks for. LANGUAGE.md:4809-4820 reads
+(Which variable a named lookup asks for. LANGUAGE.md:4835-4846 reads
  HOME, USER and SHELL by name; a generated program asks for those and for
  other names a process usually has, chosen at random - the leaf never
  assumes any of them is set. A VOXFUZZ_UNSET_ name is the other case:
@@ -207,7 +207,7 @@ To 'gen environment variable name'.
     Return a text, 'the name'.
 
 (The source expression a reading comes from - one of the four text-valued
- properties LANGUAGE.md:4803-4809 gives, and which row that is.)
+ properties LANGUAGE.md:4829-4835 gives, and which row that is.)
 
 a text called gen_environment_last_row is "ENV-06".
 
@@ -235,7 +235,7 @@ To 'gen environment source'.
  takes whatever punctuation 'gen join lines' adds (the same shape as
  gen_buffers.vox's 'gen assert number', which this reuses).)
 
-(ENV-02, ENV-05: `count` is the number of variables (LANGUAGE.md:4805)
+(ENV-02, ENV-05: `count` is the number of variables (LANGUAGE.md:4831)
  and `empty` is true iff there are none (4482) - so count is 0 exactly
  when empty is true, whatever the host's environment holds. Each property
  is read into a named variable or used inline, at random, and the two
@@ -271,7 +271,7 @@ To 'gen leaf environment agreement' with a text called indent and a boolean call
 
 (ENV-06 (ENV-07, ENV-09 folded), ENV-03, ENV-04: a text-valued property -
  the named lookup, `first`, or `last` - read into a `text` the manual's
- own way (LANGUAGE.md:4893-4907), and then again into whichever of the
+ own way (LANGUAGE.md:4919-4933), and then again into whichever of the
  other receivers the manual allows for a text value: a `buffer` declared
  straight from the property, a second such buffer, a `value`. The text is
  copied into a buffer of its own so it can be measured, and every pair of
@@ -350,7 +350,7 @@ To 'gen environment variable name unset from' with a text called 'the source'.
     Return a text, 'the unset name bytes' as text.
 
 (ENV-10, ENV-11: `If the environment variable "NAME" exists then,` is a
- predicate (LANGUAGE.md:4838-4843). Two readings of it on one name must
+ predicate (LANGUAGE.md:4864-4869). Two readings of it on one name must
  agree; on a name the generator invented it must be false. Each line
  keeps its If closed and ends on a plain statement, and the manual's
  Otherwise branch and its Complete Example's `If ... But if ... exists`
@@ -403,7 +403,7 @@ To 'gen environment spoken word'.
     Return a text, 'the word'.
 
 (ENV-03, ENV-04: `first` and `last` are the full "NAME=value" string
- (LANGUAGE.md:4893-4894), so a non-empty entry contains an `=`. The entry
+ (LANGUAGE.md:4919-4920), so a non-empty entry contains an `=`. The entry
  is read into a text, copied into a buffer, and its bytes scanned for 61
  in one For each line - one line, because a loop split across lines would
  take a period from 'gen join lines' on its first line and close with an
@@ -841,7 +841,7 @@ To 'gen emit argv assertions'.
 
 (The boolean flag, both ways round. When the invocation passed it, it
  must be true; when it did not, it must hold its DECLARED DEFAULT -
- false when it has none (LANGUAGE.md:4802-4805), true when the manifest
+ false when it has none (LANGUAGE.md:4828-4831), true when the manifest
  gave it `with default true`. Asserting `is false` unconditionally is
  what would break the moment a boolean flag drew a default, which is
  exactly the sort of assertion CLAUDE.md calls a false-finding factory.)
@@ -882,27 +882,27 @@ To 'gen emit boolean flag assertion'.
  - "one text, one number, one boolean, in that order": nothing says so.
    Each flag's type is drawn.
  - "only the text flag may carry a default": nothing says so.
-   LANGUAGE.md:4802-4805 gives every type an empty value AND allows
+   LANGUAGE.md:4828-4831 gives every type an empty value AND allows
    `with default` on every type - both hand-verified against 0.4.7,
    including `with default true` on a boolean.
- - "`Parse flags.` is always written": LANGUAGE.md:4804 says the
+ - "`Parse flags.` is always written": LANGUAGE.md:4830 says the
    opposite - omit it and Vox inserts parsing immediately after the last
    schema declaration. Verified: a program with two flags, a global
    between them and no `Parse flags.` compiles and reads both.
- - "the four declarations are contiguous": LANGUAGE.md:4821 explicitly
+ - "the four declarations are contiguous": LANGUAGE.md:4847 explicitly
    permits normal code before and between schema declarations, and the
    compiler agrees.
 
  What genuinely holds, and is enforced here:
 
  - a schema must precede the parse point, and a flag read before the
-   parse point is a compile-time error (LANGUAGE.md:4824). Every read
+   parse point is a compile-time error (LANGUAGE.md:4850). Every read
    this generator emits is either in the statement stream, which follows
    every block, or inside a function body, which is legal wherever the
    function is defined because the CALL happens after the parse point -
    verified, and the reason the reader may be emitted before the schema.
  - declaring a schema AFTER `Parse flags.` is a compile-time error
-   (LANGUAGE.md:4812), so the parse line, when it is written at all,
+   (LANGUAGE.md:4838), so the parse line, when it is written at all,
    goes after every declaration in this block.
  - a `required` flag would abort at runtime whenever argv did not
    supply it, and the invariant is a program that compiles AND runs, so
@@ -913,7 +913,7 @@ To 'gen emit prelude flags'.
     a number called 'the flag' is 1.
     While 'the flag' is less than or equal to 'how many flags',
         'gen emit one flag' of 'the flag',
-        (LANGUAGE.md:4821: "You may place normal code before/between
+        (LANGUAGE.md:4847: "You may place normal code before/between
          schema declarations." So sometimes something else goes here -
          an ordinary global, the same declaration 'gen emit globals
          block' writes - and the flag block stops being a contiguous
@@ -922,7 +922,7 @@ To 'gen emit prelude flags'.
         If 'the interleave draw' is less than 4 then,
             a number called 'the fresh global' is 'gen new var'.
         Set 'the flag' to 'the flag' add 1.
-    (LANGUAGE.md:4804: omit it and Vox inserts parsing immediately after
+    (LANGUAGE.md:4830: omit it and Vox inserts parsing immediately after
      the last schema declaration, so writing it is optional whether or
      not there are flags to parse. Hand-verified both edges against
      0.4.7: `Parse flags.` with no schema at all compiles and runs, and
@@ -1132,9 +1132,9 @@ To 'gen assert time text is' with a text called 'the row' and a text called 'the
     Return a text, 'the line'.
 
 (TIM-01, TIM-02, TIM-03, TIM-04, TIM-05, TIM-06, TIM-07, TIM-08, TIM-09,
- TIM-10, TIM-11, TIM-13: `current time`'s shape - LANGUAGE.md:4545-4564.
+ TIM-10, TIM-11, TIM-13: `current time`'s shape - LANGUAGE.md:4571-4590.
  `Get current time into <name>.` and `a time called <name> is current
- time.` (TIM-02, LANGUAGE.md:4548-4549) are drawn evenly; every property
+ time.` (TIM-02, LANGUAGE.md:4574-4575) are drawn evenly; every property
  read uses the `'s` possessive either way (TIM-04). `type` reads
  `"Time (static)"` (TIM-03) - bare `{name}'s type` only, `the {name}'s
  type` does not parse (hand-verified, see PROCEDURE.md 6a's own note on
@@ -1145,7 +1145,7 @@ To 'gen assert time text is' with a text called 'the row' and a text called 'the
  reading proves `unix` never runs backward (TIM-11's other half, `>=`
  never `>` per the surface brief); `current time's hour` read inline
  with no name stored is bounded the same way (TIM-13,
- LANGUAGE.md:4589-4591).
+ LANGUAGE.md:4615-4617).
 
  Hand-verified against both compilers (vox 0.4.14 and the 0.4.15 stack):
  `moment's type` reads `Time (static)`, `moment's year/month/day` read
@@ -1182,7 +1182,7 @@ To 'gen leaf current time shape' with a text called indent and a boolean called 
 
 (One phrasing of `Start`/`Stop`, drawn from all four contextual forms the
  manual documents as equal (TIM-24, TIM-25, TIM-26, TIM-27,
- LANGUAGE.md:4625, 4631-4636): canonical or alternate spelling, with or
+ LANGUAGE.md:4651, 4657-4662): canonical or alternate spelling, with or
  without the article, in any capitalisation the two spellings actually
  use. All eight combinations hand-verified to parse and behave the same
  (`Start the crank.`, `stop crank.`, `Begin the 'job clock'.`, `finish
@@ -1204,7 +1204,7 @@ To 'gen timer statement' with a text called handle and a list called verbs.
     Return a text, 'the line'.
 
 (TIM-15, TIM-16, TIM-17, TIM-18, TIM-19, TIM-49: every accepted
- Wait/Sleep spelling, `for` included or not (LANGUAGE.md:4599-4609). The
+ Wait/Sleep spelling, `for` included or not (LANGUAGE.md:4625-4635). The
  "seconds" flavour always waits 0 (hand-verified: `Wait 5 second.` really
  does wait five real seconds - singular/plural is cosmetic, the compiler
  does not check agreement - so a non-zero seconds draw is not an option
@@ -1251,7 +1251,7 @@ To 'gen timer wait line' with a number called 'the requested milliseconds' and a
 
 (TIM-22, TIM-23, TIM-31, TIM-33, TIM-34, TIM-35, TIM-36, TIM-37, TIM-38:
  a timer's whole lifecycle. Creation is `a timer called <name>.` or
- `Create a timer called <name>.` (TIM-22, TIM-23, LANGUAGE.md:4618-4619),
+ `Create a timer called <name>.` (TIM-22, TIM-23, LANGUAGE.md:4644-4645),
  name quoting decided by the shared word pool rather than this leaf.
  `running` reads false before Start and after Stop and (checked, not
  asserted here to avoid a third read racing the wait) true between
@@ -1385,7 +1385,7 @@ To 'gen assert time matches' with a text called 'the row' and a text called 'the
     a text called 'the line' is "If {'the left'} is not {'the right'} then, Print \"ASSERT {'the row'}: expected {'the right shown'} got {'the left shown'}\", Exit 95. Print \"{'the row'} ok\"".
     Return a text, 'the line'.
 
-(TIM-32 (LANGUAGE.md:4646): `elapsed` reads WHILE the timer is still
+(TIM-32 (LANGUAGE.md:4672): `elapsed` reads WHILE the timer is still
  running, not only after `Stop`. Every existing timer leaf (`gen leaf
  timer duration and running`, kind 221) reads `elapsed`/`duration` only
  after `Stop` - that shape is TIM-48's claim, not this one - so this is
@@ -1424,7 +1424,7 @@ To 'gen leaf timer elapsed while running' with a text called indent and a boolea
     a list called 'the tail lines' is ['the later wait line', 'the later read line', 'the growth check'].
     'gen join lines' of indent and nested and 'the tail lines'.
 
-(TIM-42 (LANGUAGE.md:4695-4697): the Formatted Time Output example -
+(TIM-42 (LANGUAGE.md:4721-4723): the Formatted Time Output example -
  three time properties read straight out of format slots with the `:02`
  zero-pad specifier, combined `hh:mm:ss`. Clock-dependent, so this leaf
  checks the SHAPE the zero-pad guarantees rather than any value: a
@@ -1453,7 +1453,7 @@ To 'gen leaf formatted clock direct' with a text called indent and a boolean cal
     a list called 'the lines' is ['the get line', 'the clock line', 'the bytes line', 'the size check', 'the first colon check', 'the second colon check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-43 (LANGUAGE.md:4703-4709): the named-parts variant of the same
+(TIM-43 (LANGUAGE.md:4729-4735): the named-parts variant of the same
  example - each zero-padded property stored in its own `text` first,
  then the three combined in one more format string. Same 8-byte,
  colon-at-3-and-6 shape as TIM-42, reached through three intermediate
@@ -1484,7 +1484,7 @@ To 'gen leaf formatted clock staged' with a text called indent and a boolean cal
     a list called 'the lines' is ['the get line', 'the hour line', 'the minute line', 'the second line', 'the clock line', 'the bytes line', 'the size check', 'the first colon check', 'the second colon check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-44 (LANGUAGE.md:4556-4564, undocumented - Discrepancy 5): the time
+(TIM-44 (LANGUAGE.md:4582-4590, undocumented - Discrepancy 5): the time
  components are UTC. `hour`, `minute` and `second` agree exactly with
  the UTC decomposition of `unix` - the strongest oracle in this section,
  needing no reference clock at all. D5.vox (mapping worker) checked only
@@ -1506,7 +1506,7 @@ To 'gen leaf current time utc agreement' with a text called indent and a boolean
     a list called 'the lines' is ['the get line', 'the hour check', 'the minute check', 'the second check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-45 (LANGUAGE.md:4645-4646, undocumented - Discrepancy 2): `duration`
+(TIM-45 (LANGUAGE.md:4671-4672, undocumented - Discrepancy 2): `duration`
  and `elapsed` are marked "requires cast" but neither does; the uncast
  reading is exactly the `in seconds` one. D2.vox showed this on a
  stopped timer reading 0/0; this leaf uses a real, non-zero interval so
@@ -1532,7 +1532,7 @@ To 'gen leaf timer uncast agreement' with a text called indent and a boolean cal
     a list called 'the lines' is ['the creation line', 'the start line', 'the wait line', 'the stop line', 'the duration check', 'the elapsed check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-46 (LANGUAGE.md:4645-4649, undocumented): a timer that was never
+(TIM-46 (LANGUAGE.md:4671-4675, undocumented): a timer that was never
  started reads 0 for every property and reports itself not running;
  `Stop` before any `Start` is not an error, but leaves `duration` reading
  the whole monotonic clock the timer measures with - the machine's
@@ -1562,7 +1562,7 @@ To 'gen leaf timer never started' with a text called indent and a boolean called
     a list called 'the tail lines' is ['the stop line', 'the running after check', 'the absurd floor check'].
     'gen join lines' of indent and nested and 'the tail lines'.
 
-(TIM-47 (LANGUAGE.md:4625, undocumented): starting a timer that has
+(TIM-47 (LANGUAGE.md:4651, undocumented): starting a timer that has
  already run RESTARTS it - the second `duration` measures only the
  second job, never the sum. The manual says nothing about a second
  Start; this is the shape that shows the reset rather than an
@@ -1604,7 +1604,7 @@ To 'gen leaf timer restart resets' with a text called indent and a boolean calle
     a list called 'the tail lines' is ['the second start line', 'the second wait line', 'the second stop line', 'the second read line', 'the second floor check', 'the restart check'].
     'gen join lines' of indent and nested and 'the tail lines'.
 
-(TIM-51 (LANGUAGE.md:4606-4609, undocumented - the other half of
+(TIM-51 (LANGUAGE.md:4632-4635, undocumented - the other half of
  Discrepancy 3): a negative duration in SECONDS returns at once - the
  kernel rejects a negative `tv_sec` outright. This is the safe half; the
  milliseconds half never returns at all (an unsigned divide turns a
@@ -1648,7 +1648,7 @@ To 'gen leaf timer negative seconds wait' with a text called indent and a boolea
     a list called 'the lines' is ['the creation line', 'the start line', 'the wait line', 'the stop line', 'the prompt check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-54 (LANGUAGE.md:4545, undocumented): a `time` value printed, or put
+(TIM-54 (LANGUAGE.md:4571, undocumented): a `time` value printed, or put
  in a format slot, renders as its own unix second count - a `time` IS
  that count. The variable holding the reading is named through 'gen flow
  witness name': it is interpolated bare, with no property, on the left
@@ -1663,7 +1663,7 @@ To 'gen leaf current time renders as unix' with a text called indent and a boole
     a list called 'the lines' is ['the get line', 'the render check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(TIM-57 (LANGUAGE.md:4556-4564, undocumented): a time property read from
+(TIM-57 (LANGUAGE.md:4582-4590, undocumented): a time property read from
  a plain NUMBER is accepted - a `time` IS a number, its own unix second
  count - so the compiler needs only a numeric operand and decomposes it
  as an epoch second count. Also a memory-safety row: nothing here may

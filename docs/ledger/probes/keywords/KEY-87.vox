@@ -1,5 +1,5 @@
 (KEY-87 — every word in the new File, Buffer, List, and Time Properties
- table (LANGUAGE.md:5275-5289, 0.4.15, #106 second half / GitHub #239)
+ table (LANGUAGE.md:5301-5315, 0.4.15, #106 second half / GitHub #239)
  is reserved as a variable name. Hand-verified across eight of the
  words:
 

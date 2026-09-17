@@ -1,6 +1,6 @@
 (FMT-24 — the ASSIGNMENT half of "Format Strings as Values": a format
  string works as `Set <text> to "{...}"`, not just as an initializer.
- LANGUAGE.md:3424-3427. Verified rather than merely emitted: the second
+ LANGUAGE.md:3450-3453. Verified rather than merely emitted: the second
  Set reads the counter's value AFTER it changed, so a leaf that only
  exercised the initializer form (the existing gap) could not catch a
  compiler that quietly kept the ORIGINAL format-string value on

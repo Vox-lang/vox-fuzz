@@ -6,23 +6,23 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "e43176f",
-    "date": "2026-08-29",
-    "voxCommit": "unknown (pre-merge stack, GitHub #239; fixes #104 #109 #110 #111 #112)",
+    "commit": "f7913bc",
+    "date": "2026-09-05",
+    "voxCommit": "efc2237",
     "script": "scripts/quality-stats"
   },
   "claims": {
     "total": 1432,
-    "exercised": 433,
-    "verified": 68,
+    "exercised": 594,
+    "verified": 186,
     "sections": [
       {
         "prefix": "BAS",
         "ledger": "basics.md",
         "section": "Basics: statements, case, comments, paragraph breaks, sentence consumption, the termination rule, closing more than one level",
         "claims": 61,
-        "exercised": 15,
-        "verified": 0
+        "exercised": 25,
+        "verified": 10
       },
       {
         "prefix": "BAS2",
@@ -77,7 +77,7 @@
         "ledger": "things-b.md",
         "section": "Things: printing, equality, manifest, the three call forms, one identifier space, top-level only, cross-file, .lib, sentence consumption, diagnostics, predicates",
         "claims": 77,
-        "exercised": 20,
+        "exercised": 23,
         "verified": 8
       },
       {
@@ -85,8 +85,8 @@
         "ledger": "expressions.md",
         "section": "Expressions: literals, references, arithmetic, comparisons, property checks, logical operators, plural are, type casting",
         "claims": 100,
-        "exercised": 42,
-        "verified": 0
+        "exercised": 59,
+        "verified": 17
       },
       {
         "prefix": "FLW",
@@ -101,8 +101,8 @@
         "ledger": "collections-a.md",
         "section": "Lists and collections: literals, mixed-type, nested, maps, type predicates",
         "claims": 82,
-        "exercised": 18,
-        "verified": 0
+        "exercised": 25,
+        "verified": 12
       },
       {
         "prefix": "VAL",
@@ -117,15 +117,15 @@
         "ledger": "collections-b.md",
         "section": "Collections: printing, properties, element access, appending, loop expansion with collections, but if, treating",
         "claims": 96,
-        "exercised": 35,
-        "verified": 0
+        "exercised": 48,
+        "verified": 5
       },
       {
         "prefix": "FMT",
         "ledger": "input-output.md",
         "section": "Input/Output: print, format strings, conditional print",
         "claims": 58,
-        "exercised": 33,
+        "exercised": 38,
         "verified": 0
       },
       {
@@ -133,32 +133,32 @@
         "ledger": "buffers.md",
         "section": "File I/O: buffers, object properties, buffer properties, resizing, byte access, append/copy",
         "claims": 61,
-        "exercised": 14,
-        "verified": 8
+        "exercised": 34,
+        "verified": 18
       },
       {
         "prefix": "FIL",
         "ledger": "files.md",
         "section": "File I/O: file/list/number properties, opening, reading, seeking, writing, closing, file operations, error handling, resource safety",
         "claims": 103,
-        "exercised": 36,
-        "verified": 17
+        "exercised": 53,
+        "verified": 24
       },
       {
         "prefix": "PRC",
         "ledger": "process-control.md",
         "section": "Directories, mounting, device nodes, symlinks, pivot_root, executing programs, process control, system control",
         "claims": 87,
-        "exercised": 0,
-        "verified": 0
+        "exercised": 29,
+        "verified": 23
       },
       {
         "prefix": "TIM",
         "ledger": "time.md",
         "section": "Time and timers",
         "claims": 60,
-        "exercised": 12,
-        "verified": 0
+        "exercised": 44,
+        "verified": 26
       },
       {
         "prefix": "ARG",
@@ -189,8 +189,8 @@
         "ledger": "keywords.md",
         "section": "Keywords: articles, starters, flag schema, connectors, and, reserved aliases, two classes of special word, contextual keywords",
         "claims": 88,
-        "exercised": 36,
-        "verified": 0
+        "exercised": 44,
+        "verified": 8
       },
       {
         "prefix": "EXA",
@@ -228,16 +228,20 @@
   },
   "probes": {
     "families": 27,
-    "leaves": 105,
+    "leaves": 228,
     "leafFiles": [
+      "src/gen_basics.vox",
       "src/gen_buffers.vox",
       "src/gen_collections.vox",
       "src/gen_core.vox",
+      "src/gen_expressions.vox",
       "src/gen_files.vox",
       "src/gen_flow.vox",
+      "src/gen_keywords.vox",
       "src/gen_literals.vox",
       "src/gen_manifest.vox",
       "src/gen_misc.vox",
+      "src/gen_process.vox",
       "src/gen_text.vox",
       "src/gen_things.vox"
     ]
@@ -407,16 +411,16 @@
     "total": 300
   },
   "register": {
-    "found": 112,
-    "fixed": 105,
-    "open": 1,
+    "found": 126,
+    "fixed": 106,
+    "open": 14,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
-    "voxFuzz": 36,
+    "voxFuzz": 53,
     "vox": {
-      "run": 675,
+      "run": 681,
       "compileFail": 324
     }
   }

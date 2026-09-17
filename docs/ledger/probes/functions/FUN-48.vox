@@ -1,5 +1,5 @@
 (FUN-48: a map-returning function that falls off its end hands back a
- real, usable empty map (LANGUAGE.md:2849-2855, 0.4.15, #112). Before
+ real, usable empty map (LANGUAGE.md:2875-2881, 0.4.15, #112). Before
  #112 this hung (CHANGELOG.md, Unreleased).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack FUN-48.vox -o p && ./p
  expected output:
