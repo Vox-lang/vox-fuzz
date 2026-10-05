@@ -476,7 +476,11 @@ To 'gen leaf map keys values fresh' with a text called indent and a boolean call
  missing key, a stale-flag drain before the first risky read - but a
  different claim: VAL-27 is "is nothing" versus "raises an error"; this
  is the provable/unprovable SPLIT and what each destination type
- actually receives. Reuses that leaf's naming idiom ('gen fresh noun' /
+ actually receives. Both missing keys come from 'the absent keys', which
+ is disjoint from 'the value nouns' the present keys come from, so a
+ "missing" read can never find the key the leaf has just set. Every
+ assertion prints the value it checked, interpolated when the program
+ runs, not the name of the variable that holds it. Reuses that leaf's naming idiom ('gen fresh noun' /
  'gen written name' / 'gen possessive name') rather than 'gen buffer
  name': a possessive built from an already-quoted companion name would
  double its closing quote (see 'gen buffer property's own comment), and
@@ -502,15 +506,15 @@ To 'gen leaf map missing key typed default' with a text called indent and a bool
     a text called 'the provable read' is "{indent}a number called {'the provable holder name'} is {'the provable possessive'} \"{'the provable missing key'}\".\n".
     'gen emit' of 'the provable read'.
     'gen emit' of "{indent}On error Set {'the provable witness name'} to 1.\n".
-    a text called 'the provable flag check' is "{indent}If {'the provable witness name'} is not 1 then, Print \"ASSERT LST-49: expected the provable missing read to raise the error flag got {'the provable witness name'}\", Exit 95.\n".
+    a text called 'the provable flag check' is "{indent}If {'the provable witness name'} is not 1 then, Print \"ASSERT LST-49: expected the provable missing read to raise the error flag got {{{'the provable witness name'}}}\", Exit 95.\n".
     'gen emit' of 'the provable flag check'.
-    a text called 'the provable value check' is "{indent}If {'the provable holder name'} is not 0 then, Print \"ASSERT LST-49: expected the provable missing read to be 0 got {'the provable holder name'}\", Exit 95.\n".
+    a text called 'the provable value check' is "{indent}If {'the provable holder name'} is not 0 then, Print \"ASSERT LST-49: expected the provable missing read to be 0 got {{{'the provable holder name'}}}\", Exit 95.\n".
     'gen emit' of 'the provable value check'.
     a text called 'the grown phrase' is 'gen fresh noun'.
     a text called 'the grown name' is 'gen written name' of 'the grown phrase'.
     a text called 'the grown possessive' is 'gen possessive name' of 'the grown phrase'.
     a text called 'the grown key' is 'gen noun other than' of 'the provable key'.
-    a text called 'the grown missing key' is 'gen noun other than' of 'the provable missing key'.
+    a text called 'the grown missing key' is 'gen word from' of 'the absent keys'.
     a number called 'the grown value' is 'rng below' of 1000.
     'gen emit' of "{indent}a map called {'the grown name'} is {{}}.\n".
     'gen emit' of "{indent}Set {'the grown possessive'} \"{'the grown key'}\" to {'the grown value'}.\n".
@@ -522,13 +526,13 @@ To 'gen leaf map missing key typed default' with a text called indent and a bool
     a text called 'the text read' is "{indent}a text called {'the text holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
     'gen emit' of 'the text read'.
     'gen emit' of "{indent}On error Set {'the text witness name'} to 1.\n".
-    a text called 'the text flag check' is "{indent}If {'the text witness name'} is not 1 then, Print \"ASSERT LST-49: expected the text-typed missing read to raise the error flag got {'the text witness name'}\", Exit 95.\n".
+    a text called 'the text flag check' is "{indent}If {'the text witness name'} is not 1 then, Print \"ASSERT LST-49: expected the text-typed missing read to raise the error flag got {{{'the text witness name'}}}\", Exit 95.\n".
     'gen emit' of 'the text flag check'.
     a text called 'the text view phrase' is 'gen fresh noun'.
     a text called 'the text view name' is 'gen written name' of 'the text view phrase'.
     a text called 'the text view possessive' is 'gen possessive name' of 'the text view phrase'.
     'gen emit' of "{indent}a buffer called {'the text view name'} is {'the text holder name'}.\n".
-    a text called 'the text size check' is "{indent}If {'the text view possessive'} size is not 0 then, Print \"ASSERT LST-49: expected the empty-text default to be 0 bytes got {'the text view possessive'} size\", Exit 95.\n".
+    a text called 'the text size check' is "{indent}If {'the text view possessive'} size is not 0 then, Print \"ASSERT LST-49: expected the empty-text default to be 0 bytes got {{{'the text view possessive'} size}}\", Exit 95.\n".
     'gen emit' of 'the text size check'.
     a text called 'the list holder phrase' is 'gen fresh noun'.
     a text called 'the list holder name' is 'gen written name' of 'the list holder phrase'.
@@ -539,9 +543,9 @@ To 'gen leaf map missing key typed default' with a text called indent and a bool
     a text called 'the list read' is "{indent}a list called {'the list holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
     'gen emit' of 'the list read'.
     'gen emit' of "{indent}On error Set {'the list witness name'} to 1.\n".
-    a text called 'the list flag check' is "{indent}If {'the list witness name'} is not 1 then, Print \"ASSERT LST-49: expected the list-typed missing read to raise the error flag got {'the list witness name'}\", Exit 95.\n".
+    a text called 'the list flag check' is "{indent}If {'the list witness name'} is not 1 then, Print \"ASSERT LST-49: expected the list-typed missing read to raise the error flag got {{{'the list witness name'}}}\", Exit 95.\n".
     'gen emit' of 'the list flag check'.
-    a text called 'the list size check' is "{indent}If {'the list holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-list default to have length 0 got {'the list holder possessive'} length\", Exit 95.\n".
+    a text called 'the list size check' is "{indent}If {'the list holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-list default to have length 0 got {{{'the list holder possessive'} length}}\", Exit 95.\n".
     'gen emit' of 'the list size check'.
     a text called 'the map holder phrase' is 'gen fresh noun'.
     a text called 'the map holder name' is 'gen written name' of 'the map holder phrase'.
@@ -552,9 +556,9 @@ To 'gen leaf map missing key typed default' with a text called indent and a bool
     a text called 'the map read' is "{indent}a map called {'the map holder name'} is {'the grown possessive'} \"{'the grown missing key'}\".\n".
     'gen emit' of 'the map read'.
     'gen emit' of "{indent}On error Set {'the map witness name'} to 1.\n".
-    a text called 'the map flag check' is "{indent}If {'the map witness name'} is not 1 then, Print \"ASSERT LST-49: expected the map-typed missing read to raise the error flag got {'the map witness name'}\", Exit 95.\n".
+    a text called 'the map flag check' is "{indent}If {'the map witness name'} is not 1 then, Print \"ASSERT LST-49: expected the map-typed missing read to raise the error flag got {{{'the map witness name'}}}\", Exit 95.\n".
     'gen emit' of 'the map flag check'.
-    a text called 'the map size check' is "{indent}If {'the map holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-map default to have length 0 got {'the map holder possessive'} length\", Exit 95.\n".
+    a text called 'the map size check' is "{indent}If {'the map holder possessive'} length is not 0 then, Print \"ASSERT LST-49: expected the empty-map default to have length 0 got {{{'the map holder possessive'} length}}\", Exit 95.\n".
     'gen emit' of 'the map size check'.
     'gen emit' of "{indent}Print {'the map holder name'}.\n".
 
@@ -1937,10 +1941,16 @@ To 'gen leaf value predicate' with a text called indent and a boolean called nes
     'gen emit' of 'the payload assertion'.
     'gen emit' of "{indent}Print {'the name'}.\n".
 
-(VAL-13 (LANGUAGE.md:2823-2833): a conversion that cannot succeed sets
- the error flag and leaves the variable as 0, and `On error` catches it.
- Both halves are asserted, because a runtime that silently left the text
- in place would still run the handler.)
+(VAL-13: an in-place retype of a `value` holding text that is not a
+ number raises the error flag, `On error` catches it, and the value keeps
+ its text and its text tag. The manual's Casting Rules and its in-place
+ retype paragraph both say so on vox main dfdfc7f ("A `value` retyped in
+ place (`answer is a number.`) keeps its text"; "A text that is not a
+ number leaves the variable as it was, with the error flag raised"). Up
+ to 0.4.15 the variable became 0 instead; this leaf asserted that until
+ the rule changed. All three halves are asserted - the handler, the tag
+ and the text - because a runtime that ran the handler could still have
+ overwritten the value.)
 
 To 'gen leaf value bad retype' with a text called indent and a boolean called nested.
     a number called 'the target' is 'rng below' of 2.
@@ -1962,8 +1972,11 @@ To 'gen leaf value bad retype' with a text called indent and a boolean called ne
     'gen emit' of 'the handler line'.
     a text called 'the handler assertion' is "{indent}If {'the witness name'} is not 1 then, Print \"ASSERT VAL-13: expected the error handler to run got {{{'the witness name'}}}\", Exit 95.\n".
     'gen emit' of 'the handler assertion'.
-    a text called 'the zero assertion' is "{indent}If {'the name'} is not 0 then, Print \"ASSERT VAL-13: expected 0 got {{{'the name'}}}\", Exit 95.\n".
-    'gen emit' of 'the zero assertion'.
+    a text called 'the possessive' is 'gen possessive name' of 'the phrase'.
+    a text called 'the tag assertion' is "{indent}If {'the name'} is not a text then, Print \"ASSERT VAL-13: expected the value to stay a text got {{{'the possessive'} type}}\", Exit 95.\n".
+    'gen emit' of 'the tag assertion'.
+    a text called 'the kept text assertion' is "{indent}If {'the name'} is not \"{'the nonsense'}\" then, Print \"ASSERT VAL-13: expected {'the nonsense'} got {{{'the name'}}}\", Exit 95.\n".
+    'gen emit' of 'the kept text assertion'.
     'gen emit' of "{indent}Print {'the name'}.\n".
 
 (The capitalised type word the `type` property reports, one per runtime

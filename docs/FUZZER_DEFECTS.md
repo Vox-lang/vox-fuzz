@@ -1443,11 +1443,17 @@ print the witness variable's NAME where they mean its value (`got token`,
 program prints a fixed word, not the flag it is checking. The same
 pattern is in the provable, list and map checks of this leaf.
 
-**Status:** Open: verified 2026-10-05; not fixed (the fuzzer is frozen;
-fix needs the owner's go-ahead). The fix is to draw the grown missing key
-from `'the absent keys'`, which is disjoint from `'the value nouns'` by
-design (as `'gen leaf absent key'` already does), and to emit the witness
-as `{{…}}` so the program interpolates it at run time.
+**Status:** **fixed** (2026-10-05). `'the grown missing key'` is now drawn
+from `'the absent keys'`, as `'gen leaf absent key'` does, so it can never
+equal `'the grown key'`, which comes from `'the value nouns'`; the two
+vocabularies share no word. Every assertion message in the leaf now
+interpolates the value it checked when the program runs (`got
+{'the figure'}` prints `got 0`), including the three size and length
+checks, which had printed `got <name>'s size` as fixed text. Verified by
+emitting the leaf for 40 seeds and running each program on vox main
+`dfdfc7f` (all pass), and by changing one missing key by hand to the key
+that was set, which exits 95 with `ASSERT LST-49: expected the
+text-typed missing read to raise the error flag got 0`.
 
 ## Defect 25: the depth-3 remap chain re-remaps, so 73 registered kinds cannot be drawn (2026-10-05)
 
@@ -1518,12 +1524,21 @@ lost. Every later draw on main has the same 73.
 - The invariant reports since then have never seen these leaves'
   vocabulary, so they cannot have flagged sameness in it.
 
-**Status:** Open: verified 2026-10-05; not fixed (the fuzzer is frozen;
-fix needs the owner's go-ahead). The fix is to keep the raw draw in its
-own variable (`a number called 'the raw draw' is 'rng below' of …`) and
-test that variable in every If, so that each remap really is bounded
-against the raw value. That changes which leaf every seed draws, so every
-golden that pins a generated program needs regenerating with it.
+**Status:** **fixed** (2026-10-05). `'gen statement'` now keeps the
+depth-3 draw in `'the raw draw'` and every remap If tests that raw value,
+bounded on both sides, and sets `kind` from it. The raw ranges are
+disjoint, so at most one If fires for any draw. The separate fold of raw
+45 to 49 onto 100 to 104, which ran after the chain and tested `kind`, now
+sits with the other depth-3 remaps and tests the raw draw too. No kind
+was renumbered. Running every raw value of the draw (`'rng below' of 229`)
+through the new code gives 229 distinct kinds, every registered kind
+except the parked 99, and no kind reached from two raw values. The draws
+at depths 2, 1 and 0 each have one remap and cannot move a value twice;
+the one kind they reach from two raw values is kind 1 at depths 2 and 1,
+which is the documented replacement for new-var (kind 18) below the top
+level. The comment above the draw is rewritten to say how it works.
+`tests/040_gen.expected` is regenerated, because the same seed now draws
+different leaves.
 
 ## Defect 26: EXP-94's rounding oracle caps only the whole part, so long literals still drift (2026-10-05)
 
@@ -1543,7 +1558,10 @@ declares `255269670110833.49`. float64 stores it as `255269670110833.5`
 computation agrees with the compiler, so this is a false wrong-value
 finding.
 
-**Status:** Open: verified 2026-10-05; not fixed (the fuzzer is frozen;
-fix needs the owner's go-ahead). The fix is to cap the whole part at 13
-digits, so that the whole part and the fraction together stay within 15
-significant digits.
+**Status:** **fixed** (2026-10-05). The whole part is capped at 13 digits,
+so the literal has at most 15 significant digits. A sweep of 4000 literals
+(two thirds of them at 13 whole digits, with fractions 00, 01, 48, 49, 50,
+51, 98, 99 and random ones) rounds exactly as the oracle predicts on vox
+0.4.15 and on vox main `dfdfc7f`. The retained probe
+`docs/ledger/probes/expressions/EXP-94-precision.vox` records the largest
+13-digit cases and the 17-digit literal above as the contrast.

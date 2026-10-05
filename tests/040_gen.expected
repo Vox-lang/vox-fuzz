@@ -115,36 +115,12 @@ a float called d4 is d1 divide d2.
 Print d4.
 a float called d5 is d1 add v2.
 Print d5.
-a timer called 'the dispatch note'.
-Begin 'the dispatch note'.
-Wait 106 milliseconds.
-a number called 'the shipping label' is 'the dispatch note's elapsed in milliseconds.
-If 'the dispatch note's running is false then, Print "ASSERT TIM-32: expected 1 got {'the dispatch note's running}", Exit 95. Print 'the dispatch note's running.
-If 'the shipping label' is less than 106 then, Print "ASSERT TIM-32: expected at least 106 got {'the shipping label'}", Exit 95. Print "TIM-32 ok".
-Wait 193 milliseconds.
-a number called 'the inbox' is 'the dispatch note's elapsed in milliseconds.
-If 'the inbox' is less than 'the shipping label' add 1 then, Print "ASSERT TIM-32: expected at least {'the shipping label' add 1} got {'the inbox'}", Exit 95. Print "TIM-32 ok".
-a map called 'the waybill' is {}.
-If 'the waybill's length is not 0 then, Print "ASSERT LST-46: expected 0 got {'the waybill's length}", Exit 95. Print 'the waybill's length.
-If 'the waybill's empty is false then, Print "ASSERT LST-46: expected 1 got {'the waybill's empty}", Exit 95. Print 'the waybill's empty.
-a map called 'cupboard' is {"the sachet": 814, "the answer given": 210}.
-If 'cupboard's length is not 2 then, Print "ASSERT LST-46: expected 2 got {'cupboard's length}", Exit 95. Print 'cupboard's length.
-If 'cupboard's empty then, Print "ASSERT LST-46: expected 0 got {'cupboard's empty}", Exit 95. Print 'cupboard's empty.
-a text called 'the postbag path' is "{annotation}/1seekinv".
-open a file for writing called 'the postbag' at 'the postbag path'.
-Write "s02mn384875dys" to 'the postbag'.
-Close 'the postbag'.
-open a file for reading called 'the postbag' at 'the postbag path'.
-a boolean called 'the postbag below floor errored' is false.
-Seek 'the postbag' to byte 0.
-On error Set 'the postbag below floor errored' to true.
-If 'the postbag below floor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'the postbag below floor errored'}", Exit 95. Print 'the postbag below floor errored'.
-Close 'the postbag'.
-open a file for reading called satchel at 2147483647.
-a boolean called 'satchel borrowed descriptor errored' is false.
-Seek satchel to byte 1.
-On error Set 'satchel borrowed descriptor errored' to true.
-If 'satchel borrowed descriptor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'satchel borrowed descriptor errored'}", Exit 95. Print 'satchel borrowed descriptor errored'.
+a text called 'the dispatch note path' is "{annotation}/1times".
+open a file for writing called 'the dispatch note' at 'the dispatch note path'.
+Write "kpdosy09lrogkiqtj7tcocs02mn384875dys2810" to 'the dispatch note'.
+If 'the dispatch note's modified is less than 1 then, Print "ASSERT FIL-05: expected at least 1 got {'the dispatch note's modified}", Exit 95. If 'the dispatch note's modified is greater than current time's unix then, Print "ASSERT FIL-05: expected at most {current time's unix} got {'the dispatch note's modified}", Exit 95. Print "FIL-05 in range".
+If 'the dispatch note's accessed is less than 1 then, Print "ASSERT FIL-06: expected at least 1 got {'the dispatch note's accessed}", Exit 95. If 'the dispatch note's accessed is greater than current time's unix then, Print "ASSERT FIL-06: expected at most {current time's unix} got {'the dispatch note's accessed}", Exit 95. Print "FIL-06 in range".
+Close 'the dispatch note'.
 a number called 'loading bay' is 0.
 (see pantry for details
 a note about the inbox
@@ -157,36 +133,78 @@ If 'loading bay' is not 2 then, Print "ASSERT BAS-12: expected 2 got {'loading b
 If v2 is greater than or equal to v1 then, Print v1 multiply v2. Otherwise, Print v2 minus v2.
 a list called l1 is [33, "mixed1", 49.6].
 For each w1 in l1, Print w1.
-a number called 'the message slip binary value' is 0b111111111111111111111111111111111111111111111111111111111111111.
-If 'the message slip binary value' is not 9223372036854775807 then, Print "ASSERT EXP-06: expected 9223372036854775807 got {'the message slip binary value'}", Exit 95. Print 'the message slip binary value'.
-a number called 'the envelope binary sum' is 'the message slip binary value' add 0b1000.
-If 'the envelope binary sum' is not -9223372036854775801 then, Print "ASSERT EXP-15: expected -9223372036854775801 got {'the envelope binary sum'}", Exit 95. Print 'the envelope binary sum'.
-a buffer called b1 is 43 bytes in size.
-Print byte 204 of b1.
-On error print "buffer read out of range".
-a text called 'pantry path' is "{annotation}/2neverclosed".
-open a file for writing called 'the tally sheet' at 'pantry path'.
-Write "ifkmpj4xccay0ajfswh0" to 'the tally sheet'.
-open a file for reading called 'notebook' at 'pantry path'.
-a buffer called pantry is 20 bytes in size.
-Read from 'notebook' into pantry.
-a text called 'pantry durable capture' is pantry as text.
-If pantry is not "ifkmpj4xccay0ajfswh0" then, Print "ASSERT FIL-89: expected ifkmpj4xccay0ajfswh0 got {'pantry durable capture'}", Exit 95. Print pantry.
-Close 'notebook'.
-a number called 'the manifest' is fork the process.
-If 'the manifest' is 0 then, Exit 48.
-Set reaped to reap any child process.
-a boolean called 'the manifest reap matched' is false.
-If reaped is 'the manifest' then, Set 'the manifest reap matched' to true.
-If 'the manifest reap matched' is false then, Print "ASSERT PRC-61: expected 1 got {'the manifest reap matched'}", Exit 95. Print 'the manifest reap matched'.
-a number called 'the manifest reproduced exit' is the reaped status divide 256 modulo 256.
-If 'the manifest reproduced exit' is not 48 then, Print "ASSERT PRC-60: expected 48 got {'the manifest reproduced exit'}", Exit 95. Print 'the manifest reproduced exit'.
-a text called 'the reaped' is "the landmark".
-If 'the reaped' is not "the landmark" then, Print "ASSERT PRC-60: expected the landmark got {'the reaped'}", Exit 95. Print 'the reaped'.
-a number called waiting is 5953776797.
-If waiting is not 5953776797 then, Print "ASSERT PRC-55: expected 5953776797 got {waiting}", Exit 95. Print waiting.
+a buffer called 'the message slip' is 14 bytes.
+append "8e0s0" to 'the message slip'.
+If 'the message slip's length is not 'the message slip's size then, Print "ASSERT BUF-11: expected {'the message slip's size} got {'the message slip's length}", Exit 95. Print 'the message slip's length.
+append "zkdv" to 'the message slip'.
+If 'the message slip's length is not 'the message slip's size then, Print "ASSERT BUF-11: expected {'the message slip's size} got {'the message slip's length}", Exit 95. Print 'the message slip's length.
+a map called 'the tally' is {"the receipt": 515}.
+a boolean called 'the slot' is false.
+On error Set 'the slot' to true.
+a number called result is 0.
+a number called 'the upshot' is 'the tally's "absent from the ledger".
+On error Set result to 1.
+If result is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got {result}", Exit 95.
+If 'the upshot' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got {'the upshot'}", Exit 95.
+a map called 'the numeral' is {}.
+Set 'the numeral's "the delivery" to 621.
+a number called guess is 0.
+a text called 'the freight' is 'the numeral's "never written down".
+On error Set guess to 1.
+If guess is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got {guess}", Exit 95.
+a buffer called carton is 'the freight'.
+If carton's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got {carton's size}", Exit 95.
+a number called 'the sachet' is 0.
+a list called 'the receipt' is 'the numeral's "never written down".
+On error Set 'the sachet' to 1.
+If 'the sachet' is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got {'the sachet'}", Exit 95.
+If 'the receipt's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got {'the receipt's length}", Exit 95.
+a number called 'the jar' is 0.
+a map called sample is 'the numeral's "never written down".
+On error Set 'the jar' to 1.
+If 'the jar' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got {'the jar'}", Exit 95.
+If sample's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got {sample's length}", Exit 95.
+Print sample.
+a number called 'the register hex value' is 0x42fdd2.
+If 'the register hex value' is not 4390354 then, Print "ASSERT EXP-05: expected 4390354 got {'the register hex value'}", Exit 95. Print 'the register hex value'.
+a number called 'the waybill hex sum' is 'the register hex value' add 0x8.
+If 'the waybill hex sum' is not 4390362 then, Print "ASSERT EXP-14: expected 4390362 got {'the waybill hex sum'}", Exit 95. Print 'the waybill hex sum'.
+a text called 'pantry missing path' is "{annotation}/2missing".
+a boolean called 'pantry found an error already pending' is false.
+On error Set 'pantry found an error already pending' to true.
+a boolean called 'pantry open failed' is false.
+open a file for reading called pantry at 'pantry missing path'.
+On error Set 'pantry open failed' to true.
+If 'pantry open failed' is false then, Print "ASSERT FIL-80: expected 1 got {'pantry open failed'}", Exit 95. Print 'pantry open failed'.
+a buffer called 'the envelope' is 33 bytes.
+append "qmqxpp4fm12kikkqh828r7il0r83" to 'the envelope'.
+a boolean called 'the envelope found an error already pending' is false.
+On error Set 'the envelope found an error already pending' to true.
+a boolean called 'the envelope write errored' is false.
+Set byte 30 of 'the envelope' to 185.
+On error Set 'the envelope write errored' to true.
+If 'the envelope write errored' then, Print "ASSERT BUF-29: expected 0 got {'the envelope write errored'}", Exit 95. Print 'the envelope write errored'.
+If 'the envelope's size is not 30 then, Print "ASSERT BUF-29: expected 30 got {'the envelope's size}", Exit 95. Print 'the envelope's size.
+a boolean called 'the envelope gap read errored' is false.
+a number called 'the envelope gap read' is byte 31 of 'the envelope'.
+On error Set 'the envelope gap read errored' to true.
+If 'the envelope gap read errored' is false then, Print "ASSERT BUF-30: expected 1 got {'the envelope gap read errored'}", Exit 95. Print 'the envelope gap read errored'.
+If 'the envelope gap read' is not 0 then, Print "ASSERT BUF-30: expected 0 got {'the envelope gap read'}", Exit 95. Print 'the envelope gap read'.
+a text called 'the crate' is "{annotation}/berth9".
+open a file for writing called 'the crate scribe' at 'the crate'.
+Write "uvbkgiw" to 'the crate scribe'.
+Close 'the crate scribe'.
+a boolean called 'the crate refused' is false.
+Remove the directory called "{annotation}/berth9".
+On error Set 'the crate refused' to true.
+If 'the crate refused' is false then, Print "ASSERT PRC-06: expected 1 got {'the crate refused'}", Exit 95. Print 'the crate refused'.
+If 'the crate' is not available then, Print "ASSERT PRC-06: expected available got missing", Exit 95. Print "the file is still there".
+open a file for reading called 'the crate reader' at 'the crate'.
+If 'the crate reader's size is not 7 then, Print "ASSERT PRC-06: expected 7 got {'the crate reader's size}", Exit 95. Print 'the crate reader's size.
+Close 'the crate reader'.
+Delete the file 'the crate'.
 open a file for reading called sin1 at "/dev/stdin".
-a buffer called sb1 is 45 bytes.
+a buffer called sb1 is 44 bytes.
 Read from sin1 into sb1.
 Print sb1's size.
 If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
@@ -194,8 +212,8 @@ a buffer called sc1 is 8 bytes.
 Read from sin1 into sc1.
 Print sc1's size.
 Close sin1.
-'the reckoning' of each q1s1 from 3 to 3 and each q1s2 from 0 to 1 and each q1s3 from 5 to 5 and each q1s4 from 5 to 5 and each q1s5 from 6 to 6 and each q1s6 from 2 to 3 and each q1s7 from 2 to 2 and each q1s8 from 1 to 1 and each q1s9 from 5 to 6.
+'the reckoning' of each q1s1 from 2 to 3 and each q1s2 from 0 to 0 and each q1s3 from 7 to 7 and each q1s4 from 5 to 6 and each q1s5 from 5 to 5 and each q1s6 from 2 to 2 and each q1s7 from 2 to 2 and each q1s8 from 6 to 6 and each q1s9 from 7 to 7.
 'the summed parts'.
-Exit 195.
+Terminate.
 
 reproducible: 1

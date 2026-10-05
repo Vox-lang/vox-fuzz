@@ -380,20 +380,24 @@ To 'gen leaf plural are expansion' with a text called indent and a boolean calle
  digits) - this leaf's own arithmetic runs out sooner because it does
  an ADD on top of the parse, not because the parse itself is wrong.
 
- Per the rework directive, this is not clamped back down to dodge the
- cliff: the whole part draws the FULL extreme span, INCLUDING past 14
- digits, and a run that lands there will assert-fail and be scored a
- `wrong-value` finding - a real, repeatable, understood-in-advance
- candidate, recorded in the report rather than engineered away. Probe:
- docs/ledger/probes/expressions/EXP-94.vox.)
+ The whole part first drew the FULL extreme span, so a run past 14
+ digits would assert-fail on purpose. TheJostler ruled that drift a
+ false alarm on 2026-08-30, and the body below caps the whole part so
+ the oracle stays inside float64's precision (see its own comment for
+ the cap and why it is 13). Probes:
+ docs/ledger/probes/expressions/EXP-94.vox and EXP-94-precision.vox.)
 
 To 'gen leaf round half up' with a text called indent and a boolean called nested.
-    (Master constraint 2026-08-30, owner ruled the float-cliff finding a false alarm:
-     the whole part of THIS float-rounding oracle is capped at 15 digits, inside float64's
-     exact-integer range (2^53). Still random-length and large, but the add-0.5-then-cast
-     oracle is now always-true instead of drifting past ~14 significant digits. Integer-context
+    (The whole part of THIS float-rounding oracle is capped at 13 digits, so the whole
+     part and the two fraction digits together stay within 15 significant digits, where
+     float64 holds every `<whole>.<two digits>` closely enough that adding 0.5 and casting
+     lands on the predicted side of the boundary. TheJostler ruled on 2026-08-30 that the
+     drift past that is float64 running out of mantissa bits, not a compiler fault. The
+     2026-08-30 cap of 15 counted only the whole part, so up to 17 significant digits still
+     reached the oracle and drifted (`255269670110833.49` is stored as `.5` and rounds up;
+     docs/FUZZER_DEFECTS.md Defect 26). Still random-length and large; integer-context
      extremes elsewhere keep the full i64 span - those are exact.)
-    a number called 'the whole digits' is 'rng below' of 15 add 1.
+    a number called 'the whole digits' is 'rng below' of 13 add 1.
     a text called 'the whole text' is 'gen random digits' of 'the whole digits'.
     a number called 'the whole part' is 'the whole text' as a number.
     a number called 'the fraction draw' is 'rng below' of 100.
@@ -497,22 +501,6 @@ To 'gen expr safe text' with a number called 'how many'.
         Set built to "{built}{'the char'}",
         Set i to i add 1.
     Return a text, built.
-
-(A digit-value LIST evaluated positionally - value = ((d1 * base) + d2)
- * base + d3 ... - the same rule EXP-83/84's own parser follows, so the
- leaf below computes its expected value by the identical accumulation
- rather than a separate formula that could drift from the parser's own.)
-
-To 'gen expr base value' with a number called base and a list called digits.
-    a number called value is 0.
-    a number called i is 0.
-    a number called 'how many' is digits's length.
-    While i is less than 'how many',
-        a number called 'the slot' is i add 1,
-        a number called d is element 'the slot' of digits,
-        Set value to value multiply base add d,
-        Set i to i add 1.
-    Return a number, value.
 
 (EXP-18: `the number` - the documented spelling of the `for each` loop
  iterator (LANGUAGE.md:1932) - referenced inside the loop body and
@@ -749,53 +737,65 @@ To 'gen leaf buffer text independent copy' with a text called indent and a boole
     a list called 'the lines' is ['the buffer decl', 'the kept decl', 'the clear line', 'the append line', 'the kept check', 'the after decl', 'the after check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(EXP-83, EXP-84: base-conversion parsing stops at the first character
- invalid for the chosen base rather than raising (LANGUAGE.md:2116-2118,
- the manual's own `"12g5" as a hex number` -> 18), and a numeral invalid
- from its very first character gives 0 (LANGUAGE.md:2118-2120) - the
- real gap `'gen leaf base conversion'` (gen_text.vox) never reaches,
- since every digit it emits is drawn from the chosen base's own
- alphabet on purpose. Neither row touches the D2 discrepancy (still
- open, blocked) - that one is about the ERROR FLAG; these two are about
- the VALUE, which both bullets agree on and hand-verification confirms.
- Base is drawn 2-35, never 36 (base 36 already spans the whole 0-9a-z
- alphabet, so no invalid digit would exist to append). The partial-parse
- half also appends one further trailing character after the invalid
- one, the same "g5" shape the manual's own example uses, to show
- parsing really stops rather than merely ending. The total-failure half
- sometimes draws the empty string instead (LANGUAGE.md's own `""` case,
- hand-verified 0 across four parse-form spellings including two
- non-default bases) rather than a string with an invalid first
- character - both are "zero characters consumed".)
+(EXP-83, EXP-84: a radix cast reads the WHOLE text as digits of its
+ base. Any character outside the base makes the text not a number in
+ that base: the error flag is raised, a `Set` leaves its destination as
+ it was, and a declaration holds 0 (vox main dfdfc7f: the radix cast
+ paragraph and the Casting Rules). Up to 0.4.15 the cast stopped
+ at the first invalid character and kept the prefix (`"12g5" as a hex
+ number` was 18); this leaf asserted that until the rule changed.
+
+ EXP-83 builds a text of valid digits with one invalid character and one
+ more character after it, the shape of the manual's own `"12g5"`, and
+ casts it with `Set` onto a number that already holds a drawn value. It
+ asserts both halves: the flag was raised, and the number still holds
+ its old value. The old value is drawn from 1 up, so a runtime that
+ stored 0 cannot pass by coincidence. A lone valid `0` followed by its
+ base's own prefix letter (`0x` for 16, `0o` for 8, `0b` for 2) would
+ make a valid prefixed numeral, so that one case swaps the `0` for a
+ `1`. EXP-84 casts a text invalid from its first character, or the
+ empty string, in a declaration, and asserts the declared number is 0.
+ Base is drawn 2-35, never 36 (base 36 spans the whole 0-9a-z alphabet,
+ so no invalid digit would exist).)
 
 To 'gen leaf base conversion partial and total parse' with a text called indent and a boolean called nested.
     a number called 'the base' is 'rng below' of 34 add 2.
     a number called 'the valid count' is 'rng below' of 6 add 1.
-    a list called 'the valid digit values' is [].
     a text called 'the valid text' is "".
     a number called 'the position' is 0.
     While 'the position' is less than 'the valid count',
         a number called 'the digit value' is 'rng below' of 'the base',
         a text called 'the digit char' is 'gen digit for value' of 'the digit value',
-        append 'the digit value' to 'the valid digit values',
         Set 'the valid text' to "{'the valid text'}{'the digit char'}",
         Set 'the position' to 'the position' add 1.
     a number called 'the invalid span' is 36 minus 'the base'.
     a number called 'the invalid offset' is 'rng below' of 'the invalid span'.
     a number called 'the invalid value' is 'the base' add 'the invalid offset'.
     a text called 'the invalid char' is 'gen digit for value' of 'the invalid value'.
+    If 'the valid text' is equal to "0" and 'the base' is 16 and 'the invalid char' is equal to "x" then,
+        Set 'the valid text' to "1".
+    If 'the valid text' is equal to "0" and 'the base' is 8 and 'the invalid char' is equal to "o" then,
+        Set 'the valid text' to "1".
+    If 'the valid text' is equal to "0" and 'the base' is 2 and 'the invalid char' is equal to "b" then,
+        Set 'the valid text' to "1".
     a number called 'the trailing value' is 'rng below' of 36.
     a text called 'the trailing char' is 'gen digit for value' of 'the trailing value'.
     a text called 'the partial text' is "{'the valid text'}{'the invalid char'}{'the trailing char'}".
-    a number called 'the partial expected' is 'gen expr base value' of 'the base' and 'the valid digit values'.
+    a number called 'the old value' is 'rng below' of 1000 add 1.
     a text called 'the partial parse form' is 'gen pick parse form' of 'the base'.
     'gen buffer name'.
     a text called 'the partial text name' is 'gen buffer companion' of "partial numeral".
     a text called 'the partial decl' is "a text called {'the partial text name'} is \"{'the partial text'}\"".
     'gen buffer name'.
     a text called 'the partial result name' is 'gen buffer companion' of "partial value".
-    a text called 'the partial conv' is "a number called {'the partial result name'} is {'the partial text name'} {'the partial parse form'}".
-    a text called 'the partial check' is 'gen assert number is' of "EXP-83" and 'the partial result name' and 'the partial expected'.
+    a text called 'the partial result decl' is "a number called {'the partial result name'} is {'the old value'}".
+    'gen buffer name'.
+    a text called 'the partial flag name' is 'gen buffer companion' of "partial flag".
+    a text called 'the partial flag decl' is "a number called {'the partial flag name'} is 0".
+    a text called 'the partial conv' is "Set {'the partial result name'} to {'the partial text name'} {'the partial parse form'}".
+    a text called 'the partial handler' is "On error Set {'the partial flag name'} to 1".
+    a text called 'the partial flag check' is 'gen assert number is' of "EXP-83" and 'the partial flag name' and 1.
+    a text called 'the partial check' is 'gen assert number is' of "EXP-83" and 'the partial result name' and 'the old value'.
     a number called 'the total base' is 'rng below' of 34 add 2.
     a number called 'the empty draw' is 'rng below' of 3.
     a text called 'the total text' is "".
@@ -815,5 +815,5 @@ To 'gen leaf base conversion partial and total parse' with a text called indent 
     a text called 'the total result name' is 'gen buffer companion' of "total failure value".
     a text called 'the total conv' is "a number called {'the total result name'} is {'the total text name'} {'the total parse form'}".
     a text called 'the total check' is 'gen assert number is' of "EXP-84" and 'the total result name' and 0.
-    a list called 'the lines' is ['the partial decl', 'the partial conv', 'the partial check', 'the total decl', 'the total conv', 'the total check'].
+    a list called 'the lines' is ['the partial decl', 'the partial result decl', 'the partial flag decl', 'the partial conv', 'the partial handler', 'the partial flag check', 'the partial check', 'the total decl', 'the total conv', 'the total check'].
     'gen join lines' of indent and nested and 'the lines'.

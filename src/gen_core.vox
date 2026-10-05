@@ -1330,104 +1330,99 @@ To 'gen body' with a number called depth and a text called indent.
 
 To 'gen statement' with a number called depth and a text called indent and a boolean called 'avoid onerror'.
     a number called kind is 0.
+    a number called 'the raw draw' is 0.
     If depth is equal to 3 then,
-        (0..44: the four format leaves are 39-42. The file-write leaf
-         is parked at 99, outside the draw, so no number in this range
-         dispatches to nothing. 45..49 are the five reserved-span
-         buffer leaves, remapped to 100..104 just below.
-         50..64 are drawn as one contiguous span with the rest and then
-         shifted into the collections surface's reserved 140-154 band -
-         the fifteen `value` leaves. The shift keeps a single flat draw
-         (so the existing kinds' odds move by exactly the new ones'
-         share, and no seed's leaf choice depends on where a band
-         happens to sit) while leaving the band numbers themselves
-         where the reservation table put them, out of the way of the
-         other surfaces' parallel work.
-         65..69 are five more reserved-span buffer leaves (batch A,
-         2026-08-28), remapped to 105..109 just below, the same way
-         45..49 remap to 100..104 - a second, later span rather than a
-         wider first one, so this line's own arithmetic (0..64) and the
-         values band's (50..64, add 90) stay exactly as another
-         worker's parallel edit here would find them; only the upper
-         bound below is new.)
-        (Merged by the master, 2026-08-29: four batches each widened this
-         draw by their own span tonight; one draw of 97 with one remap per
-         reserved span keeps every leaf reachable and no raw value remapped
-         twice - each If tests the RAW draw range, and every remapped value
-         lands above 100, outside every later test.)
-        (Salvaged onto main by the master, 2026-09-01: parked delta batches, one draw
-         of 216; raw 187..215 remap to the spans below - each If tests the RAW
-         value, bounded both sides; the master derived every span from the kinds
-         each batch actually registered.)
-        (Files batch C and process batch C, 2026-10-05, each widened this
-         draw by their own leaf count; one draw of 229 is the previous 210
-         plus 11 + 8. Raw 210..220 go to the files kinds 400..410
-         and raw 221..228 to the process kinds 420..427. These two remaps sit
-         FIRST, straight after the draw, because the Ifs below run in turn
-         and some of them leave kind inside 210..228 (raw 116 becomes 220),
-         so only here does an If see the raw value. Both land above 400,
-         past every bound below.)
-        Set kind to 'rng below' of 229.
-        If kind is greater than 209 and kind is less than 221 then,
-            Set kind to kind add 190.
-        If kind is greater than 220 and kind is less than 229 then,
-            Set kind to kind add 199.
-        If kind is greater than 49 and kind is less than 65 then,
-            Set kind to kind add 90.
-        If kind is greater than 64 and kind is less than 70 then,
-            Set kind to kind add 40.
-        If kind is greater than 69 and kind is less than 72 then,
-            Set kind to kind add 50.
-        If kind is greater than 71 and kind is less than 77 then,
-            Set kind to kind add 108.
-        If kind is greater than 76 and kind is less than 82 then,
-            Set kind to kind add 123.
-        If kind is greater than 81 and kind is less than 89 then,
-            Set kind to kind add 40.
-        If kind is greater than 88 and kind is less than 97 then,
-            Set kind to kind add 96.
-        If kind is greater than 96 and kind is less than 104 then,
-            Set kind to kind add 13.
-        If kind is greater than 103 and kind is less than 107 then,
-            Set kind to kind add 51.
-        If kind is greater than 106 and kind is less than 112 then,
-            Set kind to kind add 53.
-        If kind is greater than 111 and kind is less than 115 then,
-            Set kind to kind add 81.
-        If kind is greater than 114 and kind is less than 116 then,
-            Set kind to kind add 83.
-        If kind is greater than 115 and kind is less than 118 then,
-            Set kind to kind add 104.
-        If kind is greater than 117 and kind is less than 125 then,
-            Set kind to kind add 11.
-        If kind is greater than 124 and kind is less than 135 then,
-            Set kind to kind add 97.
-        If kind is greater than 134 and kind is less than 144 then,
-            Set kind to kind add 105.
-        If kind is greater than 143 and kind is less than 145 then,
-            Set kind to kind add 116.
-        If kind is greater than 144 and kind is less than 152 then,
-            Set kind to kind add 117.
-        If kind is greater than 151 and kind is less than 161 then,
-            Set kind to kind add 97.
-        If kind is greater than 160 and kind is less than 170 then,
-            Set kind to kind add 119.
-        If kind is greater than 169 and kind is less than 177 then,
-            Set kind to kind add 130.
-        If kind is greater than 176 and kind is less than 187 then,
-            Set kind to kind add 133.
-        If kind is greater than 186 and kind is less than 188 then,
-            Set kind to kind add 82.
-        If kind is greater than 187 and kind is less than 193 then,
-            Set kind to kind add 142.
-        If kind is greater than 192 and kind is less than 199 then,
-            Set kind to kind add 147.
-        If kind is greater than 198 and kind is less than 201 then,
-            Set kind to kind add 151.
-        If kind is greater than 200 and kind is less than 203 then,
-            Set kind to kind add 152.
-        If kind is greater than 202 and kind is less than 210 then,
-            Set kind to kind add 157.
+        (The depth-3 draw is one flat 'rng below' of 229, kept in 'the raw
+         draw', and every remap below tests that raw value, bounded on both
+         sides. The raw ranges are disjoint, so at most one If fires for any
+         draw and the order of the Ifs does not matter. 'the raw draw' is
+         declared at the top of the function because this If ends at its
+         own period: the remaps below are sentences of their own, and at
+         the other depths the raw draw stays 0, which no remap tests for.
+
+         Raw 0..44 are the leaves numbered 0..44 and dispatch as drawn; the
+         four format leaves are 39-42. The file-write leaf is parked at 99,
+         outside the draw, so no raw value reaches it and none dispatches
+         to nothing. Raw 45..228 are folded onto each surface's reserved
+         kind span (the reservation note above 'gen dispatch leaf'), so a
+         leaf keeps its kind number for good while the draw stays one
+         contiguous range: raw 45..49 go to the buffer kinds 100..104, raw
+         50..64 to the `value` band 140..154, and so on down the list, up
+         to raw 210..220 to the files kinds 400..410 and raw 221..228 to
+         the process kinds 420..427. A surface that adds leaves widens the
+         draw by its own count and adds one bounded remap for its span.
+
+         Every remap tests the raw draw, never `kind`. From 2026-09-01 to
+         2026-10-05 these Ifs tested `kind`, so a value one If had moved
+         into a later If's range was moved again (raw 50 went to 140 and
+         then to 245), and 73 registered kinds, the whole `value` band
+         among them, could not be drawn at all; docs/FUZZER_DEFECTS.md
+         Defect 25 has the proof. A remap added here tests 'the raw draw'
+         like the rest.)
+        Set 'the raw draw' to 'rng below' of 229,
+        Set kind to 'the raw draw'.
+        If 'the raw draw' is greater than 209 and 'the raw draw' is less than 221 then,
+            Set kind to 'the raw draw' add 190.
+        If 'the raw draw' is greater than 220 and 'the raw draw' is less than 229 then,
+            Set kind to 'the raw draw' add 199.
+        If 'the raw draw' is greater than 44 and 'the raw draw' is less than 50 then,
+            Set kind to 'the raw draw' add 55.
+        If 'the raw draw' is greater than 49 and 'the raw draw' is less than 65 then,
+            Set kind to 'the raw draw' add 90.
+        If 'the raw draw' is greater than 64 and 'the raw draw' is less than 70 then,
+            Set kind to 'the raw draw' add 40.
+        If 'the raw draw' is greater than 69 and 'the raw draw' is less than 72 then,
+            Set kind to 'the raw draw' add 50.
+        If 'the raw draw' is greater than 71 and 'the raw draw' is less than 77 then,
+            Set kind to 'the raw draw' add 108.
+        If 'the raw draw' is greater than 76 and 'the raw draw' is less than 82 then,
+            Set kind to 'the raw draw' add 123.
+        If 'the raw draw' is greater than 81 and 'the raw draw' is less than 89 then,
+            Set kind to 'the raw draw' add 40.
+        If 'the raw draw' is greater than 88 and 'the raw draw' is less than 97 then,
+            Set kind to 'the raw draw' add 96.
+        If 'the raw draw' is greater than 96 and 'the raw draw' is less than 104 then,
+            Set kind to 'the raw draw' add 13.
+        If 'the raw draw' is greater than 103 and 'the raw draw' is less than 107 then,
+            Set kind to 'the raw draw' add 51.
+        If 'the raw draw' is greater than 106 and 'the raw draw' is less than 112 then,
+            Set kind to 'the raw draw' add 53.
+        If 'the raw draw' is greater than 111 and 'the raw draw' is less than 115 then,
+            Set kind to 'the raw draw' add 81.
+        If 'the raw draw' is greater than 114 and 'the raw draw' is less than 116 then,
+            Set kind to 'the raw draw' add 83.
+        If 'the raw draw' is greater than 115 and 'the raw draw' is less than 118 then,
+            Set kind to 'the raw draw' add 104.
+        If 'the raw draw' is greater than 117 and 'the raw draw' is less than 125 then,
+            Set kind to 'the raw draw' add 11.
+        If 'the raw draw' is greater than 124 and 'the raw draw' is less than 135 then,
+            Set kind to 'the raw draw' add 97.
+        If 'the raw draw' is greater than 134 and 'the raw draw' is less than 144 then,
+            Set kind to 'the raw draw' add 105.
+        If 'the raw draw' is greater than 143 and 'the raw draw' is less than 145 then,
+            Set kind to 'the raw draw' add 116.
+        If 'the raw draw' is greater than 144 and 'the raw draw' is less than 152 then,
+            Set kind to 'the raw draw' add 117.
+        If 'the raw draw' is greater than 151 and 'the raw draw' is less than 161 then,
+            Set kind to 'the raw draw' add 97.
+        If 'the raw draw' is greater than 160 and 'the raw draw' is less than 170 then,
+            Set kind to 'the raw draw' add 119.
+        If 'the raw draw' is greater than 169 and 'the raw draw' is less than 177 then,
+            Set kind to 'the raw draw' add 130.
+        If 'the raw draw' is greater than 176 and 'the raw draw' is less than 187 then,
+            Set kind to 'the raw draw' add 133.
+        If 'the raw draw' is greater than 186 and 'the raw draw' is less than 188 then,
+            Set kind to 'the raw draw' add 82.
+        If 'the raw draw' is greater than 187 and 'the raw draw' is less than 193 then,
+            Set kind to 'the raw draw' add 142.
+        If 'the raw draw' is greater than 192 and 'the raw draw' is less than 199 then,
+            Set kind to 'the raw draw' add 147.
+        If 'the raw draw' is greater than 198 and 'the raw draw' is less than 201 then,
+            Set kind to 'the raw draw' add 151.
+        If 'the raw draw' is greater than 200 and 'the raw draw' is less than 203 then,
+            Set kind to 'the raw draw' add 152.
+        If 'the raw draw' is greater than 202 and 'the raw draw' is less than 210 then,
+            Set kind to 'the raw draw' add 157.
     If depth is equal to 2 then,
         Set kind to 'rng below' of 32.
     If depth is equal to 1 then,
@@ -1445,12 +1440,10 @@ To 'gen statement' with a number called depth and a text called indent and a boo
      Deeper positions get fewer of them, on the same rule the pre-existing
      bands follow: 103 (a While) and 104 (an On error, plus real file I/O)
      are top-level-only, exactly like 'gen leaf while' and 'gen leaf file
-     round trip', so only depth 3 reaches past 102. The upper bound below
-     (kind less than 50) keeps this remap off the value band, which has
-     already been shifted to 140-154 by the time this runs - without it
-     a value kind would be greater than 44 twice over and land past 154.)
-    If depth is equal to 3 and kind is greater than 44 and kind is less than 50 then,
-        Set kind to kind add 55.
+     round trip', so only depth 3 reaches past 102. Depth 3's own fold
+     (raw 45..49 onto 100..104) sits with the other depth-3 remaps above
+     and tests the raw draw like them. Each depth below has one remap,
+     drawn and tested once, so none of them can move a value twice.)
     If depth is equal to 2 and kind is greater than 28 then,
         Set kind to kind add 71.
     If depth is equal to 1 and kind is greater than 28 then,

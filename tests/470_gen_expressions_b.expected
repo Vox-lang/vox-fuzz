@@ -90,26 +90,34 @@ a text called 'the waybill after snapshot' is 'the dispatch note' as text.
 If 'the waybill after snapshot' is not "YRW8" then, Print "ASSERT EXP-73: expected YRW8 got {'the waybill after snapshot'}", Exit 95. Print 'the waybill after snapshot'.
 
 --- EXP-83, EXP-84: base-conversion partial parse, and total failure from a non-empty invalid string ---
-a text called 'the tray partial numeral' is "213035ox".
-a number called 'the inbox partial value' is 'the tray partial numeral' as a base 6 number.
-If 'the inbox partial value' is not 17519 then, Print "ASSERT EXP-83: expected 17519 got {'the inbox partial value'}", Exit 95. Print 'the inbox partial value'.
-a text called 'pantry total failure numeral' is "gh".
-a number called 'the crate total failure value' is 'pantry total failure numeral' as a base 10 number.
-If 'the crate total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'the crate total failure value'}", Exit 95. Print 'the crate total failure value'.
+a text called 'satchel partial numeral' is "213035ox".
+a number called 'scratch partial value' is 472.
+a number called 'the waybill partial flag' is 0.
+Set 'scratch partial value' to 'satchel partial numeral' as a base 6 number.
+On error Set 'the waybill partial flag' to 1.
+If 'the waybill partial flag' is not 1 then, Print "ASSERT EXP-83: expected 1 got {'the waybill partial flag'}", Exit 95. Print 'the waybill partial flag'.
+If 'scratch partial value' is not 472 then, Print "ASSERT EXP-83: expected 472 got {'scratch partial value'}", Exit 95. Print 'scratch partial value'.
+a text called 'toolbox total failure numeral' is "s9".
+a number called 'the mailbag total failure value' is 'toolbox total failure numeral' as a base 18 number.
+If 'the mailbag total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'the mailbag total failure value'}", Exit 95. Print 'the mailbag total failure value'.
 
 --- the same leaf, a seed whose total-failure numeral is the empty string ---
-a text called 'the drawer partial numeral' is "838wt".
-a number called 'the pigeonhole partial value' is 'the drawer partial numeral' as a base 24 number.
-If 'the pigeonhole partial value' is not 4688 then, Print "ASSERT EXP-83: expected 4688 got {'the pigeonhole partial value'}", Exit 95. Print 'the pigeonhole partial value'.
-a text called 'the tally sheet total failure numeral' is "".
-a number called 'ledger total failure value' is 'the tally sheet total failure numeral' as a base 12 number.
-If 'ledger total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'ledger total failure value'}", Exit 95. Print 'ledger total failure value'.
+a text called 'the message slip partial numeral' is "838wt".
+a number called 'the inbox partial value' is 467.
+a number called 'the greeting partial flag' is 0.
+Set 'the inbox partial value' to 'the message slip partial numeral' as a base24 number.
+On error Set 'the greeting partial flag' to 1.
+If 'the greeting partial flag' is not 1 then, Print "ASSERT EXP-83: expected 1 got {'the greeting partial flag'}", Exit 95. Print 'the greeting partial flag'.
+If 'the inbox partial value' is not 467 then, Print "ASSERT EXP-83: expected 467 got {'the inbox partial value'}", Exit 95. Print 'the inbox partial value'.
+a text called 'loading bay total failure numeral' is "zs".
+a number called 'the pallet total failure value' is 'loading bay total failure numeral' as a base 35 number.
+If 'the pallet total failure value' is not 0 then, Print "ASSERT EXP-84: expected 0 got {'the pallet total failure value'}", Exit 95. Print 'the pallet total failure value'.
 
 --- registration reachable: kinds 360-366 all dispatch without error ---
-kind 360: 349 bytes emitted
-kind 361: 800 bytes emitted
+kind 360: 305 bytes emitted
+kind 361: 787 bytes emitted
 kind 362: 393 bytes emitted
-kind 363: 728 bytes emitted
-kind 364: 452 bytes emitted
-kind 365: 619 bytes emitted
-kind 366: 696 bytes emitted
+kind 363: 712 bytes emitted
+kind 364: 484 bytes emitted
+kind 365: 639 bytes emitted
+kind 366: 906 bytes emitted

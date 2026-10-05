@@ -72,9 +72,9 @@ If 'the waybill witness' is true and 'outgoing post witness' is true then, Set '
 If 'the postbag plural result' is not 'the postbag expanded result' then, Print "ASSERT EXP-51: expected the plural are-form and the written-out conjunction to agree", Exit 95. Print 'the postbag plural result'.
 
 --- EXP-94: round half up, fraction below .50 (truncates down) ---
-a float called 'the dispatch note reading' is 232641478.50.
-a number called 'cupboard rounded reading' is {'the dispatch note reading' add 0.5} as a number.
-If 'cupboard rounded reading' is not 232641479 then, Print "ASSERT EXP-94: expected 232641479 got {'cupboard rounded reading'}", Exit 95. Print 'cupboard rounded reading'.
+a float called 'cupboard reading' is 23264147.86.
+a number called 'the dispatch note rounded reading' is {'cupboard reading' add 0.5} as a number.
+If 'the dispatch note rounded reading' is not 23264148 then, Print "ASSERT EXP-94: expected 23264148 got {'the dispatch note rounded reading'}", Exit 95. Print 'the dispatch note rounded reading'.
 
 --- the same leaf, a seed with fraction at or above .50 (rounds up) ---
 a float called 'notebook reading' is 7.31.
