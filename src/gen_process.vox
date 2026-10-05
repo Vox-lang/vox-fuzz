@@ -138,60 +138,6 @@ To 'gen leaf process directory create' with a text called indent and a boolean c
     a list called 'the lines' is ['the path line', 'the create line', 'the assert line', 'the cleanup line'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(PRC-06, PRC-07, PRC-08: `Remove the directory called '<path>'.` /
- `Delete the directory "<path>".` both perform rmdir(2)
- (LANGUAGE.md:4243-4244); `Remove`/`Delete`, `the` and `called` are each
- independently optional - all eight combinations (2 verbs x 2 articles x
- 2 called-words) hand-verified this session to compile and behave
- identically, four of them matching the retained PRC-06 probe. PRC-09
- (undocumented precision - rmdir(2)'s own semantics, not a sentence in
- the manual): the removal is not recursive, so removing a directory
- that still holds a child fails, the child survives, and only emptying
- it first lets the removal succeed. Confined to the per-run scratch
- directory; stands aside the same way as the create leaf above.)
-To 'gen leaf process directory remove' with a text called indent and a boolean called nested.
-    If gen_does_file_io is false then,
-        'gen leaf print' of indent,
-        Return a boolean, false.
-    If gen_scratch_flag is empty then,
-        Print "PROBE PRC-06: gen_does_file_io true but gen_scratch_flag unbound",
-        'gen leaf print' of indent,
-        Return a boolean, false.
-    Set gen_file_ios to gen_file_ios add 1.
-    a text called 'the outer name' is 'gen process witness'.
-    a number called 'the outer number' is gen_buffer_names.
-    a text called 'the outer line' is "a text called {'the outer name'} is \"{{{gen_scratch_flag}}}/procouter{'the outer number'}\"".
-    a text called 'the inner name' is 'gen buffer companion' of "inner path".
-    a text called 'the inner line' is "a text called {'the inner name'} is \"{{{gen_scratch_flag}}}/procouter{'the outer number'}/inner\"".
-    a text called 'the make outer' is "Create a directory called {'the outer name'}".
-    a text called 'the make inner' is "Create a directory called {'the inner name'}".
-    a text called 'the refused' is 'gen buffer companion' of "refused".
-    a text called 'the refused init' is "a boolean called {'the refused'} is false".
-    a number called 'the failing verb draw' is 'rng below' of 2.
-    a text called 'the failing remove' is "Remove the directory called {'the outer name'}".
-    If 'the failing verb draw' is 1 then,
-        Set 'the failing remove' to "Delete the directory called {'the outer name'}".
-    a text called 'the refused handler' is "On error Set {'the refused'} to true".
-    a text called 'the refused assert' is 'gen assert true' of "PRC-09" and 'the refused'.
-    a text called 'the survive assert' is "If {'the inner name'} is not available then, Print \"ASSERT PRC-09: expected available got missing\", Exit 95. Print \"survived\"".
-    a number called 'the cleanup verb draw' is 'rng below' of 2.
-    a number called 'the article draw' is 'rng below' of 2.
-    a number called 'the called draw' is 'rng below' of 2.
-    a text called 'the verb' is "Remove".
-    If 'the cleanup verb draw' is 1 then,
-        Set 'the verb' to "Delete".
-    a text called 'the article' is "".
-    If 'the article draw' is 1 then,
-        Set 'the article' to "the ".
-    a text called 'the called word' is "".
-    If 'the called draw' is 1 then,
-        Set 'the called word' to "called ".
-    a text called 'the empty inner' is "{'the verb'} {'the article'}directory {'the called word'}{'the inner name'}".
-    a text called 'the empty outer' is "{'the verb'} {'the article'}directory {'the called word'}{'the outer name'}".
-    a text called 'the gone assert' is "If {'the outer name'} is not available then, Print \"ASSERT PRC-08: expected missing got available\", Exit 95. Print \"removed\"".
-    a list called 'the lines' is ['the outer line', 'the inner line', 'the make outer', 'the make inner', 'the refused init', 'the failing remove', 'the refused handler', 'the refused assert', 'the survive assert', 'the empty inner', 'the empty outer', 'the gone assert'].
-    'gen join lines' of indent and nested and 'the lines'.
-
 (PRC-12, PRC-13, PRC-21: `Mount "<source>" at "<target>" with type
  "<fstype>" [with options "<options>"].` lowers directly to mount(2)
  (LANGUAGE.md:4261-4264); the `with options` clause is optional
@@ -530,9 +476,9 @@ To 'gen leaf process system control refusal' with a text called indent and a boo
 (Process leaves, batch B (2026-08-31), kinds 350-359 - the SECOND
  reservation for this surface, docs/ledger/process-control.md. The
  260-279 block above is process batch A's; this batch opens a NEW block
- rather than filling that one's two remaining spares (261, 269 was
- spare and is now claimed by the fix above) because the surface brief
- reserved a fresh RAW span for it - see 'gen statement's own remap
+ rather than filling that one's remaining spare (269, since claimed by
+ the fix above) because a fresh RAW span was
+ reserved for it - see 'gen statement's own remap
  comment in gen_core.vox for the raw span this batch widened the draw
  by. Same safety posture as batch A's leaves in this file: Execute stays
  limited to the fixed /usr/bin/true / /usr/bin/false allowlist, `Send
@@ -861,4 +807,783 @@ To 'gen leaf process empty path refusal' with a text called indent and a boolean
     If 'the construct draw' is 2 then,
         Set 'the statement' to "Create symbolic link from \"\" to \"\"".
     a list called 'the lines' is ['the flag init', 'the statement', 'the handler', 'the assert line', 'the continued'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Process leaves, batch C (2026-10-05), kinds 420-427 - the THIRD
+ reservation for this surface, docs/ledger/process-control.md rows
+ PRC-06 to 10, 14 to 20 and 22 to 24. Same safety posture as batches A
+ and B. TheJostler ruled (see also PROCEDURE.md sect.6) that mount,
+ unmount and device-node creation are SAFE TO EMIT because the kernel refuses each of them to an
+ unprivileged process before it acts - hand-verified this batch with
+ strace on the installed 0.4.15: every one lowers to a single plain
+ mount(2), umount2(2) or mknod(2) and returns EPERM, so none can wait
+ on an interactive authorisation the way `Shutdown` was seen to (none
+ of these leaves emits `Shutdown`). Every path lives under the
+ program's own scratch directory; the one successful `Change directory`
+ runs only inside a forked child, which this leaf reaps, so no sibling
+ leaf's scratch-relative path ever moves; and the device-node type is
+ only ever "c" or "b" - never "p", which creates a real FIFO with no
+ privilege at all (Discrepancy 1), and which tests/200_never_emitted.vox
+ now guards against in place of its old blanket device-node needle.)
+
+(The last part of a scratch path in this batch - a place, so a path
+ reads as somewhere a directory could stand. Nothing in the manual
+ constrains a path component, so the word is drawn; the per-program
+ counter appended after it is what keeps two paths from colliding.)
+a list called gen_process_place_words is ["harbour", "quay", "jetty", "berth", "wharf", "landing", "dock", "pier", "mooring", "haven", "cove", "inlet", "boathouse", "lock", "weir", "sluice", "staithe", "hithe", "basin", "marina"].
+
+(A run of DISTINCT places for a leaf that names several paths at once:
+ a random starting point, then consecutive words, so no two paths in
+ the same leaf can draw the same word and declare the same variable
+ twice.)
+To 'gen process places' with a number called 'how many'.
+    a number called 'the word count' is gen_process_place_words's length.
+    a number called 'the start' is 'rng below' of 'the word count'.
+    a list called 'the places' is [].
+    a number called 'the position' is 0.
+    While 'the position' is less than 'how many',
+        a number called 'the slot' is {'the start' add 'the position'} modulo 'the word count' add 1,
+        a text called 'the place' is element 'the slot' of gen_process_place_words,
+        append 'the place' to 'the places',
+        Set 'the position' to 'the position' add 1.
+    Return a list, 'the places'.
+
+(Whether a path statement names its path through the variable holding
+ it or spells the path again as a format-string literal. The manual
+ shows both (LANGUAGE.md:4234-4236 literals, 4241 a `'<path>'`
+ variable) and both were hand-verified this batch for directories,
+ mount, unmount and device nodes; neither is canonical, so it is drawn.)
+To 'gen process path operand' with a text called 'the variable' and a text called 'the literal'.
+    a number called 'the spelling draw' is 'rng below' of 2.
+    If 'the spelling draw' is 1 then,
+        Return a text, 'the literal'.
+    Return a text, 'the variable'.
+
+(The directory creation statement with its optional article drawn
+ (LANGUAGE.md:4241-4242), so a leaf that only needs a directory to
+ exist does not stamp one spelling of it into every program.)
+To 'gen process create directory' with a text called 'the operand'.
+    a number called 'the article draw' is 'rng below' of 2.
+    If 'the article draw' is 1 then,
+        Return a text, "Create directory called {'the operand'}".
+    Return a text, "Create a directory called {'the operand'}".
+
+(rmdir(2) in any of its eight spellings: `Remove` or `Delete`, with or
+ without `the`, with or without `called` (LANGUAGE.md:4243-4244) - all
+ eight hand-verified this batch to compile and remove the directory.
+ The caller draws the three choices (each 0 or 1) so it knows which row
+ the spelling puts on trial; 'gen process any removal' draws them here.)
+To 'gen process removal statement' with a text called 'the operand' and a number called 'the verb draw' and a number called 'the article draw' and a number called 'the called draw'.
+    a text called 'the verb' is "Remove".
+    If 'the verb draw' is 1 then,
+        Set 'the verb' to "Delete".
+    a text called 'the article' is "".
+    If 'the article draw' is 1 then,
+        Set 'the article' to "the ".
+    a text called 'the called word' is "".
+    If 'the called draw' is 1 then,
+        Set 'the called word' to "called ".
+    a text called 'the statement' is "{'the verb'} {'the article'}directory {'the called word'}{'the operand'}".
+    Return a text, 'the statement'.
+
+To 'gen process any removal' with a text called 'the operand'.
+    a number called 'the verb draw' is 'rng below' of 2.
+    a number called 'the article draw' is 'rng below' of 2.
+    a number called 'the called draw' is 'rng below' of 2.
+    a text called 'the statement' is 'gen process removal statement' of 'the operand' and 'the verb draw' and 'the article draw' and 'the called draw'.
+    Return a text, 'the statement'.
+
+(The row a removal spelling puts on trial: PRC-07 for `Delete`, PRC-08
+ when `the` or `called` is left out, PRC-06 for the full `Remove the
+ directory called`.)
+To 'gen process removal row' with a number called 'the verb draw' and a number called 'the article draw' and a number called 'the called draw'.
+    If 'the verb draw' is 1 then,
+        Return a text, "PRC-07".
+    If 'the article draw' is 0 then,
+        Return a text, "PRC-08".
+    If 'the called draw' is 0 then,
+        Return a text, "PRC-08".
+    Return a text, "PRC-06".
+
+(The two path assertions this batch makes, as one renderable line each
+ in the shape 'gen assert number' documents: an If that closes itself,
+ then a plain Print to take the join's punctuation.)
+To 'gen process assert present' with a text called 'the row' and a text called 'the path' and a text called 'the shown'.
+    a text called 'the line' is "If {'the path'} is not available then, Print \"ASSERT {'the row'}: expected available got missing\", Exit 95. Print \"{'the shown'}\"".
+    Return a text, 'the line'.
+
+To 'gen process assert absent' with a text called 'the row' and a text called 'the path' and a text called 'the shown'.
+    a text called 'the line' is "If {'the path'} is available then, Print \"ASSERT {'the row'}: expected missing got available\", Exit 95. Print \"{'the shown'}\"".
+    Return a text, 'the line'.
+
+(PRC-06, PRC-07, PRC-08: `Remove the directory called '<path>'.` /
+ `Delete the directory "<path>".` perform rmdir(2); `Remove` and
+ `Delete` both work and `the` and `called` are each optional
+ (LANGUAGE.md:4243-4244). One to four sibling directories are created
+ and then removed, forwards or backwards, each removal in its own drawn
+ spelling naming its path by variable or by literal, and each asserted
+ gone afterwards; the assertion carries the row its spelling puts on
+ trial (PRC-07 for `Delete`, PRC-08 when `the` or `called` is left out,
+ PRC-06 for the full `Remove the directory called`). No removal may
+ fire the shared handler.)
+To 'gen leaf process directory removal spellings' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-06: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the flag name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a number called 'the directory count' is 'rng below' of 4 add 1.
+    a list called 'the places' is 'gen process places' of 'the directory count'.
+    a list called 'the path names' is [].
+    a list called 'the path literals' is [].
+    a list called 'the lines' is [].
+    a text called 'the flag init' is "a boolean called {'the flag name'} is false".
+    append 'the flag init' to 'the lines'.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the directory count',
+        a text called 'the place' is element 'the position' of 'the places',
+        a text called 'the path name' is 'gen buffer companion' of "{'the place'}",
+        a text called 'the path literal' is "\"{{{gen_scratch_flag}}}/{'the place'}{'the path number'}\"",
+        a text called 'the path line' is "a text called {'the path name'} is {'the path literal'}",
+        a text called 'the create line' is 'gen process create directory' of 'the path name',
+        append 'the path name' to 'the path names',
+        append 'the path literal' to 'the path literals',
+        append 'the path line' to 'the lines',
+        append 'the create line' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    a number called 'the order draw' is 'rng below' of 2.
+    Set 'the position' to 1.
+    While 'the position' is less than or equal to 'the directory count',
+        a number called 'the index' is 'the position',
+        If 'the order draw' is 1 then,
+            Set 'the index' to 'the directory count' subtract 'the position' add 1.
+        a text called 'the path name' is element 'the index' of 'the path names',
+        a text called 'the path literal' is element 'the index' of 'the path literals',
+        a text called 'the operand' is 'gen process path operand' of 'the path name' and 'the path literal',
+        a number called 'the verb draw' is 'rng below' of 2,
+        a number called 'the article draw' is 'rng below' of 2,
+        a number called 'the called draw' is 'rng below' of 2,
+        a text called 'the removal' is 'gen process removal statement' of 'the operand' and 'the verb draw' and 'the article draw' and 'the called draw',
+        a text called 'the row' is 'gen process removal row' of 'the verb draw' and 'the article draw' and 'the called draw',
+        a text called 'the handler' is "On error Set {'the flag name'} to true",
+        a text called 'the gone line' is 'gen process assert absent' of 'the row' and 'the path name' and "removed",
+        append 'the removal' to 'the lines',
+        append 'the handler' to 'the lines',
+        append 'the gone line' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the clean assert' is 'gen assert false' of "PRC-06" and 'the flag name'.
+    append 'the clean assert' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-09: removal is rmdir(2), so it is not recursive - a directory that
+ still holds anything cannot be removed, and what it holds survives
+ (LANGUAGE.md:4243; rmdir(2)'s own semantics, cited rather than stated
+ in a sentence). The outer directory holds a chain of zero to three
+ nested directories and, at the bottom, possibly a written file - at
+ least one of the two, so there is always something in the way. The
+ refused removal must fire its handler and leave the deepest child in
+ place; then the chain is emptied deepest first, each in its own drawn
+ spelling, and only then does the outer removal succeed.)
+To 'gen leaf process directory removal is not recursive' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-09: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the outer name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a number called 'the depth' is 'rng below' of 4.
+    a boolean called 'the file is inside' is false.
+    a number called 'the file draw' is 'rng below' of 2.
+    If 'the file draw' is 1 then,
+        Set 'the file is inside' to true.
+    If 'the depth' is 0 then,
+        Set 'the file is inside' to true.
+    a number called 'the place count' is 'the depth' add 2.
+    a list called 'the places' is 'gen process places' of 'the place count'.
+    a text called 'the outer place' is element 1 of 'the places'.
+    a text called 'the outer path' is "{{{gen_scratch_flag}}}/{'the outer place'}{'the path number'}".
+    a list called 'the lines' is [].
+    a text called 'the outer line' is "a text called {'the outer name'} is \"{'the outer path'}\"".
+    a text called 'the outer create' is 'gen process create directory' of 'the outer name'.
+    append 'the outer line' to 'the lines'.
+    append 'the outer create' to 'the lines'.
+    a list called 'the chain names' is [].
+    a text called 'the deepest path' is 'the outer path'.
+    a number called 'the level' is 1.
+    While 'the level' is less than or equal to 'the depth',
+        a number called 'the slot' is 'the level' add 1,
+        a text called 'the place' is element 'the slot' of 'the places',
+        Set 'the deepest path' to "{'the deepest path'}/{'the place'}",
+        a text called 'the chain name' is 'gen buffer companion' of "{'the place'}",
+        a text called 'the chain line' is "a text called {'the chain name'} is \"{'the deepest path'}\"",
+        a text called 'the chain create' is 'gen process create directory' of 'the chain name',
+        append 'the chain name' to 'the chain names',
+        append 'the chain line' to 'the lines',
+        append 'the chain create' to 'the lines',
+        Set 'the level' to 'the level' add 1.
+    a text called 'the deepest name' is 'the outer name'.
+    If 'the depth' is greater than 0 then,
+        Set 'the deepest name' to element 'the depth' of 'the chain names'.
+    a text called 'the file name' is 'gen buffer companion' of "keepsake".
+    a text called 'the handle name' is 'gen buffer companion' of "scribe".
+    If 'the file is inside' then,
+        a number called 'the last slot' is 'the depth' add 2,
+        a text called 'the file place' is element 'the last slot' of 'the places',
+        Set 'the deepest name' to 'the file name',
+        a number called 'the payload length' is 'rng below' of 40 add 1,
+        a text called 'the payload' is 'gen buffer filler' of 'the payload length',
+        a text called 'the file line' is "a text called {'the file name'} is \"{'the deepest path'}/{'the file place'}\"",
+        a text called 'the open line' is "open a file for writing called {'the handle name'} at {'the file name'}",
+        a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle name'}",
+        a text called 'the close line' is "Close {'the handle name'}",
+        append 'the file line' to 'the lines',
+        append 'the open line' to 'the lines',
+        append 'the write line' to 'the lines',
+        append 'the close line' to 'the lines'.
+    a text called 'the refused' is 'gen buffer companion' of "refused".
+    a text called 'the refused init' is "a boolean called {'the refused'} is false".
+    a text called 'the outer literal' is "\"{'the outer path'}\"".
+    a text called 'the outer operand' is 'gen process path operand' of 'the outer name' and 'the outer literal'.
+    a text called 'the refused removal' is 'gen process any removal' of 'the outer operand'.
+    a text called 'the refused handler' is "On error Set {'the refused'} to true".
+    a text called 'the refused assert' is 'gen assert true' of "PRC-09" and 'the refused'.
+    a text called 'the survivor assert' is 'gen process assert present' of "PRC-09" and 'the deepest name' and "survived".
+    append 'the refused init' to 'the lines'.
+    append 'the refused removal' to 'the lines'.
+    append 'the refused handler' to 'the lines'.
+    append 'the refused assert' to 'the lines'.
+    append 'the survivor assert' to 'the lines'.
+    a text called 'the emptying' is 'gen buffer companion' of "emptying failed".
+    a text called 'the emptying init' is "a boolean called {'the emptying'} is false".
+    a text called 'the emptying handler' is "On error Set {'the emptying'} to true".
+    append 'the emptying init' to 'the lines'.
+    If 'the file is inside' then,
+        a text called 'the delete file' is "Delete the file {'the file name'}",
+        append 'the delete file' to 'the lines',
+        append 'the emptying handler' to 'the lines'.
+    Set 'the level' to 'the depth'.
+    While 'the level' is greater than 0,
+        a text called 'the chain name' is element 'the level' of 'the chain names',
+        a text called 'the chain removal' is 'gen process any removal' of 'the chain name',
+        append 'the chain removal' to 'the lines',
+        append 'the emptying handler' to 'the lines',
+        Set 'the level' to 'the level' subtract 1.
+    a text called 'the final removal' is 'gen process any removal' of 'the outer operand'.
+    a text called 'the emptying assert' is 'gen assert false' of "PRC-09" and 'the emptying'.
+    a text called 'the gone assert' is 'gen process assert absent' of "PRC-09" and 'the outer name' and "emptied and removed".
+    append 'the final removal' to 'the lines'.
+    append 'the emptying handler' to 'the lines'.
+    append 'the emptying assert' to 'the lines'.
+    append 'the gone assert' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-06: the removal really is rmdir(2) and not a general "remove this
+ path" - pointed at a regular FILE it refuses (ENOTDIR, seen under
+ strace this batch), fires the handler, and the file is still there
+ with every byte the leaf wrote, read back through FIL-01's live `size`
+ (LANGUAGE.md:4243; FIL-01 is LANGUAGE.md:3832). A removal that quietly
+ fell through to unlink(2) would pass a sloppier leaf and fail this
+ one.)
+To 'gen leaf process directory removal refuses a file' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-06: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the file name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the place' is 'gen word from' of gen_process_place_words.
+    a text called 'the file literal' is "\"{{{gen_scratch_flag}}}/{'the place'}{'the path number'}\"".
+    a text called 'the file line' is "a text called {'the file name'} is {'the file literal'}".
+    a text called 'the handle name' is 'gen buffer companion' of "scribe".
+    a number called 'the payload length' is 'rng below' of 64.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the open line' is "open a file for writing called {'the handle name'} at {'the file name'}".
+    a text called 'the write line' is "Write \"{'the payload'}\" to {'the handle name'}".
+    a text called 'the close line' is "Close {'the handle name'}".
+    a text called 'the refused' is 'gen buffer companion' of "refused".
+    a text called 'the refused init' is "a boolean called {'the refused'} is false".
+    a text called 'the operand' is 'gen process path operand' of 'the file name' and 'the file literal'.
+    a number called 'the verb draw' is 'rng below' of 2.
+    a number called 'the article draw' is 'rng below' of 2.
+    a number called 'the called draw' is 'rng below' of 2.
+    a text called 'the removal' is 'gen process removal statement' of 'the operand' and 'the verb draw' and 'the article draw' and 'the called draw'.
+    a text called 'the row' is 'gen process removal row' of 'the verb draw' and 'the article draw' and 'the called draw'.
+    a text called 'the handler' is "On error Set {'the refused'} to true".
+    a text called 'the refused assert' is 'gen assert true' of 'the row' and 'the refused'.
+    a text called 'the present assert' is 'gen process assert present' of 'the row' and 'the file name' and "the file is still there".
+    (The reader's name is built from its stem, not taken from 'gen buffer
+     companion', so its possessive takes one apostrophe - `'x reader's
+     size` - the way 'gen buffer property' spells a quoted name's.)
+    a text called 'the reader stem' is "'{gen_buffer_last_word} reader".
+    a text called 'the reader name' is "{'the reader stem'}'".
+    a text called 'the reader line' is "open a file for reading called {'the reader name'} at {'the file name'}".
+    a text called 'the size access' is 'gen buffer property' of 'the reader stem' and "size".
+    a text called 'the size assert' is 'gen assert number is' of 'the row' and 'the size access' and 'the payload length'.
+    a text called 'the reader close' is "Close {'the reader name'}".
+    a text called 'the cleanup' is "Delete the file {'the file name'}".
+    a list called 'the lines' is ['the file line', 'the open line', 'the write line', 'the close line', 'the refused init', 'the removal', 'the handler', 'the refused assert', 'the present assert', 'the reader line', 'the size assert', 'the reader close', 'the cleanup'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-10: `Change directory to "<path>".` performs chdir(2), and a later
+ RELATIVE path resolves from the new working directory
+ (LANGUAGE.md:4237, 4245). A successful chdir would move the cwd out
+ from under every scratch path a sibling leaf builds afterwards (they
+ are relative), so it happens only inside a forked child, which this
+ leaf reaps before it ends: the parent's cwd never moves. The child
+ changes into a fresh scratch directory and first checks, by a BARE
+ name, for a beacon directory the parent made inside it - so if the
+ chdir silently failed the child exits with a stray code before it
+ creates anything in the wrong place. Then it creates one to three more
+ directories by bare name and exits with a drawn code. The parent
+ asserts the child's exit code and finds every bare-named directory at
+ the path it has only if the chdir took effect, then clears them all
+ away.)
+To 'gen leaf process change directory in a child' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-10: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    Set gen_process_has_reaped to true.
+    a text called 'the child name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a number called 'the bare count' is 'rng below' of 3 add 1.
+    a number called 'the place count' is 'the bare count' add 2.
+    a list called 'the places' is 'gen process places' of 'the place count'.
+    a text called 'the room place' is element 1 of 'the places'.
+    a text called 'the beacon place' is element 2 of 'the places'.
+    a text called 'the room path' is "{{{gen_scratch_flag}}}/{'the room place'}{'the path number'}".
+    a text called 'the room name' is 'gen buffer companion' of "{'the room place'}".
+    a text called 'the room line' is "a text called {'the room name'} is \"{'the room path'}\"".
+    a text called 'the room create' is 'gen process create directory' of 'the room name'.
+    a text called 'the beacon literal' is "\"{'the room path'}/{'the beacon place'}\"".
+    a text called 'the beacon create' is 'gen process create directory' of 'the beacon literal'.
+    a number called 'the exit code' is 'gen process safe exit code'.
+    a number called 'the stray offset' is 'rng below' of 89 add 1.
+    a number called 'the stray code' is {'the exit code' add 'the stray offset'} modulo 90.
+    a text called 'the room literal' is "\"{'the room path'}\"".
+    a text called 'the room operand' is 'gen process path operand' of 'the room name' and 'the room literal'.
+    a text called 'the fork line' is "a number called {'the child name'} is fork the process".
+    a text called 'the change line' is "If {'the child name'} is 0 then, Change directory to {'the room operand'}".
+    a text called 'the beacon check' is "If {'the child name'} is 0 and \"{'the beacon place'}\" is not available then, Exit {'the stray code'}".
+    a text called 'the child actions' is "".
+    a number called 'the position' is 3.
+    a number called 'the last place' is 'the bare count' add 2.
+    While 'the position' is less than or equal to 'the last place',
+        a text called 'the bare place' is element 'the position' of 'the places',
+        a text called 'the bare create' is 'gen process create directory' of "\"{'the bare place'}\"",
+        Set 'the child actions' to "{'the child actions'}{'the bare create'}, ",
+        Set 'the position' to 'the position' add 1.
+    a text called 'the child line' is "If {'the child name'} is 0 then, {'the child actions'}Exit {'the exit code'}".
+    a text called 'the reap name' is 'gen buffer companion' of "chdir reaped".
+    a text called 'the reap line' is "a number called {'the reap name'} is reap child {'the child name'}".
+    a text called 'the exit name' is 'gen buffer companion' of "chdir exit".
+    a text called 'the exit line' is "a number called {'the exit name'} is the reaped status divide 256 modulo 256".
+    a text called 'the exit assert' is 'gen assert number is' of "PRC-10" and 'the exit name' and 'the exit code'.
+    a list called 'the lines' is ['the room line', 'the room create', 'the beacon create', 'the fork line', 'the change line', 'the beacon check', 'the child line', 'the reap line', 'the exit line', 'the exit assert'].
+    Set 'the position' to 3.
+    While 'the position' is less than or equal to 'the last place',
+        a text called 'the bare place' is element 'the position' of 'the places',
+        a text called 'the composed' is "\"{'the room path'}/{'the bare place'}\"",
+        a text called 'the found assert' is 'gen process assert present' of "PRC-10" and 'the composed' and 'the bare place',
+        a text called 'the bare removal' is 'gen process any removal' of 'the composed',
+        append 'the found assert' to 'the lines',
+        append 'the bare removal' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the beacon removal' is 'gen process any removal' of 'the beacon literal'.
+    a text called 'the room removal' is 'gen process any removal' of 'the room name'.
+    append 'the beacon removal' to 'the lines'.
+    append 'the room removal' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(One mount operand in one of the four forms LANGUAGE.md:4262-4264
+ allows - a string literal, a text variable, a buffer, or a buffer
+ built by a format string - returned as a list: any declaration lines
+ first, the operand itself last. The format-built form interpolates a
+ text holding 'the stem' and appends 'the suffix', so it spells the same
+ value the other forms spell; when 'the stem' is empty (a scratch path,
+ which is format-built already) the buffer holds 'the plain' directly.)
+To 'gen process mount operand' with a text called 'the name' and a text called 'the plain' and a text called 'the stem' and a text called 'the suffix'.
+    a number called 'the form' is 'rng below' of 4.
+    a list called 'the parts' is [].
+    If 'the form' is 0 then,
+        append "\"{'the plain'}\"" to 'the parts',
+        Return a list, 'the parts'.
+    If 'the form' is 1 then,
+        append "a text called {'the name'} is \"{'the plain'}\"" to 'the parts'.
+    If 'the form' is 2 then,
+        append "a buffer called {'the name'} is \"{'the plain'}\"" to 'the parts'.
+    If 'the form' is 3 and 'the stem' is empty then,
+        append "a buffer called {'the name'} is \"{'the plain'}\"" to 'the parts'.
+    If 'the form' is 3 and 'the stem' is not empty then,
+        a text called 'the stem name' is 'gen buffer companion' of "stem",
+        append "a text called {'the stem name'} is \"{'the stem'}\"" to 'the parts',
+        append "a buffer called {'the name'} is \"{{{'the stem name'}}}{'the suffix'}\"" to 'the parts'.
+    append 'the name' to 'the parts'.
+    Return a list, 'the parts'.
+
+(Moves a 'gen process mount operand' result's declarations onto the end
+ of a leaf's lines and hands back the operand.)
+To 'gen process take operand' with a list called 'the parts' and a list called 'the lines'.
+    a number called 'the count' is 'the parts's length.
+    a number called 'the position' is 1.
+    While 'the position' is less than 'the count',
+        a text called 'the part' is element 'the position' of 'the parts',
+        append 'the part' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    a text called 'the operand' is element 'the count' of 'the parts'.
+    Return a text, 'the operand'.
+
+(PRC-14: `source`, `target`, `fstype` and `options` each accept a string
+ literal, a text variable, or a buffer, including a format-string-built
+ buffer (LANGUAGE.md:4262-4264). Each of the four operands draws its own
+ form, so every combination appears across a corpus; whether `with
+ options` appears at all is drawn too (LANGUAGE.md:4261). The values are
+ drawn as well - real filesystem names beside nonsense ones, options a
+ kernel would and would not understand, a size from 'gen extreme number'
+ - since an unprivileged mount(2) refuses with EPERM before reading any
+ of them, which is exactly why every one may be anything. The refusal is
+ asserted (the error-flag path is the only one an unprivileged fuzzer
+ can reach), then the target is unmounted lazily - also refused - and
+ removed.)
+To 'gen leaf process mount operand forms' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-14: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the flag name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the place' is 'gen word from' of gen_process_place_words.
+    a text called 'the target path' is "{{{gen_scratch_flag}}}/{'the place'}{'the path number'}".
+    a text called 'the directory name' is 'gen buffer companion' of "{'the place'}".
+    a list called 'the lines' is [].
+    a text called 'the directory line' is "a text called {'the directory name'} is \"{'the target path'}\"".
+    a text called 'the directory create' is 'gen process create directory' of 'the directory name'.
+    append 'the directory line' to 'the lines'.
+    append 'the directory create' to 'the lines'.
+    a list called 'the source words' is ["tmpfs", "ramfs", "proc", "sysfs", "devpts", "mqueue", "cgroup2", "overlay", "nothing at all", "", 'the place'].
+    a text called 'the source plain' is 'gen word from' of 'the source words'.
+    a text called 'the source name' is 'gen buffer companion' of "source".
+    a list called 'the source parts' is 'gen process mount operand' of 'the source name' and 'the source plain' and 'the source plain' and "".
+    a text called 'the source operand' is 'gen process take operand' of 'the source parts' and 'the lines'.
+    a text called 'the target name' is 'gen buffer companion' of "target".
+    a list called 'the target parts' is 'gen process mount operand' of 'the target name' and 'the target path' and "" and "".
+    a text called 'the target operand' is 'gen process take operand' of 'the target parts' and 'the lines'.
+    a list called 'the type stems' is ["tmp", "ram", "sys", "proc", "hugetlb", "debug", "trace", "config", "squash", "ext4", "x", ""].
+    a text called 'the type stem' is 'gen word from' of 'the type stems'.
+    a text called 'the type suffix' is "fs".
+    If 'the type stem' is "proc" then,
+        Set 'the type suffix' to "".
+    a text called 'the type plain' is "{'the type stem'}{'the type suffix'}".
+    a text called 'the type name' is 'gen buffer companion' of "type".
+    a list called 'the type parts' is 'gen process mount operand' of 'the type name' and 'the type plain' and 'the type stem' and 'the type suffix'.
+    a text called 'the type operand' is 'gen process take operand' of 'the type parts' and 'the lines'.
+    a text called 'the mount line' is "Mount {'the source operand'} at {'the target operand'} with type {'the type operand'}".
+    a number called 'the options draw' is 'rng below' of 6.
+    If 'the options draw' is greater than 0 then,
+        a text called 'the options stem' is "ro",
+        a text called 'the options suffix' is "",
+        a text called 'the size digits' is 'gen extreme number',
+        a text called 'the mode digits' is 'gen random digits' of 3,
+        If 'the options draw' is 1 then,
+            Set 'the options stem' to "size={'the size digits'}",
+            Set 'the options suffix' to "m".
+        If 'the options draw' is 2 then,
+            Set 'the options stem' to "mode=0{'the mode digits'}".
+        If 'the options draw' is 3 then,
+            Set 'the options stem' to "nosuid,nodev,noexec".
+        If 'the options draw' is 4 then,
+            Set 'the options stem' to "".
+        a text called 'the options plain' is "{'the options stem'}{'the options suffix'}",
+        a text called 'the options name' is 'gen buffer companion' of "options",
+        a list called 'the options parts' is 'gen process mount operand' of 'the options name' and 'the options plain' and 'the options stem' and 'the options suffix',
+        a text called 'the options operand' is 'gen process take operand' of 'the options parts' and 'the lines',
+        Set 'the mount line' to "{'the mount line'} with options {'the options operand'}".
+    a text called 'the flag init' is "a boolean called {'the flag name'} is false".
+    a text called 'the handler' is "On error Set {'the flag name'} to true".
+    a text called 'the refused assert' is 'gen assert true' of "PRC-14" and 'the flag name'.
+    append 'the flag init' to 'the lines'.
+    append 'the mount line' to 'the lines'.
+    append 'the handler' to 'the lines'.
+    append 'the refused assert' to 'the lines'.
+    a text called 'the detach flag' is 'gen buffer companion' of "detach refused".
+    a text called 'the detach init' is "a boolean called {'the detach flag'} is false".
+    a text called 'the detach line' is "Unmount {'the directory name'} lazily".
+    a text called 'the detach handler' is "On error Set {'the detach flag'} to true".
+    a text called 'the detach assert' is 'gen assert true' of "PRC-21" and 'the detach flag'.
+    a text called 'the removal' is 'gen process any removal' of 'the directory name'.
+    append 'the detach init' to 'the lines'.
+    append 'the detach line' to 'the lines'.
+    append 'the detach handler' to 'the lines'.
+    append 'the detach assert' to 'the lines'.
+    append 'the removal' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(PRC-15, PRC-16: fstype "none" with options "move" or "bind" is
+ recognised and translated into MS_MOVE or MS_BIND
+ (LANGUAGE.md:4265-4270). Seen under strace this batch: the literal
+ pattern does reach mount(2) as MS_MOVE / MS_BIND with a NULL fstype.
+ From inside Vox the translation is not observable - an unprivileged
+ mount(2) refuses either way with EPERM - so what this leaf asserts is
+ the refusal, and these two rows stay `exercised`. The pattern is only
+ ever written as string LITERALS: Discrepancy 8 records that the same
+ words held in text variables are NOT translated (they reach the kernel
+ as fstype "none", options "bind", no flag), so a variable here would
+ put an open discrepancy on trial rather than the documented pattern.
+ Each of one or two attempts draws move or bind and whether it moves a
+ scratch directory onto itself or onto a second one.)
+To 'gen leaf process mount move and bind' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-15: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the first witness' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a list called 'the places' is 'gen process places' of 2.
+    a list called 'the names' is [].
+    a list called 'the literals' is [].
+    a list called 'the lines' is [].
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 2,
+        a text called 'the place' is element 'the position' of 'the places',
+        a text called 'the path literal' is "\"{{{gen_scratch_flag}}}/{'the place'}{'the path number'}\"",
+        a text called 'the path name' is 'gen buffer companion' of "{'the place'}",
+        a text called 'the path line' is "a text called {'the path name'} is {'the path literal'}",
+        a text called 'the create line' is 'gen process create directory' of 'the path name',
+        append 'the path name' to 'the names',
+        append 'the path literal' to 'the literals',
+        append 'the path line' to 'the lines',
+        append 'the create line' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    a number called 'the attempt count' is 'rng below' of 2 add 1.
+    Set 'the position' to 1.
+    While 'the position' is less than or equal to 'the attempt count',
+        a number called 'the target slot' is 'rng below' of 2 add 1,
+        a text called 'the source variable' is element 1 of 'the names',
+        a text called 'the source literal' is element 1 of 'the literals',
+        a text called 'the target variable' is element 'the target slot' of 'the names',
+        a text called 'the target literal' is element 'the target slot' of 'the literals',
+        a text called 'the source operand' is 'gen process path operand' of 'the source variable' and 'the source literal',
+        a text called 'the target operand' is 'gen process path operand' of 'the target variable' and 'the target literal',
+        a text called 'the ordinal' is 'gen process place spelled' of 'the position',
+        a number called 'the move draw' is 'rng below' of 2,
+        a text called 'the option' is "bind",
+        a text called 'the row' is "PRC-16",
+        If 'the move draw' is 1 then,
+            Set 'the option' to "move",
+            Set 'the row' to "PRC-15".
+        a text called 'the flag name' is 'gen buffer companion' of "{'the option'} refused {'the ordinal'}",
+        a text called 'the flag init' is "a boolean called {'the flag name'} is false",
+        a text called 'the mount line' is "Mount {'the source operand'} at {'the target operand'} with type \"none\" with options \"{'the option'}\"",
+        a text called 'the handler' is "On error Set {'the flag name'} to true",
+        a text called 'the refused assert' is 'gen assert true' of 'the row' and 'the flag name',
+        append 'the flag init' to 'the lines',
+        append 'the mount line' to 'the lines',
+        append 'the handler' to 'the lines',
+        append 'the refused assert' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    Set 'the position' to 2.
+    While 'the position' is greater than 0,
+        a text called 'the doomed name' is element 'the position' of 'the names',
+        a text called 'the removal' is 'gen process any removal' of 'the doomed name',
+        append 'the removal' to 'the lines',
+        Set 'the position' to 'the position' subtract 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(An attempt's ordinal as a word, so the flags of two attempts in one
+ leaf get distinct names that still read aloud.)
+To 'gen process place spelled' with a number called 'the ordinal'.
+    If 'the ordinal' is 1 then,
+        Return a text, "first".
+    If 'the ordinal' is 2 then,
+        Return a text, "second".
+    If 'the ordinal' is 3 then,
+        Return a text, "third".
+    Return a text, "fourth".
+
+(PRC-17, PRC-18, PRC-19, PRC-20: `Unmount "<target>".` performs
+ umount2(2); `umount` is an accepted alias; a trailing `lazily` requests
+ MNT_DETACH (LANGUAGE.md:4271-4275) - all four spellings seen under
+ strace this batch reaching umount2(2) with flags 0 or MNT_DETACH. One
+ to four attempts, each drawing its verb, whether `lazily` follows, and
+ whether it names the target by variable, literal or a buffer copy; the
+ target is either a scratch directory the leaf made or a scratch path
+ that never existed (the kernel refuses an unprivileged umount2(2) with
+ EPERM before it looks the path up, so both are refused). Each refusal
+ is asserted under the row its spelling puts on trial; MNT_DETACH's own
+ semantics (PRC-20) need a real mount and stay unobservable, so PRC-20
+ is `exercised` by the `lazily` spellings.)
+To 'gen leaf process unmount spellings' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-17: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the path name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the place' is 'gen word from' of gen_process_place_words.
+    a text called 'the path literal' is "\"{{{gen_scratch_flag}}}/{'the place'}{'the path number'}\"".
+    a text called 'the path line' is "a text called {'the path name'} is {'the path literal'}".
+    a list called 'the lines' is ['the path line'].
+    a number called 'the exists draw' is 'rng below' of 2.
+    If 'the exists draw' is 1 then,
+        a text called 'the create line' is 'gen process create directory' of 'the path name',
+        append 'the create line' to 'the lines'.
+    a number called 'the copy draw' is 'rng below' of 2.
+    a text called 'the copy name' is 'gen buffer companion' of "copy".
+    If 'the copy draw' is 1 then,
+        a text called 'the copy line' is "a buffer called {'the copy name'} is {'the path name'}",
+        append 'the copy line' to 'the lines'.
+    a number called 'the attempt count' is 'rng below' of 4 add 1.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the attempt count',
+        a number called 'the verb draw' is 'rng below' of 2,
+        a number called 'the lazily draw' is 'rng below' of 2,
+        a number called 'the operand draw' is 'rng below' of 2 add 'the copy draw',
+        a text called 'the verb' is "Unmount",
+        a text called 'the row' is "PRC-17",
+        If 'the lazily draw' is 1 then,
+            Set 'the row' to "PRC-19".
+        If 'the verb draw' is 1 then,
+            Set 'the verb' to "umount",
+            Set 'the row' to "PRC-18".
+        a text called 'the operand' is 'the path name',
+        If 'the operand draw' is 1 then,
+            Set 'the operand' to 'the path literal'.
+        If 'the operand draw' is 2 then,
+            Set 'the operand' to 'the copy name'.
+        a text called 'the statement' is "{'the verb'} {'the operand'}",
+        If 'the lazily draw' is 1 then,
+            Set 'the statement' to "{'the statement'} lazily".
+        a text called 'the ordinal' is 'gen process place spelled' of 'the position',
+        a text called 'the flag name' is 'gen buffer companion' of "{'the ordinal'} refusal",
+        a text called 'the flag init' is "a boolean called {'the flag name'} is false",
+        a text called 'the handler' is "On error Set {'the flag name'} to true",
+        a text called 'the refused assert' is 'gen assert true' of 'the row' and 'the flag name',
+        append 'the flag init' to 'the lines',
+        append 'the statement' to 'the lines',
+        append 'the handler' to 'the lines',
+        append 'the refused assert' to 'the lines',
+        Set 'the position' to 'the position' add 1.
+    If 'the exists draw' is 1 then,
+        a text called 'the removal' is 'gen process any removal' of 'the path name',
+        append 'the removal' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(A device number for the node leaf: any magnitude 'gen extreme number'
+ draws, now and then negated. LANGUAGE.md:4286-4287 names `major`/
+ `minor` as the standard Linux device numbers and pins no range, and an
+ unprivileged mknod(2) is refused before the number means anything -
+ so the extremes, which put the encoding on trial, are fair. Note
+ Discrepancy 7: a minor above 255 does not survive the encoding.)
+To 'gen process device number'.
+    a text called 'the digits' is 'gen extreme number'.
+    a number called 'the sign draw' is 'rng below' of 5.
+    If 'the sign draw' is 0 and 'the digits' is not "0" then,
+        Return a text, "-{'the digits'}".
+    Return a text, 'the digits'.
+
+(PRC-22, PRC-23, PRC-24: `Create a device node called "<path>" with
+ type "c" major N minor M.` performs mknod(2); `type "b"` is accepted;
+ the type is "c" or "b" (LANGUAGE.md:4281-4287) - seen under strace this
+ batch as mknod(2) with S_IFCHR / S_IFBLK. An unprivileged process lacks
+ CAP_MKNOD, so the kernel refuses (EPERM, or EEXIST when the path is
+ taken) and the leaf asserts the handler fired. The path is either fresh
+ - and then nothing may appear there, which is how a type that lowered
+ to anything but a device node (a FIFO needs no privilege and WOULD
+ appear, Discrepancy 1) is caught under PRC-24 - or a file the leaf just
+ wrote, which must still be there afterwards. Type, path form, and
+ whether each number is a literal or a number variable are all drawn.
+ Never type "p": see this batch's header.)
+To 'gen leaf process device node refusal' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE PRC-22: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the path name' is 'gen process witness'.
+    a number called 'the path number' is gen_buffer_names.
+    a text called 'the place' is 'gen word from' of gen_process_place_words.
+    a text called 'the path plain' is "{{{gen_scratch_flag}}}/{'the place'}{'the path number'}".
+    a list called 'the lines' is [].
+    a list called 'the path parts' is 'gen process mount operand' of 'the path name' and 'the path plain' and "" and "".
+    a text called 'the path operand' is 'gen process take operand' of 'the path parts' and 'the lines'.
+    a text called 'the check path' is "\"{'the path plain'}\"".
+    a number called 'the occupied draw' is 'rng below' of 2.
+    a text called 'the handle name' is 'gen buffer companion' of "scribe".
+    If 'the occupied draw' is 1 then,
+        a text called 'the open line' is "open a file for writing called {'the handle name'} at {'the check path'}",
+        a text called 'the filler' is 'gen buffer filler' of 8,
+        a text called 'the write line' is "Write \"{'the filler'}\" to {'the handle name'}",
+        a text called 'the close line' is "Close {'the handle name'}",
+        append 'the open line' to 'the lines',
+        append 'the write line' to 'the lines',
+        append 'the close line' to 'the lines'.
+    a number called 'the type draw' is 'rng below' of 2.
+    a text called 'the type' is "c".
+    a text called 'the row' is "PRC-22".
+    If 'the type draw' is 1 then,
+        Set 'the type' to "b",
+        Set 'the row' to "PRC-23".
+    a text called 'the major' is 'gen process device number'.
+    a text called 'the minor' is 'gen process device number'.
+    a number called 'the major draw' is 'rng below' of 2.
+    If 'the major draw' is 1 then,
+        a text called 'the major name' is 'gen buffer companion' of "major number",
+        a text called 'the major line' is "a number called {'the major name'} is {'the major'}",
+        append 'the major line' to 'the lines',
+        Set 'the major' to 'the major name'.
+    a number called 'the minor draw' is 'rng below' of 2.
+    If 'the minor draw' is 1 then,
+        a text called 'the minor name' is 'gen buffer companion' of "minor number",
+        a text called 'the minor line' is "a number called {'the minor name'} is {'the minor'}",
+        append 'the minor line' to 'the lines',
+        Set 'the minor' to 'the minor name'.
+    a text called 'the flag name' is 'gen buffer companion' of "node refused".
+    a text called 'the flag init' is "a boolean called {'the flag name'} is false".
+    a text called 'the node line' is "Create a device node called {'the path operand'} with type \"{'the type'}\" major {'the major'} minor {'the minor'}".
+    a text called 'the handler' is "On error Set {'the flag name'} to true".
+    a text called 'the refused assert' is 'gen assert true' of 'the row' and 'the flag name'.
+    append 'the flag init' to 'the lines'.
+    append 'the node line' to 'the lines'.
+    append 'the handler' to 'the lines'.
+    append 'the refused assert' to 'the lines'.
+    If 'the occupied draw' is 0 then,
+        a text called 'the absent assert' is 'gen process assert absent' of "PRC-24" and 'the check path' and "no node appeared",
+        append 'the absent assert' to 'the lines'.
+    If 'the occupied draw' is 1 then,
+        a text called 'the present assert' is 'gen process assert present' of 'the row' and 'the check path' and "the file is still there",
+        a text called 'the cleanup' is "Delete the file {'the check path'}",
+        append 'the present assert' to 'the lines',
+        append 'the cleanup' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.

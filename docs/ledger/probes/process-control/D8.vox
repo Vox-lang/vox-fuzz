@@ -1,0 +1,28 @@
+(D8 - the "none" + "move"/"bind" pattern is translated only for string
+ literals. LANGUAGE.md:4262-4267: operands "accept string literals, text
+ variables, or buffers", and "Vox recognizes this pattern and translates
+ it into the correct MS_MOVE/MS_BIND mount flags". With
+   strace -e trace=mount ./p
+ the literal statement reaches mount(2) as
+   mount(..., NULL, MS_BIND, NULL) = -1 EPERM
+ and the variable statement as
+   mount(..., "none", 0, "bind") = -1 EPERM
+ Indistinguishable from inside Vox unprivileged (both refused).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/D8.vox -o p && ./p
+ expected output:
+   the literal pattern was refused
+   the variable pattern was refused
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a text called quay is "vf_scratch/process-control/scratch_d8".
+Create a directory called quay.
+Mount quay at quay with type "none" with options "bind".
+On error print "the literal pattern was refused".
+a text called 'none word' is "none".
+a text called 'bind word' is "bind".
+Mount quay at quay with type 'none word' with options 'bind word'.
+On error print "the variable pattern was refused".
+Remove the directory called quay.

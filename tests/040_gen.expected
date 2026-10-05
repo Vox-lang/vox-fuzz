@@ -98,105 +98,104 @@ If 'the byline' is not "the survey plot 47215" then, Exit 91.
 If endnote is not 1118016078 then, Exit 92.
 If 'the callsign' is false then, Exit 93.
 
-a text called fp1 is "{annotation}/out1".
-open a file for writing called fw1 at fp1.
-Write "payload 45516\n" to fw1.
-Close fw1.
-open a file for reading called fr1 at fp1.
-a buffer called fb1 is 9 bytes in size.
-Read from fr1 into fb1.
-Print fb1's size.
-Print fr1's readable.
-Close fr1.
-a number called workbench is 726645.
-If workbench's hour is not workbench's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-57: expected {workbench's unix modulo 86400 divide 3600} got {workbench's hour}", Exit 95. Print "TIM-57 ok".
-If workbench's unix is not 726645 then, Print "ASSERT TIM-57: expected 726645 got {workbench's unix}", Exit 95. Print "TIM-57 ok".
-If workbench's year is less than 1970 or workbench's year is greater than 1970 then, Print "ASSERT TIM-57: expected 1970..1970 got {workbench's year}", Exit 95. Print "TIM-57 ok".
-a number called 'the drawer' is 0.
-a number called 'the postbag' is 0.
-a number called u1 is 0.
-While u1 is less than 3,
-  Increment u1,
-  If u1 is equal to 1 then, Set 'the drawer' to 'the drawer' add 1.
-
-Set 'the postbag' to 'the postbag' add 1.
-If 'the drawer' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the drawer'}", Exit 95. Print 'the drawer'.
-If 'the postbag' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the postbag'}", Exit 95. Print 'the postbag'.
-a text called notebook is "{annotation}/procmount4".
-Create a directory called notebook.
-a boolean called 'notebook mount refused' is false.
-Mount notebook at notebook with type "tmpfs" with options "size=1m".
-On error Set 'notebook mount refused' to true.
-If 'notebook mount refused' is false then, Print "ASSERT PRC-12: expected 1 got {'notebook mount refused'}", Exit 95. Print 'notebook mount refused'.
-a boolean called 'notebook unmount refused' is false.
-Unmount notebook.
-On error Set 'notebook unmount refused' to true.
-If 'notebook unmount refused' is false then, Print "ASSERT PRC-21: expected 1 got {'notebook unmount refused'}", Exit 95. Print 'notebook unmount refused'.
-Remove the directory called notebook.
-a number called 'the crate' is fork the process.
-If 'the crate' is 0 then, Exit 53.
+Create a buffer called 'the tray'.
+a number called 'the tray appends made' is 0.
+a boolean called 'the tray overflowed' is false.
+a boolean called 'the tray found an error already pending' is false.
+On error Set 'the tray found an error already pending' to true.
+While 'the tray appends made' is less than 242, append "a7qcr8d30f9d3wdlxqiecd0ezzzf7iybw59" to 'the tray', On error Set 'the tray overflowed' to true. Set 'the tray appends made' to 'the tray appends made' add 1.
+If 'the tray's size is not 8470 then, Print "ASSERT BUF-03: expected 8470 got {'the tray's size}", Exit 95. Print 'the tray's size.
+If 'the tray overflowed' then, Print "ASSERT BUF-03: expected 0 got {'the tray overflowed'}", Exit 95. Print 'the tray overflowed'.
+Print 'the tray's size.
+a float called d1 is 1.91835399298023439652.
+a float called d2 is 2.69.
+a float called d3 is d1 multiply d2.
+Print d3.
+a float called d4 is d1 divide d2.
+Print d4.
+a float called d5 is d1 add v2.
+Print d5.
+a timer called 'the dispatch note'.
+Begin 'the dispatch note'.
+Wait 106 milliseconds.
+a number called 'the shipping label' is 'the dispatch note's elapsed in milliseconds.
+If 'the dispatch note's running is false then, Print "ASSERT TIM-32: expected 1 got {'the dispatch note's running}", Exit 95. Print 'the dispatch note's running.
+If 'the shipping label' is less than 106 then, Print "ASSERT TIM-32: expected at least 106 got {'the shipping label'}", Exit 95. Print "TIM-32 ok".
+Wait 193 milliseconds.
+a number called 'the inbox' is 'the dispatch note's elapsed in milliseconds.
+If 'the inbox' is less than 'the shipping label' add 1 then, Print "ASSERT TIM-32: expected at least {'the shipping label' add 1} got {'the inbox'}", Exit 95. Print "TIM-32 ok".
+a map called 'the waybill' is {}.
+If 'the waybill's length is not 0 then, Print "ASSERT LST-46: expected 0 got {'the waybill's length}", Exit 95. Print 'the waybill's length.
+If 'the waybill's empty is false then, Print "ASSERT LST-46: expected 1 got {'the waybill's empty}", Exit 95. Print 'the waybill's empty.
+a map called 'cupboard' is {"the sachet": 814, "the answer given": 210}.
+If 'cupboard's length is not 2 then, Print "ASSERT LST-46: expected 2 got {'cupboard's length}", Exit 95. Print 'cupboard's length.
+If 'cupboard's empty then, Print "ASSERT LST-46: expected 0 got {'cupboard's empty}", Exit 95. Print 'cupboard's empty.
+a text called 'the postbag path' is "{annotation}/1seekinv".
+open a file for writing called 'the postbag' at 'the postbag path'.
+Write "s02mn384875dys" to 'the postbag'.
+Close 'the postbag'.
+open a file for reading called 'the postbag' at 'the postbag path'.
+a boolean called 'the postbag below floor errored' is false.
+Seek 'the postbag' to byte 0.
+On error Set 'the postbag below floor errored' to true.
+If 'the postbag below floor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'the postbag below floor errored'}", Exit 95. Print 'the postbag below floor errored'.
+Close 'the postbag'.
+open a file for reading called satchel at 2147483647.
+a boolean called 'satchel borrowed descriptor errored' is false.
+Seek satchel to byte 1.
+On error Set 'satchel borrowed descriptor errored' to true.
+If 'satchel borrowed descriptor errored' is false then, Print "ASSERT FIL-63: expected 1 got {'satchel borrowed descriptor errored'}", Exit 95. Print 'satchel borrowed descriptor errored'.
+a number called 'loading bay' is 0.
+(see pantry for details
+a note about the inbox
+a note about the drawer
+the tray, checked)
+Set 'loading bay' to 'loading bay' add 1.
+(((see the tally sheet for details)))
+Set 'loading bay' to 'loading bay' add 1.
+If 'loading bay' is not 2 then, Print "ASSERT BAS-12: expected 2 got {'loading bay'}", Exit 95. Print 'loading bay'.
+If v2 is greater than or equal to v1 then, Print v1 multiply v2. Otherwise, Print v2 minus v2.
+a list called l1 is [33, "mixed1", 49.6].
+For each w1 in l1, Print w1.
+a number called 'the message slip binary value' is 0b111111111111111111111111111111111111111111111111111111111111111.
+If 'the message slip binary value' is not 9223372036854775807 then, Print "ASSERT EXP-06: expected 9223372036854775807 got {'the message slip binary value'}", Exit 95. Print 'the message slip binary value'.
+a number called 'the envelope binary sum' is 'the message slip binary value' add 0b1000.
+If 'the envelope binary sum' is not -9223372036854775801 then, Print "ASSERT EXP-15: expected -9223372036854775801 got {'the envelope binary sum'}", Exit 95. Print 'the envelope binary sum'.
+a buffer called b1 is 43 bytes in size.
+Print byte 204 of b1.
+On error print "buffer read out of range".
+a text called 'pantry path' is "{annotation}/2neverclosed".
+open a file for writing called 'the tally sheet' at 'pantry path'.
+Write "ifkmpj4xccay0ajfswh0" to 'the tally sheet'.
+open a file for reading called 'notebook' at 'pantry path'.
+a buffer called pantry is 20 bytes in size.
+Read from 'notebook' into pantry.
+a text called 'pantry durable capture' is pantry as text.
+If pantry is not "ifkmpj4xccay0ajfswh0" then, Print "ASSERT FIL-89: expected ifkmpj4xccay0ajfswh0 got {'pantry durable capture'}", Exit 95. Print pantry.
+Close 'notebook'.
+a number called 'the manifest' is fork the process.
+If 'the manifest' is 0 then, Exit 48.
 Set reaped to reap any child process.
-a boolean called 'the crate reap matched' is false.
-If reaped is 'the crate' then, Set 'the crate reap matched' to true.
-If 'the crate reap matched' is false then, Print "ASSERT PRC-61: expected 1 got {'the crate reap matched'}", Exit 95. Print 'the crate reap matched'.
-a number called 'the crate reproduced exit' is the reaped status divide 256 modulo 256.
-If 'the crate reproduced exit' is not 53 then, Print "ASSERT PRC-60: expected 53 got {'the crate reproduced exit'}", Exit 95. Print 'the crate reproduced exit'.
-a text called 'the reaped' is "the milestone".
-If 'the reaped' is not "the milestone" then, Print "ASSERT PRC-60: expected the milestone got {'the reaped'}", Exit 95. Print 'the reaped'.
-a number called waiting is 4039994.
-If waiting is not 4039994 then, Print "ASSERT PRC-55: expected 4039994 got {waiting}", Exit 95. Print waiting.
-open a file for reading called sin2 at 0.
-a buffer called sb2 is 34 bytes.
-Read from sin2 into sb2.
-Print sb2's size.
-If sb2 is empty then, Print "sb2 empty". Otherwise, Print "sb2 filled".
-a buffer called sc2 is 8 bytes.
-Read from sin2 into sc2.
-Print sc2's size.
-Close sin2.
-a number called 'storeroom binary value' is 0b10000000000000000000000000000000.
-If 'storeroom binary value' is not 2147483648 then, Print "ASSERT EXP-06: expected 2147483648 got {'storeroom binary value'}", Exit 95. Print 'storeroom binary value'.
-a number called 'the message slip binary sum' is 'storeroom binary value' add 0b0.
-If 'the message slip binary sum' is not 2147483648 then, Print "ASSERT EXP-15: expected 2147483648 got {'the message slip binary sum'}", Exit 95. Print 'the message slip binary sum'.
-a number called 'scratch' is 16893.
-If 'scratch's hour is not 'scratch's unix modulo 86400 divide 3600 then, Print "ASSERT TIM-57: expected {'scratch's unix modulo 86400 divide 3600} got {'scratch's hour}", Exit 95. Print "TIM-57 ok".
-If 'scratch's unix is not 16893 then, Print "ASSERT TIM-57: expected 16893 got {'scratch's unix}", Exit 95. Print "TIM-57 ok".
-If 'scratch's year is less than 1970 or 'scratch's year is greater than 1970 then, Print "ASSERT TIM-57: expected 1970..1970 got {'scratch's year}", Exit 95. Print "TIM-57 ok".
-a buffer called 'ledger' is "kcxx8z".
-Set byte 1 of 'ledger' to 0x01.
-a number called 'ledger byte written by a hex literal' is byte 1 of 'ledger'.
-If 'ledger byte written by a hex literal' is not 1 then, Print "ASSERT BUF-23: expected 1 got {'ledger byte written by a hex literal'}", Exit 95. Print 'ledger byte written by a hex literal'.
-Set byte 6 of 'ledger' to 'a'.
-a number called 'ledger byte written by a character literal' is byte 6 of 'ledger'.
-If 'ledger byte written by a character literal' is not 97 then, Print "ASSERT BUF-24: expected 97 got {'ledger byte written by a character literal'}", Exit 95. Print 'ledger byte written by a character literal'.
-Print 'ledger byte written by a character literal'.
-a number called 'the envelope' is 0.
-a number called 'the tally sheet' is 0.
-For each number from 1 to 3,
-  If number is equal to 1 then, Set 'the envelope' to 'the envelope' add 1.
-
-Set 'the tally sheet' to 'the tally sheet' add 1.
-If 'the envelope' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the envelope'}", Exit 95. Print 'the envelope'.
-If 'the tally sheet' is not 1 then, Print "ASSERT BAS-17: expected 1 got {'the tally sheet'}", Exit 95. Print 'the tally sheet'.
-Print v2 minus v2, but if v2 is not equal to v2 and v2 modulo 5 is equal to 0 print v2, but if v1 is not equal to v1 or v1 modulo 5 is equal to 0 print v1 multiply v2.
-a list called 'the greeting' is [{"the token": 9223372036854775807, "offering": 9223372036854775807}, 120078986200704439.3190833375892034, "the noted figure", true, 9223372036854775807].
-a boolean called 'the greeting synonym accepted' is false.
-If element 1 of 'the greeting' is a dictionary then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
-If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
-a boolean called 'the greeting synonym accepted' is false.
-If element 2 of 'the greeting' is a float then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
-If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
-a boolean called 'the greeting synonym accepted' is false.
-If element 3 of 'the greeting' is a string then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
-If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
-a boolean called 'the greeting synonym accepted' is false.
-If element 4 of 'the greeting' is a bool then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
-If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
-a boolean called 'the greeting synonym accepted' is false.
-If element 5 of 'the greeting' is an integer then, Set 'the greeting synonym accepted' to true. Print 'the greeting synonym accepted'.
-If 'the greeting synonym accepted' is false then, Print "ASSERT LST-63: expected 1 got {'the greeting synonym accepted'}", Exit 95. Print 'the greeting synonym accepted'.
-'the reckoning' of each q1s1 from 3 to 4 and each q1s2 from 3 to 4 and each q1s3 from 7 to 8 and each q1s4 from 4 to 4 and each q1s5 from 3 to 3 and each q1s6 from 5 to 5 and each q1s7 from 7 to 7 and each q1s8 from 2 to 2 and each q1s9 from 4 to 4.
+a boolean called 'the manifest reap matched' is false.
+If reaped is 'the manifest' then, Set 'the manifest reap matched' to true.
+If 'the manifest reap matched' is false then, Print "ASSERT PRC-61: expected 1 got {'the manifest reap matched'}", Exit 95. Print 'the manifest reap matched'.
+a number called 'the manifest reproduced exit' is the reaped status divide 256 modulo 256.
+If 'the manifest reproduced exit' is not 48 then, Print "ASSERT PRC-60: expected 48 got {'the manifest reproduced exit'}", Exit 95. Print 'the manifest reproduced exit'.
+a text called 'the reaped' is "the landmark".
+If 'the reaped' is not "the landmark" then, Print "ASSERT PRC-60: expected the landmark got {'the reaped'}", Exit 95. Print 'the reaped'.
+a number called waiting is 5953776797.
+If waiting is not 5953776797 then, Print "ASSERT PRC-55: expected 5953776797 got {waiting}", Exit 95. Print waiting.
+open a file for reading called sin1 at "/dev/stdin".
+a buffer called sb1 is 45 bytes.
+Read from sin1 into sb1.
+Print sb1's size.
+If sb1 is empty then, Print "sb1 empty". Otherwise, Print "sb1 filled".
+a buffer called sc1 is 8 bytes.
+Read from sin1 into sc1.
+Print sc1's size.
+Close sin1.
+'the reckoning' of each q1s1 from 3 to 3 and each q1s2 from 0 to 1 and each q1s3 from 5 to 5 and each q1s4 from 5 to 5 and each q1s5 from 6 to 6 and each q1s6 from 2 to 3 and each q1s7 from 2 to 2 and each q1s8 from 1 to 1 and each q1s9 from 5 to 6.
 'the summed parts'.
-Terminate.
+Exit 195.
 
 reproducible: 1

@@ -79,8 +79,9 @@ directory and symlink rows need.
 Every hand-verified row's probe is retained, runnable, in
 `docs/ledger/probes/process-control/`, one file per row named `PRC-NN.vox`
 (a probe covering more than one row is named for the first and says so in
-its own header). The six discrepancies have repros `D1.vox` … `D6.vox` in
-the same directory. **49 probe files; `docs/check-probes.sh` reports 49
+its own header). The eight discrepancies have repros `D1.vox` … `D8.vox` in
+the same directory (D7, D8 and the batch-C shape probes `PRC-06b`, `PRC-10b`,
+`PRC-14b`, `PRC-22b` added 2026-10-05). **49 probe files; `docs/check-probes.sh` reports 49
 passed, 0 failed, 0 skipped.**
 
 Probes are compiled and run **from the repo root** — the file-touching ones
@@ -124,30 +125,30 @@ commands to check privilege with before running it.
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| PRC-01 | 4227–4229 | The section's constructs exist for early-userspace/init programs, and `examples/initramfs.vox` is a complete, working init sequence "exercising all of them together". | compile the example verbatim; running it unprivileged stops at the first `Mount` | partly — the composite compiles and its first two statements behave predictably (exit 1 via its own handler); "working" as an init cannot be checked outside an initramfs | none | todo — and see **Discrepancy 6**: the example uses no fork, reap, `the reaped status`, `Send signal` or system control | |
+| PRC-01 | 4227–4229 | The section's constructs exist for early-userspace/init programs, and `examples/initramfs.vox` is a complete, working init sequence "exercising all of them together". | compile the example verbatim; running it unprivileged stops at the first `Mount` | partly: the composite compiles and its first two statements behave predictably (exit 1 via its own handler); "working" as an init cannot be checked outside an initramfs | none | todo: and see **Discrepancy 6**: the example uses no fork, reap, `the reaped status`, `Send signal` or system control; HELD by batch C (2026-10-05): the example writes absolute paths outside any scratch dir (`/proc`, `/newroot`, ...), uses `Pivot root` (still banned), and has an unbounded `While the root_device is not available` wait; a leaf cannot emit it confined | |
 | PRC-02 | 4234, 4241 | `Create a directory called '<path>'.` performs `mkdir(2)`. | create a directory under the program's scratch dir, then `If "<path>" is not available then, Exit 95.` | yes — the generator picks the path, so it knows the answer | `gen leaf process directory create` | **verified** | leaf assertion, campaign 2026-09-05 (seed 20260905, 200 programs, budget 12): fired 5/200 |
 | PRC-03 | 4241 | The directory is created with mode `0755`. | — | **no** from inside Vox — the language has no stat/mode accessor. Hand-checked outside with `stat -c '%a'`: 755 under `umask 0`, 700 under `umask 077`, i.e. 0755 is the mode argument and umask still applies, exactly as `mkdir(2)` specifies | n/a | not assertable | |
 | PRC-04 | 4241–4242 | The article `a` is optional: `Create directory called '<path>'.` also parses. | emit both spellings, varying which | yes — same assertion as PRC-02 | `gen leaf directory create` | exercised | construct emitted by gen leaf directory create (spelling/position drawn); the documented result is asserted through a sibling row's check, not its own |
 | PRC-05 | 4242 | `called` is required; omitting it is an error. | — | **no** at run time — it is a **compile** error (`Expected 'called' after directory`), so a generated program cannot carry it. Belongs to a negative-corpus harness, not a leaf | n/a | not assertable (compile-time) | |
-| PRC-06 | 4235, 4243–4244 | `Remove the directory called '<path>'.` performs `rmdir(2)`. | create then remove, `If "<path>" is available then, Exit 95.` | yes | none | todo | |
-| PRC-07 | 4236, 4243–4244 | `Delete` works as well as `Remove`. | emit both verbs, varying which | yes — same assertion | none | todo | |
-| PRC-08 | 4244 | `the` and `called` are both optional in the remove/delete form. | emit all four combinations across programs | yes — same assertion; four spellings is the anti-invariant requirement | none | todo | |
-| PRC-09 | 4243 | The removal is `rmdir(2)` — not recursive: a directory with a child cannot be removed. | remove a directory that still holds a child, assert the error flag fired and the child survives | yes — the generator created the child | none | todo — undocumented only in the sense that "rmdir(2)" is a citation rather than a sentence | |
-| PRC-10 | 4237, 4245 | `Change directory to "<path>".` performs `chdir(2)`; later relative paths resolve from the new cwd. | chdir into the scratch dir, create a child by a bare relative name, chdir back, assert the child is at the composed path | yes | none | todo — **and this is the one directory construct a leaf must think hardest about**: it moves the cwd out from under every other leaf in the same program, including the file-I/O leaves' scratch paths | |
+| PRC-06 | 4235, 4243–4244 | `Remove the directory called '<path>'.` performs `rmdir(2)`. | create then remove, `If "<path>" is available then, Exit 95.` | yes | `gen leaf process directory removal spellings` (kind 420), `gen leaf process directory removal refuses a file` (kind 422); probes PRC-06.vox, PRC-06b.vox | **verified** (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-07 | 4236, 4243–4244 | `Delete` works as well as `Remove`. | emit both verbs, varying which | yes: same assertion | kind 420/422 tag their assertions PRC-07 when `Delete` is drawn; probe PRC-06.vox | **verified** (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-08 | 4244 | `the` and `called` are both optional in the remove/delete form. | emit all four combinations across programs | yes: same assertion; four spellings is the anti-invariant requirement | kind 420/422 tag their assertions PRC-08 when `the` or `called` is left out; all eight spellings drawn; probe PRC-06.vox | **verified** (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-09 | 4243 | The removal is `rmdir(2)`, not recursive: a directory with a child cannot be removed. | remove a directory that still holds a child, assert the error flag fired and the child survives | yes: the generator created the child | `gen leaf process directory removal is not recursive` (kind 421): child chain 0-3 deep plus optional file; probe PRC-09.vox | **verified** (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-10 | 4237, 4245 | `Change directory to "<path>".` performs `chdir(2)`; later relative paths resolve from the new cwd. | chdir into the scratch dir, create a child by a bare relative name, chdir back, assert the child is at the composed path | yes | `gen leaf process change directory in a child` (kind 423): the chdir runs only in a reaped forked child; probes PRC-10.vox, PRC-10b.vox | **verified** (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
 | PRC-11 | 4246 | All three directory statements set the error flag on failure and `On error` catches it. | force each failure (unwritable parent, absent path), assert each handler fired | yes — the generator chooses a path it knows is absent | `gen leaf process directory failure paths` | **verified** | leaf assertion, campaign 2026-09-05 (seed 20260905, 200 programs, budget 12): fired 6/200 |
 | PRC-12 | 4251, 4261–4262 | `Mount "<source>" at "<target>" with type "<fstype>".` lowers to `mount(2)`. | **BANNED** — `tests/200_never_emitted.vox` fails on the substring `mount`. If the ban is lifted: mount under the scratch dir and assert the error flag fired (unprivileged) | yes, but only on the ERROR path: `On error` fires, so a leaf could assert the handler ran. The success path needs CAP_SYS_ADMIN and is unreachable for the fuzzer | `gen leaf process mount unmount refusal` | **verified** | leaf assertion, campaign 2026-09-05 (seed 20260905, 200 programs, budget 12): fired 12/200 |
 | PRC-13 | 4252, 4261 | The `with options "<options>"` clause is optional. | **BANNED** (as PRC-12); emit both arities | yes — error-path only, as PRC-12 | `gen leaf mount unmount refusal` | exercised | construct emitted by gen leaf mount unmount refusal (spelling/position drawn); the documented result is asserted through a sibling row's check, not its own |
-| PRC-14 | 4262–4264 | source, target, fstype and options each accept a string literal, a text variable, or a buffer, including a format-string-built buffer. | **BANNED** (as PRC-12); emit all four operands in each of the three forms | yes — error-path only. The format-built buffer is separately assertable by printing/comparing it, which is a buffer claim, not a mount one | none | todo (banned) | |
-| PRC-15 | 4265–4270 | fstype `"none"` with options `"move"` is recognised and translated to `MS_MOVE`. | **BANNED** (as PRC-12) | **no** for the fuzzer — the translation is only observable if the mount succeeds, which needs CAP_SYS_ADMIN. Unprivileged it is indistinguishable from a plain failing mount | none | todo (banned, and not assertable unprivileged) | |
-| PRC-16 | 4265–4267 | fstype `"none"` with options `"bind"` → `MS_BIND`. | **BANNED** (as PRC-12) | **no**, same as PRC-15 | none | todo (banned, and not assertable unprivileged) | |
-| PRC-17 | 4255, 4271 | `Unmount "<target>".` performs `umount2(2)`. | **BANNED** — `unmount` contains `mount` | yes — error-path only | none | todo (banned) | |
-| PRC-18 | 4271 | `umount` is an accepted alias for `Unmount`. | **BANNED** (as PRC-17); emit both spellings | yes — error-path only | none | todo (banned) | |
-| PRC-19 | 4256, 4272 | Appending `lazily` requests `MNT_DETACH`. | **BANNED** (as PRC-17); emit with and without the suffix | yes that the suffix parses and reaches the syscall; **no** that it is MNT_DETACH — see PRC-20 | none | todo (banned) | |
-| PRC-20 | 4272–4275 | `MNT_DETACH` detaches immediately and releases the mount once nothing uses it, instead of failing with "device busy" — needed to unmount the filesystem your own program was loaded from. | **BANNED** (as PRC-17) | **no** — needs a real mount to detach, therefore root | none | todo (banned, and not assertable unprivileged) | |
+| PRC-14 | 4262–4264 | source, target, fstype and options each accept a string literal, a text variable, or a buffer, including a format-string-built buffer. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-12); emit all four operands in each of the three forms | yes: error-path only. The format-built buffer is separately assertable by printing/comparing it, which is a buffer claim, not a mount one | `gen leaf process mount operand forms` (kind 424): each operand draws literal / text / buffer / format-built buffer; probes PRC-14.vox, PRC-14b.vox | **verified** (batch C, unmerged; error path only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-15 | 4265–4270 | fstype `"none"` with options `"move"` is recognised and translated to `MS_MOVE`. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-12) | **no** for the fuzzer; the translation is only observable if the mount succeeds, which needs CAP_SYS_ADMIN. Unprivileged it is indistinguishable from a plain failing mount | kind 425 emits the literal pattern and asserts the refusal; MS_MOVE seen only under strace (probe PRC-15.vox); variables are not translated, see **Discrepancy 8** | exercised (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-16 | 4265–4267 | fstype `"none"` with options `"bind"` → `MS_BIND`. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-12) | **no**, same as PRC-15 | kind 425, as PRC-15 with MS_BIND; see **Discrepancy 8** | exercised (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-17 | 4255, 4271 | `Unmount "<target>".` performs `umount2(2)`. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)*; `unmount` contains `mount` | yes: error-path only | `gen leaf process unmount spellings` (kind 426); umount2(2) seen under strace, probe PRC-17.vox | **verified** (batch C, unmerged; error path only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-18 | 4271 | `umount` is an accepted alias for `Unmount`. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-17); emit both spellings | yes: error-path only | kind 426 tags `umount` attempts PRC-18; probe PRC-17.vox | **verified** (batch C, unmerged; error path only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-19 | 4256, 4272 | Appending `lazily` requests `MNT_DETACH`. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-17); emit with and without the suffix | yes that the suffix parses and reaches the syscall; **no** that it is MNT_DETACH; see PRC-20 | kind 426 draws `lazily`; refusal asserted, MNT_DETACH seen only under strace (probe PRC-17.vox) | exercised (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-20 | 4272–4275 | `MNT_DETACH` detaches immediately and releases the mount once nothing uses it, instead of failing with "device busy"; needed to unmount the filesystem your own program was loaded from. | *(ban lifted 2026-08-30 for mount/unmount, was BANNED)* (as PRC-17) | **no**: needs a real mount to detach, therefore root | kind 426's `lazily` spellings; detach semantics need a real mount, not observable unprivileged | exercised (batch C, unmerged) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
 | PRC-21 | 4253, 4257, 4276 | Both Mount and Unmount set the error flag on failure. | **BANNED** (as PRC-12) | yes — this is the only mount/unmount behaviour an unprivileged fuzzer can assert, and it is worth a row | `gen leaf process mount unmount refusal` | **verified** | leaf assertion, campaign 2026-09-05 (seed 20260905, 200 programs, budget 12): fired 12/200 |
-| PRC-22 | 4281, 4285 | `Create a device node called "<path>" with type "c" major N minor M.` performs `mknod(2)`. | **BANNED** — the guard's needle is `device node` | yes — error-path only for `"c"`/`"b"` (needs CAP_MKNOD). **`"p"` is different: it succeeds unprivileged** and would create a real FIFO — see PRC-24 and D1 | none | todo (banned) | |
-| PRC-23 | 4282, 4285 | `type "b"` is accepted (block device). | **BANNED** (as PRC-22) | yes — error-path only | none | todo (banned) | |
-| PRC-24 | 4285 | The type is `"c"` (character) or `"b"` (block). | **BANNED** (as PRC-22) | yes, and the claim as written is **incomplete** — the compiler also accepts `"p"` (FIFO) and names it in its own diagnostic. See **Discrepancy 1** | none | todo (banned) | |
+| PRC-22 | 4281, 4285 | `Create a device node called "<path>" with type "c" major N minor M.` performs `mknod(2)`. | *(ban lifted 2026-10-05 for "c"/"b"; tests/200_never_emitted.vox now guards only `type "p"`, was BANNED)*; the guard's needle is `device node` | yes: error-path only for `"c"`/`"b"` (needs CAP_MKNOD). **`"p"` is different: it succeeds unprivileged** and would create a real FIFO; see PRC-24 and D1 | `gen leaf process device node refusal` (kind 427); probes PRC-22.vox, PRC-22b.vox; minor encoding see **Discrepancy 7** | **verified** (batch C, unmerged; error path only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-23 | 4282, 4285 | `type "b"` is accepted (block device). | *(ban lifted 2026-10-05 for "c"/"b"; tests/200_never_emitted.vox now guards only `type "p"`, was BANNED)* (as PRC-22) | yes: error-path only | kind 427 tags `"b"` attempts PRC-23; probe PRC-22b.vox | **verified** (batch C, unmerged; error path only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
+| PRC-24 | 4285 | The type is `"c"` (character) or `"b"` (block). | *(ban lifted 2026-10-05 for "c"/"b"; tests/200_never_emitted.vox now guards only `type "p"`, was BANNED)* (as PRC-22) | yes, and the claim as written is **incomplete**: the compiler also accepts `"p"` (FIFO) and names it in its own diagnostic. See **Discrepancy 1** | kind 427 on a fresh path asserts nothing appears (a type lowered to a FIFO would appear and fail it; hand-checked); `"p"` is never emitted, see D1 | **verified** (batch C, unmerged; "c"/"b" only) | acceptance campaign pending; batch C run 2026-10-05: seeds 20261005–20261104 and 20261105–20261204, budget 40, vox 0.4.15: 200/200 compiled, 0 findings |
 | PRC-25 | 4286–4287 | `major`/`minor` are the standard Linux device-driver identification numbers. | **BANNED** (as PRC-22) | **no** unprivileged — the numbers are only observable on a node that was actually created, i.e. with CAP_MKNOD | none | todo (banned, and not assertable unprivileged) | |
 | PRC-26 | 4288 | The device-node statement sets the error flag on failure. | **BANNED** (as PRC-22) | yes for a *runtime* failure. Note that an invalid **type** is not a runtime failure at all but a compile error — see **Discrepancy 2** | none | todo (banned) | |
 | PRC-27 | 4293, 4296 | `Create symbolic link from '<target>' to "<linkpath>".` performs `symlink(2)`: the second path is created and points at the first. | create a link inside the scratch dir to a file the program just wrote, read the file back through the link and assert the bytes; also link to an absent target and assert the link does not resolve | yes — the generator wrote the target and knows its contents | `gen leaf process symbolic link` | **verified** | leaf assertion, campaign 2026-09-05 (seed 20260905, 200 programs, budget 12): fired 16/200 |
@@ -392,6 +393,61 @@ constructs, which is true. The sentence as it now stands is still wrong for
 a reader arriving at the section today, and "working" is doing quiet work
 too: run outside an initramfs the example gets two statements in before its
 own handler exits 1.
+
+### 7. A device-node minor above 255 does not survive the encoding
+
+*Recorded by process batch C, 2026-10-05, vox 0.4.15. Not adjudicated.*
+
+LANGUAGE.md:4286-4287: *"`major`/`minor` are the standard Linux
+device-driver identification numbers"*. `D7.vox` issues
+`Create a device node called "…/scratch_d7" with type "c" major 259 minor 300.`
+and `strace -e trace=mknod` shows
+`mknod(…, S_IFCHR|0666, makedev(0x103, 0x2c)) = -1 EPERM`: major 259
+arrives intact, minor 300 arrives as 44 (300 bit-and 255). Minor 1048575
+arrives as 255; any major above 4095 arrives as 4095. From inside Vox
+nothing shows, because an unprivileged mknod(2) is refused before the
+number matters.
+
+Reading in the compiler's favour: the registry the sentence points at
+(`devices.txt`) is dominated by minors below 256, and the classic 16-bit
+`(major << 8) | minor` dev_t is a faithful encoding of those; the manual
+promises the *standard numbers*, and on the old encoding minors above
+255 did not exist. On that reading this is the legacy dev_t, not a
+truncation bug, and the manual is silent about the 32-bit `new_encode_dev`
+layout the kernel actually decodes. It matters only to a privileged
+init creating, say, an NVMe or input node.
+
+### 8. The `none` + `move`/`bind` translation fires only for string literals
+
+*Recorded by process batch C, 2026-10-05, vox 0.4.15. Not adjudicated.*
+
+LANGUAGE.md:4262-4267 says the four mount operands *"accept string
+literals, text variables, or buffers"* and that for `fstype "none"` with
+`options "move"` or `"bind"` *"Vox recognizes this pattern and translates
+it into the correct `MS_MOVE`/`MS_BIND` mount flags"*. `D8.vox`, under
+`strace -e trace=mount`:
+
+```
+Mount quay at quay with type "none" with options "bind".
+  -> mount(…, NULL, MS_BIND, NULL) = -1 EPERM
+Mount quay at quay with type 'none word' with options 'bind word'.
+  -> mount(…, "none", 0, "bind") = -1 EPERM
+```
+
+where the two variables hold `"none"` and `"bind"`. Unprivileged, both
+are refused, so no Vox program can tell them apart; with privilege the
+variable form would attempt a filesystem of type "none" instead of a
+bind.
+
+Reading in the compiler's favour: the manual's own example writes the
+pattern as literals, and "recognizes this pattern" can fairly mean a
+compile-time pattern over the source spelling - the same way a keyword
+is recognised - while the operand sentence describes plain mounts.
+Translating a runtime value would mean a string comparison inside every
+mount, which the compiler deliberately avoids elsewhere. On that reading
+the manual should say the pattern must be written literally.
+`gen leaf process mount move and bind` (kind 425) therefore emits only
+the literal form.
 
 ## A policy conflict this map cannot resolve
 

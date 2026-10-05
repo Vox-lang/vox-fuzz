@@ -1,0 +1,36 @@
+(FIL-18: element <index> of <list> takes a variable or a grouped expression as its index - LANGUAGE.md:3905-3906.
+ Three rendered shapes of 'gen leaf list computed index': a grouped
+ {base add offset} index, a plain variable, and a variable corrected by a
+ runtime Set. Also hand-verified: the ungrouped
+ 'element base add 1 of' does not parse (Expected 'of' after element index).
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-18.vox -o p && ./p
+ exit code 0; actual output:
+   -94293
+   0
+   -965
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-18-c1".
+Create a directory called 'the workspace'.
+a list called 'the crate' is [005, -000000000094293, 9169595743, 00339, -0086252, -31171].
+a number called 'the crate position' is -591653.
+a number called 'the crate computed read' is element {'the crate position' add 591655} of 'the crate'.
+If 'the crate computed read' is not -000000000094293 then, Print "ASSERT FIL-18: expected the literal written at position 2 got {'the crate computed read'}", Exit 95. Print 'the crate computed read'.
+a text called 'the workspace' is "vf_scratch/files/fil-18-c2".
+Create a directory called 'the workspace'.
+a list called 'the envelope' is [000, 0009].
+a number called 'the envelope position' is -438819.
+a number called 'the envelope computed read' is element {'the envelope position' add 438820} of 'the envelope'.
+If 'the envelope computed read' is not 000 then, Print "ASSERT FIL-18: expected the literal written at position 1 got {'the envelope computed read'}", Exit 95. Print 'the envelope computed read'.
+a text called 'the workspace' is "vf_scratch/files/fil-18-c3".
+Create a directory called 'the workspace'.
+a number called 'the gate' is 1.
+If 'the gate' is 1 then,
+  a list called ledger is [-965, -4],
+  a number called 'ledger position' is 738641,
+  Set 'ledger position' to 'ledger position' subtract 738640,
+  a number called 'ledger computed read' is element 'ledger position' of ledger,
+  If 'ledger computed read' is not -965 then, Print "ASSERT FIL-18: expected the literal written at position 1 got {'ledger computed read'}", Exit 95. Print 'ledger computed read'.

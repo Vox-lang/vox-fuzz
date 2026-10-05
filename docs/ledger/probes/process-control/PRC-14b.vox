@@ -1,0 +1,26 @@
+(PRC-14b - each mount operand in each form LANGUAGE.md:4262-4264 names:
+ text variable source, format-built buffer target, buffer fstype built
+ from a text stem, and a literal options string; every one reaches
+ mount(2) (strace: mount("ramfs", "vf_scratch/process-control/scratch_quay",
+ "tmpfs", 0, "size=8m") = -1 EPERM). Shape of 'gen leaf process mount
+ operand forms', kind 424 (process batch C, 2026-10-05).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/PRC-14b.vox -o p && ./p
+ expected output:
+   the mount was refused
+   the lazy unmount was refused
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a text called 'the place' is "vf_scratch/process-control".
+Create a directory called "{'the place'}/scratch_quay".
+a text called source is "ramfs".
+a buffer called target is "{'the place'}/scratch_quay".
+a text called 'type stem' is "tmp".
+a buffer called 'file system type' is "{'type stem'}fs".
+Mount source at target with type 'file system type' with options "size=8m".
+On error print "the mount was refused".
+Unmount target lazily.
+On error print "the lazy unmount was refused".
+Remove the directory called target.

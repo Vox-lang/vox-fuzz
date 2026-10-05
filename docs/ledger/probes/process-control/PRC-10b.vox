@@ -1,0 +1,28 @@
+(PRC-10b - `Change directory to` moves the working directory, and a
+ bare relative name then resolves from it - done inside a forked child
+ so the probe's own cwd never moves. The child first checks for a
+ beacon directory by its bare name, so a failed chdir exits 3 before it
+ creates anything in the wrong place. Shape of 'gen leaf process change
+ directory in a child', kind 423 (process batch C, 2026-10-05).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/PRC-10b.vox -o p && ./p
+ expected output:
+   37
+   the bare name landed in the new working directory
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a text called harbour is "vf_scratch/process-control/scratch_harbour".
+Create a directory called harbour.
+Create a directory called "vf_scratch/process-control/scratch_harbour/beacon".
+a number called sailor is fork the process.
+If sailor is 0 then, Change directory to harbour.
+If sailor is 0 and "beacon" is not available then, Exit 3.
+If sailor is 0 then, Create a directory called "skiff", Exit 37.
+a number called 'sailor reaped' is reap child sailor.
+Print the reaped status divide 256 modulo 256.
+If "vf_scratch/process-control/scratch_harbour/skiff" is available then, print "the bare name landed in the new working directory".
+Remove the directory called "vf_scratch/process-control/scratch_harbour/skiff".
+Remove the directory called "vf_scratch/process-control/scratch_harbour/beacon".
+Remove the directory called harbour.

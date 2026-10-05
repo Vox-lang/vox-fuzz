@@ -1,0 +1,28 @@
+(PRC-06b - the removal statement is rmdir(2), not a general "remove this
+ path": pointed at a regular FILE it refuses and the file keeps every
+ byte. Under strace the call is rmdir(path) = -1 ENOTDIR. Also shows the
+ path may be spelled as a format-string literal (LANGUAGE.md:4234-4236
+ show literals). Shape of 'gen leaf process directory removal refuses a
+ file', kind 422 (process batch C, 2026-10-05).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/PRC-06b.vox -o p && ./p
+ expected output:
+   the file refused the removal
+   the file is still there
+   7
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a text called 'the place' is "vf_scratch/process-control".
+a text called keepsake is "{'the place'}/scratch_keepsake".
+open a file for writing called scribe at keepsake.
+Write "payload" to scribe.
+Close scribe.
+Delete directory "{'the place'}/scratch_keepsake".
+On error print "the file refused the removal".
+If keepsake is available then, print "the file is still there".
+open a file for reading called reader at keepsake.
+Print reader's size.
+Close reader.
+Delete the file keepsake.

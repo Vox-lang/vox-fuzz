@@ -1,0 +1,18 @@
+(D7 - a device-node minor above 255 does not survive the encoding.
+ LANGUAGE.md:4286-4287: major/minor are "the standard Linux device-driver
+ identification numbers". Not observable from inside Vox (the call is
+ refused unprivileged); seen with
+   strace -e trace=mknod ./p
+ which shows, for the first statement,
+   mknod("vf_scratch/process-control/scratch_d7", S_IFCHR|0666, makedev(0x103, 0x2c)) = -1 EPERM
+ i.e. major 259 survives and minor 300 arrives as 44 (300 bitand 255).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/D7.vox -o p && ./p
+ expected output:
+   refused
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+Create a device node called "vf_scratch/process-control/scratch_d7" with type "c" major 259 minor 300.
+On error print "refused".

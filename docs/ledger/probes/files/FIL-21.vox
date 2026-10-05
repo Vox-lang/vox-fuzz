@@ -2,13 +2,27 @@
  Also covers: FIL-22, FIL-23.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-21.vox -o p && ./p
- actual output:
+ Extended 2026-10-05 (files batch C): appended rendered shapes of
+ 'gen leaf list out of bounds typed default' - a map holder, a list holder,
+ a literal index into a number holder, and a text holder: each flags and
+ reads its type's default.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-21.vox -o p && ./p
+ exit code 0; actual output:
    Cannot access element 100 - out of bounds!
    0
    element 0 is out of bounds too
    0
+   1
+   0
+   1
+   0
+   1
+   0
+   1
+   FIL-21 empty text
 )
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
 a list called items is [1, 2, 3].
 a number called 'the out of range item' is element 100 of items.
 On error print "Cannot access element 100 - out of bounds!".
@@ -16,3 +30,46 @@ print 'the out of range item'.
 a number called 'the zeroth item' is element 0 of items.
 On error print "element 0 is out of bounds too".
 print 'the zeroth item'.
+a text called 'the workspace' is "vf_scratch/files/fil-21-c1".
+Create a directory called 'the workspace'.
+a list called 'the crate' is [{}].
+a number called 'the crate missing position' is 4.
+a boolean called 'the crate found an error already pending' is false.
+On error Set 'the crate found an error already pending' to true.
+a boolean called 'the crate read was out of bounds' is false.
+a map called 'scratch' is element 'the crate missing position' of 'the crate'.
+On error Set 'the crate read was out of bounds' to true.
+If 'the crate read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'the crate read was out of bounds'}", Exit 95. Print 'the crate read was out of bounds'.
+If 'scratch's length is not 0 then, Print "ASSERT FIL-21: expected 0 got {'scratch's length}", Exit 95. Print 'scratch's length.
+a text called 'the workspace' is "vf_scratch/files/fil-21-c2".
+Create a directory called 'the workspace'.
+a list called 'loading bay' is [[], [-178395, 003], [-99, -0], [000787527575, 0237]].
+a number called 'loading bay missing position' is -299.
+a boolean called 'loading bay found an error already pending' is false.
+On error Set 'loading bay found an error already pending' to true.
+a boolean called 'loading bay read was out of bounds' is false.
+a list called 'pantry' is element 'loading bay missing position' of 'loading bay'.
+On error Set 'loading bay read was out of bounds' to true.
+If 'loading bay read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'loading bay read was out of bounds'}", Exit 95. Print 'loading bay read was out of bounds'.
+If 'pantry's length is not 0 then, Print "ASSERT FIL-21: expected 0 got {'pantry's length}", Exit 95. Print 'pantry's length.
+a text called 'the workspace' is "vf_scratch/files/fil-21-c3".
+Create a directory called 'the workspace'.
+a list called 'the waybill' is [000004, 000073].
+a boolean called 'the waybill found an error already pending' is false.
+On error Set 'the waybill found an error already pending' to true.
+a boolean called 'the waybill read was out of bounds' is false.
+a number called 'the dispatch note' is element 0 of 'the waybill'.
+On error Set 'the waybill read was out of bounds' to true.
+If 'the waybill read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'the waybill read was out of bounds'}", Exit 95. Print 'the waybill read was out of bounds'.
+If 'the dispatch note' is not 0 then, Print "ASSERT FIL-21: expected 0 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+a text called 'the workspace' is "vf_scratch/files/fil-21-c4".
+Create a directory called 'the workspace'.
+a list called 'the crate' is ["tqn", "h3b5ggs", "uo", "zera", "pzu", "i6rwwn594a"].
+a number called 'the crate missing position' is 0.
+a boolean called 'the crate found an error already pending' is false.
+On error Set 'the crate found an error already pending' to true.
+a boolean called 'the crate read was out of bounds' is false.
+a text called 'the greeting' is element 'the crate missing position' of 'the crate'.
+On error Set 'the crate read was out of bounds' to true.
+If 'the crate read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'the crate read was out of bounds'}", Exit 95. Print 'the crate read was out of bounds'.
+If 'the greeting' is not "" then, Print "ASSERT FIL-21: expected the empty text got a non-empty one", Exit 95. Print "FIL-21 empty text".

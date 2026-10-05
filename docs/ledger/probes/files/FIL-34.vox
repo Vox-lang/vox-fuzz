@@ -1,0 +1,53 @@
+(FIL-34: open for appending adds to the end, over several rounds, including a zero-length Write.
+ Also covers: FIL-37 (every open here uses a drawn clause order). Rendered
+ shapes of 'gen leaf file appending rounds'.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-34.vox -o p && ./p
+ exit code 0; actual output:
+   8
+   24
+   sy1zl2i4q1mwkk0vpu7ye5b4
+   52
+   4oqftdmjuuvizu3t2ei4b3l0yllw1qs1lmkcihtoobw4h1gyba9c
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-34-c1".
+Create a directory called 'the workspace'.
+a number called 'the gate' is 1.
+If 'the gate' is 1 then,
+  a text called 'cupboard path' is "{'the workspace'}/86rounds",
+  open a file called cupboard for writing at 'cupboard path',
+  Write "" to cupboard,
+  Close cupboard,
+  open a file at 'cupboard path' for appending called cupboard,
+  Write "sy1zl2i4" to cupboard,
+  If cupboard's size is not 8 then, Print "ASSERT FIL-34: expected 8 got {cupboard's size}", Exit 95. Print cupboard's size,
+  Close cupboard,
+  open a file for appending at 'cupboard path' called cupboard,
+  Write "q1mwkk0vpu7ye5b4" to cupboard,
+  If cupboard's size is not 24 then, Print "ASSERT FIL-34: expected 24 got {cupboard's size}", Exit 95. Print cupboard's size,
+  Close cupboard,
+  open a file for reading at 'cupboard path' called cupboard,
+  a buffer called 'loading bay' is 31 bytes in size,
+  Read from cupboard into 'loading bay',
+  a text called 'loading bay appended whole' is 'loading bay' as text,
+  If 'loading bay' is not "sy1zl2i4q1mwkk0vpu7ye5b4" then, Print "ASSERT FIL-34: expected sy1zl2i4q1mwkk0vpu7ye5b4 got {'loading bay appended whole'}", Exit 95. Print 'loading bay',
+  Close cupboard.
+a text called 'the workspace' is "vf_scratch/files/fil-34-c2".
+Create a directory called 'the workspace'.
+a text called 'storeroom path' is "{'the workspace'}/10rounds".
+open a file for writing at 'storeroom path' called storeroom.
+Write "4oqftdmjuuvizu3t2ei4b3l0yl" to storeroom.
+Close storeroom.
+open a file at 'storeroom path' for appending called storeroom.
+Write "lw1qs1lmkcihtoobw4h1gyba9c" to storeroom.
+If storeroom's size is not 52 then, Print "ASSERT FIL-34: expected 52 got {storeroom's size}", Exit 95. Print storeroom's size.
+Close storeroom.
+open a file for reading at 'storeroom path' called storeroom.
+a buffer called 'cupboard' is 65 bytes in size.
+Read from storeroom into 'cupboard'.
+a text called 'cupboard appended whole' is 'cupboard' as text.
+If 'cupboard' is not "4oqftdmjuuvizu3t2ei4b3l0yllw1qs1lmkcihtoobw4h1gyba9c" then, Print "ASSERT FIL-34: expected 4oqftdmjuuvizu3t2ei4b3l0yllw1qs1lmkcihtoobw4h1gyba9c got {'cupboard appended whole'}", Exit 95. Print 'cupboard'.
+Close storeroom.

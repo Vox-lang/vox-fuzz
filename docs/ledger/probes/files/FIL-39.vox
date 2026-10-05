@@ -1,0 +1,68 @@
+(FIL-39: reopening an existing file for writing truncates it to 0 before anything is written.
+ Also covers: FIL-80 (a Write on the closed handle sets the error flag).
+ Rendered shapes of 'gen leaf file writing truncates'.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-39.vox -o p && ./p
+ exit code 0; actual output:
+   117
+   0
+   80
+   1
+   t89rfw5u539pi8h4fbxjod8lp1goqjhg6k39wfydoz19r2njv9nqdhrvef0qvcwvwr27detdxdpoeuhf
+   329
+   0
+   124
+   1
+   5u4hleoo1qcpldv8rdx2eil4j2sj5ojuer6mgopyjuaeb36jz3ndk3rlmdecl3a5kzbwb43d3e26uc3oncp186wch0xgohvei79p9jo3pau9sydintov6bkpmf15
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-39-c1".
+Create a directory called 'the workspace'.
+a text called 'cupboard path' is "{'the workspace'}/11overwrite".
+open a file at 'cupboard path' called 'cupboard' for writing.
+Write "svcko27nx6mat5b1yc4hw6awkifwi3xxos7askncqfhwdyrz6o59p79emsxgkt0ozponcf5cen559b2v8qzj80mck69r2etp5p6rz1r6fjgch64dchopq" to 'cupboard'.
+If 'cupboard's size is not 117 then, Print "ASSERT FIL-39: expected 117 got {'cupboard's size}", Exit 95. Print 'cupboard's size.
+Close 'cupboard'.
+open a file for writing at 'cupboard path' called 'cupboard'.
+If 'cupboard's size is not 0 then, Print "ASSERT FIL-39: expected 0 got {'cupboard's size}", Exit 95. Print 'cupboard's size.
+Write "t89rfw5u539pi8h4fbxjod8lp1goqjhg6k39wfydoz19r2njv9nqdhrvef0qvcwvwr27detdxdpoeuhf" to 'cupboard'.
+If 'cupboard's size is not 80 then, Print "ASSERT FIL-39: expected 80 got {'cupboard's size}", Exit 95. Print 'cupboard's size.
+Close 'cupboard'.
+a boolean called 'cupboard found an error already pending' is false.
+On error Set 'cupboard found an error already pending' to true.
+a boolean called 'cupboard write after close failed' is false.
+Write "dt0hhdlm53t9vf" to 'cupboard'.
+On error Set 'cupboard write after close failed' to true.
+If 'cupboard write after close failed' is false then, Print "ASSERT FIL-80: expected 1 got {'cupboard write after close failed'}", Exit 95. Print 'cupboard write after close failed'.
+open a file at 'cupboard path' for reading called 'cupboard'.
+a buffer called 'the tray' is 126 bytes in size.
+Read from 'cupboard' into 'the tray'.
+a text called 'cupboard surviving bytes' is 'the tray' as text.
+If 'the tray' is not "t89rfw5u539pi8h4fbxjod8lp1goqjhg6k39wfydoz19r2njv9nqdhrvef0qvcwvwr27detdxdpoeuhf" then, Print "ASSERT FIL-39: expected t89rfw5u539pi8h4fbxjod8lp1goqjhg6k39wfydoz19r2njv9nqdhrvef0qvcwvwr27detdxdpoeuhf got {'cupboard surviving bytes'}", Exit 95. Print 'the tray'.
+Close 'cupboard'.
+a text called 'the workspace' is "vf_scratch/files/fil-39-c2".
+Create a directory called 'the workspace'.
+a text called 'the mailbag path' is "{'the workspace'}/19overwrite".
+open a file called 'the mailbag' for writing at 'the mailbag path'.
+Write "8hlfwkttomp7862dwgl3jy39b7rafapseseqdattwfc2821t9ecoxnrspbsdm0fzjnn88o8ett00aichfaro66bcimvmvnw3e8tyvadvn5kik72xsjvq14cj2ayk9e2j07g4gq65ycy64uvg31ro7z4o4x00sefgvn864g5zkraxw122h5ok5aeupm6war0pp6wtp0ers7oulekgcowp5hlu8ynhekjwmtbv0tmm40d9ths2hwskg1q3gyp6nwaa34eima4fjwppzvt22kvv1cevg4rldr4xx171ytsqa44wd1cbixqjrsr2oe8ns6gi92uybs4tz" to 'the mailbag'.
+If 'the mailbag's size is not 329 then, Print "ASSERT FIL-39: expected 329 got {'the mailbag's size}", Exit 95. Print 'the mailbag's size.
+Close 'the mailbag'.
+open a file at 'the mailbag path' for writing called 'the mailbag'.
+If 'the mailbag's size is not 0 then, Print "ASSERT FIL-39: expected 0 got {'the mailbag's size}", Exit 95. Print 'the mailbag's size.
+Write "5u4hleoo1qcpldv8rdx2eil4j2sj5ojuer6mgopyjuaeb36jz3ndk3rlmdecl3a5kzbwb43d3e26uc3oncp186wch0xgohvei79p9jo3pau9sydintov6bkpmf15" to 'the mailbag'.
+If 'the mailbag's size is not 124 then, Print "ASSERT FIL-39: expected 124 got {'the mailbag's size}", Exit 95. Print 'the mailbag's size.
+Close 'the mailbag'.
+a boolean called 'the mailbag found an error already pending' is false.
+On error Set 'the mailbag found an error already pending' to true.
+a boolean called 'the mailbag write after close failed' is false.
+Write "z8539fd" to 'the mailbag'.
+On error Set 'the mailbag write after close failed' to true.
+If 'the mailbag write after close failed' is false then, Print "ASSERT FIL-80: expected 1 got {'the mailbag write after close failed'}", Exit 95. Print 'the mailbag write after close failed'.
+open a file called 'the mailbag' at 'the mailbag path' for reading.
+a buffer called 'scratch' is 343 bytes in size.
+Read from 'the mailbag' into 'scratch'.
+a text called 'the mailbag surviving bytes' is 'scratch' as text.
+If 'scratch' is not "5u4hleoo1qcpldv8rdx2eil4j2sj5ojuer6mgopyjuaeb36jz3ndk3rlmdecl3a5kzbwb43d3e26uc3oncp186wch0xgohvei79p9jo3pau9sydintov6bkpmf15" then, Print "ASSERT FIL-39: expected 5u4hleoo1qcpldv8rdx2eil4j2sj5ojuer6mgopyjuaeb36jz3ndk3rlmdecl3a5kzbwb43d3e26uc3oncp186wch0xgohvei79p9jo3pau9sydintov6bkpmf15 got {'the mailbag surviving bytes'}", Exit 95. Print 'scratch'.
+Close 'the mailbag'.
