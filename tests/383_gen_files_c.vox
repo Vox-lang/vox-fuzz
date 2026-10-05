@@ -1,0 +1,305 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(The ledger's file leaves, batch C - docs/ledger/files.md rows FIL-09,
+ FIL-15, FIL-16, FIL-18, FIL-19, FIL-20, FIL-21, FIL-27, FIL-28, FIL-30,
+ FIL-31, FIL-34, FIL-36, FIL-37, FIL-39, FIL-43, FIL-48, FIL-50.
+
+ Same shape as 382_gen_files_b3.vox: each leaf called directly off a
+ pinned rng seed, its emitted source printed in full as the golden. Every
+ leaf is rendered at the true top level (nested false) under two seeds,
+ chosen so each drawn branch shows, and once inside a block (nested true)
+ - except the four leaves that carry an On error (FIL-21, FIL-39, FIL-36/43,
+ FIL-48): an On error handler takes a following comma as more of its own
+ body, so those are drawn at depth 3 only, where 'gen statement' renders
+ nothing nested, the same as every earlier files kind. FIL-37 shows in
+ every open line: the clause order differs.)
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+Set gen_reads_stdin to true.
+Set gen_input to "seven bytes\n".
+
+Print "--- FIL-09: the File Properties worked example ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file properties worked example' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 2 ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file properties worked example' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file properties worked example' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-15: a bare Boolean property as an If condition ---".
+'rng seed' of 118786.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty guard' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 1 ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty guard' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 118786.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list empty guard' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-16, FIL-19, FIL-20: index, first and last agree ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list index reads agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 134625 ---".
+'rng seed' of 134625.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list index reads agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list index reads agree' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-18: a computed index ---".
+'rng seed' of 118788.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list computed index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 2 ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list computed index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 3 ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list computed index' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 118788.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list computed index' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-21: out-of-bounds reads yield a typed default ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list out of bounds typed default' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 213817 ---".
+'rng seed' of 213817.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list out of bounds typed default' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 293007 ---".
+'rng seed' of 293007.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list out of bounds typed default' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 182141 ---".
+'rng seed' of 182141.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf list out of bounds typed default' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-27, FIL-28, FIL-30, FIL-31: negative, zero, sign and the worked example ---".
+'rng seed' of 174223.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number sign properties' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 3 ---".
+'rng seed' of 3.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number sign properties' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 1 ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number sign properties' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 174223.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf number sign properties' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-34: several rounds of appending ---".
+'rng seed' of 174224.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending rounds' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 2 ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending rounds' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 174224.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending rounds' of "  " and true.
+Print 'gen text'.
+
+Print "--- FIL-39: reopening for writing truncates ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file writing truncates' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 2 ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file writing truncates' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-36, FIL-43: borrowed descriptors ---".
+'rng seed' of 293011.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file borrowed descriptors' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 1 ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file borrowed descriptors' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-48: Read from standard input ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf standard input read' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 2 ---".
+'rng seed' of 2.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf standard input read' of "" and false.
+Print 'gen text'.
+
+Print "--- FIL-50: Read line through a whole file ---".
+'rng seed' of 87119.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line through a file' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, seed 1 ---".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line through a file' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, nested ---".
+'rng seed' of 87119.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line through a file' of "  " and true.
+Print 'gen text'.
+
+(A program that never committed to file I/O was never given a path, and
+ one that was given no stdin must not read it, so the path-building leaves
+ and the stdin leaf stand aside for the plain-print leaf instead.)
+Print "--- the path and stdin leaves with no file I/O and no stdin committed ---".
+Set gen_does_file_io to false.
+Set gen_reads_stdin to false.
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file properties worked example' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file appending rounds' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file writing truncates' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf read line through a file' of "" and false.
+Print "emits a file open: {'gen text contains' of \"open a file\"}".
+'rng seed' of 1.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf standard input read' of "" and false.
+Print "reads standard input: {'gen text contains' of \"standard input\"}".
+(The borrowed-descriptor leaf builds no path, so it still runs - but
+ with no stdin committed it must never borrow descriptor 0.)
+'rng seed' of 7.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf file borrowed descriptors' of "" and false.
+Print "borrows descriptor 0: {'gen text contains' of \"at 0\"}".
+Set gen_does_file_io to true.
+Set gen_reads_stdin to true.

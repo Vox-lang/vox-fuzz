@@ -1086,10 +1086,8 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
     ( ── process leaves, batch B, 2026-08-31 -
      docs/ledger/process-control.md PRC-11, 47, 48, 55, 60, 61, 87, in
      the 350-359 span this batch's surface brief reserves as a NEW block
-     (the 260-279 block above is batch A's, now full: 261 stays
-     unregistered pending the PRC-08 stale-read candidate
-     REPORT-LEAVES-PROCESS-A.md flags; 269 is claimed by the fix just
-     above). Kind 352 is written in gen_process.vox but LEFT
+     (the 260-279 block above is batch A's, now full; 269 is claimed by
+     the fix just above). Kind 352 is written in gen_process.vox but LEFT
      UNREGISTERED - PRC-50/51/52/53/54 (the `without waiting` family) hit
      a compiler candidate this batch's report records in full: the layout
      randomiser can put a single newline between a reap expression and
@@ -1107,6 +1105,23 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf process reaped ordinary identifier' of indent and nested.
     If kind is 354 then,
         'gen leaf process empty path refusal' of indent and nested.
+    ( ── process leaves, batch C, 2026-10-05 ── )
+    If kind is 420 then,
+        'gen leaf process directory removal spellings' of indent and nested.
+    If kind is 421 then,
+        'gen leaf process directory removal is not recursive' of indent and nested.
+    If kind is 422 then,
+        'gen leaf process directory removal refuses a file' of indent and nested.
+    If kind is 423 then,
+        'gen leaf process change directory in a child' of indent and nested.
+    If kind is 424 then,
+        'gen leaf process mount operand forms' of indent and nested.
+    If kind is 425 then,
+        'gen leaf process mount move and bind' of indent and nested.
+    If kind is 426 then,
+        'gen leaf process unmount spellings' of indent and nested.
+    If kind is 427 then,
+        'gen leaf process device node refusal' of indent and nested.
     ( ── expressions leaves, batch B, 2026-08-31 ──
      docs/ledger/expressions.md EXP-18, 29, 30, 35, 39, 41, 43, 73, 83,
      84, in the 360-369 span the reservation table sets aside as a NEW
@@ -1129,6 +1144,34 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf buffer text independent copy' of indent and nested.
     If kind is 366 then,
         'gen leaf base conversion partial and total parse' of indent and nested.
+    ( ── files leaves, batch C, 2026-10-05 ──
+     docs/ledger/files.md FIL-09, 15, 16, 18, 19, 20, 21, 27, 28, 30, 31,
+     34, 36, 37, 39, 43, 48, 50. Kinds 400-419 are the files leaves of
+     this batch. Eleven leaves claim 400-410; 411-419 are spare. FIL-37 has
+     no kind of its own - every open below goes through 'gen file open in
+     any order'. Drawn only at depth 3, the same as every other files kind.)
+    If kind is 400 then,
+        'gen leaf file properties worked example' of indent and nested.
+    If kind is 401 then,
+        'gen leaf list empty guard' of indent and nested.
+    If kind is 402 then,
+        'gen leaf list index reads agree' of indent and nested.
+    If kind is 403 then,
+        'gen leaf list computed index' of indent and nested.
+    If kind is 404 then,
+        'gen leaf list out of bounds typed default' of indent and nested.
+    If kind is 405 then,
+        'gen leaf number sign properties' of indent and nested.
+    If kind is 406 then,
+        'gen leaf file appending rounds' of indent and nested.
+    If kind is 407 then,
+        'gen leaf file writing truncates' of indent and nested.
+    If kind is 408 then,
+        'gen leaf file borrowed descriptors' of indent and nested.
+    If kind is 409 then,
+        'gen leaf standard input read' of indent and nested.
+    If kind is 410 then,
+        'gen leaf read line through a file' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1316,7 +1359,19 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          of 216; raw 187..215 remap to the spans below - each If tests the RAW
          value, bounded both sides; the master derived every span from the kinds
          each batch actually registered.)
-        Set kind to 'rng below' of 210.
+        (Files batch C and process batch C, 2026-10-05, each widened this
+         draw by their own leaf count; one draw of 229 is the previous 210
+         plus 11 + 8. Raw 210..220 go to the files kinds 400..410
+         and raw 221..228 to the process kinds 420..427. These two remaps sit
+         FIRST, straight after the draw, because the Ifs below run in turn
+         and some of them leave kind inside 210..228 (raw 116 becomes 220),
+         so only here does an If see the raw value. Both land above 400,
+         past every bound below.)
+        Set kind to 'rng below' of 229.
+        If kind is greater than 209 and kind is less than 221 then,
+            Set kind to kind add 190.
+        If kind is greater than 220 and kind is less than 229 then,
+            Set kind to kind add 199.
         If kind is greater than 49 and kind is less than 65 then,
             Set kind to kind add 90.
         If kind is greater than 64 and kind is less than 70 then,

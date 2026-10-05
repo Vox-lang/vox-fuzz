@@ -1487,3 +1487,884 @@ To 'gen leaf file forgotten close' with a text called indent and a boolean calle
     a text called 'the reader close' is "Close {'the reader handle'}".
     a list called 'the lines' is ['the path line', 'the write open', 'the write line', 'the read open', 'the sink line', 'the read line', 'the sink capture', 'the sink check', 'the reader close'].
     'gen join lines' of indent and nested and 'the lines'.
+
+(--- The ledger's file leaves, batch C, 2026-10-05 -----------------------
+
+ docs/ledger/files.md rows FIL-09, FIL-15, FIL-16, FIL-18, FIL-19,
+ FIL-20, FIL-21, FIL-27, FIL-28, FIL-30, FIL-31, FIL-34, FIL-36, FIL-37,
+ FIL-39, FIL-43, FIL-48, FIL-50. Same machinery as batches B to B3: the
+ name allocator and assertion helpers from gen_buffers.vox, the D16 guard
+ repeated in every leaf that builds a path, every path built from
+ gen_scratch_flag, and every property read on a still-open handle.
+
+ FIL-37 is not one leaf but a rule every leaf here follows: each `open`
+ goes through 'gen file open in any order', so the clause order is drawn
+ per open rather than fixed. Hand-verified against vox 0.4.15 before
+ encoding; the probes are docs/ledger/probes/files/FIL-NN.vox, each
+ recording what the compiler printed.)
+
+(FIL-37: the `for <mode>`, `called <name>` and `at <path>` clauses of an
+ open may appear in any order - LANGUAGE.md:3974. Three clauses, six
+ orders, all hand-verified to compile and to open the same file in the
+ same mode (docs/ledger/probes/files/FIL-37.vox). Before this batch every
+ generated open used the manual's first order only, an invariant the
+ ledger's own Invariants table names as a defect.)
+
+To 'gen file open in any order' with a text called 'the mode' and a text called 'the handle' and a text called 'the target'.
+    a text called 'the mode clause' is "for {'the mode'}".
+    a text called 'the name clause' is "called {'the handle'}".
+    a text called 'the place clause' is "at {'the target'}".
+    a number called 'the order draw' is 'rng below' of 6.
+    If 'the order draw' is 0 then,
+        Return a text, "open a file {'the mode clause'} {'the name clause'} {'the place clause'}".
+    If 'the order draw' is 1 then,
+        Return a text, "open a file {'the mode clause'} {'the place clause'} {'the name clause'}".
+    If 'the order draw' is 2 then,
+        Return a text, "open a file {'the name clause'} {'the mode clause'} {'the place clause'}".
+    If 'the order draw' is 3 then,
+        Return a text, "open a file {'the name clause'} {'the place clause'} {'the mode clause'}".
+    If 'the order draw' is 4 then,
+        Return a text, "open a file {'the place clause'} {'the mode clause'} {'the name clause'}".
+    Return a text, "open a file {'the place clause'} {'the name clause'} {'the mode clause'}".
+
+(Three independent blocks of lines in a drawn order - six orders, the
+ same enumeration 'gen leaf number properties' writes out inline, here as
+ a helper because four leaves below need it. Each block is
+ self-contained, so every order is legal by inspection.)
+
+To 'gen file shuffle three blocks' with a list called 'the first block' and a list called 'the second block' and a list called 'the third block'.
+    a number called 'the order draw' is 'rng below' of 6.
+    If 'the order draw' is 0 then,
+        Return a list, 'gen concat three blocks' of 'the first block' and 'the second block' and 'the third block'.
+    If 'the order draw' is 1 then,
+        Return a list, 'gen concat three blocks' of 'the first block' and 'the third block' and 'the second block'.
+    If 'the order draw' is 2 then,
+        Return a list, 'gen concat three blocks' of 'the second block' and 'the first block' and 'the third block'.
+    If 'the order draw' is 3 then,
+        Return a list, 'gen concat three blocks' of 'the second block' and 'the third block' and 'the first block'.
+    If 'the order draw' is 4 then,
+        Return a list, 'gen concat three blocks' of 'the third block' and 'the first block' and 'the second block'.
+    Return a list, 'gen concat three blocks' of 'the third block' and 'the second block' and 'the first block'.
+
+(A whole number with a drawn sign and a magnitude from 'gen extreme
+ number', so i64's top and the 2^31 boundary turn up beside short and
+ long random ones. Never `-0`: a zero magnitude stays unsigned, so a
+ caller can read the sign of the result off its first character.)
+
+To 'gen signed extreme number'.
+    a text called 'the magnitude' is 'gen extreme number'.
+    If 'the magnitude' is "0" then,
+        Return a text, 'the magnitude'.
+    a number called 'the sign draw' is 'rng below' of 2.
+    If 'the sign draw' is 1 then,
+        Return a text, "-{'the magnitude'}".
+    Return a text, 'the magnitude'.
+
+(FIL-09: the File Properties worked example - LANGUAGE.md:3842-3848:
+ open for reading, read `size` and `modified`, then guard on `size is
+ greater than` a threshold. The size is the payload length the generator
+ wrote; `modified` is checked as a range and never printed, for the
+ wall-clock reason 'gen file assert range quietly' records; and the
+ guard's threshold is drawn so the generator knows which way it goes -
+ the manual's own 1048576, which the payload never reaches, the length
+ itself or one below it (the boundary from both sides), zero, or any
+ 'gen extreme number'. Probe: docs/ledger/probes/files/FIL-09.vox.)
+
+To 'gen leaf file properties worked example' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the modified access' is 'gen buffer property' of 'the stem' and "modified".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the guard flag' is 'gen buffer companion' of "size guard fired".
+    a number called 'the payload draw' is 'rng below' of 400.
+    a number called 'the payload length' is 'the payload draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a number called 'the threshold draw' is 'rng below' of 5.
+    a text called 'the threshold' is "1048576".
+    If 'the threshold draw' is 1 then,
+        Set 'the threshold' to "{'the payload length' subtract 1}".
+    If 'the threshold draw' is 2 then,
+        Set 'the threshold' to "{'the payload length'}".
+    If 'the threshold draw' is 3 then,
+        Set 'the threshold' to "0".
+    If 'the threshold draw' is 4 then,
+        Set 'the threshold' to 'gen extreme number'.
+    a number called 'the threshold value' is 'the threshold' as a number.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}example\"".
+    a text called 'the seed open' is 'gen file open in any order' of "writing" and 'the handle' and 'the path name'.
+    a text called 'the seed write' is "Write \"{'the payload'}\" to {'the handle'}".
+    a text called 'the seed close' is "Close {'the handle'}".
+    a text called 'the read open' is 'gen file open in any order' of "reading" and 'the handle' and 'the path name'.
+    a text called 'the size check' is 'gen assert number is' of "FIL-09" and 'the size access' and 'the payload length'.
+    a text called 'the now expression' is "current time's unix".
+    a text called 'the now shown' is 'gen buffer slot of' of 'the now expression'.
+    a text called 'the modified check' is 'gen file assert range quietly' of "FIL-09" and 'the modified access' and "1" and "1" and 'the now expression' and 'the now shown'.
+    a text called 'the guard declaration' is "a boolean called {'the guard flag'} is false".
+    a text called 'the guard' is "If {'the size access'} is greater than {'the threshold'} then, Set {'the guard flag'} to true. Print {'the guard flag'}".
+    a text called 'the guard check' is 'gen assert false' of "FIL-09" and 'the guard flag'.
+    If 'the payload length' is greater than 'the threshold value' then,
+        Set 'the guard check' to 'gen assert true' of "FIL-09" and 'the guard flag'.
+    a text called 'the close line' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the read open', 'the size check', 'the modified check', 'the guard declaration', 'the guard', 'the guard check', 'the close line'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-15: the List Properties worked example - LANGUAGE.md:3886-3891 - and
+ the point it makes: a Boolean property is a condition on its own, `If
+ names's empty then,` with no comparison. 'gen assert true'/'false'
+ compare (`is false`), so they never put the bare form on trial; here the
+ bare form sets a flag and the flag is asserted. The list is empty or
+ holds one to five literals of a drawn type, so the guard fires in some
+ programs and not in others. Probe: docs/ledger/probes/files/FIL-15.vox.)
+
+To 'gen leaf list empty guard' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a text called 'the empty access' is 'gen buffer property' of 'the stem' and "empty".
+    a text called 'the guard flag' is 'gen buffer companion' of "empty guard fired".
+    a number called 'the count' is 'rng below' of 6.
+    a number called 'the type draw' is 'rng below' of 4.
+    a text called 'the elements' is "".
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a text called 'the drawn literal' is 'gen typed literal' of 'the type draw',
+        If 'the built' is 0 then,
+            Set 'the elements' to 'the drawn literal'.
+        If 'the built' is greater than 0 then,
+            Set 'the elements' to "{'the elements'}, {'the drawn literal'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements'}]".
+    a text called 'the length check' is 'gen assert number is' of "FIL-15" and 'the length access' and 'the count'.
+    a text called 'the guard declaration' is "a boolean called {'the guard flag'} is false".
+    a text called 'the guard' is "If {'the empty access'} then, Set {'the guard flag'} to true. Print {'the guard flag'}".
+    a text called 'the guard check' is 'gen assert false' of "FIL-15" and 'the guard flag'.
+    If 'the count' is 0 then,
+        Set 'the guard check' to 'gen assert true' of "FIL-15" and 'the guard flag'.
+    a list called 'the lines' is ['the declaration', 'the length check', 'the guard declaration', 'the guard', 'the guard check'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(One list element literal of a drawn kind, for the index leaves below:
+ kind 0 is a whole number in 'literal integer's unbounded spelling
+ (leading zeros, a sign), kind 1 a quoted run of 'gen buffer filler'
+ letters and digits - possibly empty, and never anything that would need
+ escaping inside an assertion's message.)
+
+To 'gen list literal of kind' with a number called kind.
+    If kind is 0 then,
+        Return a text, 'literal integer'.
+    a number called 'the length' is 'rng below' of 13.
+    a text called 'the letters' is 'gen buffer filler' of 'the length'.
+    Return a text, "\"{'the letters'}\"".
+
+(FIL-16, FIL-19, FIL-20: list indexes are 1-indexed (LANGUAGE.md:3896),
+ `first` is the same item as `element 1` (LANGUAGE.md:3911) and `last`
+ the same item as `element <length>` (LANGUAGE.md:3912). The same three
+ facts are asserted for the Lists chapter by 'gen leaf list length and
+ ends' and 'gen leaf list element index' (gen_collections.vox), but over
+ values 0..999 only; here the elements are 'literal integer's whole
+ range, signs and i64's ends included, or texts, so a read that
+ truncates, sign-extends or confuses a text pointer with a number is
+ caught. Every read is captured into a typed holder first and the holder
+ is asserted, so no element read ever sits inside a format slot. The
+ three checks are independent and land in a drawn order. Probe:
+ docs/ledger/probes/files/FIL-16.vox.)
+
+To 'gen leaf list index reads agree' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the first access' is 'gen buffer property' of 'the stem' and "first".
+    a text called 'the last access' is 'gen buffer property' of 'the stem' and "last".
+    a text called 'the length access' is 'gen buffer property' of 'the stem' and "length".
+    a number called 'the kind' is 'rng below' of 2.
+    a text called 'the holder type' is "number".
+    If 'the kind' is 1 then,
+        Set 'the holder type' to "text".
+    a number called 'the count draw' is 'rng below' of 8.
+    a number called 'the count' is 'the count draw' add 1.
+    a list called 'the literals' is [].
+    a text called 'the elements' is "".
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a text called 'the drawn literal' is 'gen list literal of kind' of 'the kind',
+        append 'the drawn literal' to 'the literals',
+        If 'the built' is 0 then,
+            Set 'the elements' to 'the drawn literal'.
+        If 'the built' is greater than 0 then,
+            Set 'the elements' to "{'the elements'}, {'the drawn literal'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the first literal' is element 1 of 'the literals'.
+    a text called 'the last literal' is element 'the count' of 'the literals'.
+    a number called 'the position draw' is 'rng below' of 'the count'.
+    a number called 'the position' is 'the position draw' add 1.
+    a text called 'the positioned literal' is element 'the position' of 'the literals'.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements'}]".
+    a text called 'the opening holder' is 'gen buffer companion' of "element one".
+    a text called 'the opening capture' is "a {'the holder type'} called {'the opening holder'} is element 1 of {'the name'}".
+    a text called 'the opening check' is 'gen assert number' of "FIL-16" and 'the opening holder' and 'the first literal' and "the literal written first".
+    a text called 'the positioned holder' is 'gen buffer companion' of "element {'the position'}".
+    a text called 'the positioned capture' is "a {'the holder type'} called {'the positioned holder'} is element {'the position'} of {'the name'}".
+    a text called 'the positioned check' is 'gen assert number' of "FIL-16" and 'the positioned holder' and 'the positioned literal' and "the literal written at position {'the position'}".
+    a list called 'the index block' is ['the opening capture', 'the opening check', 'the positioned capture', 'the positioned check'].
+    a text called 'the first holder' is 'gen buffer companion' of "first item".
+    a text called 'the first capture' is "a {'the holder type'} called {'the first holder'} is {'the first access'}".
+    a text called 'the first literal check' is 'gen assert number' of "FIL-19" and 'the first holder' and 'the first literal' and "the literal written first".
+    a text called 'the head holder' is 'gen buffer companion' of "head by index".
+    a text called 'the head capture' is "a {'the holder type'} called {'the head holder'} is element 1 of {'the name'}".
+    a text called 'the first agreement' is 'gen assert number matches' of "FIL-19" and 'the first holder' and 'the head holder'.
+    a list called 'the first block' is ['the first capture', 'the first literal check', 'the head capture', 'the first agreement'].
+    a text called 'the count holder' is 'gen buffer companion' of "item count".
+    a text called 'the count capture' is "a number called {'the count holder'} is {'the length access'}".
+    a text called 'the last holder' is 'gen buffer companion' of "last item".
+    a text called 'the last capture' is "a {'the holder type'} called {'the last holder'} is {'the last access'}".
+    a text called 'the last literal check' is 'gen assert number' of "FIL-20" and 'the last holder' and 'the last literal' and "the literal written last".
+    a text called 'the tail holder' is 'gen buffer companion' of "tail by length".
+    a text called 'the tail capture' is "a {'the holder type'} called {'the tail holder'} is element {'the count holder'} of {'the name'}".
+    a text called 'the last agreement' is 'gen assert number matches' of "FIL-20" and 'the last holder' and 'the tail holder'.
+    a list called 'the last block' is ['the count capture', 'the last capture', 'the last literal check', 'the tail capture', 'the last agreement'].
+    a list called 'the checks' is 'gen file shuffle three blocks' of 'the index block' and 'the first block' and 'the last block'.
+    a list called 'the opening' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the opening' and 'the checks'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-18: `element i of <list>` takes a variable or an expression as its
+ index - LANGUAGE.md:3905-3906. The index is never a literal here, and
+ three forms are drawn: a plain variable holding the position, a variable
+ that only reaches the position after a runtime `Set` (declared off by a
+ drawn offset, then corrected), and a grouped `{base add offset}`
+ expression written straight into the index slot - hand-verified to
+ parse and to read the right slot, including a negative base
+ (docs/ledger/probes/files/FIL-18.vox). The ungrouped `element base add
+ 1 of` does not parse ("Expected 'of' after element index"), so it is
+ never emitted. The read is captured into a typed holder and asserted
+ against the literal the generator wrote at that position.)
+
+To 'gen leaf list computed index' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the kind' is 'rng below' of 2.
+    a text called 'the holder type' is "number".
+    If 'the kind' is 1 then,
+        Set 'the holder type' to "text".
+    a number called 'the count draw' is 'rng below' of 8.
+    a number called 'the count' is 'the count draw' add 1.
+    a list called 'the literals' is [].
+    a text called 'the elements' is "".
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a text called 'the drawn literal' is 'gen list literal of kind' of 'the kind',
+        append 'the drawn literal' to 'the literals',
+        If 'the built' is 0 then,
+            Set 'the elements' to 'the drawn literal'.
+        If 'the built' is greater than 0 then,
+            Set 'the elements' to "{'the elements'}, {'the drawn literal'}".
+        Set 'the built' to 'the built' add 1.
+    a number called 'the position draw' is 'rng below' of 'the count'.
+    a number called 'the position' is 'the position draw' add 1.
+    a text called 'the expected literal' is element 'the position' of 'the literals'.
+    a number called 'the offset draw' is 'rng below' of 1000000.
+    a number called 'the offset' is 'the offset draw' add 1.
+    a text called 'the index holder' is 'gen buffer companion' of "position".
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements'}]".
+    a list called 'the index lines' is [].
+    a text called 'the index expression' is 'the index holder'.
+    a number called 'the form draw' is 'rng below' of 3.
+    If 'the form draw' is 0 then,
+        append "a number called {'the index holder'} is {'the position'}" to 'the index lines'.
+    If 'the form draw' is 1 then,
+        append "a number called {'the index holder'} is {'the position' add 'the offset'}" to 'the index lines',
+        append "Set {'the index holder'} to {'the index holder'} subtract {'the offset'}" to 'the index lines'.
+    If 'the form draw' is 2 then,
+        append "a number called {'the index holder'} is {'the position' subtract 'the offset'}" to 'the index lines',
+        Set 'the index expression' to "{{{'the index holder'} add {'the offset'}}}".
+    a text called 'the read holder' is 'gen buffer companion' of "computed read".
+    a text called 'the capture' is "a {'the holder type'} called {'the read holder'} is element {'the index expression'} of {'the name'}".
+    a text called 'the check' is 'gen assert number' of "FIL-18" and 'the read holder' and 'the expected literal' and "the literal written at position {'the position'}".
+    a list called 'the opening' is ['the declaration'].
+    a list called 'the closing' is ['the capture', 'the check'].
+    a list called 'the lines' is 'gen concat three blocks' of 'the opening' and 'the index lines' and 'the closing'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-21: an out-of-bounds list read sets the error flag and yields a
+ default - LANGUAGE.md:3916-3921. Where the compiler can prove the index
+ is past the end it yields the NUMBER 0, so only a number holder is
+ legal; where it cannot, it yields the holder's own default: 0, the empty
+ text, [] or {}. Hand-verified (docs/ledger/probes/files/FIL-21.vox):
+
+ - provable: literal 0 and any positive literal past the end, i64's top
+   included - a text holder there is a compile error, so the literal
+   forms are only ever drawn for a list of numbers;
+ - not provable: a variable index, AND a negative literal - the compiler
+   does not treat `element -2 of` as provably out of range, so a text
+   holder compiles and reads the empty text. That matches the manual's
+   "where the compiler can prove" wording and is not recorded as a
+   discrepancy, but it is why a negative literal is drawn here only for
+   numbers too: a compiler that started proving it would turn a text
+   holder into a compile failure, which the fuzzer must never emit.
+
+ The element type is drawn - numbers, texts, lists or maps - and every
+ non-number type reads through a variable index holding 0, a negative, a
+ position just past the end, or a 'gen extreme number' past it. The
+ stale-flag drain from 'gen leaf read line mechanics' runs first, so a
+ flag left by an earlier leaf is never read as this one's. This covers
+ the collections ledger's LST2-25/LST2-28 territory too; the row named
+ here is the File I/O chapter's restatement of it.)
+
+To 'gen leaf list out of bounds typed default' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a number called 'the kind' is 'rng below' of 4.
+    a number called 'the count draw' is 'rng below' of 6.
+    a number called 'the count' is 'the count draw' add 1.
+    a text called 'the elements' is "".
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the count',
+        a text called 'the drawn element' is 'literal integer',
+        a text called 'the inner number' is 'literal integer',
+        a text called 'the inner key' is 'gen buffer filler' of 6,
+        If 'the kind' is 1 then,
+            Set 'the drawn element' to 'gen list literal of kind' of 1.
+        If 'the kind' is 2 then,
+            Set 'the drawn element' to "[{'the drawn element'}, {'the inner number'}]".
+        If 'the kind' is 2 and 'the built' is 0 then,
+            Set 'the drawn element' to "[]".
+        If 'the kind' is 3 then,
+            Set 'the drawn element' to "{{\"{'the inner key'}\": {'the inner number'}}}".
+        If 'the kind' is 3 and 'the built' is 0 then,
+            Set 'the drawn element' to "{{}}".
+        If 'the built' is 0 then,
+            Set 'the elements' to 'the drawn element'.
+        If 'the built' is greater than 0 then,
+            Set 'the elements' to "{'the elements'}, {'the drawn element'}".
+        Set 'the built' to 'the built' add 1.
+    a text called 'the declaration' is "a list called {'the name'} is [{'the elements'}]".
+    a number called 'the past draw' is 'rng below' of 1000.
+    a number called 'the past end' is 'the count' add 1 add 'the past draw'.
+    a number called 'the value draw' is 'rng below' of 4.
+    a text called 'the index value' is "0".
+    a text called 'the far magnitude' is 'gen extreme number'.
+    If 'the value draw' is 1 then,
+        Set 'the index value' to "-{'the far magnitude'}".
+    If 'the value draw' is 2 then,
+        Set 'the index value' to "{'the count' add 1}".
+    If 'the value draw' is 3 then,
+        Set 'the index value' to "{'the past end'}".
+    If 'the index value' is "-0" then,
+        Set 'the index value' to "0".
+    a text called 'the index holder' is 'gen buffer companion' of "missing position".
+    a list called 'the index lines' is [].
+    append "a number called {'the index holder'} is {'the index value'}" to 'the index lines'.
+    a text called 'the index expression' is 'the index holder'.
+    a number called 'the literal draw' is 'rng below' of 2.
+    If 'the kind' is 0 and 'the literal draw' is 1 then,
+        Set 'the index lines' to [],
+        Set 'the index expression' to 'the index value'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the miss flag' is 'gen buffer companion' of "read was out of bounds".
+    a text called 'the miss declaration' is "a boolean called {'the miss flag'} is false".
+    a text called 'the holder stem' is 'gen buffer name'.
+    a text called 'the holder' is 'gen buffer reference' of 'the holder stem'.
+    a text called 'the holder length' is 'gen buffer property' of 'the holder stem' and "length".
+    a text called 'the holder type' is "number".
+    If 'the kind' is 1 then,
+        Set 'the holder type' to "text".
+    If 'the kind' is 2 then,
+        Set 'the holder type' to "list".
+    If 'the kind' is 3 then,
+        Set 'the holder type' to "map".
+    a text called 'the read' is "a {'the holder type'} called {'the holder'} is element {'the index expression'} of {'the name'}".
+    a text called 'the miss handler' is "On error Set {'the miss flag'} to true".
+    a text called 'the miss check' is 'gen assert true' of "FIL-21" and 'the miss flag'.
+    a text called 'the default check' is 'gen assert number is' of "FIL-21" and 'the holder' and 0.
+    If 'the kind' is 1 then,
+        Set 'the default check' to "If {'the holder'} is not \"\" then, Print \"ASSERT FIL-21: expected the empty text got a non-empty one\", Exit 95. Print \"FIL-21 empty text\"".
+    If 'the kind' is greater than 1 then,
+        Set 'the default check' to 'gen assert number is' of "FIL-21" and 'the holder length' and 0.
+    a list called 'the opening' is ['the declaration'].
+    a list called 'the closing' is ['the stale declaration', 'the stale handler', 'the miss declaration', 'the read', 'the miss handler', 'the miss check', 'the default check'].
+    a list called 'the lines' is 'gen concat three blocks' of 'the opening' and 'the index lines' and 'the closing'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-27, FIL-28, FIL-30, FIL-31: `negative` is true iff the number is
+ below 0, `zero` iff it is 0, `sign` is -1, 0 or 1 (LANGUAGE.md:3939,
+ 3940, 3942), and the worked example - `If x's negative then,` as a bare
+ condition, then `x's absolute` (LANGUAGE.md:3946-3951). The value is
+ 'gen signed extreme number', so i64's top and its negation turn up; it
+ is written either as a literal or, for a negative, as `0 subtract`
+ its magnitude. `absolute` of i64's minimum is never reachable from here
+ - the most negative value drawn is -9223372036854775807 - because that
+ is FIL-29's question, not this leaf's (the batch report records what it
+ does). Three independent blocks in a drawn order. Probe:
+ docs/ledger/probes/files/FIL-27.vox.)
+
+To 'gen leaf number sign properties' with a text called indent and a boolean called nested.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the name' is 'gen buffer reference' of 'the stem'.
+    a text called 'the negative access' is 'gen buffer property' of 'the stem' and "negative".
+    a text called 'the zero access' is 'gen buffer property' of 'the stem' and "zero".
+    a text called 'the sign access' is 'gen buffer property' of 'the stem' and "sign".
+    a text called 'the absolute access' is 'gen buffer property' of 'the stem' and "absolute".
+    a text called 'the guard flag' is 'gen buffer companion' of "negative guard fired".
+    a text called 'the magnitude' is 'gen extreme number'.
+    a number called 'the class draw' is 'rng below' of 3.
+    If 'the magnitude' is "0" then,
+        Set 'the class draw' to 1.
+    If 'the class draw' is 1 then,
+        Set 'the magnitude' to "0".
+    a text called 'the value' is 'the magnitude'.
+    a text called 'the expected sign' is "0".
+    If 'the class draw' is 0 then,
+        Set 'the value' to "-{'the magnitude'}",
+        Set 'the expected sign' to "-1".
+    If 'the class draw' is 2 then,
+        Set 'the expected sign' to "1".
+    a number called 'the spelling draw' is 'rng below' of 2.
+    If 'the class draw' is 0 and 'the spelling draw' is 1 then,
+        Set 'the value' to "0 subtract {'the magnitude'}".
+    a text called 'the declaration' is "a number called {'the name'} is {'the value'}".
+    a text called 'the negative check' is 'gen assert false' of "FIL-27" and 'the negative access'.
+    If 'the class draw' is 0 then,
+        Set 'the negative check' to 'gen assert true' of "FIL-27" and 'the negative access'.
+    a text called 'the zero check' is 'gen assert false' of "FIL-28" and 'the zero access'.
+    If 'the class draw' is 1 then,
+        Set 'the zero check' to 'gen assert true' of "FIL-28" and 'the zero access'.
+    a list called 'the predicate block' is ['the negative check', 'the zero check'].
+    a text called 'the sign check' is 'gen assert number' of "FIL-30" and 'the sign access' and 'the expected sign' and 'the expected sign'.
+    a list called 'the sign block' is ['the sign check'].
+    a text called 'the guard declaration' is "a boolean called {'the guard flag'} is false".
+    a text called 'the guard' is "If {'the negative access'} then, Set {'the guard flag'} to true. Print {'the guard flag'}".
+    a text called 'the guard check' is 'gen assert false' of "FIL-31" and 'the guard flag'.
+    If 'the class draw' is 0 then,
+        Set 'the guard check' to 'gen assert true' of "FIL-31" and 'the guard flag'.
+    a text called 'the absolute check' is 'gen assert number' of "FIL-31" and 'the absolute access' and 'the magnitude' and 'the magnitude'.
+    a list called 'the example block' is ['the guard declaration', 'the guard', 'the guard check', 'the absolute check'].
+    a list called 'the checks' is 'gen file shuffle three blocks' of 'the predicate block' and 'the sign block' and 'the example block'.
+    a list called 'the opening' is ['the declaration'].
+    a list called 'the lines' is 'gen concat two blocks' of 'the opening' and 'the checks'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-34: `open a file for appending` opens a file to add to its end -
+ LANGUAGE.md:3961 and 3985. 'gen leaf file appending' (batch B) proves
+ the size grows by one append; this proves WHERE the bytes go and that
+ it keeps holding over several rounds: seed the file, then reopen for
+ appending one to five times, each round writing a drawn chunk -
+ sometimes zero bytes, a `Write ""` that must leave the size alone - and
+ asserting the running size on the live handle; finally read the whole
+ file back and assert it is every chunk in order. An append that wrote
+ at the start, or truncated on open, fails the content check even where
+ the sizes happen to agree. Probe: docs/ledger/probes/files/FIL-34.vox.)
+
+To 'gen leaf file appending rounds' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink holder' is 'gen buffer companion' of "appended whole".
+    a number called 'the seed length' is 'rng below' of 60.
+    a text called 'the seed payload' is 'gen buffer filler' of 'the seed length'.
+    a text called 'the whole' is 'the seed payload'.
+    a number called 'the running length' is 'the seed length'.
+    a list called 'the lines' is [].
+    append "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}rounds\"" to 'the lines'.
+    append 'gen file open in any order' of "writing" and 'the handle' and 'the path name' to 'the lines'.
+    append "Write \"{'the seed payload'}\" to {'the handle'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    a number called 'the round count draw' is 'rng below' of 5.
+    a number called 'the round count' is 'the round count draw' add 1.
+    a number called 'the round' is 0.
+    While 'the round' is less than 'the round count',
+        a number called 'the chunk length' is 'rng below' of 60,
+        a text called 'the chunk' is 'gen buffer filler' of 'the chunk length',
+        Set 'the whole' to "{'the whole'}{'the chunk'}",
+        Set 'the running length' to 'the running length' add 'the chunk length',
+        append 'gen file open in any order' of "appending" and 'the handle' and 'the path name' to 'the lines',
+        append "Write \"{'the chunk'}\" to {'the handle'}" to 'the lines',
+        append 'gen assert number is' of "FIL-34" and 'the size access' and 'the running length' to 'the lines',
+        append "Close {'the handle'}" to 'the lines',
+        Set 'the round' to 'the round' add 1.
+    a number called 'the slack' is 'rng below' of 16.
+    a number called 'the capacity' is 'the running length' add 1 add 'the slack'.
+    append 'gen file open in any order' of "reading" and 'the handle' and 'the path name' to 'the lines'.
+    append "a buffer called {'the sink name'} is {'the capacity'} bytes in size" to 'the lines'.
+    append "Read from {'the handle'} into {'the sink name'}" to 'the lines'.
+    a list called 'the content check pair' is 'gen assert text is' of "FIL-34" and 'the sink name' and 'the sink holder' and 'the whole'.
+    append element 1 of 'the content check pair' to 'the lines'.
+    append element 2 of 'the content check pair' to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-39: opening for writing creates OR OVERWRITES - LANGUAGE.md:3984 -
+ so reopening an existing file for writing truncates it. A long payload
+ is written and closed; the reopen must read size 0 on the live handle
+ before anything is written, then exactly the short payload's length
+ after it, and reading the file back must give the short payload alone,
+ with none of the long one's tail. The short payload is drawn strictly
+ shorter, down to zero bytes, so a reopen that merely overwrote in place
+ without truncating leaves a tail the content check sees.
+
+ After the short write the handle is closed and written to AGAIN: a
+ write on a closed handle is a failure the manual says sets the error
+ flag (LANGUAGE.md:4077-4079, the Writing rules; FIL-80's catchable file
+ operations), and a write through a closed descriptor is exactly the
+ use-after-close the memory-safety promise is about. Probe:
+ docs/ledger/probes/files/FIL-39.vox.)
+
+To 'gen leaf file writing truncates' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the size access' is 'gen buffer property' of 'the stem' and "size".
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink holder' is 'gen buffer companion' of "surviving bytes".
+    a number called 'the long draw' is 'rng below' of 400.
+    a number called 'the long length' is 'the long draw' add 1.
+    a text called 'the long payload' is 'gen buffer filler' of 'the long length'.
+    a number called 'the short length' is 'rng below' of 'the long length'.
+    a text called 'the short payload' is 'gen buffer filler' of 'the short length'.
+    a number called 'the late length' is 'rng below' of 20 add 1.
+    a text called 'the late payload' is 'gen buffer filler' of 'the late length'.
+    a number called 'the slack' is 'rng below' of 16.
+    a number called 'the capacity' is 'the long length' add 'the slack'.
+    a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}overwrite\"".
+    a text called 'the long open' is 'gen file open in any order' of "writing" and 'the handle' and 'the path name'.
+    a text called 'the long write' is "Write \"{'the long payload'}\" to {'the handle'}".
+    a text called 'the long check' is 'gen assert number is' of "FIL-39" and 'the size access' and 'the long length'.
+    a text called 'the long close' is "Close {'the handle'}".
+    a text called 'the short open' is 'gen file open in any order' of "writing" and 'the handle' and 'the path name'.
+    a text called 'the truncated check' is 'gen assert number is' of "FIL-39" and 'the size access' and 0.
+    a text called 'the short write' is "Write \"{'the short payload'}\" to {'the handle'}".
+    a text called 'the short check' is 'gen assert number is' of "FIL-39" and 'the size access' and 'the short length'.
+    a text called 'the short close' is "Close {'the handle'}".
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    a text called 'the stale declaration' is "a boolean called {'the stale flag'} is false".
+    a text called 'the stale handler' is "On error Set {'the stale flag'} to true".
+    a text called 'the late flag' is 'gen buffer companion' of "write after close failed".
+    a text called 'the late declaration' is "a boolean called {'the late flag'} is false".
+    a text called 'the late write' is "Write \"{'the late payload'}\" to {'the handle'}".
+    a text called 'the late handler' is "On error Set {'the late flag'} to true".
+    a text called 'the late check' is 'gen assert true' of "FIL-80" and 'the late flag'.
+    a text called 'the read open' is 'gen file open in any order' of "reading" and 'the handle' and 'the path name'.
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the capacity'} bytes in size".
+    a text called 'the read line' is "Read from {'the handle'} into {'the sink name'}".
+    a list called 'the content check pair' is 'gen assert text is' of "FIL-39" and 'the sink name' and 'the sink holder' and 'the short payload'.
+    a text called 'the content capture' is element 1 of 'the content check pair'.
+    a text called 'the content check' is element 2 of 'the content check pair'.
+    a text called 'the read close' is "Close {'the handle'}".
+    a list called 'the lines' is ['the path line', 'the long open', 'the long write', 'the long check', 'the long close', 'the short open', 'the truncated check', 'the short write', 'the short check', 'the short close', 'the stale declaration', 'the stale handler', 'the late declaration', 'the late write', 'the late handler', 'the late check', 'the read open', 'the sink line', 'the read line', 'the content capture', 'the content check', 'the read close'].
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-36, FIL-43: a numeric `at` is a borrowed descriptor, not a path
+ (LANGUAGE.md:3972), and descriptor literals run 0..2147483647
+ (LANGUAGE.md:3990). The oracle for "borrowed" is the handle's own
+ `descriptor`: a path open gets a fresh descriptor of 3 or more, a
+ borrowed one reports exactly the number written. Asking whether a file
+ named "1" appeared would test the harness's working directory, which
+ the program does not own, so that half is not emitted.
+
+ One to three borrowed opens, each drawn from the targets PROCEDURE.md
+ 6's allowlist and the earlier leaves already use:
+ - descriptor 1 for writing - stdout; a short marker line is sometimes
+   written through it, which lands in the program's own output;
+ - descriptor 0 for reading - only when the harness feeds this program
+   stdin, the same condition 'gen leaf stdin read' opens it under, and it
+   is never read here, so a later stdin leaf still sees all of its input;
+ - descriptor 2147483647, the top of FIL-43's range, in a drawn mode: it
+   is never an open descriptor, so the open itself succeeds (hand-
+   verified) and the first real operation on it - a write, or a read
+   into a buffer that must stay empty - fails and must set the error flag
+   (LANGUAGE.md:4139-4141, FIL-80).
+ Descriptor 2 is never opened (generated programs never touch stderr).
+ Neither 0 nor 1 is ever closed: closing a borrowed descriptor closes
+ the process's own stdin or stdout - harness.vox's own child setup
+ relies on exactly that - and every later Print would then fail. No
+ path is built, so the leaf needs no scratch directory. Probe:
+ docs/ledger/probes/files/FIL-36.vox.)
+
+To 'gen leaf file borrowed descriptors' with a text called indent and a boolean called nested.
+    a list called 'the lines' is [].
+    a number called 'the open count draw' is 'rng below' of 3.
+    a number called 'the open count' is 'the open count draw' add 1.
+    a number called 'the opened' is 0.
+    While 'the opened' is less than 'the open count',
+        a text called 'the stem' is 'gen buffer name',
+        a number called 'the target draw' is 'rng below' of 3,
+        If 'the target draw' is 2 and gen_reads_stdin is false then,
+            Set 'the target draw' to 'rng below' of 2.
+        a list called 'the borrowed block' is [],
+        If 'the target draw' is 0 then,
+            Set 'the borrowed block' to 'gen file borrow the top descriptor' of 'the stem'.
+        If 'the target draw' is 1 then,
+            Set 'the borrowed block' to 'gen file borrow standard output' of 'the stem'.
+        If 'the target draw' is 2 then,
+            Set 'the borrowed block' to 'gen file borrow standard input' of 'the stem'.
+        Set 'the lines' to 'gen concat two blocks' of 'the lines' and 'the borrowed block',
+        Set 'the opened' to 'the opened' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(Descriptor 1, for writing, sometimes with a marker line written through
+ it - the borrowed write lands in the program's own stdout.)
+
+To 'gen file borrow standard output' with a text called 'the stem'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the descriptor access' is 'gen buffer property' of 'the stem' and "descriptor".
+    a list called 'the block' is [].
+    a text called 'the open line' is 'gen file open in any order' of "writing" and 'the handle' and "1".
+    a text called 'the descriptor check' is 'gen assert number is' of "FIL-36" and 'the descriptor access' and 1.
+    append 'the open line' to 'the block'.
+    append 'the descriptor check' to 'the block'.
+    a number called 'the marker draw' is 'rng below' of 2.
+    a number called 'the marker length draw' is 'rng below' of 20.
+    a number called 'the marker length' is 'the marker length draw' add 1.
+    a text called 'the marker' is 'gen buffer filler' of 'the marker length'.
+    If 'the marker draw' is 1 then,
+        append "Write \"{'the marker'}\\n\" to {'the handle'}" to 'the block'.
+    Return a list, 'the block'.
+
+(Descriptor 0, for reading, never read - see the leaf's comment.)
+
+To 'gen file borrow standard input' with a text called 'the stem'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the descriptor access' is 'gen buffer property' of 'the stem' and "descriptor".
+    a list called 'the block' is [].
+    a text called 'the open line' is 'gen file open in any order' of "reading" and 'the handle' and "0".
+    a text called 'the descriptor check' is 'gen assert number is' of "FIL-43" and 'the descriptor access' and 0.
+    append 'the open line' to 'the block'.
+    append 'the descriptor check' to 'the block'.
+    Return a list, 'the block'.
+
+(Descriptor 2147483647 in a drawn mode, then one operation on it - a
+ read into a buffer of drawn capacity, or a write of a drawn payload -
+ that must set the error flag, behind the usual stale-flag drain.)
+
+To 'gen file borrow the top descriptor' with a text called 'the stem'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the descriptor access' is 'gen buffer property' of 'the stem' and "descriptor".
+    a list called 'the block' is [].
+    a number called 'the mode draw' is 'rng below' of 3.
+    a text called 'the mode' is "reading".
+    If 'the mode draw' is 1 then,
+        Set 'the mode' to "writing".
+    If 'the mode draw' is 2 then,
+        Set 'the mode' to "appending".
+    a text called 'the open line' is 'gen file open in any order' of 'the mode' and 'the handle' and "2147483647".
+    a text called 'the descriptor check' is 'gen assert number is' of "FIL-43" and 'the descriptor access' and 2147483647.
+    append 'the open line' to 'the block'.
+    append 'the descriptor check' to 'the block'.
+    a text called 'the stale flag' is 'gen buffer companion' of "found an error already pending".
+    append "a boolean called {'the stale flag'} is false" to 'the block'.
+    append "On error Set {'the stale flag'} to true" to 'the block'.
+    a text called 'the failure flag' is 'gen buffer companion' of "dead descriptor refused".
+    append "a boolean called {'the failure flag'} is false" to 'the block'.
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a number called 'the capacity' is 'gen buffer size'.
+    a number called 'the payload length draw' is 'rng below' of 30.
+    a number called 'the payload length' is 'the payload length draw' add 1.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    If 'the mode draw' is 0 then,
+        append "a buffer called {'the sink name'} is {'the capacity'} bytes in size" to 'the block',
+        append "Read from {'the handle'} into {'the sink name'}" to 'the block'.
+    If 'the mode draw' is greater than 0 then,
+        append "Write \"{'the payload'}\" to {'the handle'}" to 'the block'.
+    append "On error Set {'the failure flag'} to true" to 'the block'.
+    append 'gen assert true' of "FIL-80" and 'the failure flag' to 'the block'.
+    Return a list, 'the block'.
+
+(Scratch view for measuring a text's length in bytes, program level
+ and 'clear'ed on each use for the same Defect 17 reason as 'the built
+ input' above: a text has no size property, and a per-call buffer would
+ be one 4 KB allocation per call, never freed.)
+
+a buffer called 'the byte measuring view' is "".
+
+(FIL-48: `Read from standard input into <buffer>` - the manual's own
+ spelling, LANGUAGE.md:4009 and the keyword table at 5293. 'gen leaf
+ stdin read' reaches stdin only through "/dev/stdin" or descriptor 0.
+
+ The generator wrote the input, but not which reads run first: another
+ stdin leaf, a loop or a function called twice can each consume some of
+ it before this one. So the assertion is a bound, not a value: every
+ read lands no more than the input's length, a fixed buffer no more than
+ its capacity, and two reads together no more than the input - an
+ agreement check across the reads, the PROCEDURE.md 6a pattern for an
+ input the generator does not fully control.
+
+ The overflow flag is caught and printed but NOT asserted. A fixed
+ buffer smaller than the waiting input is a "Fixed buffer overflow (data
+ exceeds capacity)" by LANGUAGE.md:4138, and `Read from <file>` sets the
+ flag there, but `Read from standard input` does not, on a pipe or on a
+ redirected file alike - an open discrepancy with the manual, not
+ encoded either way. Probe: docs/ledger/probes/files/FIL-48.vox.)
+
+To 'gen leaf standard input read' with a text called indent and a boolean called nested.
+    If gen_reads_stdin is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_stdin_reads to gen_stdin_reads add 1.
+    clear 'the byte measuring view'.
+    append gen_input to 'the byte measuring view'.
+    a number called 'the input length' is 'the byte measuring view's size.
+    a text called 'the input length shown' is "{'the input length'}".
+    a list called 'the lines' is [].
+    a text called 'the total holder' is "".
+    a number called 'the read count draw' is 'rng below' of 2.
+    a number called 'the read count' is 'the read count draw' add 1.
+    a number called 'the reads made' is 0.
+    While 'the reads made' is less than 'the read count',
+        a text called 'the sink stem' is 'gen buffer name',
+        a text called 'the sink name' is 'gen buffer reference' of 'the sink stem',
+        a text called 'the sink size' is 'gen buffer property' of 'the sink stem' and "size",
+        a text called 'the overflow flag' is 'gen buffer companion' of "read flagged",
+        a number called 'the capacity draw' is 'rng below' of 64,
+        a number called 'the capacity' is 'the capacity draw' add 1,
+        a number called 'the fixed draw' is 'rng below' of 3,
+        a text called 'the sink line' is "a buffer called {'the sink name'} is {'the capacity'} bytes in size",
+        If 'the fixed draw' is 0 then,
+            Set 'the sink line' to 'gen dynamic buffer declaration' of 'the sink name'.
+        append 'the sink line' to 'the lines',
+        append "a boolean called {'the overflow flag'} is false" to 'the lines',
+        append "Read from standard input into {'the sink name'}" to 'the lines',
+        append "On error Set {'the overflow flag'} to true" to 'the lines',
+        append "Print {'the overflow flag'}" to 'the lines',
+        append 'gen assert time at most' of "FIL-48" and 'the sink size' and 'the input length shown' and 'the input length shown' to 'the lines',
+        If 'the fixed draw' is greater than 0 then,
+            append 'gen assert time at most' of "FIL-48" and 'the sink size' and "{'the capacity'}" and "{'the capacity'}" to 'the lines'.
+        If 'the reads made' is 0 then,
+            Set 'the total holder' to 'gen buffer companion' of "bytes taken from standard input",
+            append "a number called {'the total holder'} is {'the sink size'}" to 'the lines'.
+        If 'the reads made' is greater than 0 then,
+            append "Set {'the total holder'} to {'the total holder'} add {'the sink size'}" to 'the lines'.
+        Set 'the reads made' to 'the reads made' add 1.
+    append 'gen assert time at most' of "FIL-48" and 'the total holder' and 'the input length shown' and 'the input length shown' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FIL-50: `Read line from <file handle> into <buffer>` reads one line of a
+ file - LANGUAGE.md:4016. Batch B2's 'gen leaf read line mechanics' reads
+ two lines of a fixed shape; this walks a whole file of one to eight
+ lines line by line, each line a drawn length from zero - so empty lines,
+ "\n" alone, come back as one-byte reads - with the last line's newline
+ drawn (present or absent), into a sink that is fixed with room to spare
+ or dynamic. Every read is checked twice: its size (the line plus one
+ for a kept newline, LANGUAGE.md:4021) and its exact bytes. One read past
+ the last line must come back empty (LANGUAGE.md:4022, FIL-54). Lines
+ hold only 'gen buffer filler' letters and digits, so the expected text
+ needs no escaping beyond its own newline. Probe:
+ docs/ledger/probes/files/FIL-50.vox.)
+
+To 'gen leaf read line through a file' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "PROBE g3: gen_does_file_io true but gen_scratch_flag unbound",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the stem' is 'gen buffer name'.
+    a text called 'the handle' is 'gen buffer reference' of 'the stem'.
+    a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the sink stem' is 'gen buffer name'.
+    a text called 'the sink name' is 'gen buffer reference' of 'the sink stem'.
+    a text called 'the sink size' is 'gen buffer property' of 'the sink stem' and "size".
+    a number called 'the line count draw' is 'rng below' of 8.
+    a number called 'the line count' is 'the line count draw' add 1.
+    a number called 'the newline draw' is 'rng below' of 2.
+    a list called 'the payloads' is [].
+    a text called 'the file content' is "".
+    a number called 'the longest' is 0.
+    a number called 'the built' is 0.
+    While 'the built' is less than 'the line count',
+        a number called 'the line length' is 'rng below' of 30,
+        a text called 'the payload' is 'gen buffer filler' of 'the line length',
+        append 'the payload' to 'the payloads',
+        Set 'the file content' to "{'the file content'}{'the payload'}\\n",
+        If 'the line length' is greater than 'the longest' then,
+            Set 'the longest' to 'the line length'.
+        Set 'the built' to 'the built' add 1.
+    If 'the newline draw' is 1 then,
+        Set 'the file content' to 'gen file content without final newline' of 'the payloads'.
+    a list called 'the lines' is [].
+    append "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}walk\"" to 'the lines'.
+    append 'gen file open in any order' of "writing" and 'the handle' and 'the path name' to 'the lines'.
+    append "Write \"{'the file content'}\" to {'the handle'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    append 'gen file open in any order' of "reading" and 'the handle' and 'the path name' to 'the lines'.
+    a number called 'the slack' is 'rng below' of 8.
+    a number called 'the capacity' is 'the longest' add 1 add 'the slack'.
+    a text called 'the sink line' is "a buffer called {'the sink name'} is {'the capacity'} bytes in size".
+    a number called 'the sink draw' is 'rng below' of 3.
+    If 'the sink draw' is 0 then,
+        Set 'the sink line' to 'gen dynamic buffer declaration' of 'the sink name'.
+    append 'the sink line' to 'the lines'.
+    a number called 'the line number' is 1.
+    While 'the line number' is less than or equal to 'the line count',
+        a text called 'the expected payload' is element 'the line number' of 'the payloads',
+        a number called 'the expected length' is 'gen buffer filler length' of 'the expected payload',
+        a text called 'the expected line' is "{'the expected payload'}\\n",
+        If 'the line number' is 'the line count' and 'the newline draw' is 1 then,
+            Set 'the expected line' to 'the expected payload'.
+        If 'the line number' is less than 'the line count' or 'the newline draw' is 0 then,
+            Set 'the expected length' to 'the expected length' add 1.
+        append "Read line from {'the handle'} into {'the sink name'}" to 'the lines',
+        append 'gen assert number is' of "FIL-50" and 'the sink size' and 'the expected length' to 'the lines',
+        append "If {'the sink name'} is not \"{'the expected line'}\" then, Print \"ASSERT FIL-50: expected line {'the line number'} to read {'the expected payload'} got other bytes\", Exit 95. Print \"FIL-50 line {'the line number'} matches\"" to 'the lines',
+        Set 'the line number' to 'the line number' add 1.
+    append "Read line from {'the handle'} into {'the sink name'}" to 'the lines'.
+    a text called 'the end check' is 'gen assert number is' of "FIL-54" and 'the sink size' and 0.
+    append 'the end check' to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The same lines joined with a newline BETWEEN them but none after the
+ last - the file shape whose final line ends at EOF instead.)
+
+To 'gen file content without final newline' with a list called 'the payloads'.
+    a text called 'the content' is "".
+    a number called 'the count' is 'the payloads's length.
+    a number called 'the position' is 1.
+    While 'the position' is less than or equal to 'the count',
+        a text called 'the payload' is element 'the position' of 'the payloads',
+        Set 'the content' to "{'the content'}{'the payload'}",
+        If 'the position' is less than 'the count' then,
+            Set 'the content' to "{'the content'}\\n".
+        Set 'the position' to 'the position' add 1.
+    Return a text, 'the content'.
+
+(A filler payload's length in bytes - every byte is one letter or digit,
+ so the byte count is the length the generator asked 'gen buffer filler'
+ for; measured here rather than carried alongside, through the
+ program-level 'the byte measuring view'.)
+
+To 'gen buffer filler length' with a text called 'the payload'.
+    clear 'the byte measuring view'.
+    append 'the payload' to 'the byte measuring view'.
+    Return a number, 'the byte measuring view's size.

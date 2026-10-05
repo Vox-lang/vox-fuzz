@@ -1,0 +1,219 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(process leaves, batch C - docs/ledger/process-control.md rows PRC-06 to
+ 10, 14 to 20 and 22 to 24, kinds 420-427. Each leaf is called directly
+ off a pinned rng seed and its emitted source printed in full, so the
+ golden is the generated Vox itself, the same convention
+ tests/470_gen_process_b.vox uses; several seeds per leaf so the drawn
+ spellings, counts and forms show up in the golden. The scratch-gated
+ leaves need gen_scratch_flag/gen_does_file_io set by hand.)
+
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+
+Print "--- PRC-06, 07, 08: directory removal in all eight spellings ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 40.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 41.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 42.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-09: removal is not recursive ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 43.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal is not recursive' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 44.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal is not recursive' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 45.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal is not recursive' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-06: removal is rmdir, so a file refuses it ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 46.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal refuses a file' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 47.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process directory removal refuses a file' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-10: change directory, inside a reaped child ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 48.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process change directory in a child' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 49.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process change directory in a child' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-14: mount operands in all four forms ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 50.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount operand forms' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 51.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount operand forms' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 52.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount operand forms' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-15, 16: none + move/bind, literals only ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 53.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount move and bind' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 54.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process mount move and bind' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-17, 18, 19, 20: Unmount/umount, with and without lazily ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 55.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process unmount spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 56.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process unmount spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 57.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process unmount spellings' of "" and false.
+Print 'gen text'.
+
+Print "--- PRC-22, 23, 24: device node refusal, c and b only ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 58.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process device node refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 59.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process device node refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+Set gen_process_has_reaped to false.
+'rng seed' of 60.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process device node refusal' of "" and false.
+Print 'gen text'.
+
+Print "--- nested: the device node leaf as a block body ---".
+'rng seed' of 58.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf process device node refusal' of "  " and true.
+Print 'gen text'.
+
+Print "--- with no file I/O committed, the confined leaves stand aside ---".
+Set gen_does_file_io to false.
+a number called 'the kind' is 420.
+While 'the kind' is less than 428,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'} emits a scratch path: {'gen text contains' of \"the workspace\"}",
+    Set 'the kind' to 'the kind' add 1.
+Set gen_does_file_io to true.
+
+Print "--- registration reachable: kinds 420-427 all dispatch ---".
+Set 'the kind' to 420.
+While 'the kind' is less than 428,
+    clear gen_out,
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'} emits a statement: {gen_out's length is greater than 0}",
+    Set 'the kind' to 'the kind' add 1.

@@ -1,0 +1,358 @@
+--- PRC-06, 07, 08: directory removal in all eight spellings ---
+a boolean called 'the register' is false.
+a text called 'the register quay' is "{'the workspace'}/quay1".
+Create directory called 'the register quay'.
+a text called 'the register jetty' is "{'the workspace'}/jetty1".
+Create directory called 'the register jetty'.
+Remove the directory called "{'the workspace'}/jetty1".
+On error Set 'the register' to true.
+If 'the register jetty' is available then, Print "ASSERT PRC-06: expected missing got available", Exit 95. Print "removed".
+Remove directory 'the register quay'.
+On error Set 'the register' to true.
+If 'the register quay' is available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+If 'the register' then, Print "ASSERT PRC-06: expected 0 got {'the register'}", Exit 95. Print 'the register'.
+
+--- the same leaf, another seed ---
+a boolean called scratch is false.
+a text called 'scratch basin' is "{'the workspace'}/basin1".
+Create directory called 'scratch basin'.
+a text called 'scratch marina' is "{'the workspace'}/marina1".
+Create a directory called 'scratch marina'.
+Remove the directory 'scratch basin'.
+On error Set scratch to true.
+If 'scratch basin' is available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+Remove directory called "{'the workspace'}/marina1".
+On error Set scratch to true.
+If 'scratch marina' is available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+If scratch then, Print "ASSERT PRC-06: expected 0 got {scratch}", Exit 95. Print scratch.
+
+--- the same leaf, another seed ---
+a boolean called 'the register' is false.
+a text called 'the register sluice' is "{'the workspace'}/sluice1".
+Create a directory called 'the register sluice'.
+a text called 'the register staithe' is "{'the workspace'}/staithe1".
+Create a directory called 'the register staithe'.
+Delete the directory "{'the workspace'}/sluice1".
+On error Set 'the register' to true.
+If 'the register sluice' is available then, Print "ASSERT PRC-07: expected missing got available", Exit 95. Print "removed".
+Delete directory called "{'the workspace'}/staithe1".
+On error Set 'the register' to true.
+If 'the register staithe' is available then, Print "ASSERT PRC-07: expected missing got available", Exit 95. Print "removed".
+If 'the register' then, Print "ASSERT PRC-06: expected 0 got {'the register'}", Exit 95. Print 'the register'.
+
+--- PRC-09: removal is not recursive ---
+a text called 'the greeting' is "{'the workspace'}/landing1".
+Create directory called 'the greeting'.
+a text called 'the greeting dock' is "{'the workspace'}/landing1/dock".
+Create directory called 'the greeting dock'.
+a text called 'the greeting keepsake' is "{'the workspace'}/landing1/dock/pier".
+open a file for writing called 'the greeting scribe' at 'the greeting keepsake'.
+Write "qkw2nb9uf6hw41bgrm" to 'the greeting scribe'.
+Close 'the greeting scribe'.
+a boolean called 'the greeting refused' is false.
+Remove directory called "{'the workspace'}/landing1".
+On error Set 'the greeting refused' to true.
+If 'the greeting refused' is false then, Print "ASSERT PRC-09: expected 1 got {'the greeting refused'}", Exit 95. Print 'the greeting refused'.
+If 'the greeting keepsake' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
+a boolean called 'the greeting emptying failed' is false.
+Delete the file 'the greeting keepsake'.
+On error Set 'the greeting emptying failed' to true.
+Remove the directory called 'the greeting dock'.
+On error Set 'the greeting emptying failed' to true.
+Delete directory called "{'the workspace'}/landing1".
+On error Set 'the greeting emptying failed' to true.
+If 'the greeting emptying failed' then, Print "ASSERT PRC-09: expected 0 got {'the greeting emptying failed'}", Exit 95. Print 'the greeting emptying failed'.
+If 'the greeting' is available then, Print "ASSERT PRC-09: expected missing got available", Exit 95. Print "emptied and removed".
+
+--- the same leaf, another seed ---
+a text called pantry is "{'the workspace'}/jetty1".
+Create a directory called pantry.
+a text called 'pantry berth' is "{'the workspace'}/jetty1/berth".
+Create directory called 'pantry berth'.
+a boolean called 'pantry refused' is false.
+Delete directory called pantry.
+On error Set 'pantry refused' to true.
+If 'pantry refused' is false then, Print "ASSERT PRC-09: expected 1 got {'pantry refused'}", Exit 95. Print 'pantry refused'.
+If 'pantry berth' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
+a boolean called 'pantry emptying failed' is false.
+Delete the directory 'pantry berth'.
+On error Set 'pantry emptying failed' to true.
+Delete the directory pantry.
+On error Set 'pantry emptying failed' to true.
+If 'pantry emptying failed' then, Print "ASSERT PRC-09: expected 0 got {'pantry emptying failed'}", Exit 95. Print 'pantry emptying failed'.
+If pantry is available then, Print "ASSERT PRC-09: expected missing got available", Exit 95. Print "emptied and removed".
+
+--- the same leaf, another seed ---
+a text called ledger is "{'the workspace'}/basin1".
+Create directory called ledger.
+a text called 'ledger marina' is "{'the workspace'}/basin1/marina".
+Create a directory called 'ledger marina'.
+a boolean called 'ledger refused' is false.
+Delete directory "{'the workspace'}/basin1".
+On error Set 'ledger refused' to true.
+If 'ledger refused' is false then, Print "ASSERT PRC-09: expected 1 got {'ledger refused'}", Exit 95. Print 'ledger refused'.
+If 'ledger marina' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
+a boolean called 'ledger emptying failed' is false.
+Remove the directory 'ledger marina'.
+On error Set 'ledger emptying failed' to true.
+Delete directory called "{'the workspace'}/basin1".
+On error Set 'ledger emptying failed' to true.
+If 'ledger emptying failed' then, Print "ASSERT PRC-09: expected 0 got {'ledger emptying failed'}", Exit 95. Print 'ledger emptying failed'.
+If ledger is available then, Print "ASSERT PRC-09: expected missing got available", Exit 95. Print "emptied and removed".
+
+--- PRC-06: removal is rmdir, so a file refuses it ---
+a text called 'the manifest' is "{'the workspace'}/haven1".
+open a file for writing called 'the manifest scribe' at 'the manifest'.
+Write "sn9a460rzja3r" to 'the manifest scribe'.
+Close 'the manifest scribe'.
+a boolean called 'the manifest refused' is false.
+Remove the directory called "{'the workspace'}/haven1".
+On error Set 'the manifest refused' to true.
+If 'the manifest refused' is false then, Print "ASSERT PRC-06: expected 1 got {'the manifest refused'}", Exit 95. Print 'the manifest refused'.
+If 'the manifest' is not available then, Print "ASSERT PRC-06: expected available got missing", Exit 95. Print "the file is still there".
+open a file for reading called 'the manifest reader' at 'the manifest'.
+If 'the manifest reader's size is not 13 then, Print "ASSERT PRC-06: expected 13 got {'the manifest reader's size}", Exit 95. Print 'the manifest reader's size.
+Close 'the manifest reader'.
+Delete the file 'the manifest'.
+
+--- the same leaf, another seed ---
+a text called 'outgoing post' is "{'the workspace'}/haven1".
+open a file for writing called 'outgoing post scribe' at 'outgoing post'.
+Write "mbhx" to 'outgoing post scribe'.
+Close 'outgoing post scribe'.
+a boolean called 'outgoing post refused' is false.
+Remove the directory 'outgoing post'.
+On error Set 'outgoing post refused' to true.
+If 'outgoing post refused' is false then, Print "ASSERT PRC-08: expected 1 got {'outgoing post refused'}", Exit 95. Print 'outgoing post refused'.
+If 'outgoing post' is not available then, Print "ASSERT PRC-08: expected available got missing", Exit 95. Print "the file is still there".
+open a file for reading called 'outgoing post reader' at 'outgoing post'.
+If 'outgoing post reader's size is not 4 then, Print "ASSERT PRC-08: expected 4 got {'outgoing post reader's size}", Exit 95. Print 'outgoing post reader's size.
+Close 'outgoing post reader'.
+Delete the file 'outgoing post'.
+
+--- PRC-10: change directory, inside a reaped child ---
+a text called 'the shipping label basin' is "{'the workspace'}/basin1".
+Create a directory called 'the shipping label basin'.
+Create directory called "{'the workspace'}/basin1/marina".
+a number called 'the shipping label' is fork the process.
+If 'the shipping label' is 0 then, Change directory to 'the shipping label basin'.
+If 'the shipping label' is 0 and "marina" is not available then, Exit 22.
+If 'the shipping label' is 0 then, Create directory called "harbour", Create a directory called "quay", Exit 62.
+a number called 'the shipping label chdir reaped' is reap child 'the shipping label'.
+a number called 'the shipping label chdir exit' is the reaped status divide 256 modulo 256.
+If 'the shipping label chdir exit' is not 62 then, Print "ASSERT PRC-10: expected 62 got {'the shipping label chdir exit'}", Exit 95. Print 'the shipping label chdir exit'.
+If "{'the workspace'}/basin1/harbour" is not available then, Print "ASSERT PRC-10: expected available got missing", Exit 95. Print "harbour".
+Delete directory called "{'the workspace'}/basin1/harbour".
+If "{'the workspace'}/basin1/quay" is not available then, Print "ASSERT PRC-10: expected available got missing", Exit 95. Print "quay".
+Delete the directory "{'the workspace'}/basin1/quay".
+Remove directory "{'the workspace'}/basin1/marina".
+Remove the directory called 'the shipping label basin'.
+
+--- the same leaf, another seed ---
+a text called 'the pigeonhole sluice' is "{'the workspace'}/sluice1".
+Create a directory called 'the pigeonhole sluice'.
+Create directory called "{'the workspace'}/sluice1/staithe".
+a number called 'the pigeonhole' is fork the process.
+If 'the pigeonhole' is 0 then, Change directory to 'the pigeonhole sluice'.
+If 'the pigeonhole' is 0 and "staithe" is not available then, Exit 7.
+If 'the pigeonhole' is 0 then, Create directory called "hithe", Create a directory called "basin", Exit 81.
+a number called 'the pigeonhole chdir reaped' is reap child 'the pigeonhole'.
+a number called 'the pigeonhole chdir exit' is the reaped status divide 256 modulo 256.
+If 'the pigeonhole chdir exit' is not 81 then, Print "ASSERT PRC-10: expected 81 got {'the pigeonhole chdir exit'}", Exit 95. Print 'the pigeonhole chdir exit'.
+If "{'the workspace'}/sluice1/hithe" is not available then, Print "ASSERT PRC-10: expected available got missing", Exit 95. Print "hithe".
+Remove directory called "{'the workspace'}/sluice1/hithe".
+If "{'the workspace'}/sluice1/basin" is not available then, Print "ASSERT PRC-10: expected available got missing", Exit 95. Print "basin".
+Remove directory "{'the workspace'}/sluice1/basin".
+Remove directory "{'the workspace'}/sluice1/staithe".
+Remove directory called 'the pigeonhole sluice'.
+
+--- PRC-14: mount operands in all four forms ---
+a text called 'toolbox haven' is "{'the workspace'}/haven1".
+Create directory called 'toolbox haven'.
+a text called 'toolbox source' is "ramfs".
+a buffer called 'toolbox type' is "ext4fs".
+a text called 'toolbox stem' is "nosuid,nodev,noexec".
+a buffer called 'toolbox options' is "{'toolbox stem'}".
+a boolean called toolbox is false.
+Mount 'toolbox source' at "{'the workspace'}/haven1" with type 'toolbox type' with options 'toolbox options'.
+On error Set toolbox to true.
+If toolbox is false then, Print "ASSERT PRC-14: expected 1 got {toolbox}", Exit 95. Print toolbox.
+a boolean called 'toolbox detach refused' is false.
+Unmount 'toolbox haven' lazily.
+On error Set 'toolbox detach refused' to true.
+If 'toolbox detach refused' is false then, Print "ASSERT PRC-21: expected 1 got {'toolbox detach refused'}", Exit 95. Print 'toolbox detach refused'.
+Remove the directory called 'toolbox haven'.
+
+--- the same leaf, another seed ---
+a text called 'satchel cove' is "{'the workspace'}/cove1".
+Create directory called 'satchel cove'.
+a text called 'satchel stem' is "cove".
+a buffer called 'satchel source' is "{'satchel stem'}".
+a text called 'satchel target' is "{'the workspace'}/cove1".
+a buffer called 'satchel type' is "debugfs".
+a boolean called satchel is false.
+Mount 'satchel source' at 'satchel target' with type 'satchel type' with options "nosuid,nodev,noexec".
+On error Set satchel to true.
+If satchel is false then, Print "ASSERT PRC-14: expected 1 got {satchel}", Exit 95. Print satchel.
+a boolean called 'satchel detach refused' is false.
+Unmount 'satchel cove' lazily.
+On error Set 'satchel detach refused' to true.
+If 'satchel detach refused' is false then, Print "ASSERT PRC-21: expected 1 got {'satchel detach refused'}", Exit 95. Print 'satchel detach refused'.
+Remove the directory 'satchel cove'.
+
+--- the same leaf, another seed ---
+a text called 'toolbox cove' is "{'the workspace'}/cove1".
+Create a directory called 'toolbox cove'.
+a buffer called 'toolbox source' is "".
+a buffer called 'toolbox target' is "{'the workspace'}/cove1".
+a text called 'toolbox stem' is "tmp".
+a buffer called 'toolbox type' is "{'toolbox stem'}fs".
+a text called 'toolbox options' is "mode=0269".
+a boolean called toolbox is false.
+Mount 'toolbox source' at 'toolbox target' with type 'toolbox type' with options 'toolbox options'.
+On error Set toolbox to true.
+If toolbox is false then, Print "ASSERT PRC-14: expected 1 got {toolbox}", Exit 95. Print toolbox.
+a boolean called 'toolbox detach refused' is false.
+Unmount 'toolbox cove' lazily.
+On error Set 'toolbox detach refused' to true.
+If 'toolbox detach refused' is false then, Print "ASSERT PRC-21: expected 1 got {'toolbox detach refused'}", Exit 95. Print 'toolbox detach refused'.
+Delete directory called 'toolbox cove'.
+
+--- PRC-15, 16: none + move/bind, literals only ---
+a text called 'satchel cove' is "{'the workspace'}/cove1".
+Create a directory called 'satchel cove'.
+a text called 'satchel inlet' is "{'the workspace'}/inlet1".
+Create directory called 'satchel inlet'.
+a boolean called 'satchel bind refused first' is false.
+Mount "{'the workspace'}/cove1" at "{'the workspace'}/inlet1" with type "none" with options "bind".
+On error Set 'satchel bind refused first' to true.
+If 'satchel bind refused first' is false then, Print "ASSERT PRC-16: expected 1 got {'satchel bind refused first'}", Exit 95. Print 'satchel bind refused first'.
+Delete the directory called 'satchel inlet'.
+Remove the directory 'satchel cove'.
+
+--- the same leaf, another seed ---
+a text called 'the drawer cove' is "{'the workspace'}/cove1".
+Create a directory called 'the drawer cove'.
+a text called 'the drawer inlet' is "{'the workspace'}/inlet1".
+Create directory called 'the drawer inlet'.
+a boolean called 'the drawer bind refused first' is false.
+Mount 'the drawer cove' at 'the drawer inlet' with type "none" with options "bind".
+On error Set 'the drawer bind refused first' to true.
+If 'the drawer bind refused first' is false then, Print "ASSERT PRC-16: expected 1 got {'the drawer bind refused first'}", Exit 95. Print 'the drawer bind refused first'.
+a boolean called 'the drawer bind refused second' is false.
+Mount 'the drawer cove' at "{'the workspace'}/inlet1" with type "none" with options "bind".
+On error Set 'the drawer bind refused second' to true.
+If 'the drawer bind refused second' is false then, Print "ASSERT PRC-16: expected 1 got {'the drawer bind refused second'}", Exit 95. Print 'the drawer bind refused second'.
+Delete directory called 'the drawer inlet'.
+Remove the directory called 'the drawer cove'.
+
+--- PRC-17, 18, 19, 20: Unmount/umount, with and without lazily ---
+a text called 'the mailbag' is "{'the workspace'}/cove1".
+Create a directory called 'the mailbag'.
+a buffer called 'the mailbag copy' is 'the mailbag'.
+a boolean called 'the mailbag first refusal' is false.
+umount 'the mailbag copy'.
+On error Set 'the mailbag first refusal' to true.
+If 'the mailbag first refusal' is false then, Print "ASSERT PRC-18: expected 1 got {'the mailbag first refusal'}", Exit 95. Print 'the mailbag first refusal'.
+Remove the directory called 'the mailbag'.
+
+--- the same leaf, another seed ---
+a text called 'the waybill' is "{'the workspace'}/cove1".
+Create a directory called 'the waybill'.
+a boolean called 'the waybill first refusal' is false.
+umount "{'the workspace'}/cove1".
+On error Set 'the waybill first refusal' to true.
+If 'the waybill first refusal' is false then, Print "ASSERT PRC-18: expected 1 got {'the waybill first refusal'}", Exit 95. Print 'the waybill first refusal'.
+a boolean called 'the waybill second refusal' is false.
+Unmount 'the waybill'.
+On error Set 'the waybill second refusal' to true.
+If 'the waybill second refusal' is false then, Print "ASSERT PRC-17: expected 1 got {'the waybill second refusal'}", Exit 95. Print 'the waybill second refusal'.
+Remove the directory called 'the waybill'.
+
+--- the same leaf, another seed ---
+a text called workbench is "{'the workspace'}/cove1".
+Create a directory called workbench.
+a buffer called 'workbench copy' is workbench.
+a boolean called 'workbench first refusal' is false.
+Unmount 'workbench copy'.
+On error Set 'workbench first refusal' to true.
+If 'workbench first refusal' is false then, Print "ASSERT PRC-17: expected 1 got {'workbench first refusal'}", Exit 95. Print 'workbench first refusal'.
+a boolean called 'workbench second refusal' is false.
+umount "{'the workspace'}/cove1" lazily.
+On error Set 'workbench second refusal' to true.
+If 'workbench second refusal' is false then, Print "ASSERT PRC-18: expected 1 got {'workbench second refusal'}", Exit 95. Print 'workbench second refusal'.
+a boolean called 'workbench third refusal' is false.
+Unmount "{'the workspace'}/cove1".
+On error Set 'workbench third refusal' to true.
+If 'workbench third refusal' is false then, Print "ASSERT PRC-17: expected 1 got {'workbench third refusal'}", Exit 95. Print 'workbench third refusal'.
+Remove directory called workbench.
+
+--- PRC-22, 23, 24: device node refusal, c and b only ---
+a buffer called 'the message slip' is "{'the workspace'}/cove1".
+open a file for writing called 'the message slip scribe' at "{'the workspace'}/cove1".
+Write "itslljj8" to 'the message slip scribe'.
+Close 'the message slip scribe'.
+a number called 'the message slip minor number' is 0.
+a boolean called 'the message slip node refused' is false.
+Create a device node called 'the message slip' with type "c" major 1 minor 'the message slip minor number'.
+On error Set 'the message slip node refused' to true.
+If 'the message slip node refused' is false then, Print "ASSERT PRC-22: expected 1 got {'the message slip node refused'}", Exit 95. Print 'the message slip node refused'.
+If "{'the workspace'}/cove1" is not available then, Print "ASSERT PRC-22: expected available got missing", Exit 95. Print "the file is still there".
+Delete the file "{'the workspace'}/cove1".
+
+--- the same leaf, another seed ---
+a text called 'the sketchpad' is "{'the workspace'}/cove1".
+open a file for writing called 'the sketchpad scribe' at "{'the workspace'}/cove1".
+Write "61eqg83c" to 'the sketchpad scribe'.
+Close 'the sketchpad scribe'.
+a boolean called 'the sketchpad node refused' is false.
+Create a device node called 'the sketchpad' with type "c" major 873724006085830 minor 500.
+On error Set 'the sketchpad node refused' to true.
+If 'the sketchpad node refused' is false then, Print "ASSERT PRC-22: expected 1 got {'the sketchpad node refused'}", Exit 95. Print 'the sketchpad node refused'.
+If "{'the workspace'}/cove1" is not available then, Print "ASSERT PRC-22: expected available got missing", Exit 95. Print "the file is still there".
+Delete the file "{'the workspace'}/cove1".
+
+--- the same leaf, another seed ---
+open a file for writing called 'loading bay scribe' at "{'the workspace'}/cove1".
+Write "t81ucyof" to 'loading bay scribe'.
+Close 'loading bay scribe'.
+a number called 'loading bay major number' is 0.
+a number called 'loading bay minor number' is 6043960692.
+a boolean called 'loading bay node refused' is false.
+Create a device node called "{'the workspace'}/cove1" with type "b" major 'loading bay major number' minor 'loading bay minor number'.
+On error Set 'loading bay node refused' to true.
+If 'loading bay node refused' is false then, Print "ASSERT PRC-23: expected 1 got {'loading bay node refused'}", Exit 95. Print 'loading bay node refused'.
+If "{'the workspace'}/cove1" is not available then, Print "ASSERT PRC-23: expected available got missing", Exit 95. Print "the file is still there".
+Delete the file "{'the workspace'}/cove1".
+
+--- nested: the device node leaf as a block body ---
+  a buffer called 'the message slip' is "{'the workspace'}/cove1",
+  open a file for writing called 'the message slip scribe' at "{'the workspace'}/cove1",
+  Write "itslljj8" to 'the message slip scribe',
+  Close 'the message slip scribe',
+  a number called 'the message slip minor number' is 0,
+  a boolean called 'the message slip node refused' is false,
+  Create a device node called 'the message slip' with type "c" major 1 minor 'the message slip minor number',
+  On error Set 'the message slip node refused' to true,
+  If 'the message slip node refused' is false then, Print "ASSERT PRC-22: expected 1 got {'the message slip node refused'}", Exit 95. Print 'the message slip node refused',
+  If "{'the workspace'}/cove1" is not available then, Print "ASSERT PRC-22: expected available got missing", Exit 95. Print "the file is still there",
+  Delete the file "{'the workspace'}/cove1".
+
+--- with no file I/O committed, the confined leaves stand aside ---
+kind 420 emits a scratch path: 0
+kind 421 emits a scratch path: 0
+kind 422 emits a scratch path: 0
+kind 423 emits a scratch path: 0
+kind 424 emits a scratch path: 0
+kind 425 emits a scratch path: 0
+kind 426 emits a scratch path: 0
+kind 427 emits a scratch path: 0
+--- registration reachable: kinds 420-427 all dispatch ---
+kind 420 emits a statement: 1
+kind 421 emits a statement: 1
+kind 422 emits a statement: 1
+kind 423 emits a statement: 1
+kind 424 emits a statement: 1
+kind 425 emits a statement: 1
+kind 426 emits a statement: 1
+kind 427 emits a statement: 1

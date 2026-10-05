@@ -4,13 +4,48 @@
  "tail-without-newline" is 20 bytes with no newline to keep.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-50.vox -o p && ./p
- actual output:
+ Extended 2026-10-05 (files batch C): appended rendered shapes of
+ 'gen leaf read line through a file' - a whole file walked line by line,
+ one ending without a final newline, then one read past the end.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-50.vox -o p && ./p
+ exit code 0; actual output:
    4
    one
-  
+   
    20
    tail-without-newline
+   28
+   FIL-50 line 1 matches
+   11
+   FIL-50 line 2 matches
+   6
+   FIL-50 line 3 matches
+   25
+   FIL-50 line 4 matches
+   14
+   FIL-50 line 5 matches
+   23
+   FIL-50 line 6 matches
+   22
+   FIL-50 line 7 matches
+   24
+   FIL-50 line 8 matches
+   0
+   16
+   FIL-50 line 1 matches
+   4
+   FIL-50 line 2 matches
+   12
+   FIL-50 line 3 matches
+   26
+   FIL-50 line 4 matches
+   15
+   FIL-50 line 5 matches
+   27
+   FIL-50 line 6 matches
+   24
+   FIL-50 line 7 matches
+   0
 )
 Create a directory called "vf_scratch".
 Create a directory called "vf_scratch/files".
@@ -26,3 +61,70 @@ Read line from source into linebuf.
 print linebuf's size.
 print linebuf.
 Close source.
+a text called 'the workspace' is "vf_scratch/files/fil-50-c1".
+Create a directory called 'the workspace'.
+a text called 'the postbag path' is "{'the workspace'}/44walk".
+open a file at 'the postbag path' called 'the postbag' for writing.
+Write "8g66cm6y6ay7z0elu28lm1c42ye\n60gtj6lf8n\nbb9yk\nrv8kpuv0yjd44yl8z47pp85n\n5obxuvfmtg9wp\nl2aj5r8t47n7vvqtqlsh5x\n8ia8peo6nixsrz5nn6s1j\ny7wokqof47r0c5z5g346x5w4" to 'the postbag'.
+Close 'the postbag'.
+open a file for reading called 'the postbag' at 'the postbag path'.
+Create a buffer called 'pantry'.
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 28 then, Print "ASSERT FIL-50: expected 28 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "8g66cm6y6ay7z0elu28lm1c42ye\n" then, Print "ASSERT FIL-50: expected line 1 to read 8g66cm6y6ay7z0elu28lm1c42ye got other bytes", Exit 95. Print "FIL-50 line 1 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 11 then, Print "ASSERT FIL-50: expected 11 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "60gtj6lf8n\n" then, Print "ASSERT FIL-50: expected line 2 to read 60gtj6lf8n got other bytes", Exit 95. Print "FIL-50 line 2 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 6 then, Print "ASSERT FIL-50: expected 6 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "bb9yk\n" then, Print "ASSERT FIL-50: expected line 3 to read bb9yk got other bytes", Exit 95. Print "FIL-50 line 3 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 25 then, Print "ASSERT FIL-50: expected 25 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "rv8kpuv0yjd44yl8z47pp85n\n" then, Print "ASSERT FIL-50: expected line 4 to read rv8kpuv0yjd44yl8z47pp85n got other bytes", Exit 95. Print "FIL-50 line 4 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 14 then, Print "ASSERT FIL-50: expected 14 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "5obxuvfmtg9wp\n" then, Print "ASSERT FIL-50: expected line 5 to read 5obxuvfmtg9wp got other bytes", Exit 95. Print "FIL-50 line 5 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 23 then, Print "ASSERT FIL-50: expected 23 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "l2aj5r8t47n7vvqtqlsh5x\n" then, Print "ASSERT FIL-50: expected line 6 to read l2aj5r8t47n7vvqtqlsh5x got other bytes", Exit 95. Print "FIL-50 line 6 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 22 then, Print "ASSERT FIL-50: expected 22 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "8ia8peo6nixsrz5nn6s1j\n" then, Print "ASSERT FIL-50: expected line 7 to read 8ia8peo6nixsrz5nn6s1j got other bytes", Exit 95. Print "FIL-50 line 7 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 24 then, Print "ASSERT FIL-50: expected 24 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "y7wokqof47r0c5z5g346x5w4" then, Print "ASSERT FIL-50: expected line 8 to read y7wokqof47r0c5z5g346x5w4 got other bytes", Exit 95. Print "FIL-50 line 8 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'pantry's size}", Exit 95. Print 'pantry's size.
+Close 'the postbag'.
+a text called 'the workspace' is "vf_scratch/files/fil-50-c2".
+Create a directory called 'the workspace'.
+a text called 'the inbox path' is "{'the workspace'}/12walk".
+open a file called 'the inbox' for writing at 'the inbox path'.
+Write "8xa7wy57vmc11mo\nxlo\nche8odqn0jk\nrd9lith9wlk3nflct2v1za58p\noultudtcn6b7f2\neq798184ey2s1ksod2uqon3e58\nbuv3rbg4szjinlwvbsknzh5h" to 'the inbox'.
+Close 'the inbox'.
+open a file for reading called 'the inbox' at 'the inbox path'.
+a buffer called cupboard is 27 bytes in size.
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 16 then, Print "ASSERT FIL-50: expected 16 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "8xa7wy57vmc11mo\n" then, Print "ASSERT FIL-50: expected line 1 to read 8xa7wy57vmc11mo got other bytes", Exit 95. Print "FIL-50 line 1 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 4 then, Print "ASSERT FIL-50: expected 4 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "xlo\n" then, Print "ASSERT FIL-50: expected line 2 to read xlo got other bytes", Exit 95. Print "FIL-50 line 2 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 12 then, Print "ASSERT FIL-50: expected 12 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "che8odqn0jk\n" then, Print "ASSERT FIL-50: expected line 3 to read che8odqn0jk got other bytes", Exit 95. Print "FIL-50 line 3 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 26 then, Print "ASSERT FIL-50: expected 26 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "rd9lith9wlk3nflct2v1za58p\n" then, Print "ASSERT FIL-50: expected line 4 to read rd9lith9wlk3nflct2v1za58p got other bytes", Exit 95. Print "FIL-50 line 4 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 15 then, Print "ASSERT FIL-50: expected 15 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "oultudtcn6b7f2\n" then, Print "ASSERT FIL-50: expected line 5 to read oultudtcn6b7f2 got other bytes", Exit 95. Print "FIL-50 line 5 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 27 then, Print "ASSERT FIL-50: expected 27 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "eq798184ey2s1ksod2uqon3e58\n" then, Print "ASSERT FIL-50: expected line 6 to read eq798184ey2s1ksod2uqon3e58 got other bytes", Exit 95. Print "FIL-50 line 6 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 24 then, Print "ASSERT FIL-50: expected 24 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard is not "buv3rbg4szjinlwvbsknzh5h" then, Print "ASSERT FIL-50: expected line 7 to read buv3rbg4szjinlwvbsknzh5h got other bytes", Exit 95. Print "FIL-50 line 7 matches".
+Read line from 'the inbox' into cupboard.
+If cupboard's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {cupboard's size}", Exit 95. Print cupboard's size.
+Close 'the inbox'.

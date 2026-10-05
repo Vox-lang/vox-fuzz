@@ -1,11 +1,23 @@
 (FIL-09: the File Properties worked example (open for reading, print size, print modified, compare size against 1048576) compiles and behaves as the surrounding prose says.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-09.vox -o p && ./p
- actual output:
+ Extended 2026-10-05 (files batch C): appended two rendered shapes of
+ 'gen leaf file properties worked example' - size asserted, modified
+ range-checked, and the size guard against a drawn threshold that fires
+ in one and not the other.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-09.vox -o p && ./p
+ exit code 0; actual output:
    16
    modified is a plausible unix timestamp
    the size comparison did not fire
+   277
+   FIL-09 in range
+   1
+   1
+   32
+   FIL-09 in range
+   1
+   1
 )
 Create a directory called "vf_scratch".
 Create a directory called "vf_scratch/files".
@@ -21,3 +33,31 @@ If src's size is greater than 1048576 then,
     print "File is larger than 1MB".
 print "the size comparison did not fire".
 Close src.
+a text called 'the workspace' is "vf_scratch/files/fil-09-c1".
+Create a directory called 'the workspace'.
+a text called 'workbench path' is "{'the workspace'}/1example".
+open a file called workbench for writing at 'workbench path'.
+Write "mvqsqtdmmrodbyizwaprga5umfjdgq1cyy9oqx3tf4s4144g1q5dgbo3eimumuklkqqsdeeezl8jlarszhsbv3m2i1pcyuchjce93dkc9lu0ba7lc0u3kx1s2d44o7c63ogv7cenfcgkabqk0nho5jfaao5ynv4woi0xn54gw0tu9y2g0murxwrspy29j0n00g9e3yh19hn0o3g6oy1kychk1432n8dwyx8sybnndkqxtyjojh4wzmky8vfz1g62oa18b3ar9woxi4h09z77h" to workbench.
+Close workbench.
+open a file called workbench for reading at 'workbench path'.
+If workbench's size is not 277 then, Print "ASSERT FIL-09: expected 277 got {workbench's size}", Exit 95. Print workbench's size.
+If workbench's modified is less than 1 then, Print "ASSERT FIL-09: expected at least 1 got {workbench's modified}", Exit 95. If workbench's modified is greater than current time's unix then, Print "ASSERT FIL-09: expected at most {current time's unix} got {workbench's modified}", Exit 95. Print "FIL-09 in range".
+a boolean called 'workbench size guard fired' is false.
+If workbench's size is greater than 0 then, Set 'workbench size guard fired' to true. Print 'workbench size guard fired'.
+If 'workbench size guard fired' is false then, Print "ASSERT FIL-09: expected 1 got {'workbench size guard fired'}", Exit 95. Print 'workbench size guard fired'.
+Close workbench.
+a text called 'the workspace' is "vf_scratch/files/fil-09-c2".
+Create a directory called 'the workspace'.
+a number called 'the gate' is 1.
+If 'the gate' is 1 then,
+  a text called 'the register path' is "{'the workspace'}/5example",
+  open a file called 'the register' for writing at 'the register path',
+  Write "lmy3u8hvfc22vw7i9z6t7ly8i4wq4fif" to 'the register',
+  Close 'the register',
+  open a file for reading called 'the register' at 'the register path',
+  If 'the register's size is not 32 then, Print "ASSERT FIL-09: expected 32 got {'the register's size}", Exit 95. Print 'the register's size,
+  If 'the register's modified is less than 1 then, Print "ASSERT FIL-09: expected at least 1 got {'the register's modified}", Exit 95. If 'the register's modified is greater than current time's unix then, Print "ASSERT FIL-09: expected at most {current time's unix} got {'the register's modified}", Exit 95. Print "FIL-09 in range",
+  a boolean called 'the register size guard fired' is false,
+  If 'the register's size is greater than 31 then, Set 'the register size guard fired' to true. Print 'the register size guard fired',
+  If 'the register size guard fired' is false then, Print "ASSERT FIL-09: expected 1 got {'the register size guard fired'}", Exit 95. Print 'the register size guard fired',
+  Close 'the register'.

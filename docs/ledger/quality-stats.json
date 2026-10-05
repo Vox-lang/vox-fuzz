@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "39292e4",
+    "commit": "58c7877",
     "date": "2026-10-05",
-    "voxCommit": "7e5b337",
+    "voxCommit": "dfdfc7f",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -228,7 +228,7 @@
   },
   "probes": {
     "families": 27,
-    "leaves": 228,
+    "leaves": 246,
     "leafFiles": [
       "src/gen_basics.vox",
       "src/gen_buffers.vox",
@@ -400,6 +400,127 @@
       "compiled": 10000,
       "findings": 0,
       "note": "20 chunks of 500; cut by the 03:00 poweroff, last completed chunk exit 02:47:41; chunk 519187–519686 interrupted, not counted. Whole stripe-4: 37 chunks, 18,500 programs, 0 findings"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "39292e4 + files-c batch (staged)",
+      "seeds": "1005001–1005200",
+      "budget": "12 (default)",
+      "programs": 200,
+      "compiled": 200,
+      "findings": 0,
+      "note": "files batch C acceptance run, random layout, installed /usr/bin/vox; 82 of 200 programs carry a batch C leaf; no signal deaths"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "39292e4 + process-c batch (staged)",
+      "seeds": "20261005–20261104, 20261105–20261204",
+      "budget": "40",
+      "programs": 200,
+      "compiled": 200,
+      "findings": 0,
+      "note": "process batch C acceptance run, random layout, timeout 20000; no signal deaths; every new leaf reached"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "39292e4 + library-leaf prototype (not merged)",
+      "seeds": "71001–71200",
+      "budget": "n/r",
+      "programs": 200,
+      "compiled": 200,
+      "findings": 0,
+      "note": "library-leaf prototype on its normal draw; not merged. 11 programs carried a library; no signal deaths. Budget not recorded for this run"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "library-leaf prototype, forced-draw copy (not merged)",
+      "seeds": "90001–90200",
+      "budget": "n/r",
+      "programs": 200,
+      "compiled": 200,
+      "findings": 0,
+      "note": "forced kind-370 draw, scratch-only build, never committed; 157 libraries, 309 LIB-42 assertions. Budget not recorded"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "library-leaf prototype, forced-draw copy (not merged)",
+      "seeds": "50001–50050",
+      "budget": "n/r",
+      "programs": 50,
+      "compiled": 50,
+      "findings": 0,
+      "note": "forced kind-370 draw, unconfined; 41 carried a library, 74 LIB-42 assertions. Budget not recorded"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "library-leaf prototype, forced-draw copy (not merged)",
+      "seeds": "50001–50050",
+      "budget": "n/r",
+      "programs": 50,
+      "compiled": 50,
+      "findings": 0,
+      "note": "the same 50 forced seeds under bwrap, after the prototype's TMPDIR=. fix (FUZZER_DEFECTS.md Defect 23). Budget not recorded"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "58c7877 + merged files-c/process-c (staged)",
+      "seeds": "51005000–51005299",
+      "budget": "40",
+      "programs": 300,
+      "compiled": 300,
+      "findings": 0,
+      "note": "invariant corpus, --layout plain, generated, compiled and run. An earlier attempt (294/300 compiled, 0 findings) is discarded: it shared a working directory with ./test.sh, whose rm -rf ./vf_* deleted its scratch mid-run. Too large for scripts/invariants (about 300 MB of memory per program), so the invariant diff used the budget-12 corpora below"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "58c7877",
+      "seeds": "51005000–51005299",
+      "budget": "40",
+      "programs": 300,
+      "compiled": 300,
+      "findings": 1,
+      "note": "baseline corpus, --layout plain. 1 finding, seed 51005068: ASSERT EXP-94: expected 255269670110833 got 255269670110834, a fuzzer defect (FUZZER_DEFECTS.md Defect 26), not a compiler bug"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "58c7877 + merged files-c/process-c (staged)",
+      "seeds": "51005000–51005299",
+      "budget": "12",
+      "programs": 300,
+      "compiled": 300,
+      "findings": 0,
+      "note": "invariant corpus, --layout plain; input to the invariant diff (no new invariant)"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "58c7877",
+      "seeds": "51005000–51005299",
+      "budget": "12",
+      "programs": 300,
+      "compiled": 300,
+      "findings": 0,
+      "note": "baseline invariant corpus, --layout plain"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15",
+      "voxFuzz": "58c7877 + merged files-c/process-c (staged)",
+      "seeds": "61005000–61005999 (5 chunks ×200)",
+      "budget": "40",
+      "programs": 1000,
+      "compiled": 1000,
+      "findings": 2,
+      "note": "random layout, timeout 20000, each chunk under systemd-run --user --scope -p MemoryMax=8G; no signal deaths. Both findings (seeds 61005087, 61005153) are ASSERT LST-49 wrong-values caused by a fuzzer defect (FUZZER_DEFECTS.md Defect 24), not compiler bugs"
     }
   ],
   "findings": {
@@ -408,20 +529,20 @@
     "byCategory": {
       "parser-reject": 2
     },
-    "total": 300
+    "total": 303
   },
   "register": {
-    "found": 126,
-    "fixed": 119,
-    "open": 1,
+    "found": 135,
+    "fixed": 127,
+    "open": 2,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
-    "voxFuzz": 53,
+    "voxFuzz": 55,
     "vox": {
-      "run": 702,
-      "compileFail": 332
+      "run": 744,
+      "compileFail": 378
     }
   }
 }
