@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "f7913bc",
-    "date": "2026-09-05",
-    "voxCommit": "efc2237",
+    "commit": "39292e4",
+    "date": "2026-10-05",
+    "voxCommit": "7e5b337",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -412,16 +412,16 @@
   },
   "register": {
     "found": 126,
-    "fixed": 106,
-    "open": 14,
+    "fixed": 119,
+    "open": 1,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
     "voxFuzz": 53,
     "vox": {
-      "run": 681,
-      "compileFail": 324
+      "run": 702,
+      "compileFail": 332
     }
   }
 }
