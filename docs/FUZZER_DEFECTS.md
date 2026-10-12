@@ -1565,3 +1565,57 @@ so the literal has at most 15 significant digits. A sweep of 4000 literals
 0.4.15 and on vox main `dfdfc7f`. The retained probe
 `docs/ledger/probes/expressions/EXP-94-precision.vox` records the largest
 13-digit cases and the 17-digit literal above as the contrast.
+
+## Defect 27: the stdin leaf closes descriptor 0, and two later leaves assume descriptor 0 can never be reused (2026-10-12)
+
+`src/gen_files.vox`'s `'gen leaf stdin read'` (kind 43) opens standard
+input either by path (`at "/dev/stdin"`) or, on a coin flip, by number
+(`open a file for reading called sin<n> at 0`), reads from it twice, and
+ends with `Close sin<n>`. The manual calls a numeric `at` a borrowed
+descriptor (LANGUAGE.md:4041 at vox `dfdfc7f`) and does not say what
+`Close` does to one; vox closes the descriptor itself, so the process
+has no descriptor 0 from then on, and the next open gets 0.
+
+Two leaves assume that can never happen:
+
+- `'gen leaf file descriptor'` (kind 123, FIL-02) asserts a freshly
+  opened handle's `descriptor` is at least 3, because "fds 0-2 are
+  stdio, so a real open never lands below that".
+- `'gen leaf file descriptor tracking'` (kind 135, FIL-93) starts its
+  floor at 0 and asserts every descriptor it opens is greater than the
+  floor, so a first open that gets descriptor 0 fails at once.
+
+When kind 43 takes the numeric form and runs before either of them, the
+program exits 95 on a correct compiler. Both kinds were unreachable until
+Defect 25 was fixed, which is why no campaign saw this before.
+
+**Proof.** On vox main `dfdfc7f`, this program prints `0`:
+
+```
+open a file for reading called keyboard at 0.
+Close keyboard.
+open a file for writing called notebook at "notebook.txt".
+Print notebook's descriptor.
+```
+
+The 1000-program run of 2026-10-05 (seeds 81005000 to 81005999, budget
+40) reported three wrong-value findings, and all three are this defect:
+seeds 81005329 and 81005395 print `ASSERT FIL-02: expected at least 3 got
+0`, and seed 81005389 prints `ASSERT FIL-93: expected greater than 0 got
+0`. Each reproduces on every run. In the same 1000 programs, exactly
+three close a borrowed descriptor 0 before a FIL-02 or FIL-93 check, and
+they are those three.
+
+The newer files leaves (kinds 400 to 410) already avoid this: their
+borrowed-descriptor leaf never closes descriptors 0 and 1, because
+closing a borrowed descriptor closes the process's own stream.
+
+**How found:** the 1000-program run that checked the Defect 25 fix.
+
+**Status:** Open: verified 2026-10-12; not fixed. Two ways to fix it,
+which can be combined: kind 43 stops closing a handle it opened with
+`at 0`, as the newer leaves do; or FIL-02 and FIL-93 take their floor
+from a descriptor the program opens first, rather than from the
+assumption that 0 to 2 stay open. What `Close` should do to a borrowed
+descriptor is a separate question for the manual; the fix here does not
+depend on the answer.

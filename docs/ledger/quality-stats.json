@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "58c7877",
-    "date": "2026-10-05",
-    "voxCommit": "dfdfc7f",
+    "commit": "8d88cf2",
+    "date": "2026-10-12",
+    "voxCommit": "a0a2ecc",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -521,6 +521,28 @@
       "compiled": 1000,
       "findings": 2,
       "note": "random layout, timeout 20000, each chunk under systemd-run --user --scope -p MemoryMax=8G; no signal deaths. Both findings (seeds 61005087, 61005153) are ASSERT LST-49 wrong-values caused by a fuzzer defect (FUZZER_DEFECTS.md Defect 24), not compiler bugs"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15 (main dfdfc7f)",
+      "voxFuzz": "8d88cf2 + Defects 24 to 26 fix (staged)",
+      "seeds": "81005000–81005599 (3 chunks ×200)",
+      "budget": "40",
+      "programs": 600,
+      "compiled": 600,
+      "findings": 7,
+      "note": "the check on the Defect 25 fix: random layout, timeout 20000, each chunk under systemd-run --user --scope -p MemoryMax=8G; every kind Defect 25 had made unreachable was drawn. No signal deaths. 3 wrong-values (seeds 81005329, 81005395: ASSERT FIL-02: expected at least 3 got 0; 81005389: ASSERT FIL-93: expected greater than 0 got 0) are a fuzzer defect (FUZZER_DEFECTS.md Defect 27), not compiler bugs. 4 hangs (seeds 81005027, 81005065, 81005374, 81005518) are deadline artifacts of an overloaded machine: these three chunks took 10 to 21 minutes each, against under 8 for each of the two chunks after the restart, and on 2026-10-12 each program runs in under 0.2 s and passes a rerun under the same harness and 20000 ms timeout"
+    },
+    {
+      "date": "2026-10-05",
+      "vox": "0.4.15 (main dfdfc7f)",
+      "voxFuzz": "8d88cf2 + Defects 24 to 26 fix (staged)",
+      "seeds": "81005600–81005999 (2 chunks ×200)",
+      "budget": "40",
+      "programs": 400,
+      "compiled": 400,
+      "findings": 1,
+      "note": "the same run, resumed after a machine restart cut chunk 81005600 short; that chunk was rerun whole and its partial run is not counted. No signal deaths. 1 hang (seed 81005918) that does not reproduce: on 2026-10-12 the program exits 0 in 0.72 s (0.69 s of it its own Waits) in 100 of 100 runs and passes three reruns under the same harness and timeout. Its cause is not established"
     }
   ],
   "findings": {
@@ -529,12 +551,12 @@
     "byCategory": {
       "parser-reject": 2
     },
-    "total": 303
+    "total": 311
   },
   "register": {
-    "found": 135,
-    "fixed": 127,
-    "open": 2,
+    "found": 145,
+    "fixed": 128,
+    "open": 11,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
