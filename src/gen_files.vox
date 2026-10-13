@@ -147,8 +147,17 @@ To 'gen leaf stdin read' with a text called indent and a boolean called nested.
     a text called 'second read' is "a buffer called sc{n} is 8 bytes".
     a text called 'second line' is "Read from sin{n} into sc{n}".
     a text called 'second size' is "Print sc{n}'s size".
-    a text called 'close line' is "Close sin{n}".
-    a list called 'the lines' is ['open line', 'buffer line', 'read line', 'size line', 'empty line', 'second read', 'second line', 'second size', 'close line'].
+    a list called 'the lines' is ['open line', 'buffer line', 'read line', 'size line', 'empty line', 'second read', 'second line', 'second size'].
+    (A handle opened at 0 borrows the process's own stdin. Closing it
+     today closes descriptor 0 itself, so the next open anywhere in the
+     program gets 0, and later leaves that check a fresh descriptor would
+     fail on a correct compiler. The manual does not yet say what Close
+     does to a borrowed descriptor, so the borrowed handle is simply left
+     open, whatever that answer turns out to be; only the path form is
+     closed. 'gen leaf file borrowed descriptors' follows the same rule.
+     FUZZER_DEFECTS.md Defect 27.)
+    If 'by descriptor' is 0 then,
+        append "Close sin{n}" to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
 (Real file I/O, into the program's own per-run scratch directory.
@@ -537,35 +546,26 @@ To 'gen leaf number properties' with a text called indent and a boolean called n
  exact rendered assertion shape, run clean and then deliberately broken
  to confirm the Exit 95 path.)
 
-(A range assertion: 'gen assert number is'/'matches' in gen_buffers.vox
- only ever test equality, and two of this batch's claims - FIL-02's
- descriptor, FIL-05/FIL-06's timestamps - are knowable only as a floor
- or a ceiling, never as a literal number the generator could have
- written itself. 'the minimum'/'the maximum' are EXPRESSIONS, not always
- literals - 'current time's unix' for the not-in-the-future half,
- hand-verified against 0.4.14 to work inline inside an If condition the
- same way the manual's own inline Print example uses it
- (LANGUAGE.md:4727, the "Inline Time Access" example; docs/ledger/
- probes/files/FIL-06.vox.).)
+(A two-sided range assertion: 'gen assert number is'/'matches' in
+ gen_buffers.vox only ever test equality, and FIL-05/FIL-06's timestamps
+ are knowable only as a floor and a ceiling, never as a literal number
+ the generator could have written itself. 'the minimum'/'the maximum'
+ are EXPRESSIONS, not always literals - 'current time's unix' for the
+ not-in-the-future half, hand-verified against 0.4.14 to work inline
+ inside an If condition the same way the manual's own inline Print
+ example uses it (LANGUAGE.md:4727, the "Inline Time Access" example;
+ docs/ledger/probes/files/FIL-06.vox.).
 
-To 'gen file assert at least' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown'.
-    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
-    a text called 'the line' is "If {'the subject'} is less than {'the minimum'} then, Print \"ASSERT {'the row'}: expected at least {'the minimum shown'} got {'the got shown'}\", Exit 95. Print {'the subject'}".
-    Return a text, 'the line'.
-
-(A two-sided range assertion whose SUCCESS path prints a fixed marker
- rather than the subject - unlike 'gen file assert at least' above,
- which prints the observed value because a descriptor number is
- deterministic across the oracle's two runs of one binary. A file's
- modified/accessed timestamp is not: it can tick a wall-clock second
- between those two runs (a fresh write on each run, no guarantee both
- land in the same second), and a first version of this leaf that
- printed the raw value was caught by a live campaign (200 programs,
- seed 5001) as a `nondeterministic` finding within 20 programs - a
- defect in the leaf, not in the compiler. The bound-vs-subject checks
- are exactly as strict; only what prints on success differs, the same
- tradeoff 'gen leaf timer and clock' already makes (src/gen_misc.vox)
- for the identical reason.)
+ Its SUCCESS path prints a fixed marker rather than the subject. A
+ file's modified/accessed timestamp can tick a wall-clock second
+ between the oracle's two runs of one binary (a fresh write on each
+ run, no guarantee both land in the same second), and a first version
+ of this leaf that printed the raw value was caught by a live campaign
+ (200 programs, seed 5001) as a `nondeterministic` finding within 20
+ programs - a defect in the leaf, not in the compiler. The
+ bound-vs-subject checks are exactly as strict; only what prints on
+ success differs, the same tradeoff 'gen leaf timer and clock' already
+ makes (src/gen_misc.vox) for the identical reason.)
 
 To 'gen file assert range quietly' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown' and a text called 'the maximum' and a text called 'the maximum shown'.
     a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
@@ -625,9 +625,16 @@ To 'gen leaf file size' with a text called indent and a boolean called nested.
     a list called 'the lines' is ['the path line', 'the open line', 'the before check', 'the write line', 'the after check', 'the close line'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FIL-02: descriptor is a Number, at least 3 for a freshly opened handle
- - fds 0-2 are stdio, so a real open never lands below that.
- LANGUAGE.md:3902. Probe: docs/ledger/probes/files/FIL-02.vox.)
+(FIL-02: descriptor is a Number. LANGUAGE.md:3902. Probe:
+ docs/ledger/probes/files/FIL-02.vox.
+
+ The exact number depends on what else is open, but a floor is
+ knowable: an anchor handle is opened first and kept open, and the
+ handle under test must then report a descriptor greater than the
+ anchor's, since a descriptor still in use is never handed out again.
+ The floor is not "at least 3": descriptors 0 to 2 are only taken while
+ the program's standard streams stay open, and FUZZER_DEFECTS.md Defect
+ 27 was a program in which one did not.)
 
 To 'gen leaf file descriptor' with a text called indent and a boolean called nested.
     If gen_does_file_io is false then,
@@ -642,11 +649,18 @@ To 'gen leaf file descriptor' with a text called indent and a boolean called nes
     a text called 'the handle' is 'gen buffer reference' of 'the stem'.
     a text called 'the descriptor access' is 'gen buffer property' of 'the stem' and "descriptor".
     a text called 'the path name' is 'gen buffer companion' of "path".
+    a text called 'the anchor stem' is 'gen buffer name'.
+    a text called 'the anchor handle' is 'gen buffer reference' of 'the anchor stem'.
+    a text called 'the anchor descriptor' is 'gen buffer property' of 'the anchor stem' and "descriptor".
     a text called 'the path line' is "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}descr\"".
+    a text called 'the anchor open' is "open a file for writing called {'the anchor handle'} at {'the path name'}".
     a text called 'the open line' is "open a file for writing called {'the handle'} at {'the path name'}".
-    a text called 'the descriptor check' is 'gen file assert at least' of "FIL-02" and 'the descriptor access' and "3" and "3".
+    a text called 'the anchor shown' is 'gen buffer slot of' of 'the anchor descriptor'.
+    a text called 'the descriptor shown' is 'gen buffer slot of' of 'the descriptor access'.
+    a text called 'the descriptor check' is "If {'the descriptor access'} is less than or equal to {'the anchor descriptor'} then, Print \"ASSERT FIL-02: expected greater than {'the anchor shown'} got {'the descriptor shown'}\", Exit 95. Print {'the descriptor access'}".
     a text called 'the close line' is "Close {'the handle'}".
-    a list called 'the lines' is ['the path line', 'the open line', 'the descriptor check', 'the close line'].
+    a text called 'the anchor close' is "Close {'the anchor handle'}".
+    a list called 'the lines' is ['the path line', 'the anchor open', 'the open line', 'the descriptor check', 'the close line', 'the anchor close'].
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-03, FIL-04: readable is true iff open for reading, writable iff
@@ -1151,7 +1165,11 @@ To 'gen leaf file open error' with a text called indent and a boolean called nes
  claim on trial, so this draws a modest 5-19 and checks every descriptor
  strictly increasing over the previous one - proof none was recycled
  while all the earlier ones stayed open, the same reasoning at a size
- that keeps program generation and compilation fast. Every open targets
+ that keeps program generation and compilation fast. The floor starts
+ at the descriptor of the handle that creates the file, which stays open
+ until the loop is done, rather than at 0: a program whose standard
+ input was closed earlier hands out 0 to its first open
+ (FUZZER_DEFECTS.md Defect 27). Every open targets
  the SAME already-created file (concurrent read-only opens of one path
  are ordinary and each still gets its own fd), inside a `For each …
  from 1 to N` loop - one period after the loop's last body statement
@@ -1183,11 +1201,12 @@ To 'gen leaf file descriptor tracking' with a text called indent and a boolean c
     a text called 'the seed open' is "open a file for writing called {'the seed handle'} at {'the path name'}".
     a text called 'the seed write' is "Write \"tracked\" to {'the seed handle'}".
     a text called 'the seed close' is "Close {'the seed handle'}".
-    a text called 'the floor declaration' is "a number called {'the floor holder'} is 0".
+    a text called 'the seed descriptor' is 'gen buffer property' of 'the seed stem' and "descriptor".
+    a text called 'the floor declaration' is "a number called {'the floor holder'} is {'the seed descriptor'}".
     a text called 'the floor shown' is 'gen buffer slot of' of 'the floor holder'.
     a text called 'the descriptor shown' is 'gen buffer slot of' of 'the descriptor access'.
     a text called 'the loop line' is "For each {'the loop variable'} from 1 to {'the count'}, open a file for reading called {'the handle variable'} at {'the path name'}, If {'the descriptor access'} is less than or equal to {'the floor holder'} then, Print \"ASSERT FIL-93: expected greater than {'the floor shown'} got {'the descriptor shown'}\", Exit 95. Set {'the floor holder'} to {'the descriptor access'}".
-    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the floor declaration', 'the loop line'].
+    a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the floor declaration', 'the loop line', 'the seed close'].
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-58, FIL-59, FIL-60, FIL-62: `Seek <file> to byte N` and its plural

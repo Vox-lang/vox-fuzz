@@ -43,7 +43,7 @@ clear gen_out.
 'gen leaf file size' of "  " and true.
 Print 'gen text'.
 
-Print "--- FIL-02: descriptor is a Number, at least 3 ---".
+Print "--- FIL-02: descriptor is a Number, above an anchor kept open ---".
 'rng seed' of 3.
 'gen buffer names reset'.
 clear gen_out.

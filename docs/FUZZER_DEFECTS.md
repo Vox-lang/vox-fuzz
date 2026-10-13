@@ -1612,10 +1612,29 @@ closing a borrowed descriptor closes the process's own stream.
 
 **How found:** the 1000-program run that checked the Defect 25 fix.
 
-**Status:** Open: verified 2026-10-12; not fixed. Two ways to fix it,
-which can be combined: kind 43 stops closing a handle it opened with
-`at 0`, as the newer leaves do; or FIL-02 and FIL-93 take their floor
-from a descriptor the program opens first, rather than from the
-assumption that 0 to 2 stay open. What `Close` should do to a borrowed
-descriptor is a separate question for the manual; the fix here does not
-depend on the answer.
+**Status:** **fixed** (2026-10-13), both ways. Kind 43 now closes its
+handle only when it opened standard input by path; a handle opened
+`at 0` is left open, the rule `'gen leaf file borrowed descriptors'`
+already follows. FIL-02 and FIL-93 no longer assume descriptors 0 to 2
+stay open: FIL-02 opens an anchor handle on the same file first, keeps
+it open, and asserts the handle under test reports a descriptor greater
+than the anchor's; FIL-93 keeps the handle that creates its file open
+until the loop is done and starts its floor at that handle's
+descriptor instead of at 0. A descriptor still in use is never handed
+out again, so both checks hold whether or not a standard stream was
+closed earlier. Neither change depends on what `Close` should do to a
+borrowed descriptor, which stays a question for the manual.
+`'gen file assert at least'`, which FIL-02 alone used, is removed.
+
+**Proof.** On vox main `a0a2ecc`, the three seeds above (budget 40,
+random layout, timeout 20000) each still open standard input `at 0`,
+no longer close it, and run with no findings. The program in the
+record, with the new FIL-02 check after it, passes with the anchor at
+descriptor 0 and the handle at 3; the same check with its comparison
+reversed exits 95. A 200-program run of fresh seeds (91013000 to
+91013199, budget 40) compiled all 200 with no findings: 14 programs
+drew FIL-02, 11 drew FIL-93, 8 of those also opened standard input
+`at 0`, and no handle opened `at 0` was closed. The retained probe
+`docs/ledger/probes/files/FIL-02.vox` records the new check's shape.
+`tests/380_gen_files_b.expected` and `tests/381_gen_files_b2.expected`
+are regenerated; `tests/040_gen.expected` does not move.

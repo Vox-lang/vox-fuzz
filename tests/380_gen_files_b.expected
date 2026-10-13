@@ -14,11 +14,13 @@ Close 'the manifest'.
   If 'the manifest's size is not 174 then, Print "ASSERT FIL-01: expected 174 got {'the manifest's size}", Exit 95. Print 'the manifest's size,
   Close 'the manifest'.
 
---- FIL-02: descriptor is a Number, at least 3 ---
+--- FIL-02: descriptor is a Number, above an anchor kept open ---
 a text called 'the dispatch note path' is "{'the workspace'}/3descr".
+open a file for writing called 'the sketchpad' at 'the dispatch note path'.
 open a file for writing called 'the dispatch note' at 'the dispatch note path'.
-If 'the dispatch note's descriptor is less than 3 then, Print "ASSERT FIL-02: expected at least 3 got {'the dispatch note's descriptor}", Exit 95. Print 'the dispatch note's descriptor.
+If 'the dispatch note's descriptor is less than or equal to 'the sketchpad's descriptor then, Print "ASSERT FIL-02: expected greater than {'the sketchpad's descriptor} got {'the dispatch note's descriptor}", Exit 95. Print 'the dispatch note's descriptor.
 Close 'the dispatch note'.
+Close 'the sketchpad'.
 
 --- FIL-03, FIL-04: readable/writable per drawn mode - reading ---
 a text called 'scratch path' is "{'the workspace'}/4mode".

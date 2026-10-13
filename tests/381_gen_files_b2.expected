@@ -117,9 +117,9 @@ If 'the waybill open failed' is false then, Print "ASSERT FIL-80: expected 1 got
 a text called 'the pallet path' is "{'the workspace'}/9many".
 open a file for writing called 'the pallet' at 'the pallet path'.
 Write "tracked" to 'the pallet'.
-Close 'the pallet'.
-a number called 'the message slip descriptor floor' is 0.
+a number called 'the message slip descriptor floor' is 'the pallet's descriptor.
 For each 'notebook' from 1 to 8, open a file for reading called 'the message slip' at 'the pallet path', If 'the message slip's descriptor is less than or equal to 'the message slip descriptor floor' then, Print "ASSERT FIL-93: expected greater than {'the message slip descriptor floor'} got {'the message slip's descriptor}", Exit 95. Set 'the message slip descriptor floor' to 'the message slip's descriptor.
+Close 'the pallet'.
 
 --- every leaf above with no file I/O committed ---
 emits a file open: 0
