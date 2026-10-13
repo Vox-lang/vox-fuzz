@@ -1,7 +1,7 @@
 (PRC-06b - the removal statement is rmdir(2), not a general "remove this
  path": pointed at a regular FILE it refuses and the file keeps every
  byte. Under strace the call is rmdir(path) = -1 ENOTDIR. Also shows the
- path may be spelled as a format-string literal (LANGUAGE.md:4234-4236
+ path may be spelled as a format-string literal (LANGUAGE.md:4303-4305
  show literals). Shape of 'gen leaf process directory removal refuses a
  file', kind 422 (process batch C, 2026-10-05).
  Ran, from the repo root, on the installed vox v0.4.15:

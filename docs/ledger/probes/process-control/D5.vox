@@ -1,17 +1,19 @@
-(D5 — Discrepancy 5 repro: `Send signal` hands the pid straight to kill(2)
- (LANGUAGE.md:4508-4509), so pid 0 (the caller's process group) and pid -1
- (every process this uid may signal) are reachable from an ordinary Vox
- program with no diagnostic and no guard.
- SAFETY: signal 0 only. The kernel delivers nothing for signal 0 — it does
- the permission check and returns — so running this repro is inert. The
- finding is that both lines succeed: with `9` in place of `0` the second
- one would kill every process this user owns.
- Ran, from the repo root:
-   VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
-   /home/josj/scr/english/vox/target/release/vox \
-   docs/ledger/probes/process-control/D5.vox -o p && ./p
+(D5 - Discrepancy 5 repro, RESOLVED by vox #279 (register #135, #136).
+ Up to vox 0.4.15 `Send signal` handed the pid straight to kill(2), so
+ pid 0 (the caller's process group) and pid -1 (every process this uid may
+ signal) were reachable with no diagnostic, and this probe printed
+ "kill(2) accepted the broadcast pid".
+ Now `to process <pid>` reaches exactly one process, numbered 1 to
+ 2147483647 (LANGUAGE.md:4584, 4593-4597), and a pid the compiler can
+ prove is outside that range is a compile error whose help line names the
+ group forms. `Send signal 0 to process 0.` is refused the same way. A pid
+ known only at run time is refused when the program runs: PRC-77.vox.
+ SAFETY: signal 0 only, and the program no longer compiles.
+ Re-recorded 2026-10-13 on vox main a0a2ecc.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D5.vox -o p && ./p
  expected output:
-   kill(2) accepted the broadcast pid
+   error: cannot send a signal to process -1
+   (no binary produced; compile error)
 )
 Send signal 0 to process -1.
 On error print "pid -1 was rejected".

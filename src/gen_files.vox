@@ -280,9 +280,9 @@ To 'gen write input' with a text called path.
 (--- Ledger batch A: list and number properties -----------------------
 
  docs/ledger/files.md, rows FIL-10, FIL-11, FIL-12, FIL-13, FIL-14 (List
- Properties table, heading two lines above, LANGUAGE.md:3876-3892,
+ Properties table, heading two lines above, LANGUAGE.md:3945-3961,
  mirrored at :2948-2967) and FIL-24, FIL-25, FIL-26 (Number Properties
- table, heading one line above, LANGUAGE.md:3934-3946). Both leaves
+ table, heading one line above, LANGUAGE.md:4003-4015). Both leaves
  below are pure in-memory assertions - no file handle is opened, no
  file-handle row (FIL-01..07, 40, 46, 48, 50) is touched; those are
  batch B's.
@@ -315,7 +315,7 @@ To 'gen write input' with a text called path.
  `Set … to …`, which needs one period like any other.)
 
 (A random element type for a list literal - number, float, text or
- boolean, all four forms LANGUAGE.md:2381-2390 shows inside `[...]`
+ boolean, all four forms LANGUAGE.md:2448-2457 shows inside `[...]`
  ("Mixed-Type Lists"). Delegates straight to the unbounded literal
  generators in gen_literals.vox, so a list element drawn here carries
  the same sign/leading-zero/escape variety any scalar declaration does,
@@ -365,7 +365,7 @@ To 'gen concat three blocks' with a list called 'the first block' and a list cal
  LANGUAGE.md's List Properties table promises a value for a populated
  list, and says nothing about what first/last report on one with no
  items - unlike element-by-index access, which the Bounds Checking
- paragraph explicitly covers (LANGUAGE.md:3909-3912, just past the
+ paragraph explicitly covers (LANGUAGE.md:3978-3981, just past the
  code fence). Hand-verified
  against 0.4.14: both set the error flag and read back 0, the same
  default-value shape the documented bounds-checking behaviour uses for
@@ -545,7 +545,7 @@ To 'gen leaf number properties' with a text called indent and a boolean called n
  literals - 'current time's unix' for the not-in-the-future half,
  hand-verified against 0.4.14 to work inline inside an If condition the
  same way the manual's own inline Print example uses it
- (LANGUAGE.md:4616, the "Inline Time Access" example; docs/ledger/
+ (LANGUAGE.md:4727, the "Inline Time Access" example; docs/ledger/
  probes/files/FIL-06.vox.).)
 
 To 'gen file assert at least' with a text called 'the row' and a text called 'the subject' and a text called 'the minimum' and a text called 'the minimum shown'.
@@ -593,7 +593,7 @@ To 'gen file assert not available' with a text called 'the row' and a text calle
     Return a text, 'the line'.
 
 (FIL-01: size reads 0 immediately after an open for writing, and the
- exact byte count after a write of known length - LANGUAGE.md:3832.
+ exact byte count after a write of known length - LANGUAGE.md:3901.
  Probe: docs/ledger/probes/files/FIL-02.vox (also covers this row).)
 
 To 'gen leaf file size' with a text called indent and a boolean called nested.
@@ -627,7 +627,7 @@ To 'gen leaf file size' with a text called indent and a boolean called nested.
 
 (FIL-02: descriptor is a Number, at least 3 for a freshly opened handle
  - fds 0-2 are stdio, so a real open never lands below that.
- LANGUAGE.md:3833. Probe: docs/ledger/probes/files/FIL-02.vox.)
+ LANGUAGE.md:3902. Probe: docs/ledger/probes/files/FIL-02.vox.)
 
 To 'gen leaf file descriptor' with a text called indent and a boolean called nested.
     If gen_does_file_io is false then,
@@ -651,7 +651,7 @@ To 'gen leaf file descriptor' with a text called indent and a boolean called nes
 
 (FIL-03, FIL-04: readable is true iff open for reading, writable iff
  open for writing - appending counts as writing for this property, hand-
- verified. LANGUAGE.md:3834-3835. A file is seeded first (writing mode
+ verified. LANGUAGE.md:3903-3904. A file is seeded first (writing mode
  always succeeds, even on a path that does not exist yet), then reopened
  in a DRAWN mode - reading, writing or appending - so which mode a given
  program tests varies across the corpus. Probe:
@@ -702,9 +702,9 @@ To 'gen leaf file readable writable' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-05, FIL-06: modified and accessed return Unix timestamps -
- LANGUAGE.md:3836-3837. Bounded on both sides: never below 1 (never 0 or
+ LANGUAGE.md:3905-3906. Bounded on both sides: never below 1 (never 0 or
  negative), and never after `current time's unix` - the manual gives a
- clock (LANGUAGE.md:4590, the `unix` time property), so "not in the future" is assertable
+ clock (LANGUAGE.md:4701, the `unix` time property), so "not in the future" is assertable
  exactly rather than as a wide fixed floor. Prints a fixed marker on
  success, never the raw timestamp - see 'gen file assert range
  quietly's own comment for why. Probe: docs/ledger/probes/files/
@@ -739,7 +739,7 @@ To 'gen leaf file times' with a text called indent and a boolean called nested.
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-07: permissions returns the file's permission bits as a Number.
- LANGUAGE.md:3838's table entry is "File permission bits (e.g., 0644)" -
+ LANGUAGE.md:3907's table entry is "File permission bits (e.g., 0644)" -
  an EXAMPLE, not a promised value, and the mode a fresh file lands at is
  umask-dependent: 420 (octal 0644) under umask 022, 384 (octal 0600)
  under a stricter 077. Asserting the literal 420 would file a false
@@ -815,11 +815,11 @@ To 'gen leaf file appending' with a text called indent and a boolean called nest
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-46: Read line REPLACES the buffer with the next line, rather than
- appending to it - LANGUAGE.md:4003. A fixed-length seed is appended to
+ appending to it - LANGUAGE.md:4072. A fixed-length seed is appended to
  the sink buffer first; if Read line appended instead of replacing, the
  final size would be seed length + line length + 1 (the newline), not
  line length + 1 - so the one post-read size check puts both the
- replace claim and the newline-retention claim (LANGUAGE.md:4021, not
+ replace claim and the newline-retention claim (LANGUAGE.md:4090, not
  this batch's row, caught for free) on trial together, the same
  reasoning D2's probe used for plain `Read`. Probe:
  docs/ledger/probes/files/FIL-53.vox.)
@@ -878,7 +878,7 @@ To 'gen leaf read line replaces' with a text called indent and a boolean called 
  this batch (docs/ledger/probes/files/FIL-52.vox, FIL-80.vox).)
 
 (FIL-45: `Read from ... into ...` REPLACES the buffer's contents rather
- than appending to them - LANGUAGE.md:4001. Pre-seed the sink with a
+ than appending to them - LANGUAGE.md:4070. Pre-seed the sink with a
  known length, `Read` a file of a different known length into it, and
  assert the post-read size is the READ length, not the sum - an
  appending bug would fail this the same way D2's own probe caught it for
@@ -921,7 +921,7 @@ To 'gen leaf file read replaces' with a text called indent and a boolean called 
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-52, FIL-53, FIL-54, FIL-55: the four rows `Read line` leaves the
- rest of the section entirely untouched - LANGUAGE.md:4020-4024. One
+ rest of the section entirely untouched - LANGUAGE.md:4089-4093. One
  file, two lines: the first ends in a newline, the second does NOT
  (the final line of the file), which puts both halves of "up to `\n` or
  EOF" on trial in one probe.
@@ -988,13 +988,13 @@ To 'gen leaf read line mechanics' with a text called indent and a boolean called
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-56: for a fixed-size buffer, an overlong `Read line` is truncated to
- capacity and the error flag is set - LANGUAGE.md:4023. A capacity
+ capacity and the error flag is set - LANGUAGE.md:4092. A capacity
  strictly below the line's length, so the truncation is never
  accidental; the size check and the flag check are the same two-part
  shape 'gen leaf buffer fixed overflow' (gen_buffers.vox) uses for the
  equivalent buffer-append claim, reused here rather than copied since a
  file-backed `Read line` truncation and a plain `append` truncation are
- the same underlying rule (LANGUAGE.md:3567) exercised through a
+ the same underlying rule (LANGUAGE.md:3636) exercised through a
  different statement. Probe: docs/ledger/probes/files/FIL-56.vox.)
 
 To 'gen leaf read line truncation' with a text called indent and a boolean called nested.
@@ -1038,7 +1038,7 @@ To 'gen leaf read line truncation' with a text called indent and a boolean calle
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-70: `If "<path>" is available then, …` checks whether a path is
- available - LANGUAGE.md:4097-4101. Both directions from one leaf: a
+ available - LANGUAGE.md:4166-4170. Both directions from one leaf: a
  path the generator just created must answer true, and a path in the
  SAME scratch directory that the generator built but never wrote must
  answer false - the generator knows both answers because it decided
@@ -1111,7 +1111,7 @@ To 'gen leaf file delete' with a text called indent and a boolean called nested.
     a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the before check', 'the delete line', 'the after check', 'the stale declaration', 'the stale handler', 'the redelete declaration', 'the redelete line', 'the redelete handler', 'the redelete check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FIL-80: file operation failures are catchable - LANGUAGE.md:4139-4141.
+(FIL-80: file operation failures are catchable - LANGUAGE.md:4208-4210.
  The plainest forced failure a generator can guarantee: open a path
  inside its own scratch directory that it never created, for READING
  (writing always succeeds/creates), and confirm `On error` fires. No
@@ -1145,7 +1145,7 @@ To 'gen leaf file open error' with a text called indent and a boolean called nes
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-93: on open, the FD is registered in a tracking table, and no
- descriptor is recycled while a handle stays live - LANGUAGE.md:4200.
+ descriptor is recycled while a handle stays live - LANGUAGE.md:4269.
  The retained probe pushes this to 100000 unclosed opens; a leaf embedded
  among many others in a fuzzed program needs no such scale to put the
  claim on trial, so this draws a modest 5-19 and checks every descriptor
@@ -1191,9 +1191,9 @@ To 'gen leaf file descriptor tracking' with a text called indent and a boolean c
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-58, FIL-59, FIL-60, FIL-62: `Seek <file> to byte N` and its plural
- synonym `to bytes N` are both accepted (LANGUAGE.md:4032-4033), seek
- positions are 1-indexed so `byte 1` is file offset 0 (LANGUAGE.md:4037),
- and an arbitrary byte N moves to byte position N (LANGUAGE.md:4039). One
+ synonym `to bytes N` are both accepted (LANGUAGE.md:4101-4102), seek
+ positions are 1-indexed so `byte 1` is file offset 0 (LANGUAGE.md:4106),
+ and an arbitrary byte N moves to byte position N (LANGUAGE.md:4108). One
  file, two known halves - a prefix and a suffix, each a random-length
  filler the generator wrote - proves all four at once: seeking to byte 1
  and reading the prefix's own length back must return exactly the
@@ -1261,13 +1261,13 @@ To 'gen leaf file seek by byte' with a text called indent and a boolean called n
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-57, FIL-61, FIL-102, and FIL-63's line-past-EOF sub-case: `Seek
- <file> to line N` is accepted (LANGUAGE.md:4031) and lands on the first
- byte of line N (LANGUAGE.md:4038) - proved by seeking to one drawn line
+ <file> to line N` is accepted (LANGUAGE.md:4100) and lands on the first
+ byte of line N (LANGUAGE.md:4107) - proved by seeking to one drawn line
  of a file built from K lines of distinct known lengths and asserting
  `Read line` returns exactly that line, trailing newline included (the
  same reading FIL-53 already established). A file ending in a newline
  has exactly K newlines, so line K+1 is the one empty trailing line the
- manual documents as existing (LANGUAGE.md:4042-4044): seeking there and
+ manual documents as existing (LANGUAGE.md:4111-4113): seeking there and
  reading must NOT set the error flag and must return an empty buffer;
  line K+2 is past that and MUST set the error flag - also FIL-63's third
  invalid-target case (the other two are in 'gen leaf file seek invalid
@@ -1350,7 +1350,7 @@ To 'gen leaf file seek by line' with a text called indent and a boolean called n
 
 (FIL-63: two of the three invalid Seek targets the manual names set the
  error flag - a position below 1, and an invalid descriptor
- (LANGUAGE.md:4040-4041). The third, a line past EOF, is asserted in
+ (LANGUAGE.md:4109-4110). The third, a line past EOF, is asserted in
  'gen leaf file seek by line' alongside FIL-102, which is where the
  known-newline-count file this needs already lives. The invalid
  descriptor is the same in-range-but-never-opened literal FIL-43 already
@@ -1405,9 +1405,9 @@ To 'gen leaf file seek invalid targets' with a text called indent and a boolean 
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-100: closing an already-closed file handle neither crashes nor sets
- the error flag (LANGUAGE.md:4220) - the double-free-is-impossible claim
+ the error flag (LANGUAGE.md:4289) - the double-free-is-impossible claim
  from the file-handle side. Incidentally the same *no-crash* observation
- FIL-86 needs for its own "no use-after-free" claim (LANGUAGE.md:4168),
+ FIL-86 needs for its own "no use-after-free" claim (LANGUAGE.md:4237),
  though this leaf is scoped to FIL-100 alone; FIL-86's tracking-mechanism
  half stays out of a generator's reach regardless. Probe: docs/ledger/
  probes/files/FIL-100.vox.)
@@ -1442,7 +1442,7 @@ To 'gen leaf file double close' with a text called indent and a boolean called n
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-89: all resources are cleaned up on exit even when you forget to
- `Close` (LANGUAGE.md:4172-4180, the manual's own worked example).
+ `Close` (LANGUAGE.md:4241-4249, the manual's own worked example).
  `Write` is unbuffered (FIL-01/FIL-56's own leaves already lean on this),
  so a second, independent handle opened on the same path BEFORE the
  writer is ever closed already sees every byte - proof the bytes reached
@@ -1504,7 +1504,7 @@ To 'gen leaf file forgotten close' with a text called indent and a boolean calle
  recording what the compiler printed.)
 
 (FIL-37: the `for <mode>`, `called <name>` and `at <path>` clauses of an
- open may appear in any order - LANGUAGE.md:3974. Three clauses, six
+ open may appear in any order - LANGUAGE.md:4043. Three clauses, six
  orders, all hand-verified to compile and to open the same file in the
  same mode (docs/ledger/probes/files/FIL-37.vox). Before this batch every
  generated open used the manual's first order only, an invariant the
@@ -1560,7 +1560,7 @@ To 'gen signed extreme number'.
         Return a text, "-{'the magnitude'}".
     Return a text, 'the magnitude'.
 
-(FIL-09: the File Properties worked example - LANGUAGE.md:3842-3848:
+(FIL-09: the File Properties worked example - LANGUAGE.md:3911-3917:
  open for reading, read `size` and `modified`, then guard on `size is
  greater than` a threshold. The size is the payload length the generator
  wrote; `modified` is checked as a range and never printed, for the
@@ -1617,7 +1617,7 @@ To 'gen leaf file properties worked example' with a text called indent and a boo
     a list called 'the lines' is ['the path line', 'the seed open', 'the seed write', 'the seed close', 'the read open', 'the size check', 'the modified check', 'the guard declaration', 'the guard', 'the guard check', 'the close line'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FIL-15: the List Properties worked example - LANGUAGE.md:3886-3891 - and
+(FIL-15: the List Properties worked example - LANGUAGE.md:3955-3960 - and
  the point it makes: a Boolean property is a condition on its own, `If
  names's empty then,` with no comparison. 'gen assert true'/'false'
  compare (`is false`), so they never put the bare form on trial; here the
@@ -1665,9 +1665,9 @@ To 'gen list literal of kind' with a number called kind.
     a text called 'the letters' is 'gen buffer filler' of 'the length'.
     Return a text, "\"{'the letters'}\"".
 
-(FIL-16, FIL-19, FIL-20: list indexes are 1-indexed (LANGUAGE.md:3896),
- `first` is the same item as `element 1` (LANGUAGE.md:3911) and `last`
- the same item as `element <length>` (LANGUAGE.md:3912). The same three
+(FIL-16, FIL-19, FIL-20: list indexes are 1-indexed (LANGUAGE.md:3965),
+ `first` is the same item as `element 1` (LANGUAGE.md:3980) and `last`
+ the same item as `element <length>` (LANGUAGE.md:3981). The same three
  facts are asserted for the Lists chapter by 'gen leaf list length and
  ends' and 'gen leaf list element index' (gen_collections.vox), but over
  values 0..999 only; here the elements are 'literal integer's whole
@@ -1736,7 +1736,7 @@ To 'gen leaf list index reads agree' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-18: `element i of <list>` takes a variable or an expression as its
- index - LANGUAGE.md:3905-3906. The index is never a literal here, and
+ index - LANGUAGE.md:3974-3975. The index is never a literal here, and
  three forms are drawn: a plain variable holding the position, a variable
  that only reaches the position after a runtime `Set` (declared off by a
  drawn offset, then corrected), and a grouped `{base add offset}`
@@ -1794,7 +1794,7 @@ To 'gen leaf list computed index' with a text called indent and a boolean called
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-21: an out-of-bounds list read sets the error flag and yields a
- default - LANGUAGE.md:3916-3921. Where the compiler can prove the index
+ default - LANGUAGE.md:3985-3990. Where the compiler can prove the index
  is past the end it yields the NUMBER 0, so only a number holder is
  legal; where it cannot, it yields the holder's own default: 0, the empty
  text, [] or {}. Hand-verified (docs/ledger/probes/files/FIL-21.vox):
@@ -1896,9 +1896,9 @@ To 'gen leaf list out of bounds typed default' with a text called indent and a b
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-27, FIL-28, FIL-30, FIL-31: `negative` is true iff the number is
- below 0, `zero` iff it is 0, `sign` is -1, 0 or 1 (LANGUAGE.md:3939,
+ below 0, `zero` iff it is 0, `sign` is -1, 0 or 1 (LANGUAGE.md:4008,
  3940, 3942), and the worked example - `If x's negative then,` as a bare
- condition, then `x's absolute` (LANGUAGE.md:3946-3951). The value is
+ condition, then `x's absolute` (LANGUAGE.md:4015-4020). The value is
  'gen signed extreme number', so i64's top and its negation turn up; it
  is written either as a literal or, for a negative, as `0 subtract`
  its magnitude. `absolute` of i64's minimum is never reachable from here
@@ -1954,7 +1954,7 @@ To 'gen leaf number sign properties' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-34: `open a file for appending` opens a file to add to its end -
- LANGUAGE.md:3961 and 3985. 'gen leaf file appending' (batch B) proves
+ LANGUAGE.md:4030 and 3985. 'gen leaf file appending' (batch B) proves
  the size grows by one append; this proves WHERE the bytes go and that
  it keeps holding over several rounds: seed the file, then reopen for
  appending one to five times, each round writing a drawn chunk -
@@ -2013,7 +2013,7 @@ To 'gen leaf file appending rounds' with a text called indent and a boolean call
     append "Close {'the handle'}" to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(FIL-39: opening for writing creates OR OVERWRITES - LANGUAGE.md:3984 -
+(FIL-39: opening for writing creates OR OVERWRITES - LANGUAGE.md:4053 -
  so reopening an existing file for writing truncates it. A long payload
  is written and closed; the reopen must read size 0 on the live handle
  before anything is written, then exactly the short payload's length
@@ -2024,7 +2024,7 @@ To 'gen leaf file appending rounds' with a text called indent and a boolean call
 
  After the short write the handle is closed and written to AGAIN: a
  write on a closed handle is a failure the manual says sets the error
- flag (LANGUAGE.md:4077-4079, the Writing rules; FIL-80's catchable file
+ flag (LANGUAGE.md:4146-4148, the Writing rules; FIL-80's catchable file
  operations), and a write through a closed descriptor is exactly the
  use-after-close the memory-safety promise is about. Probe:
  docs/ledger/probes/files/FIL-39.vox.)
@@ -2083,8 +2083,8 @@ To 'gen leaf file writing truncates' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-36, FIL-43: a numeric `at` is a borrowed descriptor, not a path
- (LANGUAGE.md:3972), and descriptor literals run 0..2147483647
- (LANGUAGE.md:3990). The oracle for "borrowed" is the handle's own
+ (LANGUAGE.md:4041), and descriptor literals run 0..2147483647
+ (LANGUAGE.md:4059). The oracle for "borrowed" is the handle's own
  `descriptor`: a path open gets a fresh descriptor of 3 or more, a
  borrowed one reports exactly the number written. Asking whether a file
  named "1" appeared would test the harness's working directory, which
@@ -2101,7 +2101,7 @@ To 'gen leaf file writing truncates' with a text called indent and a boolean cal
    is never an open descriptor, so the open itself succeeds (hand-
    verified) and the first real operation on it - a write, or a read
    into a buffer that must stay empty - fails and must set the error flag
-   (LANGUAGE.md:4139-4141, FIL-80).
+   (LANGUAGE.md:4208-4210, FIL-80).
  Descriptor 2 is never opened (generated programs never touch stderr).
  Neither 0 nor 1 is ever closed: closing a borrowed descriptor closes
  the process's own stdin or stdout - harness.vox's own child setup
@@ -2207,7 +2207,7 @@ To 'gen file borrow the top descriptor' with a text called 'the stem'.
 a buffer called 'the byte measuring view' is "".
 
 (FIL-48: `Read from standard input into <buffer>` - the manual's own
- spelling, LANGUAGE.md:4009 and the keyword table at 5293. 'gen leaf
+ spelling, LANGUAGE.md:4078 and the keyword table at 5293. 'gen leaf
  stdin read' reaches stdin only through "/dev/stdin" or descriptor 0.
 
  The generator wrote the input, but not which reads run first: another
@@ -2220,7 +2220,7 @@ a buffer called 'the byte measuring view' is "".
 
  The overflow flag is caught and printed but NOT asserted. A fixed
  buffer smaller than the waiting input is a "Fixed buffer overflow (data
- exceeds capacity)" by LANGUAGE.md:4138, and `Read from <file>` sets the
+ exceeds capacity)" by LANGUAGE.md:4207, and `Read from <file>` sets the
  flag there, but `Read from standard input` does not, on a pipe or on a
  redirected file alike - an open discrepancy with the manual, not
  encoded either way. Probe: docs/ledger/probes/files/FIL-48.vox.)
@@ -2268,14 +2268,14 @@ To 'gen leaf standard input read' with a text called indent and a boolean called
     'gen join lines' of indent and nested and 'the lines'.
 
 (FIL-50: `Read line from <file handle> into <buffer>` reads one line of a
- file - LANGUAGE.md:4016. Batch B2's 'gen leaf read line mechanics' reads
+ file - LANGUAGE.md:4085. Batch B2's 'gen leaf read line mechanics' reads
  two lines of a fixed shape; this walks a whole file of one to eight
  lines line by line, each line a drawn length from zero - so empty lines,
  "\n" alone, come back as one-byte reads - with the last line's newline
  drawn (present or absent), into a sink that is fixed with room to spare
  or dynamic. Every read is checked twice: its size (the line plus one
- for a kept newline, LANGUAGE.md:4021) and its exact bytes. One read past
- the last line must come back empty (LANGUAGE.md:4022, FIL-54). Lines
+ for a kept newline, LANGUAGE.md:4090) and its exact bytes. One read past
+ the last line must come back empty (LANGUAGE.md:4091, FIL-54). Lines
  hold only 'gen buffer filler' letters and digits, so the expected text
  needs no escaping beyond its own newline. Probe:
  docs/ledger/probes/files/FIL-50.vox.)

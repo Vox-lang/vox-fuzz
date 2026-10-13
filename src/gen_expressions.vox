@@ -149,7 +149,7 @@ a list called gen_expr_safe_char_codes is [65, 66, 67, 68, 69, 70, 71, 72, 73, 7
  second one added in operand position, the same two-position shape as
  the hex and binary leaves. RUTHLESS REWORK reviewed, not reworked: a
  character literal's value is not a free magnitude - it is pinned to a
- single byte by the construct itself (LANGUAGE.md:1927), the same
+ single byte by the construct itself (LANGUAGE.md:1958), the same
  category as a byte index or a list length the rework directive itself
  names as exempt. Making the SUM of two bytes "extreme" would mean
  drawing bytes outside gen_expr_safe_chars, which is a renderer-safety
@@ -208,7 +208,7 @@ To 'gen leaf boolean arithmetic' with a text called indent and a boolean called 
     'gen join lines' of indent and nested and 'the lines'.
 
 (EXP-46: `not <condition>` is true iff the condition is false, put
- directly in front of a comparison the way LANGUAGE.md:1980's fragment
+ directly in front of a comparison the way LANGUAGE.md:2011's fragment
  shows it (not a separately-declared boolean first - that is a different
  leaf, EXP-27/EXP-36 below). Which branch is the "should never run" one
  is decided here, at generation time, from the same two numbers the
@@ -355,7 +355,7 @@ To 'gen leaf plural are expansion' with a text called indent and a boolean calle
 
 (EXP-94: the documented rounding idiom, add 0.5 before casting to a
  number - hand-verified to truncate DOWN for a fraction below .50 and
- round UP at or above it (LANGUAGE.md:2187's own worked example, `3.7`
+ round UP at or above it (LANGUAGE.md:2221's own worked example, `3.7`
  to `4`). The fraction is a two-digit draw, so both directions of the
  boundary are reachable. The rounded reading is captured into its own
  variable before the assertion rather than asserted on the bare cast
@@ -375,7 +375,7 @@ To 'gen leaf plural are expansion' with a text called indent and a boolean calle
  with - not a rare edge, the FIRST 15-digit case tried), worsening
  through 19 (`...226916.99` rounds to `...227008`, off by 92). This is
  float64 physically running out of mantissa bits, not a parser bug, and
- LANGUAGE.md:2076-2089 already documents a precision ceiling for
+ LANGUAGE.md:2107-2120 already documents a precision ceiling for
  text-to-float parsing in the same neighbourhood (eighteen significant
  digits) - this leaf's own arithmetic runs out sooner because it does
  an ADD on top of the parse, not because the parse itself is wrong.
@@ -421,7 +421,7 @@ To 'gen leaf round half up' with a text called indent and a boolean called neste
  negative value in this generator is an arithmetic subtraction, never a
  leading `-`) - this leaf is what puts a negative value into a bare
  condition at all. The boolean the `If` sets is cast `as a number`
- before the assertion (LANGUAGE.md:2396: `Print` alone on a boolean
+ before the assertion (LANGUAGE.md:2463: `Print` alone on a boolean
  shows 0/1, which is what 'gen assert number is' already expects, so the
  cast just makes that expectation explicit rather than relying on it).
 
@@ -503,7 +503,7 @@ To 'gen expr safe text' with a number called 'how many'.
     Return a text, built.
 
 (EXP-18: `the number` - the documented spelling of the `for each` loop
- iterator (LANGUAGE.md:1932) - referenced inside the loop body and
+ iterator (LANGUAGE.md:1963) - referenced inside the loop body and
  summed across every iteration, checked against the same sum computed
  by walking 1..bound in the GENERATOR itself rather than a closed-form
  N*(N+1)/2, which would need parenthesised grouping to keep the
@@ -536,7 +536,7 @@ To 'gen leaf article the number iterator' with a text called indent and a boolea
 (EXP-29, EXP-30: a cast binds tighter than arithmetic and applies only
  to the expression immediately to its left (EXP-29), and bracing the
  whole expression before the cast overrides that (EXP-30) -
- LANGUAGE.md:1950, 2174. The tight half is demonstrated the way EXP-11
+ LANGUAGE.md:1981, 2208. The tight half is demonstrated the way EXP-11
  already proves it has to work: a TEXT operand next to `add` only
  compiles at all under tight binding, since a loose reading would put
  the text directly in arithmetic, a compile error (this ledger's own
@@ -601,7 +601,7 @@ To 'gen leaf cast tight and braced' with a text called indent and a boolean call
     'gen join lines' of indent and nested and 'the lines'.
 
 (EXP-35: `x is 0` - a bare value on the right is an equality comparison
- (LANGUAGE.md:1958), the shorter spelling of EXP-34's `is equal to`.
+ (LANGUAGE.md:1989), the shorter spelling of EXP-34's `is equal to`.
  'gen assert predicate' with the predicate text "0" writes exactly
  `If {subject} is 0 then ...`, so no custom condition code is needed -
  the same helper the collections leaves already use for `is empty`/
@@ -628,8 +628,8 @@ To 'gen leaf bare zero comparison' with a text called indent and a boolean calle
     a list called 'the lines' is 'gen concat two blocks' of 'the head' and 'the trio'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(EXP-39, EXP-41: `is odd` (LANGUAGE.md:1968) and `is negative`
- (LANGUAGE.md:1970), two independent predicate checks over two
+(EXP-39, EXP-41: `is odd` (LANGUAGE.md:1999) and `is negative`
+ (LANGUAGE.md:2001), two independent predicate checks over two
  independently-drawn subjects in one program. `'gen expr extreme
  value'` never returns negative, so oddness is read straight off it by
  parity; a negative reading is built the same way EXP-98's leaf builds
@@ -704,7 +704,7 @@ To 'gen leaf list emptiness check' with a text called indent and a boolean calle
 
 (EXP-73: a text made from a buffer is an independent copy, not a
  window - it keeps its own bytes after the buffer that made it is
- cleared and refilled (LANGUAGE.md:2051-2057). This is the memory-safety
+ cleared and refilled (LANGUAGE.md:2082-2088). This is the memory-safety
  row of the whole section, per the ledger's own Report ("the manual's
  own stated reason is that a window would read freed memory after a
  resize") - CLAUDE.md's priority ordering put it first in this batch.

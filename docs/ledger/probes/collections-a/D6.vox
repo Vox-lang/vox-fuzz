@@ -1,5 +1,5 @@
 (D6 — Discrepancy 6 repro, HISTORICAL, 0.4.14 and earlier. The cyclic-list
- example at LANGUAGE.md:2431-2434 (0.4.14 numbering) records its output as
+ example at LANGUAGE.md:2498-2501 (0.4.14 numbering) records its output as
  "(prints: [[...]] then cyclic)". The compiler printed 64 opening brackets,
  `...`, 64 closing brackets, then `cyclic`. The surrounding PROSE
  (2293-2297) was exact and correct; only the example's inline comment was

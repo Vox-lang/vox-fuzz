@@ -1,4 +1,4 @@
-(PRC-14b - each mount operand in each form LANGUAGE.md:4262-4264 names:
+(PRC-14b - each mount operand in each form LANGUAGE.md:4331-4333 names:
  text variable source, format-built buffer target, buffer fstype built
  from a text stem, and a literal options string; every one reaches
  mount(2) (strace: mount("ramfs", "vf_scratch/process-control/scratch_quay",

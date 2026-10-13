@@ -1,0 +1,20 @@
+(D6 - Discrepancy 6 repro: a later number flag that converts clears the
+ error an earlier one raised. LANGUAGE.md:4926-4928 says a token that is
+ not a number "raises the error flag"; LANGUAGE.md:2248 says "A text that
+ is a number clears the flag". Parse flags converts the tokens in argv
+ order, so:
+   ./p -p 3 -r x   prints   Parse flags raised the error flag
+                            retries is 0, patience is 3
+   ./p -r x -p 3   prints   retries is 0, patience is 3
+ The second run hands retries the same bad token and no handler runs.
+ Recorded 2026-10-13 on vox main a0a2ecc.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D6.vox -o p && ./p -r x -p 3
+ Args: -r x -p 3
+ expected output:
+   retries is 0, patience is 3
+)
+a flag called retries is "-r" or "--retries", it is a number.
+a flag called patience is "-p" or "--patience", it is a number.
+Parse flags.
+On error print "Parse flags raised the error flag".
+Print "retries is {retries}, patience is {patience}".

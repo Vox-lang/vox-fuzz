@@ -1,6 +1,6 @@
 # Vox Language Specification
 
-**Version 0.4.14**
+**Version 0.4.15**
 
 This document defines the syntax and semantics of Vox (sentence based code).
 It states the language as it is now. What changed in which release is in
@@ -606,23 +606,23 @@ silent retype.
 
 ```vox fragment
 a number called n is 5.
-n is "abc".              (compile error: cannot assign text to 'n', which is a number)
+n is "42".               (compile error: cannot assign text to 'n', which is a number)
 n is "42" as a number.   (OK: n is now 42)
 ```
 
 The error names the variable, its declared type and where it was declared,
 the type of the value that doesn't match, and the exact cast that would fix
-it:
+it, when there is one (a text that is not a number has none):
 
 ```text
 error: cannot assign text to 'n', which is a number
   --> prog.vox:2:1
    |
- 2 | n is "abc".
+ 2 | n is "42".
    | ^ this assigns text
    |
   note: 'n' was declared as a number at prog.vox:1:17
-  help: convert it explicitly:  n is "abc" as a number.
+  help: convert it explicitly:  n is "42" as a number.
 ```
 
 Convert explicitly with [Type Casting](#type-casting) (`as a number` / `as
@@ -990,11 +990,17 @@ a 'bounding box' called viewport.
 Print viewport's width.
 ```
 
-**Field types in v1.** A field may be `number`, `float`, `boolean`,
-`time`, or any **previously defined** thing (things nest to any depth;
-see [Nesting](#nesting)). `text`, `list`, `map`, and `buffer` fields are
-deferred: they carry references and would reopen the aliasing question
-value copy semantics (below) is designed to avoid.
+**Field types.** A field may be `number`, `float`, `boolean`, `time`,
+`text`, or any **previously defined** thing (things nest to any depth;
+see [Nesting](#nesting)). A text field follows the same value semantics
+as every other field (below): a copy of the thing never shares its text
+with the original, and a text field with no default holds the empty
+text `""`. `list`, `map`, and `buffer` are not field types: each can be
+changed in place, so two copies of a thing holding one would share it.
+A field's type is fixed by the definition, as a variable's is by its
+declaration: writing a value of another type into a field, or reading a
+field into a variable of another type, is the compile error
+[Type Immutability](#type-immutability) describes, and `as` converts.
 
 #### The article rule
 
@@ -1196,6 +1202,22 @@ Print invitation's postbox's x.
 Print reply's postbox's x.
 ```
 
+A text field is copied the same way. Changing it in one copy, by any
+spelling of assignment, is never seen in the other:
+
+```
+A thing called letter has
+  a text called greeting is "dear friend",
+  a text called signature.
+
+a letter called original.
+Set original's signature to "Ada".
+a letter called reply is original.
+Set reply's signature to "Grace".
+Print original.
+Print reply.
+```
+
 The same is true across a call. A function receives a copy of a thing
 and hands one back by returning it; nudging the parameter cannot reach
 the caller's point, because the only way out is the `Return`, which
@@ -1314,8 +1336,10 @@ Print after.
 `Print p.` walks the fields in definition order and recurses into the
 things they hold, map-style. Every field name is baked into the emitted
 program, so nothing is read from a descriptor and nothing is allocated.
-A quoted field name prints in the quotes it is written with, and a
-function member takes no part; it is the type's API, not its state:
+A quoted field name prints in the quotes it is written with, a text
+field prints its text in double quotes (the way a list or a map prints
+a text), and a function member takes no part; it is the type's API, not
+its state:
 
 ```
 A thing called point has
@@ -1374,8 +1398,10 @@ a text called note is "the point is {origin}".
 ### Equality
 
 `is` between two values of the same thing compares those same fields at
-the same depth; `is not` is its negation. Like printing, the comparison is
-written out by the compiler, so it recurses into nested things:
+the same depth; `is not` is its negation. A text field compares by its
+characters, wherever each copy's text is stored. Like printing, the
+comparison is written out by the compiler, so it recurses into nested
+things:
 
 ```
 A thing called point has
@@ -1915,15 +1941,20 @@ deferred. Things live in the compile-time type table, not the runtime tag.
 | Boolean | `true`, `false` |
 | Hexadecimal | `0xFF`, `0xDEADBEEF` |
 | Binary | `0b10110100`, `0b1111` |
+| Octal | `0o17`, `0o755` |
 | Character | `'A'`, `'!'` |
 
 **Note:** Float literals are recognized by the presence of a decimal point. Floats and integers can be mixed in arithmetic expressions.
 
 **Note:** Arithmetic operates on numbers (booleans count as 0/1). Text, buffers, and lists must be cast with `as a number` or `as a float` before they can be used in arithmetic - using them directly is a compile error, since they hold pointers rather than numeric values.
 
-**Hex and Binary:**
+**Hex, Binary and Octal:**
 - Hexadecimal literals use `0x` prefix: `0xFF` equals 255
 - Binary literals use `0b` prefix: `0b1010` equals 10
+- Octal literals use `0o` prefix: `0o17` equals 15
+- The prefix letter may be a capital (`0X1F`, `0B1`, `0O17`), and so may a
+  hex digit
+- A leading zero without a prefix means nothing: `0234` equals 234
 - Character literals use single quotes: `'A'` equals 65
 
 ### Variable Reference
@@ -2124,11 +2155,14 @@ a text called upper is "FF".
 a number called n5 is upper as a hex number. (255)
 ```
 
-Like the base-10 case, parsing **stops at the first character invalid
-for that base** rather than raising an error - `"12g5" as a hex number`
-gives `18` (stops at `g`), and a string that's invalid from its very
-first character (e.g. `"abc" as a base5 number`, since `a`'s value of
-10 is too big for base 5) gives `0`.
+A radix cast reads **the whole text as digits of that base**, after an
+optional `-` and, for base 16, 8 and 2, an optional `0x`, `0o` or `0b`
+prefix: `"0x1F" as a hex number` is `31`, `"0o17" as an octal number` is
+`15`. Any other character makes the text not a number in that base:
+`"12g5" as a hex number` (`g` is not a hex digit), `"abc" as a base5
+number` (`a`'s value of 10 is too big for base 5), and `"0x1F" as a base
+10 number` (a prefix belongs to its own base) are not numbers; see the
+Casting Rules below for what follows.
 
 **Examples:**
 
@@ -2186,12 +2220,41 @@ Print the hpadded.  (prints "09")
 - Float to number **truncates** (does not round)
 - To round: add 0.5 before casting (`{3.7 add 0.5} as a number` → `4`)
 - Text, buffers, and lists cannot be used directly in arithmetic; cast them with `as a number` / `as a float` first
-- Text to number fails if text is not a valid number (sets error flag)
-- Text to number in a non-default base (`as a hex/octal/binary/base N
-  number`) stops parsing at the first character invalid for that base,
-  rather than failing outright - it does not set the error flag
+- **A text is a number** when the whole text could be written as a number
+  literal in Vox source (see [Literals](#literals)), after one optional
+  `-`: decimal digits, where a leading zero means nothing (`"0234"` is
+  `234`), with an optional fractional part (`"4.8"`, `"-2.5"`), or a whole
+  number after `0x`, `0b` or `0o` (`"-0x345A"` is `-13402`, `"0o234"` is
+  `156`, `"0b101"` is `5`). Nothing else may be in the text: `"12 apples"`,
+  `"1.5x"`, `"1e5"`, `"+7"`, `" 7"`, `"7 "`, `"3."`, `".5"`, `"0x"`, `"-"`
+  and the empty text `""` are not numbers.
+- `as a number` of a text with a fractional part keeps the whole part and
+  drops the fraction, as a float cast to a number does: `"4.8" as a
+  number` is `4`, `"-2.5" as a number` is `-2`. The whole number must fit
+  in a number (-9223372036854775808 to 9223372036854775807), in any
+  spelling.
+- `as a float` reads the same texts: `"4.8" as a float` is `4.8`, `"0x10"
+  as a float` is `16.0`. A text with no fractional part is a whole number,
+  so it must fit in a number, as it must when written in the source.
+- A buffer cast to a number or a float is read exactly as a text.
+- A text literal that is not a number cannot be cast to one: `"hello" as
+  a number` is a compile error, because the compiler can read the text for
+  itself.
+- A text known only when the program runs (a variable, a field, a buffer,
+  a line of input, a `value` holding text) that is not a number raises the
+  error flag, and the sentence that stores the cast changes nothing: the
+  destination keeps the value it had, and a declaration holds its type's
+  default (`0`, `0.0`). A `value` retyped in place (`answer is a number.`)
+  keeps its text. A text that is a number clears the flag.
 - Zero is `false`, any non-zero number is `true`
 - `in` keyword is for timer `duration`/`elapsed` casts (see above)
+
+```
+a text called reply is "hello".
+a number called count is 5.
+Set count to reply as a number.
+On error print "not a number, so count is still {count}".
+```
 
 ---
 
@@ -2357,6 +2420,10 @@ If arguments's empty then,
 
 **Notes:**
 - Exit code defaults to 0 if not specified
+- The exit code is 0 to 255. A code outside that range that the compiler
+  can prove (a literal, or a name that holds one number for the whole
+  program) is a compile error; a code computed outside it when the program
+  runs exits with 255
 - All resources are automatically cleaned up before exit
 - Alternative keywords: `quit`, `terminate`
 
@@ -2790,8 +2857,10 @@ To bump with a value called v. Return a number, v add 1.
 variable's type is fixed forever, but `value` is deliberately not one. The
 statement `<valuevar> is a <type>.` reads the variable's runtime tag,
 performs the conversion that the corresponding static cast would use, and
-stores the result back into the same variable with the new tag. This works
-for `number`, `float`/`decimal`, `text`, and `boolean` targets:
+stores the result back into the same variable with the new tag. A text
+that is not a number leaves the variable as it was, with the error flag
+raised (see the Casting Rules). This works for `number`,
+`float`/`decimal`, `text`, and `boolean` targets:
 
 ```
 a value called numstr is "357".
@@ -2820,16 +2889,16 @@ After a successful in-place retype, the variable is tracked with the new
 type for the rest of its lifetime, so arithmetic and further casts behave
 accordingly. Retyping to the type it already holds is a no-op.
 
-**Failed conversions set `_last_error` and leave the variable as 0.** A
-text that cannot be parsed as a number, for instance, results in 0 and
-raises the error flag so `On error` can catch it:
+**A failed conversion sets `_last_error` and leaves the variable as it was.** A
+text that is not a number keeps its text and its tag, and the error flag
+is raised so `On error` can catch it:
 
 ```
 a value called bad is "abc".
 bad is a number.
 on error print "cast failed".
 print bad.
-(prints: cast failed / 0)
+(prints: cast failed / abc)
 ```
 
 **Inspecting a `value`'s current type.** The universal `type` property reads the variable's runtime tag and returns a text description such as `Text (dynamic)`, `Number (dynamic)`, `Float (dynamic)`, `Boolean (dynamic)`, `List (dynamic)`, `Map (dynamic)`, or `Nothing (dynamic)`. Because it reads the tag, the reported type changes with reassignment:
@@ -4264,7 +4333,9 @@ On error print "unmount failed".
   buffers).
 - Moving/binding an already-mounted filesystem uses `fstype "none"` with
   `options "move"` or `options "bind"` - Vox recognizes this pattern and
-  translates it into the correct `MS_MOVE`/`MS_BIND` mount flags:
+  translates it into the correct `MS_MOVE`/`MS_BIND` mount flags, whether the
+  type and options are written as literals or held in text variables or
+  buffers:
   ```
   Mount "/proc" at "/newroot/proc" with type "none" with options "move".
   ```
@@ -4499,15 +4570,35 @@ the five-second mark.
 
 #### Send a signal: `Send signal`
 
-Unlike `fork`/`reap`, this is a **statement**, not an expression:
+Unlike `fork`/`reap`, this is a **statement**, not an expression. It
+performs `kill(2)` (syscall 62), and it has four forms, one for each set of
+processes it can reach:
 
 ```vox fragment
 Send signal <N-expr> to process <pid-expr>.
+Send signal <N-expr> to process group <group-expr>.
+Send signal <N-expr> to my process group.
+Send signal <N-expr> to every process.
 ```
 
-It performs `kill(2)` (syscall 62): `<pid-expr>` is the target PID (loaded
-into `rdi`), `<N-expr>` is the signal number (loaded into `rsi`). `child` is
-accepted as an alias for `process`, mirroring `reap process/child`:
+- `to process <pid>` reaches exactly one process, the one numbered `<pid>`.
+  `child` is accepted as an alias for `process`, mirroring
+  `reap process/child`.
+- `to process group <group>` reaches every process in that process group.
+- `to my process group` reaches every process in the program's own process
+  group, the program included.
+- `to every process` reaches every process the program is permitted to
+  signal, except process 1 and the program itself.
+
+`<N-expr>` is the signal number, 0 to 64. A process and a process group are
+numbered from 1 to 2147483647. A number outside its range that the compiler
+can prove (a literal, or a name that holds one number for the whole
+program) is a compile error; one known only when the program runs sets the
+error flag (`EINVAL`) and sends nothing. The words `group`, `my` and
+`every` belong to the statement only in these shapes, so each remains an
+ordinary name everywhere else, including as the pid itself:
+`Send signal 0 to process group.` signals the one process whose number the
+variable `group` holds.
 
 ```
 Send signal 9 to child pid.
@@ -4524,7 +4615,27 @@ On error print "no such process".
 
 Signal 0 is the standard existence check: it delivers nothing but returns an
 error if no process has that PID, which makes it a safe way to probe the error
-path. A common pattern is to send a real signal to a forked child and reap it:
+path, and the only signal a program should send to a group or to everyone
+while it is being tried out:
+
+```
+Send signal 0 to my process group.
+On error print "unexpected: my own process group is always there".
+Send signal 0 to process group 2147483647.
+On error print "no process group 2147483647".
+```
+
+A real signal to a group reaches every member at once. The program's own
+group usually includes the shell pipeline that started it, so a supervisor
+that signals its group is written with that in mind:
+
+```vox fragment
+(Stops every process in the program's own process group, the program
+ included. A fragment: running it would stop whatever started it.)
+Send signal 15 to my process group.
+```
+
+A common pattern is to send a real signal to a forked child and reap it:
 
 ```
 Set pid to fork the process.
@@ -4812,7 +4923,9 @@ Supported flag value types:
 
 - `boolean` (presence sets true)
 - `text` (consumes the next token as text)
-- `number` (consumes the next token and parses it as a number)
+- `number` (consumes the next token and reads it as a number, by the
+  rule under "Casting Rules"; a token that is not a number leaves the flag
+  holding its default and raises the error flag)
 
 #### 2) Optional schema modifiers
 
@@ -5090,7 +5203,7 @@ Set result to value bit-shift-right 8 bit-and 0xFF.
 | `Execute` | `execve` - replace the process image |
 | `Shutdown`/`Poweroff`, `Reboot`/`Restart`, `Halt` | `reboot(2)` - power off/restart/halt the machine |
 | `fork`, `reap` | Process control expressions - `fork(2)`/`wait4(2)` |
-| `Send signal` | `kill(2)` - send a signal to a process (`child` aliases `process`) |
+| `Send signal` | `kill(2)` - send a signal to a process, a process group, my process group, or every process (`child` aliases `process`) |
 | `Read` | `Read from <file> into <buffer>.` / `Read line from <file> into <buffer>.` |
 | `Write` | `Write <value> to <file>.` |
 | `Open` | `open a file for reading/writing/appending called <name> at <path>.` |
@@ -5418,6 +5531,10 @@ For each number from 1 to 15, print the number, but if 'check divisibility' of t
 - **`see '<lib>' version "<ver>" from "<path>.lib".`**: consume a shared
   library through its `.lib` interface. This is the library path; see
   [Shared libraries](#shared-libraries) below.
+
+A `see` stands at the top level of a file, written against the left margin:
+one inside an `If` or `Otherwise` branch, a loop, an `On error` handler, a
+function body or a thing definition is a compile error that names the rule.
 
 ```vox fragment
 see "./utils.vox".

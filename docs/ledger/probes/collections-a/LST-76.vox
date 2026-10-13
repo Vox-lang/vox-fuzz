@@ -1,5 +1,5 @@
 (LST-76: reading a nested collection back out with `element N of`
- copies it (LANGUAGE.md:2500-2501, 0.4.15, #111). Also covers: LST-80
+ copies it (LANGUAGE.md:2567-2568, 0.4.15, #111). Also covers: LST-80
  (the got half of the worked example).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-76.vox -o p && ./p
  expected output:

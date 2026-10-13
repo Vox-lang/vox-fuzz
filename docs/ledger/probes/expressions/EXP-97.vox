@@ -1,11 +1,15 @@
-(EXP-97: LANGUAGE.md:2179-2181 - a non-default-base cast "stops parsing at the
- first character invalid for that base ... it does not set the error flag".
- The stopping half holds. The flag half does not: a string invalid from its
- first character sets the flag in base 5 and in base 16 exactly as it does in
- base 10. See Discrepancy 2.
+(EXP-97, folded into EXP-83: a radix cast reads the whole text as digits
+ of its base, and any other character makes the text not a number in that
+ base (LANGUAGE.md:2158-2165), so each cast below raises the error flag
+ and its declaration holds 0 (LANGUAGE.md:2243-2248). Up to vox 0.4.15 a
+ radix cast stopped at the first invalid character instead, and this
+ probe printed 18 for "12g5" as a hex number with the flag clear
+ (Discrepancy 2, resolved by vox #281). Re-recorded 2026-10-13 on vox main
+ a0a2ecc.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-97.vox -o p && ./p
  expected output:
-   18
+   hex partial set the flag
+   0
    base 5 fully invalid set the flag
    0
    hex fully invalid set the flag

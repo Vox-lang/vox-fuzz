@@ -1,4 +1,4 @@
-(FIL-18: element <index> of <list> takes a variable or a grouped expression as its index - LANGUAGE.md:3905-3906.
+(FIL-18: element <index> of <list> takes a variable or a grouped expression as its index - LANGUAGE.md:3974-3975.
  Three rendered shapes of 'gen leaf list computed index': a grouped
  {base add offset} index, a plain variable, and a variable corrected by a
  runtime Set. Also hand-verified: the ungrouped

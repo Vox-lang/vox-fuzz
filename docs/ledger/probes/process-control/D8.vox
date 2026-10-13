@@ -1,5 +1,12 @@
 (D8 - the "none" + "move"/"bind" pattern is translated only for string
- literals. LANGUAGE.md:4262-4267: operands "accept string literals, text
+ literals. RESOLVED by vox #279 (register #134): on vox main a0a2ecc the
+ emitted assembly (vox D8.vox --emit-asm) gives the literal statement
+ `mov r10, 4096` (MS_BIND) and the variable statement the run-time
+ recogniser MOUNT_RECOGNISING_MOVE_OR_BIND, which sets MS_MOVE or MS_BIND
+ when the texts are "none" and "move"/"bind"; strace was not available to
+ re-check the call itself. The output below is unchanged (both are still
+ refused unprivileged). The history follows.
+ LANGUAGE.md:4331-4338: operands "accept string literals, text
  variables, or buffers", and "Vox recognizes this pattern and translates
  it into the correct MS_MOVE/MS_BIND mount flags". With
    strace -e trace=mount ./p

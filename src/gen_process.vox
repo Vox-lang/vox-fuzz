@@ -44,7 +44,7 @@
  friends - see the reset lines there):
 
  - gen_process_decoders_declared: the manual's own `'exit code of'`/
-   `'signal of'` functions (LANGUAGE.md:4423-4427) can be declared only
+   `'signal of'` functions (LANGUAGE.md:4494-4498) can be declared only
    ONCE per program - a second `To 'exit code of' ...` is a duplicate-
    label NASM assembly error, hand-verified this session (see the
    report) - and kind 266 can be drawn more than once in a program with
@@ -111,7 +111,7 @@ To 'gen process safe exit code'.
     Return a number, 'the code'.
 
 (PRC-02, PRC-04: `Create a directory called '<path>'.` performs
- mkdir(2), mode 0755 (LANGUAGE.md:4241-4242; PRC-03's mode claim is not
+ mkdir(2), mode 0755 (LANGUAGE.md:4310-4311; PRC-03's mode claim is not
  assertable - Vox has no stat/mode accessor). The leading article `a`
  is optional - both spellings are drawn, varying which. Confined to the
  per-run scratch directory; stands aside for a plain print leaf when
@@ -140,10 +140,10 @@ To 'gen leaf process directory create' with a text called indent and a boolean c
 
 (PRC-12, PRC-13, PRC-21: `Mount "<source>" at "<target>" with type
  "<fstype>" [with options "<options>"].` lowers directly to mount(2)
- (LANGUAGE.md:4261-4264); the `with options` clause is optional
- (LANGUAGE.md:4252, 4261); `Unmount "<target>".` lowers to umount2(2)
- (LANGUAGE.md:4271); both set the error flag on failure
- (LANGUAGE.md:4276). SAFE TO EMIT under this surface brief's ruling -
+ (LANGUAGE.md:4330-4333); the `with options` clause is optional
+ (LANGUAGE.md:4321, 4330); `Unmount "<target>".` lowers to umount2(2)
+ (LANGUAGE.md:4342); both set the error flag on failure
+ (LANGUAGE.md:4347). SAFE TO EMIT under this surface brief's ruling -
  see the file header - because the campaign is always unprivileged and
  mount(2)/umount2(2) refuse with EPERM before doing anything;
  hand-verified this session under both pinned compilers (see the
@@ -183,8 +183,8 @@ To 'gen leaf process mount unmount refusal' with a text called indent and a bool
 
 (PRC-27, PRC-28: `Create symbolic link from '<target>' to "<linkpath>".`
  performs symlink(2) - the SECOND path is the link created, and it
- points at the FIRST (LANGUAGE.md:4296); sets the error flag on failure
- (LANGUAGE.md:4297). Hand-verified gotcha this session, not in the
+ points at the FIRST (LANGUAGE.md:4367); sets the error flag on failure
+ (LANGUAGE.md:4368). Hand-verified gotcha this session, not in the
  manual: a relative TARGET resolves relative to the LINK's own
  directory, not the process's cwd, so writing the target as a full
  scratch-relative path double-prefixes and dangles. The retained probe
@@ -232,11 +232,11 @@ To 'gen leaf process symbolic link' with a text called indent and a boolean call
 
 (PRC-42, PRC-43, PRC-44, PRC-46: fork/reap are EXPRESSIONS, not
  statements - usable anywhere an expression is valid, not only after
- `Set` (LANGUAGE.md:4352-4353). `fork the process`/bare `fork` both work
- (LANGUAGE.md:4355-4356, the trailing `the process` is optional); fork
+ `Set` (LANGUAGE.md:4423-4424). `fork the process`/bare `fork` both work
+ (LANGUAGE.md:4426-4427, the trailing `the process` is optional); fork
  returns 0 in the child, the child's real pid in the parent
- (LANGUAGE.md:4356-4357); `reap any child process` (wait4 pid -1)
- returns the reaped child's pid (LANGUAGE.md:4358-4359). Two shapes are
+ (LANGUAGE.md:4427-4428); `reap any child process` (wait4 pid -1)
+ returns the reaped child's pid (LANGUAGE.md:4429-4430). Two shapes are
  drawn: the ordinary `a number called ... is fork ...` form (varying the
  fork spelling, asserting the reaped pid equals the forked one), and
  fork used DIRECTLY as an If-condition with no intermediate `Set` at
@@ -278,12 +278,12 @@ To 'gen leaf process fork reap basic' with a text called indent and a boolean ca
         'gen join lines' of indent and nested and 'the lines expr form'.
 
 (PRC-56, PRC-57, PRC-58: `the reaped status` yields the raw wait4
- status word, undecoded (LANGUAGE.md:4400-4401) - an exit code times
+ status word, undecoded (LANGUAGE.md:4471-4472) - an exit code times
  256, hand-verified. It reflects only the most recent SUCCESSFUL reap:
  a reap that fails (ECHILD, on a pid this program never forked) leaves
- it exactly where it was (LANGUAGE.md:4402). Before any successful reap
+ it exactly where it was (LANGUAGE.md:4473). Before any successful reap
  anywhere in the whole program it is the sentinel `-1`
- (LANGUAGE.md:4403-4404) - but that claim is only true the FIRST time a
+ (LANGUAGE.md:4474-4475) - but that claim is only true the FIRST time a
  program reaps, and four other kinds in this file (264, 266, 267, 268)
  can each reap too, so this leaf only claims the sentinel when
  gen_process_has_reaped says nothing has reaped yet; otherwise it still
@@ -323,9 +323,9 @@ To 'gen leaf process reaped status decode' with a text called indent and a boole
 
 (PRC-62, PRC-63: the compiler has no wait-status decoding built in - a
  program decodes the raw word with `divide`, `modulo` and `bit-and`,
- with nothing installed (LANGUAGE.md:4417-4420). The manual's own worked
+ with nothing installed (LANGUAGE.md:4488-4491). The manual's own worked
  decoder functions, `'exit code of'` and `'signal of'`
- (LANGUAGE.md:4423-4427), compile and return the exit code and
+ (LANGUAGE.md:4494-4498), compile and return the exit code and
  terminating signal; this leaf declares them ONCE per program (a second
  declaration is a duplicate-label assembly error, hand-verified this
  session) and cross-checks their output against the same divide/modulo/
@@ -365,7 +365,7 @@ To 'gen leaf process status decode functions' with a text called indent and a bo
 
 (PRC-33: `Execute "<path>".` performs execve(2), replacing the current
  process image entirely - the manual's own example shows the line after
- it never running (LANGUAGE.md:4324-4338). SAFETY (this surface brief;
+ it never running (LANGUAGE.md:4395-4409). SAFETY (this surface brief;
  PROCEDURE.md sect.6's Execute carve-out): the target is drawn from a
  FIXED two-element allowlist, /usr/bin/true and /usr/bin/false, and
  nothing else, ever - no generated command line, no path built from a
@@ -394,11 +394,11 @@ To 'gen leaf process execute' with a text called indent and a boolean called nes
     'gen join lines' of indent and nested and 'the lines'.
 
 (PRC-72, PRC-73, PRC-75: `Send signal <N> to process <pid>.` performs
- kill(2) (LANGUAGE.md:4508-4509); `child` is an accepted alias for
- `process` (LANGUAGE.md:4510); signal 0 delivers nothing but errors only
+ kill(2) (LANGUAGE.md:4573-4574); `child` is an accepted alias for
+ `process` (LANGUAGE.md:4585-4586); signal 0 delivers nothing but errors only
  if no process has that pid, the standard existence check
- (LANGUAGE.md:4525-4526), and a successful send clears the error flag
- (LANGUAGE.md:4516). SAFETY (this surface brief): the target is ALWAYS
+ (LANGUAGE.md:4616-4617), and a successful send clears the error flag
+ (LANGUAGE.md:4607). SAFETY (this surface brief): the target is ALWAYS
  signal 0, and ALWAYS the pid this leaf's own `fork` just returned -
  never a drawn number, never the process's own group. The pid stays
  valid (a live child, or a zombie awaiting reap) until this leaf reaps
@@ -438,9 +438,9 @@ To 'gen leaf process signal existence check' with a text called indent and a boo
     'gen join lines' of indent and nested and 'the lines'.
 
 (PRC-79, PRC-86: `Reboot.` lowers to reboot(2), requiring CAP_SYS_BOOT
- (LANGUAGE.md:4546, 4556-4557); on failure (not root, no CAP_SYS_BOOT)
+ (LANGUAGE.md:4657, 4667-4668); on failure (not root, no CAP_SYS_BOOT)
  the error flag is set instead of crashing, `On error` catches it and
- execution continues (LANGUAGE.md:4559-4563) - the exact safety property
+ execution continues (LANGUAGE.md:4670-4674) - the exact safety property
  this surface brief's ruling leans on: the campaign runs unprivileged, so
  the kernel refuses the call with EPERM before doing anything, and
  asserting the refusal is itself a memory-safety-relevant test of the
@@ -489,7 +489,7 @@ To 'gen leaf process system control refusal' with a text called indent and a boo
 
 (PRC-11: all three directory statements - `Create`, `Remove`/`Delete`,
  `Change directory` - set the error flag on failure and `On error`
- catches it, execution continuing past all three (LANGUAGE.md:4246).
+ catches it, execution continuing past all three (LANGUAGE.md:4315).
  Every failure here is engineered, not incidental, and stays inside the
  program's own scratch directory throughout: the create targets a path
  whose PARENT does not exist (mkdir(2) refuses ENOENT without the real
@@ -546,8 +546,8 @@ To 'gen leaf process directory failure paths' with a text called indent and a bo
     'gen join lines' of indent and nested and 'the lines'.
 
 (PRC-47, PRC-48: `reap process <pid-expr>` / `reap child <pid-expr>` both
- `wait4(2)` a SPECIFIC pid, both spellings (LANGUAGE.md:4360-4361); reap
- returns a negative value on error, on any reap form (LANGUAGE.md:4359)
+ `wait4(2)` a SPECIFIC pid, both spellings (LANGUAGE.md:4431-4432); reap
+ returns a negative value on error, on any reap form (LANGUAGE.md:4430)
  - one leaf reaps a REAL forked
  child this way (drawn spelling, asserted the returned pid equals the
  forked one and the decoded exit code matches what the child was told to
@@ -628,17 +628,17 @@ To 'gen leaf process reap by pid' with a text called indent and a boolean called
  instead, so it is not lost to this same hold.
 
  PRC-50, PRC-51, PRC-52, PRC-53, PRC-54, PRC-55: any reap form takes a
- `without waiting` suffix (WNOHANG) (LANGUAGE.md:4368-4375); the three
+ `without waiting` suffix (WNOHANG) (LANGUAGE.md:4439-4446); the three
  outcomes are told apart by the return value alone - a child that
- finished returns its pid with the flag clear (LANGUAGE.md:4380), a
+ finished returns its pid with the flag clear (LANGUAGE.md:4451), a
  child that exists but has not finished returns exactly 0 with the flag
- clear, NOT an error (LANGUAGE.md:4381-4382), and a genuine error (no
- such child) returns negative with the flag set (LANGUAGE.md:4383-4384).
+ clear, NOT an error (LANGUAGE.md:4452-4453), and a genuine error (no
+ such child) returns negative with the flag set (LANGUAGE.md:4454-4455).
  A poll that returns 0 reaps nothing and so does not disturb `the reaped
- status` (LANGUAGE.md:4386-4388). `without` is already reserved (the
+ status` (LANGUAGE.md:4457-4459). `without` is already reserved (the
  `print ... without newline` token) so the suffix cannot be confused
  with a call argument, and `waiting` remains an ordinary identifier
- everywhere it is not this exact suffix (LANGUAGE.md:4388-4391).
+ everywhere it is not this exact suffix (LANGUAGE.md:4459-4462).
 
  SAFETY DEVIATION from the ledger's own retained probe
  (docs/ledger/probes/process-control/PRC-50.vox): that probe forces the
@@ -731,8 +731,8 @@ To 'gen leaf process reap without waiting' with a text called indent and a boole
 (PRC-60, PRC-61: `reaped` stays an ordinary identifier everywhere it is
  not the exact phrase `the reaped status` - `the reaped` followed by
  anything else is an ordinary variable reference too
- (LANGUAGE.md:4410-4412). `tests/102_fork_reap.vox` does `Set reaped to
- reap any child process.` and keeps passing (LANGUAGE.md:4412-4413); this
+ (LANGUAGE.md:4481-4483). `tests/102_fork_reap.vox` does `Set reaped to
+ reap any child process.` and keeps passing (LANGUAGE.md:4483-4484); this
  leaf reproduces that exact body (a bare, undeclared `reaped` receiving a
  reap result via `Set ... to ...`, which the manual's own retained test
  relies on working) rather than merely declaring `reaped` unused, and
@@ -742,7 +742,7 @@ To 'gen leaf process reap without waiting' with a text called indent and a boole
 
  PRC-55 folded in here rather than living with the `without waiting`
  family above: its own claim ("`waiting` remains an ordinary identifier
- everywhere it is not this suffix", LANGUAGE.md:4388-4391) needs no reap
+ everywhere it is not this suffix", LANGUAGE.md:4459-4462) needs no reap
  call at all to test - only a plain declaration and a read-back - so it
  is not affected by that family's held-out candidate and does not need
  to wait on it.)
@@ -850,7 +850,7 @@ To 'gen process places' with a number called 'how many'.
 
 (Whether a path statement names its path through the variable holding
  it or spells the path again as a format-string literal. The manual
- shows both (LANGUAGE.md:4234-4236 literals, 4241 a `'<path>'`
+ shows both (LANGUAGE.md:4303-4305 literals, 4241 a `'<path>'`
  variable) and both were hand-verified this batch for directories,
  mount, unmount and device nodes; neither is canonical, so it is drawn.)
 To 'gen process path operand' with a text called 'the variable' and a text called 'the literal'.
@@ -860,7 +860,7 @@ To 'gen process path operand' with a text called 'the variable' and a text calle
     Return a text, 'the variable'.
 
 (The directory creation statement with its optional article drawn
- (LANGUAGE.md:4241-4242), so a leaf that only needs a directory to
+ (LANGUAGE.md:4310-4311), so a leaf that only needs a directory to
  exist does not stamp one spelling of it into every program.)
 To 'gen process create directory' with a text called 'the operand'.
     a number called 'the article draw' is 'rng below' of 2.
@@ -869,7 +869,7 @@ To 'gen process create directory' with a text called 'the operand'.
     Return a text, "Create a directory called {'the operand'}".
 
 (rmdir(2) in any of its eight spellings: `Remove` or `Delete`, with or
- without `the`, with or without `called` (LANGUAGE.md:4243-4244) - all
+ without `the`, with or without `called` (LANGUAGE.md:4312-4313) - all
  eight hand-verified this batch to compile and remove the directory.
  The caller draws the three choices (each 0 or 1) so it knows which row
  the spelling puts on trial; 'gen process any removal' draws them here.)
@@ -919,7 +919,7 @@ To 'gen process assert absent' with a text called 'the row' and a text called 't
 (PRC-06, PRC-07, PRC-08: `Remove the directory called '<path>'.` /
  `Delete the directory "<path>".` perform rmdir(2); `Remove` and
  `Delete` both work and `the` and `called` are each optional
- (LANGUAGE.md:4243-4244). One to four sibling directories are created
+ (LANGUAGE.md:4312-4313). One to four sibling directories are created
  and then removed, forwards or backwards, each removal in its own drawn
  spelling naming its path by variable or by literal, and each asserted
  gone afterwards; the assertion carries the row its spelling puts on
@@ -982,7 +982,7 @@ To 'gen leaf process directory removal spellings' with a text called indent and 
 
 (PRC-09: removal is rmdir(2), so it is not recursive - a directory that
  still holds anything cannot be removed, and what it holds survives
- (LANGUAGE.md:4243; rmdir(2)'s own semantics, cited rather than stated
+ (LANGUAGE.md:4312; rmdir(2)'s own semantics, cited rather than stated
  in a sentence). The outer directory holds a chain of zero to three
  nested directories and, at the bottom, possibly a written file - at
  least one of the two, so there is always something in the way. The
@@ -1090,7 +1090,7 @@ To 'gen leaf process directory removal is not recursive' with a text called inde
  path" - pointed at a regular FILE it refuses (ENOTDIR, seen under
  strace this batch), fires the handler, and the file is still there
  with every byte the leaf wrote, read back through FIL-01's live `size`
- (LANGUAGE.md:4243; FIL-01 is LANGUAGE.md:3832). A removal that quietly
+ (LANGUAGE.md:4312; FIL-01 is LANGUAGE.md:3901). A removal that quietly
  fell through to unlink(2) would pass a sloppier leaf and fail this
  one.)
 To 'gen leaf process directory removal refuses a file' with a text called indent and a boolean called nested.
@@ -1139,7 +1139,7 @@ To 'gen leaf process directory removal refuses a file' with a text called indent
 
 (PRC-10: `Change directory to "<path>".` performs chdir(2), and a later
  RELATIVE path resolves from the new working directory
- (LANGUAGE.md:4237, 4245). A successful chdir would move the cwd out
+ (LANGUAGE.md:4306, 4314). A successful chdir would move the cwd out
  from under every scratch path a sibling leaf builds afterwards (they
  are relative), so it happens only inside a forked child, which this
  leaf reaps before it ends: the parent's cwd never moves. The child
@@ -1212,7 +1212,7 @@ To 'gen leaf process change directory in a child' with a text called indent and 
     append 'the room removal' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(One mount operand in one of the four forms LANGUAGE.md:4262-4264
+(One mount operand in one of the four forms LANGUAGE.md:4331-4333
  allows - a string literal, a text variable, a buffer, or a buffer
  built by a format string - returned as a list: any declaration lines
  first, the operand itself last. The format-built form interpolates a
@@ -1252,9 +1252,9 @@ To 'gen process take operand' with a list called 'the parts' and a list called '
 
 (PRC-14: `source`, `target`, `fstype` and `options` each accept a string
  literal, a text variable, or a buffer, including a format-string-built
- buffer (LANGUAGE.md:4262-4264). Each of the four operands draws its own
+ buffer (LANGUAGE.md:4331-4333). Each of the four operands draws its own
  form, so every combination appears across a corpus; whether `with
- options` appears at all is drawn too (LANGUAGE.md:4261). The values are
+ options` appears at all is drawn too (LANGUAGE.md:4330). The values are
  drawn as well - real filesystem names beside nonsense ones, options a
  kernel would and would not understand, a size from 'gen extreme number'
  - since an unprivileged mount(2) refuses with EPERM before reading any
@@ -1341,7 +1341,7 @@ To 'gen leaf process mount operand forms' with a text called indent and a boolea
 
 (PRC-15, PRC-16: fstype "none" with options "move" or "bind" is
  recognised and translated into MS_MOVE or MS_BIND
- (LANGUAGE.md:4265-4270). Seen under strace this batch: the literal
+ (LANGUAGE.md:4334-4341). Seen under strace this batch: the literal
  pattern does reach mount(2) as MS_MOVE / MS_BIND with a NULL fstype.
  From inside Vox the translation is not observable - an unprivileged
  mount(2) refuses either way with EPERM - so what this leaf asserts is
@@ -1427,7 +1427,7 @@ To 'gen process place spelled' with a number called 'the ordinal'.
 
 (PRC-17, PRC-18, PRC-19, PRC-20: `Unmount "<target>".` performs
  umount2(2); `umount` is an accepted alias; a trailing `lazily` requests
- MNT_DETACH (LANGUAGE.md:4271-4275) - all four spellings seen under
+ MNT_DETACH (LANGUAGE.md:4342-4346) - all four spellings seen under
  strace this batch reaching umount2(2) with flags 0 or MNT_DETACH. One
  to four attempts, each drawing its verb, whether `lazily` follows, and
  whether it names the target by variable, literal or a buffer copy; the
@@ -1498,7 +1498,7 @@ To 'gen leaf process unmount spellings' with a text called indent and a boolean 
     'gen join lines' of indent and nested and 'the lines'.
 
 (A device number for the node leaf: any magnitude 'gen extreme number'
- draws, now and then negated. LANGUAGE.md:4286-4287 names `major`/
+ draws, now and then negated. LANGUAGE.md:4357-4358 names `major`/
  `minor` as the standard Linux device numbers and pins no range, and an
  unprivileged mknod(2) is refused before the number means anything -
  so the extremes, which put the encoding on trial, are fair. Note
@@ -1512,7 +1512,7 @@ To 'gen process device number'.
 
 (PRC-22, PRC-23, PRC-24: `Create a device node called "<path>" with
  type "c" major N minor M.` performs mknod(2); `type "b"` is accepted;
- the type is "c" or "b" (LANGUAGE.md:4281-4287) - seen under strace this
+ the type is "c" or "b" (LANGUAGE.md:4352-4358) - seen under strace this
  batch as mknod(2) with S_IFCHR / S_IFBLK. An unprivileged process lacks
  CAP_MKNOD, so the kernel refuses (EPERM, or EEXIST when the path is
  taken) and the leaf asserts the handler fired. The path is either fresh

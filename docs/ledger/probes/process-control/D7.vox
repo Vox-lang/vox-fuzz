@@ -1,5 +1,11 @@
 (D7 - a device-node minor above 255 does not survive the encoding.
- LANGUAGE.md:4286-4287: major/minor are "the standard Linux device-driver
+ RESOLVED by vox #279 (register #133): on vox main a0a2ecc the emitted
+ assembly (vox D7.vox --emit-asm) loads `mov rdx, 1114924 ; dev =
+ makedev(259, 300)`, 0x11032C, glibc's encoding, so minor 300 arrives
+ intact; strace was not available to re-check the call itself. The
+ output below is unchanged (the call is still refused unprivileged).
+ The history follows.
+ LANGUAGE.md:4357-4358: major/minor are "the standard Linux device-driver
  identification numbers". Not observable from inside Vox (the call is
  refused unprivileged); seen with
    strace -e trace=mknod ./p
