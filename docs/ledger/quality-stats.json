@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "de676dd",
+    "commit": "3035fdc",
     "date": "2026-10-13",
-    "voxCommit": "a0a2ecc",
+    "voxCommit": "c9a19a5",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -543,6 +543,17 @@
       "compiled": 400,
       "findings": 1,
       "note": "the same run, resumed after a machine restart cut chunk 81005600 short; that chunk was rerun whole and its partial run is not counted. No signal deaths. 1 hang (seed 81005918) that does not reproduce: on 2026-10-12 the program exits 0 in 0.72 s (0.69 s of it its own Waits) in 100 of 100 runs and passes three reruns under the same harness and timeout. Its cause is not established"
+    },
+    {
+      "date": "2026-10-13",
+      "vox": "0.4.15 (main a0a2ecc)",
+      "voxFuzz": "3035fdc + Defect 27 fix (staged)",
+      "seeds": "91013000–91013199",
+      "budget": "40",
+      "programs": 200,
+      "compiled": 200,
+      "findings": 0,
+      "note": "the check on the Defect 27 fix: random layout, timeout 20000. No signal deaths and no wrong-values: 14 programs drew FIL-02 and 11 drew FIL-93, 8 of them after opening standard input at 0, which is no longer closed. The three seeds that showed the defect (81005329, 81005389, 81005395, budget 40) were rerun on the same build and pass"
     }
   ],
   "findings": {

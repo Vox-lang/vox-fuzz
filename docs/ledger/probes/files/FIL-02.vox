@@ -1,5 +1,15 @@
-(FIL-02: descriptor is a Number, and for a freshly opened file it is at
- least 3 (fds 0-2 are stdio; a real open never lands below that).
+(FIL-02: descriptor is a Number. Its exact value depends on what else is
+ open, so the floor is taken from an anchor handle opened first and kept
+ open: a freshly opened handle must report a descriptor greater than the
+ anchor's, since a descriptor still in use is never handed out again.
+ The floor is not "at least 3". Descriptors 0 to 2 are only taken while
+ the standard streams stay open; FUZZER_DEFECTS.md Defect 27 was a
+ program that closed a borrowed descriptor 0 first. Run once by hand
+ with `open a file for reading called keyboard at 0.` and
+ `Close keyboard.` added before the anchor, the anchor got 0, the
+ handle under test got 3, and the check passed. That variant is not
+ retained, because its output depends on what Close does to a borrowed
+ descriptor, which the manual does not yet say.
  Also covers: FIL-01 (size is 0 before a write and the byte count after,
  checked BEFORE Close - reading a property after Close reports -1, not
  the true value, which is why every assertion here happens on the open
@@ -10,22 +20,24 @@
  below).
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-02.vox -o p && ./p
+ Ran: VOX_CORE_PATH=/var/home/josj/scr/english/vox/coreasm /var/home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-02.vox -o p && ./p
+ on vox main a0a2ecc.
+ With the descriptor check changed to `is greater than` (a deliberately
+ wrong expectation), to prove a failing assertion is classified
+ correctly, it printed `ASSERT FIL-02: expected greater than 3 got 4`
+ and exited 95.
  actual output:
    0
-   3
+   4
    10
- Then with the first size line changed to `is not 4` (a deliberately
- wrong expectation), to prove a failing assertion is classified
- correctly:
-   ASSERT FIL-01: expected 4 got 0
- exit code 95.
 )
 Create a directory called "vf_scratch".
 Create a directory called "vf_scratch/files".
+open a file for writing called 'the drawer' at "vf_scratch/files/fil02.txt".
 open a file for writing called 'the toolbox' at "vf_scratch/files/fil02.txt".
 If 'the toolbox's size is not 0 then, Print "ASSERT FIL-01: expected 0 got {'the toolbox's size}", Exit 95. Print 'the toolbox's size.
-If 'the toolbox's descriptor is less than 3 then, Print "ASSERT FIL-02: expected at least 3 got {'the toolbox's descriptor}", Exit 95. Print 'the toolbox's descriptor.
+If 'the toolbox's descriptor is less than or equal to 'the drawer's descriptor then, Print "ASSERT FIL-02: expected greater than {'the drawer's descriptor} got {'the toolbox's descriptor}", Exit 95. Print 'the toolbox's descriptor.
 Write "seed bytes" to 'the toolbox'.
 If 'the toolbox's size is not 10 then, Print "ASSERT FIL-01: expected 10 got {'the toolbox's size}", Exit 95. Print 'the toolbox's size.
 Close 'the toolbox'.
+Close 'the drawer'.
