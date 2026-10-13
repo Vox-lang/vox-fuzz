@@ -1,9 +1,12 @@
-(ARG-46 — *(not a manual claim — a gap in the manual)* a number flag
- whose value does not parse as a number sets the error flag on the first
- read and holds 0. LANGUAGE.md:4815 says the token is "parsed as a
- number" and stops there.
- The `On error` binds to the DECLARATION above it, which is where the
- read happens — not to the Print.
+(ARG-46: a number flag whose token is not a number leaves the flag holding
+ its default (0 when it has none) and raises the error flag
+ (LANGUAGE.md:4926-4928). Up to vox 0.4.15 the manual did not say so; it
+ does since vox #281.
+ The error flag is raised by `Parse flags.` itself and stays raised until
+ an `On error` catches it, so the handler under the declaration below is
+ the first one that can see it. A later number flag that converts would
+ clear it first: see Discrepancy 6.
+ Re-run 2026-10-13 on vox main a0a2ecc, unchanged.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-46.vox -o p && ./p -r notanumber
  Args: -r notanumber
  expected output:

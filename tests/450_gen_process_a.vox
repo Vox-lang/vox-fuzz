@@ -15,8 +15,9 @@ see "../src/gen_keywords.vox".
 see "../src/gen_basics.vox".
 
 (process leaves, batch A - docs/ledger/process-control.md rows PRC-02,
- 04, 06, 07, 08, 09, 12, 13, 21, 27, 28, 42, 43, 44, 46, 49, 56, 57, 58,
- 62, 63, 72, 73, 75, 78, 79. Kinds 260-269.
+ 04, 12, 13, 21, 27, 28, 42, 43, 44, 46, 49, 56, 57, 58, 62, 63, 72,
+ 73, 75, 78, 79. Kinds 260 and 262-269; PRC-06 to 09 are batch C's,
+ tests/471_gen_process_c.vox.
 
  Each leaf is called directly off a pinned rng seed and its emitted
  source printed in full, so the golden is the generated Vox itself, the
@@ -52,20 +53,6 @@ clear gen_out.
 'gen leaf process directory create' of "" and false.
 Print "emits a directory statement: {'gen text contains' of \"directory\"}".
 Set gen_does_file_io to true.
-
-Print "--- PRC-06, 07, 08, 09: directory remove, nonrecursive refusal ---".
-'rng seed' of 2.
-'gen buffer names reset'.
-clear gen_out.
-'gen leaf process directory remove' of "" and false.
-Print 'gen text'.
-
-Print "--- the same leaf, a different seed ---".
-'rng seed' of 5.
-'gen buffer names reset'.
-clear gen_out.
-'gen leaf process directory remove' of "" and false.
-Print 'gen text'.
 
 Print "--- PRC-12, 13, 21: mount/unmount refusal ---".
 'rng seed' of 3.
@@ -171,8 +158,11 @@ clear gen_out.
 'gen leaf process system control refusal' of "" and false.
 Print 'gen text'.
 
-Print "--- registration reachable: kinds 260-269 all dispatch without error ---".
-a number called 'the kind' is 260.
+Print "--- registration reachable: batch A's kinds all dispatch without error ---".
+clear gen_out.
+'gen dispatch leaf' of 260 and "" and false.
+Print "kind 260: {gen_out's length} bytes emitted".
+a number called 'the kind' is 262.
 While 'the kind' is less than 270,
     clear gen_out,
     'gen dispatch leaf' of 'the kind' and "" and false,

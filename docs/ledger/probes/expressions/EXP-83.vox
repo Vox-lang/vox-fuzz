@@ -1,15 +1,32 @@
-(EXP-83: parsing stops at the first character invalid for the base rather than
- failing outright - the manual's own `"12g5" as a hex number` gives 18.
- The extra lines record the same rule in three other bases, including base 10,
- which the manual describes differently at :2026. See Discrepancy 2.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox EXP-83.vox -o p && ./p
+(EXP-83: a radix cast reads the whole text as digits of its base. A text
+ with a character outside the base is not a number in that base: the error
+ flag is raised and a `Set` leaves its destination as it was. The manual's
+ own example is `"12g5" as a hex number`; the texts are variables here
+ because a literal that is not a number is refused at compile time.
+ Up to 0.4.15 the cast stopped at the first invalid character instead, and
+ this probe printed 18, 12, 5 and 15.
+ Ran on vox main dfdfc7f: vox EXP-83.vox -o p && ./p
  expected output:
-   18
-   12
-   5
-   15
+   hex: flag raised, still 7
+   base 10: flag raised, still 7
+   binary: flag raised, still 7
+   octal: flag raised, still 7
+   prefixed: 31
 )
-Print "12g5" as a hex number.
-Print "12xy" as a number.
-Print "1012" as a binary number.
-Print "1789" as an octal number.
+a number called kept is 7.
+a text called sixteens is "12g5".
+Set kept to sixteens as a hex number.
+On error Print "hex: flag raised, still {kept}".
+a text called tens is "12xy".
+Set kept to tens as a number.
+On error Print "base 10: flag raised, still {kept}".
+a text called twos is "1012".
+Set kept to twos as a binary number.
+On error Print "binary: flag raised, still {kept}".
+a text called eights is "1789".
+Set kept to eights as an octal number.
+On error Print "octal: flag raised, still {kept}".
+a text called prefixed is "0x1F".
+Set kept to prefixed as a hex number.
+On error Print "prefixed: flag raised".
+Print "prefixed: {kept}".

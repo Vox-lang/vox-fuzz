@@ -1,5 +1,5 @@
 (LST-79: reading a nested collection back out via a `For each` loop
- binding copies it (LANGUAGE.md:2500-2501, 0.4.15, #111). The loop
+ binding copies it (LANGUAGE.md:2567-2568, 0.4.15, #111). The loop
  variable itself cannot be a mutation target directly (`Element set
  target must be a list: item`), so the copy is shown by declaring a
  fresh variable from the binding and mutating that.

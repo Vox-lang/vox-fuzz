@@ -1,5 +1,5 @@
 (LST-71: printing is recursive at any depth — a nested list prints
- exactly as written, however deep (LANGUAGE.md:2493-2494, 0.4.15).
+ exactly as written, however deep (LANGUAGE.md:2560-2561, 0.4.15).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/worktrees/wt-stack-0415/coreasm /home/josj/scr/english/vox-notes/stack-0415/vox-stack LST-71.vox -o p && ./p
  expected output:
    [1, [2, [3, [4, 5]]]]

@@ -1,0 +1,54 @@
+(FIL-19: list's first is element 1, and (FIL-20) list's last is element <length>.
+ Also covers: FIL-16, FIL-20. Two rendered shapes of 'gen leaf list index
+ reads agree', one list of whole numbers and one of texts.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-19.vox -o p && ./p
+ exit code 0; actual output:
+   0
+   0
+   0
+   2
+   2
+   2
+   o103xyo9wk
+   o103xyo9wk
+   fgeo833
+   fgeo833
+   o103xyo9wk
+   o103xyo9wk
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-19-c1".
+Create a directory called 'the workspace'.
+a list called 'the crate' is [-0, 0, 02].
+a number called 'the crate first item' is 'the crate's first.
+If 'the crate first item' is not -0 then, Print "ASSERT FIL-19: expected the literal written first got {'the crate first item'}", Exit 95. Print 'the crate first item'.
+a number called 'the crate head by index' is element 1 of 'the crate'.
+If 'the crate first item' is not 'the crate head by index' then, Print "ASSERT FIL-19: expected {'the crate head by index'} got {'the crate first item'}", Exit 95. Print 'the crate first item'.
+a number called 'the crate element one' is element 1 of 'the crate'.
+If 'the crate element one' is not -0 then, Print "ASSERT FIL-16: expected the literal written first got {'the crate element one'}", Exit 95. Print 'the crate element one'.
+a number called 'the crate element 3' is element 3 of 'the crate'.
+If 'the crate element 3' is not 02 then, Print "ASSERT FIL-16: expected the literal written at position 3 got {'the crate element 3'}", Exit 95. Print 'the crate element 3'.
+a number called 'the crate item count' is 'the crate's length.
+a number called 'the crate last item' is 'the crate's last.
+If 'the crate last item' is not 02 then, Print "ASSERT FIL-20: expected the literal written last got {'the crate last item'}", Exit 95. Print 'the crate last item'.
+a number called 'the crate tail by length' is element 'the crate item count' of 'the crate'.
+If 'the crate last item' is not 'the crate tail by length' then, Print "ASSERT FIL-20: expected {'the crate tail by length'} got {'the crate last item'}", Exit 95. Print 'the crate last item'.
+a text called 'the workspace' is "vf_scratch/files/fil-19-c2".
+Create a directory called 'the workspace'.
+a list called 'the tally sheet' is ["o103xyo9wk", "tew8g", "khzfej9oyfjj", "clyoox3hfh", "ggw2hndz", "fgeo833"].
+a text called 'the tally sheet element one' is element 1 of 'the tally sheet'.
+If 'the tally sheet element one' is not "o103xyo9wk" then, Print "ASSERT FIL-16: expected the literal written first got {'the tally sheet element one'}", Exit 95. Print 'the tally sheet element one'.
+a text called 'the tally sheet element 1' is element 1 of 'the tally sheet'.
+If 'the tally sheet element 1' is not "o103xyo9wk" then, Print "ASSERT FIL-16: expected the literal written at position 1 got {'the tally sheet element 1'}", Exit 95. Print 'the tally sheet element 1'.
+a number called 'the tally sheet item count' is 'the tally sheet's length.
+a text called 'the tally sheet last item' is 'the tally sheet's last.
+If 'the tally sheet last item' is not "fgeo833" then, Print "ASSERT FIL-20: expected the literal written last got {'the tally sheet last item'}", Exit 95. Print 'the tally sheet last item'.
+a text called 'the tally sheet tail by length' is element 'the tally sheet item count' of 'the tally sheet'.
+If 'the tally sheet last item' is not 'the tally sheet tail by length' then, Print "ASSERT FIL-20: expected {'the tally sheet tail by length'} got {'the tally sheet last item'}", Exit 95. Print 'the tally sheet last item'.
+a text called 'the tally sheet first item' is 'the tally sheet's first.
+If 'the tally sheet first item' is not "o103xyo9wk" then, Print "ASSERT FIL-19: expected the literal written first got {'the tally sheet first item'}", Exit 95. Print 'the tally sheet first item'.
+a text called 'the tally sheet head by index' is element 1 of 'the tally sheet'.
+If 'the tally sheet first item' is not 'the tally sheet head by index' then, Print "ASSERT FIL-19: expected {'the tally sheet head by index'} got {'the tally sheet first item'}", Exit 95. Print 'the tally sheet first item'.

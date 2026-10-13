@@ -9,6 +9,12 @@
  delivers: 999999 is an invalid pid (ESRCH), and pid 1 belongs to another
  user (EPERM) but receives nothing whatsoever. A generated program must
  not do even this much — see the ledger's leaf-safety column.
+ The invalid signal, 999, is computed: since vox #279 a signal number the
+ compiler can prove is outside 0 to 64 is a compile error ("cannot send
+ signal 999: there is no such signal"), and one known only at run time
+ sets the error flag (EINVAL) and sends nothing (LANGUAGE.md:4593-4597).
+ Up to 0.4.15 this probe wrote `Send signal 999` as a literal. Re-recorded
+ 2026-10-13 on vox main a0a2ecc, same output.
  Ran, from the repo root:
    VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm \
    /home/josj/scr/english/vox/target/release/vox \
@@ -29,7 +35,9 @@ If 'the child' is 0 then, Wait 2 seconds, Exit 0.
 Send signal 0 to child 'the child'.
 On error print "the child alias set the error flag".
 print "the child alias was accepted".
-Send signal 999 to process 'the child'.
+a number called 'the bad signal' is 9.
+Set 'the bad signal' to 'the bad signal' add 990.
+Send signal 'the bad signal' to process 'the child'.
 On error print "an invalid signal number set the error flag".
 Send signal 0 to process 1.
 On error print "signalling a process of another user set the error flag".

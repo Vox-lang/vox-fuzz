@@ -3,14 +3,14 @@
  capped at a depth of 64, the over-deep subtree printed as `...`, the
  error flag was set, and printing unwound safely instead of overflowing
  the stack. Hand-counted: exactly 64 opening brackets and 64 closing ones.
- Also covers (then): LST-33 (the worked example of LANGUAGE.md:2431-2434 —
+ Also covers (then): LST-33 (the worked example of LANGUAGE.md:2498-2501 —
  note that its inline comment "(prints: [[...]] then cyclic)" is an
  abbreviation, not a transcript; see Discrepancy 6).
 
  STALE as of 0.4.15 (#111): `append ring to ring.` no longer builds a
  self-referential list at all — #111 makes nesting always copy, so this
  exact program now prints `[[]]` and never reaches the depth cap. LST-32's
- ledger row is narrowed (the cap itself is still real, LANGUAGE.md:2520-
+ ledger row is narrowed (the cap itself is still real, LANGUAGE.md:2587-
  2523, but only reachable via 64 explicit nested literal levels now); this
  probe is retained as the historical record of the pre-#111 behavior, not
  as a currently-passing claim. LST-33 is withdrawn. See

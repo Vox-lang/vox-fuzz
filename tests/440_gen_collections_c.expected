@@ -113,26 +113,26 @@ On error Set payload to true.
 a number called 'what arrived' is 0.
 a number called 'the answer' is whatever's "no such entry".
 On error Set 'what arrived' to 1.
-If 'what arrived' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got 'what arrived'", Exit 95.
-If 'the answer' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got 'the answer'", Exit 95.
+If 'what arrived' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got {'what arrived'}", Exit 95.
+If 'the answer' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got {'the answer'}", Exit 95.
 a map called 'the cargo' is {}.
 Set 'the cargo's "the reply" to 171.
 a number called 'the reading' is 0.
-a text called cargo is 'the cargo's "leftover".
+a text called cargo is 'the cargo's "not in the book".
 On error Set 'the reading' to 1.
-If 'the reading' is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got 'the reading'", Exit 95.
+If 'the reading' is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got {'the reading'}", Exit 95.
 a buffer called 'the tally' is cargo.
-If 'the tally's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got 'the tally's size", Exit 95.
+If 'the tally's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got {'the tally's size}", Exit 95.
 a number called token is 0.
-a list called 'the token' is 'the cargo's "leftover".
+a list called 'the token' is 'the cargo's "not in the book".
 On error Set token to 1.
-If token is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got token", Exit 95.
-If 'the token's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got 'the token's length", Exit 95.
+If token is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got {token}", Exit 95.
+If 'the token's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got {'the token's length}", Exit 95.
 a number called 'the label' is 0.
-a map called 'the slot' is 'the cargo's "leftover".
+a map called 'the slot' is 'the cargo's "not in the book".
 On error Set 'the label' to 1.
-If 'the label' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got 'the label'", Exit 95.
-If 'the slot's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got 'the slot's length", Exit 95.
+If 'the label' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got {'the label'}", Exit 95.
+If 'the slot's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got {'the slot's length}", Exit 95.
 Print 'the slot'.
 
 --- the same leaf, nested ---
@@ -142,26 +142,26 @@ Print 'the slot'.
   a number called 'the guess' is 0.
   a number called 'the numeral' is 'what came back's "no such entry".
   On error Set 'the guess' to 1.
-  If 'the guess' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got 'the guess'", Exit 95.
-  If 'the numeral' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got 'the numeral'", Exit 95.
+  If 'the guess' is not 1 then, Print "ASSERT LST-49: expected the provable missing read to raise the error flag got {'the guess'}", Exit 95.
+  If 'the numeral' is not 0 then, Print "ASSERT LST-49: expected the provable missing read to be 0 got {'the numeral'}", Exit 95.
   a map called guess is {}.
   Set guess's "the reply" to 171.
   a number called offering is 0.
-  a text called 'the offering' is guess's "leftover".
+  a text called 'the offering' is guess's "not in the book".
   On error Set offering to 1.
-  If offering is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got offering", Exit 95.
+  If offering is not 1 then, Print "ASSERT LST-49: expected the text-typed missing read to raise the error flag got {offering}", Exit 95.
   a buffer called 'the receipt' is 'the offering'.
-  If 'the receipt's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got 'the receipt's size", Exit 95.
+  If 'the receipt's size is not 0 then, Print "ASSERT LST-49: expected the empty-text default to be 0 bytes got {'the receipt's size}", Exit 95.
   a number called 'the sample' is 0.
-  a list called receipt is guess's "leftover".
+  a list called receipt is guess's "not in the book".
   On error Set 'the sample' to 1.
-  If 'the sample' is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got 'the sample'", Exit 95.
-  If receipt's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got receipt's length", Exit 95.
+  If 'the sample' is not 1 then, Print "ASSERT LST-49: expected the list-typed missing read to raise the error flag got {'the sample'}", Exit 95.
+  If receipt's length is not 0 then, Print "ASSERT LST-49: expected the empty-list default to have length 0 got {receipt's length}", Exit 95.
   a number called 'the shipment' is 0.
-  a map called sample is guess's "leftover".
+  a map called sample is guess's "not in the book".
   On error Set 'the shipment' to 1.
-  If 'the shipment' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got 'the shipment'", Exit 95.
-  If sample's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got sample's length", Exit 95.
+  If 'the shipment' is not 1 then, Print "ASSERT LST-49: expected the map-typed missing read to raise the error flag got {'the shipment'}", Exit 95.
+  If sample's length is not 0 then, Print "ASSERT LST-49: expected the empty-map default to have length 0 got {sample's length}", Exit 95.
   Print sample.
 
 --- LST2-30: two appends onto a populated list, length +2 ---

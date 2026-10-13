@@ -1,0 +1,49 @@
+(FIL-36: a numeric at is a borrowed descriptor - the handle reports exactly the number written; FIL-43: 0 and 2147483647 are accepted.
+ Also covers: FIL-43, and FIL-80 for the dead descriptor (a write and a read
+ on 2147483647 set the error flag). Rendered shapes of 'gen leaf file
+ borrowed descriptors'; descriptor 1 writes its marker straight into
+ this output.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-36.vox -o p && printf 'hello world, this is the input\nsecond line\n' | ./p
+ exit code 0; actual output:
+   2147483647
+   1
+   2147483647
+   1
+   0
+   1
+   ptba5l82a6
+   0
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-36-c1".
+Create a directory called 'the workspace'.
+open a file for reading called 'the envelope' at 2147483647.
+If 'the envelope's descriptor is not 2147483647 then, Print "ASSERT FIL-43: expected 2147483647 got {'the envelope's descriptor}", Exit 95. Print 'the envelope's descriptor.
+a boolean called 'the envelope found an error already pending' is false.
+On error Set 'the envelope found an error already pending' to true.
+a boolean called 'the envelope dead descriptor refused' is false.
+a buffer called 'the sketchpad' is 41092 bytes in size.
+Read from 'the envelope' into 'the sketchpad'.
+On error Set 'the envelope dead descriptor refused' to true.
+If 'the envelope dead descriptor refused' is false then, Print "ASSERT FIL-80: expected 1 got {'the envelope dead descriptor refused'}", Exit 95. Print 'the envelope dead descriptor refused'.
+open a file for reading called 'the manifest' at 2147483647.
+If 'the manifest's descriptor is not 2147483647 then, Print "ASSERT FIL-43: expected 2147483647 got {'the manifest's descriptor}", Exit 95. Print 'the manifest's descriptor.
+a boolean called 'the manifest found an error already pending' is false.
+On error Set 'the manifest found an error already pending' to true.
+a boolean called 'the manifest dead descriptor refused' is false.
+a buffer called toolbox is 39091 bytes in size.
+Read from 'the manifest' into toolbox.
+On error Set 'the manifest dead descriptor refused' to true.
+If 'the manifest dead descriptor refused' is false then, Print "ASSERT FIL-80: expected 1 got {'the manifest dead descriptor refused'}", Exit 95. Print 'the manifest dead descriptor refused'.
+open a file called 'storeroom' at 0 for reading.
+If 'storeroom's descriptor is not 0 then, Print "ASSERT FIL-43: expected 0 got {'storeroom's descriptor}", Exit 95. Print 'storeroom's descriptor.
+a text called 'the workspace' is "vf_scratch/files/fil-36-c2".
+Create a directory called 'the workspace'.
+open a file called 'the postbag' at 1 for writing.
+If 'the postbag's descriptor is not 1 then, Print "ASSERT FIL-36: expected 1 got {'the postbag's descriptor}", Exit 95. Print 'the postbag's descriptor.
+Write "ptba5l82a6\n" to 'the postbag'.
+open a file at 0 called 'the mailbag' for reading.
+If 'the mailbag's descriptor is not 0 then, Print "ASSERT FIL-43: expected 0 got {'the mailbag's descriptor}", Exit 95. Print 'the mailbag's descriptor.

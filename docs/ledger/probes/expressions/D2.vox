@@ -1,18 +1,24 @@
-(Discrepancy 2 - minimal repro. LANGUAGE.md:2178 says text to number "fails if
- text is not a valid number and sets the error flag"; :2027-2029 says a
- NON-default-base cast stops at the first invalid character and "does not set
- the error flag". Neither bullet describes what happens.
- One rule covers every base: parsing stops at the first invalid character, and
- the error flag is set only when ZERO characters parsed. So a base-10 partial
- parse does not fail, and a non-default-base total failure does set the flag -
- both bullets are wrong in opposite directions.
- The four casts below are the two bases crossed with the two outcomes.
+(Discrepancy 2 - minimal repro, RESOLVED by vox #281. The vox 0.4.15 manual
+ had two bullets: text to number "fails if text is not a valid number and
+ sets the error flag", and a non-default-base cast "stops parsing at the
+ first character invalid for that base" and "does not set the error
+ flag". The 0.4.15 compiler did neither: it stopped at the first invalid
+ character in every base and set the flag only when nothing parsed, so
+ this probe printed 12, then the base 10 total failure and 0, then 18,
+ then the hex total failure and 0.
+ The manual now has one rule for every base (LANGUAGE.md:2158-2165,
+ 2223-2230): a text is a number only when the whole text is one, and a
+ text known only at run time that is not a number raises the error flag
+ and leaves a declaration holding 0 (LANGUAGE.md:2243-2248). All four
+ casts below now fail. Re-recorded 2026-10-13 on vox main a0a2ecc.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D2.vox -o p && ./p
  expected output:
-   12
+   base 10 partial: flag SET
+   0
    base 10 total failure: flag SET
    0
-   18
+   hex partial: flag SET
+   0
    hex total failure: flag SET
    0
 )

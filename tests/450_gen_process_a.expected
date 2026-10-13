@@ -12,34 +12,6 @@ Remove the directory called cupboard.
 
 --- PRC-02 with no file I/O committed: stands aside ---
 emits a directory statement: 0
---- PRC-06, 07, 08, 09: directory remove, nonrecursive refusal ---
-a text called 'the inbox' is "{'the workspace'}/procouter1".
-a text called 'the inbox inner path' is "{'the workspace'}/procouter1/inner".
-Create a directory called 'the inbox'.
-Create a directory called 'the inbox inner path'.
-a boolean called 'the inbox refused' is false.
-Remove the directory called 'the inbox'.
-On error Set 'the inbox refused' to true.
-If 'the inbox refused' is false then, Print "ASSERT PRC-09: expected 1 got {'the inbox refused'}", Exit 95. Print 'the inbox refused'.
-If 'the inbox inner path' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
-Remove the directory called 'the inbox inner path'.
-Remove the directory called 'the inbox'.
-If 'the inbox' is not available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
-
---- the same leaf, a different seed ---
-a text called 'the register' is "{'the workspace'}/procouter1".
-a text called 'the register inner path' is "{'the workspace'}/procouter1/inner".
-Create a directory called 'the register'.
-Create a directory called 'the register inner path'.
-a boolean called 'the register refused' is false.
-Remove the directory called 'the register'.
-On error Set 'the register refused' to true.
-If 'the register refused' is false then, Print "ASSERT PRC-09: expected 1 got {'the register refused'}", Exit 95. Print 'the register refused'.
-If 'the register inner path' is not available then, Print "ASSERT PRC-09: expected available got missing", Exit 95. Print "survived".
-Delete directory called 'the register inner path'.
-Delete directory called 'the register'.
-If 'the register' is not available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
-
 --- PRC-12, 13, 21: mount/unmount refusal ---
 a text called 'the dispatch note' is "{'the workspace'}/procmount1".
 Create a directory called 'the dispatch note'.
@@ -192,9 +164,8 @@ On error Set satchel to true.
 If satchel is false then, Print "ASSERT PRC-79: expected 1 got {satchel}", Exit 95. Print satchel.
 Print "execution continued".
 
---- registration reachable: kinds 260-269 all dispatch without error ---
+--- registration reachable: batch A's kinds all dispatch without error ---
 kind 260: 264 bytes emitted
-kind 261: 0 bytes emitted
 kind 262: 851 bytes emitted
 kind 263: 1155 bytes emitted
 kind 264: 405 bytes emitted

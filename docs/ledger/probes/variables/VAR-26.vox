@@ -2,8 +2,13 @@
  fixed, so assigning text to a number is a compile error and not a silent
  retype — and the diagnostic carries all five parts LANGUAGE.md:613-615
  promises: the variable, its declared type, its declaration site, the type
- of the offending value, and the exact cast that would fix it. The block at
- LANGUAGE.md:618-626 is reproduced, column markers included.
+ of the offending value, and the exact cast that would fix it, when there
+ is one. The block at LANGUAGE.md:618-626 is reproduced, column markers
+ included.
+ Since vox #281 the manual's example assigns "42", and a text that is not a
+ number gets no cast suggestion ("a text that is not a number has none",
+ LANGUAGE.md:615): with "abc", which this probe used up to 2026-10-13,
+ the help line is gone. Re-recorded with "42" on vox main a0a2ecc.
  Neither this comment nor the recorded output below may echo the offending
  statement: the caret is placed by searching the source text, so any earlier
  copy of it in the file steals the span — see Discrepancy 6. The help line
@@ -14,12 +19,12 @@
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox VAR-26.vox -o p && ./p
  expected output:
    error: cannot assign text to 'n', which is a number
-     --> VAR-26.vox:24:1
+     --> VAR-26.vox:29:1
      |  ^ this assigns text
-   note: 'n' was declared as a number at VAR-26.vox:23:17
+   note: 'n' was declared as a number at VAR-26.vox:28:17
    help: convert it explicitly:  <the statement> as a number.
    (no binary produced; compile error)
 )
 a number called n is 5.
-n is "abc".
+n is "42".
 Print n.

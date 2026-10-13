@@ -1,17 +1,28 @@
-(ARG-47 — *(not a manual claim — a gap in the manual)* a number flag
- value beyond i64 both sets the error flag AND yields the value wrapped
- modulo 2^64: 99999999999999999999 - 5 * 2^64 = 7766279631452241919.
- An error flag and a plausible-looking wrong number at the same time is
- the worst of both; see Discrepancy 4.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-47.vox -o p && ./p -r 99999999999999999999
- Args: -r 99999999999999999999
+(ARG-47: a number flag token beyond the range of a number is not a number
+ ("The whole number must fit in a number", LANGUAGE.md:2233-2235), so the
+ flag holds its default and the error flag is raised (LANGUAGE.md:
+ 4926-4928). retries has no default and holds 0; patience has default 5
+ and keeps it.
+ Up to vox 0.4.15 the value wrapped modulo 2^64 instead
+ (99999999999999999999 read as 7766279631452241919) and this probe
+ printed "retries is 7766279631452241919": Discrepancy 4, resolved by
+ vox #281. Re-recorded 2026-10-13 on vox main a0a2ecc.
+ Only the first handler runs: Parse flags converts both tokens and raises
+ the flag once, and the first On error catches and clears it.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox ARG-47.vox -o p && ./p -r 99999999999999999999 -p 99999999999999999999
+ Args: -r 99999999999999999999 -p 99999999999999999999
  expected output:
-   reading the flag errored
-   retries is 7766279631452241919
+   reading retries errored
+   retries is 0
+   patience is 5
 )
 a flag called retries is "-r" or "--retries", it is a number.
+a flag called patience is "-p" or "--patience", it is a number with default 5.
 Parse flags.
 
 a number called seen is retries.
-On error print "reading the flag errored".
+On error print "reading retries errored".
 Print "retries is {seen}".
+a number called waited is patience.
+On error print "reading patience errored".
+Print "patience is {waited}".

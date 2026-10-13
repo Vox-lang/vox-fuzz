@@ -1,18 +1,20 @@
-(THG-17: `text`, `list`, `map` and `buffer` fields are deferred - a thing
- cannot hold one yet.
- Hand-run for all four (LANGUAGE.md:967) plus `file`, `timer` and `value`,
- which the compiler rejects with the same diagnostic and the type name
- swapped; the manual names only the first four. This probe keeps the `text`
- case; the other six were run identically while mapping.
+(THG-17: `list`, `map` and `buffer` are not field types (LANGUAGE.md:
+ 998-999). Hand-run on vox main a0a2ecc for all three plus `file`, `timer`
+ and `value`, which the compiler rejects with the same diagnostic and the
+ type name swapped; the manual names only the first three. This probe
+ keeps the `list` case.
+ Up to vox 0.4.15 `text` was deferred too and this probe kept the `text`
+ case; since vox #277 a thing can hold a text field (THG-15), so it was
+ re-recorded 2026-10-13.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox THG-17.vox -o p && ./p
  expected output:
-   error: Field 'payload' of thing 'holder' is a text, which a thing cannot hold yet
-       A field's type may be number, float, boolean, time, or any thing defined earlier (plan 310 §6).
-       text is deferred until copying a text handle is verified not to observe mutation; buffer, list, map, file, timer, and value carry references, which value semantics (§5) deliberately keep out.
+   error: Field 'payload' of thing 'holder' is a list, which a thing cannot hold yet
+       A field's type may be number, float, boolean, time, text, or any thing defined earlier (plan 310 §6).
+       buffer, list, map, file, timer, and value carry references, which value semantics (§5) deliberately keep out.
    (no binary produced; compile error)
 )
 A thing called holder has
-  a text called payload.
+  a list called payload.
 
 a holder called box.
 Print "made".

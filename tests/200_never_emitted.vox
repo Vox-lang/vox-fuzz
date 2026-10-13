@@ -38,6 +38,16 @@ see "../src/gen_basics.vox".
  ruling - the surface brief names only `mount`, `reboot` and `shutdown` -
  so those five needles stay exactly as they were.
 
+ NARROWED AGAIN 2026-10-05 (process leaves, batch C): device-node
+ creation is no longer banned. TheJostler ruled (see also PROCEDURE.md
+ sect.6) that mknod(2) is safe to emit for exactly
+ the reason mount is - an unprivileged process lacks CAP_MKNOD and the
+ kernel refuses with EPERM, seen under strace this batch. That reason
+ does NOT cover type "p": a FIFO needs no privilege and is really
+ created (docs/ledger/process-control.md, Discrepancy 1), so the old
+ `device node` needle is replaced by one that catches `type "p"` -
+ the only device-node spelling that can take effect.
+
  Scope - Tier NEVER only, now five needles instead of nine. Plan 323
  also lists directory create/remove, Execute, fork, and Send signal, but
  those are Tier CONFINE: legitimate once confined (src/gen_process.vox
@@ -75,7 +85,7 @@ a buffer called needle_restart is "restart".
 a buffer called needle_halt is "halt".
 a buffer called needle_pivotroot is "pivot root".
 a buffer called needle_pivotroot_us is "pivot_root".
-a buffer called needle_devicenode is "device node".
+a buffer called needle_fifo_node is "type \"p\"".
 
 To 'lower text' with a text called s.
     a buffer called work is s.
@@ -119,7 +129,7 @@ To 'text has' with a buffer called haystack and a buffer called needle.
 (The Tier NEVER vocabulary, derived from plan 323's Tier NEVER table and
  LANGUAGE.md's "Directories, Mounting, and Process Control" / "System
  Control" sections, narrowed 2026-08-30 night per the header comment:
- poweroff/restart, halt, pivot_root, device-node creation. Returns the
+ poweroff/restart, halt, pivot_root, a type "p" (FIFO) device node. Returns the
  matched word, or "" if the source is clean.)
 To 'find banned construct' with a text called source.
     a buffer called hay is 'lower text' of source.
@@ -128,7 +138,7 @@ To 'find banned construct' with a text called source.
     If 'text has' of hay and needle_halt then, Return a text, "halt".
     If 'text has' of hay and needle_pivotroot then, Return a text, "pivot root".
     If 'text has' of hay and needle_pivotroot_us then, Return a text, "pivot_root".
-    If 'text has' of hay and needle_devicenode then, Return a text, "device node".
+    If 'text has' of hay and needle_fifo_node then, Return a text, "type p".
     Return a text, "".
 
 (Sweeps 'seed count' seeds starting at 'first seed', at the given budget,

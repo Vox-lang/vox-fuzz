@@ -73,66 +73,66 @@ two folded cross-references, ARG-29 (in `ARG-25.vox`) and ARG-37 (in
 
 | id | line | claim | leaf needed | assertable? | existing leaf | status | verified by |
 |---|---|---|---|---|---|---|---|
-| ARG-01 | 4742 | Command-line arguments are read through the `'s` property syntax on the special name `arguments`. | emit any `arguments's <property>` read | yes — every property below is predictable, since the generator chooses the argv | `gen leaf arguments inrange` (`gen_misc.vox:142`), `gen leaf format expression` (`gen_text.vox:330`, inside a format slot) | exercised | |
-| ARG-02 | 4748 | `arguments's count` is the total number of arguments, including the program name. | read `count` with a known argv | yes — `If arguments's count is not {expected} then, Exit 95.` where expected is the positional count plus 1 (**not** the raw argv length — see ARG-41) | `gen leaf arguments inrange` (`gen_misc.vox:143`) prints it; `gen leaf format expression` interpolates it | exercised (construct only; never compared against the argv the generator passed) | |
-| ARG-03 | 4749 | `arguments's name` is the program name, argv[0]. | read `name` | yes, but **not** as a literal — the binary path varies per run (per-pid scratch dir, see `sandbox.vox`). The assertable form is the identity `If arguments's name is not the argument at 0 then, Exit 95.` | none — deliberately dropped from `gen leaf arguments inrange` (`gen_misc.vox:118-130`) because printing the raw path breaks the byte-exact test fixtures | todo | |
-| ARG-04 | 4750 | `arguments's first` is the first user argument, argv[1]. | read `first` with a known argv | yes — `If arguments's first is not "{passed}" then, Exit 95.` | none | todo | |
-| ARG-05 | 4751 | `arguments's second` is the second user argument, argv[2]. | read `second` with a known argv | yes, same shape as ARG-04 | none | todo | |
-| ARG-06 | 4752 | `arguments's last` is the last argument. | read `last` with a known argv | yes when at least one positional is passed. With none it is argv[0] instead (ARG-43), so the assertion must branch on the count the generator chose | none | todo | |
-| ARG-07 | 4753 | `arguments's empty` is true exactly when there are no user arguments (argc ≤ 1). | read `empty` with a known argv | yes — the generator knows whether it passed positionals: `If arguments's empty then, Exit 95.` when it did | `gen leaf arguments inrange` (`gen_misc.vox:144`) prints it | exercised | |
-| ARG-08 | 4754 | `arguments's all` is the user arguments as a collection, usable for loop expansion. | bind it to a list and iterate it | yes — `If all's length is not {n} then, Exit 95.`, and each element compared to what was passed | `gen leaf treating print` (`gen_flow.vox:189`) uses it as a loop-expansion source | exercised — but **only ever with a `treating` clause**; the plain forms (bind to a list, `For each … from`, bare `Print each item from`) are never emitted. See ARG-40 | |
-| ARG-09 | 4755 | `arguments's raw` is the original, unfiltered user arguments as a collection. | bind `raw` to a list, iterate it | yes — raw's length and elements are exactly the argv the generator built, before any filtering | none — `arguments's raw` appears nowhere in `src/` | todo — the one property in the table that no leaf reads at all | |
-| ARG-10 | 4759–4767 | The Basic Usage example compiles and behaves as its prose says (composite): count bound to a number, printed with `the argc`; name bound to a text. | reproduce the declare-then-print chain | yes for the count half; the name half only as the ARG-03 identity | none binds `arguments's count` to a variable — every read is inline | todo | |
-| ARG-11 | 4771–4778 | The Accessing User Arguments example compiles and behaves (composite): `count is greater than 1` guard, `first` declared inside the comma-continued branch, `Otherwise` arm. | reproduce the guarded-read shape | yes — the generator knows which arm must run | none | todo | |
-| ARG-12 | 4783–4786 | `arguments's empty` is usable directly as an `If` condition, with no comparison. | `If arguments's empty then, …` | yes — which arm runs is known | none — `gen leaf arguments inrange` prints the property but never branches on it | todo | |
-| ARG-13 | 4790–4795 | `the argument at the <number variable>` reads an argument by a computed index. | emit a byte-for-byte `the argument at the <var>` read | yes — `If the argument at the n is not "{passed}" then, Exit 95.` | none — flagged as unreachable in `gen_misc.vox:132-136` on the ground that the program is run with no arguments. **That is no longer true**: `loop_gen.vox:128` passes `gen_argv` to both runs | todo — and the reason it was skipped has expired | |
-| ARG-14 | 4799 | Vox supports declarative CLI flag parsing, schema-first. | emit a flag schema and a parse point | yes, via the individual rows below | `gen emit prelude flags` (`gen_misc.vox:348-366`) | exercised | |
-| ARG-15 | 4803, 4806–4808 | A flag schema is a name, two alias strings joined by `or`, and `it is a <type>`. | emit the declaration form; vary name, both aliases, and type | yes — the schema's effect is asserted through ARG-17/18/19 | `gen emit prelude flags` emits four of them | exercised — but the names and alias spellings are **frozen**: `gen_flags` is pinned to 1 (`gen_core.vox:1004`), so every program ever generated declares `fl1label`/`fl1count`/`fl1on`/`fl1scratch` with aliases `-a`/`--alpha1`, `-b`/`--beta1`, `-c`/`--gamma1`, `-s`/`--scratch1` | |
-| ARG-16 | 4811–4815 | The supported flag value types are exactly `boolean`, `number` and `text` — the list is exhaustive. | — | **no** — the exhaustiveness half is a compile error, and a generated program must compile. The three positive cases are ARG-17/18/19 | `gen emit prelude flags` emits all three types | not assertable (exhaustiveness); the three types themselves exercised | |
-| ARG-17 | 4813 | A `boolean` flag's presence sets it true. | pass the flag, assert true; omit it, assert false | yes — and it already does | `gen emit prelude flags` + `gen build argv` (`gen_misc.vox:273-278`) + `gen emit argv assertions` (`Exit 93`/`Exit 94`) | **verified** | |
-| ARG-18 | 4814 | A `text` flag consumes the next token as text. | pass `-a <word>`, assert the flag holds `<word>` | yes — and it already does (`Exit 91`) | `gen emit argv assertions` (`gen_misc.vox:316`) | **verified** | |
-| ARG-19 | 4815 | A `number` flag consumes the next token and parses it as a number. | pass `-b <digits>`, assert the flag holds that number | yes — and it already does (`Exit 92`) | `gen emit argv assertions` (`gen_misc.vox:317`) | **verified** | |
-| ARG-20 | 4819 | Flags may be marked required **and/or** given defaults — the two modifiers combine. | emit one flag carrying both modifiers | the declaration compiles, but the runtime behaviour is Discrepancy 3: required aborts before the default can be read, so there is nothing to assert but the exit status | none — no leaf emits `is required` at all | todo — blocked on D3 | |
-| ARG-21 | 4822, 4826 | `with default <value>` initializes the flag when it is not passed. | declare a default, do not pass the flag, assert the default is what is read | yes — `If fl{n}label is not "d{n}" then, Exit 95.` on the runs where the generator chose not to pass `-a` | `gen emit prelude flags` (`gen_misc.vox:352`) emits `with default "d{n}"` one draw in three | exercised — text only, never asserted; number and boolean defaults compile (probe ARG-21) and are never emitted | |
-| ARG-22 | 4823, 4827 | `and is required` requires the flag to be present at runtime. | declare a required flag and omit it | only as an **expected exit status** — the program aborts before its first statement, printing nothing (ARG-51). The runner does not carry an expected exit code today: `loop_gen.vox` treats any clean exit outside 91–94 as a pass, so a silent `exit 1` is invisible | none — deliberately avoided (`gen_misc.vox:339-341`), on the ground that a required flag "would abort every program". The generator now chooses the argv and could simply pass it | todo — needs runner support for an expected exit code | |
-| ARG-23 | 4828–4829 | A flag with no `with default` that is not passed holds its type's empty value: `""` for a text, `0` for a number, false for a boolean. | leave each type unsupplied and assert the empty value | yes — `If fl{n}count is not 0 then, Exit 95.` on the runs where `-b` was not passed | `gen build argv` shapes 6–9 (`gen_misc.vox:281-303`) leave flags unsupplied and the program prints them | exercised — `gen_asserts_argv` is false for exactly those shapes, so the empty-value claim is the one thing never checked | |
-| ARG-24 | 4830–4831 | An unsupplied `text` flag is safe to read and can be tested with `is empty`. | `If fl{n}label is empty then, …` on a run where `-a` was not passed | yes — the generator knows whether it passed `-a` | **none.** The comment at `gen_misc.vox:395-398` says `is empty` on the text flag is deliberate, but the leaf below it (`gen leaf flag read`) only prints; the `is empty` probe that exists (`gen leaf predicate probe`, `gen_misc.vox:431`) applies it to a plain text `pt{n}`, not to a flag | todo — a comment claims coverage the code does not have | |
-| ARG-25 | 4835–4839, 4848 | `Parse flags.` parses explicitly, at exactly that point. | emit `Parse flags.` with ordinary code before it | yes — everything after it reads parsed values | `gen emit prelude flags` (`gen_misc.vox:362`) | exercised — emitted in **every** program, which is itself an unjustified invariant (see below) | |
-| ARG-26 | 4841 | With `Parse flags.` omitted, parsing is inserted automatically immediately after the last flag schema declaration. | emit a program with a schema and no parse statement | yes — reads after the last schema must see parsed values. The "immediately after the **last**" half is only observable as a compile error (ARG-31), so a generated program can prove the positive half only | none — `Parse flags.` is always emitted | todo | |
-| ARG-27 | 4845 | Flag schema declarations are valid as long as they appear before parsing occurs. | any schema-then-parse program | structurally true of anything that compiles; nothing to assert beyond ARG-25/26 | `gen emit prelude flags` | exercised | |
-| ARG-28 | 4847 | Normal code may be placed before and between schema declarations. | emit a statement before the first schema and between two schemas | yes — the interleaved statements' own output is predictable | none — the schema block is contiguous and always the first thing in the program | todo — CLAUDE.md names this exact pattern (`flags always contiguous`) as a defect, and the manual explicitly permits the alternative | |
-| ARG-29 | 4848 | An explicit `Parse flags.` chooses exactly when parsing happens. | — | — | — | folded into ARG-25 | |
-| ARG-30 | 4849 | Declaring a new flag schema after `Parse flags.` is a compile-time error. | — | **no** — emitting it produces a program that does not compile, outside the generator's "legal Vox that should compile and run" contract | n/a | not assertable | |
-| ARG-31 | 4850 | Using a flag variable before the parse point is a compile-time error. | — | **no** — same reason as ARG-30 | n/a | not assertable | |
-| ARG-32 | 4856 | After parsing, `arguments's all` is the filtered positional view: recognized flags are removed. | pass flags and positionals, assert `all` holds only the positionals | yes — the generator built the argv, so it knows exactly which tokens survive | `gen leaf treating print` reads `all` after parsing, and `gen build argv` shape 9 puts real positionals in it | exercised — never compared against what was passed | |
-| ARG-33 | 4857 | After parsing, `arguments's raw` keeps the original user-provided sequence unchanged. | assert `raw`'s length and elements equal the argv passed | yes — the strongest assertion in the section: raw is the generator's own list, element for element | none | todo | |
-| ARG-34 | 4861–4873 | The all-vs-raw worked example compiles and behaves as shown (composite), including a flag read from inside a format slot (`"output:{output}"`). | reproduce the example, including the flag-in-a-slot read | yes | flags are read bare (`gen leaf flag read`) and format slots carry `arguments's count` (`gen_text.vox:330`), but a **flag** inside a format slot is never emitted | todo | |
-| ARG-35 | 4877 | `--` stops flag processing. | pass `--` in the argv, assert the flags after it did not parse | yes — the generator controls where `--` goes | none — `gen build argv` never appends `--` | todo | |
-| ARG-36 | 4877 | Tokens after `--` are treated as positional arguments. | assert those tokens appear in `all` | yes | none | todo | |
-| ARG-37 | 4882–4888 | The example invocation `myprog --verbose -- -v file.txt`: `--verbose` parses as a flag, `-v` after `--` is a positional. | — | — | — | folded into ARG-35/ARG-36 | |
-| ARG-38 | 4892–4905 | The Practical Pattern example compiles and behaves (composite), including flag names that are **quoted** because they are reserved words: `'version'`, `'number'`. | emit at least one quoted flag name | yes | none — every generated flag name is an unquoted `fl1…` | todo — the quoted-name path through the parser is never taken | |
-| ARG-39 | 4899, 4902 | A boolean flag's own name is usable bare as an `If` condition. | `If fl{n}on then, …` | yes — and it already does | `gen emit argv assertions` (`gen_misc.vox:321`): `If fl{n}on then, Exit 94.` | **verified** (as the false-expectation half of the argv assertion) | |
-| ARG-40 | 4905 | `Print each item from arguments's all` prints each positional argument. | emit the bare print-each form | yes — the generator knows the positionals | `gen leaf treating print` emits it **only** with a `treating` clause attached (`gen_flow.vox:199`) | todo for the plain form — a different path through the compiler | |
-| ARG-41 | 4748, 4750–4752 (undocumented precision) | *(not a manual claim — a gap in the manual)* After parsing, **every** positional property follows the filtered view, not the raw argv: `count`, `empty`, `first`, `second`, `last` and `the argument at` all count and index the positionals only. 4417 says this of `all` and of nothing else. | read each of them after a parse that filtered something, assert against the filtered list | yes — `If arguments's count is not {positionals + 1} then, Exit 95.` | none — `count` is printed but never compared, so the filtered-vs-raw distinction is invisible today | todo | see Discrepancy 1 |
-| ARG-42 | 4750–4751 (undocumented) | *(gap)* Reading `first` or `second` when there is no such argument sets the error flag — `On error` catches it — and yields `""`. | read them with a known-short argv, wrapped in `On error` | yes — the generator knows how many positionals it passed | none | todo | |
-| ARG-43 | 4752 (undocumented) | *(gap)* `last` never errors: with no user arguments it returns the program name, where `first` errors instead. | read `last` on a positional-free argv | yes, as the identity `last is name` (the literal path is not assertable, ARG-03) | none | todo | see Discrepancy 2 |
-| ARG-44 | 4790–4795 (undocumented) | *(gap)* `the argument at N` indexes **argv**, not the user arguments: index 0 is the program name and does not error, index 1 is the first user argument, a negative index sets the error flag and yields `""`, and a bare literal or a computed expression is accepted where the manual shows only a variable. | emit index 0, a positive index, a negative index, and a literal-index form | yes for every part | none | todo | |
-| ARG-45 | 4803, 4806 (undocumented) | *(gap)* A schema must carry **exactly two** alias strings; one is a compile error. The diagnostic demands a *long* alias, but two short aliases (`"-a" or "-b"`) are accepted — the enforced rule and the stated rule differ. | — | **no** — the negative half is a compile error. The positive half (two aliases, any mix of short and long) is what every schema already emits | `gen emit prelude flags` (always two, always short-then-long) | not assertable | see Discrepancy 5 |
-| ARG-46 | 4815 (undocumented) | *(gap)* A `number` flag whose value does not parse sets the error flag on the first read and holds 0. | pass a non-numeric value, wrap the read in `On error`, assert 0 and that the handler fired | yes — the generator chose the bad token | `gen build argv` shape 6 (`gen_misc.vox:283-286`) | exercised — `gen_asserts_argv` is false for this shape, so neither the 0 nor the error flag is checked | |
-| ARG-47 | 4815 (undocumented) | *(gap)* A `number` flag value beyond i64 sets the error flag **and** leaves the value wrapped modulo 2^64 (`99999999999999999999` → `7766279631452241919`), which then propagates through arithmetic. | pass an over-range value, assert both the error flag and the wrapped value | yes — the wrap is computable at generation time | `gen build argv` shape 7 (`gen_misc.vox:288-292`); its comment says "Raises too" and stops there — the wrapped value is not mentioned or checked | exercised | see Discrepancy 4 |
-| ARG-48 | 4815 (undocumented) | *(gap)* A `number` flag given a decimal value truncates toward zero **silently** — `1.5` → `1`, no error flag, nothing for a program to notice. | pass a decimal value, assert the truncated integer and that no error fired | yes | none | todo | |
-| ARG-49 | 4814 (undocumented) | *(gap)* A flag whose value token is missing because argv ends keeps its empty value and raises nothing; the flag itself is still consumed and does not fall into the positional view. | end the argv on a value-taking flag, assert the empty value and that `all` is empty | yes | `gen build argv` shape 8 (`gen_misc.vox:293-297`) | exercised — unasserted | |
-| ARG-50 | 4856 (undocumented) | *(gap)* An unrecognized flag is not consumed: it stays in both `all` and `raw`, and so does the token after it. 4417 says "recognized flags removed" and leaves the rest undefined. | pass an unknown flag plus a positional, assert both survive into `all` | yes | `gen build argv` shape 9 (`gen_misc.vox:298-303`) | exercised — unasserted | |
-| ARG-51 | 4827 (undocumented) | *(gap)* A missing required flag aborts with exit status 1 and **no output at all** — nothing on stdout, nothing on stderr, no mention of which flag was missing. | declare a required flag, omit it, expect exit 1 | only as an expected exit status — see ARG-22 | none | todo | see Discrepancy 3 |
-| ARG-52 | 4803 (undocumented) | *(gap)* Two schemas may share a name: they merge into one variable and every alias of both triggers it. "Define each supported flag once" is not enforced — no error, no warning. Duplicate *aliases* across two flags are accepted too. | emit two schemas with one name, assert either alias sets the same variable | yes | none | todo | |
-| ARG-53 | 4838 (undocumented) | *(gap)* A second `Parse flags.` is a compile-time error. The manual presents the parse point as explicit-or-automatic and never says the explicit form is once-only. | — | **no** — compile error | n/a | not assertable | |
-| ARG-54 | 4838 (undocumented) | *(gap)* `Parse flags.` with no schema at all is legal: nothing is recognized, so nothing is filtered and a leading-dash token is just another positional. | emit a schema-free program with a parse point | yes — `all` equals the whole argv | none — the schema block is never empty | todo | |
+| ARG-01 | 4853 | Command-line arguments are read through the `'s` property syntax on the special name `arguments`. | emit any `arguments's <property>` read | yes — every property below is predictable, since the generator chooses the argv | `gen leaf arguments inrange` (`gen_misc.vox:142`), `gen leaf format expression` (`gen_text.vox:330`, inside a format slot) | exercised | |
+| ARG-02 | 4859 | `arguments's count` is the total number of arguments, including the program name. | read `count` with a known argv | yes — `If arguments's count is not {expected} then, Exit 95.` where expected is the positional count plus 1 (**not** the raw argv length — see ARG-41) | `gen leaf arguments inrange` (`gen_misc.vox:143`) prints it; `gen leaf format expression` interpolates it | exercised (construct only; never compared against the argv the generator passed) | |
+| ARG-03 | 4860 | `arguments's name` is the program name, argv[0]. | read `name` | yes, but **not** as a literal — the binary path varies per run (per-pid scratch dir, see `sandbox.vox`). The assertable form is the identity `If arguments's name is not the argument at 0 then, Exit 95.` | none — deliberately dropped from `gen leaf arguments inrange` (`gen_misc.vox:118-130`) because printing the raw path breaks the byte-exact test fixtures | todo | |
+| ARG-04 | 4861 | `arguments's first` is the first user argument, argv[1]. | read `first` with a known argv | yes — `If arguments's first is not "{passed}" then, Exit 95.` | none | todo | |
+| ARG-05 | 4862 | `arguments's second` is the second user argument, argv[2]. | read `second` with a known argv | yes, same shape as ARG-04 | none | todo | |
+| ARG-06 | 4863 | `arguments's last` is the last argument. | read `last` with a known argv | yes when at least one positional is passed. With none it is argv[0] instead (ARG-43), so the assertion must branch on the count the generator chose | none | todo | |
+| ARG-07 | 4864 | `arguments's empty` is true exactly when there are no user arguments (argc ≤ 1). | read `empty` with a known argv | yes — the generator knows whether it passed positionals: `If arguments's empty then, Exit 95.` when it did | `gen leaf arguments inrange` (`gen_misc.vox:144`) prints it | exercised | |
+| ARG-08 | 4865 | `arguments's all` is the user arguments as a collection, usable for loop expansion. | bind it to a list and iterate it | yes — `If all's length is not {n} then, Exit 95.`, and each element compared to what was passed | `gen leaf treating print` (`gen_flow.vox:189`) uses it as a loop-expansion source | exercised — but **only ever with a `treating` clause**; the plain forms (bind to a list, `For each … from`, bare `Print each item from`) are never emitted. See ARG-40 | |
+| ARG-09 | 4866 | `arguments's raw` is the original, unfiltered user arguments as a collection. | bind `raw` to a list, iterate it | yes — raw's length and elements are exactly the argv the generator built, before any filtering | none — `arguments's raw` appears nowhere in `src/` | todo — the one property in the table that no leaf reads at all | |
+| ARG-10 | 4870–4878 | The Basic Usage example compiles and behaves as its prose says (composite): count bound to a number, printed with `the argc`; name bound to a text. | reproduce the declare-then-print chain | yes for the count half; the name half only as the ARG-03 identity | none binds `arguments's count` to a variable — every read is inline | todo | |
+| ARG-11 | 4882–4889 | The Accessing User Arguments example compiles and behaves (composite): `count is greater than 1` guard, `first` declared inside the comma-continued branch, `Otherwise` arm. | reproduce the guarded-read shape | yes — the generator knows which arm must run | none | todo | |
+| ARG-12 | 4894–4897 | `arguments's empty` is usable directly as an `If` condition, with no comparison. | `If arguments's empty then, …` | yes — which arm runs is known | none — `gen leaf arguments inrange` prints the property but never branches on it | todo | |
+| ARG-13 | 4901–4906 | `the argument at the <number variable>` reads an argument by a computed index. | emit a byte-for-byte `the argument at the <var>` read | yes — `If the argument at the n is not "{passed}" then, Exit 95.` | none — flagged as unreachable in `gen_misc.vox:132-136` on the ground that the program is run with no arguments. **That is no longer true**: `loop_gen.vox:128` passes `gen_argv` to both runs | todo — and the reason it was skipped has expired | |
+| ARG-14 | 4910 | Vox supports declarative CLI flag parsing, schema-first. | emit a flag schema and a parse point | yes, via the individual rows below | `gen emit prelude flags` (`gen_misc.vox:348-366`) | exercised | |
+| ARG-15 | 4914, 4917–4919 | A flag schema is a name, two alias strings joined by `or`, and `it is a <type>`. | emit the declaration form; vary name, both aliases, and type | yes — the schema's effect is asserted through ARG-17/18/19 | `gen emit prelude flags` emits four of them | exercised — but the names and alias spellings are **frozen**: `gen_flags` is pinned to 1 (`gen_core.vox:1004`), so every program ever generated declares `fl1label`/`fl1count`/`fl1on`/`fl1scratch` with aliases `-a`/`--alpha1`, `-b`/`--beta1`, `-c`/`--gamma1`, `-s`/`--scratch1` | |
+| ARG-16 | 4922–4928 | The supported flag value types are exactly `boolean`, `number` and `text` — the list is exhaustive. | — | **no** — the exhaustiveness half is a compile error, and a generated program must compile. The three positive cases are ARG-17/18/19 | `gen emit prelude flags` emits all three types | not assertable (exhaustiveness); the three types themselves exercised | |
+| ARG-17 | 4924 | A `boolean` flag's presence sets it true. | pass the flag, assert true; omit it, assert false | yes — and it already does | `gen emit prelude flags` + `gen build argv` (`gen_misc.vox:273-278`) + `gen emit argv assertions` (`Exit 93`/`Exit 94`) | **verified** | |
+| ARG-18 | 4925 | A `text` flag consumes the next token as text. | pass `-a <word>`, assert the flag holds `<word>` | yes — and it already does (`Exit 91`) | `gen emit argv assertions` (`gen_misc.vox:316`) | **verified** | |
+| ARG-19 | 4926–4928 | A `number` flag consumes the next token and reads it as a number, by the rule under "Casting Rules" (the whole token must be a Vox number literal, after one optional `-`). **Claim text updated 2026-10-13 (vox a0a2ecc, #281)**: the sentence was "parses it as a number". | pass `-b <digits>`, assert the flag holds that number | yes — and it already does (`Exit 92`) | `gen emit argv assertions` (`gen_misc.vox:317`) | **verified** | |
+| ARG-20 | 4932 | Flags may be marked required **and/or** given defaults — the two modifiers combine. | emit one flag carrying both modifiers | the declaration compiles, but the runtime behaviour is Discrepancy 3: required aborts before the default can be read, so there is nothing to assert but the exit status | none — no leaf emits `is required` at all | todo — blocked on D3 | |
+| ARG-21 | 4935, 4939 | `with default <value>` initializes the flag when it is not passed. | declare a default, do not pass the flag, assert the default is what is read | yes — `If fl{n}label is not "d{n}" then, Exit 95.` on the runs where the generator chose not to pass `-a` | `gen emit prelude flags` (`gen_misc.vox:352`) emits `with default "d{n}"` one draw in three | exercised — text only, never asserted; number and boolean defaults compile (probe ARG-21) and are never emitted | |
+| ARG-22 | 4936, 4940 | `and is required` requires the flag to be present at runtime. | declare a required flag and omit it | only as an **expected exit status** — the program aborts before its first statement, printing nothing (ARG-51). The runner does not carry an expected exit code today: `loop_gen.vox` treats any clean exit outside 91–94 as a pass, so a silent `exit 1` is invisible | none — deliberately avoided (`gen_misc.vox:339-341`), on the ground that a required flag "would abort every program". The generator now chooses the argv and could simply pass it | todo — needs runner support for an expected exit code | |
+| ARG-23 | 4941–4942 | A flag with no `with default` that is not passed holds its type's empty value: `""` for a text, `0` for a number, false for a boolean. | leave each type unsupplied and assert the empty value | yes — `If fl{n}count is not 0 then, Exit 95.` on the runs where `-b` was not passed | `gen build argv` shapes 6–9 (`gen_misc.vox:281-303`) leave flags unsupplied and the program prints them | exercised — `gen_asserts_argv` is false for exactly those shapes, so the empty-value claim is the one thing never checked | |
+| ARG-24 | 4943–4944 | An unsupplied `text` flag is safe to read and can be tested with `is empty`. | `If fl{n}label is empty then, …` on a run where `-a` was not passed | yes — the generator knows whether it passed `-a` | **none.** The comment at `gen_misc.vox:395-398` says `is empty` on the text flag is deliberate, but the leaf below it (`gen leaf flag read`) only prints; the `is empty` probe that exists (`gen leaf predicate probe`, `gen_misc.vox:431`) applies it to a plain text `pt{n}`, not to a flag | todo — a comment claims coverage the code does not have | |
+| ARG-25 | 4948–4952, 4961 | `Parse flags.` parses explicitly, at exactly that point. | emit `Parse flags.` with ordinary code before it | yes — everything after it reads parsed values | `gen emit prelude flags` (`gen_misc.vox:362`) | exercised — emitted in **every** program, which is itself an unjustified invariant (see below) | |
+| ARG-26 | 4954 | With `Parse flags.` omitted, parsing is inserted automatically immediately after the last flag schema declaration. | emit a program with a schema and no parse statement | yes — reads after the last schema must see parsed values. The "immediately after the **last**" half is only observable as a compile error (ARG-31), so a generated program can prove the positive half only | none — `Parse flags.` is always emitted | todo | |
+| ARG-27 | 4958 | Flag schema declarations are valid as long as they appear before parsing occurs. | any schema-then-parse program | structurally true of anything that compiles; nothing to assert beyond ARG-25/26 | `gen emit prelude flags` | exercised | |
+| ARG-28 | 4960 | Normal code may be placed before and between schema declarations. | emit a statement before the first schema and between two schemas | yes — the interleaved statements' own output is predictable | none — the schema block is contiguous and always the first thing in the program | todo — CLAUDE.md names this exact pattern (`flags always contiguous`) as a defect, and the manual explicitly permits the alternative | |
+| ARG-29 | 4961 | An explicit `Parse flags.` chooses exactly when parsing happens. | — | — | — | folded into ARG-25 | |
+| ARG-30 | 4962 | Declaring a new flag schema after `Parse flags.` is a compile-time error. | — | **no** — emitting it produces a program that does not compile, outside the generator's "legal Vox that should compile and run" contract | n/a | not assertable | |
+| ARG-31 | 4963 | Using a flag variable before the parse point is a compile-time error. | — | **no** — same reason as ARG-30 | n/a | not assertable | |
+| ARG-32 | 4969 | After parsing, `arguments's all` is the filtered positional view: recognized flags are removed. | pass flags and positionals, assert `all` holds only the positionals | yes — the generator built the argv, so it knows exactly which tokens survive | `gen leaf treating print` reads `all` after parsing, and `gen build argv` shape 9 puts real positionals in it | exercised — never compared against what was passed | |
+| ARG-33 | 4970 | After parsing, `arguments's raw` keeps the original user-provided sequence unchanged. | assert `raw`'s length and elements equal the argv passed | yes — the strongest assertion in the section: raw is the generator's own list, element for element | none | todo | |
+| ARG-34 | 4974–4986 | The all-vs-raw worked example compiles and behaves as shown (composite), including a flag read from inside a format slot (`"output:{output}"`). | reproduce the example, including the flag-in-a-slot read | yes | flags are read bare (`gen leaf flag read`) and format slots carry `arguments's count` (`gen_text.vox:330`), but a **flag** inside a format slot is never emitted | todo | |
+| ARG-35 | 4990 | `--` stops flag processing. | pass `--` in the argv, assert the flags after it did not parse | yes — the generator controls where `--` goes | none — `gen build argv` never appends `--` | todo | |
+| ARG-36 | 4990 | Tokens after `--` are treated as positional arguments. | assert those tokens appear in `all` | yes | none | todo | |
+| ARG-37 | 4995–5001 | The example invocation `myprog --verbose -- -v file.txt`: `--verbose` parses as a flag, `-v` after `--` is a positional. | — | — | — | folded into ARG-35/ARG-36 | |
+| ARG-38 | 5005–5018 | The Practical Pattern example compiles and behaves (composite), including flag names that are **quoted** because they are reserved words: `'version'`, `'number'`. | emit at least one quoted flag name | yes | none — every generated flag name is an unquoted `fl1…` | todo — the quoted-name path through the parser is never taken | |
+| ARG-39 | 5012, 5015 | A boolean flag's own name is usable bare as an `If` condition. | `If fl{n}on then, …` | yes — and it already does | `gen emit argv assertions` (`gen_misc.vox:321`): `If fl{n}on then, Exit 94.` | **verified** (as the false-expectation half of the argv assertion) | |
+| ARG-40 | 5018 | `Print each item from arguments's all` prints each positional argument. | emit the bare print-each form | yes — the generator knows the positionals | `gen leaf treating print` emits it **only** with a `treating` clause attached (`gen_flow.vox:199`) | todo for the plain form — a different path through the compiler | |
+| ARG-41 | 4859, 4861–4863 (undocumented precision) | *(not a manual claim — a gap in the manual)* After parsing, **every** positional property follows the filtered view, not the raw argv: `count`, `empty`, `first`, `second`, `last` and `the argument at` all count and index the positionals only. 4417 says this of `all` and of nothing else. | read each of them after a parse that filtered something, assert against the filtered list | yes — `If arguments's count is not {positionals + 1} then, Exit 95.` | none — `count` is printed but never compared, so the filtered-vs-raw distinction is invisible today | todo | see Discrepancy 1 |
+| ARG-42 | 4861–4862 (undocumented) | *(gap)* Reading `first` or `second` when there is no such argument sets the error flag — `On error` catches it — and yields `""`. | read them with a known-short argv, wrapped in `On error` | yes — the generator knows how many positionals it passed | none | todo | |
+| ARG-43 | 4863 (undocumented) | *(gap)* `last` never errors: with no user arguments it returns the program name, where `first` errors instead. | read `last` on a positional-free argv | yes, as the identity `last is name` (the literal path is not assertable, ARG-03) | none | todo | see Discrepancy 2 |
+| ARG-44 | 4901–4906 (undocumented) | *(gap)* `the argument at N` indexes **argv**, not the user arguments: index 0 is the program name and does not error, index 1 is the first user argument, a negative index sets the error flag and yields `""`, and a bare literal or a computed expression is accepted where the manual shows only a variable. | emit index 0, a positive index, a negative index, and a literal-index form | yes for every part | none | todo | |
+| ARG-45 | 4914, 4917 (undocumented) | *(gap)* A schema must carry **exactly two** alias strings; one is a compile error. The diagnostic demands a *long* alias, but two short aliases (`"-a" or "-b"`) are accepted — the enforced rule and the stated rule differ. | — | **no** — the negative half is a compile error. The positive half (two aliases, any mix of short and long) is what every schema already emits | `gen emit prelude flags` (always two, always short-then-long) | not assertable | see Discrepancy 5 |
+| ARG-46 | 4926–4928 | A `number` flag whose token is not a number leaves the flag holding its default (`0` when it has none) and raises the error flag. **Claim rewritten 2026-10-13 (vox a0a2ecc, #281)**: this was an undocumented gap ("sets the error flag on the first read and holds 0"); the manual now states it. Precision the manual omits, re-probed: the flag is raised by `Parse flags.` itself, not by the first read, and stays raised until an `On error` or a later conversion clears it; a later number flag whose token IS a number clears it first (see Discrepancy 6). | pass a non-numeric value, wrap the read in `On error`, assert 0 and that the handler fired | yes — the generator chose the bad token | `gen build argv` shape 6 (`gen_misc.vox:283-286`) | exercised — `gen_asserts_argv` is false for this shape, so neither the 0 nor the error flag is checked | |
+| ARG-47 | 4926–4928, 2233–2235 | A `number` flag value beyond the range of a number is not a number ("The whole number must fit in a number"), so the flag holds its default (`0` when it has none) and the error flag is raised; nothing wraps. **Claim rewritten 2026-10-13 (vox a0a2ecc, #281): INVALIDATED.** The old claim (an undocumented gap) was that the value wraps modulo 2^64 (`99999999999999999999` → `7766279631452241919`) and the wrap propagates through arithmetic; `ARG-47.vox` and `D4.vox` recorded that and both failed on a0a2ecc, printing `0`. Re-probed for the new claim. | pass an over-range value, assert the default and the error flag | yes: the default is the generator's own choice | `gen build argv` shape 7 (`gen_misc.vox:288-292`); its comment says "Raises too" and stops there — the wrapped value is not mentioned or checked | exercised | see Discrepancy 4 |
+| ARG-48 | 4926–4928, 2231–2233 | A `number` flag given a decimal value keeps the whole part and drops the fraction, with no error flag: `1.5` → `1`. **Claim text updated 2026-10-13 (vox a0a2ecc, #281)**: this was an undocumented gap; the Casting Rules now state it ("`"4.8" as a number` is `4`", and "A text that is a number clears the flag"). Probe unchanged and passing. | pass a decimal value, assert the truncated integer and that no error fired | yes | none | todo | |
+| ARG-49 | 4925 (undocumented) | *(gap)* A flag whose value token is missing because argv ends keeps its empty value and raises nothing; the flag itself is still consumed and does not fall into the positional view. | end the argv on a value-taking flag, assert the empty value and that `all` is empty | yes | `gen build argv` shape 8 (`gen_misc.vox:293-297`) | exercised — unasserted | |
+| ARG-50 | 4969 (undocumented) | *(gap)* An unrecognized flag is not consumed: it stays in both `all` and `raw`, and so does the token after it. 4417 says "recognized flags removed" and leaves the rest undefined. | pass an unknown flag plus a positional, assert both survive into `all` | yes | `gen build argv` shape 9 (`gen_misc.vox:298-303`) | exercised — unasserted | |
+| ARG-51 | 4940 (undocumented) | *(gap)* A missing required flag aborts with exit status 1 and **no output at all** — nothing on stdout, nothing on stderr, no mention of which flag was missing. | declare a required flag, omit it, expect exit 1 | only as an expected exit status — see ARG-22 | none | todo | see Discrepancy 3 |
+| ARG-52 | 4914 (undocumented) | *(gap)* Two schemas may share a name: they merge into one variable and every alias of both triggers it. "Define each supported flag once" is not enforced — no error, no warning. Duplicate *aliases* across two flags are accepted too. | emit two schemas with one name, assert either alias sets the same variable | yes | none | todo | |
+| ARG-53 | 4951 (undocumented) | *(gap)* A second `Parse flags.` is a compile-time error. The manual presents the parse point as explicit-or-automatic and never says the explicit form is once-only. | — | **no** — compile error | n/a | not assertable | |
+| ARG-54 | 4951 (undocumented) | *(gap)* `Parse flags.` with no schema at all is legal: nothing is recognized, so nothing is filtered and a leading-dash token is just another positional. | emit a schema-free program with a parse point | yes — `all` equals the whole argv | none — the schema block is never empty | todo | |
 
 ## Discrepancies
 
 ### 1. After parsing, `arguments's count` is not "the total number of arguments"
 
-LANGUAGE.md:4748 defines `count` as "Total number of arguments
+LANGUAGE.md:4859 defines `count` as "Total number of arguments
 (including program name)". After `Parse flags.` it is the count of the
 **filtered** view. Repro (`probes/arguments/D1.vox`), five user
 arguments of which three are consumed by the schema:
@@ -217,7 +217,7 @@ doc fix. That choice is not a worker's to make.
 
 ### 3. `and is required` makes `with default` unreachable, and aborts in silence
 
-LANGUAGE.md:4819 says flags may be marked required "and/or" given
+LANGUAGE.md:4932 says flags may be marked required "and/or" given
 defaults; 4387 says a default "initializes the flag value if the flag is
 not passed". Put both on one flag and the rules collide: the flag is not
 passed, so the default should initialize it — but required aborts first.
@@ -248,6 +248,8 @@ tidy status. **Not filed.** Two questions for the human: should
 name the flag it is missing.
 
 ### 4. An over-range number flag raises *and* hands back a wrapped value
+
+**Resolution, 2026-10-13: RESOLVED by vox #281 (register #130), on vox main since `dfdfc7f`; re-probed on `a0a2ecc`.** A number flag's token is now read by the Casting Rules (LANGUAGE.md:4926–4928), under which a whole number that does not fit in a number is not a number (LANGUAGE.md:2233–2235). The repro below now prints `retries is 0` and `and it computes: 0`, with the error flag raised; `D4.vox` and `ARG-47.vox` are re-recorded to that output. The history follows unchanged.
 
 Repro (`probes/arguments/D4.vox`), run as
 `./p -r 99999999999999999999`:
@@ -317,6 +319,52 @@ The underlying two-alias requirement should be in LANGUAGE.md either
 way; it is the only hard grammar rule in this section that the manual
 does not state.
 
+### 6. A later number flag that converts clears the error an earlier one raised
+
+*Recorded 2026-10-13 on vox main `a0a2ecc`, while re-probing ARG-46 and
+ARG-47 for the new cast rule. Not adjudicated.*
+
+LANGUAGE.md:4926–4928: a `number` flag's token is read "by the rule under
+"Casting Rules"; a token that is not a number leaves the flag holding
+its default and raises the error flag". LANGUAGE.md:2248, in those
+Casting Rules: "A text that is a number clears the flag." Repro
+(`probes/arguments/D6.vox`):
+
+```
+a flag called retries is "-r" or "--retries", it is a number.
+a flag called patience is "-p" or "--patience", it is a number.
+Parse flags.
+On error print "Parse flags raised the error flag".
+Print "retries is {retries}, patience is {patience}".
+```
+
+| argv | output |
+|---|---|
+| `-p 3 -r x` | `Parse flags raised the error flag`, then `retries is 0, patience is 3` |
+| `-r x -p 3` | `retries is 0, patience is 3`, and no handler runs |
+
+Both runs hand `retries` the bad token `x`, and in both it holds its
+default `0`. Whether the program can tell depends only on the order of
+the tokens in argv: `Parse flags.` converts the tokens in argv order,
+and a later number token that converts clears the flag the earlier one
+raised, before any statement of the program runs. An `On error` placed
+straight after `Parse flags.` sees nothing, and so does one after the
+first read (the shape `ARG-46.vox` uses). With a single number flag the
+error always survives to the first `On error`.
+
+**The reading in which the compiler is right:** each flag is a
+conversion, the Casting Rules say a conversion of a text that is a
+number clears the flag, and `Parse flags.` is one sentence that
+performs several conversions in a row, so the flag after it reports the
+last one, exactly as two cast statements in a row would with no
+`On error` between them. Under that reading a program that needs to
+know whether every number flag was a number has to check each flag
+another way (a `text` flag read and cast by the program itself, with an
+`On error` per cast). The manual does not say which conversion the flag
+reports after `Parse flags.`, and its sentence "a token that is not a
+number ... raises the error flag" reads as a promise a program can
+observe. **Not filed.**
+
 ## Invariants this section justifies
 
 Sameness a corpus report will show that the manual (or the compiler's
@@ -325,11 +373,11 @@ enforced grammar) actually requires:
 - every flag declaration carries exactly two alias strings — no
   LANGUAGE.md line states it; enforced by the compiler, ARG-45, D5
 - every flag's type is one of `boolean`, `number`, `text` —
-  LANGUAGE.md:4811–4815, ARG-16
+  LANGUAGE.md:4922–4928, ARG-16
 - every flag schema declaration precedes the parse point —
-  LANGUAGE.md:4845, ARG-27
+  LANGUAGE.md:4958, ARG-27
 - no flag variable is read before the parse point —
-  LANGUAGE.md:4850, ARG-31
+  LANGUAGE.md:4963, ARG-31
 - at most one `Parse flags.` per program — no LANGUAGE.md line states
   it; enforced by the compiler, ARG-53
 
@@ -346,9 +394,9 @@ generated, so the entire flag surface is a single frozen shape:
 - always short alias first, long alias second (ARG-52 proves the order
   is free, and that neither has to be long)
 - the schema block is always contiguous and always the first thing in
-  the program — LANGUAGE.md:4847 explicitly permits code before and
+  the program — LANGUAGE.md:4960 explicitly permits code before and
   between declarations (ARG-28)
-- `Parse flags.` in every program — LANGUAGE.md:4841 makes it optional
+- `Parse flags.` in every program — LANGUAGE.md:4954 makes it optional
   (ARG-26)
 - no program ever declares a `required` flag (ARG-22)
 - no program ever passes `--` (ARG-35, ARG-36)
@@ -416,6 +464,12 @@ over-range number flag raises *and* returns the value wrapped modulo
 2^64) is the one worth a compiler person's eye: the error flag is set,
 so the contract is arguably kept, but the value left behind looks
 exactly like a real answer and keeps wrapping through arithmetic.
+
+**Update, 2026-10-13 (vox `a0a2ecc`):** D4 is resolved by vox #281 (an
+over-range token is now not a number and leaves the default). D6 is
+new: a later number flag that converts clears the error an earlier bad
+one raised, so whether a program can see the bad token depends on argv
+order.
 
 **For the next mapper**, four things this section cost time on:
 

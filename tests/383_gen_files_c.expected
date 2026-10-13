@@ -1,0 +1,507 @@
+--- FIL-09: the File Properties worked example ---
+a text called 'cupboard path' is "{'the workspace'}/1example".
+open a file for writing at 'cupboard path' called cupboard.
+Write "jy6p8h43e9dzjrnrst5mbcxielsxvvorkec7tegz47yqesry1br8l1yb2fwk4k9h8hevfcd15ip3er8c8aav1neoqx8uysfot5a4vr75as7kp7z9fruwzef4g8zn" to cupboard.
+Close cupboard.
+open a file called cupboard for reading at 'cupboard path'.
+If cupboard's size is not 124 then, Print "ASSERT FIL-09: expected 124 got {cupboard's size}", Exit 95. Print cupboard's size.
+If cupboard's modified is less than 1 then, Print "ASSERT FIL-09: expected at least 1 got {cupboard's modified}", Exit 95. If cupboard's modified is greater than current time's unix then, Print "ASSERT FIL-09: expected at most {current time's unix} got {cupboard's modified}", Exit 95. Print "FIL-09 in range".
+a boolean called 'cupboard size guard fired' is false.
+If cupboard's size is greater than 0 then, Set 'cupboard size guard fired' to true. Print 'cupboard size guard fired'.
+If 'cupboard size guard fired' is false then, Print "ASSERT FIL-09: expected 1 got {'cupboard size guard fired'}", Exit 95. Print 'cupboard size guard fired'.
+Close cupboard.
+
+--- the same leaf, seed 2 ---
+a text called 'the inbox path' is "{'the workspace'}/2example".
+open a file for writing called 'the inbox' at 'the inbox path'.
+Write "estwumzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nswgszc9y2r218yi3ucfhltavhd8n7qymewp29mcsu81rnfh45s9x7a25dpe56bwzal8ych6mrqys" to 'the inbox'.
+Close 'the inbox'.
+open a file at 'the inbox path' for reading called 'the inbox'.
+If 'the inbox's size is not 125 then, Print "ASSERT FIL-09: expected 125 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+If 'the inbox's modified is less than 1 then, Print "ASSERT FIL-09: expected at least 1 got {'the inbox's modified}", Exit 95. If 'the inbox's modified is greater than current time's unix then, Print "ASSERT FIL-09: expected at most {current time's unix} got {'the inbox's modified}", Exit 95. Print "FIL-09 in range".
+a boolean called 'the inbox size guard fired' is false.
+If 'the inbox's size is greater than 1048576 then, Set 'the inbox size guard fired' to true. Print 'the inbox size guard fired'.
+If 'the inbox size guard fired' then, Print "ASSERT FIL-09: expected 0 got {'the inbox size guard fired'}", Exit 95. Print 'the inbox size guard fired'.
+Close 'the inbox'.
+
+--- the same leaf, nested ---
+  a text called 'cupboard path' is "{'the workspace'}/3example",
+  open a file for writing at 'cupboard path' called cupboard,
+  Write "jy6p8h43e9dzjrnrst5mbcxielsxvvorkec7tegz47yqesry1br8l1yb2fwk4k9h8hevfcd15ip3er8c8aav1neoqx8uysfot5a4vr75as7kp7z9fruwzef4g8zn" to cupboard,
+  Close cupboard,
+  open a file called cupboard for reading at 'cupboard path',
+  If cupboard's size is not 124 then, Print "ASSERT FIL-09: expected 124 got {cupboard's size}", Exit 95. Print cupboard's size,
+  If cupboard's modified is less than 1 then, Print "ASSERT FIL-09: expected at least 1 got {cupboard's modified}", Exit 95. If cupboard's modified is greater than current time's unix then, Print "ASSERT FIL-09: expected at most {current time's unix} got {cupboard's modified}", Exit 95. Print "FIL-09 in range",
+  a boolean called 'cupboard size guard fired' is false,
+  If cupboard's size is greater than 0 then, Set 'cupboard size guard fired' to true. Print 'cupboard size guard fired',
+  If 'cupboard size guard fired' is false then, Print "ASSERT FIL-09: expected 1 got {'cupboard size guard fired'}", Exit 95. Print 'cupboard size guard fired',
+  Close cupboard.
+
+--- FIL-15: a bare Boolean property as an If condition ---
+a list called 'the pallet' is [].
+If 'the pallet's length is not 0 then, Print "ASSERT FIL-15: expected 0 got {'the pallet's length}", Exit 95. Print 'the pallet's length.
+a boolean called 'the pallet empty guard fired' is false.
+If 'the pallet's empty then, Set 'the pallet empty guard fired' to true. Print 'the pallet empty guard fired'.
+If 'the pallet empty guard fired' is false then, Print "ASSERT FIL-15: expected 1 got {'the pallet empty guard fired'}", Exit 95. Print 'the pallet empty guard fired'.
+
+--- the same leaf, seed 1 ---
+a list called cupboard is ["C/in*"].
+If cupboard's length is not 1 then, Print "ASSERT FIL-15: expected 1 got {cupboard's length}", Exit 95. Print cupboard's length.
+a boolean called 'cupboard empty guard fired' is false.
+If cupboard's empty then, Set 'cupboard empty guard fired' to true. Print 'cupboard empty guard fired'.
+If 'cupboard empty guard fired' then, Print "ASSERT FIL-15: expected 0 got {'cupboard empty guard fired'}", Exit 95. Print 'cupboard empty guard fired'.
+
+--- the same leaf, nested ---
+  a list called 'the pallet' is [],
+  If 'the pallet's length is not 0 then, Print "ASSERT FIL-15: expected 0 got {'the pallet's length}", Exit 95. Print 'the pallet's length,
+  a boolean called 'the pallet empty guard fired' is false,
+  If 'the pallet's empty then, Set 'the pallet empty guard fired' to true. Print 'the pallet empty guard fired',
+  If 'the pallet empty guard fired' is false then, Print "ASSERT FIL-15: expected 1 got {'the pallet empty guard fired'}", Exit 95. Print 'the pallet empty guard fired'.
+
+--- FIL-16, FIL-19, FIL-20: index, first and last agree ---
+a list called cupboard is [-2742, 0007, 02, -00000590, -065571].
+a number called 'cupboard item count' is cupboard's length.
+a number called 'cupboard last item' is cupboard's last.
+If 'cupboard last item' is not -065571 then, Print "ASSERT FIL-20: expected the literal written last got {'cupboard last item'}", Exit 95. Print 'cupboard last item'.
+a number called 'cupboard tail by length' is element 'cupboard item count' of cupboard.
+If 'cupboard last item' is not 'cupboard tail by length' then, Print "ASSERT FIL-20: expected {'cupboard tail by length'} got {'cupboard last item'}", Exit 95. Print 'cupboard last item'.
+a number called 'cupboard element one' is element 1 of cupboard.
+If 'cupboard element one' is not -2742 then, Print "ASSERT FIL-16: expected the literal written first got {'cupboard element one'}", Exit 95. Print 'cupboard element one'.
+a number called 'cupboard element 2' is element 2 of cupboard.
+If 'cupboard element 2' is not 0007 then, Print "ASSERT FIL-16: expected the literal written at position 2 got {'cupboard element 2'}", Exit 95. Print 'cupboard element 2'.
+a number called 'cupboard first item' is cupboard's first.
+If 'cupboard first item' is not -2742 then, Print "ASSERT FIL-19: expected the literal written first got {'cupboard first item'}", Exit 95. Print 'cupboard first item'.
+a number called 'cupboard head by index' is element 1 of cupboard.
+If 'cupboard first item' is not 'cupboard head by index' then, Print "ASSERT FIL-19: expected {'cupboard head by index'} got {'cupboard first item'}", Exit 95. Print 'cupboard first item'.
+
+--- the same leaf, seed 134625 ---
+a list called 'the tally sheet' is ["o103xyo9wk", "tew8g", "khzfej9oyfjj", "clyoox3hfh", "ggw2hndz", "fgeo833"].
+a text called 'the tally sheet element one' is element 1 of 'the tally sheet'.
+If 'the tally sheet element one' is not "o103xyo9wk" then, Print "ASSERT FIL-16: expected the literal written first got {'the tally sheet element one'}", Exit 95. Print 'the tally sheet element one'.
+a text called 'the tally sheet element 1' is element 1 of 'the tally sheet'.
+If 'the tally sheet element 1' is not "o103xyo9wk" then, Print "ASSERT FIL-16: expected the literal written at position 1 got {'the tally sheet element 1'}", Exit 95. Print 'the tally sheet element 1'.
+a number called 'the tally sheet item count' is 'the tally sheet's length.
+a text called 'the tally sheet last item' is 'the tally sheet's last.
+If 'the tally sheet last item' is not "fgeo833" then, Print "ASSERT FIL-20: expected the literal written last got {'the tally sheet last item'}", Exit 95. Print 'the tally sheet last item'.
+a text called 'the tally sheet tail by length' is element 'the tally sheet item count' of 'the tally sheet'.
+If 'the tally sheet last item' is not 'the tally sheet tail by length' then, Print "ASSERT FIL-20: expected {'the tally sheet tail by length'} got {'the tally sheet last item'}", Exit 95. Print 'the tally sheet last item'.
+a text called 'the tally sheet first item' is 'the tally sheet's first.
+If 'the tally sheet first item' is not "o103xyo9wk" then, Print "ASSERT FIL-19: expected the literal written first got {'the tally sheet first item'}", Exit 95. Print 'the tally sheet first item'.
+a text called 'the tally sheet head by index' is element 1 of 'the tally sheet'.
+If 'the tally sheet first item' is not 'the tally sheet head by index' then, Print "ASSERT FIL-19: expected {'the tally sheet head by index'} got {'the tally sheet first item'}", Exit 95. Print 'the tally sheet first item'.
+
+--- the same leaf, nested ---
+  a list called cupboard is [-2742, 0007, 02, -00000590, -065571],
+  a number called 'cupboard item count' is cupboard's length,
+  a number called 'cupboard last item' is cupboard's last,
+  If 'cupboard last item' is not -065571 then, Print "ASSERT FIL-20: expected the literal written last got {'cupboard last item'}", Exit 95. Print 'cupboard last item',
+  a number called 'cupboard tail by length' is element 'cupboard item count' of cupboard,
+  If 'cupboard last item' is not 'cupboard tail by length' then, Print "ASSERT FIL-20: expected {'cupboard tail by length'} got {'cupboard last item'}", Exit 95. Print 'cupboard last item',
+  a number called 'cupboard element one' is element 1 of cupboard,
+  If 'cupboard element one' is not -2742 then, Print "ASSERT FIL-16: expected the literal written first got {'cupboard element one'}", Exit 95. Print 'cupboard element one',
+  a number called 'cupboard element 2' is element 2 of cupboard,
+  If 'cupboard element 2' is not 0007 then, Print "ASSERT FIL-16: expected the literal written at position 2 got {'cupboard element 2'}", Exit 95. Print 'cupboard element 2',
+  a number called 'cupboard first item' is cupboard's first,
+  If 'cupboard first item' is not -2742 then, Print "ASSERT FIL-19: expected the literal written first got {'cupboard first item'}", Exit 95. Print 'cupboard first item',
+  a number called 'cupboard head by index' is element 1 of cupboard,
+  If 'cupboard first item' is not 'cupboard head by index' then, Print "ASSERT FIL-19: expected {'cupboard head by index'} got {'cupboard first item'}", Exit 95. Print 'cupboard first item'.
+
+--- FIL-18: a computed index ---
+a list called 'the crate' is [005, -000000000094293, 9169595743, 00339, -0086252, -31171].
+a number called 'the crate position' is -591653.
+a number called 'the crate computed read' is element {'the crate position' add 591655} of 'the crate'.
+If 'the crate computed read' is not -000000000094293 then, Print "ASSERT FIL-18: expected the literal written at position 2 got {'the crate computed read'}", Exit 95. Print 'the crate computed read'.
+
+--- the same leaf, seed 2 ---
+a list called 'the inbox' is [0786173890, 0000, 0159, -4].
+a number called 'the inbox position' is 212031.
+Set 'the inbox position' to 'the inbox position' subtract 212030.
+a number called 'the inbox computed read' is element 'the inbox position' of 'the inbox'.
+If 'the inbox computed read' is not 0786173890 then, Print "ASSERT FIL-18: expected the literal written at position 1 got {'the inbox computed read'}", Exit 95. Print 'the inbox computed read'.
+
+--- the same leaf, seed 3 ---
+a list called 'the dispatch note' is [-7, -007, 6].
+a number called 'the dispatch note position' is 2.
+a number called 'the dispatch note computed read' is element 'the dispatch note position' of 'the dispatch note'.
+If 'the dispatch note computed read' is not -007 then, Print "ASSERT FIL-18: expected the literal written at position 2 got {'the dispatch note computed read'}", Exit 95. Print 'the dispatch note computed read'.
+
+--- the same leaf, nested ---
+  a list called 'the crate' is [005, -000000000094293, 9169595743, 00339, -0086252, -31171],
+  a number called 'the crate position' is -591653,
+  a number called 'the crate computed read' is element {'the crate position' add 591655} of 'the crate',
+  If 'the crate computed read' is not -000000000094293 then, Print "ASSERT FIL-18: expected the literal written at position 2 got {'the crate computed read'}", Exit 95. Print 'the crate computed read'.
+
+--- FIL-21: out-of-bounds reads yield a typed default ---
+a list called cupboard is ["lsxvv", "2fwk", "1neoqx8uysf", "ef4g8znl8gs2"].
+a number called 'cupboard missing position' is 0.
+a boolean called 'cupboard found an error already pending' is false.
+On error Set 'cupboard found an error already pending' to true.
+a boolean called 'cupboard read was out of bounds' is false.
+a text called 'pantry' is element 'cupboard missing position' of cupboard.
+On error Set 'cupboard read was out of bounds' to true.
+If 'cupboard read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'cupboard read was out of bounds'}", Exit 95. Print 'cupboard read was out of bounds'.
+If 'pantry' is not "" then, Print "ASSERT FIL-21: expected the empty text got a non-empty one", Exit 95. Print "FIL-21 empty text".
+
+--- the same leaf, seed 213817 ---
+a list called 'the crate' is [{}].
+a number called 'the crate missing position' is 4.
+a boolean called 'the crate found an error already pending' is false.
+On error Set 'the crate found an error already pending' to true.
+a boolean called 'the crate read was out of bounds' is false.
+a map called 'scratch' is element 'the crate missing position' of 'the crate'.
+On error Set 'the crate read was out of bounds' to true.
+If 'the crate read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'the crate read was out of bounds'}", Exit 95. Print 'the crate read was out of bounds'.
+If 'scratch's length is not 0 then, Print "ASSERT FIL-21: expected 0 got {'scratch's length}", Exit 95. Print 'scratch's length.
+
+--- the same leaf, seed 293007 ---
+a list called 'loading bay' is [[], [-178395, 003], [-99, -0], [000787527575, 0237]].
+a number called 'loading bay missing position' is -299.
+a boolean called 'loading bay found an error already pending' is false.
+On error Set 'loading bay found an error already pending' to true.
+a boolean called 'loading bay read was out of bounds' is false.
+a list called 'pantry' is element 'loading bay missing position' of 'loading bay'.
+On error Set 'loading bay read was out of bounds' to true.
+If 'loading bay read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'loading bay read was out of bounds'}", Exit 95. Print 'loading bay read was out of bounds'.
+If 'pantry's length is not 0 then, Print "ASSERT FIL-21: expected 0 got {'pantry's length}", Exit 95. Print 'pantry's length.
+
+--- the same leaf, seed 182141 ---
+a list called 'the waybill' is [000004, 000073].
+a boolean called 'the waybill found an error already pending' is false.
+On error Set 'the waybill found an error already pending' to true.
+a boolean called 'the waybill read was out of bounds' is false.
+a number called 'the dispatch note' is element 0 of 'the waybill'.
+On error Set 'the waybill read was out of bounds' to true.
+If 'the waybill read was out of bounds' is false then, Print "ASSERT FIL-21: expected 1 got {'the waybill read was out of bounds'}", Exit 95. Print 'the waybill read was out of bounds'.
+If 'the dispatch note' is not 0 then, Print "ASSERT FIL-21: expected 0 got {'the dispatch note'}", Exit 95. Print 'the dispatch note'.
+
+--- FIL-27, FIL-28, FIL-30, FIL-31: negative, zero, sign and the worked example ---
+a number called 'the tally sheet' is 0 subtract 27.
+If 'the tally sheet's sign is not -1 then, Print "ASSERT FIL-30: expected -1 got {'the tally sheet's sign}", Exit 95. Print 'the tally sheet's sign.
+a boolean called 'the tally sheet negative guard fired' is false.
+If 'the tally sheet's negative then, Set 'the tally sheet negative guard fired' to true. Print 'the tally sheet negative guard fired'.
+If 'the tally sheet negative guard fired' is false then, Print "ASSERT FIL-31: expected 1 got {'the tally sheet negative guard fired'}", Exit 95. Print 'the tally sheet negative guard fired'.
+If 'the tally sheet's absolute is not 27 then, Print "ASSERT FIL-31: expected 27 got {'the tally sheet's absolute}", Exit 95. Print 'the tally sheet's absolute.
+If 'the tally sheet's negative is false then, Print "ASSERT FIL-27: expected 1 got {'the tally sheet's negative}", Exit 95. Print 'the tally sheet's negative.
+If 'the tally sheet's zero then, Print "ASSERT FIL-28: expected 0 got {'the tally sheet's zero}", Exit 95. Print 'the tally sheet's zero.
+
+--- the same leaf, seed 3 ---
+a number called 'the dispatch note' is 0.
+If 'the dispatch note's sign is not 0 then, Print "ASSERT FIL-30: expected 0 got {'the dispatch note's sign}", Exit 95. Print 'the dispatch note's sign.
+If 'the dispatch note's negative then, Print "ASSERT FIL-27: expected 0 got {'the dispatch note's negative}", Exit 95. Print 'the dispatch note's negative.
+If 'the dispatch note's zero is false then, Print "ASSERT FIL-28: expected 1 got {'the dispatch note's zero}", Exit 95. Print 'the dispatch note's zero.
+a boolean called 'the dispatch note negative guard fired' is false.
+If 'the dispatch note's negative then, Set 'the dispatch note negative guard fired' to true. Print 'the dispatch note negative guard fired'.
+If 'the dispatch note negative guard fired' then, Print "ASSERT FIL-31: expected 0 got {'the dispatch note negative guard fired'}", Exit 95. Print 'the dispatch note negative guard fired'.
+If 'the dispatch note's absolute is not 0 then, Print "ASSERT FIL-31: expected 0 got {'the dispatch note's absolute}", Exit 95. Print 'the dispatch note's absolute.
+
+--- the same leaf, seed 1 ---
+a number called cupboard is 91.
+If cupboard's sign is not 1 then, Print "ASSERT FIL-30: expected 1 got {cupboard's sign}", Exit 95. Print cupboard's sign.
+If cupboard's negative then, Print "ASSERT FIL-27: expected 0 got {cupboard's negative}", Exit 95. Print cupboard's negative.
+If cupboard's zero then, Print "ASSERT FIL-28: expected 0 got {cupboard's zero}", Exit 95. Print cupboard's zero.
+a boolean called 'cupboard negative guard fired' is false.
+If cupboard's negative then, Set 'cupboard negative guard fired' to true. Print 'cupboard negative guard fired'.
+If 'cupboard negative guard fired' then, Print "ASSERT FIL-31: expected 0 got {'cupboard negative guard fired'}", Exit 95. Print 'cupboard negative guard fired'.
+If cupboard's absolute is not 91 then, Print "ASSERT FIL-31: expected 91 got {cupboard's absolute}", Exit 95. Print cupboard's absolute.
+
+--- the same leaf, nested ---
+  a number called 'the tally sheet' is 0 subtract 27,
+  If 'the tally sheet's sign is not -1 then, Print "ASSERT FIL-30: expected -1 got {'the tally sheet's sign}", Exit 95. Print 'the tally sheet's sign,
+  a boolean called 'the tally sheet negative guard fired' is false,
+  If 'the tally sheet's negative then, Set 'the tally sheet negative guard fired' to true. Print 'the tally sheet negative guard fired',
+  If 'the tally sheet negative guard fired' is false then, Print "ASSERT FIL-31: expected 1 got {'the tally sheet negative guard fired'}", Exit 95. Print 'the tally sheet negative guard fired',
+  If 'the tally sheet's absolute is not 27 then, Print "ASSERT FIL-31: expected 27 got {'the tally sheet's absolute}", Exit 95. Print 'the tally sheet's absolute,
+  If 'the tally sheet's negative is false then, Print "ASSERT FIL-27: expected 1 got {'the tally sheet's negative}", Exit 95. Print 'the tally sheet's negative,
+  If 'the tally sheet's zero then, Print "ASSERT FIL-28: expected 0 got {'the tally sheet's zero}", Exit 95. Print 'the tally sheet's zero.
+
+--- FIL-34: several rounds of appending ---
+a text called 'cupboard path' is "{'the workspace'}/4rounds".
+open a file called cupboard for writing at 'cupboard path'.
+Write "" to cupboard.
+Close cupboard.
+open a file at 'cupboard path' for appending called cupboard.
+Write "sy1zl2i4" to cupboard.
+If cupboard's size is not 8 then, Print "ASSERT FIL-34: expected 8 got {cupboard's size}", Exit 95. Print cupboard's size.
+Close cupboard.
+open a file for appending at 'cupboard path' called cupboard.
+Write "q1mwkk0vpu7ye5b4" to cupboard.
+If cupboard's size is not 24 then, Print "ASSERT FIL-34: expected 24 got {cupboard's size}", Exit 95. Print cupboard's size.
+Close cupboard.
+open a file for reading at 'cupboard path' called cupboard.
+a buffer called 'loading bay' is 31 bytes in size.
+Read from cupboard into 'loading bay'.
+a text called 'loading bay appended whole' is 'loading bay' as text.
+If 'loading bay' is not "sy1zl2i4q1mwkk0vpu7ye5b4" then, Print "ASSERT FIL-34: expected sy1zl2i4q1mwkk0vpu7ye5b4 got {'loading bay appended whole'}", Exit 95. Print 'loading bay'.
+Close cupboard.
+
+--- the same leaf, seed 2 ---
+a text called 'the inbox path' is "{'the workspace'}/5rounds".
+open a file at 'the inbox path' for writing called 'the inbox'.
+Write "twumzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0n" to 'the inbox'.
+Close 'the inbox'.
+open a file called 'the inbox' at 'the inbox path' for appending.
+Write "szc9y2r218yi3ucfhltavhd8n7qy" to 'the inbox'.
+If 'the inbox's size is not 75 then, Print "ASSERT FIL-34: expected 75 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+Close 'the inbox'.
+open a file at 'the inbox path' for appending called 'the inbox'.
+Write "wp29mcsu81rnfh45s9x7a25d" to 'the inbox'.
+If 'the inbox's size is not 99 then, Print "ASSERT FIL-34: expected 99 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+Close 'the inbox'.
+open a file for appending called 'the inbox' at 'the inbox path'.
+Write "56bwzal8ych6mrqys34oihqv" to 'the inbox'.
+If 'the inbox's size is not 123 then, Print "ASSERT FIL-34: expected 123 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+Close 'the inbox'.
+open a file called 'the inbox' at 'the inbox path' for appending.
+Write "klj1bse9eqdmres7v25" to 'the inbox'.
+If 'the inbox's size is not 142 then, Print "ASSERT FIL-34: expected 142 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+Close 'the inbox'.
+open a file at 'the inbox path' called 'the inbox' for appending.
+Write "gs0ugruqvyj273moq5zqe0al2x1l9nohmk099" to 'the inbox'.
+If 'the inbox's size is not 179 then, Print "ASSERT FIL-34: expected 179 got {'the inbox's size}", Exit 95. Print 'the inbox's size.
+Close 'the inbox'.
+open a file called 'the inbox' at 'the inbox path' for reading.
+a buffer called 'the sketchpad' is 180 bytes in size.
+Read from 'the inbox' into 'the sketchpad'.
+a text called 'the sketchpad appended whole' is 'the sketchpad' as text.
+If 'the sketchpad' is not "twumzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nszc9y2r218yi3ucfhltavhd8n7qywp29mcsu81rnfh45s9x7a25d56bwzal8ych6mrqys34oihqvklj1bse9eqdmres7v25gs0ugruqvyj273moq5zqe0al2x1l9nohmk099" then, Print "ASSERT FIL-34: expected twumzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nszc9y2r218yi3ucfhltavhd8n7qywp29mcsu81rnfh45s9x7a25d56bwzal8ych6mrqys34oihqvklj1bse9eqdmres7v25gs0ugruqvyj273moq5zqe0al2x1l9nohmk099 got {'the sketchpad appended whole'}", Exit 95. Print 'the sketchpad'.
+Close 'the inbox'.
+
+--- the same leaf, nested ---
+  a text called 'cupboard path' is "{'the workspace'}/6rounds",
+  open a file called cupboard for writing at 'cupboard path',
+  Write "" to cupboard,
+  Close cupboard,
+  open a file at 'cupboard path' for appending called cupboard,
+  Write "sy1zl2i4" to cupboard,
+  If cupboard's size is not 8 then, Print "ASSERT FIL-34: expected 8 got {cupboard's size}", Exit 95. Print cupboard's size,
+  Close cupboard,
+  open a file for appending at 'cupboard path' called cupboard,
+  Write "q1mwkk0vpu7ye5b4" to cupboard,
+  If cupboard's size is not 24 then, Print "ASSERT FIL-34: expected 24 got {cupboard's size}", Exit 95. Print cupboard's size,
+  Close cupboard,
+  open a file for reading at 'cupboard path' called cupboard,
+  a buffer called 'loading bay' is 31 bytes in size,
+  Read from cupboard into 'loading bay',
+  a text called 'loading bay appended whole' is 'loading bay' as text,
+  If 'loading bay' is not "sy1zl2i4q1mwkk0vpu7ye5b4" then, Print "ASSERT FIL-34: expected sy1zl2i4q1mwkk0vpu7ye5b4 got {'loading bay appended whole'}", Exit 95. Print 'loading bay',
+  Close cupboard.
+
+--- FIL-39: reopening for writing truncates ---
+a text called 'workbench path' is "{'the workspace'}/7overwrite".
+open a file at 'workbench path' called 'workbench' for writing.
+Write "6p8h43e9dzjrnrst5mbcxielsxvvorkec7tegz47yqesry1br8l1yb2fwk4k9h8hevfcd15ip3er8c8aav1neoqx8uysfot5a4vr75as7kp7z9fruwzef4g8znl8gs2h58ymzhsqdhi3lc5spgp3yjqkms6aaoakfbgkhle491z4dncjckh5m6javuuwlj6no93t6fcu496hdiici4ilqkcsl9ojsvw2swn5a5auj170cmij5t10dm0mwdqezl47svq0qfd76245s1sle86mblyd6a150vymym1c53730yxwv562nq35340ry1n3fb0vri5rvhvq81lviozlhlw1v3ik0dh6ircpwopf07yi6n49cp1yrvm8mu8pc1hw" to 'workbench'.
+If 'workbench's size is not 380 then, Print "ASSERT FIL-39: expected 380 got {'workbench's size}", Exit 95. Print 'workbench's size.
+Close 'workbench'.
+open a file at 'workbench path' called 'workbench' for writing.
+If 'workbench's size is not 0 then, Print "ASSERT FIL-39: expected 0 got {'workbench's size}", Exit 95. Print 'workbench's size.
+Write "ihuc474d7ftitevpnkygicb0zf65jkbc5f87p77frt80ic2p9cjva2gdgt0w7m48lnuu57mfk3dqisv3njqgurdtmmf8" to 'workbench'.
+If 'workbench's size is not 92 then, Print "ASSERT FIL-39: expected 92 got {'workbench's size}", Exit 95. Print 'workbench's size.
+Close 'workbench'.
+a boolean called 'workbench found an error already pending' is false.
+On error Set 'workbench found an error already pending' to true.
+a boolean called 'workbench write after close failed' is false.
+Write "hm242" to 'workbench'.
+On error Set 'workbench write after close failed' to true.
+If 'workbench write after close failed' is false then, Print "ASSERT FIL-80: expected 1 got {'workbench write after close failed'}", Exit 95. Print 'workbench write after close failed'.
+open a file called 'workbench' at 'workbench path' for reading.
+a buffer called cupboard is 391 bytes in size.
+Read from 'workbench' into cupboard.
+a text called 'workbench surviving bytes' is cupboard as text.
+If cupboard is not "ihuc474d7ftitevpnkygicb0zf65jkbc5f87p77frt80ic2p9cjva2gdgt0w7m48lnuu57mfk3dqisv3njqgurdtmmf8" then, Print "ASSERT FIL-39: expected ihuc474d7ftitevpnkygicb0zf65jkbc5f87p77frt80ic2p9cjva2gdgt0w7m48lnuu57mfk3dqisv3njqgurdtmmf8 got {'workbench surviving bytes'}", Exit 95. Print cupboard.
+Close 'workbench'.
+
+--- the same leaf, seed 2 ---
+a text called 'the sketchpad path' is "{'the workspace'}/8overwrite".
+open a file called 'the sketchpad' at 'the sketchpad path' for writing.
+Write "twumzsydfbajh2001jwpil3heuyor9l9b704mzf17c70t0nswgszc9y2r218yi3ucfhltavhd8n7qymewp29mcsu81rnfh45s9x7a25dpe56bwzal8ych6mrqys34oihqv5bklj1bse9eqdmres7v25jmgs0ugruqvyj273moq5zqe0al2x1l9nohmk099v0mddn03bwl391wqswnlw9c0yab11yueghlydphjde86ofbl3sqsbikhjags7wy8sd6m6xdp0c2rfb7rx03wunnxe9jc54q0nn9xysiqmqz3o2p1zb9o9qse9imp24" to 'the sketchpad'.
+If 'the sketchpad's size is not 316 then, Print "ASSERT FIL-39: expected 316 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+Close 'the sketchpad'.
+open a file for writing called 'the sketchpad' at 'the sketchpad path'.
+If 'the sketchpad's size is not 0 then, Print "ASSERT FIL-39: expected 0 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+Write "0gw1s2zgr274vmbr5d65ch2z2940a7nch8i5pyeowx70cmx4tztzjh64zatf2ymqlkhfk36h6asj32" to 'the sketchpad'.
+If 'the sketchpad's size is not 78 then, Print "ASSERT FIL-39: expected 78 got {'the sketchpad's size}", Exit 95. Print 'the sketchpad's size.
+Close 'the sketchpad'.
+a boolean called 'the sketchpad found an error already pending' is false.
+On error Set 'the sketchpad found an error already pending' to true.
+a boolean called 'the sketchpad write after close failed' is false.
+Write "hq65cg9rx8r3yes8yi" to 'the sketchpad'.
+On error Set 'the sketchpad write after close failed' to true.
+If 'the sketchpad write after close failed' is false then, Print "ASSERT FIL-80: expected 1 got {'the sketchpad write after close failed'}", Exit 95. Print 'the sketchpad write after close failed'.
+open a file at 'the sketchpad path' for reading called 'the sketchpad'.
+a buffer called 'the inbox' is 326 bytes in size.
+Read from 'the sketchpad' into 'the inbox'.
+a text called 'the sketchpad surviving bytes' is 'the inbox' as text.
+If 'the inbox' is not "0gw1s2zgr274vmbr5d65ch2z2940a7nch8i5pyeowx70cmx4tztzjh64zatf2ymqlkhfk36h6asj32" then, Print "ASSERT FIL-39: expected 0gw1s2zgr274vmbr5d65ch2z2940a7nch8i5pyeowx70cmx4tztzjh64zatf2ymqlkhfk36h6asj32 got {'the sketchpad surviving bytes'}", Exit 95. Print 'the inbox'.
+Close 'the sketchpad'.
+
+--- FIL-36, FIL-43: borrowed descriptors ---
+open a file for reading called 'the envelope' at 2147483647.
+If 'the envelope's descriptor is not 2147483647 then, Print "ASSERT FIL-43: expected 2147483647 got {'the envelope's descriptor}", Exit 95. Print 'the envelope's descriptor.
+a boolean called 'the envelope found an error already pending' is false.
+On error Set 'the envelope found an error already pending' to true.
+a boolean called 'the envelope dead descriptor refused' is false.
+a buffer called 'the sketchpad' is 41092 bytes in size.
+Read from 'the envelope' into 'the sketchpad'.
+On error Set 'the envelope dead descriptor refused' to true.
+If 'the envelope dead descriptor refused' is false then, Print "ASSERT FIL-80: expected 1 got {'the envelope dead descriptor refused'}", Exit 95. Print 'the envelope dead descriptor refused'.
+open a file for reading called 'the manifest' at 2147483647.
+If 'the manifest's descriptor is not 2147483647 then, Print "ASSERT FIL-43: expected 2147483647 got {'the manifest's descriptor}", Exit 95. Print 'the manifest's descriptor.
+a boolean called 'the manifest found an error already pending' is false.
+On error Set 'the manifest found an error already pending' to true.
+a boolean called 'the manifest dead descriptor refused' is false.
+a buffer called toolbox is 39091 bytes in size.
+Read from 'the manifest' into toolbox.
+On error Set 'the manifest dead descriptor refused' to true.
+If 'the manifest dead descriptor refused' is false then, Print "ASSERT FIL-80: expected 1 got {'the manifest dead descriptor refused'}", Exit 95. Print 'the manifest dead descriptor refused'.
+open a file called 'storeroom' at 0 for reading.
+If 'storeroom's descriptor is not 0 then, Print "ASSERT FIL-43: expected 0 got {'storeroom's descriptor}", Exit 95. Print 'storeroom's descriptor.
+
+--- the same leaf, seed 1 ---
+open a file at 1 called 'the pigeonhole' for writing.
+If 'the pigeonhole's descriptor is not 1 then, Print "ASSERT FIL-36: expected 1 got {'the pigeonhole's descriptor}", Exit 95. Print 'the pigeonhole's descriptor.
+open a file at 1 called 'the manifest' for writing.
+If 'the manifest's descriptor is not 1 then, Print "ASSERT FIL-36: expected 1 got {'the manifest's descriptor}", Exit 95. Print 'the manifest's descriptor.
+Write "lsxvvorke\n" to 'the manifest'.
+
+--- FIL-48: Read from standard input ---
+a buffer called 'the pigeonhole' is 35 bytes in size.
+a boolean called 'the pigeonhole read flagged' is false.
+Read from standard input into 'the pigeonhole'.
+On error Set 'the pigeonhole read flagged' to true.
+Print 'the pigeonhole read flagged'.
+If 'the pigeonhole's size is greater than 12 then, Print "ASSERT FIL-48: expected at most 12 got {'the pigeonhole's size}", Exit 95. Print "FIL-48 ok".
+If 'the pigeonhole's size is greater than 35 then, Print "ASSERT FIL-48: expected at most 35 got {'the pigeonhole's size}", Exit 95. Print "FIL-48 ok".
+a number called 'the pigeonhole bytes taken from standard input' is 'the pigeonhole's size.
+a buffer called 'outgoing post' is 15 bytes in size.
+a boolean called 'outgoing post read flagged' is false.
+Read from standard input into 'outgoing post'.
+On error Set 'outgoing post read flagged' to true.
+Print 'outgoing post read flagged'.
+If 'outgoing post's size is greater than 12 then, Print "ASSERT FIL-48: expected at most 12 got {'outgoing post's size}", Exit 95. Print "FIL-48 ok".
+If 'outgoing post's size is greater than 15 then, Print "ASSERT FIL-48: expected at most 15 got {'outgoing post's size}", Exit 95. Print "FIL-48 ok".
+Set 'the pigeonhole bytes taken from standard input' to 'the pigeonhole bytes taken from standard input' add 'outgoing post's size.
+If 'the pigeonhole bytes taken from standard input' is greater than 12 then, Print "ASSERT FIL-48: expected at most 12 got {'the pigeonhole bytes taken from standard input'}", Exit 95. Print "FIL-48 ok".
+
+--- the same leaf, seed 2 ---
+a buffer called toolbox is 26 bytes in size.
+a boolean called 'toolbox read flagged' is false.
+Read from standard input into toolbox.
+On error Set 'toolbox read flagged' to true.
+Print 'toolbox read flagged'.
+If toolbox's size is greater than 12 then, Print "ASSERT FIL-48: expected at most 12 got {toolbox's size}", Exit 95. Print "FIL-48 ok".
+If toolbox's size is greater than 26 then, Print "ASSERT FIL-48: expected at most 26 got {toolbox's size}", Exit 95. Print "FIL-48 ok".
+a number called 'toolbox bytes taken from standard input' is toolbox's size.
+If 'toolbox bytes taken from standard input' is greater than 12 then, Print "ASSERT FIL-48: expected at most 12 got {'toolbox bytes taken from standard input'}", Exit 95. Print "FIL-48 ok".
+
+--- FIL-50: Read line through a whole file ---
+a text called 'the postbag path' is "{'the workspace'}/9walk".
+open a file at 'the postbag path' called 'the postbag' for writing.
+Write "8g66cm6y6ay7z0elu28lm1c42ye\n60gtj6lf8n\nbb9yk\nrv8kpuv0yjd44yl8z47pp85n\n5obxuvfmtg9wp\nl2aj5r8t47n7vvqtqlsh5x\n8ia8peo6nixsrz5nn6s1j\ny7wokqof47r0c5z5g346x5w4" to 'the postbag'.
+Close 'the postbag'.
+open a file for reading called 'the postbag' at 'the postbag path'.
+Create a buffer called 'pantry'.
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 28 then, Print "ASSERT FIL-50: expected 28 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "8g66cm6y6ay7z0elu28lm1c42ye\n" then, Print "ASSERT FIL-50: expected line 1 to read 8g66cm6y6ay7z0elu28lm1c42ye got other bytes", Exit 95. Print "FIL-50 line 1 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 11 then, Print "ASSERT FIL-50: expected 11 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "60gtj6lf8n\n" then, Print "ASSERT FIL-50: expected line 2 to read 60gtj6lf8n got other bytes", Exit 95. Print "FIL-50 line 2 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 6 then, Print "ASSERT FIL-50: expected 6 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "bb9yk\n" then, Print "ASSERT FIL-50: expected line 3 to read bb9yk got other bytes", Exit 95. Print "FIL-50 line 3 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 25 then, Print "ASSERT FIL-50: expected 25 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "rv8kpuv0yjd44yl8z47pp85n\n" then, Print "ASSERT FIL-50: expected line 4 to read rv8kpuv0yjd44yl8z47pp85n got other bytes", Exit 95. Print "FIL-50 line 4 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 14 then, Print "ASSERT FIL-50: expected 14 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "5obxuvfmtg9wp\n" then, Print "ASSERT FIL-50: expected line 5 to read 5obxuvfmtg9wp got other bytes", Exit 95. Print "FIL-50 line 5 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 23 then, Print "ASSERT FIL-50: expected 23 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "l2aj5r8t47n7vvqtqlsh5x\n" then, Print "ASSERT FIL-50: expected line 6 to read l2aj5r8t47n7vvqtqlsh5x got other bytes", Exit 95. Print "FIL-50 line 6 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 22 then, Print "ASSERT FIL-50: expected 22 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "8ia8peo6nixsrz5nn6s1j\n" then, Print "ASSERT FIL-50: expected line 7 to read 8ia8peo6nixsrz5nn6s1j got other bytes", Exit 95. Print "FIL-50 line 7 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 24 then, Print "ASSERT FIL-50: expected 24 got {'pantry's size}", Exit 95. Print 'pantry's size.
+If 'pantry' is not "y7wokqof47r0c5z5g346x5w4" then, Print "ASSERT FIL-50: expected line 8 to read y7wokqof47r0c5z5g346x5w4 got other bytes", Exit 95. Print "FIL-50 line 8 matches".
+Read line from 'the postbag' into 'pantry'.
+If 'pantry's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'pantry's size}", Exit 95. Print 'pantry's size.
+Close 'the postbag'.
+
+--- the same leaf, seed 1 ---
+a text called 'cupboard path' is "{'the workspace'}/10walk".
+open a file for writing at 'cupboard path' called cupboard.
+Write "8h43e9dzjrnrst5mbcxie\nsxvvorkec7tegz47yq\nsry1br8l1yb2\nwk4k9h8hevfcd\n5\np3er8c8aav1neoq\n8uysfot5a4vr75as7kp7z9fruwze\n4g8znl8gs2h5\n" to cupboard.
+Close cupboard.
+open a file at 'cupboard path' called cupboard for reading.
+a buffer called 'workbench' is 33 bytes in size.
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 22 then, Print "ASSERT FIL-50: expected 22 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "8h43e9dzjrnrst5mbcxie\n" then, Print "ASSERT FIL-50: expected line 1 to read 8h43e9dzjrnrst5mbcxie got other bytes", Exit 95. Print "FIL-50 line 1 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 19 then, Print "ASSERT FIL-50: expected 19 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "sxvvorkec7tegz47yq\n" then, Print "ASSERT FIL-50: expected line 2 to read sxvvorkec7tegz47yq got other bytes", Exit 95. Print "FIL-50 line 2 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 13 then, Print "ASSERT FIL-50: expected 13 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "sry1br8l1yb2\n" then, Print "ASSERT FIL-50: expected line 3 to read sry1br8l1yb2 got other bytes", Exit 95. Print "FIL-50 line 3 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 14 then, Print "ASSERT FIL-50: expected 14 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "wk4k9h8hevfcd\n" then, Print "ASSERT FIL-50: expected line 4 to read wk4k9h8hevfcd got other bytes", Exit 95. Print "FIL-50 line 4 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 2 then, Print "ASSERT FIL-50: expected 2 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "5\n" then, Print "ASSERT FIL-50: expected line 5 to read 5 got other bytes", Exit 95. Print "FIL-50 line 5 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 16 then, Print "ASSERT FIL-50: expected 16 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "p3er8c8aav1neoq\n" then, Print "ASSERT FIL-50: expected line 6 to read p3er8c8aav1neoq got other bytes", Exit 95. Print "FIL-50 line 6 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 29 then, Print "ASSERT FIL-50: expected 29 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "8uysfot5a4vr75as7kp7z9fruwze\n" then, Print "ASSERT FIL-50: expected line 7 to read 8uysfot5a4vr75as7kp7z9fruwze got other bytes", Exit 95. Print "FIL-50 line 7 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 13 then, Print "ASSERT FIL-50: expected 13 got {'workbench's size}", Exit 95. Print 'workbench's size.
+If 'workbench' is not "4g8znl8gs2h5\n" then, Print "ASSERT FIL-50: expected line 8 to read 4g8znl8gs2h5 got other bytes", Exit 95. Print "FIL-50 line 8 matches".
+Read line from cupboard into 'workbench'.
+If 'workbench's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'workbench's size}", Exit 95. Print 'workbench's size.
+Close cupboard.
+
+--- the same leaf, nested ---
+  a text called 'the postbag path' is "{'the workspace'}/11walk",
+  open a file at 'the postbag path' called 'the postbag' for writing,
+  Write "8g66cm6y6ay7z0elu28lm1c42ye\n60gtj6lf8n\nbb9yk\nrv8kpuv0yjd44yl8z47pp85n\n5obxuvfmtg9wp\nl2aj5r8t47n7vvqtqlsh5x\n8ia8peo6nixsrz5nn6s1j\ny7wokqof47r0c5z5g346x5w4" to 'the postbag',
+  Close 'the postbag',
+  open a file for reading called 'the postbag' at 'the postbag path',
+  Create a buffer called 'pantry',
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 28 then, Print "ASSERT FIL-50: expected 28 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "8g66cm6y6ay7z0elu28lm1c42ye\n" then, Print "ASSERT FIL-50: expected line 1 to read 8g66cm6y6ay7z0elu28lm1c42ye got other bytes", Exit 95. Print "FIL-50 line 1 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 11 then, Print "ASSERT FIL-50: expected 11 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "60gtj6lf8n\n" then, Print "ASSERT FIL-50: expected line 2 to read 60gtj6lf8n got other bytes", Exit 95. Print "FIL-50 line 2 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 6 then, Print "ASSERT FIL-50: expected 6 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "bb9yk\n" then, Print "ASSERT FIL-50: expected line 3 to read bb9yk got other bytes", Exit 95. Print "FIL-50 line 3 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 25 then, Print "ASSERT FIL-50: expected 25 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "rv8kpuv0yjd44yl8z47pp85n\n" then, Print "ASSERT FIL-50: expected line 4 to read rv8kpuv0yjd44yl8z47pp85n got other bytes", Exit 95. Print "FIL-50 line 4 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 14 then, Print "ASSERT FIL-50: expected 14 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "5obxuvfmtg9wp\n" then, Print "ASSERT FIL-50: expected line 5 to read 5obxuvfmtg9wp got other bytes", Exit 95. Print "FIL-50 line 5 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 23 then, Print "ASSERT FIL-50: expected 23 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "l2aj5r8t47n7vvqtqlsh5x\n" then, Print "ASSERT FIL-50: expected line 6 to read l2aj5r8t47n7vvqtqlsh5x got other bytes", Exit 95. Print "FIL-50 line 6 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 22 then, Print "ASSERT FIL-50: expected 22 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "8ia8peo6nixsrz5nn6s1j\n" then, Print "ASSERT FIL-50: expected line 7 to read 8ia8peo6nixsrz5nn6s1j got other bytes", Exit 95. Print "FIL-50 line 7 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 24 then, Print "ASSERT FIL-50: expected 24 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  If 'pantry' is not "y7wokqof47r0c5z5g346x5w4" then, Print "ASSERT FIL-50: expected line 8 to read y7wokqof47r0c5z5g346x5w4 got other bytes", Exit 95. Print "FIL-50 line 8 matches",
+  Read line from 'the postbag' into 'pantry',
+  If 'pantry's size is not 0 then, Print "ASSERT FIL-54: expected 0 got {'pantry's size}", Exit 95. Print 'pantry's size,
+  Close 'the postbag'.
+
+--- the path and stdin leaves with no file I/O and no stdin committed ---
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+emits a file open: 0
+reads standard input: 0
+borrows descriptor 0: 0

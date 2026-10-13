@@ -1,0 +1,30 @@
+(PRC-22b - device nodes with the path as a buffer and the numbers as
+ variables, both accepted; "b" and "c" are refused unprivileged (EPERM,
+ or EEXIST on a path already taken) and nothing appears. strace:
+ mknod(path, S_IFBLK|0666, makedev(0x7, 0)) = -1 EPERM. Shape of 'gen
+ leaf process device node refusal', kind 427 (process batch C,
+ 2026-10-05). Never type "p" (D1).
+ Ran, from the repo root, on the installed vox v0.4.15:
+   VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox \
+   docs/ledger/probes/process-control/PRC-22b.vox -o p && ./p
+ expected output:
+   the block node was refused
+   no node appeared
+   the taken path was refused
+   the file is still there
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/process-control".
+a buffer called gizmo is "vf_scratch/process-control/scratch_gizmo".
+a number called 'major number' is 7.
+a number called 'minor number' is 0.
+Create a device node called gizmo with type "b" major 'major number' minor 'minor number'.
+On error print "the block node was refused".
+If gizmo is not available then, print "no node appeared".
+open a file for writing called scribe at "vf_scratch/process-control/scratch_taken".
+Write "taken" to scribe.
+Close scribe.
+Create a device node called "vf_scratch/process-control/scratch_taken" with type "c" major 1 minor 3.
+On error print "the taken path was refused".
+If "vf_scratch/process-control/scratch_taken" is available then, print "the file is still there".
+Delete the file "vf_scratch/process-control/scratch_taken".

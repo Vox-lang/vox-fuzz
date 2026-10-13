@@ -1,11 +1,18 @@
-(FLW-42 (undocumented precision): the exit code is the POSIX process
- status, so it is taken modulo 256 - `Exit 300.` leaves status 44. The
- code may also be a variable rather than a literal (hand-run separately:
- `Exit code.` with code=7 exits 7).
+(FLW-42: the exit code is 0 to 255; a code computed outside that range
+ when the program runs exits with 255 (LANGUAGE.md:2423-2426). `code`
+ holds two numbers over the program, so the compiler cannot prove its
+ value and the check happens at run time. The code may be a variable.
+ A code the compiler CAN prove is refused instead: `Exit 300.` and
+ `quit -1.` each fail to compile with "cannot exit with code 300" (or -1)
+ and the note "an exit code is between 0 and 255" (hand-run 2026-10-13).
+ Up to vox 0.4.15 the code was taken modulo 256 and this probe was
+ `Exit 300.`, exiting 44. Re-recorded 2026-10-13 on vox main a0a2ecc.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FLW-42.vox -o p && ./p
  expected output:
    before
-   exit 44
+   exit 255
 )
+a number called code is 7.
+Set code to code add 293.
 print "before".
-Exit 300.
+Exit code.

@@ -2,14 +2,50 @@
  This probe needs input on stdin; the recorded command supplies it.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-48.vox -o p && printf 'sky\nsea\n' | ./p
- actual output:
-   8
-   sky
-   sea
-  
+ Extended 2026-10-05 (files batch C): appended rendered shapes of
+ 'gen leaf standard input read'. The original lines read the whole input
+ first, so the appended reads meet EOF - the bounds still hold. Run with
+ the command below, not the original printf.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-48.vox -o p && printf 'hello world, this is the input\nsecond line\n' | ./p
+ exit code 0; actual output:
+   43
+   hello world, this is the input
+   second line
+   
+   1
+   FIL-48 ok
+   FIL-48 ok
+   FIL-48 ok
+   1
+   FIL-48 ok
+   FIL-48 ok
+   FIL-48 ok
 )
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
 a buffer called bulk is 64 bytes in size.
 Read from standard input into bulk.
 print bulk's size.
 print bulk.
+a text called 'the workspace' is "vf_scratch/files/fil-48-c1".
+Create a directory called 'the workspace'.
+a buffer called 'storeroom' is 19 bytes in size.
+a boolean called 'storeroom read flagged' is false.
+Read from standard input into 'storeroom'.
+On error Set 'storeroom read flagged' to true.
+Print 'storeroom read flagged'.
+If 'storeroom's size is greater than 43 then, Print "ASSERT FIL-48: expected at most 43 got {'storeroom's size}", Exit 95. Print "FIL-48 ok".
+If 'storeroom's size is greater than 19 then, Print "ASSERT FIL-48: expected at most 19 got {'storeroom's size}", Exit 95. Print "FIL-48 ok".
+a number called 'storeroom bytes taken from standard input' is 'storeroom's size.
+If 'storeroom bytes taken from standard input' is greater than 43 then, Print "ASSERT FIL-48: expected at most 43 got {'storeroom bytes taken from standard input'}", Exit 95. Print "FIL-48 ok".
+a text called 'the workspace' is "vf_scratch/files/fil-48-c2".
+Create a directory called 'the workspace'.
+a buffer called 'the tally sheet' is 14 bytes in size.
+a boolean called 'the tally sheet read flagged' is false.
+Read from standard input into 'the tally sheet'.
+On error Set 'the tally sheet read flagged' to true.
+Print 'the tally sheet read flagged'.
+If 'the tally sheet's size is greater than 43 then, Print "ASSERT FIL-48: expected at most 43 got {'the tally sheet's size}", Exit 95. Print "FIL-48 ok".
+If 'the tally sheet's size is greater than 14 then, Print "ASSERT FIL-48: expected at most 14 got {'the tally sheet's size}", Exit 95. Print "FIL-48 ok".
+a number called 'the tally sheet bytes taken from standard input' is 'the tally sheet's size.
+If 'the tally sheet bytes taken from standard input' is greater than 43 then, Print "ASSERT FIL-48: expected at most 43 got {'the tally sheet bytes taken from standard input'}", Exit 95. Print "FIL-48 ok".

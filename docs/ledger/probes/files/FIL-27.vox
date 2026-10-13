@@ -1,0 +1,61 @@
+(FIL-27: negative is true iff the number is below 0; FIL-28 zero iff it is 0; FIL-30 sign is -1, 0 or 1; FIL-31 the worked example.
+ Also covers: FIL-28, FIL-30, FIL-31. Three rendered shapes of 'gen leaf
+ number sign properties': a negative written as 0 subtract its
+ magnitude, zero, and a positive.
+ Run from the vox-fuzz worktree root; the probe creates everything it
+ needs under vf_scratch/files/ and touches nothing else.
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-27.vox -o p && ./p
+ exit code 0; actual output:
+   -1
+   1
+   1
+   27
+   1
+   0
+   0
+   0
+   1
+   0
+   0
+   0
+   -1
+   1
+   0
+   1
+   1
+   10884714200087412
+)
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
+a text called 'the workspace' is "vf_scratch/files/fil-27-c1".
+Create a directory called 'the workspace'.
+a number called 'the gate' is 1.
+If 'the gate' is 1 then,
+  a number called 'the tally sheet' is 0 subtract 27,
+  If 'the tally sheet's sign is not -1 then, Print "ASSERT FIL-30: expected -1 got {'the tally sheet's sign}", Exit 95. Print 'the tally sheet's sign,
+  a boolean called 'the tally sheet negative guard fired' is false,
+  If 'the tally sheet's negative then, Set 'the tally sheet negative guard fired' to true. Print 'the tally sheet negative guard fired',
+  If 'the tally sheet negative guard fired' is false then, Print "ASSERT FIL-31: expected 1 got {'the tally sheet negative guard fired'}", Exit 95. Print 'the tally sheet negative guard fired',
+  If 'the tally sheet's absolute is not 27 then, Print "ASSERT FIL-31: expected 27 got {'the tally sheet's absolute}", Exit 95. Print 'the tally sheet's absolute,
+  If 'the tally sheet's negative is false then, Print "ASSERT FIL-27: expected 1 got {'the tally sheet's negative}", Exit 95. Print 'the tally sheet's negative,
+  If 'the tally sheet's zero then, Print "ASSERT FIL-28: expected 0 got {'the tally sheet's zero}", Exit 95. Print 'the tally sheet's zero.
+a text called 'the workspace' is "vf_scratch/files/fil-27-c2".
+Create a directory called 'the workspace'.
+a number called 'the envelope' is 0.
+If 'the envelope's sign is not 0 then, Print "ASSERT FIL-30: expected 0 got {'the envelope's sign}", Exit 95. Print 'the envelope's sign.
+If 'the envelope's negative then, Print "ASSERT FIL-27: expected 0 got {'the envelope's negative}", Exit 95. Print 'the envelope's negative.
+If 'the envelope's zero is false then, Print "ASSERT FIL-28: expected 1 got {'the envelope's zero}", Exit 95. Print 'the envelope's zero.
+a boolean called 'the envelope negative guard fired' is false.
+If 'the envelope's negative then, Set 'the envelope negative guard fired' to true. Print 'the envelope negative guard fired'.
+If 'the envelope negative guard fired' then, Print "ASSERT FIL-31: expected 0 got {'the envelope negative guard fired'}", Exit 95. Print 'the envelope negative guard fired'.
+If 'the envelope's absolute is not 0 then, Print "ASSERT FIL-31: expected 0 got {'the envelope's absolute}", Exit 95. Print 'the envelope's absolute.
+a text called 'the workspace' is "vf_scratch/files/fil-27-c3".
+Create a directory called 'the workspace'.
+a number called 'loading bay' is -10884714200087412.
+If 'loading bay's sign is not -1 then, Print "ASSERT FIL-30: expected -1 got {'loading bay's sign}", Exit 95. Print 'loading bay's sign.
+If 'loading bay's negative is false then, Print "ASSERT FIL-27: expected 1 got {'loading bay's negative}", Exit 95. Print 'loading bay's negative.
+If 'loading bay's zero then, Print "ASSERT FIL-28: expected 0 got {'loading bay's zero}", Exit 95. Print 'loading bay's zero.
+a boolean called 'loading bay negative guard fired' is false.
+If 'loading bay's negative then, Set 'loading bay negative guard fired' to true. Print 'loading bay negative guard fired'.
+If 'loading bay negative guard fired' is false then, Print "ASSERT FIL-31: expected 1 got {'loading bay negative guard fired'}", Exit 95. Print 'loading bay negative guard fired'.
+If 'loading bay's absolute is not 10884714200087412 then, Print "ASSERT FIL-31: expected 10884714200087412 got {'loading bay's absolute}", Exit 95. Print 'loading bay's absolute.

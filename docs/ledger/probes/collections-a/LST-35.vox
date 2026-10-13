@@ -2,7 +2,7 @@
  EXPRESSION form of `{...}` interpolation had no runtime-tag dispatch, so
  a nested list did not render there and instead printed a live heap
  address that changed between runs. LANGUAGE.md's two sentences
- documenting the limitation are gone in 0.4.10 (LANGUAGE.md:2498 then
+ documenting the limitation are gone in 0.4.10 (LANGUAGE.md:2565 then
  read "One limitation remains for this stage", where 0.4.9 read "Two" —
  and as of 0.4.15 (#111) that "one limitation" sentence is itself gone
  too, see LST-34, withdrawn).

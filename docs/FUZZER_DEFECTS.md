@@ -667,7 +667,7 @@ before it is measured:
   of merely tidier);
 - a period ends the statement unless it has a digit on both sides, where
   it is a decimal point (`3.14`; `3.` and `.5` are both parse errors —
-  LANGUAGE.md:1910 and `gen_literals.vox`), and a run of periods closing
+  LANGUAGE.md:1947 and `gen_literals.vox`), and a run of periods closing
   several clauses stays with the statement it ends;
 - string literals, parenthesised comments and quoted multi-word names
   are copied through untouched, by scanners that mirror `layout copy
@@ -1316,323 +1316,306 @@ worker's own `tests/450_gen_process_a.vox` already reset the flags by
 hand between calls, which is how the leaves' correct behaviour was known
 in the first place), so no `.expected` needed regenerating for this fix.
 
-## Defect 20 — the thing-equality leaf's "differing value" redraw guarded only zero; drawn things carry non-zero declared field defaults (found by the leaves night campaign, 2026-08-30)
+## Defect 22: kind 261's final check was inverted, so it reported a failure exactly when the directory removal succeeded (2026-10-05)
 
-`'gen leaf thing equality'` (`src/gen_things.vox`, ~line 930) asserts two
-fresh instances of the same thing equal (THG2-08), sets ONE instance's
-chosen field to a drawn literal, then asserts the pair now differ
-(THG2-09). The redraw loop guarding that literal was
-
-```
-While 'the differing value' is 0,
-    Set 'the differing literal' to 'literal integer',
-    Set 'the differing value' to 'the differing literal' as a number.
-```
-
-— it only re-rolled a literal that numerically parsed to 0. But drawn
-thing declarations carry EXPLICIT, non-zero field defaults (e.g. `a
-number called depth is -8`), and the leaf never set the FIRST instance's
-field at all — it relied on the field's own declared default matching
-the second instance's untouched field. When the redrawn literal happened
-to equal that default, both instances stayed equal after the Set, and
-THG2-09's "must differ" assertion (Exit 95) fired as a wrong-value
-finding, even though the compiler had done nothing wrong.
-
-Reach: seed 20260856, `--layout plain` under vox 0.4.14 —
-`ASSERT THG2-09: expected i1 to differ from i2`. The thing's `depth`
-field defaults to `-8`; the redraw drew the literal `-00008`, textually
-different from `-8` but numerically identical (this is why the original
-guard, and any bare-string fix, would have missed it — the fix must
-compare the parsed NUMBER, never the literal's text)
-(`vox-notes/evidence/2026-08-30-leaves-night/finding-thg2-09-d20/`).
-
-**Fix:** made THG2-09's guarantee structural instead of probabilistic.
-Both instances now get their own explicit Set, to two literals drawn
-distinct from EACH OTHER rather than from a hard-coded value:
+`src/gen_process.vox`'s `'gen leaf process directory remove'` (kind 261,
+PRC-06/07/08/09) created an outer directory with a child, tried to remove
+the outer one while the child was still there (PRC-09: the removal is
+`rmdir(2)`, which is not recursive), emptied it, removed it, and then
+emitted this final check (`src/gen_process.vox:191` at `39292e4`):
 
 ```
-a text called 'the first literal' is 'literal integer'.
-a number called 'the first value' is 'the first literal' as a number.
+a text called 'the gone assert' is "If {'the outer name'} is not available then, Print \"ASSERT PRC-08: expected missing got available\", Exit 95. Print \"removed\"".
+```
+
+The condition is the wrong way round. The message expects the directory
+to be missing, but `If <outer> is not available` fires when it IS missing,
+so the leaf exits 95 exactly when the removal worked. On a correct
+compiler, every program that drew this leaf would have been scored a
+wrong-value finding.
+
+**Proof.** On vox 0.4.15, this program removes the directory (it is gone
+from disk afterwards) and then prints `ASSERT PRC-08: expected missing
+got available` and exits 95:
+
+```
+a text called cupboard is "probe261d".
+Create a directory called cupboard.
+Remove the directory called cupboard.
+If cupboard is not available then, Print "ASSERT PRC-08: expected missing got available", Exit 95. Print "removed".
+```
+
+An earlier suspicion that the compiler read a stale directory state after
+`rmdir` came from this check. Re-run on 0.4.15, the program behind that
+suspicion prints `refusal flag 1` and `outer correctly gone`: the compiler
+was right and the check was inverted.
+
+Kind 261 was never registered in `'gen dispatch leaf'`, so no campaign
+drew it and no row in `SEEDS.md` comes from it. Only its direct golden in
+`tests/450_gen_process_a.vox` emitted it, and that test prints the source
+without running it.
+
+**How found:** by reading the leaf while writing kinds 420 to 422, which
+put the same rows on trial.
+
+**Status:** **retired** (2026-10-05). The leaf and every reference to it
+are deleted: its definition and comment in `gen_process.vox`, its two
+cases and its slot in the registration loop in
+`tests/450_gen_process_a.vox` (golden regenerated), and the comments in
+`gen_core.vox` and `gen_process.vox` that held it out. PRC-06 to PRC-09
+are covered with the correct sense by kinds 420 (`'gen leaf process
+directory removal spellings'`), 421 (`'gen leaf process directory removal
+is not recursive'`) and 422 (`'gen leaf process directory removal refuses
+a file'`), which all assert absence with `If <path> is available then,
+... Exit 95`. Slot 261 stays empty, because kind numbers are never reused.
+
+## Defect 23: a confined `vox --shared` build fails because the linker version script is written to `$TMPDIR=/tmp` (2026-10-05)
+
+The library-leaf prototype, which is not merged, builds each seed's
+library with `vox --shared` inside the per-seed scratch directory. Under
+`scripts/fuzz-confined.sh` the whole of `/` is bound read-only. `vox
+--shared` writes its linker version script to `$TMPDIR`
+(`/tmp/vox-<stem>-<pid>.map`, seen under strace), so every confined
+library build failed. The harness then reported "NOTHING COMPILED" and no
+finding, so a campaign that could not build a single library looked the
+same as a clean one.
+
+**Proof.** `bwrap --ro-bind / / … vox x.vox --shared -o libx.so` prints
+`Error writing version script: Read-only file system (os error 30)`. With
+`--tmpfs /tmp`, or with `TMPDIR` pointing inside the bind, it builds.
+
+**How found:** running the prototype's forced-draw seeds under bwrap.
+
+**Status:** affects only the unmerged library-leaf prototype; fixed there
+with `TMPDIR=.` in `compile vox shared`; not on main. Nothing on main
+builds with `--shared`. With the fix, 50 forced seeds (50001 to 50050)
+compiled 50/50 under bwrap.
+
+## Defect 24: kind 244 can draw its "missing" key equal to the key it has just set (2026-10-05)
+
+`src/gen_collections.vox`'s `'gen leaf map missing key typed default'`
+(kind 244, LST-49, on main since `8b70b65`) grows a map through `Set`,
+then reads a key it expects to be absent and asserts that the read
+raised the error flag. Both keys come from `'gen noun other than'`, which
+draws from `'the value nouns'`:
+
+- `'the grown key'` is drawn to differ from `'the provable key'`;
+- `'the grown missing key'` is drawn to differ from `'the provable missing key'`.
+
+Nothing keeps the two grown keys apart from each other. When they
+coincide, the "missing" read finds the key, the flag correctly stays down,
+and the leaf exits 95 with `ASSERT LST-49: expected the text-typed missing
+read to raise the error flag`. That is a false wrong-value finding.
+
+**Proof.** Seeds 61005087 and 61005153 (budget 40, random layout,
+generator `58c7877` plus the files and process batch C leaves) both hit
+it. In 61005153 both keys are `"the figure"`:
+
+```
+a map called spare is {}.
+Set spare's "the figure" to 43.
+a number called 'the item read' is 0.
+a text called 'the carton' is spare's "the figure".
+On error Set 'the item read' to 1.
+```
+
+The compiler is right. On vox 0.4.15, a read of the present key leaves
+the flag down and a read of an absent key raises it:
+
+```
+a map called spare is {}.
+Set spare's "the figure" to 43.
+a number called witness is 0.
+a text called carton is spare's "the figure".
+On error Set witness to 1.
+Print "flag {witness}".
+a text called other is spare's "never mentioned".
+On error Set witness to 2.
+Print "flag {witness}".
+```
+
+prints `flag 0` and then `flag 2`.
+
+**A second, smaller defect in the same leaf.** Its assertion messages
+print the witness variable's NAME where they mean its value (`got token`,
+`got 'the item read'`). The generator interpolates
+`{'the text witness name'}` when it builds the line, so the emitted
+program prints a fixed word, not the flag it is checking. The same
+pattern is in the provable, list and map checks of this leaf.
+
+**Status:** **fixed** (2026-10-05). `'the grown missing key'` is now drawn
+from `'the absent keys'`, as `'gen leaf absent key'` does, so it can never
+equal `'the grown key'`, which comes from `'the value nouns'`; the two
+vocabularies share no word. Every assertion message in the leaf now
+interpolates the value it checked when the program runs (`got
+{'the figure'}` prints `got 0`), including the three size and length
+checks, which had printed `got <name>'s size` as fixed text. Verified by
+emitting the leaf for 40 seeds and running each program on vox main
+`dfdfc7f` (all pass), and by changing one missing key by hand to the key
+that was set, which exits 95 with `ASSERT LST-49: expected the
+text-typed missing read to raise the error flag got 0`.
+
+## Defect 25: the depth-3 remap chain re-remaps, so 73 registered kinds cannot be drawn (2026-10-05)
+
+`'gen statement'` draws one flat `'rng below'` at depth 3 and then folds
+the tail of that draw onto each surface's reserved kind span with a chain
+of remaps:
+
+```
+If kind is greater than 49 and kind is less than 65 then,
+    Set kind to kind add 90.
+If kind is greater than 64 and kind is less than 70 then,
+    Set kind to kind add 40.
 ...
-a text called 'the second literal' is 'literal integer'.
-a number called 'the second value' is 'the second literal' as a number.
-While 'the second value' is 'the first value',
-    Set 'the second literal' to 'literal integer',
-    Set 'the second value' to 'the second literal' as a number.
 ```
 
-THG2-08's equal assert still runs before either Set (both instances are
-still freshly constructed and structurally equal at that point); both
-Sets follow, then THG2-09's not-equal assert. Two instances forced to
-two different values for the same field cannot be equal, regardless of
-what either type declares as that field's default — no dependence on
-knowing the field's default value at generation time.
+Each `If` is a separate statement, so each one tests the CURRENT value of
+`kind`, not the raw draw. The draw's own comment says every remapped
+value "lands above 100, outside every later test". That stopped being
+true once spans above 100 were added to the chain. A value that one If
+moves into a later If's range is moved again: raw 50 becomes 140 and
+then 245, and raw 91 becomes 187 and then 269.
 
-**Status:** fixed in `fix/d20-equality-leaf-default`. Re-probe:
-`./build/vox-fuzz gen --seed 20260856 --count 1 --layout plain` under
-the installed 0.4.14 now reports `findings: 0`. `tests/040_gen.expected`
-is unaffected (`gen leaf thing equality`'s draw count and rng calls
-changed shape, but 040 does not pin this leaf's raw output).
-
-**Related, not fixed here:** `'gen leaf thing nested equality'`
-(THG2-10, same file, ~line 963) uses the identical "redraw a single
-literal against 0" pattern to diverge the nested field on ONE instance,
-then relies on the OTHER instance's untouched nested field still
-sitting at its type's default to make the pair differ. It is exposed to
-the same false-positive class as D20 — a redrawn literal that lands on
-that nested field's own declared default would leave the two instances
-equal at the "must differ" assert. Not hand-confirmed against a live
-seed and out of this fix's scope (the brief named THG2-08/09 only); worth
-a targeted probe before the next things-surface batch.
-
-## Defect 21 — two process-leaf flags leaked state across in-process reruns of `'gen program'` (found by the master chain re-gating the process batch, 2026-08-30)
-
-`src/gen_process.vox` added two per-program flags, `gen_process_decoders_declared`
-and `gen_process_has_reaped`, and the leaves that check them
-(`'gen leaf process status decode functions'`, `'gen leaf process reaped
-status decode'`) were reset only by the worker's own golden test
-(`tests/450_gen_process_a.vox`), which calls each leaf directly and resets
-both flags by hand between calls. `gen_core.vox`'s `'gen program'` never
-reset them at all, so any TWO calls to `'gen program'` for the same seed
-within one process — exactly what `tests/220_determinism.vox` and
-`tests/270_layout.vox` both do, to prove the generator is deterministic
-and the layout randomiser is behaviour-preserving — carried the first
-call's leftover state into the second: a program that happened to draw
-kind 266 (the decoder functions) first would find `gen_process_decoders_declared`
-already true on its second in-process generation and silently skip
-declaring `'exit code of'`/`'signal of'` the second time, and a program
-that drew any of kinds 264-268 would find `gen_process_has_reaped` already
-true and silently drop kind 265's `-1` sentinel claim (PRC-58) the second
-time — a real behaviour difference between two supposedly identical runs
-of the same seed, not layout noise.
-
-**Fix:** a dedicated `'gen reset process state'` (`gen_process.vox`) sets
-both flags to `false`; `'gen program'` calls it once, grouped with the
-other plain per-program counters right after `'gen environment names
-reset'` — before the reseed (`'rng seed' of seed`), not after, since
-neither flag is draw-dependent (unlike the value-name cycle `'gen reset
-value names'` restarts just below, which has to follow the reseed for the
-opposite reason — see the comment above that call).
-
-**Status:** **fixed** (2026-08-30, process batch A). Verified: `./build/vox-fuzz
-gen --seed 42 --count 1 --budget 8` into two separate `--keep` dirs
-diffs clean; `tests/220_determinism.vox` and `tests/270_layout.vox` both
-pass under the installed 0.4.14; `tests/220_determinism.vox` also passes
-under the `stack-0415` build. No golden pinned the faulty shape (the
-worker's own `tests/450_gen_process_a.vox` already reset the flags by
-hand between calls, which is how the leaves' correct behaviour was known
-in the first place), so no `.expected` needed regenerating for this fix.
-
-## Defect 20 — the thing-equality leaf's "differing value" redraw guarded only zero; drawn things carry non-zero declared field defaults (found by the leaves night campaign, 2026-08-30)
-
-`'gen leaf thing equality'` (`src/gen_things.vox`, ~line 930) asserts two
-fresh instances of the same thing equal (THG2-08), sets ONE instance's
-chosen field to a drawn literal, then asserts the pair now differ
-(THG2-09). The redraw loop guarding that literal was
+**Proof that Vox runs the chain this way.** On vox 0.4.15 this program
+prints `269`:
 
 ```
-While 'the differing value' is 0,
-    Set 'the differing literal' to 'literal integer',
-    Set 'the differing value' to 'the differing literal' as a number.
+a number called kind is 91.
+If kind is greater than 88 and kind is less than 97 then,
+    Set kind to kind add 96.
+If kind is greater than 186 and kind is less than 188 then,
+    Set kind to kind add 82.
+Print kind.
 ```
 
-— it only re-rolled a literal that numerically parsed to 0. But drawn
-thing declarations carry EXPLICIT, non-zero field defaults (e.g. `a
-number called depth is -8`), and the leaf never set the FIRST instance's
-field at all — it relied on the field's own declared default matching
-the second instance's untouched field. When the redrawn literal happened
-to equal that default, both instances stayed equal after the Set, and
-THG2-09's "must differ" assertion (Exit 95) fired as a wrong-value
-finding, even though the compiler had done nothing wrong.
+**Which kinds are lost.** Running every raw value of the main `58c7877`
+draw (`'rng below' of 210`) through the chain exactly as written, plus the
+later 45-49 fold, and comparing the results with the kinds `'gen dispatch
+leaf'` registers, gives 73 registered kinds that no raw value reaches:
+105 to 116, 120 to 135, 140 to 157, 160 to 164, 180 to 195, 198 and 200
+to 204. That includes the whole `value` band (140 to 154). (Kind 99 is
+also never drawn, but on purpose: the draw's comment parks the file-write
+leaf there.) The kinds those values land on instead (for example 245 to
+269, 280 to 283, 313 to 319, 330 to 334, 340 to 342, 345 and 351 to 361)
+are drawn two or three times as often as intended. The batch C draw
+(`'rng below' of 229`, with its two new remaps placed first, before the
+chain) loses exactly the same 73.
 
-Reach: seed 20260856, `--layout plain` under vox 0.4.14 —
-`ASSERT THG2-09: expected i1 to differ from i2`. The thing's `depth`
-field defaults to `-8`; the redraw drew the literal `-00008`, textually
-different from `-8` but numerically identical (this is why the original
-guard, and any bare-string fix, would have missed it — the fix must
-compare the parsed NUMBER, never the literal's text)
-(`vox-notes/evidence/2026-08-30-leaves-night/finding-thg2-09-d20/`).
+**Corpus check.** `src/gen_collections.vox` holds 41 `ASSERT VAL-`
+assertions. None of them appears in 1000 programs from seeds 61005000 to
+61005999 (budget 40, this patch's generator), nor in 300 programs from
+seeds 51005000 to 51005299 (budget 40, main `58c7877`).
 
-**Fix:** made THG2-09's guarantee structural instead of probabilistic.
-Both instances now get their own explicit Set, to two literals drawn
-distinct from EACH OTHER rather than from a hard-coded value:
+**When it started.** The same calculation over the history of
+`src/gen_core.vox`: at `f12f28b` (2026-08-29, a draw of 97) every
+registered kind except the parked 99 is reachable. At `8b70b65`, the
+salvage of the parked leaf batches (dated 2026-09-01 in the draw's
+comment, committed 2026-09-02), the draw grew to 210 and 73 kinds were
+lost. Every later draw on main has the same 73.
 
-```
-a text called 'the first literal' is 'literal integer'.
-a number called 'the first value' is 'the first literal' as a number.
-...
-a text called 'the second literal' is 'literal integer'.
-a number called 'the second value' is 'the second literal' as a number.
-While 'the second value' is 'the first value',
-    Set 'the second literal' to 'literal integer',
-    Set 'the second value' to 'the second literal' as a number.
-```
+**What it means.**
 
-THG2-08's equal assert still runs before either Set (both instances are
-still freshly constructed and structurally equal at that point); both
-Sets follow, then THG2-09's not-equal assert. Two instances forced to
-two different values for the same field cannot be equal, regardless of
-what either type declares as that field's default — no dependence on
-knowing the field's default value at generation time.
+- Every campaign since 2026-09-01 has drawn none of these 73 kinds. Its
+  "0 findings" says nothing about them.
+- Every ledger row whose credit rests on one of these kinds has not been
+  put on trial by any campaign since then. Hand probes and direct golden
+  tests still ran, and they still hold, but no generated program has
+  tested the claim since.
+- The invariant reports since then have never seen these leaves'
+  vocabulary, so they cannot have flagged sameness in it.
 
-**Status:** fixed in `fix/d20-equality-leaf-default`. Re-probe:
-`./build/vox-fuzz gen --seed 20260856 --count 1 --layout plain` under
-the installed 0.4.14 now reports `findings: 0`. `tests/040_gen.expected`
-is unaffected (`gen leaf thing equality`'s draw count and rng calls
-changed shape, but 040 does not pin this leaf's raw output).
+**Status:** **fixed** (2026-10-05). `'gen statement'` now keeps the
+depth-3 draw in `'the raw draw'` and every remap If tests that raw value,
+bounded on both sides, and sets `kind` from it. The raw ranges are
+disjoint, so at most one If fires for any draw. The separate fold of raw
+45 to 49 onto 100 to 104, which ran after the chain and tested `kind`, now
+sits with the other depth-3 remaps and tests the raw draw too. No kind
+was renumbered. Running every raw value of the draw (`'rng below' of 229`)
+through the new code gives 229 distinct kinds, every registered kind
+except the parked 99, and no kind reached from two raw values. The draws
+at depths 2, 1 and 0 each have one remap and cannot move a value twice;
+the one kind they reach from two raw values is kind 1 at depths 2 and 1,
+which is the documented replacement for new-var (kind 18) below the top
+level. The comment above the draw is rewritten to say how it works.
+`tests/040_gen.expected` is regenerated, because the same seed now draws
+different leaves.
 
-**Related, not fixed here:** `'gen leaf thing nested equality'`
-(THG2-10, same file, ~line 963) uses the identical "redraw a single
-literal against 0" pattern to diverge the nested field on ONE instance,
-then relies on the OTHER instance's untouched nested field still
-sitting at its type's default to make the pair differ. It is exposed to
-the same false-positive class as D20 — a redrawn literal that lands on
-that nested field's own declared default would leave the two instances
-equal at the "must differ" assert. Not hand-confirmed against a live
-seed and out of this fix's scope (the brief named THG2-08/09 only); worth
-a targeted probe before the next things-surface batch.
+## Defect 26: EXP-94's rounding oracle caps only the whole part, so long literals still drift (2026-10-05)
 
-## Defect 21 — two process-leaf flags leaked state across in-process reruns of `'gen program'` (found by the master chain re-gating the process batch, 2026-08-30)
+`src/gen_expressions.vox`'s `'gen leaf round half up'` (EXP-94) declares
+a float `<whole>.<two digits>`, adds 0.5, casts to a number, and asserts
+the result is the whole part, or the whole part plus one when the fraction
+is 50 or more. The 2026-08-30 constraint caps the whole part at 15 digits,
+"inside float64's exact-integer range", but the two fraction digits make
+up to 17 significant digits. float64 cannot hold that many, and the
+leaf's own comment records that the oracle starts drifting at 15.
 
-`src/gen_process.vox` added two per-program flags, `gen_process_decoders_declared`
-and `gen_process_has_reaped`, and the leaves that check them
-(`'gen leaf process status decode functions'`, `'gen leaf process reaped
-status decode'`) were reset only by the worker's own golden test
-(`tests/450_gen_process_a.vox`), which calls each leaf directly and resets
-both flags by hand between calls. `gen_core.vox`'s `'gen program'` never
-reset them at all, so any TWO calls to `'gen program'` for the same seed
-within one process — exactly what `tests/220_determinism.vox` and
-`tests/270_layout.vox` both do, to prove the generator is deterministic
-and the layout randomiser is behaviour-preserving — carried the first
-call's leftover state into the second: a program that happened to draw
-kind 266 (the decoder functions) first would find `gen_process_decoders_declared`
-already true on its second in-process generation and silently skip
-declaring `'exit code of'`/`'signal of'` the second time, and a program
-that drew any of kinds 264-268 would find `gen_process_has_reaped` already
-true and silently drop kind 265's `-1` sentinel claim (PRC-58) the second
-time — a real behaviour difference between two supposedly identical runs
-of the same seed, not layout noise.
+**Proof.** Seed 51005068 (budget 40, plain layout, main `58c7877`)
+declares `255269670110833.49`. float64 stores it as `255269670110833.5`
+(the spacing there is 0.03125), so adding 0.5 and casting gives
+`255269670110834`. The program prints `ASSERT EXP-94: expected
+255269670110833 got 255269670110834` and exits 95. Any IEEE double
+computation agrees with the compiler, so this is a false wrong-value
+finding.
 
-**Fix:** a dedicated `'gen reset process state'` (`gen_process.vox`) sets
-both flags to `false`; `'gen program'` calls it once, grouped with the
-other plain per-program counters right after `'gen environment names
-reset'` — before the reseed (`'rng seed' of seed`), not after, since
-neither flag is draw-dependent (unlike the value-name cycle `'gen reset
-value names'` restarts just below, which has to follow the reseed for the
-opposite reason — see the comment above that call).
+**Status:** **fixed** (2026-10-05). The whole part is capped at 13 digits,
+so the literal has at most 15 significant digits. A sweep of 4000 literals
+(two thirds of them at 13 whole digits, with fractions 00, 01, 48, 49, 50,
+51, 98, 99 and random ones) rounds exactly as the oracle predicts on vox
+0.4.15 and on vox main `dfdfc7f`. The retained probe
+`docs/ledger/probes/expressions/EXP-94-precision.vox` records the largest
+13-digit cases and the 17-digit literal above as the contrast.
 
-**Status:** **fixed** (2026-08-30, process batch A). Verified: `./build/vox-fuzz
-gen --seed 42 --count 1 --budget 8` into two separate `--keep` dirs
-diffs clean; `tests/220_determinism.vox` and `tests/270_layout.vox` both
-pass under the installed 0.4.14; `tests/220_determinism.vox` also passes
-under the `stack-0415` build. No golden pinned the faulty shape (the
-worker's own `tests/450_gen_process_a.vox` already reset the flags by
-hand between calls, which is how the leaves' correct behaviour was known
-in the first place), so no `.expected` needed regenerating for this fix.
+## Defect 27: the stdin leaf closes descriptor 0, and two later leaves assume descriptor 0 can never be reused (2026-10-12)
 
-## Defect 20 — the thing-equality leaf's "differing value" redraw guarded only zero; drawn things carry non-zero declared field defaults (found by the leaves night campaign, 2026-08-30)
+`src/gen_files.vox`'s `'gen leaf stdin read'` (kind 43) opens standard
+input either by path (`at "/dev/stdin"`) or, on a coin flip, by number
+(`open a file for reading called sin<n> at 0`), reads from it twice, and
+ends with `Close sin<n>`. The manual calls a numeric `at` a borrowed
+descriptor (LANGUAGE.md:4041 at vox `dfdfc7f`) and does not say what
+`Close` does to one; vox closes the descriptor itself, so the process
+has no descriptor 0 from then on, and the next open gets 0.
 
-`'gen leaf thing equality'` (`src/gen_things.vox`, ~line 930) asserts two
-fresh instances of the same thing equal (THG2-08), sets ONE instance's
-chosen field to a drawn literal, then asserts the pair now differ
-(THG2-09). The redraw loop guarding that literal was
+Two leaves assume that can never happen:
 
-```
-While 'the differing value' is 0,
-    Set 'the differing literal' to 'literal integer',
-    Set 'the differing value' to 'the differing literal' as a number.
-```
+- `'gen leaf file descriptor'` (kind 123, FIL-02) asserts a freshly
+  opened handle's `descriptor` is at least 3, because "fds 0-2 are
+  stdio, so a real open never lands below that".
+- `'gen leaf file descriptor tracking'` (kind 135, FIL-93) starts its
+  floor at 0 and asserts every descriptor it opens is greater than the
+  floor, so a first open that gets descriptor 0 fails at once.
 
-— it only re-rolled a literal that numerically parsed to 0. But drawn
-thing declarations carry EXPLICIT, non-zero field defaults (e.g. `a
-number called depth is -8`), and the leaf never set the FIRST instance's
-field at all — it relied on the field's own declared default matching
-the second instance's untouched field. When the redrawn literal happened
-to equal that default, both instances stayed equal after the Set, and
-THG2-09's "must differ" assertion (Exit 95) fired as a wrong-value
-finding, even though the compiler had done nothing wrong.
+When kind 43 takes the numeric form and runs before either of them, the
+program exits 95 on a correct compiler. Both kinds were unreachable until
+Defect 25 was fixed, which is why no campaign saw this before.
 
-Reach: seed 20260856, `--layout plain` under vox 0.4.14 —
-`ASSERT THG2-09: expected i1 to differ from i2`. The thing's `depth`
-field defaults to `-8`; the redraw drew the literal `-00008`, textually
-different from `-8` but numerically identical (this is why the original
-guard, and any bare-string fix, would have missed it — the fix must
-compare the parsed NUMBER, never the literal's text)
-(`vox-notes/evidence/2026-08-30-leaves-night/finding-thg2-09-d20/`).
-
-**Fix:** made THG2-09's guarantee structural instead of probabilistic.
-Both instances now get their own explicit Set, to two literals drawn
-distinct from EACH OTHER rather than from a hard-coded value:
+**Proof.** On vox main `dfdfc7f`, this program prints `0`:
 
 ```
-a text called 'the first literal' is 'literal integer'.
-a number called 'the first value' is 'the first literal' as a number.
-...
-a text called 'the second literal' is 'literal integer'.
-a number called 'the second value' is 'the second literal' as a number.
-While 'the second value' is 'the first value',
-    Set 'the second literal' to 'literal integer',
-    Set 'the second value' to 'the second literal' as a number.
+open a file for reading called keyboard at 0.
+Close keyboard.
+open a file for writing called notebook at "notebook.txt".
+Print notebook's descriptor.
 ```
 
-THG2-08's equal assert still runs before either Set (both instances are
-still freshly constructed and structurally equal at that point); both
-Sets follow, then THG2-09's not-equal assert. Two instances forced to
-two different values for the same field cannot be equal, regardless of
-what either type declares as that field's default — no dependence on
-knowing the field's default value at generation time.
+The 1000-program run of 2026-10-05 (seeds 81005000 to 81005999, budget
+40) reported three wrong-value findings, and all three are this defect:
+seeds 81005329 and 81005395 print `ASSERT FIL-02: expected at least 3 got
+0`, and seed 81005389 prints `ASSERT FIL-93: expected greater than 0 got
+0`. Each reproduces on every run. In the same 1000 programs, exactly
+three close a borrowed descriptor 0 before a FIL-02 or FIL-93 check, and
+they are those three.
 
-**Status:** fixed in `fix/d20-equality-leaf-default`. Re-probe:
-`./build/vox-fuzz gen --seed 20260856 --count 1 --layout plain` under
-the installed 0.4.14 now reports `findings: 0`. `tests/040_gen.expected`
-is unaffected (`gen leaf thing equality`'s draw count and rng calls
-changed shape, but 040 does not pin this leaf's raw output).
+The newer files leaves (kinds 400 to 410) already avoid this: their
+borrowed-descriptor leaf never closes descriptors 0 and 1, because
+closing a borrowed descriptor closes the process's own stream.
 
-**Related, not fixed here:** `'gen leaf thing nested equality'`
-(THG2-10, same file, ~line 963) uses the identical "redraw a single
-literal against 0" pattern to diverge the nested field on ONE instance,
-then relies on the OTHER instance's untouched nested field still
-sitting at its type's default to make the pair differ. It is exposed to
-the same false-positive class as D20 — a redrawn literal that lands on
-that nested field's own declared default would leave the two instances
-equal at the "must differ" assert. Not hand-confirmed against a live
-seed and out of this fix's scope (the brief named THG2-08/09 only); worth
-a targeted probe before the next things-surface batch.
+**How found:** the 1000-program run that checked the Defect 25 fix.
 
-## Defect 21 — two process-leaf flags leaked state across in-process reruns of `'gen program'` (found by the master chain re-gating the process batch, 2026-08-30)
-
-`src/gen_process.vox` added two per-program flags, `gen_process_decoders_declared`
-and `gen_process_has_reaped`, and the leaves that check them
-(`'gen leaf process status decode functions'`, `'gen leaf process reaped
-status decode'`) were reset only by the worker's own golden test
-(`tests/450_gen_process_a.vox`), which calls each leaf directly and resets
-both flags by hand between calls. `gen_core.vox`'s `'gen program'` never
-reset them at all, so any TWO calls to `'gen program'` for the same seed
-within one process — exactly what `tests/220_determinism.vox` and
-`tests/270_layout.vox` both do, to prove the generator is deterministic
-and the layout randomiser is behaviour-preserving — carried the first
-call's leftover state into the second: a program that happened to draw
-kind 266 (the decoder functions) first would find `gen_process_decoders_declared`
-already true on its second in-process generation and silently skip
-declaring `'exit code of'`/`'signal of'` the second time, and a program
-that drew any of kinds 264-268 would find `gen_process_has_reaped` already
-true and silently drop kind 265's `-1` sentinel claim (PRC-58) the second
-time — a real behaviour difference between two supposedly identical runs
-of the same seed, not layout noise.
-
-**Fix:** a dedicated `'gen reset process state'` (`gen_process.vox`) sets
-both flags to `false`; `'gen program'` calls it once, grouped with the
-other plain per-program counters right after `'gen environment names
-reset'` — before the reseed (`'rng seed' of seed`), not after, since
-neither flag is draw-dependent (unlike the value-name cycle `'gen reset
-value names'` restarts just below, which has to follow the reseed for the
-opposite reason — see the comment above that call).
-
-**Status:** **fixed** (2026-08-30, process batch A). Verified: `./build/vox-fuzz
-gen --seed 42 --count 1 --budget 8` into two separate `--keep` dirs
-diffs clean; `tests/220_determinism.vox` and `tests/270_layout.vox` both
-pass under the installed 0.4.14; `tests/220_determinism.vox` also passes
-under the `stack-0415` build. No golden pinned the faulty shape (the
-worker's own `tests/450_gen_process_a.vox` already reset the flags by
-hand between calls, which is how the leaves' correct behaviour was known
-in the first place), so no `.expected` needed regenerating for this fix.
+**Status:** Open: verified 2026-10-12; not fixed. Two ways to fix it,
+which can be combined: kind 43 stops closing a handle it opened with
+`at 0`, as the newer leaves do; or FIL-02 and FIL-93 take their floor
+from a descriptor the program opens first, rather than from the
+assumption that 0 to 2 stay open. What `Close` should do to a borrowed
+descriptor is a separate question for the manual; the fix here does not
+depend on the answer.

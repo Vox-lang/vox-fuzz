@@ -1,0 +1,24 @@
+(EXP-94: the add-0.5 rounding idiom on the largest literal the leaf can
+ draw, a 13-digit whole part and two fraction digits, 15 significant
+ digits in all. Each lands on the side of the .50 boundary the leaf
+ predicts. The last pair is the contrast: 255269670110833.49 has 17
+ significant digits, float64 stores it as 255269670110833.5, and adding
+ 0.5 and casting gives 255269670110834. That is float64's precision, not
+ a compiler fault, and it is why the leaf caps the whole part at 13.
+ Ran: vox EXP-94-precision.vox -o p && ./p
+ expected output:
+   9999999999999
+   9999999999999
+   10000000000000
+   8796093022207
+   8796093022208
+   255269670110833
+   255269670110834
+)
+Print {9999999999998.99 add 0.5} as a number.
+Print {9999999999999.49 add 0.5} as a number.
+Print {9999999999999.50 add 0.5} as a number.
+Print {8796093022207.49 add 0.5} as a number.
+Print {8796093022207.50 add 0.5} as a number.
+Print 255269670110833.49 as a number.
+Print {255269670110833.49 add 0.5} as a number.

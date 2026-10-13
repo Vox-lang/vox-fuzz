@@ -1,13 +1,38 @@
 (FIL-15: the List Properties worked example compiles; a Boolean property reads directly as an If condition.
  Run from the vox-fuzz worktree root; the probe creates everything it
  needs under vf_scratch/files/ and touches nothing else.
- Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox docs/ledger/probes/files/FIL-15.vox -o p && ./p
- actual output:
+ Extended 2026-10-05 (files batch C): appended rendered shapes of
+ 'gen leaf list empty guard' - the bare-property guard on an empty list
+ (fires) and on a populated one (does not).
+ Ran (vox 0.4.15, 2026-10-05): VOX_CORE_PATH=/usr/share/vox/coreasm /usr/bin/vox docs/ledger/probes/files/FIL-15.vox -o p && ./p
+ exit code 0; actual output:
    3
    names is not empty, so the guard did not fire
+   0
+   1
+   1
+   2
+   0
+   0
 )
+Create a directory called "vf_scratch".
+Create a directory called "vf_scratch/files".
 a list called names is ["Alice", "Bob", "Charlie"].
 print names's length.
 If names's empty then,
     print "No names in list".
 print "names is not empty, so the guard did not fire".
+a text called 'the workspace' is "vf_scratch/files/fil-15-c1".
+Create a directory called 'the workspace'.
+a list called 'the pallet' is [].
+If 'the pallet's length is not 0 then, Print "ASSERT FIL-15: expected 0 got {'the pallet's length}", Exit 95. Print 'the pallet's length.
+a boolean called 'the pallet empty guard fired' is false.
+If 'the pallet's empty then, Set 'the pallet empty guard fired' to true. Print 'the pallet empty guard fired'.
+If 'the pallet empty guard fired' is false then, Print "ASSERT FIL-15: expected 1 got {'the pallet empty guard fired'}", Exit 95. Print 'the pallet empty guard fired'.
+a text called 'the workspace' is "vf_scratch/files/fil-15-c2".
+Create a directory called 'the workspace'.
+a list called 'notebook' is [96.13360, 002.4].
+If 'notebook's length is not 2 then, Print "ASSERT FIL-15: expected 2 got {'notebook's length}", Exit 95. Print 'notebook's length.
+a boolean called 'notebook empty guard fired' is false.
+If 'notebook's empty then, Set 'notebook empty guard fired' to true. Print 'notebook empty guard fired'.
+If 'notebook empty guard fired' then, Print "ASSERT FIL-15: expected 0 got {'notebook empty guard fired'}", Exit 95. Print 'notebook empty guard fired'.
