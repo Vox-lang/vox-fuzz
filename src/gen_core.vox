@@ -1172,6 +1172,32 @@ To 'gen dispatch leaf' with a number called kind and a text called indent and a 
         'gen leaf standard input read' of indent and nested.
     If kind is 410 then,
         'gen leaf read line through a file' of indent and nested.
+    ( ── format-string leaves, batch A, 2026-10-17 ──
+     docs/ledger/input-output.md FMT-07 to 17, 19 to 21, 24, 31 to 42,
+     44, 56, 58. Kinds 430-440, contiguous from 430; drawn only at depth
+     3, where a function definition (434, 440) is legal.)
+    If kind is 430 then,
+        'gen leaf format sinks agree' of indent and nested.
+    If kind is 431 then,
+        'gen leaf format path sink' of indent and nested.
+    If kind is 432 then,
+        'gen leaf format treating sink' of indent and nested.
+    If kind is 433 then,
+        'gen leaf format special names agree' of indent and nested.
+    If kind is 434 then,
+        'gen leaf format function argument' of indent and nested.
+    If kind is 435 then,
+        'gen leaf format radix verified' of indent and nested.
+    If kind is 436 then,
+        'gen leaf format width verified' of indent and nested.
+    If kind is 437 then,
+        'gen leaf format precision verified' of indent and nested.
+    If kind is 438 then,
+        'gen leaf format expression slots verified' of indent and nested.
+    If kind is 439 then,
+        'gen leaf format quoted names' of indent and nested.
+    If kind is 440 then,
+        'gen leaf branch declarations verified' of indent and nested.
 
 (Excludes the three On-error kinds (3, 5, 10). Adjudicated 2026-08-18:
  this is not a parser bug but the termination rule working as
@@ -1359,8 +1385,12 @@ To 'gen statement' with a number called depth and a text called indent and a boo
          among them, could not be drawn at all; docs/FUZZER_DEFECTS.md
          Defect 25 has the proof. A remap added here tests 'the raw draw'
          like the rest.)
-        Set 'the raw draw' to 'rng below' of 229,
+        Set 'the raw draw' to 'rng below' of 240,
         Set kind to 'the raw draw'.
+        ( ── format-string leaves, batch A, 2026-10-17: raw 229..239 to
+         kinds 430..440. The master re-derives this at merge. )
+        If 'the raw draw' is greater than 228 and 'the raw draw' is less than 240 then,
+            Set kind to 'the raw draw' add 201.
         If 'the raw draw' is greater than 209 and 'the raw draw' is less than 221 then,
             Set kind to 'the raw draw' add 190.
         If 'the raw draw' is greater than 220 and 'the raw draw' is less than 229 then,

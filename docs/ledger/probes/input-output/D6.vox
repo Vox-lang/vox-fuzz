@@ -1,0 +1,17 @@
+(D6 — a format string as the MATCH of a `treating` clause never fires
+ over a list whose elements are all text, though it renders to the
+ element: the first line prints kiwi where the manual's reading gives
+ matched. The same match fires over a mixed list (third line), and a
+ text variable holding the same value fires over the text list (second
+ line).
+ Ran: /usr/bin/vox D6.vox -o p && ./p   (vox 0.4.16, VOX_CORE_PATH unset)
+ expected output:
+   kiwi
+   matched
+   matched
+   3
+)
+a text called word is "kiwi".
+print each name from ["kiwi"] treating "{word}" as "matched".
+print each name from ["kiwi"] treating word as "matched".
+print each name from ["kiwi", 3] treating "{word}" as "matched".

@@ -1,0 +1,305 @@
+see "../src/rng.vox".
+see "../src/gen_literals.vox".
+see "../src/gen_manifest.vox".
+see "../src/gen_core.vox".
+see "../src/gen_buffers.vox".
+see "../src/gen_files.vox".
+see "../src/gen_collections.vox".
+see "../src/gen_text.vox".
+see "../src/gen_things.vox".
+see "../src/gen_flow.vox".
+see "../src/gen_misc.vox".
+see "../src/gen_process.vox".
+see "../src/gen_expressions.vox".
+see "../src/gen_keywords.vox".
+see "../src/gen_basics.vox".
+
+(format-string leaves, batch A - docs/ledger/input-output.md, kinds
+ 430-440. Each leaf is called directly off a pinned rng seed and its
+ emitted source printed in full, so the golden is the generated Vox
+ itself, the same convention tests/471_gen_process_c.vox uses; several
+ seeds per leaf so the drawn specifiers, widths, sinks and branches show
+ up in the golden. The scratch-gated leaves need gen_scratch_flag and
+ gen_does_file_io set by hand.)
+
+Set gen_scratch_flag to "'the workspace'".
+Set gen_does_file_io to true.
+'rng seed' of 7.
+'gen reset value names'.
+
+Print "--- FMT-07, 08, 24, 32, 33, 38, 39: one format string in every sink ---".
+'rng seed' of 11.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format sinks agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 12.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format sinks agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 13.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format sinks agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 14.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format sinks agree' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-31, 34: format strings as paths ---".
+'rng seed' of 21.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format path sink' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 22.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format path sink' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 23.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format path sink' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-35: format strings in a treating clause ---".
+'rng seed' of 31.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format treating sink' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 32.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format treating sink' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 33.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format treating sink' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-21, 37: special names agree across sinks ---".
+'rng seed' of 41.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format special names agree' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 42.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format special names agree' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-36: format strings as function arguments ---".
+'rng seed' of 51.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format function argument' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 52.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format function argument' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 53.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format function argument' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-13 to 17: the radix specifiers ---".
+'rng seed' of 61.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format radix verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 62.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format radix verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 63.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format radix verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 64.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format radix verified' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-09, 11, 12: default, width and zero width ---".
+'rng seed' of 71.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format width verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 72.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format width verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 73.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format width verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 74.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format width verified' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-10, 56: precision and width with precision ---".
+'rng seed' of 81.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format precision verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 82.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format precision verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 83.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format precision verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 84.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format precision verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 85.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format precision verified' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-19, 20: expressions in slots ---".
+'rng seed' of 91.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format expression slots verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 92.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format expression slots verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 93.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format expression slots verified' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-58: quoted one-word names in slots ---".
+'rng seed' of 101.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format quoted names' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 102.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format quoted names' of "" and false.
+Print 'gen text'.
+
+Print "--- FMT-40, 41, 42, 44: declarations in every branch ---".
+'rng seed' of 111.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf branch declarations verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 112.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf branch declarations verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 113.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf branch declarations verified' of "" and false.
+Print 'gen text'.
+
+Print "--- the same leaf, another seed ---".
+'rng seed' of 114.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf branch declarations verified' of "" and false.
+Print 'gen text'.
+
+Print "--- with no file I/O committed, the path sink stands aside ---".
+Set gen_does_file_io to false.
+'rng seed' of 120.
+'gen buffer names reset'.
+clear gen_out.
+'gen leaf format path sink' of "" and false.
+Print "the path sink emits a scratch path: {'gen text contains' of \"the workspace\"}".
+Set gen_does_file_io to true.
+
+Print "--- registration reachable: kinds 430-440 all dispatch ---".
+a number called 'the kind' is 430.
+While 'the kind' is less than 441,
+    clear gen_out,
+    'gen buffer names reset',
+    'gen dispatch leaf' of 'the kind' and "" and false,
+    Print "kind {'the kind'} emits a statement: {gen_out's length is greater than 0}",
+    Set 'the kind' to 'the kind' add 1.

@@ -1,0 +1,10 @@
+(D8 — a zero width beside a precision is refused, though a zero width
+ alone is a legal no-op (`{n:0}`, `{n:00}` print 63) and a width
+ composes with a precision (`{n:1.2}` prints 63.00).
+ Ran: /usr/bin/vox D8.vox -o p   (vox 0.4.16, VOX_CORE_PATH unset)
+ expected output:
+   error: '0.2' is not a format specifier Vox knows
+   (compile error - no binary is produced)
+)
+a number called n is 63.
+Print "[{n:0.2}]".
