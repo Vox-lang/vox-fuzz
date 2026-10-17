@@ -1,0 +1,817 @@
+--- FMT-07, 08, 24, 32, 33, 38, 39: one format string in every sink ---
+a number called 'outgoing post' is 4137847.
+a text called workbench is "".
+a buffer called 'the message slip' is "2dz".
+a buffer called 'the mailbag' is "{'outgoing post':.5}.{workbench} {'the message slip'}.".
+If 'the mailbag' is not "4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 4137847.00000. 2dz. got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+a buffer called scratch is 27 bytes in size.
+set scratch to "{'outgoing post':.5}.{workbench} {'the message slip'}.".
+If scratch is not "4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 4137847.00000. 2dz. got {scratch}", Exit 95.
+Print scratch.
+a buffer called 'the pigeonhole' is "aku8".
+copy "{'outgoing post':.5}.{workbench} {'the message slip'}." to 'the pigeonhole'.
+If 'the pigeonhole' is not "4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 4137847.00000. 2dz. got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a buffer called 'the dispatch note' is "2dz".
+append "{'outgoing post':.5}.{workbench} {'the message slip'}." to 'the dispatch note'.
+If 'the dispatch note' is not "2dz4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 2dz4137847.00000. 2dz. got {'the dispatch note'}", Exit 95.
+Print 'the dispatch note'.
+a text called 'the register' is "{'the workspace'}/1formatted".
+open a file called 'the sketchpad' for writing at 'the register'.
+Write "{'outgoing post':.5}.{workbench} {'the message slip'}." to 'the sketchpad'.
+Close 'the sketchpad'.
+open a file at 'the register' for reading called 'the sketchpad'.
+a buffer called satchel is 28 bytes in size.
+Read from 'the sketchpad' into satchel.
+Close 'the sketchpad'.
+If satchel is not "4137847.00000. 2dz." then, Print "ASSERT FMT-32: expected 4137847.00000. 2dz. got {satchel}", Exit 95.
+Print satchel.
+a text called notebook is "{'outgoing post':.5}.{workbench} {'the message slip'}.".
+If notebook is not "4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 4137847.00000. 2dz. got {notebook}", Exit 95.
+Print notebook.
+a text called ledger is "v1z".
+Set ledger to "{'outgoing post':.5}.{workbench} {'the message slip'}.".
+If ledger is not "4137847.00000. 2dz." then, Print "ASSERT FMT-33: expected 4137847.00000. 2dz. got {ledger}", Exit 95.
+Print ledger.
+
+--- the same leaf, another seed ---
+a number called 'the waybill' is 9223372036854775807.
+a text called notebook is "13v".
+a buffer called 'the sketchpad' is "wlf5qqb".
+a text called 'the dispatch note' is "{'the waybill':5.10};{notebook}_{'the sketchpad'}|".
+If 'the dispatch note' is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {'the dispatch note'}", Exit 95.
+Print 'the dispatch note'.
+a text called satchel is "c9q".
+Set satchel to "{'the waybill':5.10};{notebook}_{'the sketchpad'}|".
+If satchel is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {satchel}", Exit 95.
+Print satchel.
+a buffer called 'the drawer' is "{'the waybill':5.10};{notebook}_{'the sketchpad'}|".
+If 'the drawer' is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {'the drawer'}", Exit 95.
+Print 'the drawer'.
+a buffer called 'the crate' is 45 bytes in size.
+set 'the crate' to "{'the waybill':5.10};{notebook}_{'the sketchpad'}|".
+If 'the crate' is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {'the crate'}", Exit 95.
+Print 'the crate'.
+a buffer called pantry is "ky2jh06c".
+copy "{'the waybill':5.10};{notebook}_{'the sketchpad'}|" to pantry.
+If pantry is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {pantry}", Exit 95.
+Print pantry.
+a buffer called 'outgoing post' is "wlf5qqb".
+append "{'the waybill':5.10};{notebook}_{'the sketchpad'}|" to 'outgoing post'.
+If 'outgoing post' is not "wlf5qqb9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-33: expected wlf5qqb9223372036854775807.0000000000;13v_wlf5qqb| got {'outgoing post'}", Exit 95.
+Print 'outgoing post'.
+a text called 'the postbag' is "{'the workspace'}/2formatted".
+open a file at 'the postbag' called 'the inbox' for writing.
+Write "{'the waybill':5.10};{notebook}_{'the sketchpad'}|" to 'the inbox'.
+Close 'the inbox'.
+open a file called 'the inbox' at 'the postbag' for reading.
+a buffer called storeroom is 47 bytes in size.
+Read from 'the inbox' into storeroom.
+Close 'the inbox'.
+If storeroom is not "9223372036854775807.0000000000;13v_wlf5qqb|" then, Print "ASSERT FMT-32: expected 9223372036854775807.0000000000;13v_wlf5qqb| got {storeroom}", Exit 95.
+Print storeroom.
+
+--- the same leaf, another seed ---
+a number called 'the crate' is 48002795.
+a text called 'the pallet' is "72h3".
+a buffer called notebook is "eo6zohrz".
+a buffer called 'the postbag' is "eo6zohrz".
+append "04x{'the crate':o}#{'the pallet'}.{notebook}=" to 'the postbag'.
+If 'the postbag' is not "eo6zohrz04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected eo6zohrz04x0o267073353#72h3.eo6zohrz= got {'the postbag'}", Exit 95.
+Print 'the postbag'.
+a text called 'the manifest' is "{'the workspace'}/3formatted".
+open a file called 'the inbox' at 'the manifest' for writing.
+Write "04x{'the crate':o}#{'the pallet'}.{notebook}=" to 'the inbox'.
+Close 'the inbox'.
+open a file for reading called 'the inbox' at 'the manifest'.
+a buffer called 'the tray' is 31 bytes in size.
+Read from 'the inbox' into 'the tray'.
+Close 'the inbox'.
+If 'the tray' is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-32: expected 04x0o267073353#72h3.eo6zohrz= got {'the tray'}", Exit 95.
+Print 'the tray'.
+a text called storeroom is "04x{'the crate':o}#{'the pallet'}.{notebook}=".
+If storeroom is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected 04x0o267073353#72h3.eo6zohrz= got {storeroom}", Exit 95.
+Print storeroom.
+a text called ledger is "o7c".
+Set ledger to "04x{'the crate':o}#{'the pallet'}.{notebook}=".
+If ledger is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected 04x0o267073353#72h3.eo6zohrz= got {ledger}", Exit 95.
+Print ledger.
+a buffer called 'outgoing post' is "04x{'the crate':o}#{'the pallet'}.{notebook}=".
+If 'outgoing post' is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected 04x0o267073353#72h3.eo6zohrz= got {'outgoing post'}", Exit 95.
+Print 'outgoing post'.
+a buffer called 'the tally sheet' is 38 bytes in size.
+set 'the tally sheet' to "04x{'the crate':o}#{'the pallet'}.{notebook}=".
+If 'the tally sheet' is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected 04x0o267073353#72h3.eo6zohrz= got {'the tally sheet'}", Exit 95.
+Print 'the tally sheet'.
+a buffer called 'the message slip' is "84s".
+copy "04x{'the crate':o}#{'the pallet'}.{notebook}=" to 'the message slip'.
+If 'the message slip' is not "04x0o267073353#72h3.eo6zohrz=" then, Print "ASSERT FMT-33: expected 04x0o267073353#72h3.eo6zohrz= got {'the message slip'}", Exit 95.
+Print 'the message slip'.
+
+--- the same leaf, another seed ---
+a number called 'the register' is 9223372036854775807.
+a text called notebook is "gc4ebq".
+a buffer called 'the drawer' is "ae8vnp".
+a text called pantry is "v{'the register':022.11}={notebook}-{'the drawer'}-".
+If pantry is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {pantry}", Exit 95.
+Print pantry.
+a text called cupboard is "8nk".
+Set cupboard to "v{'the register':022.11}={notebook}-{'the drawer'}-".
+If cupboard is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {cupboard}", Exit 95.
+Print cupboard.
+a buffer called 'the pallet' is "v{'the register':022.11}={notebook}-{'the drawer'}-".
+If 'the pallet' is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {'the pallet'}", Exit 95.
+Print 'the pallet'.
+a buffer called satchel is 55 bytes in size.
+set satchel to "v{'the register':022.11}={notebook}-{'the drawer'}-".
+If satchel is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {satchel}", Exit 95.
+Print satchel.
+a buffer called 'the pigeonhole' is "gm4fh2c".
+copy "v{'the register':022.11}={notebook}-{'the drawer'}-" to 'the pigeonhole'.
+If 'the pigeonhole' is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a buffer called 'loading bay' is "ae8vnp".
+append "v{'the register':022.11}={notebook}-{'the drawer'}-" to 'loading bay'.
+If 'loading bay' is not "ae8vnpv9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-33: expected ae8vnpv9223372036854775807.00000000000=gc4ebq-ae8vnp- got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+a text called 'the crate' is "{'the workspace'}/4formatted".
+open a file called 'the sketchpad' at 'the crate' for writing.
+Write "v{'the register':022.11}={notebook}-{'the drawer'}-" to 'the sketchpad'.
+Close 'the sketchpad'.
+open a file at 'the crate' for reading called 'the sketchpad'.
+a buffer called 'the manifest' is 49 bytes in size.
+Read from 'the sketchpad' into 'the manifest'.
+Close 'the sketchpad'.
+If 'the manifest' is not "v9223372036854775807.00000000000=gc4ebq-ae8vnp-" then, Print "ASSERT FMT-32: expected v9223372036854775807.00000000000=gc4ebq-ae8vnp- got {'the manifest'}", Exit 95.
+Print 'the manifest'.
+
+--- FMT-31, 34: format strings as paths ---
+a number called 'the manifest' is 47729794263.
+a text called 'the dispatch note' is "bktl".
+Create directory called "{'the workspace'}/5dir{'the manifest':.24}".
+If "{'the workspace'}/5dir47729794263.000000000000000000000000" is not available then, Print "ASSERT FMT-34: expected the directory 5dir47729794263.000000000000000000000000 to exist", Exit 95.
+Print "the formatted directory exists".
+open a file at "{'the workspace'}/5dir{'the manifest':.24}/{'the dispatch note'}" for writing called 'the pallet'.
+Write "62apo09x18md703vijgem4yn1zfex0" to 'the pallet'.
+Close 'the pallet'.
+open a file for reading at "{'the workspace'}/5dir47729794263.000000000000000000000000/bktl" called 'the pallet'.
+a buffer called 'the crate' is 32 bytes in size.
+Read from 'the pallet' into 'the crate'.
+Close 'the pallet'.
+If 'the crate' is not "62apo09x18md703vijgem4yn1zfex0" then, Print "ASSERT FMT-31: expected 62apo09x18md703vijgem4yn1zfex0 got {'the crate'}", Exit 95.
+Print 'the crate'.
+Delete the file "{'the workspace'}/5dir{'the manifest':.24}/{'the dispatch note'}".
+Remove the directory called "{'the workspace'}/5dir{'the manifest':.24}".
+If "{'the workspace'}/5dir47729794263.000000000000000000000000" is available then, Print "ASSERT FMT-34: expected the directory 5dir47729794263.000000000000000000000000 to be gone", Exit 95.
+Print "the formatted directory is gone".
+
+--- the same leaf, another seed ---
+a number called 'loading bay' is 4.
+a text called 'the greeting' is "5b4cz8gu".
+Create a directory called "{'the workspace'}/6dir{'loading bay':o}".
+If "{'the workspace'}/6dir0o4" is not available then, Print "ASSERT FMT-34: expected the directory 6dir0o4 to exist", Exit 95.
+Print "the formatted directory exists".
+open a file called 'the pallet' at "{'the workspace'}/6dir{'loading bay':o}/{'the greeting'}" for writing.
+Write "73e4" to 'the pallet'.
+Close 'the pallet'.
+open a file for reading called 'the pallet' at "{'the workspace'}/6dir0o4/5b4cz8gu".
+a buffer called 'the mailbag' is 12 bytes in size.
+Read from 'the pallet' into 'the mailbag'.
+Close 'the pallet'.
+If 'the mailbag' is not "73e4" then, Print "ASSERT FMT-31: expected 73e4 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+Delete the file "{'the workspace'}/6dir{'loading bay':o}/{'the greeting'}".
+Remove the directory called "{'the workspace'}/6dir{'loading bay':o}".
+If "{'the workspace'}/6dir0o4" is available then, Print "ASSERT FMT-34: expected the directory 6dir0o4 to be gone", Exit 95.
+Print "the formatted directory is gone".
+
+--- the same leaf, another seed ---
+a number called 'the tray' is 444539226759.
+a text called 'the mailbag' is "9f36zwhf".
+Create a directory called "{'the workspace'}/7dir{'the tray':b}".
+If "{'the workspace'}/7dir110011110000000100110100100101010000111" is not available then, Print "ASSERT FMT-34: expected the directory 7dir110011110000000100110100100101010000111 to exist", Exit 95.
+Print "the formatted directory exists".
+open a file for writing at "{'the workspace'}/7dir{'the tray':b}/{'the mailbag'}" called 'the sketchpad'.
+Write "5no92s0d15mfltsy5jbj71v14w0s8bln72" to 'the sketchpad'.
+Close 'the sketchpad'.
+open a file called 'the sketchpad' at "{'the workspace'}/7dir110011110000000100110100100101010000111/9f36zwhf" for reading.
+a buffer called 'the manifest' is 38 bytes in size.
+Read from 'the sketchpad' into 'the manifest'.
+Close 'the sketchpad'.
+If 'the manifest' is not "5no92s0d15mfltsy5jbj71v14w0s8bln72" then, Print "ASSERT FMT-31: expected 5no92s0d15mfltsy5jbj71v14w0s8bln72 got {'the manifest'}", Exit 95.
+Print 'the manifest'.
+Delete the file "{'the workspace'}/7dir{'the tray':b}/{'the mailbag'}".
+Remove the directory called "{'the workspace'}/7dir{'the tray':b}".
+If "{'the workspace'}/7dir110011110000000100110100100101010000111" is available then, Print "ASSERT FMT-34: expected the directory 7dir110011110000000100110100100101010000111 to be gone", Exit 95.
+Print "the formatted directory is gone".
+
+--- FMT-35: format strings in a treating clause ---
+a number called 'the inbox' is 431809213344191.
+a list called satchel is ["hmz", "3q9e7", "vw", "3gph", "yww1"].
+a list called 'the mailbag' is [].
+append each 'the register' from satchel treating "hmz" as "{'the inbox'}" to 'the mailbag'.
+If 'the mailbag''s length is not 5 then, Print "ASSERT FMT-35: expected 5 got {'the mailbag''s length}", Exit 95.
+Print 'the mailbag''s length.
+a text called scratch is element 1 of 'the mailbag'.
+If scratch is not "431809213344191" then, Print "ASSERT FMT-35: expected 431809213344191 got {scratch}", Exit 95.
+Print scratch.
+a text called 'loading bay' is element 2 of 'the mailbag'.
+If 'loading bay' is not "3q9e7" then, Print "ASSERT FMT-35: expected 3q9e7 got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+a text called 'the sketchpad' is element 3 of 'the mailbag'.
+If 'the sketchpad' is not "vw" then, Print "ASSERT FMT-35: expected vw got {'the sketchpad'}", Exit 95.
+Print 'the sketchpad'.
+a text called 'the pigeonhole' is element 4 of 'the mailbag'.
+If 'the pigeonhole' is not "3gph" then, Print "ASSERT FMT-35: expected 3gph got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a text called 'the waybill' is element 5 of 'the mailbag'.
+If 'the waybill' is not "yww1" then, Print "ASSERT FMT-35: expected yww1 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+a text called 'the postbag' is "8y7mi4".
+a list called 'the greeting' is [167, "8y7mi4", "8y7mi4z"].
+a list called 'the tally sheet' is [].
+append each 'the crate' from 'the greeting' treating "{'the postbag'}" as "{'the inbox'}" to 'the tally sheet'.
+a text called 'the tray' is element 2 of 'the tally sheet'.
+If 'the tray' is not "431809213344191" then, Print "ASSERT FMT-35: expected 431809213344191 got {'the tray'}", Exit 95.
+Print 'the tray'.
+
+--- the same leaf, another seed ---
+a number called 'the greeting' is 410425.
+a list called cupboard is ["q5tvhrb", "g2ndh", "7"].
+a list called 'the dispatch note' is [].
+append each 'the pallet' from cupboard treating "7" as "{'the greeting':X}" to 'the dispatch note'.
+If 'the dispatch note''s length is not 3 then, Print "ASSERT FMT-35: expected 3 got {'the dispatch note''s length}", Exit 95.
+Print 'the dispatch note''s length.
+a text called 'the envelope' is element 1 of 'the dispatch note'.
+If 'the envelope' is not "q5tvhrb" then, Print "ASSERT FMT-35: expected q5tvhrb got {'the envelope'}", Exit 95.
+Print 'the envelope'.
+a text called notebook is element 2 of 'the dispatch note'.
+If notebook is not "g2ndh" then, Print "ASSERT FMT-35: expected g2ndh got {notebook}", Exit 95.
+Print notebook.
+a text called 'the pigeonhole' is element 3 of 'the dispatch note'.
+If 'the pigeonhole' is not "0x64339" then, Print "ASSERT FMT-35: expected 0x64339 got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a text called 'the message slip' is "z8".
+a list called 'the mailbag' is [43, "98z8", "98z8z"].
+a list called 'the register' is [].
+append each pantry from 'the mailbag' treating "98{'the message slip'}" as "{'the greeting':X}" to 'the register'.
+a text called scratch is element 2 of 'the register'.
+If scratch is not "0x64339" then, Print "ASSERT FMT-35: expected 0x64339 got {scratch}", Exit 95.
+Print scratch.
+
+--- the same leaf, another seed ---
+a number called 'outgoing post' is 4081514974668367.
+a list called ledger is ["c0r", "55", "b"].
+a list called 'the greeting' is [].
+append each 'the crate' from ledger treating "55" as "e{'outgoing post':b}" to 'the greeting'.
+If 'the greeting''s length is not 3 then, Print "ASSERT FMT-35: expected 3 got {'the greeting''s length}", Exit 95.
+Print 'the greeting''s length.
+a text called scratch is element 1 of 'the greeting'.
+If scratch is not "c0r" then, Print "ASSERT FMT-35: expected c0r got {scratch}", Exit 95.
+Print scratch.
+a text called pantry is element 2 of 'the greeting'.
+If pantry is not "e1110100000000001110111000010001101011110011001001111" then, Print "ASSERT FMT-35: expected e1110100000000001110111000010001101011110011001001111 got {pantry}", Exit 95.
+Print pantry.
+a text called satchel is element 3 of 'the greeting'.
+If satchel is not "b" then, Print "ASSERT FMT-35: expected b got {satchel}", Exit 95.
+Print satchel.
+a text called 'the pigeonhole' is "1qpr".
+a list called 'the tray' is [937, "w1qpr", "w1qprz"].
+a list called 'the manifest' is [].
+append each 'the mailbag' from 'the tray' treating "w{'the pigeonhole'}" as "e{'outgoing post':b}" to 'the manifest'.
+a text called 'the pallet' is element 2 of 'the manifest'.
+If 'the pallet' is not "e1110100000000001110111000010001101011110011001001111" then, Print "ASSERT FMT-35: expected e1110100000000001110111000010001101011110011001001111 got {'the pallet'}", Exit 95.
+Print 'the pallet'.
+
+--- FMT-21, 37: special names agree across sinks ---
+a number called scratch is arguments's count.
+a text called 'the tray' is "{arguments's count}".
+If 'the tray' is not "{scratch}" then, Print "ASSERT FMT-21: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+a buffer called 'the register' is "hv".
+copy "{arguments's count}" to 'the register'.
+If 'the register' is not 'the tray' then, Print "ASSERT FMT-37: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+a text called 'the pigeonhole' is arguments's first.
+a text called cupboard is "#{arguments's first}#".
+If cupboard is not "#{'the pigeonhole'}#" then, Print "ASSERT FMT-37: the first argument renders differently in two sinks", Exit 95.
+Print "the first argument agrees across sinks".
+a buffer called 'the dispatch note' is "".
+set 'the dispatch note' to "#{arguments's first}#".
+If 'the dispatch note' is not cupboard then, Print "ASSERT FMT-37: the first argument renders differently in two sinks", Exit 95.
+Print "the first argument agrees across sinks".
+a text called pantry is "{current time's hour:02}".
+a buffer called 'the manifest' is "{current time's hour:02}".
+If 'the manifest' is not pantry then, Print "ASSERT FMT-37: the current hour renders differently in two sinks", Exit 95.
+Print "the current hour agrees across sinks".
+If 'the manifest''s size is not 2 then, Print "ASSERT FMT-37: expected 2 got {'the manifest''s size}", Exit 95.
+Print 'the manifest''s size.
+a text called 'the mailbag' is "{'the workspace'}/8special".
+open a file called satchel for writing at 'the mailbag'.
+Write "{arguments's count}" to satchel.
+Close satchel.
+open a file called satchel for reading at 'the mailbag'.
+a buffer called 'the envelope' is 64 bytes in size.
+Read from satchel into 'the envelope'.
+Close satchel.
+If 'the envelope' is not 'the tray' then, Print "ASSERT FMT-37: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+
+--- the same leaf, another seed ---
+a number called 'the register' is arguments's count.
+a text called 'the tray' is "{arguments's count}".
+If 'the tray' is not "{'the register'}" then, Print "ASSERT FMT-21: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+a buffer called 'the envelope' is "b6".
+copy "{arguments's count}" to 'the envelope'.
+If 'the envelope' is not 'the tray' then, Print "ASSERT FMT-37: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+a text called cupboard is arguments's first.
+a text called pantry is ":{arguments's first}:".
+If pantry is not ":{cupboard}:" then, Print "ASSERT FMT-37: the first argument renders differently in two sinks", Exit 95.
+Print "the first argument agrees across sinks".
+a buffer called 'the pigeonhole' is "".
+set 'the pigeonhole' to ":{arguments's first}:".
+If 'the pigeonhole' is not pantry then, Print "ASSERT FMT-37: the first argument renders differently in two sinks", Exit 95.
+Print "the first argument agrees across sinks".
+a text called 'the manifest' is "{current time's hour:02}".
+a buffer called 'the crate' is "{current time's hour:02}".
+If 'the crate' is not 'the manifest' then, Print "ASSERT FMT-37: the current hour renders differently in two sinks", Exit 95.
+Print "the current hour agrees across sinks".
+If 'the crate''s size is not 2 then, Print "ASSERT FMT-37: expected 2 got {'the crate''s size}", Exit 95.
+Print 'the crate''s size.
+a text called 'loading bay' is "{'the workspace'}/9special".
+open a file for writing called ledger at 'loading bay'.
+Write "{arguments's count}" to ledger.
+Close ledger.
+open a file called ledger at 'loading bay' for reading.
+a buffer called 'the shipping label' is 64 bytes in size.
+Read from ledger into 'the shipping label'.
+Close ledger.
+If 'the shipping label' is not 'the tray' then, Print "ASSERT FMT-37: the argument count renders differently in two sinks", Exit 95.
+Print "the argument count agrees across sinks".
+
+--- FMT-36: format strings as function arguments ---
+
+To 'sort out' with a text called satchel. Return a text, satchel.
+
+To report of a value called cupboard. Return a value, cupboard.
+
+a number called 'the postbag' is 34755558986998627.
+a float called 'the sketchpad' is 7215380.0.
+a text called notebook is 'sort out' on "ln{'the postbag':08}:{'the sketchpad':010.0}".
+If notebook is not "ln34755558986998627:0007215380" then, Print "ASSERT FMT-36: expected ln34755558986998627:0007215380 got {notebook}", Exit 95.
+Print notebook.
+a value called 'the envelope' is report on "{'the sketchpad':010.0}:{'the postbag':08}".
+If 'the envelope' is not "0007215380:34755558986998627" then, Print "ASSERT FMT-36: expected 0007215380:34755558986998627 got {'the envelope'}", Exit 95.
+Print 'the envelope'.
+
+--- the same leaf, another seed ---
+
+To identify of a text called toolbox. Return a text, toolbox.
+
+To describe with a value called cupboard. Return a value, cupboard.
+
+a number called 'the manifest' is 50832169354.
+a float called storeroom is 680.0.
+a text called 'the crate' is identify with "{'the manifest':.6}|{storeroom:01.29}".
+If 'the crate' is not "50832169354.000000|680.00000000000000000000000000000" then, Print "ASSERT FMT-36: expected 50832169354.000000|680.00000000000000000000000000000 got {'the crate'}", Exit 95.
+Print 'the crate'.
+a value called 'the tally sheet' is describe of "{storeroom:01.29}|{'the manifest':.6}".
+If 'the tally sheet' is not "680.00000000000000000000000000000|50832169354.000000" then, Print "ASSERT FMT-36: expected 680.00000000000000000000000000000|50832169354.000000 got {'the tally sheet'}", Exit 95.
+Print 'the tally sheet'.
+
+--- the same leaf, another seed ---
+
+To recognise of a text called satchel. Return a text, satchel.
+
+To 'carry over' of a value called cupboard. Return a value, cupboard.
+
+a number called notebook is 76929.
+a float called 'the shipping label' is 653.125.
+a text called 'the register' is recognise to "wu{notebook:018x} {'the shipping label':13.2}".
+If 'the register' is not "wu0x000000000000012c81        653.12" then, Print "ASSERT FMT-36: expected wu0x000000000000012c81        653.12 got {'the register'}", Exit 95.
+Print 'the register'.
+a value called 'the waybill' is 'carry over' on "{'the shipping label':13.2} {notebook:018x}".
+If 'the waybill' is not "       653.12 0x000000000000012c81" then, Print "ASSERT FMT-36: expected        653.12 0x000000000000012c81 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+
+--- FMT-13 to 17: the radix specifiers ---
+a number called workbench is 1344692625.
+a text called notebook is "{workbench:b}".
+If notebook is not "1010000001001100110000110010001" then, Print "ASSERT FMT-15: expected 1010000001001100110000110010001 got {notebook}", Exit 95.
+Print notebook.
+a number called 'the crate' is 2147483648.
+a text called 'the envelope' is "{'the crate':o}".
+If 'the envelope' is not "0o20000000000" then, Print "ASSERT FMT-16: expected 0o20000000000 got {'the envelope'}", Exit 95.
+Print 'the envelope'.
+
+--- the same leaf, another seed ---
+a number called 'the inbox' is 9216210376.
+a text called 'the mailbag' is "{'the inbox':o}".
+If 'the mailbag' is not "0o104525032710" then, Print "ASSERT FMT-16: expected 0o104525032710 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+a number called 'the pallet' is 2887706417123017.
+a text called ledger is "{'the pallet':07x}".
+If ledger is not "0xa425a8b354ec9" then, Print "ASSERT FMT-17: expected 0xa425a8b354ec9 got {ledger}", Exit 95.
+Print ledger.
+a number called 'the greeting' is 4028215.
+a text called scratch is "{'the greeting':05x}".
+If scratch is not "0x3d7737" then, Print "ASSERT FMT-17: expected 0x3d7737 got {scratch}", Exit 95.
+Print scratch.
+a number called 'the sketchpad' is 2147483648.
+a text called 'the postbag' is "{'the sketchpad':b}".
+If 'the postbag' is not "10000000000000000000000000000000" then, Print "ASSERT FMT-15: expected 10000000000000000000000000000000 got {'the postbag'}", Exit 95.
+Print 'the postbag'.
+a boolean called 'the crate' is false.
+a text called 'the tray' is "{'the crate':x}|{'the crate':b}".
+If 'the tray' is not "0x0|0" then, Print "ASSERT FMT-13: expected 0x0|0 got {'the tray'}", Exit 95.
+Print 'the tray'.
+
+--- the same leaf, another seed ---
+a number called 'the waybill' is 8078929037.
+a text called 'the greeting' is "{'the waybill':o}".
+If 'the greeting' is not "0o74142526215" then, Print "ASSERT FMT-16: expected 0o74142526215 got {'the greeting'}", Exit 95.
+Print 'the greeting'.
+a number called notebook is 17.
+a text called 'the postbag' is "{notebook:b}".
+If 'the postbag' is not "10001" then, Print "ASSERT FMT-15: expected 10001 got {'the postbag'}", Exit 95.
+Print 'the postbag'.
+
+--- the same leaf, another seed ---
+a number called cupboard is 7940538798.
+a text called storeroom is "{cupboard:o}".
+If storeroom is not "0o73122600656" then, Print "ASSERT FMT-16: expected 0o73122600656 got {storeroom}", Exit 95.
+Print storeroom.
+a number called satchel is 96049.
+a text called 'the manifest' is "{satchel:X}".
+If 'the manifest' is not "0x17731" then, Print "ASSERT FMT-14: expected 0x17731 got {'the manifest'}", Exit 95.
+Print 'the manifest'.
+a number called workbench is 1147324445.
+a text called 'the sketchpad' is "{workbench:x}".
+If 'the sketchpad' is not "0x4462c81d" then, Print "ASSERT FMT-13: expected 0x4462c81d got {'the sketchpad'}", Exit 95.
+Print 'the sketchpad'.
+a number called 'the tray' is 2147483648.
+a text called ledger is "{'the tray':o}".
+If ledger is not "0o20000000000" then, Print "ASSERT FMT-16: expected 0o20000000000 got {ledger}", Exit 95.
+Print ledger.
+
+--- FMT-09, 11, 12: default, width and zero width ---
+a number called 'the manifest' is 678059287852.
+a text called 'the register' is "q7uyona".
+a buffer called 'the envelope' is "72".
+a boolean called 'the postbag' is false.
+a text called cupboard is "{'the manifest'}".
+If cupboard is not "678059287852" then, Print "ASSERT FMT-09: expected 678059287852 got {cupboard}", Exit 95.
+Print cupboard.
+a text called 'the waybill' is "{'the manifest':22}".
+If 'the waybill' is not "          678059287852" then, Print "ASSERT FMT-11: expected           678059287852 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+a text called pantry is "{'the manifest':017}".
+If pantry is not "00000678059287852" then, Print "ASSERT FMT-12: expected 00000678059287852 got {pantry}", Exit 95.
+Print pantry.
+a text called storeroom is "{'the register':0}".
+If storeroom is not "q7uyona" then, Print "ASSERT FMT-11: expected q7uyona got {storeroom}", Exit 95.
+Print storeroom.
+a buffer called 'the shipping label' is "{'the envelope':16}".
+If 'the shipping label' is not "              72" then, Print "ASSERT FMT-11: expected               72 got {'the shipping label'}", Exit 95.
+Print 'the shipping label'.
+a text called notebook is "{'the postbag':00}".
+If notebook is not "0" then, Print "ASSERT FMT-11: expected 0 got {notebook}", Exit 95.
+Print notebook.
+
+--- the same leaf, another seed ---
+a number called 'the greeting' is 656.
+a text called 'outgoing post' is "sicrhf".
+a buffer called notebook is "c4hzp9w".
+a boolean called 'the envelope' is true.
+a text called 'the shipping label' is "{'the greeting'}".
+If 'the shipping label' is not "656" then, Print "ASSERT FMT-09: expected 656 got {'the shipping label'}", Exit 95.
+Print 'the shipping label'.
+a text called toolbox is "{'the greeting':2}".
+If toolbox is not "656" then, Print "ASSERT FMT-11: expected 656 got {toolbox}", Exit 95.
+Print toolbox.
+a text called 'loading bay' is "{'the greeting':011}".
+If 'loading bay' is not "00000000656" then, Print "ASSERT FMT-12: expected 00000000656 got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+a text called storeroom is "{'outgoing post':20}".
+If storeroom is not "              sicrhf" then, Print "ASSERT FMT-11: expected               sicrhf got {storeroom}", Exit 95.
+Print storeroom.
+a buffer called workbench is "{notebook:4}".
+If workbench is not "c4hzp9w" then, Print "ASSERT FMT-11: expected c4hzp9w got {workbench}", Exit 95.
+Print workbench.
+a text called 'the pallet' is "{'the envelope':23}".
+If 'the pallet' is not "                      1" then, Print "ASSERT FMT-11: expected                       1 got {'the pallet'}", Exit 95.
+Print 'the pallet'.
+
+--- the same leaf, another seed ---
+a number called satchel is 644301461084.
+a text called notebook is "8rjk".
+a buffer called 'the postbag' is "13".
+a boolean called 'loading bay' is true.
+a text called 'the pallet' is "{satchel}".
+If 'the pallet' is not "644301461084" then, Print "ASSERT FMT-09: expected 644301461084 got {'the pallet'}", Exit 95.
+Print 'the pallet'.
+a text called 'outgoing post' is "{satchel:20}".
+If 'outgoing post' is not "        644301461084" then, Print "ASSERT FMT-11: expected         644301461084 got {'outgoing post'}", Exit 95.
+Print 'outgoing post'.
+a text called 'the mailbag' is "{satchel:021}".
+If 'the mailbag' is not "000000000644301461084" then, Print "ASSERT FMT-12: expected 000000000644301461084 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+a text called 'the greeting' is "{notebook:1}".
+If 'the greeting' is not "8rjk" then, Print "ASSERT FMT-11: expected 8rjk got {'the greeting'}", Exit 95.
+Print 'the greeting'.
+a buffer called storeroom is "{'the postbag':21}".
+If storeroom is not "                   13" then, Print "ASSERT FMT-11: expected                    13 got {storeroom}", Exit 95.
+Print storeroom.
+a text called 'the tray' is "{'loading bay':102}".
+If 'the tray' is not "                                                                                                     1" then, Print "ASSERT FMT-11: expected                                                                                                      1 got {'the tray'}", Exit 95.
+Print 'the tray'.
+
+--- the same leaf, another seed ---
+a number called 'the pallet' is 0.
+a text called satchel is "l".
+a buffer called 'the crate' is "bz7".
+a boolean called 'outgoing post' is true.
+a text called storeroom is "{'the pallet'}".
+If storeroom is not "0" then, Print "ASSERT FMT-09: expected 0 got {storeroom}", Exit 95.
+Print storeroom.
+a text called 'the tally sheet' is "{'the pallet':12}".
+If 'the tally sheet' is not "           0" then, Print "ASSERT FMT-11: expected            0 got {'the tally sheet'}", Exit 95.
+Print 'the tally sheet'.
+a text called 'the waybill' is "{'the pallet':014}".
+If 'the waybill' is not "00000000000000" then, Print "ASSERT FMT-12: expected 00000000000000 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+a text called ledger is "{satchel:12}".
+If ledger is not "           l" then, Print "ASSERT FMT-11: expected            l got {ledger}", Exit 95.
+Print ledger.
+a buffer called 'the pigeonhole' is "{'the crate':24}".
+If 'the pigeonhole' is not "                     bz7" then, Print "ASSERT FMT-11: expected                      bz7 got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a text called 'the mailbag' is "{'outgoing post':010}".
+If 'the mailbag' is not "0000000001" then, Print "ASSERT FMT-11: expected 0000000001 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+
+--- FMT-10, 56: precision and width with precision ---
+a float called 'the pigeonhole' is 2571.4375.
+a text called 'the sketchpad' is "{'the pigeonhole':5.8}".
+If 'the sketchpad' is not "2571.43750000" then, Print "ASSERT FMT-10: expected 2571.43750000 got {'the sketchpad'}", Exit 95.
+Print 'the sketchpad'.
+a float called 'loading bay' is 41794.0.
+a text called pantry is "{'loading bay':.31}".
+If pantry is not "41794.0000000000000000000000000000000" then, Print "ASSERT FMT-10: expected 41794.0000000000000000000000000000000 got {pantry}", Exit 95.
+Print pantry.
+a number called 'outgoing post' is 0.
+a text called 'the tray' is "{'outgoing post':.19}".
+If 'the tray' is not "0.0000000000000000000" then, Print "ASSERT FMT-56: expected 0.0000000000000000000 got {'the tray'}", Exit 95.
+Print 'the tray'.
+a text called 'the mailbag' is "{'outgoing post':09.19}".
+If 'the mailbag' is not "0.0000000000000000000" then, Print "ASSERT FMT-56: expected 0.0000000000000000000 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+a boolean called cupboard is true.
+a text called notebook is "{cupboard:.4}".
+If notebook is not "1.0000" then, Print "ASSERT FMT-10: expected 1.0000 got {notebook}", Exit 95.
+Print notebook.
+
+--- the same leaf, another seed ---
+a float called cupboard is 129.5.
+a text called 'the waybill' is "{cupboard:.5}".
+If 'the waybill' is not "129.50000" then, Print "ASSERT FMT-10: expected 129.50000 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+a number called ledger is 8.
+a text called 'the dispatch note' is "{ledger:.7}".
+If 'the dispatch note' is not "8.0000000" then, Print "ASSERT FMT-56: expected 8.0000000 got {'the dispatch note'}", Exit 95.
+Print 'the dispatch note'.
+a text called 'the message slip' is "{ledger:019.7}".
+If 'the message slip' is not "00000000008.0000000" then, Print "ASSERT FMT-56: expected 00000000008.0000000 got {'the message slip'}", Exit 95.
+Print 'the message slip'.
+a boolean called 'outgoing post' is true.
+a text called toolbox is "{'outgoing post':.2}".
+If toolbox is not "1.00" then, Print "ASSERT FMT-10: expected 1.00 got {toolbox}", Exit 95.
+Print toolbox.
+
+--- the same leaf, another seed ---
+a float called 'the manifest' is 9.9375.
+a text called ledger is "{'the manifest':07.1}".
+If ledger is not "00009.9" then, Print "ASSERT FMT-10: expected 00009.9 got {ledger}", Exit 95.
+Print ledger.
+a float called 'outgoing post' is 6.625.
+a text called 'the pigeonhole' is "{'outgoing post':.0}".
+If 'the pigeonhole' is not "7" then, Print "ASSERT FMT-10: expected 7 got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+a number called 'the dispatch note' is 0.
+a text called 'the message slip' is "{'the dispatch note':.1}".
+If 'the message slip' is not "0.0" then, Print "ASSERT FMT-56: expected 0.0 got {'the message slip'}", Exit 95.
+Print 'the message slip'.
+a text called scratch is "{'the dispatch note':01.1}".
+If scratch is not "0.0" then, Print "ASSERT FMT-56: expected 0.0 got {scratch}", Exit 95.
+Print scratch.
+a boolean called 'the shipping label' is true.
+a text called 'the waybill' is "{'the shipping label':.5}".
+If 'the waybill' is not "1.00000" then, Print "ASSERT FMT-10: expected 1.00000 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+
+--- the same leaf, another seed ---
+a float called 'loading bay' is 7530819291143.5.
+a text called 'the shipping label' is "{'loading bay':.8}".
+If 'the shipping label' is not "7530819291143.50000000" then, Print "ASSERT FMT-10: expected 7530819291143.50000000 got {'the shipping label'}", Exit 95.
+Print 'the shipping label'.
+a number called 'the inbox' is 913036986846.
+a text called 'the crate' is "{'the inbox':.19}".
+If 'the crate' is not "913036986846.0000000000000000000" then, Print "ASSERT FMT-56: expected 913036986846.0000000000000000000 got {'the crate'}", Exit 95.
+Print 'the crate'.
+a text called 'the register' is "{'the inbox':012.19}".
+If 'the register' is not "913036986846.0000000000000000000" then, Print "ASSERT FMT-56: expected 913036986846.0000000000000000000 got {'the register'}", Exit 95.
+Print 'the register'.
+a boolean called 'the envelope' is true.
+a text called 'the mailbag' is "{'the envelope':.3}".
+If 'the mailbag' is not "1.000" then, Print "ASSERT FMT-10: expected 1.000 got {'the mailbag'}", Exit 95.
+Print 'the mailbag'.
+
+--- the same leaf, another seed ---
+a float called notebook is 625690770.3125.
+a text called scratch is "{notebook:02.4}".
+If scratch is not "625690770.3125" then, Print "ASSERT FMT-10: expected 625690770.3125 got {scratch}", Exit 95.
+Print scratch.
+a float called workbench is 64282118788.5.
+a text called 'outgoing post' is "{workbench:016.0}".
+If 'outgoing post' is not "0000064282118788" then, Print "ASSERT FMT-10: expected 0000064282118788 got {'outgoing post'}", Exit 95.
+Print 'outgoing post'.
+a float called toolbox is 113264.0.
+a text called 'the register' is "{toolbox:1.0}".
+If 'the register' is not "113264" then, Print "ASSERT FMT-10: expected 113264 got {'the register'}", Exit 95.
+Print 'the register'.
+a number called 'the envelope' is 2147483648.
+a text called pantry is "{'the envelope':.3}".
+If pantry is not "2147483648.000" then, Print "ASSERT FMT-56: expected 2147483648.000 got {pantry}", Exit 95.
+Print pantry.
+a text called 'the greeting' is "{'the envelope':04.3}".
+If 'the greeting' is not "2147483648.000" then, Print "ASSERT FMT-56: expected 2147483648.000 got {'the greeting'}", Exit 95.
+Print 'the greeting'.
+a boolean called 'the pigeonhole' is true.
+a text called 'the tray' is "{'the pigeonhole':.5}".
+If 'the tray' is not "1.00000" then, Print "ASSERT FMT-10: expected 1.00000 got {'the tray'}", Exit 95.
+Print 'the tray'.
+
+--- FMT-19, 20: expressions in slots ---
+a number called notebook is 61837291665677045.
+a number called satchel is 32657.
+a text called 'the manifest' is "{notebook add satchel:x}".
+If 'the manifest' is not "0xdbb0b06b9b5a86" then, Print "ASSERT FMT-19: expected 0xdbb0b06b9b5a86 got {'the manifest'}", Exit 95.
+Print 'the manifest'.
+a number called 'the crate' is 80571376327855978.
+a number called 'the register' is 9603.
+a text called storeroom is "{'the crate' subtract 'the register':.11}".
+If storeroom is not "80571376327846375.00000000000" then, Print "ASSERT FMT-19: expected 80571376327846375.00000000000 got {storeroom}", Exit 95.
+Print storeroom.
+a number called ledger is 2641695665.
+a number called 'the tally sheet' is 64719.
+a text called scratch is "{ledger add 'the tally sheet':164.1}".
+If scratch is not "                                                                                                                                                        2641760384.0" then, Print "ASSERT FMT-19: expected                                                                                                                                                         2641760384.0 got {scratch}", Exit 95.
+Print scratch.
+
+--- the same leaf, another seed ---
+a number called satchel is 57008167779356.
+a number called 'the waybill' is 32938.
+a text called 'the envelope' is "{satchel modulo 'the waybill':X}".
+If 'the envelope' is not "0x162A" then, Print "ASSERT FMT-19: expected 0x162A got {'the envelope'}", Exit 95.
+Print 'the envelope'.
+
+--- the same leaf, another seed ---
+a number called 'the tally sheet' is 342699328821.
+a number called ledger is 32978.
+a text called 'the postbag' is "{'the tally sheet' add ledger}".
+If 'the postbag' is not "342699361799" then, Print "ASSERT FMT-19: expected 342699361799 got {'the postbag'}", Exit 95.
+Print 'the postbag'.
+a number called 'the crate' is 2.
+a number called 'the message slip' is 90555.
+a text called 'loading bay' is "{'the crate' add 'the message slip':.1}".
+If 'loading bay' is not "90557.0" then, Print "ASSERT FMT-19: expected 90557.0 got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+a number called 'the sketchpad' is 3010081041393671.
+a number called 'outgoing post' is 45745.
+a text called 'the pigeonhole' is "{'the sketchpad' plus 'outgoing post':.0}".
+If 'the pigeonhole' is not "3010081041439416" then, Print "ASSERT FMT-19: expected 3010081041439416 got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+
+--- FMT-58: quoted one-word names in slots ---
+a number called 'the crate' is 91520953.
+a text called 'toolbox' is "".
+a boolean called 'the inbox' is true.
+a buffer called 'storeroom' is "yoa1il".
+a list called 'the tally sheet' is [398, 383].
+a value called 'scratch' is 2863.
+a text called 'the waybill' is "{'the crate':.4}-{'toolbox'}-{'the inbox'}-{'storeroom'}-{'the tally sheet'}-{'scratch'}".
+If 'the waybill' is not "91520953.0000--1-yoa1il-[398, 383]-2863" then, Print "ASSERT FMT-58: expected 91520953.0000--1-yoa1il-[398, 383]-2863 got {'the waybill'}", Exit 95.
+Print 'the waybill'.
+
+--- the same leaf, another seed ---
+a number called 'the envelope' is 383031727.
+a text called 'toolbox' is "0d".
+a boolean called 'the pallet' is true.
+a buffer called 'outgoing post' is "nf".
+a list called 'the greeting' is [691, 223].
+a value called 'the waybill' is 46038.
+a text called 'the pigeonhole' is "{'the envelope':.14}={'toolbox'}={'the pallet'}={'outgoing post'}={'the greeting'}={'the waybill'}".
+If 'the pigeonhole' is not "383031727.00000000000000=0d=1=nf=[691, 223]=46038" then, Print "ASSERT FMT-58: expected 383031727.00000000000000=0d=1=nf=[691, 223]=46038 got {'the pigeonhole'}", Exit 95.
+Print 'the pigeonhole'.
+
+--- FMT-40, 41, 42, 44: declarations in every branch ---
+
+To 'give back'. Return a text, 'the drawer'.
+
+a boolean called scratch is false.
+If scratch then, a text called 'the drawer' is "bp3". Otherwise, a text called 'the drawer' is "bjd04".
+a text called 'the envelope' is 'give back'.
+If 'the drawer' is not "bjd04" then, Print "ASSERT FMT-40: expected bjd04 got {'the drawer'}", Exit 95.
+Print 'the drawer'.
+If 'the envelope' is not "bjd04" then, Print "ASSERT FMT-42: expected bjd04 got {'the envelope'}", Exit 95.
+Print 'the envelope'.
+If scratch then, Open a file for writing called 'the waybill' at "{'the workspace'}/10then". Otherwise, Open a file for writing called 'the waybill' at "{'the workspace'}/10otherwise".
+Write "6ohn5{'the drawer'}" to 'the waybill'.
+Close 'the waybill'.
+open a file called 'the waybill' for reading at "{'the workspace'}/10otherwise".
+a buffer called toolbox is 12 bytes in size.
+Read from 'the waybill' into toolbox.
+Close 'the waybill'.
+If toolbox is not "6ohn5bjd04" then, Print "ASSERT FMT-44: expected 6ohn5bjd04 got {toolbox}", Exit 95.
+Print toolbox.
+
+--- the same leaf, another seed ---
+
+To deliver. Return a number, 'the drawer'.
+
+a boolean called 'the register' is false.
+If 'the register' then, a number called 'the drawer' is 80. Otherwise, a number called 'the drawer' is 7315.
+a number called workbench is deliver.
+If 'the drawer' is not 7315 then, Print "ASSERT FMT-40: expected 7315 got {'the drawer'}", Exit 95.
+Print 'the drawer'.
+If workbench is not 7315 then, Print "ASSERT FMT-42: expected 7315 got {workbench}", Exit 95.
+Print workbench.
+If 'the register' then, Open a file for writing called 'the waybill' at "{'the workspace'}/11then". Otherwise, Open a file for writing called 'the waybill' at "{'the workspace'}/11otherwise".
+Write "{'the drawer'}" to 'the waybill'.
+Close 'the waybill'.
+open a file at "{'the workspace'}/11otherwise" for reading called 'the waybill'.
+a buffer called 'the crate' is 6 bytes in size.
+Read from 'the waybill' into 'the crate'.
+Close 'the waybill'.
+If 'the crate' is not "7315" then, Print "ASSERT FMT-44: expected 7315 got {'the crate'}", Exit 95.
+Print 'the crate'.
+
+--- the same leaf, another seed ---
+
+To 'take a look'. Return a number, 'the drawer'.
+
+a boolean called scratch is true.
+If scratch then, a number called 'the drawer' is 6592008. Otherwise, a number called 'the drawer' is 891.
+a number called ledger is 'take a look'.
+If 'the drawer' is not 6592008 then, Print "ASSERT FMT-40: expected 6592008 got {'the drawer'}", Exit 95.
+Print 'the drawer'.
+If ledger is not 6592008 then, Print "ASSERT FMT-42: expected 6592008 got {ledger}", Exit 95.
+Print ledger.
+If scratch then, Open a file for writing called cupboard at "{'the workspace'}/12then". Otherwise, Open a file for writing called cupboard at "{'the workspace'}/12otherwise".
+Write "eina{'the drawer'}" to cupboard.
+Close cupboard.
+open a file for reading at "{'the workspace'}/12then" called cupboard.
+a buffer called 'loading bay' is 14 bytes in size.
+Read from cupboard into 'loading bay'.
+Close cupboard.
+If 'loading bay' is not "eina6592008" then, Print "ASSERT FMT-44: expected eina6592008 got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+
+--- the same leaf, another seed ---
+
+To 'pass through'. Return a text, 'the drawer'.
+
+a boolean called 'the register' is true.
+If 'the register' then, a text called 'the drawer' is "". Otherwise, a text called 'the drawer' is "2".
+a text called storeroom is 'pass through'.
+If 'the drawer' is not "" then, Print "ASSERT FMT-40: expected  got {'the drawer'}", Exit 95.
+Print 'the drawer'.
+If storeroom is not "" then, Print "ASSERT FMT-42: expected  got {storeroom}", Exit 95.
+Print storeroom.
+If 'the register' then, Open a file for writing called 'the waybill' at "{'the workspace'}/13then". Otherwise, Open a file for writing called 'the waybill' at "{'the workspace'}/13otherwise".
+Write "ok0fq{'the drawer'}" to 'the waybill'.
+Close 'the waybill'.
+open a file called 'the waybill' for reading at "{'the workspace'}/13then".
+a buffer called 'loading bay' is 7 bytes in size.
+Read from 'the waybill' into 'loading bay'.
+Close 'the waybill'.
+If 'loading bay' is not "ok0fq" then, Print "ASSERT FMT-44: expected ok0fq got {'loading bay'}", Exit 95.
+Print 'loading bay'.
+
+--- with no file I/O committed, the path sink stands aside ---
+the path sink emits a scratch path: 0
+--- registration reachable: kinds 430-440 all dispatch ---
+kind 430 emits a statement: 1
+kind 431 emits a statement: 1
+kind 432 emits a statement: 1
+kind 433 emits a statement: 1
+kind 434 emits a statement: 1
+kind 435 emits a statement: 1
+kind 436 emits a statement: 1
+kind 437 emits a statement: 1
+kind 438 emits a statement: 1
+kind 439 emits a statement: 1
+kind 440 emits a statement: 1

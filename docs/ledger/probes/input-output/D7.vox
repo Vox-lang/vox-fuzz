@@ -1,0 +1,10 @@
+(D7 — a whole number with a width and a precision of 0 is padded one
+ character short: `{n:012.0}` and `{n:12.0}` are 11 characters, where
+ `{n:012}`, `{n:012.1}` and a float's `{f:08.0}` each fill their width.
+ Ran: /usr/bin/vox D7.vox -o p && ./p   (vox 0.4.16, VOX_CORE_PATH unset)
+ expected output:
+   [00000000063] [         63] [0000000063.0] [000000000063] [63] [00000002] [       2] [000002.5]
+)
+a number called n is 63.
+a float called f is 2.5.
+Print "[{n:012.0}] [{n:12.0}] [{n:012.1}] [{n:012}] [{n:.0}] [{f:08.0}] [{f:8.0}] [{f:08.1}]".

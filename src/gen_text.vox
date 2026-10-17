@@ -852,3 +852,1025 @@ To 'gen leaf conditional print chain' with a text called indent and a boolean ca
     a text called 'the chain' is "Print {'the operand name'}, but if {'the operand name'} is less than {'the low bound'} print \"low\" but if {'the operand name'} is greater than {'the high bound'} print \"high\" and if {'the operand name'} is greater than or equal to {'the low bound'} print \"mid\"".
     a list called 'the lines' is ['the declaration', 'the chain'].
     'gen join lines' of indent and nested and 'the lines'.
+
+( ── format-string leaves, batch A, 2026-10-17 ──
+
+ Only non-negative whole numbers are drawn for the radix and zero-pad
+ slots: the manual does not say how a negative number renders in hex,
+ octal or binary, or where a zero pad puts the sign, so asserting either
+ would encode a guess.
+
+ docs/ledger/input-output.md, kinds 430-440: the sinks (FMT-31 to
+ FMT-39), the specifiers (FMT-07 to FMT-17, FMT-56), text as a value
+ (FMT-19 to FMT-21, FMT-58) and declarations in branches (FMT-40 to
+ FMT-44). Each leaf draws a value and a specifier, works out the
+ rendering itself, and the program exits 95 on any other. The
+ renderings were run by hand first; the probes are
+ docs/ledger/probes/input-output/. Line numbers are the pinned manual's
+ (docs/ledger/PINNED-MANUAL); the compiler these leaves run against also
+ pads a float, a text and a buffer to a width (register #148), which the
+ pinned manual does not yet say.)
+
+a buffer called 'the format length view' is "".
+
+(How many characters a rendering is. A text has no size property, so it
+ is measured through a buffer, the idiom PROCEDURE.md 6a records.)
+
+To 'gen format length of' with a text called 'the rendering'.
+    clear 'the format length view'.
+    append 'the rendering' to 'the format length view'.
+    a number called 'the length' is 'the format length view's size.
+    Return a number, 'the length'.
+
+To 'gen format padded' with a text called 'the rendering' and a number called 'the width' and a text called 'the pad'.
+    a number called 'the length' is 'gen format length of' of 'the rendering'.
+    a text called 'the padded' is 'the rendering'.
+    While 'the length' is less than 'the width',
+        Set 'the padded' to "{'the pad'}{'the padded'}",
+        Set 'the length' to 'the length' add 1.
+    Return a text, 'the padded'.
+
+To 'gen format zeros' with a number called 'how many'.
+    a text called zeros is "".
+    a number called 'zeros made' is 0.
+    While 'zeros made' is less than 'how many',
+        Set zeros to "{zeros}0",
+        Set 'zeros made' to 'zeros made' add 1.
+    Return a text, zeros.
+
+To 'gen format power of ten' with a number called exponent.
+    a number called power is 1.
+    a number called 'powers made' is 0.
+    While 'powers made' is less than exponent,
+        Set power to power multiply 10,
+        Set 'powers made' to 'powers made' add 1.
+    Return a number, power.
+
+(The digits of a non-negative whole number in a base, most significant
+ first, without any prefix, each digit looked up in the alphabet given.
+ The four callers below name the base and the case.)
+
+To 'gen format digits in base' with a number called 'the value' and a number called base and a list called alphabet.
+    If 'the value' is 0 then,
+        Return a text, "0".
+    a text called digits is "".
+    a number called 'the rest' is 'the value'.
+    While 'the rest' is greater than 0,
+        a number called 'the digit value' is 'the rest' modulo base,
+        a number called 'the digit position' is 'the digit value' add 1,
+        a text called 'the digit' is element 'the digit position' of alphabet,
+        Set digits to "{'the digit'}{digits}",
+        Set 'the rest' to 'the rest' divide base.
+    Return a text, digits.
+
+To 'gen format hex digits of' with a number called 'the value'.
+    a list called 'the lower hex alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"].
+    a text called digits is 'gen format digits in base' of 'the value' and 16 and 'the lower hex alphabet'.
+    Return a text, digits.
+
+To 'gen format capital hex digits of' with a number called 'the value'.
+    a list called 'the capital hex alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"].
+    a text called digits is 'gen format digits in base' of 'the value' and 16 and 'the capital hex alphabet'.
+    Return a text, digits.
+
+To 'gen format octal digits of' with a number called 'the value'.
+    a list called 'the octal alphabet' is ["0", "1", "2", "3", "4", "5", "6", "7"].
+    a text called digits is 'gen format digits in base' of 'the value' and 8 and 'the octal alphabet'.
+    Return a text, digits.
+
+To 'gen format binary digits of' with a number called 'the value'.
+    a list called 'the binary alphabet' is ["0", "1"].
+    a text called digits is 'gen format digits in base' of 'the value' and 2 and 'the binary alphabet'.
+    Return a text, digits.
+
+(An assertion as one list element, two sentences: the check, closed by
+ its own period, and on a line of its own a plain Print of the value,
+ which takes whatever punctuation 'gen join lines' adds.)
+
+To 'gen format text check' with a text called 'the row' and a text called 'the subject' and a text called 'the expected'.
+    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the check' is "If {'the subject'} is not \"{'the expected'}\" then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the got shown'}\", Exit 95.\nPrint {'the subject'}".
+    Return a text, 'the check'.
+
+To 'gen format number check' with a text called 'the row' and a text called 'the subject' and a number called 'the expected'.
+    a text called 'the got shown' is 'gen buffer slot of' of 'the subject'.
+    a text called 'the check' is "If {'the subject'} is not {'the expected'} then, Print \"ASSERT {'the row'}: expected {'the expected'} got {'the got shown'}\", Exit 95.\nPrint {'the subject'}".
+    Return a text, 'the check'.
+
+(A width. Nothing in the manual bounds one below its 9223372036854775807
+ ceiling, so the draw reaches far past any rendering on one program in
+ eleven and lands on zero, the documented no-op, on another. A path
+ component cannot be longer than the filesystem allows, so the path
+ sink asks for a narrow one.)
+
+To 'gen format width draw' with a boolean called 'wide widths allowed'.
+    a number called 'the width choice' is 'rng below' of 11.
+    If 'the width choice' is 0 then,
+        Return a number, 0.
+    If 'the width choice' is 1 and 'wide widths allowed' then,
+        a number called 'the wide width' is 'rng below' of 280 add 21,
+        Return a number, 'the wide width'.
+    a number called 'the width' is 'rng below' of 24 add 1.
+    Return a number, 'the width'.
+
+(A width written beside a precision. Never zero: a zero width beside a
+ precision (`{n:0.2}`, `{n:00.2}`) is refused at compile time, though
+ LANGUAGE.md:3459-3461 says a width may be zero and 3498 that a width
+ composes with a precision. The shape is held until that is settled:
+ docs/ledger/input-output.md Discrepancy 8,
+ docs/ledger/probes/input-output/D8.vox.)
+
+To 'gen format composed width' with a boolean called 'wide widths allowed'.
+    a number called 'the width' is 'gen format width draw' of 'wide widths allowed'.
+    If 'the width' is 0 then,
+        Set 'the width' to 1.
+    Return a number, 'the width'.
+
+(One whole-number specifier and what it renders, as a two-element list:
+ the specifier as written after the colon, then the rendering. Every row
+ of the integer half of the table, plus precision and width-and-
+ precision on a whole number (FMT-56).)
+
+To 'gen format integer case' with a text called 'the literal' and a boolean called 'wide widths allowed'.
+    a number called 'the value' is 'the literal' as a number.
+    a number called 'the specifier choice' is 'rng below' of 11.
+    a text called specifier is "".
+    a text called rendering is 'the literal'.
+    If 'the specifier choice' is 1 then,
+        a number called 'the space width' is 'gen format width draw' of 'wide widths allowed',
+        Set specifier to "{'the space width'}",
+        Set rendering to 'gen format padded' of 'the literal' and 'the space width' and " ".
+    If 'the specifier choice' is 2 then,
+        a number called 'the zero width' is 'gen format width draw' of 'wide widths allowed',
+        Set specifier to "0{'the zero width'}",
+        Set rendering to 'gen format padded' of 'the literal' and 'the zero width' and "0".
+    If 'the specifier choice' is 3 then,
+        a text called 'the lower hex' is 'gen format hex digits of' of 'the value',
+        Set specifier to "x",
+        Set rendering to "0x{'the lower hex'}".
+    If 'the specifier choice' is 4 then,
+        a text called 'the capital hex' is 'gen format capital hex digits of' of 'the value',
+        Set specifier to "X",
+        Set rendering to "0x{'the capital hex'}".
+    If 'the specifier choice' is 5 then,
+        Set specifier to "b",
+        Set rendering to 'gen format binary digits of' of 'the value'.
+    If 'the specifier choice' is 6 then,
+        a text called 'the octal digits' is 'gen format octal digits of' of 'the value',
+        Set specifier to "o",
+        Set rendering to "0o{'the octal digits'}".
+    If 'the specifier choice' is 7 then,
+        a number called 'the hex width' is 'rng below' of 24 add 1,
+        a text called 'the bare hex' is 'gen format hex digits of' of 'the value',
+        a text called 'the padded hex' is 'gen format padded' of 'the bare hex' and 'the hex width' and "0",
+        Set specifier to "0{'the hex width'}x",
+        Set rendering to "0x{'the padded hex'}".
+    a number called 'the places' is 'rng below' of 31.
+    a text called 'the places rendering' is 'the literal'.
+    If 'the places' is greater than 0 then,
+        Set 'the places rendering' to "{'the literal'}.{'gen format zeros' of 'the places'}".
+    If 'the specifier choice' is 8 then,
+        Set specifier to ".{'the places'}",
+        Set rendering to 'the places rendering'.
+    (A width beside a precision of 0 on a whole number pads one
+     character short (input-output.md Discrepancy 7, probe D7.vox), so a
+     composed whole-number specifier carries at least one place; the
+     bare `.0` of choice 8 stays.)
+    a number called 'the composed places' is 'the places'.
+    a text called 'the composed rendering' is 'the places rendering'.
+    If 'the places' is 0 then,
+        Set 'the composed places' to 1,
+        Set 'the composed rendering' to "{'the literal'}.0".
+    If 'the specifier choice' is 9 then,
+        a number called 'the field' is 'gen format composed width' of 'wide widths allowed',
+        Set specifier to "{'the field'}.{'the composed places'}",
+        Set rendering to 'gen format padded' of 'the composed rendering' and 'the field' and " ".
+    If 'the specifier choice' is 10 then,
+        a number called 'the zero field' is 'gen format composed width' of 'wide widths allowed',
+        Set specifier to "0{'the zero field'}.{'the composed places'}",
+        Set rendering to 'gen format padded' of 'the composed rendering' and 'the zero field' and "0".
+    a list called 'the case' is [specifier, rendering].
+    Return a list, 'the case'.
+
+(A float rounded to a number of places, worked out on its exact value.
+ The float is a whole part and a fraction of the form j/2^m, so its
+ decimal expansion is exactly the whole part, a point and the m digits
+ of j times 5^m: nothing the double cannot hold, and no rounding of its
+ own. Rounding to fewer places than m keeps or bumps the last digit by
+ the dropped digits, and a dropped part of exactly one half goes to the
+ even digit, LANGUAGE.md:3455-3456.)
+
+To 'gen format rounded' with a number called 'the whole value' and a number called 'the fraction value' and a number called 'the fraction places' and a number called 'the precision'.
+    If 'the precision' is greater than or equal to 'the fraction places' and 'the precision' is 0 then,
+        Return a text, "{'the whole value'}".
+    If 'the precision' is greater than or equal to 'the fraction places' then,
+        a text called 'the fraction digits' is "",
+        If 'the fraction places' is greater than 0 then, Set 'the fraction digits' to 'gen format padded' of "{'the fraction value'}" and 'the fraction places' and "0".
+        a number called 'the padding places' is 'the precision' subtract 'the fraction places',
+        a text called 'the exact' is "{'the whole value'}.{'the fraction digits'}{'gen format zeros' of 'the padding places'}",
+        Return a text, 'the exact'.
+    a number called 'the dropped places' is 'the fraction places' subtract 'the precision'.
+    a number called 'the dropped scale' is 'gen format power of ten' of 'the dropped places'.
+    a number called kept is 'the fraction value' divide 'the dropped scale'.
+    a number called dropped is 'the fraction value' modulo 'the dropped scale'.
+    a number called half is 'the dropped scale' divide 2.
+    a number called 'the place scale' is 'gen format power of ten' of 'the precision'.
+    a number called total is 'the whole value' multiply 'the place scale' add kept.
+    a boolean called 'rounds up' is false.
+    If dropped is greater than half then,
+        Set 'rounds up' to true.
+    If dropped is half and total modulo 2 is 1 then,
+        Set 'rounds up' to true.
+    If 'rounds up' then,
+        Set total to total add 1.
+    If 'the precision' is 0 then,
+        Return a text, "{total}".
+    a number called 'the whole part' is total divide 'the place scale'.
+    a number called 'the fraction part' is total modulo 'the place scale'.
+    a text called 'the fraction text' is 'gen format padded' of "{'the fraction part'}" and 'the precision' and "0".
+    a text called 'the rounded' is "{'the whole part'}.{'the fraction text'}".
+    Return a text, 'the rounded'.
+
+(One float specifier case, as a three-element list: the float literal as
+ written in the source, the specifier, and the rendering. Fifteen
+ significant digits at most (the EXP-94 ruling), and the precision is
+ drawn three ways - inside the expansion, where it rounds; past it,
+ where it pads with zeros; and far past it.)
+
+To 'gen format float case' with a boolean called 'wide widths allowed'.
+    a number called 'the fraction places' is 'rng below' of 5.
+    a number called 'the whole room' is 15 subtract 'the fraction places'.
+    a number called 'the whole part choice' is 'rng below' of 7.
+    a text called 'the whole digits' is "0".
+    If 'the whole part choice' is not 0 then,
+        a number called 'the whole length' is 'rng below' of 'the whole room' add 1,
+        Set 'the whole digits' to 'gen random digits' of 'the whole length'.
+    a number called 'the whole value' is 'the whole digits' as a number.
+    a number called 'the fraction scale' is 'gen format power of ten' of 'the fraction places'.
+    a number called 'the denominator' is 1.
+    a number called 'doublings made' is 0.
+    While 'doublings made' is less than 'the fraction places',
+        Set 'the denominator' to 'the denominator' multiply 2,
+        Set 'doublings made' to 'doublings made' add 1.
+    a number called 'the fraction value' is 0.
+    If 'the fraction places' is greater than 0 then,
+        a number called 'half the denominator' is 'the denominator' divide 2,
+        a number called 'the odd numerator' is 'rng below' of 'half the denominator' multiply 2 add 1,
+        Set 'the fraction value' to 'the odd numerator' multiply {'the fraction scale' divide 'the denominator'}.
+    a text called 'the fraction written' is "0".
+    If 'the fraction places' is greater than 0 then,
+        Set 'the fraction written' to 'gen format padded' of "{'the fraction value'}" and 'the fraction places' and "0".
+    a text called 'the literal' is "{'the whole digits'}.{'the fraction written'}".
+    a number called 'the precision choice' is 'rng below' of 3.
+    a number called 'the inner reach' is 'the fraction places' add 1.
+    a number called precision is 'rng below' of 'the inner reach'.
+    If 'the precision choice' is 1 then,
+        Set precision to 'rng below' of 8 add 'the fraction places'.
+    If 'the precision choice' is 2 then,
+        Set precision to 'rng below' of 40.
+    a text called 'the places rendering' is 'gen format rounded' of 'the whole value' and 'the fraction value' and 'the fraction places' and precision.
+    a text called specifier is ".{precision}".
+    a text called rendering is 'the places rendering'.
+    a number called 'the field choice' is 'rng below' of 3.
+    a number called 'the field' is 'gen format composed width' of 'wide widths allowed'.
+    If 'the field choice' is 1 then,
+        Set specifier to "{'the field'}.{precision}",
+        Set rendering to 'gen format padded' of 'the places rendering' and 'the field' and " ".
+    If 'the field choice' is 2 then,
+        Set specifier to "0{'the field'}.{precision}",
+        Set rendering to 'gen format padded' of 'the places rendering' and 'the field' and "0".
+    a list called 'the case' is ['the literal', specifier, rendering].
+    Return a list, 'the case'.
+
+(Literal text between slots. No brace, quote or backslash, so nothing
+ here means anything to the format-string reader; empty is a choice
+ too.)
+
+To 'gen format separator'.
+    a list called 'the separators' is ["|", "-", " ", "/", ",", ";", "+", "=", ":", "", ".", "#", "_"].
+    a number called 'the draw' is 'rng below' of 13.
+    a number called 'the position' is 'the draw' add 1.
+    a text called 'the separator' is element 'the position' of 'the separators'.
+    Return a text, 'the separator'.
+
+(A text-equality assertion, shaped like 'gen format text check', where
+ the expected value is a run-time text rather than a literal. Prints only the verdict, never
+ the value: these hold argument and clock readings, which are the
+ host's, not the generator's (PROCEDURE.md 6a).)
+
+To 'gen format agreement' with a text called 'the row' and a text called 'the left' and a text called 'the right' and a text called 'the subject'.
+    a text called 'the line' is "If {'the left'} is not {'the right'} then, Print \"ASSERT {'the row'}: {'the subject'} renders differently in two sinks\", Exit 95.\nPrint \"{'the subject'} agrees across sinks\"".
+    Return a text, 'the line'.
+
+(FMT-07, FMT-08, FMT-24, FMT-32, FMT-33, FMT-38, FMT-39: one format
+ string carrying a number slot with a drawn specifier, a text slot with
+ a drawn width and a buffer slot, with literal text around and between
+ them, rendered into every string sink the manual names
+ (LANGUAGE.md:3543-3549): a text initializer, a text REASSIGNMENT
+ (`Set`, never `the <text> is "{...}"`, which is register #154's shape),
+ a buffer initializer, buffer `set`, `copy` over older contents and
+ `append` after a known head, and - where the program has a scratch
+ directory - a `Write` to a file that is read back. "All sinks share
+ one name resolver", so each rendering is asserted against the one the
+ generator worked out, which is cross-sink equality without trusting
+ any single sink. The sinks are emitted in a drawn rotation, so no sink
+ is always first.)
+
+To 'gen leaf format sinks agree' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a text called 'the number literal' is 'gen extreme number'.
+    a list called 'the number case' is 'gen format integer case' of 'the number literal' and 'wide widths allowed'.
+    a text called 'the number specifier' is element 1 of 'the number case'.
+    a text called 'the number rendering' is element 2 of 'the number case'.
+    a number called 'the word length' is 'rng below' of 9.
+    a text called 'the word' is 'gen buffer filler' of 'the word length'.
+    a number called 'the stock length' is 'rng below' of 9 add 1.
+    a text called 'the stock' is 'gen buffer filler' of 'the stock length'.
+    a number called 'the word width choice' is 'rng below' of 3.
+    a text called 'the word specifier' is "".
+    a text called 'the word rendering' is 'the word'.
+    If 'the word width choice' is 0 then,
+        a number called 'the word width' is 'gen format width draw' of 'wide widths allowed',
+        Set 'the word specifier' to "{'the word width'}",
+        Set 'the word rendering' to 'gen format padded' of 'the word' and 'the word width' and " ".
+    a number called 'the prefix length' is 'rng below' of 5.
+    a text called 'the prefix' is 'gen buffer filler' of 'the prefix length'.
+    a text called 'the first separator' is 'gen format separator'.
+    a text called 'the second separator' is 'gen format separator'.
+    a text called 'the suffix' is 'gen format separator'.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the word name' is 'gen flow witness name'.
+    a text called 'the stock name' is 'gen flow witness name'.
+    a text called 'the number slot' is 'gen format slot' of 'the number name' and 'the number specifier'.
+    a text called 'the word slot' is 'gen format slot' of 'the word name' and 'the word specifier'.
+    a text called 'the stock slot' is 'gen format slot' of 'the stock name' and "".
+    a text called body is "{'the prefix'}{'the number slot'}{'the first separator'}{'the word slot'}{'the second separator'}{'the stock slot'}{'the suffix'}".
+    a text called expected is "{'the prefix'}{'the number rendering'}{'the first separator'}{'the word rendering'}{'the second separator'}{'the stock'}{'the suffix'}".
+    a number called 'the expected length' is 'gen format length of' of expected.
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the number literal'}" to 'the lines'.
+    append "a text called {'the word name'} is \"{'the word'}\"" to 'the lines'.
+    append "a buffer called {'the stock name'} is \"{'the stock'}\"" to 'the lines'.
+    a number called 'the sink count' is 6.
+    If gen_does_file_io and gen_scratch_flag is not empty then,
+        Set 'the sink count' to 7.
+    a number called 'the first sink' is 'rng below' of 'the sink count'.
+    a number called 'sinks tried' is 0.
+    While 'sinks tried' is less than 'the sink count',
+        a number called 'which sink' is {'the first sink' add 'sinks tried'} modulo 'the sink count',
+        a text called 'the sink name' is 'gen flow witness name',
+        a text called 'the older word' is 'gen buffer filler' of 3,
+        a number called 'the older length' is 'rng below' of 12 add 1,
+        a text called 'the older contents' is 'gen buffer filler' of 'the older length',
+        a number called 'the sink capacity' is 'the expected length' add 1 add 'rng below' of 9,
+        If 'which sink' is 0 then, append "a text called {'the sink name'} is \"{body}\"" to 'the lines'.
+        If 'which sink' is 1 then, append "a text called {'the sink name'} is \"{'the older word'}\"" to 'the lines', append "Set {'the sink name'} to \"{body}\"" to 'the lines'.
+        If 'which sink' is 2 then, append "a buffer called {'the sink name'} is \"{body}\"" to 'the lines'.
+        If 'which sink' is 3 then, append "a buffer called {'the sink name'} is {'the sink capacity'} bytes in size" to 'the lines', append "set {'the sink name'} to \"{body}\"" to 'the lines'.
+        If 'which sink' is 4 then, append "a buffer called {'the sink name'} is \"{'the older contents'}\"" to 'the lines', append "copy \"{body}\" to {'the sink name'}" to 'the lines'.
+        If 'which sink' is 5 then, append "a buffer called {'the sink name'} is \"{'the stock'}\"" to 'the lines', append "append \"{body}\" to {'the sink name'}" to 'the lines'.
+        If 'which sink' is 6 then, 'gen format file round trip' of 'the lines' and 'the sink name' and body and expected.
+        a text called 'the sink expected' is expected,
+        If 'which sink' is 5 then, Set 'the sink expected' to "{'the stock'}{expected}".
+        If 'which sink' is not 6 then, append 'gen format text check' of "FMT-33" and 'the sink name' and 'the sink expected' to 'the lines'.
+        Set 'sinks tried' to 'sinks tried' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(The file sink, as lines appended to a leaf's own list: a format string
+ written to a scratch file, read back whole into a buffer one byte wider
+ than the rendering, and asserted. The caller has checked the program
+ has a scratch directory.)
+
+To 'gen format file round trip' with a list called 'the lines' and a text called 'the sink name' and a text called body and a text called expected.
+    Set gen_file_ios to gen_file_ios add 1.
+    a text called 'the handle' is 'gen flow witness name'.
+    a text called 'the path name' is 'gen flow witness name'.
+    a number called 'the expected length' is 'gen format length of' of expected.
+    a number called 'the capacity' is 'the expected length' add 1 add 'rng below' of 9.
+    append "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}formatted\"" to 'the lines'.
+    append 'gen file open in any order' of "writing" and 'the handle' and 'the path name' to 'the lines'.
+    append "Write \"{body}\" to {'the handle'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    append 'gen file open in any order' of "reading" and 'the handle' and 'the path name' to 'the lines'.
+    append "a buffer called {'the sink name'} is {'the capacity'} bytes in size" to 'the lines'.
+    append "Read from {'the handle'} into {'the sink name'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    append 'gen format text check' of "FMT-32" and 'the sink name' and expected to 'the lines'.
+
+(FMT-31, FMT-34: a filesystem path is a string sink like any other
+ (LANGUAGE.md:3543-3545, `Create a directory called "{base}/{name}"`).
+ A directory is made at a path whose last component carries a drawn
+ specifier, and asked after through the path the generator worked out,
+ written with no specifier at all; a file is opened for writing inside
+ it through a format-string `at`, and read back through the worked-out
+ path; then `Delete the file` and `Remove the directory` take format
+ paths too, and the worked-out path must be gone. Open, delete and
+ remove are sinks the manual does not list by name, so "every statement
+ that takes a string value" is what is on trial. Confined to the
+ program's own scratch directory, and narrow widths only: a path
+ component has a length limit the fuzzer must not trip over by
+ accident.)
+
+To 'gen leaf format path sink' with a text called indent and a boolean called nested.
+    If gen_does_file_io is false then,
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    If gen_scratch_flag is empty then,
+        Print "The program has file input and output but no scratch directory, so the format path leaf stands aside.",
+        'gen leaf print' of indent,
+        Return a boolean, false.
+    Set gen_file_ios to gen_file_ios add 1.
+    (A path component has a length limit, so only narrow widths here.)
+    a boolean called 'wide widths allowed' is false.
+    a text called 'the number literal' is 'gen extreme number'.
+    a list called 'the number case' is 'gen format integer case' of 'the number literal' and 'wide widths allowed'.
+    a text called 'the number specifier' is element 1 of 'the number case'.
+    a text called 'the number rendering' is element 2 of 'the number case'.
+    a number called 'the word length' is 'rng below' of 8 add 1.
+    a text called 'the word' is 'gen buffer filler' of 'the word length'.
+    a number called 'the payload length' is 'rng below' of 40.
+    a text called 'the payload' is 'gen buffer filler' of 'the payload length'.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the word name' is 'gen flow witness name'.
+    a text called 'the handle' is 'gen flow witness name'.
+    a text called 'the sink name' is 'gen flow witness name'.
+    a text called 'the number slot' is 'gen format slot' of 'the number name' and 'the number specifier'.
+    a text called 'the word slot' is 'gen format slot' of 'the word name' and "".
+    a text called 'the folder written' is "{{{gen_scratch_flag}}}/{gen_file_ios}dir{'the number slot'}".
+    a text called 'the folder worked out' is "{{{gen_scratch_flag}}}/{gen_file_ios}dir{'the number rendering'}".
+    a text called 'the article' is "a ".
+    a number called 'the article draw' is 'rng below' of 3.
+    If 'the article draw' is 0 then,
+        Set 'the article' to "".
+    a text called 'the file inside written' is "\"{'the folder written'}/{'the word slot'}\"".
+    a text called 'the file inside worked out' is "\"{'the folder worked out'}/{'the word'}\"".
+    a number called 'the capacity' is 'the payload length' add 1 add 'rng below' of 9.
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the number literal'}" to 'the lines'.
+    append "a text called {'the word name'} is \"{'the word'}\"" to 'the lines'.
+    append "Create {'the article'}directory called \"{'the folder written'}\"" to 'the lines'.
+    append "If \"{'the folder worked out'}\" is not available then, Print \"ASSERT FMT-34: expected the directory {gen_file_ios}dir{'the number rendering'} to exist\", Exit 95.\nPrint \"the formatted directory exists\"" to 'the lines'.
+    append 'gen file open in any order' of "writing" and 'the handle' and 'the file inside written' to 'the lines'.
+    append "Write \"{'the payload'}\" to {'the handle'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    append 'gen file open in any order' of "reading" and 'the handle' and 'the file inside worked out' to 'the lines'.
+    append "a buffer called {'the sink name'} is {'the capacity'} bytes in size" to 'the lines'.
+    append "Read from {'the handle'} into {'the sink name'}" to 'the lines'.
+    append "Close {'the handle'}" to 'the lines'.
+    append 'gen format text check' of "FMT-31" and 'the sink name' and 'the payload' to 'the lines'.
+    append "Delete the file \"{'the folder written'}/{'the word slot'}\"" to 'the lines'.
+    append "Remove the directory called \"{'the folder written'}\"" to 'the lines'.
+    append "If \"{'the folder worked out'}\" is available then, Print \"ASSERT FMT-34: expected the directory {gen_file_ios}dir{'the number rendering'} to be gone\", Exit 95.\nPrint \"the formatted directory is gone\"" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-35: a `treating` clause takes a format string (LANGUAGE.md:3545).
+ Over a text list, the REPLACEMENT is a format string with a drawn
+ specifier, and every element of the result is asserted - the matched
+ ones carry the generator's rendering, the rest are untouched. Over a
+ mixed list, the MATCH is a format string naming a text variable, and
+ the element it renders to is replaced.
+
+ A format-string MATCH over a list whose elements are all text never
+ fires (`print each name from ["kiwi"] treating "{word}" as "x".` prints
+ kiwi): input-output.md Discrepancy 6, probe D6.vox. That one shape is
+ held rather than emitted until it is settled.)
+
+To 'gen leaf format treating sink' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a text called 'the number literal' is 'gen extreme number'.
+    a list called 'the number case' is 'gen format integer case' of 'the number literal' and 'wide widths allowed'.
+    a text called 'the number specifier' is element 1 of 'the number case'.
+    a text called 'the number rendering' is element 2 of 'the number case'.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the source name' is 'gen flow witness name'.
+    a text called 'the result name' is 'gen flow witness name'.
+    a text called 'the item name' is 'gen flow witness name'.
+    a number called 'the head length' is 'rng below' of 4.
+    a text called 'the replacement head' is 'gen buffer filler' of 'the head length'.
+    a text called 'the number slot' is 'gen format slot' of 'the number name' and 'the number specifier'.
+    a text called 'the replacement' is "{'the replacement head'}{'the number slot'}".
+    a text called 'the replacement worked out' is "{'the replacement head'}{'the number rendering'}".
+    a number called 'how many words' is 'rng below' of 5 add 2.
+    a number called 'the matched position' is 'rng below' of 'how many words' add 1.
+    a number called 'the match length' is 'rng below' of 6 add 1.
+    a text called 'the match' is 'gen buffer filler' of 'the match length'.
+    a list called 'the words' is [].
+    a text called 'the list literal' is "".
+    a number called position is 1.
+    While position is less than or equal to 'how many words',
+        a number called 'the word length' is 'rng below' of 7 add 1,
+        a text called 'the word' is 'gen buffer filler' of 'the word length',
+        If position is 'the matched position' then, Set 'the word' to 'the match'.
+        append 'the word' to 'the words',
+        If position is greater than 1 then, Set 'the list literal' to "{'the list literal'}, ".
+        Set 'the list literal' to "{'the list literal'}\"{'the word'}\"",
+        Set position to position add 1.
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the number literal'}" to 'the lines'.
+    append "a list called {'the source name'} is [{'the list literal'}]" to 'the lines'.
+    append "a list called {'the result name'} is []" to 'the lines'.
+    append "append each {'the item name'} from {'the source name'} treating \"{'the match'}\" as \"{'the replacement'}\" to {'the result name'}" to 'the lines'.
+    a text called 'the result length' is "{'the result name'}'s length".
+    append 'gen format number check' of "FMT-35" and 'the result length' and 'how many words' to 'the lines'.
+    Set position to 1.
+    While position is less than or equal to 'how many words',
+        a text called 'the element name' is 'gen flow witness name',
+        a text called 'the source word' is element position of 'the words',
+        a text called 'the element expected' is 'the source word',
+        If 'the source word' is 'the match' then, Set 'the element expected' to 'the replacement worked out'.
+        append "a text called {'the element name'} is element {position} of {'the result name'}" to 'the lines',
+        append 'gen format text check' of "FMT-35" and 'the element name' and 'the element expected' to 'the lines',
+        Set position to position add 1.
+    (The mixed list: a number among the texts makes the element type
+     unprovable, the shape on which a format-string match does fire.)
+    a text called 'the key name' is 'gen flow witness name'.
+    a text called 'the mixed name' is 'gen flow witness name'.
+    a text called 'the mixed result' is 'gen flow witness name'.
+    a text called 'the mixed item' is 'gen flow witness name'.
+    a text called 'the mixed element' is 'gen flow witness name'.
+    a number called 'the key length' is 'rng below' of 6 add 1.
+    a text called 'the key' is 'gen buffer filler' of 'the key length'.
+    a number called 'the key head length' is 'rng below' of 3.
+    a text called 'the key head' is 'gen buffer filler' of 'the key head length'.
+    a text called 'the other word' is "{'the key head'}{'the key'}z".
+    a number called 'the mixed number' is 'rng below' of 1000.
+    a text called 'the key slot' is 'gen format slot' of 'the key name' and "".
+    append "a text called {'the key name'} is \"{'the key'}\"" to 'the lines'.
+    append "a list called {'the mixed name'} is [{'the mixed number'}, \"{'the key head'}{'the key'}\", \"{'the other word'}\"]" to 'the lines'.
+    append "a list called {'the mixed result'} is []" to 'the lines'.
+    append "append each {'the mixed item'} from {'the mixed name'} treating \"{'the key head'}{'the key slot'}\" as \"{'the replacement'}\" to {'the mixed result'}" to 'the lines'.
+    append "a text called {'the mixed element'} is element 2 of {'the mixed result'}" to 'the lines'.
+    append 'gen format text check' of "FMT-35" and 'the mixed element' and 'the replacement worked out' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-21, FMT-37: special names resolve the same in every sink
+ (LANGUAGE.md:3546-3549). `{arguments's count}` in a text initializer
+ must read the count `arguments's count` gives directly; the same slot
+ in a buffer and, where there is a scratch directory, in a file must
+ agree with it; `{arguments's first}` and `{current time's hour:02}`
+ must agree between a text and a buffer. The program does not choose
+ its arguments or the clock, so these assert AGREEMENT (PROCEDURE.md 6a)
+ and print only the verdict.)
+
+To 'gen leaf format special names agree' with a text called indent and a boolean called nested.
+    a text called 'the count name' is 'gen flow witness name'.
+    a text called 'the count text' is 'gen flow witness name'.
+    a text called 'the count buffer' is 'gen flow witness name'.
+    a text called 'the first name' is 'gen flow witness name'.
+    a text called 'the first text' is 'gen flow witness name'.
+    a text called 'the first buffer' is 'gen flow witness name'.
+    a text called 'the hour text' is 'gen flow witness name'.
+    a text called 'the hour buffer' is 'gen flow witness name'.
+    a text called 'the bracket' is 'gen format separator'.
+    a text called 'the older contents' is 'gen buffer filler' of 2.
+    a text called 'the count slot' is 'gen format slot' of 'the count name' and "".
+    a text called 'the count rendered' is "\"{'the count slot'}\"".
+    a text called 'the first slot' is 'gen format slot' of 'the first name' and "".
+    a text called 'the first rendered' is "\"{'the bracket'}{'the first slot'}{'the bracket'}\"".
+    a list called 'the lines' is [].
+    append "a number called {'the count name'} is arguments's count" to 'the lines'.
+    append "a text called {'the count text'} is \"{{arguments's count}}\"" to 'the lines'.
+    append 'gen format agreement' of "FMT-21" and 'the count text' and 'the count rendered' and "the argument count" to 'the lines'.
+    append "a buffer called {'the count buffer'} is \"{'the older contents'}\"" to 'the lines'.
+    append "copy \"{{arguments's count}}\" to {'the count buffer'}" to 'the lines'.
+    append 'gen format agreement' of "FMT-37" and 'the count buffer' and 'the count text' and "the argument count" to 'the lines'.
+    append "a text called {'the first name'} is arguments's first" to 'the lines'.
+    append "a text called {'the first text'} is \"{'the bracket'}{{arguments's first}}{'the bracket'}\"" to 'the lines'.
+    append 'gen format agreement' of "FMT-37" and 'the first text' and 'the first rendered' and "the first argument" to 'the lines'.
+    append "a buffer called {'the first buffer'} is \"\"" to 'the lines'.
+    append "set {'the first buffer'} to \"{'the bracket'}{{arguments's first}}{'the bracket'}\"" to 'the lines'.
+    append 'gen format agreement' of "FMT-37" and 'the first buffer' and 'the first text' and "the first argument" to 'the lines'.
+    append "a text called {'the hour text'} is \"{{current time's hour:02}}\"" to 'the lines'.
+    append "a buffer called {'the hour buffer'} is \"{{current time's hour:02}}\"" to 'the lines'.
+    append 'gen format agreement' of "FMT-37" and 'the hour buffer' and 'the hour text' and "the current hour" to 'the lines'.
+    a text called 'the hour size' is "{'the hour buffer'}'s size".
+    append 'gen format number check' of "FMT-37" and 'the hour size' and 2 to 'the lines'.
+    If gen_does_file_io and gen_scratch_flag is not empty then,
+        a text called 'the file sink' is 'gen flow witness name',
+        a text called 'the handle' is 'gen flow witness name',
+        a text called 'the path name' is 'gen flow witness name',
+        Set gen_file_ios to gen_file_ios add 1,
+        append "a text called {'the path name'} is \"{{{gen_scratch_flag}}}/{gen_file_ios}special\"" to 'the lines',
+        append 'gen file open in any order' of "writing" and 'the handle' and 'the path name' to 'the lines',
+        append "Write \"{{arguments's count}}\" to {'the handle'}" to 'the lines',
+        append "Close {'the handle'}" to 'the lines',
+        append 'gen file open in any order' of "reading" and 'the handle' and 'the path name' to 'the lines',
+        append "a buffer called {'the file sink'} is 64 bytes in size" to 'the lines',
+        append "Read from {'the handle'} into {'the file sink'}" to 'the lines',
+        append "Close {'the handle'}" to 'the lines',
+        append 'gen format agreement' of "FMT-37" and 'the file sink' and 'the count text' and "the argument count" to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-36: a function argument is a string sink (LANGUAGE.md:3545). The
+ leaf defines its own one-line function that hands its parameter
+ straight back - a `text` parameter for one call and a `value`
+ parameter for the other - and asserts what came back against the
+ generator's rendering of the format string it passed. A definition is
+ top-level only, which this kind is (drawn at depth 3 alone), and the
+ blank line before it closes anything a neighbour left open, the rule
+ 'gen open a function definition' records.)
+
+To 'gen leaf format function argument' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a text called 'the text verb' is 'gen fresh verb'.
+    a text called 'the text function' is 'gen written name' of 'the text verb'.
+    a text called 'the value verb' is 'gen fresh verb'.
+    a text called 'the value function' is 'gen written name' of 'the value verb'.
+    a text called 'the text parameter' is 'gen flow witness name'.
+    a text called 'the value parameter' is 'gen flow witness name'.
+    a text called 'the number literal' is 'gen extreme number'.
+    a list called 'the number case' is 'gen format integer case' of 'the number literal' and 'wide widths allowed'.
+    a text called 'the number specifier' is element 1 of 'the number case'.
+    a text called 'the number rendering' is element 2 of 'the number case'.
+    a list called 'the float case' is 'gen format float case' of 'wide widths allowed'.
+    a text called 'the float literal' is element 1 of 'the float case'.
+    a text called 'the float specifier' is element 2 of 'the float case'.
+    a text called 'the float rendering' is element 3 of 'the float case'.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the float name' is 'gen flow witness name'.
+    a text called 'the text result' is 'gen flow witness name'.
+    a text called 'the value result' is 'gen flow witness name'.
+    a number called 'the head length' is 'rng below' of 5.
+    a text called 'the head' is 'gen buffer filler' of 'the head length'.
+    a text called 'the tail' is 'gen format separator'.
+    a text called 'the number slot' is 'gen format slot' of 'the number name' and 'the number specifier'.
+    a text called 'the float slot' is 'gen format slot' of 'the float name' and 'the float specifier'.
+    a text called 'the text introducer' is 'gen parameter introducer'.
+    a text called 'the value introducer' is 'gen parameter introducer'.
+    a text called 'the text preposition' is 'gen call preposition'.
+    a text called 'the value preposition' is 'gen call preposition'.
+    a text called 'the text expected' is "{'the head'}{'the number rendering'}{'the tail'}{'the float rendering'}".
+    a text called 'the value expected' is "{'the float rendering'}{'the tail'}{'the number rendering'}".
+    'gen open a function definition'.
+    'gen emit' of "{indent}To {'the text function'} {'the text introducer'} a text called {'the text parameter'}. Return a text, {'the text parameter'}.\n".
+    'gen emit' of "\n".
+    'gen emit' of "{indent}To {'the value function'} {'the value introducer'} a value called {'the value parameter'}. Return a value, {'the value parameter'}.\n".
+    'gen emit' of "\n".
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the number literal'}" to 'the lines'.
+    append "a float called {'the float name'} is {'the float literal'}" to 'the lines'.
+    append "a text called {'the text result'} is {'the text function'} {'the text preposition'} \"{'the head'}{'the number slot'}{'the tail'}{'the float slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-36" and 'the text result' and 'the text expected' to 'the lines'.
+    append "a value called {'the value result'} is {'the value function'} {'the value preposition'} \"{'the float slot'}{'the tail'}{'the number slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-36" and 'the value result' and 'the value expected' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-13, FMT-14, FMT-15, FMT-16, FMT-17: the radix rows, on whole
+ numbers drawn through 'gen extreme number' - i64's own maximum among
+ them, whose binary rendering is 63 digits - each into a text and
+ asserted against the generator's own base conversion. One to four
+ numbers per program, each with its own drawn radix, and a boolean in
+ a radix now and then, since a boolean is a whole number to the radix
+ specifiers (LANGUAGE.md:3478-3479).)
+
+To 'gen leaf format radix verified' with a text called indent and a boolean called nested.
+    a list called 'the radix specifiers' is ["x", "X", "b", "o", "0x"].
+    a list called 'the lines' is [].
+    a number called 'how many numbers' is 'rng below' of 4 add 1.
+    a number called 'numbers made' is 0.
+    a list called 'the rows' is ["FMT-13", "FMT-14", "FMT-15", "FMT-16", "FMT-17"].
+    While 'numbers made' is less than 'how many numbers',
+        a text called 'the literal' is 'gen extreme number',
+        a number called 'the value' is 'the literal' as a number,
+        a number called 'the radix draw' is 'rng below' of 5,
+        a number called 'the radix position' is 'the radix draw' add 1,
+        a text called specifier is element 'the radix position' of 'the radix specifiers',
+        a text called row is element 'the radix position' of 'the rows',
+        a text called 'the lower digits' is 'gen format hex digits of' of 'the value',
+        a text called 'the capital digits' is 'gen format capital hex digits of' of 'the value',
+        a text called 'the binary digits' is 'gen format binary digits of' of 'the value',
+        a text called 'the octal digits' is 'gen format octal digits of' of 'the value',
+        a number called 'the digit width' is 'rng below' of 24 add 1,
+        a text called 'the padded digits' is 'gen format padded' of 'the lower digits' and 'the digit width' and "0",
+        a text called rendering is "0x{'the lower digits'}",
+        If 'the radix draw' is 1 then, Set rendering to "0x{'the capital digits'}".
+        If 'the radix draw' is 2 then, Set rendering to 'the binary digits'.
+        If 'the radix draw' is 3 then, Set rendering to "0o{'the octal digits'}".
+        If 'the radix draw' is 4 then, Set specifier to "0{'the digit width'}x", Set rendering to "0x{'the padded digits'}".
+        a text called 'the number name' is 'gen flow witness name',
+        a text called 'the rendered name' is 'gen flow witness name',
+        a text called 'the number slot' is 'gen format slot' of 'the number name' and specifier,
+        append "a number called {'the number name'} is {'the literal'}" to 'the lines',
+        append "a text called {'the rendered name'} is \"{'the number slot'}\"" to 'the lines',
+        append 'gen format text check' of row and 'the rendered name' and rendering to 'the lines',
+        Set 'numbers made' to 'numbers made' add 1.
+    a number called 'the boolean draw' is 'rng below' of 3.
+    If 'the boolean draw' is 0 then,
+        a text called 'the boolean name' is 'gen flow witness name',
+        a text called 'the boolean rendered' is 'gen flow witness name',
+        a number called 'the truth draw' is 'rng below' of 2,
+        a text called 'the truth' is "true",
+        a text called 'the truth digit' is "1",
+        If 'the truth draw' is 0 then, Set 'the truth' to "false", Set 'the truth digit' to "0".
+        a text called 'the hex slot' is 'gen format slot' of 'the boolean name' and "x",
+        a text called 'the binary slot' is 'gen format slot' of 'the boolean name' and "b",
+        a text called 'the truth expected' is "0x{'the truth digit'}|{'the truth digit'}",
+        append "a boolean called {'the boolean name'} is {'the truth'}" to 'the lines',
+        append "a text called {'the boolean rendered'} is \"{'the hex slot'}|{'the binary slot'}\"" to 'the lines',
+        append 'gen format text check' of "FMT-13" and 'the boolean rendered' and 'the truth expected' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-09, FMT-11, FMT-12: a bare slot renders what the value itself
+ would, a width pads with spaces on the left, a zero width with zeros
+ (LANGUAGE.md:3439-3442). The width is drawn wide - past every rendering
+ now and then, zero now and then - and applied to a number, a text, a
+ buffer and a boolean in turn; "a width asks nothing of a type"
+ (LANGUAGE.md:3469-3471), so each is asserted. A zero width is applied
+ to the number and the boolean only: the manual says what zero-padding
+ a number means and not what it means for a text.)
+
+To 'gen leaf format width verified' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a text called 'the literal' is 'gen extreme number'.
+    a number called 'the word length' is 'rng below' of 10.
+    a text called 'the word' is 'gen buffer filler' of 'the word length'.
+    a number called 'the stock length' is 'rng below' of 10 add 1.
+    a text called 'the stock' is 'gen buffer filler' of 'the stock length'.
+    a number called 'the truth draw' is 'rng below' of 2.
+    a text called 'the truth' is "true".
+    a text called 'the truth digit' is "1".
+    If 'the truth draw' is 0 then,
+        Set 'the truth' to "false",
+        Set 'the truth digit' to "0".
+    a number called 'the number width' is 'gen format width draw' of 'wide widths allowed'.
+    a number called 'the zero width' is 'gen format width draw' of 'wide widths allowed'.
+    a number called 'the word width' is 'gen format width draw' of 'wide widths allowed'.
+    a number called 'the stock width' is 'gen format width draw' of 'wide widths allowed'.
+    a number called 'the truth width' is 'gen format width draw' of 'wide widths allowed'.
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the word name' is 'gen flow witness name'.
+    a text called 'the stock name' is 'gen flow witness name'.
+    a text called 'the truth name' is 'gen flow witness name'.
+    a text called 'the default name' is 'gen flow witness name'.
+    a text called 'the padded name' is 'gen flow witness name'.
+    a text called 'the zero name' is 'gen flow witness name'.
+    a text called 'the word padded' is 'gen flow witness name'.
+    a text called 'the stock padded' is 'gen flow witness name'.
+    a text called 'the truth padded' is 'gen flow witness name'.
+    a text called 'the truth specifier' is "{'the truth width'}".
+    a text called 'the truth pad' is " ".
+    a number called 'the truth pad draw' is 'rng below' of 2.
+    If 'the truth pad draw' is 0 then,
+        Set 'the truth specifier' to "0{'the truth width'}",
+        Set 'the truth pad' to "0".
+    a text called 'the default slot' is 'gen format slot' of 'the number name' and "".
+    a text called 'the padded slot' is 'gen format slot' of 'the number name' and "{'the number width'}".
+    a text called 'the zero slot' is 'gen format slot' of 'the number name' and "0{'the zero width'}".
+    a text called 'the word slot' is 'gen format slot' of 'the word name' and "{'the word width'}".
+    a text called 'the stock slot' is 'gen format slot' of 'the stock name' and "{'the stock width'}".
+    a text called 'the truth slot' is 'gen format slot' of 'the truth name' and 'the truth specifier'.
+    a text called 'the padded expected' is 'gen format padded' of 'the literal' and 'the number width' and " ".
+    a text called 'the zero expected' is 'gen format padded' of 'the literal' and 'the zero width' and "0".
+    a text called 'the word expected' is 'gen format padded' of 'the word' and 'the word width' and " ".
+    a text called 'the stock expected' is 'gen format padded' of 'the stock' and 'the stock width' and " ".
+    a text called 'the truth expected' is 'gen format padded' of 'the truth digit' and 'the truth width' and 'the truth pad'.
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the literal'}" to 'the lines'.
+    append "a text called {'the word name'} is \"{'the word'}\"" to 'the lines'.
+    append "a buffer called {'the stock name'} is \"{'the stock'}\"" to 'the lines'.
+    append "a boolean called {'the truth name'} is {'the truth'}" to 'the lines'.
+    append "a text called {'the default name'} is \"{'the default slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-09" and 'the default name' and 'the literal' to 'the lines'.
+    append "a text called {'the padded name'} is \"{'the padded slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-11" and 'the padded name' and 'the padded expected' to 'the lines'.
+    append "a text called {'the zero name'} is \"{'the zero slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-12" and 'the zero name' and 'the zero expected' to 'the lines'.
+    append "a text called {'the word padded'} is \"{'the word slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-11" and 'the word padded' and 'the word expected' to 'the lines'.
+    append "a buffer called {'the stock padded'} is \"{'the stock slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-11" and 'the stock padded' and 'the stock expected' to 'the lines'.
+    append "a text called {'the truth padded'} is \"{'the truth slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-11" and 'the truth padded' and 'the truth expected' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-10, FMT-56: `{f:.P}` prints exactly P places of a float's exact
+ expansion, correctly rounded with an exact tie to the even digit, and
+ composes with a width (`{f:W.P}`, `{f:0W.P}`); `{n:.P}` on a whole
+ number is the number and P zeros (LANGUAGE.md:3454-3467, 3498-3501).
+ One to three floats from 'gen format float case', whose values are
+ exact binary fractions so the expansion is known to the digit, plus one
+ whole number from 'gen extreme number' with a precision of its own,
+ and a boolean, which has a decimal expansion too (LANGUAGE.md:3476-3477).)
+
+To 'gen leaf format precision verified' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a list called 'the lines' is [].
+    a number called 'how many floats' is 'rng below' of 3 add 1.
+    a number called 'floats made' is 0.
+    While 'floats made' is less than 'how many floats',
+        a list called 'the float case' is 'gen format float case' of 'wide widths allowed',
+        a text called 'the float literal' is element 1 of 'the float case',
+        a text called 'the float specifier' is element 2 of 'the float case',
+        a text called 'the float rendering' is element 3 of 'the float case',
+        a text called 'the float name' is 'gen flow witness name',
+        a text called 'the rendered name' is 'gen flow witness name',
+        a text called 'the float slot' is 'gen format slot' of 'the float name' and 'the float specifier',
+        append "a float called {'the float name'} is {'the float literal'}" to 'the lines',
+        append "a text called {'the rendered name'} is \"{'the float slot'}\"" to 'the lines',
+        append 'gen format text check' of "FMT-10" and 'the rendered name' and 'the float rendering' to 'the lines',
+        Set 'floats made' to 'floats made' add 1.
+    a text called 'the literal' is 'gen extreme number'.
+    (One place at least, and a width of one at least, for the two held
+     shapes 'gen format integer case' describes: Discrepancies 7 and 8.)
+    a number called 'the places' is 'rng below' of 30 add 1.
+    a number called 'the field' is 'gen format composed width' of 'wide widths allowed'.
+    a text called 'the places rendering' is "{'the literal'}.{'gen format zeros' of 'the places'}".
+    a text called 'the number name' is 'gen flow witness name'.
+    a text called 'the places name' is 'gen flow witness name'.
+    a text called 'the field name' is 'gen flow witness name'.
+    a text called 'the places slot' is 'gen format slot' of 'the number name' and ".{'the places'}".
+    a text called 'the field slot' is 'gen format slot' of 'the number name' and "0{'the field'}.{'the places'}".
+    a text called 'the field expected' is 'gen format padded' of 'the places rendering' and 'the field' and "0".
+    append "a number called {'the number name'} is {'the literal'}" to 'the lines'.
+    append "a text called {'the places name'} is \"{'the places slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-56" and 'the places name' and 'the places rendering' to 'the lines'.
+    append "a text called {'the field name'} is \"{'the field slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-56" and 'the field name' and 'the field expected' to 'the lines'.
+    a text called 'the truth name' is 'gen flow witness name'.
+    a text called 'the truth rendered' is 'gen flow witness name'.
+    a number called 'the truth places' is 'rng below' of 9.
+    a text called 'the truth digits' is "1".
+    If 'the truth places' is greater than 0 then,
+        Set 'the truth digits' to "1.{'gen format zeros' of 'the truth places'}".
+    a text called 'the truth slot' is 'gen format slot' of 'the truth name' and ".{'the truth places'}".
+    append "a boolean called {'the truth name'} is true" to 'the lines'.
+    append "a text called {'the truth rendered'} is \"{'the truth slot'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-10" and 'the truth rendered' and 'the truth digits' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-19, FMT-20: an arithmetic expression is legal in a slot and renders
+ its value (LANGUAGE.md:3510-3514), with a specifier on the RESULT. The
+ operator is drawn from add, subtract, multiply and modulo, and the
+ operands so the result stays inside a number: an extreme left operand
+ meets a small right one for add and subtract, two operands of at most
+ nine digits meet for multiply. A negative result takes no specifier,
+ for the reason the banner above gives.)
+
+To 'gen leaf format expression slots verified' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a list called 'the operators' is ["add", "subtract", "multiply", "modulo", "plus", "minus", "times"].
+    a list called 'the lines' is [].
+    a number called 'how many slots' is 'rng below' of 3 add 1.
+    a number called 'slots made' is 0.
+    While 'slots made' is less than 'how many slots',
+        a number called 'the operator draw' is 'rng below' of 7,
+        a number called 'the operator position' is 'the operator draw' add 1,
+        a text called operator is element 'the operator position' of 'the operators',
+        a text called 'the left literal' is 'gen extreme number',
+        a number called left is 'the left literal' as a number,
+        a number called right is 'rng below' of 100000 add 1,
+        a number called 'the left factor' is 'rng below' of 999999999 add 1,
+        a number called 'the right factor' is 'rng below' of 999999999 add 1,
+        If left is greater than 9223372036854675807 then, Set left to left subtract 100000.
+        If operator is "multiply" or operator is "times" then, Set left to 'the left factor', Set right to 'the right factor'.
+        a number called result is left add right,
+        If operator is "subtract" or operator is "minus" then, Set result to left subtract right.
+        If operator is "multiply" or operator is "times" then, Set result to left multiply right.
+        If operator is "modulo" then, Set result to left modulo right.
+        a text called 'the left name' is 'gen flow witness name',
+        a text called 'the right name' is 'gen flow witness name',
+        a text called 'the rendered name' is 'gen flow witness name',
+        a text called 'the result written' is "{result}",
+        a list called 'the result case' is 'gen format integer case' of 'the result written' and 'wide widths allowed',
+        a text called specifier is element 1 of 'the result case',
+        a text called rendering is element 2 of 'the result case',
+        If result is less than 0 then, Set specifier to "", Set rendering to 'the result written'.
+        a text called 'the expression' is "{'the left name'} {operator} {'the right name'}",
+        a text called 'the expression slot' is 'gen format slot' of 'the expression' and specifier,
+        append "a number called {'the left name'} is {left}" to 'the lines',
+        append "a number called {'the right name'} is {right}" to 'the lines',
+        append "a text called {'the rendered name'} is \"{'the expression slot'}\"" to 'the lines',
+        append 'gen format text check' of "FMT-19" and 'the rendered name' and rendering to 'the lines',
+        Set 'slots made' to 'slots made' add 1.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-58: a single-quoted one-word name resolves inside a slot, for
+ every type (LANGUAGE.md:682-705, "a name is an identifier", and #110).
+ Every name here is written quoted whatever its word count, so the
+ one-word quoted form - the shape #110 fixed - is what most of them
+ are; a number with a drawn specifier, a text, a boolean, a buffer, a
+ list and a `value` are each interpolated into one text and asserted.)
+
+To 'gen leaf format quoted names' with a text called indent and a boolean called nested.
+    a boolean called 'wide widths allowed' is true.
+    a list called 'the written names' is [].
+    a number called 'names made' is 0.
+    While 'names made' is less than 6,
+        a text called 'the stem' is 'gen buffer name',
+        append "'{gen_buffer_last_word}'" to 'the written names',
+        Set 'names made' to 'names made' add 1.
+    a text called 'the number name' is element 1 of 'the written names'.
+    a text called 'the word name' is element 2 of 'the written names'.
+    a text called 'the truth name' is element 3 of 'the written names'.
+    a text called 'the stock name' is element 4 of 'the written names'.
+    a text called 'the list name' is element 5 of 'the written names'.
+    a text called 'the value name' is element 6 of 'the written names'.
+    a text called 'the literal' is 'gen extreme number'.
+    a list called 'the number case' is 'gen format integer case' of 'the literal' and 'wide widths allowed'.
+    a text called 'the number specifier' is element 1 of 'the number case'.
+    a text called 'the number rendering' is element 2 of 'the number case'.
+    a number called 'the word length' is 'rng below' of 8.
+    a text called 'the word' is 'gen buffer filler' of 'the word length'.
+    a number called 'the stock length' is 'rng below' of 8 add 1.
+    a text called 'the stock' is 'gen buffer filler' of 'the stock length'.
+    a number called 'the first item' is 'rng below' of 1000.
+    a number called 'the second item' is 'rng below' of 1000.
+    a number called 'the value item' is 'rng below' of 100000.
+    a text called 'the separator' is 'gen format separator'.
+    a text called 'the joined name' is 'gen flow witness name'.
+    a list called 'the lines' is [].
+    append "a number called {'the number name'} is {'the literal'}" to 'the lines'.
+    append "a text called {'the word name'} is \"{'the word'}\"" to 'the lines'.
+    append "a boolean called {'the truth name'} is true" to 'the lines'.
+    append "a buffer called {'the stock name'} is \"{'the stock'}\"" to 'the lines'.
+    append "a list called {'the list name'} is [{'the first item'}, {'the second item'}]" to 'the lines'.
+    append "a value called {'the value name'} is {'the value item'}" to 'the lines'.
+    a text called 'the number slot' is 'gen format slot' of 'the number name' and 'the number specifier'.
+    a text called 'the word slot' is 'gen format slot' of 'the word name' and "".
+    a text called 'the truth slot' is 'gen format slot' of 'the truth name' and "".
+    a text called 'the stock slot' is 'gen format slot' of 'the stock name' and "".
+    a text called 'the list slot' is 'gen format slot' of 'the list name' and "".
+    a text called 'the value slot' is 'gen format slot' of 'the value name' and "".
+    a text called 'the slots' is "{'the number slot'}{'the separator'}{'the word slot'}{'the separator'}{'the truth slot'}{'the separator'}{'the stock slot'}{'the separator'}{'the list slot'}{'the separator'}{'the value slot'}".
+    a text called expected is "{'the number rendering'}{'the separator'}{'the word'}{'the separator'}1{'the separator'}{'the stock'}{'the separator'}[{'the first item'}, {'the second item'}]{'the separator'}{'the value item'}".
+    append "a text called {'the joined name'} is \"{'the slots'}\"" to 'the lines'.
+    append 'gen format text check' of "FMT-58" and 'the joined name' and expected to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
+
+(FMT-40, FMT-41, FMT-42, FMT-44: a variable or a file handle declared in
+ EVERY branch of an if/otherwise exists afterwards, after the branch and
+ from inside a function, exactly like a top-level declaration
+ (LANGUAGE.md:3555-3566). Which branch runs is drawn, and so is the
+ variable's type; the value read afterwards, and the value a function
+ defined ABOVE the declaration reads, are both asserted against the arm
+ the generator knows ran. Where there is a scratch directory, a handle
+ is opened in both arms at two different paths, a format string naming
+ the variable is written through it afterwards, and the file the taken
+ arm opened is read back and asserted - the manual's own worked example,
+ with something to check at the end of it.
+)
+
+To 'gen leaf branch declarations verified' with a text called indent and a boolean called nested.
+    a text called 'the marker name' is 'gen flow witness name'.
+    a text called 'the declared name' is 'gen flow witness name'.
+    a text called 'the after name' is 'gen flow witness name'.
+    a text called 'the function verb' is 'gen fresh verb'.
+    a text called 'the function name' is 'gen written name' of 'the function verb'.
+    a number called 'the marker draw' is 'rng below' of 2.
+    a text called 'the marker value' is "true".
+    If 'the marker draw' is 0 then,
+        Set 'the marker value' to "false".
+    a number called 'the type draw' is 'rng below' of 2.
+    a text called 'the type' is "number".
+    a text called 'the then value' is 'gen extreme number'.
+    a text called 'the otherwise value' is 'gen extreme number'.
+    a text called 'the then written' is 'the then value'.
+    a text called 'the otherwise written' is 'the otherwise value'.
+    a number called 'the then length' is 'rng below' of 9.
+    a number called 'the otherwise length' is 'rng below' of 9.
+    If 'the type draw' is 1 then,
+        Set 'the type' to "text",
+        Set 'the then value' to 'gen buffer filler' of 'the then length',
+        Set 'the otherwise value' to 'gen buffer filler' of 'the otherwise length',
+        Set 'the then written' to "\"{'the then value'}\"",
+        Set 'the otherwise written' to "\"{'the otherwise value'}\"".
+    a text called 'the taken value' is 'the then value'.
+    If 'the marker draw' is 0 then,
+        Set 'the taken value' to 'the otherwise value'.
+    'gen open a function definition'.
+    'gen emit' of "{indent}To {'the function name'}. Return a {'the type'}, {'the declared name'}.\n".
+    'gen emit' of "\n".
+    a list called 'the lines' is [].
+    append "a boolean called {'the marker name'} is {'the marker value'}" to 'the lines'.
+    append "If {'the marker name'} then, a {'the type'} called {'the declared name'} is {'the then written'}. Otherwise, a {'the type'} called {'the declared name'} is {'the otherwise written'}" to 'the lines'.
+    append "a {'the type'} called {'the after name'} is {'the function name'}" to 'the lines'.
+    If 'the type draw' is 0 then,
+        a number called 'the taken number' is 'the taken value' as a number,
+        append 'gen format number check' of "FMT-40" and 'the declared name' and 'the taken number' to 'the lines',
+        append 'gen format number check' of "FMT-42" and 'the after name' and 'the taken number' to 'the lines'.
+    If 'the type draw' is 1 then,
+        append 'gen format text check' of "FMT-40" and 'the declared name' and 'the taken value' to 'the lines',
+        append 'gen format text check' of "FMT-42" and 'the after name' and 'the taken value' to 'the lines'.
+    If gen_does_file_io and gen_scratch_flag is not empty then,
+        Set gen_file_ios to gen_file_ios add 1,
+        a text called 'the handle' is 'gen flow witness name',
+        a text called 'the sink name' is 'gen flow witness name',
+        a text called 'the then path' is "{{{gen_scratch_flag}}}/{gen_file_ios}then",
+        a text called 'the otherwise path' is "{{{gen_scratch_flag}}}/{gen_file_ios}otherwise",
+        a text called 'the taken path' is 'the then path',
+        If 'the marker draw' is 0 then, Set 'the taken path' to 'the otherwise path'.
+        a number called 'the head length' is 'rng below' of 6,
+        a text called 'the head' is 'gen buffer filler' of 'the head length',
+        a text called 'the declared slot' is 'gen format slot' of 'the declared name' and "",
+        a text called 'the written payload' is "{'the head'}{'the declared slot'}",
+        a text called 'the payload worked out' is "{'the head'}{'the taken value'}",
+        a number called 'the capacity' is 'gen format length of' of 'the payload worked out' add 1 add 'rng below' of 9,
+        append "If {'the marker name'} then, Open a file for writing called {'the handle'} at \"{'the then path'}\". Otherwise, Open a file for writing called {'the handle'} at \"{'the otherwise path'}\"" to 'the lines',
+        append "Write \"{'the written payload'}\" to {'the handle'}" to 'the lines',
+        append "Close {'the handle'}" to 'the lines',
+        append 'gen file open in any order' of "reading" and 'the handle' and "\"{'the taken path'}\"" to 'the lines',
+        append "a buffer called {'the sink name'} is {'the capacity'} bytes in size" to 'the lines',
+        append "Read from {'the handle'} into {'the sink name'}" to 'the lines',
+        append "Close {'the handle'}" to 'the lines',
+        append 'gen format text check' of "FMT-44" and 'the sink name' and 'the payload worked out' to 'the lines'.
+    'gen join lines' of indent and nested and 'the lines'.
