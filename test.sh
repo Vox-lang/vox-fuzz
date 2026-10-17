@@ -96,12 +96,15 @@ done
 echo "passed: $PASSED  failed: $FAILED"
 
 # LANGUAGE.md:N citations in docs/ledger/ are the ledger's whole point —
-# a stale one is a false claim about what the manual says. Fast enough
+# a stale one is a false claim about what the manual says. They are checked
+# against the manual the ledger is pinned to (docs/ledger/pinned/), not the
+# compiler's newest one, so the gate does not fail the day the manual moves;
+# moving the pin is its own step (scripts/repin-citations). Fast enough
 # (well under a second) to gate every run; src/ and tests/ are checked
 # separately (their citations belong to the generator authors, not this
 # gate) via `scripts/check-citations.sh src tests`.
 if [[ -x scripts/check-citations.sh ]]; then
-    LANGUAGE_MD="${LANGUAGE_MD:-$VOX_REPO_ROOT/LANGUAGE.md}" scripts/check-citations.sh docs || FAILED=$((FAILED+1))
+    LANGUAGE_MD="${LANGUAGE_MD:-$PWD/docs/ledger/pinned/LANGUAGE.md}" scripts/check-citations.sh docs || FAILED=$((FAILED+1))
 fi
 
 [[ $FAILED -eq 0 ]]
