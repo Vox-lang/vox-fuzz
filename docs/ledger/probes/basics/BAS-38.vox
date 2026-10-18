@@ -1,27 +1,19 @@
-(BAS-38 - the sentence-ownership worked example, LANGUAGE.md:141-148. The
- snippet in the manual is a FRAGMENT: `content`, `number_lines`, `output`
- and `source` are never declared and there is no `open`, so it cannot be
- compiled as printed. This is the faithful runnable form of it - same
- shape, same claim: the period after the inner `if` closes only that `if`,
- and the `while` body continues with the two actions after it.
- Reads docs/ledger/probes/basics/fixtures/lines.txt; run from the repo root.
+(BAS-38 - the sentence-ownership worked example, LANGUAGE.md:153-160,
+ verbatim. The period after the inner `if` closes only that `if`, so the
+ `while` body goes on with `print` and `increment`, and the program
+ prints `line 1`, `line 2` and `last: line 3`.
+ Re-recorded 2026-10-17 on vox cb407f8: until vox #289 the manual's example
+ was a fragment reading a file (`content`, `number_lines`, `output` and
+ `source` undeclared), and this probe kept a runnable form of it that read
+ docs/ledger/probes/basics/fixtures/lines.txt.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-38.vox -o p && ./p
  expected output:
-   0: alpha
-   1: beta
-   2: gamma
-   read 3 lines
+   line 1
+   line 2
+   last: line 3
 )
-a boolean called 'number lines' is true.
-a number called numbered is 0.
-open a file for reading called source at "docs/ledger/probes/basics/fixtures/lines.txt".
-a buffer called content is 64 bytes in size.
-Read line from source into content.
-While content is not empty,
-    if 'number lines' then,
-        print "{numbered}: " without newline.
-    print content without newline,
-    increment numbered,
-    Read line from source into content.
-Close source.
-Print "read {numbered} lines".
+a number called 'line number' is 1.
+While 'line number' is less than 4,
+    if 'line number' is 3 then, print "last: " without newline.
+    print "line {line number}",
+    increment the 'line number'.

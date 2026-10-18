@@ -1,9 +1,10 @@
 (FMT-43 — a name declared in only SOME branches stays scoped to its
  condition; using it afterwards is a compile error. The diagnostic even
- names the rule.
+ names the rule. Re-recorded 2026-10-17 on vox cb407f8: vox #292 reworded the
+ diagnostic from `Unknown variable: label` to name the condition's line.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox probe.vox -o p && ./p
  expected output:
-   error: Unknown variable: label
+   error: 'label' only exists when the condition on line 11 is true
    (compile error - no binary is produced)
 )
 a number called mode is 1.

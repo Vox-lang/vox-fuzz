@@ -279,7 +279,7 @@ To 'gen leaf comment lookalike in string' with a text called indent and a boolea
     a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
     'gen emit' of 'the assertion line'.
 
-(BAS-24 (undocumented precision, LANGUAGE.md:81-83): a line of nothing
+(BAS-24 (undocumented precision, LANGUAGE.md:83-91): a line of nothing
  but whitespace is a paragraph break; a COMMENT-only line, in the exact
  same position, is not. Placed right after a nested If's own closing
  period - the same trap the blank-line-closes leaves below use - so the
@@ -307,7 +307,7 @@ To 'gen leaf comment only line does not close' with a text called indent and a b
     a text called 'the after assertion' is 'gen assert number is' of "BAS-24" and 'the after name' and 1.
     'gen emit' of "{indent}{'the after assertion'}.\n".
 
-(BAS-16 (LANGUAGE.md:81): blank lines between two fully-terminated
+(BAS-16 (LANGUAGE.md:83): blank lines between two fully-terminated
  TOP-LEVEL statements are optional and change nothing. The manual names
  no upper bound, so the count drawn spans 0 (no blank line at all) up
  to several; the ceiling here is an implementation bound on program
@@ -331,7 +331,7 @@ To 'gen leaf blank line count invariant' with a text called indent and a boolean
     a text called 'the assertion line' is "{indent}{'the assertion'}.\n".
     'gen emit' of 'the assertion line'.
 
-(BAS-17 (LANGUAGE.md:83, 150-155): inside an open clause a blank line is
+(BAS-17 (LANGUAGE.md:91, 162-167): inside an open clause a blank line is
  not cosmetic - it force-closes the clause even when the last body
  action is a nested If already closed by its OWN period (rule 1 only
  pops the If; rule 2's blank line is what pops the loop). The outer
@@ -378,7 +378,7 @@ To 'gen leaf blank line closes nested loop repeat' with a text called indent and
     a text called body is "{indent}Repeat {'the trips'} times,\n{indent}  Set r{gen_repeats} to r{gen_repeats} add 1,\n{indent}  If r{gen_repeats} is equal to 1 then, Set {'the inner name'} to {'the inner name'} add 1.\n\n".
     'gen emit' of body.
 
-(BAS-41 (LANGUAGE.md:91, 155): the SAME blank line that force-closes an
+(BAS-41 (LANGUAGE.md:93, 167): the SAME blank line that force-closes an
  open loop also force-closes an enclosing function definition, two
  levels at once. The loop's own state has to live in globals set from
  inside the function and read from outside it - nothing can follow the
@@ -406,7 +406,7 @@ To 'gen leaf blank line closes function too' with a text called indent and a boo
     a text called 'the after assertion' is 'gen assert number is' of "BAS-41" and 'the after name' and 1.
     'gen emit' of "{indent}{'the after assertion'}.\n".
 
-(BAS-43 (LANGUAGE.md:169): the blank-line rule applies uniformly across
+(BAS-43 (LANGUAGE.md:196): the blank-line rule applies uniformly across
  while/for each/repeat (the leaf above) and On error too - its body
  force-closes on a blank line the same way, even when its last action is
  a nested If already closed by its own period. The failure is engineered
@@ -436,7 +436,7 @@ To 'gen leaf blank line closes on error' with a text called indent and a boolean
     a text called 'the after assertion' is 'gen assert number is' of "BAS-43" and 'the after name' and 1.
     'gen emit' of "{indent}{'the after assertion'}.\n".
 
-(BAS-46 (LANGUAGE.md:201-209): the one exception - a blank line placed
+(BAS-46 (LANGUAGE.md:227-237): the one exception - a blank line placed
  right after a COMMA, with more actions still to come in the same
  sentence, stays purely cosmetic, because the sentence is explicitly
  still open. The lap tally must still reach the full trip count.)

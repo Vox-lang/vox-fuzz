@@ -1,22 +1,23 @@
-(BAS-44 - the Caution example, LANGUAGE.md:174-182. `batch` is undeclared
- in the manual's copy; declaring it as [1, 2] is what makes the documented
- output `1 2 1 2 batch done` reachable. The blank line closes the While
- right after the nested For each closes itself, so `print "batch done"`
- runs ONCE, after the loop - not once per batch as the indentation
- suggests.
+(BAS-44 - the two-paragraph program of the pair at LANGUAGE.md:198-223,
+ verbatim. The blank line after the nested For each ends the While as
+ well, so `print "round done"` runs ONCE, after the loop: `1 2 1 2 round
+ done`. The one-paragraph twin (no blank line, LANGUAGE.md:201-210) prints
+ `1 2 round done 1 2 round done`; that half was run separately on vox
+ cb407f8 and matches.
+ Re-recorded 2026-10-17: vox #289 replaced the old Caution example, whose
+ `batch` was undeclared, with this pair.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-44.vox -o p && ./p
  expected output:
    1
    2
    1
    2
-   batch done
+   round done
 )
-a list called batch is [1, 2].
 a number called round is 0.
 While round is less than 2,
     the round is round add 1,
-    For each item in batch,
+    For each item from 1 to 2,
         print item.
 
-    print "batch done".
+print "round done".

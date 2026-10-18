@@ -1,6 +1,9 @@
-(BAS-42 - the `retries` worked example, LANGUAGE.md:158-165, verbatim. The
- manual says it prints `retrying` once and `done` once after the loop runs
- its full three iterations, and it does.
+(BAS-42 - the `retries` worked example, LANGUAGE.md:174-182, verbatim. The
+ manual says it prints `retrying` once and `done` once: the if's period
+ ends the if, and the period after `add 1` ends the while (rule 1), so
+ `done` follows the loop with no blank line needed.
+ Re-recorded 2026-10-17 on vox cb407f8: vox #289 dropped the example's
+ blank line before `Print "done".`; the output is unchanged.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-42.vox -o p && ./p
  expected output:
    retrying
@@ -10,5 +13,4 @@ a number called retries is 0.
 While retries is less than 3,
     if retries is equal to 1 then, print "retrying".
     the retries is retries add 1.
-
 Print "done".

@@ -1,15 +1,16 @@
 (FMT-56 — a width and a precision written together in one format
  specifier compose: {var:8.2} asks for two decimal places, padded out to
- eight characters. LANGUAGE.md:3498-3505 (new in 0.4.10, #85). Before
+ eight characters. LANGUAGE.md:3606-3610 (new in 0.4.10, #85). Before
  #85, {f:8.2} printed 2.5, not 2.50 — the width consumed the spec reader
  and the leftover ".2" fell to a catch-all that dropped the precision.
- On a float the digits print but the padding does not, because there is
- no float padder yet — the same limit a bare {f:8} already has.
+ On a float the places print and so does the padding: until vox #298
+ (register #148, 2026-10-17) a float printed `2.50` unpadded, because
+ there was no float padder; re-recorded on vox cb407f8.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FMT-56.vox -o p && ./p
  expected output:
      255.00
    00255.00
-   2.50
+       2.50
 )
 a number called n is 255.
 Print "{n:8.2}".

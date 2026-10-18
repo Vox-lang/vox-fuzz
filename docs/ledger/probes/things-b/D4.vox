@@ -4,7 +4,7 @@
  refused twice: first "Field 'label' of thing 'stamp' is a text, but its
  default is a text", naming the same type twice, then "... is a text,
  which a thing cannot hold yet".
- A thing can now hold a text field (LANGUAGE.md:993-994): the default
+ A thing can now hold a text field (LANGUAGE.md:1055-1056): the default
  works, a copy never shares its text with the original (LANGUAGE.md:
  995-997), and a text field compares by its characters (LANGUAGE.md:
  1401-1402). Re-recorded 2026-10-13 on vox main a0a2ecc.

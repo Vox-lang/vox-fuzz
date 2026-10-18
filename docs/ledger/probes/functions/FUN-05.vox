@@ -1,5 +1,5 @@
 (FUN-05 — a function name is a bare single word or a single-quoted
- multi-word name (LANGUAGE.md:758, restated for the call site at :882).
+ multi-word name (LANGUAGE.md:798, restated for the call site at :882).
  Both forms define and both forms call. The manual's OLD (pre-0.4.15)
  wording paired "bare" with "single word" and "single-quoted" with
  "multi-word", but the compiler already accepted a single-word name
@@ -12,7 +12,7 @@
  2026-08-29). Nothing here is wrong; the rule to take from it is that a
  leaf must not treat "single-word names are never quoted" as a rule,
  because no rule says it — except for a single-CHARACTER name, which
- cannot be quoted at all (LANGUAGE.md:696–699: a one-character quoted
+ cannot be quoted at all (LANGUAGE.md:736–739: a one-character quoted
  token is a character literal, not an identifier).
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox FUN-05.vox -o p && ./p
  expected output:

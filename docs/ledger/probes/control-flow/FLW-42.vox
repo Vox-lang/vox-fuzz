@@ -1,5 +1,5 @@
 (FLW-42: the exit code is 0 to 255; a code computed outside that range
- when the program runs exits with 255 (LANGUAGE.md:2423-2426). `code`
+ when the program runs exits with 255 (LANGUAGE.md:2526-2529). `code`
  holds two numbers over the program, so the compiler cannot prove its
  value and the check happens at run time. The code may be a variable.
  A code the compiler CAN prove is refused instead: `Exit 300.` and

@@ -1,9 +1,10 @@
-(D9 — Discrepancy 9 repro: LANGUAGE.md:3188-3189 calls `respectively`
- "reserved as a possible future marker for a zip mode; it is not parsed
- today". It is genuinely not parsed — this sentence is a compile error —
- but it is NOT reserved as an identifier: `a number called respectively is
- 4.` compiles and prints 4 (see LST2-71.vox). A program that uses the name
- today would break when the zip marker lands.
+(D9: Discrepancy 9 repro, RESOLVED by vox #290: the manual used to call
+ `respectively` "reserved as a possible future marker for a zip mode; it
+ is not parsed today". It is not parsed: this sentence is a compile
+ error, and it was never reserved: `a number called respectively is 4.`
+ compiles and prints 4 (see LST2-71.vox). LANGUAGE.md:3429-3430 now calls
+ it an ordinary identifier, not parsed as a marker, which is what this
+ repro shows. Re-run on vox cb407f8 2026-10-17.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D9.vox -o p && ./p
  expected output:
    error: Unknown function: respectively

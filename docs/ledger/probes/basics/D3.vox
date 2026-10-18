@@ -2,7 +2,7 @@
  rest of the file. LANGUAGE.md:56-77 documents multi-line comments and
  says nothing about an unbalanced open-paren; the compiler emits no error
  and no warning, produces a binary, and exits 0 having run only the
- statements before the stray open-paren. Contrast LANGUAGE.md:91, where
+ statements before the stray open-paren. Contrast LANGUAGE.md:103, where
  the comparable "construct still open at end of file" case for a function
  definition DOES get a warning.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D3.vox -o p && ./p

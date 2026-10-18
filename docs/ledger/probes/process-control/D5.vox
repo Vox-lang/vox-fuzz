@@ -4,7 +4,7 @@
  signal) were reachable with no diagnostic, and this probe printed
  "kill(2) accepted the broadcast pid".
  Now `to process <pid>` reaches exactly one process, numbered 1 to
- 2147483647 (LANGUAGE.md:4584, 4593-4597), and a pid the compiler can
+ 2147483647 (LANGUAGE.md:4708, 4717-4721), and a pid the compiler can
  prove is outside that range is a compile error whose help line names the
  group forms. `Send signal 0 to process 0.` is refused the same way. A pid
  known only at run time is refused when the program runs: PRC-77.vox.

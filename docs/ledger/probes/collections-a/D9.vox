@@ -1,0 +1,28 @@
+(D9: Discrepancy 9 repro. LANGUAGE.md:2622-2624: "a call to a function that
+ returns a `value` carries its runtime tag", and 2615-2617 list a list
+ literal slot and `set element` among the positions where a result lands
+ with no type of its own. Through `append` the tag arrives; through a list
+ literal slot and `Set element` it does not, and the text prints as the
+ raw address of its bytes, with `is a text` false.
+ Found on vox f42f1e0 2026-10-15; re-recorded on vox cb407f8 2026-10-17,
+ unchanged. The address is stable run to run for one build.
+ Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox D9.vox -o p && ./p
+ expected output:
+   [1, "two"]
+   appended slot is a text
+   [4202674, "two"]
+   [4202674]
+)
+To echo with a value called v. Return a value, v.
+
+a text called word is "two".
+a list called items is [1].
+append 'echo' of word to items.
+print items.
+If element 2 of items is a text then, print "appended slot is a text".
+Set element 1 of items to 'echo' of word.
+print items.
+If element 1 of items is a text then, print "set slot is a text".
+a list called literal is ['echo' of word].
+print literal.
+If element 1 of literal is a text then, print "literal slot is a text".

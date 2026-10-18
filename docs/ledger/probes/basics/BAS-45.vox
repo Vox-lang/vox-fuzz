@@ -1,12 +1,12 @@
-(BAS-45 - the hang example, LANGUAGE.md:189-197: the blank line ejects
- `increment counter` from the While body, so the condition never changes
- and the loop never terminates - no error, no warning, and `Print "end"`
- never runs.
- The manual's copy prints `inner 1` / `inner 2` forever; this retained
+(BAS-45 - WITHDRAWN 2026-10-17: the hang example this row cited (manual
+ lines 186 to 199 at vox a0a2ecc) was removed when vox #289 re-told the
+ paragraph rules. The behaviour it showed still follows from rule 2,
+ LANGUAGE.md:167: the blank line ends the While, so `increment counter` is
+ a statement after the loop, the condition never changes and the loop
+ never ends, and `Print "end"` never runs.
+ The old manual copy printed `inner 1` / `inner 2` forever; this retained
  copy replaces that print with a silent assignment so the hang can be
- recorded as a bounded timeout instead of unbounded output. The manual's
- verbatim version was run separately and does print `inner 1` / `inner 2`
- on repeat until killed.
+ recorded as a bounded timeout instead of unbounded output.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-45.vox -o p && timeout 10 ./p
  expected output:
    (exit 124)
