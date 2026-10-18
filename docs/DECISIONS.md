@@ -289,7 +289,7 @@ cost the most time when forgotten.
   pretty-printed "beautiful" layout is planned — `--layout plain` is the
   reading aid. Layout itself (indentation, line breaks, tabs) is noise
   and is randomised by the layout pass; only periods, commas and
-  paragraph breaks are syntax (LANGUAGE.md:115-117, :81-83).
+  paragraph breaks are syntax (LANGUAGE.md:127-129, 166-167).
 
 - **Pool-drawn names are their own sameness class, and the pools grow
   (Josj, 2026-08-24).** The value batch put 46 pool words over the

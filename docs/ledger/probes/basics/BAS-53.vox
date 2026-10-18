@@ -1,19 +1,22 @@
-(BAS-53 - TWO periods: the inner if is closed, so the Otherwise belongs to
- the OUTER one. LANGUAGE.md:260-269, verbatim. Prints `outer else` then
- `done` - one character different from BAS-52.
+(BAS-53 - TWO periods: the inner if is finished, so the Otherwise continues
+ the OUTER one. LANGUAGE.md:290-301, verbatim. Prints `outer otherwise`
+ then `done` - one period different from BAS-52.
  `But if` behaves the same way in this position (verified separately:
  replacing `Otherwise,` with `But if m is equal to 5 then,` prints
  `outer but if` then `done`).
+ Re-recorded 2026-10-17 on vox cb407f8: `outer else` became `outer
+ otherwise`, and the `Otherwise` moved to the outer if's margin (vox #289,
+ #290); indentation is not read, so the program means what it did.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox BAS-53.vox -o p && ./p
  expected output:
-   outer else
+   outer otherwise
    done
 )
 a number called m is 5.
 If m is equal to 1 then,
     If m is equal to 2 then,
         print "inner then"..
-    Otherwise,
-        print "outer else".
+Otherwise,
+    print "outer otherwise".
 
 Print "done".

@@ -5,7 +5,7 @@
  intact; strace was not available to re-check the call itself. The
  output below is unchanged (the call is still refused unprivileged).
  The history follows.
- LANGUAGE.md:4357-4358: major/minor are "the standard Linux device-driver
+ LANGUAGE.md:4476-4477: major/minor are "the standard Linux device-driver
  identification numbers". Not observable from inside Vox (the call is
  refused unprivileged); seen with
    strace -e trace=mknod ./p

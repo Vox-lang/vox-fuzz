@@ -26,7 +26,7 @@ To 'gen digit for value' with a number called v.
     Return a text, d.
 
 To 'gen pick parse form' with a number called base.
-    (The six documented text-to-number forms, LANGUAGE.md:2061-2066. The
+    (The six documented text-to-number forms, LANGUAGE.md:2155-2160. The
      three named aliases are fixed-base, so they are only offered when the
      digits were generated for that base; the two base-N forms - spaced
      and fused, both documented and both real syntax - take any base 2-36,
@@ -48,7 +48,7 @@ To 'gen pick parse form' with a number called base.
     Return a text, 'the spaced form'.
 
 To 'gen pick format spec'.
-    (Number-to-text in a base, LANGUAGE.md:3442-3447 - the other
+    (Number-to-text in a base, LANGUAGE.md:3550-3555 - the other
      direction, and one Josj had to point out was even a thing. `b`
      renders bare while `x`/`X`/`o` carry 0x/0o prefixes, which is what
      the table documents.
@@ -157,7 +157,7 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
    `{13 multiply z}` rather than 52. Documented behaviour, not a defect -
    and the reason 'gen deep expr' grew a `grouped` parameter instead of
    this file growing a second expression builder.
- - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3449-3450
+ - A lone literal in a slot is rejected, exactly as LANGUAGE.md:3557-3558
    says: `{255}` and `{255:x}` both fail with "Unknown variable: 255".
    A literal inside an EXPRESSION is fine - `{v1 add 5}`, `{5 add v1}`
    and `{v1 divide 7}` all compile and run - which is what makes 'gen
@@ -167,7 +167,7 @@ To 'gen leaf base conversion' with a text called indent and a boolean called nes
    degenerate one-operand case can never reach a slot.
  - `<n> as text padded to 2`, which LANGUAGE.md's "Formatted Time
    Output" section uses in all three of its lines, does not compile
-   ("Unknown function: padded"). LANGUAGE.md:2213 documents the
+   ("Unknown function: padded"). LANGUAGE.md:2307 documents the
    zero-pad SPECIFIER as the way to do that same job, and that form
    works - so the specifier form is what 'gen leaf format types' emits.
    Reported as a documentation defect, not worked around silently.
@@ -322,7 +322,7 @@ To 'gen leaf format specifiers' with a text called indent and a boolean called n
         append 'print field hex' to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(Expressions inside slots - LANGUAGE.md:3310-3318. The two shapes that
+(Expressions inside slots - LANGUAGE.md:3418-3426. The two shapes that
  section names by example (`{x add y}`, `{x multiply y}`) plus its
  `{arguments's count}` line, a chained three-operand form, an arbitrarily
  deep flat chain from 'gen deep expr', and a specifier applied to an
@@ -372,7 +372,7 @@ To 'gen leaf format expression' with a text called indent and a boolean called n
     a list called 'the lines' is ['x decl', 'y decl', 'print sum', 'print product', 'print chain', 'print deep', 'print count', 'held decl', 'print held'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(Format strings as VALUES - LANGUAGE.md:3320-3343 and 3076-3090. Every
+(Format strings as VALUES - LANGUAGE.md:3428-3451 and 3076-3090. Every
  sink those two sections name that this generator can reach safely:
 
  - a text initialized from a format string over a BUFFER's contents,
@@ -484,9 +484,9 @@ To 'gen leaf format value' with a text called indent and a boolean called nested
  of that question.
 
  Also the "Formatted Time Output" capability, in the spelling that
- actually compiles. LANGUAGE.md:4833-4841 shows `now's hour as text
+ actually compiles. LANGUAGE.md:4957-4965 shows `now's hour as text
  padded to 2`, which does not exist ("Unknown function: padded");
- LANGUAGE.md:2213 shows `"{h:02}"` for the same job, which does.
+ LANGUAGE.md:2307 shows `"{h:02}"` for the same job, which does.
  The result is asserted rather than printed: an hour zero-padded to 2 is
  two characters whatever the clock says, so the program's output stays
  the same across runs while the formatting is still genuinely exercised.
@@ -598,7 +598,7 @@ To 'gen leaf format types' with a text called indent and a boolean called nested
 (FMT-45, FMT-46, FMT-47, FMT-48, FMT-49: the escape table's five rows,
  each VERIFIED rather than merely printed — grep-confirmed absent before
  this leaf (buffers.md's byte-access idiom applied to the text side of
- the table for the first time). LANGUAGE.md:3573-3579. `{{`/`}}` render
+ the table for the first time). LANGUAGE.md:3678-3684. `{{`/`}}` render
  one literal brace each, `\n` a newline, `\t` a tab, `\\` one literal
  backslash — every one of the five decodes to exactly ONE byte, so with a
  P-byte prefix and an S-byte suffix (both plain letters/digits off 'gen
@@ -688,7 +688,7 @@ To 'gen leaf escape table verified' with a text called indent and a boolean call
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-24: the ASSIGNMENT half of "Format Strings as Values" —
- LANGUAGE.md:3519-3522 says a format string works as a text initializer
+ LANGUAGE.md:3624-3627 says a format string works as a text initializer
  AND an assignment; every existing leaf only ever exercises the
  initializer ('gen leaf format value's 'token decl'/'path decl') — grep
  for `Set <text> to "{` across every src/gen_*.vox file finds nothing
@@ -713,7 +713,7 @@ To 'gen leaf format text reassignment' with a text called indent and a boolean c
     a list called 'the lines' is ['the counter declaration', 'the first label', 'the reassign counter', 'the reassign label', 'the label check'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-29: LANGUAGE.md:3536-3537 — each format-string evaluation
+(FMT-29: LANGUAGE.md:3641-3642 — each format-string evaluation
  allocates a NEW string, so the source buffer can be cleared and
  refilled without disturbing a text already made from it. No existing
  leaf clears a USER buffer after making a text from it before this (grep-
@@ -748,7 +748,7 @@ To 'gen leaf format value isolation' with a text called indent and a boolean cal
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-41: the "or file handle" half of Declarations in Branches —
- LANGUAGE.md:3555-3559. The manual's own worked example (3466-3474) opens
+ LANGUAGE.md:3660-3664. The manual's own worked example (3466-3474) opens
  the SAME handle name on both arms of an if/otherwise and writes to it
  afterward, and never closes it; this leaf emits that shape with the
  target varying instead of the manual's flag-conditioned path, so the
@@ -822,7 +822,7 @@ To 'gen leaf branch file handle' with a text called indent and a boolean called 
     a list called 'the lines' is ['the marker declaration', 'the path line', 'the branch', 'the write'].
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-52, FMT-54: LANGUAGE.md:3594-3601's own chain shape — clauses after
+(FMT-52, FMT-54: LANGUAGE.md:3699-3706's own chain shape — clauses after
  the first carry NO leading comma, and the chain may continue with
  `and if` as well as `but if`. `gen leaf butif print` (gen_flow.vox, out
  of this surface's own scope to edit) puts a comma before EVERY clause
@@ -975,7 +975,7 @@ To 'gen format width draw' with a boolean called 'wide widths allowed'.
 
 (A width written beside a precision. Never zero: a zero width beside a
  precision (`{n:0.2}`, `{n:00.2}`) is refused at compile time, though
- LANGUAGE.md:3459-3461 says a width may be zero and 3498 that a width
+ LANGUAGE.md:3567-3569 says a width may be zero and 3498 that a width
  composes with a precision. The shape is held until that is settled:
  docs/ledger/input-output.md Discrepancy 8,
  docs/ledger/probes/input-output/D8.vox.)
@@ -1058,7 +1058,7 @@ To 'gen format integer case' with a text called 'the literal' and a boolean call
  of j times 5^m: nothing the double cannot hold, and no rounding of its
  own. Rounding to fewer places than m keeps or bumps the last digit by
  the dropped digits, and a dropped part of exactly one half goes to the
- even digit, LANGUAGE.md:3455-3456.)
+ even digit, LANGUAGE.md:3563-3564.)
 
 To 'gen format rounded' with a number called 'the whole value' and a number called 'the fraction value' and a number called 'the fraction places' and a number called 'the precision'.
     If 'the precision' is greater than or equal to 'the fraction places' and 'the precision' is 0 then,
@@ -1166,7 +1166,7 @@ To 'gen format agreement' with a text called 'the row' and a text called 'the le
  string carrying a number slot with a drawn specifier, a text slot with
  a drawn width and a buffer slot, with literal text around and between
  them, rendered into every string sink the manual names
- (LANGUAGE.md:3543-3549): a text initializer, a text REASSIGNMENT
+ (LANGUAGE.md:3648-3654): a text initializer, a text REASSIGNMENT
  (`Set`, never `the <text> is "{...}"`, which is register #154's shape),
  a buffer initializer, buffer `set`, `copy` over older contents and
  `append` after a known head, and - where the program has a scratch
@@ -1258,7 +1258,7 @@ To 'gen format file round trip' with a list called 'the lines' and a text called
     append 'gen format text check' of "FMT-32" and 'the sink name' and expected to 'the lines'.
 
 (FMT-31, FMT-34: a filesystem path is a string sink like any other
- (LANGUAGE.md:3543-3545, `Create a directory called "{base}/{name}"`).
+ (LANGUAGE.md:3648-3650, `Create a directory called "{base}/{name}"`).
  A directory is made at a path whose last component carries a drawn
  specifier, and asked after through the path the generator worked out,
  written with no specifier at all; a file is opened for writing inside
@@ -1323,7 +1323,7 @@ To 'gen leaf format path sink' with a text called indent and a boolean called ne
     append "If \"{'the folder worked out'}\" is available then, Print \"ASSERT FMT-34: expected the directory {gen_file_ios}dir{'the number rendering'} to be gone\", Exit 95.\nPrint \"the formatted directory is gone\"" to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-35: a `treating` clause takes a format string (LANGUAGE.md:3545).
+(FMT-35: a `treating` clause takes a format string (LANGUAGE.md:3650).
  Over a text list, the REPLACEMENT is a format string with a drawn
  specifier, and every element of the result is asserted - the matched
  ones carry the generator's rendering, the rest are untouched. Over a
@@ -1404,7 +1404,7 @@ To 'gen leaf format treating sink' with a text called indent and a boolean calle
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-21, FMT-37: special names resolve the same in every sink
- (LANGUAGE.md:3546-3549). `{arguments's count}` in a text initializer
+ (LANGUAGE.md:3651-3654). `{arguments's count}` in a text initializer
  must read the count `arguments's count` gives directly; the same slot
  in a buffer and, where there is a scratch directory, in a file must
  agree with it; `{arguments's first}` and `{current time's hour:02}`
@@ -1461,7 +1461,7 @@ To 'gen leaf format special names agree' with a text called indent and a boolean
         append 'gen format agreement' of "FMT-37" and 'the file sink' and 'the count text' and "the argument count" to 'the lines'.
     'gen join lines' of indent and nested and 'the lines'.
 
-(FMT-36: a function argument is a string sink (LANGUAGE.md:3545). The
+(FMT-36: a function argument is a string sink (LANGUAGE.md:3650). The
  leaf defines its own one-line function that hands its parameter
  straight back - a `text` parameter for one call and a `value`
  parameter for the other - and asserts what came back against the
@@ -1521,7 +1521,7 @@ To 'gen leaf format function argument' with a text called indent and a boolean c
  asserted against the generator's own base conversion. One to four
  numbers per program, each with its own drawn radix, and a boolean in
  a radix now and then, since a boolean is a whole number to the radix
- specifiers (LANGUAGE.md:3478-3479).)
+ specifiers (LANGUAGE.md:3586-3587).)
 
 To 'gen leaf format radix verified' with a text called indent and a boolean called nested.
     a list called 'the radix specifiers' is ["x", "X", "b", "o", "0x"].
@@ -1572,10 +1572,10 @@ To 'gen leaf format radix verified' with a text called indent and a boolean call
 
 (FMT-09, FMT-11, FMT-12: a bare slot renders what the value itself
  would, a width pads with spaces on the left, a zero width with zeros
- (LANGUAGE.md:3439-3442). The width is drawn wide - past every rendering
+ (LANGUAGE.md:3547-3550). The width is drawn wide - past every rendering
  now and then, zero now and then - and applied to a number, a text, a
  buffer and a boolean in turn; "a width asks nothing of a type"
- (LANGUAGE.md:3469-3471), so each is asserted. A zero width is applied
+ (LANGUAGE.md:3577-3580), so each is asserted. A zero width is applied
  to the number and the boolean only: the manual says what zero-padding
  a number means and not what it means for a text.)
 
@@ -1646,11 +1646,11 @@ To 'gen leaf format width verified' with a text called indent and a boolean call
 (FMT-10, FMT-56: `{f:.P}` prints exactly P places of a float's exact
  expansion, correctly rounded with an exact tie to the even digit, and
  composes with a width (`{f:W.P}`, `{f:0W.P}`); `{n:.P}` on a whole
- number is the number and P zeros (LANGUAGE.md:3454-3467, 3498-3501).
+ number is the number and P zeros (LANGUAGE.md:3562-3575, 3606-3608).
  One to three floats from 'gen format float case', whose values are
  exact binary fractions so the expansion is known to the digit, plus one
  whole number from 'gen extreme number' with a precision of its own,
- and a boolean, which has a decimal expansion too (LANGUAGE.md:3476-3477).)
+ and a boolean, which has a decimal expansion too (LANGUAGE.md:3584-3585).)
 
 To 'gen leaf format precision verified' with a text called indent and a boolean called nested.
     a boolean called 'wide widths allowed' is true.
@@ -1699,7 +1699,7 @@ To 'gen leaf format precision verified' with a text called indent and a boolean 
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-19, FMT-20: an arithmetic expression is legal in a slot and renders
- its value (LANGUAGE.md:3510-3514), with a specifier on the RESULT. The
+ its value (LANGUAGE.md:3615-3619), with a specifier on the RESULT. The
  operator is drawn from add, subtract, multiply and modulo, and the
  operands so the result stays inside a number: an extreme left operand
  meets a small right one for add and subtract, two operands of at most
@@ -1745,7 +1745,7 @@ To 'gen leaf format expression slots verified' with a text called indent and a b
     'gen join lines' of indent and nested and 'the lines'.
 
 (FMT-58: a single-quoted one-word name resolves inside a slot, for
- every type (LANGUAGE.md:682-705, "a name is an identifier", and #110).
+ every type (LANGUAGE.md:722-745, "a name is an identifier", and #110).
  Every name here is written quoted whatever its word count, so the
  one-word quoted form - the shape #110 fixed - is what most of them
  are; a number with a drawn specifier, a text, a boolean, a buffer, a
@@ -1800,7 +1800,7 @@ To 'gen leaf format quoted names' with a text called indent and a boolean called
 (FMT-40, FMT-41, FMT-42, FMT-44: a variable or a file handle declared in
  EVERY branch of an if/otherwise exists afterwards, after the branch and
  from inside a function, exactly like a top-level declaration
- (LANGUAGE.md:3555-3566). Which branch runs is drawn, and so is the
+ (LANGUAGE.md:3660-3671). Which branch runs is drawn, and so is the
  variable's type; the value read afterwards, and the value a function
  defined ABOVE the declaration reads, are both asserted against the arm
  the generator knows ran. Where there is a scratch directory, a handle

@@ -1,7 +1,8 @@
-(LST2-71 — `respectively` is described as reserved as a possible future
- zip marker and "not parsed today". The second half is true: a sentence
- using it does not compile. The first half is not: `respectively` is
- accepted as an ordinary variable name. See Discrepancy 9.
+(LST2-71: LANGUAGE.md:3429-3430: English's zip marker, `respectively`, is
+ an ordinary identifier in Vox, not parsed as a marker. Both halves hold:
+ it is accepted as a variable name, and a sentence using it as a marker
+ does not compile. Until vox #290 the manual called it "reserved", which
+ it never was; see Discrepancy 9, resolved. Re-run on vox cb407f8.
  Ran: VOX_CORE_PATH=/home/josj/scr/english/vox/coreasm /home/josj/scr/english/vox/target/release/vox LST2-71.vox -o p && ./p
  expected output:
    4

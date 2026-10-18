@@ -1,9 +1,9 @@
 (PRC-77: `to process <pid>` reaches exactly one process, numbered 1 to
  2147483647; a pid known only when the program runs that is outside the
- range sets the error flag and sends nothing (LANGUAGE.md:4584,
+ range sets the error flag and sends nothing (LANGUAGE.md:4708,
  4593-4597). Each pid below is computed, so the compiler cannot prove it
  and the check happens at run time. The kernel's group meaning has its
- own form, `to my process group` (LANGUAGE.md:4580, 4588-4589).
+ own form, `to my process group` (LANGUAGE.md:4704, 4712-4713).
  Up to vox 0.4.15 both pids reached kill(2) unfiltered as broadcasts and
  this probe printed "pid 0 reached kill(2) and returned success" and the
  same for pid -1 (Discrepancy 5, resolved by vox #279). A literal 0 or -1

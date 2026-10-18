@@ -12,7 +12,7 @@
  The invalid signal, 999, is computed: since vox #279 a signal number the
  compiler can prove is outside 0 to 64 is a compile error ("cannot send
  signal 999: there is no such signal"), and one known only at run time
- sets the error flag (EINVAL) and sends nothing (LANGUAGE.md:4593-4597).
+ sets the error flag (EINVAL) and sends nothing (LANGUAGE.md:4717-4721).
  Up to 0.4.15 this probe wrote `Send signal 999` as a literal. Re-recorded
  2026-10-13 on vox main a0a2ecc, same output.
  Ran, from the repo root:

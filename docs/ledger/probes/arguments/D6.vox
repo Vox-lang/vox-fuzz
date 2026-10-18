@@ -1,6 +1,6 @@
 (D6 - Discrepancy 6 repro: a later number flag that converts clears the
- error an earlier one raised. LANGUAGE.md:4926-4928 says a token that is
- not a number "raises the error flag"; LANGUAGE.md:2248 says "A text that
+ error an earlier one raised. LANGUAGE.md:5050-5052 says a token that is
+ not a number "raises the error flag"; LANGUAGE.md:2342 says "A text that
  is a number clears the flag". Parse flags converts the tokens in argv
  order, so:
    ./p -p 3 -r x   prints   Parse flags raised the error flag

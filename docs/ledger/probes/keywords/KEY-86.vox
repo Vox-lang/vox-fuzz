@@ -1,5 +1,5 @@
 (KEY-86 — every word in the new Reserved Nouns and Properties table
- (LANGUAGE.md:5397-5411, 0.4.15, #106 second half / GitHub #239) is
+ (LANGUAGE.md:5521-5535, 0.4.15, #106 second half / GitHub #239) is
  reserved as a variable name. Resolves the rest of Discrepancy 4 (see
  below). Hand-verified across eight of the ten words:
 
@@ -17,7 +17,7 @@
 
  Note: `byte` is reserved here as a bare declaration; its one narrow
  carve-out as the `each ... from <buffer>` loop-variable name (BAS2-61,
- LANGUAGE.md:352-353) is a different, single grammatical position, not
+ LANGUAGE.md:382-383) is a different, single grammatical position, not
  a contradiction of this row.
 
  `docs/check-probes.sh` mechanically re-runs and matches only the first

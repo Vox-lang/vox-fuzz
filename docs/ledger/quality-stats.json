@@ -6,9 +6,9 @@
     "source": "docs/ledger/PROCEDURE.md (the status ladder) and docs/ledger/INDEX.md"
   },
   "generated": {
-    "commit": "3035fdc",
-    "date": "2026-10-13",
-    "voxCommit": "c9a19a5",
+    "commit": "125ddbf",
+    "date": "2026-10-17",
+    "voxCommit": "cb407f8",
     "script": "scripts/quality-stats"
   },
   "claims": {
@@ -228,7 +228,7 @@
   },
   "probes": {
     "families": 27,
-    "leaves": 246,
+    "leaves": 257,
     "leafFiles": [
       "src/gen_basics.vox",
       "src/gen_buffers.vox",
@@ -565,17 +565,17 @@
     "total": 311
   },
   "register": {
-    "found": 145,
-    "fixed": 128,
-    "open": 11,
+    "found": 151,
+    "fixed": 145,
+    "open": 0,
     "other": 6,
     "source": "vox docs/BUGS_FOUND.md"
   },
   "tests": {
-    "voxFuzz": 55,
+    "voxFuzz": 56,
     "vox": {
-      "run": 744,
-      "compileFail": 378
+      "run": 845,
+      "compileFail": 461
     }
   }
 }

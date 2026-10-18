@@ -1,6 +1,6 @@
 (EXP-96: a text known only when the program runs that is not a number
  raises the error flag, and a declaration from the cast holds 0
- (LANGUAGE.md:2223-2230, 2243-2248). "12xy" is not a number: the whole
+ (LANGUAGE.md:2317-2324, 2337-2342). "12xy" is not a number: the whole
  text must be a Vox number literal. Up to vox 0.4.15 a valid prefix was
  enough, and this probe printed 12 for "12xy" with the flag clear
  (Discrepancy 2, resolved by vox #281). Re-recorded 2026-10-13 on vox main

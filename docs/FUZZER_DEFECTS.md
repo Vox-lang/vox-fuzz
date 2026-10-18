@@ -1155,7 +1155,7 @@ the leaf, at whatever level the leaf sat, is inside that loop:
   finding, so the campaign reported `compiled: 199 findings: 0` and the
   loss was only visible in the count.
 
-LANGUAGE.md:769 states the fix in the sentence right after that very
+LANGUAGE.md:816 states the fix in the sentence right after that very
 diagnostic: "A period stacks with the one that closes the `if` to close
 the `For each` too, in the same step: `Break..` compiles and runs exactly
 like a blank line ahead of the `To`". The guard line becomes
@@ -1572,7 +1572,7 @@ so the literal has at most 15 significant digits. A sweep of 4000 literals
 input either by path (`at "/dev/stdin"`) or, on a coin flip, by number
 (`open a file for reading called sin<n> at 0`), reads from it twice, and
 ends with `Close sin<n>`. The manual calls a numeric `at` a borrowed
-descriptor (LANGUAGE.md:4041 at vox `dfdfc7f`) and does not say what
+descriptor (LANGUAGE.md:4146 at vox `cb407f8`, 4041 at `dfdfc7f` when this was written) and does not say what
 `Close` does to one; vox closes the descriptor itself, so the process
 has no descriptor 0 from then on, and the next open gets 0.
 

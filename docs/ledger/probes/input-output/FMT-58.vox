@@ -1,5 +1,5 @@
 (FMT-58: a single-quoted one-word name resolves inside a `{...}`
- format-string slot, for every declared type (LANGUAGE.md:718, 0.4.15,
+ format-string slot, for every declared type (LANGUAGE.md:758, 0.4.15,
  #110). Before the fix (0.4.14 and earlier), every line here failed to
  compile and run: `error: Unknown variable: 'tally'` (and likewise for
  'label', 'flag') — the slot parser used the placeholder's raw quoted

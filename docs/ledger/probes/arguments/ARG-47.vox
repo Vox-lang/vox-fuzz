@@ -1,5 +1,5 @@
 (ARG-47: a number flag token beyond the range of a number is not a number
- ("The whole number must fit in a number", LANGUAGE.md:2233-2235), so the
+ ("The whole number must fit in a number", LANGUAGE.md:2327-2329), so the
  flag holds its default and the error flag is raised (LANGUAGE.md:
  4926-4928). retries has no default and holds 0; patience has default 5
  and keeps it.

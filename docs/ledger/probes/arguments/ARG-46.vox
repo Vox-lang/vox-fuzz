@@ -1,6 +1,6 @@
 (ARG-46: a number flag whose token is not a number leaves the flag holding
  its default (0 when it has none) and raises the error flag
- (LANGUAGE.md:4926-4928). Up to vox 0.4.15 the manual did not say so; it
+ (LANGUAGE.md:5050-5052). Up to vox 0.4.15 the manual did not say so; it
  does since vox #281.
  The error flag is raised by `Parse flags.` itself and stays raised until
  an `On error` catches it, so the handler under the declaration below is
